@@ -1,25 +1,3 @@
-        // 暗色模式切换
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark');
-            var icon = document.querySelector('#darkModeToggle iconify-icon');
-            if (document.body.classList.contains('dark')) {
-                icon.setAttribute('icon', 'mdi:weather-sunny');
-                localStorage.setItem('lexprime_dark_mode', 'true');
-            } else {
-                icon.setAttribute('icon', 'mdi:weather-night');
-                localStorage.setItem('lexprime_dark_mode', 'false');
-            }
-        }
-
-        // 页面加载时恢复暗色模式设置
-        (function() {
-            if (localStorage.getItem('lexprime_dark_mode') === 'true') {
-                document.body.classList.add('dark');
-                var icon = document.querySelector('#darkModeToggle iconify-icon');
-                if (icon) icon.setAttribute('icon', 'mdi:weather-sunny');
-            }
-        })();
-
         // ===== 全局应用状态 =====
         var AppState = {
             isYearly: false,
