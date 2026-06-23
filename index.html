@@ -27,7 +27,7 @@
 <!-- 自定义样式 -->
 <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
-<body class="h-screen flex flex-col">
+<body class="h-screen flex flex-col min-w-[1024px]">
 <!-- 顶部导航栏 -->
 <header class="h-12 bg-white border-b border-[#E5E6EB] flex items-center justify-between px-4 z-50 flex-none">
 <div class="flex items-center gap-3">
@@ -148,79 +148,8 @@
 </div>
 </header>
 <div class="flex-1 flex overflow-hidden">
-<!-- 移动端菜单按钮 -->
-<button class="lg:hidden fixed top-14 left-2 z-50 w-8 h-8 bg-white rounded-lg shadow-md flex items-center justify-center" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
-<iconify-icon class="text-lg text-gray-600" icon="mdi:menu"></iconify-icon>
-</button>
-<!-- 移动端侧边栏覆盖层 -->
-<div class="hidden fixed inset-0 z-40 bg-black/30 lg:hidden" id="mobileSidebarOverlay" onclick="toggleMobileSidebar()"></div>
-<!-- 移动端侧边栏 -->
-<aside class="hidden fixed top-0 left-0 h-full w-60 bg-white z-50 flex-col lg:hidden" id="mobileSidebar">
-<!-- 标签页切换栏 -->
-<div class="flex items-center gap-1 px-3 pt-3 pb-2">
-<button class="sidebar-tab-btn active" data-tab="work" onclick="switchSidebarTab('work')">工作</button>
-<button class="sidebar-tab-btn" data-tab="ai" onclick="switchSidebarTab('ai')">AI对话</button>
-</div>
-<div class="h-px bg-[#E5E6EB] mx-3"></div>
-<!-- 工作标签页内容 -->
-<div class="flex-1 flex flex-col overflow-hidden" id="mobileSidebarTabWork">
-<div class="flex-1 p-3 pt-2">
-<div class="sidebar-item active" onclick="switchView('workstation', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:view-dashboard-outline"></iconify-icon>
-<span class="sidebar-text">工作台</span>
-</div>
-<div class="sidebar-item" onclick="switchToList('case-list', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:briefcase-outline"></iconify-icon>
-<span class="sidebar-text">案件管理</span>
-</div>
-<div class="sidebar-item" onclick="switchToList('schedule-calendar', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:calendar-month-outline"></iconify-icon>
-<span class="sidebar-text">日程管理</span>
-</div>
-<div class="sidebar-item" onclick="switchView('client', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:account-group-outline"></iconify-icon>
-<span class="sidebar-text">客户管理</span>
-</div>
-<div class="sidebar-item" onclick="switchView('template', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:file-document-outline"></iconify-icon>
-<span class="sidebar-text">模板管理</span>
-</div>
-<div class="sidebar-item" onclick="switchView('knowledge', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:bookshelf"></iconify-icon>
-<span class="sidebar-text">知识库管理</span>
-</div>
-<div class="sidebar-item" onclick="switchView('attachment-list', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:attachment"></iconify-icon>
-<span class="sidebar-text">附件管理</span>
-</div>
-</div>
-</div>
-<!-- AI对话标签页内容 -->
-<div class="hidden flex flex-col h-full" id="mobileSidebarTabAI">
-<div class="flex items-center gap-2 px-4 py-3 border-b border-[#E5E6EB] flex-none">
-<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
-</div>
-<span class="text-sm font-semibold text-[#1D2129]">LexPrime 助手</span>
-</div>
-<div class="flex-1 p-3 pt-2 overflow-y-auto">
-<div class="sidebar-item active" onclick="switchAIView('chat', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:chat-processing-outline"></iconify-icon>
-<span class="sidebar-text">新对话</span>
-</div>
-<div class="sidebar-item" onclick="switchAIView('skills', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:bookmark-multiple-outline"></iconify-icon>
-<span class="sidebar-text">技能</span>
-</div>
-<div class="sidebar-item" onclick="switchAIView('history', this); toggleMobileSidebar();">
-<iconify-icon class="text-xl mr-3" icon="mdi:history"></iconify-icon>
-<span class="sidebar-text">历史记录</span>
-</div>
-</div>
-</div>
-</aside>
-<!-- 左侧导航栏（桌面端） -->
-<aside class="hidden lg:flex lg:w-60 bg-white border-r border-[#E5E6EB] flex-col relative" id="sidebar">
+<!-- 左侧导航栏 -->
+<aside class="w-60 bg-white border-r border-[#E5E6EB] flex flex-col relative flex-none" id="sidebar">
 <!-- 标签页切换栏 -->
 <div class="flex items-center gap-1 px-3 pt-3 pb-2">
 <button class="sidebar-tab-btn active" data-tab="work" onclick="switchSidebarTab('work')">工作</button>
@@ -354,12 +283,12 @@
 </div>
 </aside>
 <!-- 主内容区（动态加载视图模板） -->
-<main class="flex-1 overflow-hidden relative flex flex-col" id="main-content">
+<main class="flex-1 min-w-[784px] overflow-hidden relative flex flex-col" id="main-content">
 <!-- 视图模板将在这里动态加载 -->
 </main>
 </div>
 <!-- 主脚本 -->
-<script src="./assets/js/script.js?v=7"></script>
+<script src="./assets/js/script.js?v=8"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {
