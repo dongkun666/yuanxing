@@ -1457,7 +1457,6 @@
         }
         
         const sched = { title, date, time, type, case: caseVal, note, remind };
-        console.log('新建日程:', sched);
         
         // 保存到日程数据
         const endHour = parseInt(time.split(':')[0]) + 1;
