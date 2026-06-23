@@ -9,6 +9,19 @@
 <script src="./assets/js/tailwindcss.js"></script>
 <!-- Iconify 图标 -->
 <script src="./assets/js/iconify-icon.min.js"></script>
+<!-- Iconify 本地图标配置 -->
+<script>
+(function() {
+    // 配置 Iconify 使用本地图标数据
+    if (typeof Iconify !== 'undefined') {
+        Iconify.setAPI({
+            local: {
+                url: './assets/icons/{prefix}.json'
+            }
+        });
+    }
+})();
+</script>
 <!-- ECharts -->
 <script src="./assets/js/echarts.min.js"></script>
 <!-- 自定义样式 -->
