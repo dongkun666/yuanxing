@@ -102,26 +102,27 @@
 
         // 侧边栏标签页切换
         function switchSidebarTab(tab) {
-            const tabWork = document.getElementById('sidebarTabWork');
-            const tabAI = document.getElementById('sidebarTabAI');
-            const btns = document.querySelectorAll('.sidebar-tab-btn');
+            var tabWork = document.getElementById('sidebarTabWork');
+            var tabAI = document.getElementById('sidebarTabAI');
+            var btns = document.querySelectorAll('.sidebar-tab-btn');
             
-            btns.forEach(btn => btn.classList.remove('active'));
+            btns.forEach(function(btn) { btn.classList.remove('active'); });
             
             if (tab === 'work') {
-                tabWork.classList.remove('hidden');
-                tabAI.classList.add('hidden');
-                btns[0].classList.add('active');
+                if (tabWork) tabWork.classList.remove('hidden');
+                if (tabAI) tabAI.classList.add('hidden');
+                if (btns[0]) btns[0].classList.add('active');
                 
                 // 隐藏AI视图，显示当前激活的工作视图
-                document.getElementById('view-ai').classList.add('hidden');
+                var viewAI = document.getElementById('view-ai');
+                if (viewAI) viewAI.classList.add('hidden');
                 // 默认显示工作台
                 var ws = document.getElementById('view-workstation');
                 if (ws) ws.classList.remove('hidden');
             } else {
-                tabWork.classList.add('hidden');
-                tabAI.classList.remove('hidden');
-                btns[1].classList.add('active');
+                if (tabWork) tabWork.classList.add('hidden');
+                if (tabAI) tabAI.classList.remove('hidden');
+                if (btns[1]) btns[1].classList.add('active');
                 
                 // 清除侧边栏菜单项高亮（AI模式下无对应工作菜单项）
                 document.querySelectorAll('.sidebar-item').forEach(function(item) {
@@ -129,13 +130,29 @@
                 });
                 
                 // 隐藏所有工作视图，显示AI视图
-                document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-                document.getElementById('view-ai').classList.remove('hidden');
+                document.querySelectorAll('.view-content').forEach(function(v) { v.classList.add('hidden'); });
                 
-                // 自动显示AI新对话视图（子视图）
-                document.getElementById('aiViewChat').classList.remove('hidden');
-                document.getElementById('aiViewSkills').classList.add('hidden');
-                document.getElementById('aiViewHistory').classList.add('hidden');
+                // 动态加载AI视图（如果尚未加载）
+                var viewAI = document.getElementById('view-ai');
+                if (!viewAI) {
+                    loadView('ai', function(html) {
+                        document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                        var newViewAI = document.getElementById('view-ai');
+                        if (newViewAI) newViewAI.classList.remove('hidden');
+                        // 显示AI新对话子视图
+                        var aiViewChat = document.getElementById('aiViewChat');
+                        if (aiViewChat) aiViewChat.classList.remove('hidden');
+                    });
+                } else {
+                    viewAI.classList.remove('hidden');
+                    // 显示AI新对话子视图
+                    var aiViewChat = document.getElementById('aiViewChat');
+                    if (aiViewChat) aiViewChat.classList.remove('hidden');
+                    var aiViewSkills = document.getElementById('aiViewSkills');
+                    if (aiViewSkills) aiViewSkills.classList.add('hidden');
+                    var aiViewHistory = document.getElementById('aiViewHistory');
+                    if (aiViewHistory) aiViewHistory.classList.add('hidden');
+                }
             }
         }
 
@@ -239,21 +256,46 @@
         // AI视图切换（左侧菜单点击 -> 右侧内容切换）
         function switchAIView(viewId, el) {
             // 更新侧边栏菜单高亮
-            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(function(item) { item.classList.remove('active'); });
             if (el) el.classList.add('active');
             
+            // 获取AI子视图元素
+            var aiViewChat = document.getElementById('aiViewChat');
+            var aiViewSkills = document.getElementById('aiViewSkills');
+            var aiViewHistory = document.getElementById('aiViewHistory');
+            
+            // 如果AI视图尚未加载，先加载它
+            var viewAI = document.getElementById('view-ai');
+            if (!viewAI) {
+                loadView('ai', function(html) {
+                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                    // 加载完成后切换子视图
+                    switchAIViewSubView(viewId);
+                });
+                return;
+            }
+            
             // 隐藏所有AI子视图
-            document.getElementById('aiViewChat').classList.add('hidden');
-            document.getElementById('aiViewSkills').classList.add('hidden');
-            document.getElementById('aiViewHistory').classList.add('hidden');
+            if (aiViewChat) aiViewChat.classList.add('hidden');
+            if (aiViewSkills) aiViewSkills.classList.add('hidden');
+            if (aiViewHistory) aiViewHistory.classList.add('hidden');
             
             // 显示目标视图
-            if (viewId === 'chat') {
-                document.getElementById('aiViewChat').classList.remove('hidden');
-            } else if (viewId === 'skills') {
-                document.getElementById('aiViewSkills').classList.remove('hidden');
-            } else if (viewId === 'history') {
-                document.getElementById('aiViewHistory').classList.remove('hidden');
+            switchAIViewSubView(viewId);
+        }
+        
+        // AI子视图切换辅助函数
+        function switchAIViewSubView(viewId) {
+            var aiViewChat = document.getElementById('aiViewChat');
+            var aiViewSkills = document.getElementById('aiViewSkills');
+            var aiViewHistory = document.getElementById('aiViewHistory');
+            
+            if (viewId === 'chat' && aiViewChat) {
+                aiViewChat.classList.remove('hidden');
+            } else if (viewId === 'skills' && aiViewSkills) {
+                aiViewSkills.classList.remove('hidden');
+            } else if (viewId === 'history' && aiViewHistory) {
+                aiViewHistory.classList.remove('hidden');
             }
         }
 
