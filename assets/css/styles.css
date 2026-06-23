@@ -1,4 +1,4 @@
-@import './fonts.css';
+@import '../fonts/fonts.css';
 
         :root {
             --arco-blue-6: #165DFF;
