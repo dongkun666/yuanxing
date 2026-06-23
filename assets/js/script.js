@@ -15,6 +15,17 @@
             dynamicAttachments: []
         };
 
+        // ===== 移动端侧边栏切换 =====
+        function toggleMobileSidebar() {
+            var sidebar = document.getElementById('mobileSidebar');
+            var overlay = document.getElementById('mobileSidebarOverlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('flex');
+                overlay.classList.toggle('hidden');
+            }
+        }
+
         // ===== 视图缓存管理 =====
         var viewCache = {};
 
