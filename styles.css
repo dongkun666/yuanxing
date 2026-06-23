@@ -1,0 +1,314 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --arco-blue-6: #165DFF;
+            --arco-blue-5: #4080FF;
+            --arco-blue-1: #E8F3FF;
+            --arco-gray-1: #F2F3F5;
+            --arco-gray-2: #F7F8FA;
+            --arco-gray-3: #E5E6EB;
+            --arco-gray-10: #1D2129;
+            --arco-gray-8: #4E5969;
+            --arco-gray-6: #86909C;
+            --arco-success: #00B42A;
+            --arco-warning: #FF7D00;
+            --arco-danger: #F53F3F;
+        }
+
+        body {
+            font-family: "PingFang SC", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--arco-gray-1);
+            color: var(--arco-gray-10);
+            overflow: hidden;
+        }
+
+        .arco-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid var(--arco-gray-3);
+            transition: all 0.2s;
+        }
+
+        .arco-card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .arco-btn-primary {
+            background-color: var(--arco-blue-6);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: background-color 0.2s;
+        }
+
+        .arco-btn-primary:hover {
+            background-color: var(--arco-blue-5);
+        }
+
+        .arco-btn-secondary {
+            background-color: white;
+            border: 1px solid var(--arco-gray-3);
+            color: var(--arco-gray-8);
+            border-radius: 8px;
+            padding: 8px 16px;
+        }
+
+        .sidebar-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            cursor: pointer;
+            color: var(--arco-gray-8);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--arco-gray-1);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--arco-blue-1);
+            color: var(--arco-blue-6);
+            font-weight: 500;
+        }
+
+        .sidebar-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 3px;
+            height: 16px;
+            background-color: var(--arco-blue-6);
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--arco-gray-3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .timeline-node.active {
+            border-color: var(--arco-blue-6);
+            background-color: var(--arco-blue-1);
+        }
+
+        .editor-container {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .conflict-card {
+            border: 1px solid var(--arco-danger);
+            background-color: #FFF7F8;
+        }
+
+        .step-item.active .step-icon {
+            background-color: var(--arco-blue-6);
+            color: white;
+        }
+
+        .step-item.completed .step-icon {
+            background-color: var(--arco-success);
+            color: white;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        /* ========== 标签页切换栏 ========== */
+        .sidebar-tab-btn {
+            flex: 1;
+            padding: 6px 0;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: #86909C;
+            background: transparent;
+            border: none;
+            position: relative;
+            text-align: center;
+        }
+        .sidebar-tab-btn.active {
+            color: #165DFF;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        /* ========== AI对话消息 ========== */
+        .chat-message-ai {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        .chat-message-user {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+            flex-direction: row-reverse;
+        }
+        .chat-bubble-ai {
+            background-color: #F7F8FA;
+            border-radius: 8px;
+            padding: 10px 14px;
+            max-width: 85%;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1D2129;
+        }
+        .chat-bubble-user {
+            background-color: #165DFF;
+            border-radius: 8px;
+            padding: 10px 14px;
+            max-width: 85%;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ffffff;
+        }
+        .chat-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .chat-avatar-ai {
+            background-color: #E8F3FF;
+            color: #165DFF;
+        }
+        .chat-avatar-user {
+            background-color: #165DFF;
+            color: #ffffff;
+        }
+        #chatMessageList {
+            scrollbar-width: thin;
+        }
+
+        /* 保存成功提示动画 */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* ========== AI 对话子标签页切换 ========== */
+        .ai-subtab-btn {
+            flex: 1;
+            padding: 6px 0;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: #86909C;
+            background: transparent;
+            border: none;
+            position: relative;
+            text-align: center;
+        }
+        .ai-subtab-btn.active {
+            color: #165DFF;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        /* ========== 技能卡片 ========== */
+        .skill-card {
+            background: #FFFFFF;
+            border: 1px solid var(--arco-gray-3);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.2s;
+            cursor: default;
+        }
+        .skill-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border-color: var(--arco-blue-6);
+        }
+        .skill-card .skill-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 15px;
+        }
+        .skill-card .skill-run-btn {
+            padding: 3px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            background-color: var(--arco-blue-1);
+            color: var(--arco-blue-6);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .skill-card .skill-run-btn:hover {
+            background-color: var(--arco-blue-6);
+            color: #ffffff;
+        }
+
+        /* ========== 历史对话条目 ========== */
+        .history-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .history-item:hover {
+            background-color: var(--arco-gray-1);
+            border-color: var(--arco-gray-3);
+        }
+        .history-item .history-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--arco-gray-10);
+            line-height: 1.4;
+        }
+        .history-item .history-date {
+            font-size: 11px;
+            color: var(--arco-gray-6);
+        }
+
+
+        /* ========== AI 子标签内容区统一滚动 ========== */
+        #aiSubContent {
+            scrollbar-width: thin;
+        }
+
+        /* 更多菜单弹出动画 */
+        #moreMenuWork, #moreMenuAI {
+            animation: menuSlideUp 0.15s ease-out;
+        }
+        @keyframes menuSlideUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
