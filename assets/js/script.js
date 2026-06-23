@@ -39,7 +39,8 @@
             'payment-success': 'payment-success.html',
             'orders': 'orders.html',
             'member-center': 'member-center.html',
-            'account-settings': 'account-settings.html'
+            'account-settings': 'account-settings.html',
+            'archive': 'archive.html'
         };
 
         // 动态加载视图
