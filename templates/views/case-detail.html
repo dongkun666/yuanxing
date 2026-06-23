@@ -42,13 +42,13 @@
 <!-- Tab: 案件概览 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-overview">
 <div class="max-w-5xl w-full mx-auto space-y-4">
-<!-- 案件信息卡片 -->
+<!-- 案件基本信息 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
                         案件基本信息
                     </h5>
-<div class="grid grid-cols-3 gap-6">
+<div class="grid grid-cols-4 gap-6">
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案号</p>
 <p class="text-sm font-medium text-gray-800">(2026)京01民初128号</p>
@@ -62,79 +62,136 @@
 <p><span class="text-[11px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full">进行中</span></p>
 </div>
 <div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">标的金额</p>
+<p class="text-sm font-medium text-gray-800">¥5,230,000.00</p>
+</div>
+<div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">承办律师</p>
 <p class="text-sm font-medium text-gray-800">张律师</p>
 </div>
 <div>
-<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">立案日期</p>
-<p class="text-sm font-medium text-gray-800">2026-06-01</p>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">签约日期</p>
+<p class="text-sm font-medium text-gray-800">2026-05-20</p>
 </div>
 <div>
-<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">标的金额</p>
-<p class="text-sm font-medium text-gray-800">¥5,230,000.00</p>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">代理阶段</p>
+<p class="text-sm font-medium text-gray-800">一审</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">是否保全</p>
+<p><span class="text-[11px] bg-green-100 text-green-700 font-medium px-2 py-0.5 rounded-full">已保全</span></p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">缴费情况</p>
+<p class="text-sm font-medium text-gray-800">已缴费</p>
+</div>
+<div class="col-span-3">
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">特殊约定</p>
+<p class="text-sm text-gray-800">风险代理，回款后按比例支付律师费</p>
 </div>
 </div>
 </div>
-<!-- 当事人信息双栏 -->
+<!-- 客户信息 & 对方信息 -->
 <div class="grid grid-cols-2 gap-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-3 flex items-center gap-2">
 <iconify-icon class="text-green-500" icon="mdi:account"></iconify-icon>
-                            原告
+                            客户
                         </h5>
-<div class="space-y-2">
-<div><span class="text-[10px] text-gray-400">名称</span><p class="text-sm font-medium">上海XX贸易有限公司</p></div>
-<div><span class="text-[10px] text-gray-400">法定代表人</span><p class="text-sm">王大明</p></div>
-<div><span class="text-[10px] text-gray-400">委托代理人</span><p class="text-sm">张律师（元枢律师事务所）</p></div>
+<div class="space-y-3">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">客户姓名</span>
+<p class="text-sm font-medium">上海XX贸易有限公司</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">客户电话</span>
+<p class="text-sm">138-1234-5678</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">客户证件号</span>
+<p class="text-sm">91310000MA1G8XXXXX</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">法定代表人</span>
+<p class="text-sm">王大明</p>
+</div>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">客户地址</span>
+<p class="text-sm">上海市浦东新区张江高科技园区科苑路88号</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">委托代理人</span>
+<p class="text-sm">张律师（元枢律师事务所）</p>
+</div>
 </div>
 </div>
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-3 flex items-center gap-2">
 <iconify-icon class="text-red-500" icon="mdi:account"></iconify-icon>
-                            被告
+                            对方
                         </h5>
-<div class="space-y-2">
-<div><span class="text-[10px] text-gray-400">名称</span><p class="text-sm font-medium">北京YY科技发展有限公司</p></div>
-<div><span class="text-[10px] text-gray-400">法定代表人</span><p class="text-sm text-red-500">未提供 · 请补充</p></div>
-<div><span class="text-[10px] text-gray-400">委托代理人</span><p class="text-sm">—</p></div>
+<div class="space-y-3">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">对方姓名</span>
+<p class="text-sm font-medium">北京YY科技发展有限公司</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">对方电话</span>
+<p class="text-sm">010-8888-7777</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">对方证件号</span>
+<p class="text-sm">91110000MA01XXXXX</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">法定代表人</span>
+<p class="text-sm text-red-500">未提供 · 请补充</p>
+</div>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">对方地址</span>
+<p class="text-sm">北京市海淀区中关村大街1号</p>
+</div>
+<div>
+<span class="text-[10px] text-gray-400 block mb-1">委托代理人</span>
+<p class="text-sm">—</p>
 </div>
 </div>
 </div>
-<!-- 关键日期 -->
+</div>
+<!-- 客户诉求 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-3 flex items-center gap-2">
-<iconify-icon class="text-[#165DFF]" icon="mdi:calendar-clock"></iconify-icon>
-                        关键日期
+<iconify-icon class="text-[#165DFF]" icon="mdi:format-list-checks"></iconify-icon>
+                        客户诉求
                     </h5>
-<div class="grid grid-cols-4 gap-4">
-<div class="bg-blue-50 rounded-lg p-3 text-center">
-<p class="text-[10px] text-gray-500">签约日期</p>
-<p class="text-sm font-bold text-gray-800 mt-1">2026-05-20</p>
-</div>
-<div class="bg-green-50 rounded-lg p-3 text-center">
-<p class="text-[10px] text-gray-500">立案日期</p>
-<p class="text-sm font-bold text-gray-800 mt-1">2026-06-01</p>
-</div>
-<div class="bg-orange-50 rounded-lg p-3 text-center">
-<p class="text-[10px] text-gray-500">开庭日期</p>
-<p class="text-sm font-bold text-gray-800 mt-1">2026-08-25</p>
-<p class="text-[10px] text-orange-500">距开庭 4 天</p>
-</div>
-<div class="bg-purple-50 rounded-lg p-3 text-center">
-<p class="text-[10px] text-gray-500">上诉期限</p>
-<p class="text-sm font-bold text-gray-800 mt-1">—</p>
-<p class="text-[10px] text-purple-500">待判决</p>
+<div class="text-sm text-gray-600 leading-relaxed space-y-2">
+<p>1. 判令被告向原告支付货款本金人民币 5,000,000.00 元；</p>
+<p>2. 判令被告支付逾期利息（按LPR 4倍计算，自2026年1月1日起至实际清偿之日止）；</p>
+<p>3. 判令被告承担本案诉讼费、保全费、律师费。</p>
 </div>
 </div>
+<!-- 办案思路 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:lightbulb-outline"></iconify-icon>
+                        办案思路
+                    </h5>
+<p class="text-sm text-gray-600 leading-relaxed">
+                        本案事实清楚、证据充分，建议采取以下策略：1）以采购协议、送货单、对账单为核心证据，形成完整证据链；2）申请财产保全，查封被告银行账户及名下不动产，确保判决后可执行；3）先发律师函催告，争取庭前和解；4）如调解不成，坚持诉讼请求，重点主张逾期利息按LPR 4倍计算。
+                    </p>
 </div>
-<!-- 案件摘要 -->
+<!-- 案件情况 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-3 flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:text-subject"></iconify-icon>
-                        案件摘要
+                        案件情况
                     </h5>
 <p class="text-sm text-gray-600 leading-relaxed">
-                        2025年10月12日，原、被告双方签署编号为 SH-2025-1012 的《采购框架协议》，约定由原告向被告供应电子元器件，货款月结。截至2026年3月，原告累计供货价值人民币5,000,000.00元，被告仅支付1,200,000.00元，尚欠3,800,000.00元。经多次催讨无果，原告提起诉讼。
+                        2025年10月12日，原、被告双方签署编号为 SH-2025-1012 的《采购框架协议》，约定由原告向被告供应电子元器件，货款月结。截至2026年3月，原告累计供货价值人民币5,000,000.00元，被告仅支付1,200,000.00元，尚欠3,800,000.00元。经多次催讨无果，原告提起诉讼。目前已完成立案，已申请财产保全并获法院批准，正在准备开庭材料。
                     </p>
 </div>
 </div>
