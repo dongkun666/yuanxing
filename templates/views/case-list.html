@@ -4,8 +4,22 @@
 <div class="flex items-center gap-3 flex-wrap">
 <div class="relative flex-1 min-w-[200px]">
 <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#C9CDD4]" icon="mdi:magnify"></iconify-icon>
-<input class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="搜索案号、当事人、案由..." type="text"/>
+<input id="caseSearchInput" class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="搜索案号、当事人、案由..." type="text" oninput="filterCaseList()"/>
 </div>
+<select id="caseStatusFilter" class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white cursor-pointer" onchange="filterCaseList()">
+<option value="">全部状态</option>
+<option value="进行中">进行中</option>
+<option value="待开庭">待开庭</option>
+<option value="已结案">已结案</option>
+</select>
+<select id="caseTypeFilter" class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white cursor-pointer" onchange="filterCaseList()">
+<option value="">全部案由</option>
+<option value="民事">民事</option>
+<option value="商事">商事</option>
+<option value="劳动争议">劳动争议</option>
+<option value="知识产权">知识产权</option>
+</select>
+<span id="caseResultCount" class="text-xs text-[#86909C] ml-auto"></span>
 <button class="px-4 py-2 text-xs font-medium rounded-lg bg-gradient-to-r from-[#165DFF] to-[#6C5CE7] text-white hover:opacity-90 transition-colors flex items-center gap-1.5">
 <iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
 AI新建案件
@@ -28,8 +42,8 @@ AI新建案件
 <th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">操作</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-[#F2F3F5]">
-<tr class="hover:bg-[#F7F8FA] transition-colors">
+<tbody id="caseTableBody" class="divide-y divide-[#F2F3F5]">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="民间借贷纠纷">
 <td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(0)">(2026)京01民初128号</span></td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">民间借贷纠纷</td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">张三诉李四</td>
@@ -44,7 +58,7 @@ AI新建案件
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-status="待开庭" data-type="劳动争议">
 <td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(1)">(2026)京02民初256号</span></td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">劳动争议仲裁</td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">王五诉某科技公司</td>
@@ -59,7 +73,7 @@ AI新建案件
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-status="已结案" data-type="民事">
 <td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(2)">(2026)京03民初789号</span></td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">合同纠纷</td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">某公司诉赵六</td>
@@ -74,7 +88,7 @@ AI新建案件
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="知识产权">
 <td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(3)">(2026)京04民初345号</span></td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">知识产权侵权</td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">A公司诉B公司</td>
@@ -89,7 +103,7 @@ AI新建案件
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="民事">
 <td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(4)">(2026)京05民初567号</span></td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">离婚纠纷</td>
 <td class="py-3 px-4 text-xs text-[#4E5969]">刘某诉陈某</td>

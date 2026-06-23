@@ -63,6 +63,53 @@
                 .catch(function(err) { console.error('加载视图失败:', viewId, err); });
         }
 
+        // ===== 案件列表筛选 =====
+        function filterCaseList() {
+            var searchInput = document.getElementById('caseSearchInput');
+            var statusFilter = document.getElementById('caseStatusFilter');
+            var typeFilter = document.getElementById('caseTypeFilter');
+            var tbody = document.getElementById('caseTableBody');
+            var resultCount = document.getElementById('caseResultCount');
+
+            if (!searchInput || !statusFilter || !typeFilter || !tbody) return;
+
+            var searchText = searchInput.value.trim().toLowerCase();
+            var statusValue = statusFilter.value;
+            var typeValue = typeFilter.value;
+
+            var rows = tbody.querySelectorAll('tr');
+            var visibleCount = 0;
+
+            rows.forEach(function(row) {
+                var caseNum = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+                var caseType = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                var party = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                var lawyer = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
+                var rowStatus = row.getAttribute('data-status') || '';
+                var rowType = row.getAttribute('data-type') || '';
+
+                var matchSearch = !searchText ||
+                    caseNum.includes(searchText) ||
+                    caseType.includes(searchText) ||
+                    party.includes(searchText) ||
+                    lawyer.includes(searchText);
+
+                var matchStatus = !statusValue || rowStatus === statusValue;
+                var matchType = !typeValue || rowType.includes(typeValue) || caseType.includes(typeValue);
+
+                if (matchSearch && matchStatus && matchType) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (resultCount) {
+                resultCount.textContent = '共 ' + visibleCount + ' 条';
+            }
+        }
+
         // 视图切换逻辑
         function switchView(viewId, el) {
             var target = document.getElementById('view-' + viewId);
