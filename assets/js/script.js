@@ -1298,6 +1298,28 @@
             // 切换回案件概览 Tab
             var tab = document.querySelector('.case-tab[data-tab="overview"]');
             if (tab) switchCaseTab('overview', tab);
+        } else {
+            // 视图未加载，动态加载
+            loadView('case', function(html) {
+                document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                var newCaseView = document.getElementById('view-case');
+                if (newCaseView) {
+                    newCaseView.classList.remove('hidden');
+                    // 更新案件元数据
+                    if (caseMeta[index]) {
+                        var meta = caseMeta[index];
+                        var titleEl = document.getElementById('case-detail-title');
+                        var typeEl = document.getElementById('case-detail-type');
+                        var statusEl = document.getElementById('case-detail-status');
+                        if (titleEl) titleEl.textContent = meta.title;
+                        if (typeEl) typeEl.textContent = meta.type;
+                        if (statusEl) {
+                            statusEl.textContent = meta.status;
+                            statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
+                        }
+                    }
+                }
+            });
         }
     }
 
