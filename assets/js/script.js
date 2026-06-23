@@ -64,21 +64,27 @@
         }
 
         // ===== 案件列表筛选 =====
+        var caseCurrentPage = 1;
+
         function filterCaseList() {
             var searchInput = document.getElementById('caseSearchInput');
             var statusFilter = document.getElementById('caseStatusFilter');
             var typeFilter = document.getElementById('caseTypeFilter');
             var tbody = document.getElementById('caseTableBody');
             var resultCount = document.getElementById('caseResultCount');
+            var pageSizeSelect = document.getElementById('casePageSize');
+            var paginationInfo = document.getElementById('casePaginationInfo');
+            var paginationBtns = document.getElementById('casePaginationBtns');
 
             if (!searchInput || !statusFilter || !typeFilter || !tbody) return;
 
             var searchText = searchInput.value.trim().toLowerCase();
             var statusValue = statusFilter.value;
             var typeValue = typeFilter.value;
+            var pageSize = pageSizeSelect ? parseInt(pageSizeSelect.value) : 10;
 
             var rows = tbody.querySelectorAll('tr');
-            var visibleCount = 0;
+            var filteredRows = [];
 
             rows.forEach(function(row) {
                 var caseNum = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
@@ -98,16 +104,59 @@
                 var matchType = !typeValue || rowType.includes(typeValue) || caseType.includes(typeValue);
 
                 if (matchSearch && matchStatus && matchType) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
+                    filteredRows.push(row);
                 }
             });
 
+            // 重置到第一页
+            caseCurrentPage = 1;
+
+            // 显示结果计数
             if (resultCount) {
-                resultCount.textContent = '共 ' + visibleCount + ' 条';
+                resultCount.textContent = '共 ' + filteredRows.length + ' 条';
             }
+
+            // 计算总页数
+            var totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
+            if (caseCurrentPage > totalPages) caseCurrentPage = totalPages;
+
+            // 显示/隐藏行
+            var startIdx = (caseCurrentPage - 1) * pageSize;
+            var endIdx = startIdx + pageSize;
+
+            rows.forEach(function(row) { row.style.display = 'none'; });
+            filteredRows.forEach(function(row, idx) {
+                if (idx >= startIdx && idx < endIdx) {
+                    row.style.display = '';
+                }
+            });
+
+            // 更新分页信息
+            if (paginationInfo) {
+                paginationInfo.textContent = '共 ' + filteredRows.length + ' 条，第 ' + caseCurrentPage + '/' + totalPages + ' 页';
+            }
+
+            // 生成分页按钮
+            if (paginationBtns) {
+                paginationBtns.innerHTML = '';
+                for (var i = 1; i <= totalPages; i++) {
+                    var btn = document.createElement('button');
+                    btn.className = 'w-7 h-7 rounded text-xs flex items-center justify-center ' +
+                        (i === caseCurrentPage ? 'bg-[#165DFF] text-white' : 'bg-white hover:bg-[#F7F8FA] text-[#4E5969] border border-[#E5E6EB]');
+                    btn.textContent = i;
+                    btn.onclick = (function(page) {
+                        return function() {
+                            goToCasePage(page, pageSize);
+                        };
+                    })(i);
+                    paginationBtns.appendChild(btn);
+                }
+            }
+        }
+
+        function goToCasePage(page, pageSize) {
+            caseCurrentPage = page;
+            filterCaseList();
         }
 
         // 视图切换逻辑

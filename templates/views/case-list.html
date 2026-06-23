@@ -123,12 +123,13 @@ AI新建案件
 </div>
 <!-- 分页 -->
 <div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
-<span class="text-xs text-[#86909C]">共 12 条，当前第 1 页</span>
-<div class="flex gap-1">
-<button class="w-7 h-7 rounded bg-[#165DFF] text-white text-xs flex items-center justify-center">1</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">2</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">3</button>
-</div>
+<select id="casePageSize" class="border border-[#E5E6EB] rounded px-2 py-1 text-xs text-[#4E5969] focus:outline-none cursor-pointer" onchange="filterCaseList()">
+<option value="10">每页 10 条</option>
+<option value="20">每页 20 条</option>
+<option value="50">每页 50 条</option>
+</select>
+<span id="casePaginationInfo" class="text-xs text-[#86909C]"></span>
+<div class="flex gap-1" id="casePaginationBtns"></div>
 </div>
 </div>
 </div>
