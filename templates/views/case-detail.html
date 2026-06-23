@@ -12,14 +12,8 @@
 <span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full" id="case-detail-status">进行中</span>
 </div>
 <div class="flex items-center gap-2">
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-[#E5E6EB] transition-colors" onclick="openCaseAnalysis()">
-<iconify-icon class="mr-1" icon="mdi:chart-timeline-variant"></iconify-icon>智能分析
-            </button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-[#E5E6EB] transition-colors" onclick="editCase()">
 <iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
-            </button>
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-[#E5E6EB] transition-colors" onclick="shareCase()">
-<iconify-icon class="mr-1" icon="mdi:share-outline"></iconify-icon>分享
             </button>
 <button class="text-xs text-[#F53F3F] hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors" onclick="archiveCurrentCase()">
 <iconify-icon class="mr-1" icon="mdi:archive-outline"></iconify-icon>归档
@@ -40,10 +34,6 @@
             </button>
 <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="timeline" onclick="switchCaseTab('timeline', this)">
 <iconify-icon class="mr-1.5" icon="mdi:timeline-outline"></iconify-icon>时间线
-            </button>
-<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-[#165DFF] to-[#5B8FF9] rounded-lg hover:opacity-90 transition-all ml-auto" onclick="openAIExtractModal()">
-<iconify-icon icon="mdi:robot-outline"></iconify-icon>
-                AI 提取要点
             </button>
 </div>
 </div>
