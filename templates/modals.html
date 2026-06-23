@@ -1,0 +1,934 @@
+<!-- 新建客户弹窗 -->
+<div class="hidden fixed inset-0 z-[1000] flex items-center justify-center bg-black/40" id="new-client-modal">
+<div class="bg-white rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between p-5 border-b border-[#F2F3F5]">
+<h3 class="text-base font-semibold text-[#1D2129]">新建客户</h3>
+<button class="w-7 h-7 rounded-full hover:bg-[#F7F8FA] flex items-center justify-center transition-colors" onclick="closeNewClientModal()">
+<iconify-icon class="text-sm text-[#86909C]" icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<div class="p-5 space-y-4">
+<!-- 基础信息 -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">客户姓名 <span class="text-red-400">*</span></label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="请输入客户姓名" type="text"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">证件类型</label>
+<select class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] appearance-none bg-white transition-colors">
+<option>身份证</option>
+<option>护照</option>
+<option>统一社会信用代码</option>
+</select>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">证件号码 <span class="text-red-400">*</span></label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="请输入证件号码" type="text"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">手机号 <span class="text-red-400">*</span></label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="请输入手机号" type="text"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">邮箱</label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="请输入邮箱地址" type="email"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">客户类型</label>
+<select class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] appearance-none bg-white transition-colors">
+<option>个人客户</option>
+<option>企业客户</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">地址</label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="请输入地址" type="text"/>
+</div>
+</div>
+<!-- 案件来源 -->
+<div class="pt-3 border-t border-[#F2F3F5]">
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">案件来源</label>
+<div class="flex gap-4">
+<label class="flex items-center gap-1.5 text-xs text-[#4E5969] cursor-pointer">
+<input checked="" class="accent-[#165DFF]" name="client-source" type="radio"/>
+                        电话咨询
+                    </label>
+<label class="flex items-center gap-1.5 text-xs text-[#4E5969] cursor-pointer">
+<input class="accent-[#165DFF]" name="client-source" type="radio"/>
+                        微信咨询
+                    </label>
+<label class="flex items-center gap-1.5 text-xs text-[#4E5969] cursor-pointer">
+<input class="accent-[#165DFF]" name="client-source" type="radio"/>
+                        到所咨询
+                    </label>
+<label class="flex items-center gap-1.5 text-xs text-[#4E5969] cursor-pointer">
+<input class="accent-[#165DFF]" name="client-source" type="radio"/>
+                        介绍推荐
+                    </label>
+</div>
+</div>
+<!-- 利益冲突检索（新建时嵌入） -->
+<div class="pt-3 border-t border-[#F2F3F5]">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<iconify-icon class="text-sm text-[#165DFF]" icon="mdi:shield-check-outline"></iconify-icon>
+<span class="text-xs font-medium text-[#1D2129]">利益冲突检索</span>
+</div>
+<button class="text-[10px] text-[#165DFF] hover:underline" onclick="runNewClientConflictCheck()">立即检索</button>
+</div>
+<div class="flex items-center gap-2 text-[10px] text-[#86909C]">
+<iconify-icon icon="mdi:information-outline"></iconify-icon>
+<span>提交时将强制进行精确查重，已存在则提示是否合并</span>
+</div>
+<div class="hidden mt-2" id="new-client-conflict-result">
+<div class="flex items-center gap-1.5 text-[10px] text-green-600">
+<iconify-icon icon="mdi:check-circle"></iconify-icon>
+<span>未发现冲突</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 p-5 border-t border-[#F2F3F5]">
+<button class="px-4 py-2 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="closeNewClientModal()">取消</button>
+<button class="px-4 py-2 text-xs font-semibold rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors" onclick="submitNewClient()">保存并新建</button>
+</div>
+</div>
+</div>
+<!-- 新建日程弹窗 -->
+<div class="fixed inset-0 z-50 bg-black/30 flex items-center justify-center hidden" id="schedule-modal" onclick="closeScheduleModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[520px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800">新建日程</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeScheduleModal()">×</button>
+</div>
+<div class="p-6 space-y-4">
+<!-- 日程标题 -->
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">日程标题 <span class="text-red-500">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20" id="sched-title" placeholder="请输入日程标题" type="text"/>
+</div>
+<!-- 日期时间 -->
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">日期 <span class="text-red-500">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20" id="sched-date" type="date"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">时间 <span class="text-red-500">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20" id="sched-time" type="time"/>
+</div>
+</div>
+<!-- 日程类型 -->
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">日程类型</label>
+<div class="grid grid-cols-4 gap-2">
+<label class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input checked="" class="accent-[#165DFF]" name="sched-type" type="radio" value="开庭"/>
+<span class="text-xs text-gray-700">开庭</span>
+</label>
+<label class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-type" type="radio" value="会议"/>
+<span class="text-xs text-gray-700">会议</span>
+</label>
+<label class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-type" type="radio" value="待办"/>
+<span class="text-xs text-gray-700">待办</span>
+</label>
+<label class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-type" type="radio" value="其他"/>
+<span class="text-xs text-gray-700">其他</span>
+</label>
+</div>
+</div>
+<!-- 关联案件 -->
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">关联案件</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20" id="sched-case">
+<option value="">不关联案件</option>
+<option value="case1">李明诉XX公司买卖合同纠纷</option>
+<option value="case2">王华借贷纠纷</option>
+<option value="case3">张三合同纠纷</option>
+<option value="case4">某科技公司股权纠纷</option>
+<option value="case5">赵六劳动争议仲裁</option>
+</select>
+</div>
+<!-- 备注 -->
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">备注</label>
+<textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20 resize-none" id="sched-note" placeholder="可选备注信息" rows="2"></textarea>
+</div>
+<!-- 提醒设置（优化版） -->
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">提醒设置</label>
+<div class="grid grid-cols-4 gap-2">
+<label class="flex flex-col items-center gap-1 border border-gray-200 rounded-lg py-3 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="0"/>
+<iconify-icon class="text-gray-400 text-lg" icon="mdi:bell-off-outline"></iconify-icon>
+<span class="text-[10px] text-gray-500">不提醒</span>
+</label>
+<label class="flex flex-col items-center gap-1 border border-gray-200 rounded-lg py-3 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="15"/>
+<iconify-icon class="text-gray-400 text-lg" icon="mdi:bell-outline"></iconify-icon>
+<span class="text-[10px] text-gray-500">15分钟</span>
+</label>
+<label class="flex flex-col items-center gap-1 border border-gray-200 rounded-lg py-3 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input checked="" class="accent-[#165DFF]" name="sched-remind" type="radio" value="60"/>
+<iconify-icon class="text-gray-400 text-lg" icon="mdi:bell-ring-outline"></iconify-icon>
+<span class="text-[10px] text-gray-500">1小时</span>
+</label>
+<label class="flex flex-col items-center gap-1 border border-gray-200 rounded-lg py-3 cursor-pointer hover:border-[#165DFF] has-[:checked]:border-[#165DFF] has-[:checked]:bg-blue-50">
+<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="1440"/>
+<iconify-icon class="text-gray-400 text-lg" icon="mdi:bell-alert-outline"></iconify-icon>
+<span class="text-[10px] text-gray-500">1天</span>
+</label>
+</div>
+</div>
+<!-- 冲突提示区域（默认隐藏） -->
+<div class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800" id="schedule-conflict-warning">
+<div class="flex items-start gap-2">
+<iconify-icon class="text-amber-600 text-base flex-shrink-0 mt-0.5" icon="mdi:alert-outline"></iconify-icon>
+<div>
+<div class="font-medium mb-1">⚠️ 时间冲突提醒</div>
+<div class="text-amber-700" id="schedule-conflict-detail"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="closeScheduleModal()">取消</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-[#165DFF]/90 rounded-lg transition-colors" onclick="saveSchedule()">保存</button>
+</div>
+</div>
+</div>
+<!-- 冲突处理弹窗 -->
+<div class="fixed inset-0 z-[60] bg-black/30 flex items-center justify-center hidden" id="conflict-resolve-modal" onclick="closeConflictResolve()">
+<div class="bg-white rounded-xl shadow-2xl w-[480px]" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-red-500 text-lg" icon="mdi:alert-circle-outline"></iconify-icon>
+<h3 class="text-base font-bold text-gray-800">检测到时间冲突</h3>
+</div>
+</div>
+<div class="p-6">
+<p class="text-sm text-gray-600 mb-4">以下日程与新建日程时间重叠：</p>
+<div class="space-y-2 mb-4" id="conflict-list"></div>
+<div class="bg-blue-50 rounded-lg p-3 mb-4">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-blue-500 text-sm" icon="mdi:lightbulb-outline"></iconify-icon>
+<span class="text-xs text-blue-700">建议：以下时段当前无冲突安排</span>
+</div>
+<div class="mt-2 flex flex-wrap gap-2" id="suggested-slots"></div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="conflictResolveAction('cancel')">返回修改</button>
+<button class="px-4 py-2 text-sm text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors" onclick="conflictResolveAction('ignore')">忽略冲突，仍保存</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-[#165DFF]/90 rounded-lg transition-colors" onclick="conflictResolveAction('reschedule')">采纳建议时段</button>
+</div>
+</div>
+</div>
+<!-- 日程详情弹窗 -->
+<div class="fixed inset-0 z-50 bg-black/30 flex items-center justify-center hidden" id="schedule-detail-modal" onclick="closeScheduleDetail()">
+<div class="bg-white rounded-xl shadow-2xl w-[560px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<!-- 头部，带类型色条 -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100" id="sdetail-header" style="border-left: 4px solid #165DFF;">
+<div class="flex items-center gap-3">
+<span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full" id="sdetail-type-badge">开庭</span>
+<h3 class="text-base font-bold text-gray-800" id="sdetail-title">日程标题</h3>
+</div>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeScheduleDetail()">×</button>
+</div>
+<div class="p-6 space-y-4">
+<!-- 时间信息 -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-blue-500 text-sm" icon="mdi:calendar"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">日期</div>
+<div class="text-sm font-medium text-gray-700" id="sdetail-date">2026-06-21</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-green-500 text-sm" icon="mdi:clock-outline"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">时间</div>
+<div class="text-sm font-medium text-gray-700" id="sdetail-time">09:00 - 11:00</div>
+</div>
+</div>
+</div>
+<!-- 关联案件 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+<iconify-icon class="text-orange-500 text-sm" icon="mdi:folder-outline"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">关联案件</div>
+<div class="text-sm font-medium text-[#165DFF]" id="sdetail-case">李明诉XX公司买卖合同纠纷</div>
+</div>
+</div>
+<!-- 地点 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+<iconify-icon class="text-purple-500 text-sm" icon="mdi:map-marker-outline"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">地点</div>
+<div class="text-sm font-medium text-gray-700" id="sdetail-location">朝阳区人民法院 第3法庭</div>
+</div>
+</div>
+<!-- 备注 -->
+<div class="flex items-start gap-3" id="sdetail-note-row">
+<div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-gray-500 text-sm" icon="mdi:note-text-outline"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">备注</div>
+<div class="text-sm text-gray-600" id="sdetail-note">请带齐案件材料</div>
+</div>
+</div>
+<!-- 提醒信息 -->
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+<iconify-icon class="text-amber-500 text-sm" icon="mdi:bell-outline"></iconify-icon>
+</div>
+<div>
+<div class="text-xs text-gray-400">提醒设置</div>
+<div class="text-sm font-medium text-gray-700" id="sdetail-remind">提前 1 小时提醒</div>
+</div>
+</div>
+<!-- 冲突预警（动态） -->
+<div class="hidden bg-red-50 border border-red-200 rounded-lg p-3" id="sdetail-conflict">
+<div class="flex items-start gap-2">
+<iconify-icon class="text-red-500 text-base flex-shrink-0 mt-0.5" icon="mdi:alert-circle-outline"></iconify-icon>
+<div>
+<div class="text-xs font-medium text-red-700 mb-1">⚠️ 存在时间冲突</div>
+<div class="text-xs text-red-600" id="sdetail-conflict-detail"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 底部操作栏 -->
+<div class="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#165DFF] hover:bg-blue-50 rounded-lg transition-colors" onclick="editScheduleFromDetail()">
+<iconify-icon icon="mdi:pencil-outline"></iconify-icon>
+                    编辑
+                </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors" onclick="deleteScheduleFromDetail()">
+<iconify-icon icon="mdi:delete-outline"></iconify-icon>
+                    删除
+                </button>
+</div>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-[#165DFF]/90 rounded-lg transition-colors" onclick="closeScheduleDetail()">关闭</button>
+</div>
+</div>
+</div>
+<!-- 动态详情弹窗 -->
+<div class="fixed inset-0 z-50 bg-black/30 flex items-center justify-center hidden" id="case-dynamic-detail-modal" onclick="closeCaseDynamicDetail()">
+<div class="bg-white rounded-xl shadow-2xl w-[560px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<!-- 头部 -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<div class="flex items-center gap-2">
+<span class="text-[10px] bg-red-100 text-red-700 font-medium px-1.5 py-0.5 rounded-full" id="detail-type-badge">紧急</span>
+<h3 class="text-base font-bold text-gray-800" id="detail-title">举证期限即将截止</h3>
+</div>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeCaseDynamicDetail()">×</button>
+</div>
+<!-- 内容区 -->
+<div class="p-6 space-y-4">
+<!-- 状态信息行 -->
+<div class="flex items-center gap-4 text-xs text-gray-500">
+<span><iconify-icon class="mr-1" icon="mdi:folder-outline"></iconify-icon>案件：<span id="detail-case-name">张三合同纠纷</span></span>
+<span><iconify-icon class="mr-1" icon="mdi:clock-outline"></iconify-icon><span id="detail-time">2026-06-10 14:30</span></span>
+<span><iconify-icon class="mr-1" icon="mdi:account-outline"></iconify-icon><span id="detail-handler">李明</span></span>
+</div>
+<!-- 详细描述 -->
+<div class="bg-gray-50 rounded-lg p-4">
+<p class="text-sm text-gray-700 leading-relaxed" id="detail-description">张三合同纠纷一案的举证期限将于2026年6月23日截止，请尽快整理并提交相关证据材料，避免因逾期导致证据失权。</p>
+</div>
+<!-- 关联文件 -->
+<div>
+<h4 class="text-xs font-semibold text-gray-600 mb-2">关联文件</h4>
+<div class="space-y-1.5" id="detail-files-list">
+<!-- 文件将通过 JS 动态渲染 -->
+</div>
+</div>
+<!-- 评论/备注 -->
+<div>
+<h4 class="text-xs font-semibold text-gray-600 mb-2">备注</h4>
+<p class="text-xs text-gray-500 bg-yellow-50 rounded-lg px-3 py-2 border border-yellow-100" id="detail-note">请务必在截止日前完成证据交换，已通知对方代理人。</p>
+</div>
+</div>
+<!-- 底部操作 -->
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg" onclick="closeCaseDynamicDetail()">关闭</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg" id="detail-action-btn" onclick="closeCaseDynamicDetail();alert('已跳转至案件处理')">去处理</button>
+</div>
+</div>
+</div>
+<!-- 发布动态弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/30 flex items-center justify-center hidden" id="new-dynamic-modal" onclick="closeNewDynamicModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[520px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<!-- 头部 -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800">发布动态</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeNewDynamicModal()">×</button>
+</div>
+<!-- 内容区 -->
+<div class="p-6 space-y-4">
+<!-- 动态类型 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-2">动态类型</label>
+<div class="flex gap-2">
+<button class="dyn-type-option text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white" data-type="紧急" onclick="selectDynamicType(this, '紧急')" type="button">紧急</button>
+<button class="dyn-type-option text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-type="文书" onclick="selectDynamicType(this, '文书')" type="button">文书</button>
+<button class="dyn-type-option text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-type="开庭" onclick="selectDynamicType(this, '开庭')" type="button">开庭</button>
+<button class="dyn-type-option text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-type="归档" onclick="selectDynamicType(this, '归档')" type="button">归档</button>
+<button class="dyn-type-option text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-type="提醒" onclick="selectDynamicType(this, '提醒')" type="button">提醒</button>
+</div>
+</div>
+<!-- 标题 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-1.5">动态标题</label>
+<input class="w-full h-9 text-xs px-3 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#165DFF]" id="new-dynamic-title" placeholder="请输入动态标题" type="text"/>
+</div>
+<!-- 关联案件 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-1.5">关联案件</label>
+<select class="w-full h-9 text-xs px-3 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 focus:outline-none focus:border-[#165DFF]" id="new-dynamic-case">
+<option value="">不关联案件</option>
+<option>张三合同纠纷</option>
+<option>李四借贷纠纷</option>
+<option>王五股权转让纠纷</option>
+<option>赵六劳动争议</option>
+<option>孙七建设工程合同纠纷</option>
+<option>周八借款纠纷</option>
+<option>吴九房屋租赁合同纠纷</option>
+</select>
+</div>
+<!-- 详细描述 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-1.5">详细描述</label>
+<textarea class="w-full text-xs px-3 py-2.5 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#165DFF] resize-none" id="new-dynamic-desc" placeholder="请输入动态详情..." rows="4"></textarea>
+</div>
+<!-- 附件上传 -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-medium text-gray-700">附件上传</span>
+<button class="flex items-center gap-1 text-[11px] text-[#165DFF] hover:underline" onclick="openBatchUploadModal()">
+<iconify-icon icon="mdi:folder-multiple-outline"></iconify-icon>
+                        批量上传
+                    </button>
+</div>
+<!-- 拖拽上传区域 -->
+<div class="relative border-2 border-dashed border-gray-200 rounded-lg p-6 text-center hover:border-[#165DFF] transition-colors cursor-pointer bg-gray-50/50" id="dynamic-drop-zone" onclick="document.getElementById('dynamic-file-input').click()" ondragleave="this.classList.remove('border-[#165DFF]','bg-blue-50/50')" ondragover="event.preventDefault();this.classList.add('border-[#165DFF]','bg-blue-50/50')" ondrop="event.preventDefault();this.classList.remove('border-[#165DFF]','bg-blue-50/50');handleDynamicFileDrop(event)">
+<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-xs text-gray-500 mt-1">拖拽文件到此处，或<span class="text-[#165DFF]">点击上传</span></p>
+<p class="text-[10px] text-gray-400 mt-0.5">支持 PDF、Word、Excel、图片等格式</p>
+<input accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.txt" class="hidden" id="dynamic-file-input" multiple="" onchange="handleDynamicFileSelect(this)" type="file"/>
+</div>
+<!-- 已选文件预览列表 -->
+<div class="mt-2 space-y-1.5 hidden" id="dynamic-file-preview-list">
+<!-- 文件项将通过 JS 动态渲染 -->
+</div>
+</div>
+<!-- 优先级 -->
+<div class="flex items-center gap-3">
+<label class="text-xs font-medium text-gray-700">标记为</label>
+<label class="flex items-center gap-1.5 text-xs text-gray-600">
+<input class="rounded border-gray-300 text-red-500 focus:ring-red-400" id="new-dynamic-urgent" type="checkbox"/> 紧急
+                </label>
+</div>
+</div>
+<!-- 底部操作 -->
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg" onclick="closeNewDynamicModal()">取消</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg" onclick="submitNewDynamic()">发布</button>
+</div>
+</div>
+</div>
+<!-- AI提取要点弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/30 flex items-center justify-center hidden" id="ai-extract-modal" onclick="closeAIExtractModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[680px] max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+<!-- 头部 -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center">
+<iconify-icon class="text-white text-sm" icon="mdi:robot"></iconify-icon>
+</div>
+<h3 class="text-base font-bold text-gray-800">AI 一键提取要点</h3>
+</div>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeAIExtractModal()">×</button>
+</div>
+<!-- 内容区 -->
+<div class="p-6 space-y-5">
+<!-- 来源选择 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-2">提取来源</label>
+<div class="flex gap-2 flex-wrap">
+<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white" data-source="case" onclick="selectExtractSource(this, 'case')" type="button">案件材料</button>
+<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-source="document" onclick="selectExtractSource(this, 'document')" type="button">当前文书</button>
+<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-source="evidence" onclick="selectExtractSource(this, 'evidence')" type="button">证据材料</button>
+<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-source="timeline" onclick="selectExtractSource(this, 'timeline')" type="button">时间线记录</button>
+</div>
+</div>
+<!-- 提取维度 -->
+<div>
+<label class="block text-xs font-medium text-gray-700 mb-2">提取维度</label>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input checked="" class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 关键事实
+                    </label>
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input checked="" class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 争议焦点
+                    </label>
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input checked="" class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 法律依据
+                    </label>
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 风险提示
+                    </label>
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 时间节点
+                    </label>
+<label class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50/50">
+<input class="rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF]" type="checkbox"/> 证据摘要
+                    </label>
+</div>
+</div>
+<!-- 提取结果区（初始隐藏） -->
+<div class="hidden space-y-3" id="extract-result-area">
+<div class="flex items-center justify-between">
+<h4 class="text-xs font-semibold text-gray-600">提取结果</h4>
+<div class="flex items-center gap-2">
+<button class="text-[11px] text-[#165DFF] hover:underline" onclick="copyExtractResult()">复制结果</button>
+<button class="text-[11px] text-[#165DFF] hover:underline" onclick="exportExtractResult()">导出报告</button>
+</div>
+</div>
+<!-- 关键事实 -->
+<div class="bg-blue-50/50 rounded-lg border border-blue-100 p-3">
+<div class="flex items-center gap-1.5 mb-2">
+<iconify-icon class="text-blue-500 text-sm" icon="mdi:lightbulb-outline"></iconify-icon>
+<span class="text-xs font-semibold text-blue-700">关键事实</span>
+</div>
+<ul class="space-y-1">
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-blue-500 mt-0.5">•</span>张三于2025年3月与李四签订《借款合同》，约定借款金额50万元</li>
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-blue-500 mt-0.5">•</span>借款期限12个月，年利率12%，按月付息</li>
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-blue-500 mt-0.5">•</span>张三已支付利息至2026年2月，本金未归还</li>
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-blue-500 mt-0.5">•</span>李四于2026年4月发出催收函，张三未回应</li>
+</ul>
+</div>
+<!-- 争议焦点 -->
+<div class="bg-purple-50/50 rounded-lg border border-purple-100 p-3">
+<div class="flex items-center gap-1.5 mb-2">
+<iconify-icon class="text-purple-500 text-sm" icon="mdi:scale-balance"></iconify-icon>
+<span class="text-xs font-semibold text-purple-700">争议焦点</span>
+</div>
+<ul class="space-y-1">
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>借款利率是否超过法定上限（LPR的4倍）</li>
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>张三主张已通过现金方式部分还款是否成立</li>
+</ul>
+</div>
+<!-- 法律依据 -->
+<div class="bg-green-50/50 rounded-lg border border-green-100 p-3">
+<div class="flex items-center gap-1.5 mb-2">
+<iconify-icon class="text-green-500 text-sm" icon="mdi:book-open-page-variant-outline"></iconify-icon>
+<span class="text-xs font-semibold text-green-700">法律依据</span>
+</div>
+<ul class="space-y-1">
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《中华人民共和国民法典》第六百六十七条：借款合同定义</li>
+<li class="text-xs text-gray-700 flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条</li>
+</ul>
+</div>
+<div class="text-[10px] text-gray-400 italic border-t border-gray-100 pt-2">AI辅助生成，仅供参考。建议律师结合案件实际核查。</div>
+</div>
+<!-- 加载状态 -->
+<div class="hidden flex items-center justify-center gap-2 py-8" id="extract-loading">
+<div class="w-5 h-5 border-2 border-[#165DFF] border-t-transparent rounded-full animate-spin"></div>
+<span class="text-xs text-gray-500">AI 正在分析案件材料...</span>
+</div>
+</div>
+<!-- 底部操作 -->
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg" onclick="closeAIExtractModal()">关闭</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg flex items-center gap-1.5" onclick="startAIExtract()">
+<iconify-icon class="text-sm" icon="mdi:robot-outline"></iconify-icon>
+                开始提取
+            </button>
+</div>
+</div>
+</div>
+<!-- PDF在线批注弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center hidden" id="pdf-annotate-modal" onclick="closePDFAnnotateModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[900px] h-[85vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+<!-- 顶部工具栏 -->
+<div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-none">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-red-100 flex items-center justify-center">
+<iconify-icon class="text-red-500 text-sm" icon="mdi:file-pdf-outline"></iconify-icon>
+</div>
+<div>
+<h3 class="text-sm font-bold text-gray-800">起诉状_张三合同纠纷.pdf</h3>
+<p class="text-[10px] text-gray-400">共 8 页 · 2.3MB</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closePDFAnnotateModal()">×</button>
+</div>
+<!-- 批注工具栏 -->
+<div class="flex items-center gap-1 px-5 py-2.5 border-b border-gray-100 bg-gray-50 flex-none flex-wrap">
+<!-- 选择工具 -->
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] rounded-md bg-[#165DFF] text-white" data-tool="pan" onclick="setAnnotateTool('pan', this)">
+<iconify-icon icon="mdi:cursor-default-click-outline"></iconify-icon>
+                选择
+            </button>
+<!-- 分隔 -->
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 标注工具组 -->
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="highlight" onclick="setAnnotateTool('highlight', this)">
+<iconify-icon icon="mdi:marker"></iconify-icon>
+                高亮
+            </button>
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="underline" onclick="setAnnotateTool('underline', this)">
+<iconify-icon icon="mdi:format-underline"></iconify-icon>
+                下划线
+            </button>
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="strikethrough" onclick="setAnnotateTool('strikethrough', this)">
+<iconify-icon icon="mdi:format-strikethrough-variant"></iconify-icon>
+                删除线
+            </button>
+<!-- 分隔 -->
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 批注/形状工具组 -->
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="comment" onclick="setAnnotateTool('comment', this)">
+<iconify-icon icon="mdi:comment-plus-outline"></iconify-icon>
+                批注
+            </button>
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="draw" onclick="setAnnotateTool('draw', this)">
+<iconify-icon icon="mdi:draw"></iconify-icon>
+                画笔
+            </button>
+<button class="annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" data-tool="shape" onclick="setAnnotateTool('shape', this)">
+<iconify-icon icon="mdi:rectangle-outline"></iconify-icon>
+                形状
+            </button>
+<!-- 分隔 -->
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 颜色选择器 -->
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-gray-400 mr-1">颜色</span>
+<button class="annotate-color-btn w-5 h-5 rounded-full border-2 border-[#165DFF] bg-yellow-300" data-color="bg-yellow-300" onclick="selectAnnotateColor(this, 'bg-yellow-300')" title="黄色"></button>
+<button class="annotate-color-btn w-5 h-5 rounded-full border border-gray-200 bg-green-300" data-color="bg-green-300" onclick="selectAnnotateColor(this, 'bg-green-300')" title="绿色"></button>
+<button class="annotate-color-btn w-5 h-5 rounded-full border border-gray-200 bg-blue-300" data-color="bg-blue-300" onclick="selectAnnotateColor(this, 'bg-blue-300')" title="蓝色"></button>
+<button class="annotate-color-btn w-5 h-5 rounded-full border border-gray-200 bg-red-300" data-color="bg-red-300" onclick="selectAnnotateColor(this, 'bg-red-300')" title="红色"></button>
+<button class="annotate-color-btn w-5 h-5 rounded-full border border-gray-200 bg-purple-300" data-color="bg-purple-300" onclick="selectAnnotateColor(this, 'bg-purple-300')" title="紫色"></button>
+<button class="annotate-color-btn w-5 h-5 rounded-full border border-gray-200 bg-pink-300" data-color="bg-pink-300" onclick="selectAnnotateColor(this, 'bg-pink-300')" title="粉色"></button>
+</div>
+<!-- 分隔 -->
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 撤销/重做 -->
+<button class="flex items-center gap-1 px-2 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" onclick="undoAnnotation()" title="撤销">
+<iconify-icon icon="mdi:undo-variant"></iconify-icon>
+</button>
+<button class="flex items-center gap-1 px-2 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md" onclick="redoAnnotation()" title="重做">
+<iconify-icon icon="mdi:redo-variant"></iconify-icon>
+</button>
+<!-- 分隔 -->
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 缩放 -->
+<div class="flex items-center gap-1 text-[11px] text-gray-400">
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="zoomPDF(-0.1)"><iconify-icon icon="mdi:magnify-minus"></iconify-icon></button>
+<span class="w-8 text-center text-[10px]" id="pdf-zoom-level">100%</span>
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="zoomPDF(0.1)"><iconify-icon icon="mdi:magnify-plus"></iconify-icon></button>
+</div>
+<div class="flex-1"></div>
+<!-- 翻页 -->
+<div class="flex items-center gap-1 text-[11px] text-gray-400">
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="changePDFPage(-1)">‹</button>
+<span><span id="pdf-current-page">1</span><span class="text-gray-300">/</span><span>8</span></span>
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="changePDFPage(1)">›</button>
+</div>
+<button class="ml-1 flex items-center gap-1 px-3 py-1.5 text-[11px] text-white bg-[#165DFF] hover:bg-blue-500 rounded-md" onclick="saveAnnotations()">
+<iconify-icon icon="mdi:content-save-outline"></iconify-icon>
+                保存
+            </button>
+</div>
+<!-- 主体区域（双列） -->
+<div class="flex-1 flex min-h-0">
+<!-- 左侧：PDF预览区域 -->
+<div class="flex-1 overflow-y-auto bg-gray-200 p-6 relative" id="pdf-preview-container">
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8 min-h-[600px] relative" id="pdf-page-content">
+<!-- 模拟PDF内容 -->
+<div class="border-b border-gray-200 pb-4 mb-4">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">页 1/8</span>
+<span class="text-[10px] text-gray-400">起诉状_张三合同纠纷.pdf</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 text-center">民事起诉状</h4>
+<p class="text-[10px] text-gray-400 text-center mt-1">（张三合同纠纷案）</p>
+</div>
+<div class="space-y-3 text-xs text-gray-700 leading-relaxed selectable-text" id="pdf-text-content">
+<p><span class="font-semibold">原告：</span>李四，男，1985年3月15日出生，汉族，住北京市海淀区中关村大街1号，身份证号：11010819850315XXXX，联系电话：13800138000。</p>
+<p><span class="font-semibold">被告：</span>张三，男，1980年7月22日出生，汉族，住北京市朝阳区建国路88号，身份证号：11010519800722XXXX，联系电话：13900139000。</p>
+<p class="font-semibold mt-3">诉讼请求：</p>
+<p>一、判令被告向原告偿还借款本金人民币500,000元；</p>
+<p>二、判令被告向原告支付借款利息人民币60,000元（暂计至2026年5月1日）；</p>
+<p>三、判令被告承担本案全部诉讼费用。</p>
+<p class="font-semibold mt-3">事实与理由：</p>
+<p>2025年3月1日，被告因资金周转需要向原告借款人民币500,000元，双方签订了《借款合同》，约定借款期限为12个月，年利率12%。原告于当日通过银行转账方式向被告支付了全部借款。借款到期后，原告多次向被告催要，被告以各种理由推脱，至今未归还本金及利息。为维护自身合法权益，原告依法向贵院提起诉讼，恳请依法支持原告的全部诉讼请求。</p>
+<p class="font-semibold mt-3">证据清单：</p>
+<p>1. 《借款合同》原件，证明原被告之间借款关系成立；</p>
+<p>2. 银行转账凭证，证明原告已履行出借义务；</p>
+<p>3. 催收函及快递单，证明原告已履行催收义务；</p>
+<p>4. 利息计算明细表，证明被告应付利息金额。</p>
+<p class="text-right mt-6">具状人：李四</p>
+<p class="text-right">2026年3月15日</p>
+</div>
+<!-- 预置高亮标注示例（嵌入文本中的高亮标注） -->
+<div class="relative mt-4 space-y-2">
+<!-- 标注1：高亮 - 关键金额 -->
+<div class="annotate-marker bg-yellow-200/70 rounded px-1 py-0.5 inline-block text-xs" data-annotation-id="ann1" onclick="focusAnnotation('ann1')">
+<span class="font-semibold text-gray-800">人民币500,000元</span>
+</div>
+<span class="text-xs text-gray-400 ml-1">—— 张律师标注</span>
+<!-- 标注2：高亮 - 利率 -->
+<div class="block mt-1">
+<div class="annotate-marker bg-green-200/70 rounded px-1 py-0.5 inline-block text-xs" data-annotation-id="ann2" onclick="focusAnnotation('ann2')">
+<span class="font-semibold text-gray-800">年利率12%</span>
+</div>
+<span class="text-xs text-gray-400 ml-1">—— 王芳标注</span>
+</div>
+</div>
+<!-- 预置批注卡片（浮动批注） -->
+<div class="mt-4 space-y-2">
+<!-- 批注1 -->
+<div class="annotate-comment bg-yellow-50 border-l-4 border-yellow-400 pl-3 py-2 pr-2 rounded-r text-xs relative" data-annotation-id="ann3" onclick="focusAnnotation('ann3')">
+<div class="flex items-center gap-1 text-yellow-600 font-medium">
+<iconify-icon class="text-sm" icon="mdi:comment-text-outline"></iconify-icon>
+<span class="text-[10px]">张律师 · 2026-06-10 14:30</span>
+<span class="text-[10px] text-yellow-500 ml-auto">未解决</span>
+</div>
+<p class="text-[11px] text-gray-700 mt-0.5">建议核实借款合同原件中的利率条款是否与口头约定一致。如果口头约定的利率与书面不一致，需与当事人确认优先适用哪个版本。</p>
+</div>
+<!-- 批注2 -->
+<div class="annotate-comment bg-blue-50 border-l-4 border-blue-400 pl-3 py-2 pr-2 rounded-r text-xs relative" data-annotation-id="ann4" onclick="focusAnnotation('ann4')">
+<div class="flex items-center gap-1 text-blue-600 font-medium">
+<iconify-icon class="text-sm" icon="mdi:comment-text-outline"></iconify-icon>
+<span class="text-[10px]">王芳 · 2026-06-09 11:20</span>
+<span class="text-[10px] text-green-500 ml-auto">已解决</span>
+</div>
+<p class="text-[11px] text-gray-700 mt-0.5">诉讼请求第二项的利息计算期间需要明确起止日期，建议补充："自2026年3月1日起至实际清偿之日止"。</p>
+</div>
+<!-- 批注3 -->
+<div class="annotate-comment bg-purple-50 border-l-4 border-purple-400 pl-3 py-2 pr-2 rounded-r text-xs relative" data-annotation-id="ann5" onclick="focusAnnotation('ann5')">
+<div class="flex items-center gap-1 text-purple-600 font-medium">
+<iconify-icon class="text-sm" icon="mdi:comment-text-outline"></iconify-icon>
+<span class="text-[10px]">赵磊 · 2026-06-08 16:45</span>
+<span class="text-[10px] text-yellow-500 ml-auto">处理中</span>
+</div>
+<p class="text-[11px] text-gray-700 mt-0.5">证据清单缺少银行流水原件，建议补充近6个月的银行流水作为辅助证据，以证明资金流向的完整性。</p>
+</div>
+<!-- 批注4（下划线示例） -->
+<div class="annotate-comment bg-green-50 border-l-4 border-green-400 pl-3 py-2 pr-2 rounded-r text-xs relative" data-annotation-id="ann6" onclick="focusAnnotation('ann6')">
+<div class="flex items-center gap-1 text-green-600 font-medium">
+<iconify-icon class="text-sm" icon="mdi:format-underline"></iconify-icon>
+<span class="text-[10px]">李明 · 2026-06-07 09:15</span>
+<span class="text-[10px] text-green-500 ml-auto">已解决</span>
+</div>
+<p class="text-[11px] text-gray-700 mt-0.5">"多次向被告催要"建议补充具体的催收时间节点和方式（电话/书面/当面），以增强事实陈述的可信度。</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 右侧：批注侧边栏面板 -->
+<div class="w-64 border-l border-gray-100 bg-white flex flex-col flex-none">
+<!-- 面板头部 -->
+<div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+<h4 class="text-xs font-semibold text-gray-700">批注列表</h4>
+<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full" id="annotations-count">6 条</span>
+</div>
+<!-- 筛选/搜索 -->
+<div class="px-4 py-2 border-b border-gray-100">
+<div class="flex gap-1">
+<button class="ann-filter-btn text-[10px] px-2 py-1 rounded-full bg-[#165DFF] text-white" data-filter="all" onclick="filterAnnotations('all', this)">全部</button>
+<button class="ann-filter-btn text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-filter="unsolved" onclick="filterAnnotations('unsolved', this)">未解决</button>
+<button class="ann-filter-btn text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" data-filter="solved" onclick="filterAnnotations('solved', this)">已解决</button>
+</div>
+</div>
+<!-- 批注列表 -->
+<div class="flex-1 overflow-y-auto" id="annotations-panel-list">
+<!-- 批注项1 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann1" data-status="unsolved" onclick="focusAnnotation('ann1')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+<span class="text-[10px] font-medium text-gray-600">高亮</span>
+<span class="text-[10px] text-gray-400 ml-auto">张律师</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">人民币500,000元</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-yellow-600 bg-yellow-50 px-1 py-0.5 rounded">未解决</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+<!-- 批注项2 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann2" data-status="unsolved" onclick="focusAnnotation('ann2')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
+<span class="text-[10px] font-medium text-gray-600">高亮</span>
+<span class="text-[10px] text-gray-400 ml-auto">王芳</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">年利率12%</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-yellow-600 bg-yellow-50 px-1 py-0.5 rounded">未解决</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+<!-- 批注项3 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann3" data-status="unsolved" onclick="focusAnnotation('ann3')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+<span class="text-[10px] font-medium text-gray-600">批注</span>
+<span class="text-[10px] text-gray-400 ml-auto">张律师</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">建议核实借款合同原件中的利率条款...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-yellow-600 bg-yellow-50 px-1 py-0.5 rounded">未解决</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+<!-- 批注项4 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann4" data-status="solved" onclick="focusAnnotation('ann4')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-blue-400"></span>
+<span class="text-[10px] font-medium text-gray-600">批注</span>
+<span class="text-[10px] text-gray-400 ml-auto">王芳</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">诉讼请求第二项的利息计算期间需要明确...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-green-600 bg-green-50 px-1 py-0.5 rounded">已解决</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+<!-- 批注项5 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann5" data-status="unsolved" onclick="focusAnnotation('ann5')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-purple-400"></span>
+<span class="text-[10px] font-medium text-gray-600">批注</span>
+<span class="text-[10px] text-gray-400 ml-auto">赵磊</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">证据清单缺少银行流水原件...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-blue-600 bg-blue-50 px-1 py-0.5 rounded">处理中</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+<!-- 批注项6 -->
+<div class="annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors" data-annotation-id="ann6" data-status="solved" onclick="focusAnnotation('ann6')">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
+<span class="text-[10px] font-medium text-gray-600">下划线</span>
+<span class="text-[10px] text-gray-400 ml-auto">李明</span>
+</div>
+<p class="text-[11px] text-gray-700 truncate">"多次向被告催要"建议补充具体的催收时间...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-[10px] text-green-600 bg-green-50 px-1 py-0.5 rounded">已解决</span>
+<span class="text-[10px] text-gray-400">页1</span>
+</div>
+</div>
+</div>
+<!-- 底部操作 -->
+<div class="px-4 py-3 border-t border-gray-100">
+<button class="w-full flex items-center justify-center gap-1 px-3 py-2 text-[11px] font-medium text-[#165DFF] hover:bg-blue-50 rounded-lg border border-dashed border-[#165DFF]/30 transition-colors" onclick="addNewAnnotation()">
+<iconify-icon icon="mdi:plus-circle-outline"></iconify-icon>
+                添加批注
+            </button>
+</div>
+</div>
+</div>
+<!-- 底部状态栏 -->
+<div class="flex items-center justify-between px-5 py-2 border-t border-gray-100 bg-gray-50 flex-none text-[10px] text-gray-400">
+<div class="flex items-center gap-3">
+<span>当前工具：<span class="font-medium text-gray-600" id="current-tool-label">选择</span></span>
+<span class="w-px h-3 bg-gray-200"></span>
+<span>已标注 <span class="font-medium text-gray-600" id="annotations-count-bar">6</span> 处</span>
+<span class="w-px h-3 bg-gray-200"></span>
+<span>未解决 <span class="font-medium text-yellow-600" id="unsolved-count-bar">3</span> 处</span>
+</div>
+<div class="flex items-center gap-3">
+<span>缩放：<span id="zoom-level-bar">100%</span></span>
+<span class="w-px h-3 bg-gray-200"></span>
+<span>张三合同纠纷案 · 起诉状</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 批注编辑弹窗 -->
+<div class="fixed inset-0 z-[1100] bg-black/20 flex items-center justify-center hidden" id="annotation-edit-modal" onclick="closeAnnotationEdit()">
+<div class="bg-white rounded-xl shadow-2xl w-[420px]" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+<h3 class="text-sm font-bold text-gray-800">编辑批注</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeAnnotationEdit()">×</button>
+</div>
+<div class="p-5 space-y-3.5">
+<div>
+<label class="block text-[11px] font-medium text-gray-700 mb-1.5">批注内容</label>
+<textarea class="w-full text-xs px-3 py-2 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#165DFF] resize-none" id="annotation-edit-content" placeholder="输入批注内容..." rows="3"></textarea>
+</div>
+<div>
+<label class="block text-[11px] font-medium text-gray-700 mb-1.5">状态</label>
+<select class="w-full h-8 text-xs px-2.5 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 focus:outline-none focus:border-[#165DFF]" id="annotation-edit-status">
+<option value="unsolved">未解决</option>
+<option value="processing">处理中</option>
+<option value="solved">已解决</option>
+</select>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+<iconify-icon class="text-gray-400" icon="mdi:information-outline"></iconify-icon>
+<span>批注将关联到当前选中的文本范围</span>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 px-5 py-3.5 border-t border-gray-100">
+<button class="px-3 py-1.5 text-[11px] text-gray-600 hover:bg-gray-50 rounded-lg" onclick="closeAnnotationEdit()">取消</button>
+<button class="px-3 py-1.5 text-[11px] text-red-500 hover:bg-red-50 rounded-lg" onclick="deleteAnnotation()">删除</button>
+<button class="px-3 py-1.5 text-[11px] text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg" onclick="saveAnnotationEdit()">保存</button>
+</div>
+</div>
+</div>
+<!-- 批量上传弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/30 flex items-center justify-center hidden" id="batch-upload-modal" onclick="closeBatchUploadModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[560px] max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800">批量上传文件</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeBatchUploadModal()">×</button>
+</div>
+<div class="p-6 space-y-4">
+<!-- 大拖拽区 -->
+<div class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer bg-gray-50/50" onclick="document.getElementById('batch-file-input').click()" ondragleave="this.classList.remove('border-[#165DFF]','bg-blue-50/50')" ondragover="event.preventDefault();this.classList.add('border-[#165DFF]','bg-blue-50/50')" ondrop="event.preventDefault();this.classList.remove('border-[#165DFF]','bg-blue-50/50');handleBatchDrop(event)">
+<iconify-icon class="text-4xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-sm text-gray-500 mt-2">拖拽文件到此处，或<span class="text-[#165DFF] font-medium">点击选择</span></p>
+<p class="text-[11px] text-gray-400 mt-1">支持批量选择，最多 20 个文件</p>
+<input accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.txt" class="hidden" id="batch-file-input" multiple="" onchange="handleBatchSelect(this)" type="file"/>
+</div>
+<!-- 批量上传进度 -->
+<div class="hidden space-y-2" id="batch-progress-area">
+<div class="flex items-center justify-between text-xs text-gray-600">
+<span>已选择 <span id="batch-file-count">0</span> 个文件</span>
+<button class="text-red-500 hover:underline" onclick="clearBatchFiles()">清空</button>
+</div>
+<div class="space-y-1.5 max-h-40 overflow-y-auto" id="batch-file-list">
+<!-- 动态渲染 -->
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg" onclick="closeBatchUploadModal()">取消</button>
+<button class="px-4 py-2 text-sm text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg flex items-center gap-1" onclick="confirmBatchUpload()">
+<iconify-icon icon="mdi:upload"></iconify-icon>
+                上传 <span id="batch-upload-count">0</span> 个文件
+            </button>
+</div>
+</div>
