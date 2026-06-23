@@ -1,0 +1,506 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-hidden" id="view-case">
+<!-- 顶部标题栏 - 扩展显示更多案件元数据 -->
+<div class="flex-none px-6 py-3 bg-white border-b border-gray-200 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors" onclick="switchView('case-list')">
+<iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
+</button>
+<h4 class="text-lg font-bold">案件管理</h4>
+<div class="w-px h-5 bg-gray-200"></div>
+<span class="text-sm font-medium text-gray-800" id="case-detail-title">(2026)京01民初128号</span>
+<span class="text-xs text-gray-400" id="case-detail-type">民间借贷纠纷</span>
+<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full" id="case-detail-status">进行中</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-[#E5E6EB] transition-colors" onclick="openCaseAnalysis()">
+<iconify-icon class="mr-1" icon="mdi:chart-timeline-variant"></iconify-icon>智能分析
+            </button>
+</div>
+</div>
+<!-- Tab 导航栏 -->
+<div class="flex-none bg-white border-b border-gray-200 px-6">
+<div class="flex gap-0">
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-[#165DFF] text-[#165DFF] transition-colors" data-tab="overview" onclick="switchCaseTab('overview', this)">
+<iconify-icon class="mr-1.5" icon="mdi:information-outline"></iconify-icon>案件概览
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="documents" onclick="switchCaseTab('documents', this)">
+<iconify-icon class="mr-1.5" icon="mdi:file-document-outline"></iconify-icon>文书管理
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="materials" onclick="switchCaseTab('materials', this)">
+<iconify-icon class="mr-1.5" icon="mdi:attachment"></iconify-icon>证据材料
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="timeline" onclick="switchCaseTab('timeline', this)">
+<iconify-icon class="mr-1.5" icon="mdi:timeline-outline"></iconify-icon>时间线
+            </button>
+<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-[#165DFF] to-[#5B8FF9] rounded-lg hover:opacity-90 transition-all ml-auto" onclick="openAIExtractModal()">
+<iconify-icon icon="mdi:robot-outline"></iconify-icon>
+                AI 提取要点
+            </button>
+</div>
+</div>
+<!-- Tab 内容区 -->
+<div class="flex-1 flex">
+<!-- Tab: 案件概览 -->
+<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-overview">
+<div class="max-w-5xl w-full mx-auto space-y-4">
+<!-- 案件信息卡片 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+                        案件基本信息
+                    </h5>
+<div class="grid grid-cols-3 gap-6">
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案号</p>
+<p class="text-sm font-medium text-gray-800">(2026)京01民初128号</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案由</p>
+<p class="text-sm font-medium text-gray-800">民间借贷纠纷</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案件状态</p>
+<p><span class="text-[11px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full">进行中</span></p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">承办律师</p>
+<p class="text-sm font-medium text-gray-800">张律师</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">立案日期</p>
+<p class="text-sm font-medium text-gray-800">2026-06-01</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">标的金额</p>
+<p class="text-sm font-medium text-gray-800">¥5,230,000.00</p>
+</div>
+</div>
+</div>
+<!-- 当事人信息双栏 -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<iconify-icon class="text-green-500" icon="mdi:account"></iconify-icon>
+                            原告
+                        </h5>
+<div class="space-y-2">
+<div><span class="text-[10px] text-gray-400">名称</span><p class="text-sm font-medium">上海XX贸易有限公司</p></div>
+<div><span class="text-[10px] text-gray-400">法定代表人</span><p class="text-sm">王大明</p></div>
+<div><span class="text-[10px] text-gray-400">委托代理人</span><p class="text-sm">张律师（元枢律师事务所）</p></div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<iconify-icon class="text-red-500" icon="mdi:account"></iconify-icon>
+                            被告
+                        </h5>
+<div class="space-y-2">
+<div><span class="text-[10px] text-gray-400">名称</span><p class="text-sm font-medium">北京YY科技发展有限公司</p></div>
+<div><span class="text-[10px] text-gray-400">法定代表人</span><p class="text-sm text-red-500">未提供 · 请补充</p></div>
+<div><span class="text-[10px] text-gray-400">委托代理人</span><p class="text-sm">—</p></div>
+</div>
+</div>
+</div>
+<!-- 关键日期 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:calendar-clock"></iconify-icon>
+                        关键日期
+                    </h5>
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-blue-50 rounded-lg p-3 text-center">
+<p class="text-[10px] text-gray-500">签约日期</p>
+<p class="text-sm font-bold text-gray-800 mt-1">2026-05-20</p>
+</div>
+<div class="bg-green-50 rounded-lg p-3 text-center">
+<p class="text-[10px] text-gray-500">立案日期</p>
+<p class="text-sm font-bold text-gray-800 mt-1">2026-06-01</p>
+</div>
+<div class="bg-orange-50 rounded-lg p-3 text-center">
+<p class="text-[10px] text-gray-500">开庭日期</p>
+<p class="text-sm font-bold text-gray-800 mt-1">2026-08-25</p>
+<p class="text-[10px] text-orange-500">距开庭 4 天</p>
+</div>
+<div class="bg-purple-50 rounded-lg p-3 text-center">
+<p class="text-[10px] text-gray-500">上诉期限</p>
+<p class="text-sm font-bold text-gray-800 mt-1">—</p>
+<p class="text-[10px] text-purple-500">待判决</p>
+</div>
+</div>
+</div>
+<!-- 案件摘要 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:text-subject"></iconify-icon>
+                        案件摘要
+                    </h5>
+<p class="text-sm text-gray-600 leading-relaxed">
+                        2025年10月12日，原、被告双方签署编号为 SH-2025-1012 的《采购框架协议》，约定由原告向被告供应电子元器件，货款月结。截至2026年3月，原告累计供货价值人民币5,000,000.00元，被告仅支付1,200,000.00元，尚欠3,800,000.00元。经多次催讨无果，原告提起诉讼。
+                    </p>
+</div>
+</div>
+</div>
+<!-- Tab: 文书管理（保留原有的三栏布局） -->
+<div class="flex flex-row flex-1 overflow-hidden" id="case-tab-documents">
+<!-- 左栏：文书结构树 -->
+<div class="w-64 bg-white border-r border-gray-200 flex flex-col flex-none">
+<div class="p-4 border-b border-gray-100">
+<h5 class="font-bold text-sm">文书结构</h5>
+</div>
+<div class="flex-1 overflow-y-auto p-2">
+<div class="space-y-1">
+<div class="flex items-center justify-between p-2 rounded bg-blue-50 text-[#165DFF] cursor-pointer">
+<div class="flex items-center gap-2"><iconify-icon icon="mdi:account-group-outline"></iconify-icon><span class="text-sm">当事人信息</span></div>
+<iconify-icon class="text-green-500" icon="mdi:check-circle"></iconify-icon>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center gap-2"><iconify-icon icon="mdi:currency-usd"></iconify-icon><span class="text-sm">诉讼请求</span></div>
+<iconify-icon class="text-orange-500" icon="mdi:alert-circle"></iconify-icon>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center gap-2"><iconify-icon icon="mdi:format-list-bulleted"></iconify-icon><span class="text-sm">事实与理由</span></div>
+<iconify-icon class="text-gray-300" icon="mdi:circle-outline"></iconify-icon>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center gap-2"><iconify-icon icon="mdi:attachment"></iconify-icon><span class="text-sm">证据清单</span></div>
+<iconify-icon class="text-red-500" icon="mdi:close-circle"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+<!-- 中栏：富文本编辑区 -->
+<div class="flex-1 bg-gray-50 flex flex-col">
+<div class="h-10 bg-white border-b border-gray-200 flex items-center px-4 gap-4 flex-none">
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-bold"></iconify-icon></button>
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-italic"></iconify-icon></button>
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-underline"></iconify-icon></button>
+<div class="w-px h-4 bg-gray-200"></div>
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-align-left"></iconify-icon></button>
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-align-center"></iconify-icon></button>
+<button class="text-gray-600 hover:text-blue-600"><iconify-icon icon="mdi:format-align-right"></iconify-icon></button>
+<div class="ml-auto flex gap-2">
+<button class="text-xs bg-white border border-gray-200 px-2 py-1 rounded hover:bg-gray-50">历史版本</button>
+<button class="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 flex items-center gap-1" onclick="openPDFAnnotateModal()">
+<iconify-icon class="text-xs" icon="mdi:pen"></iconify-icon>批注预览
+                        </button>
+<button class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">导出 PDF</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-[800px] mx-auto bg-white shadow-sm border border-gray-200 min-h-[1000px] p-16 relative">
+<h1 class="text-2xl font-bold text-center mb-12">民事起诉状</h1>
+<div class="space-y-6">
+<section>
+<h3 class="font-bold mb-2">原告信息：</h3>
+<div class="border-2 border-green-500 bg-green-50 p-3 rounded relative">
+<p class="text-sm">名称：上海XX贸易有限公司</p>
+<p class="text-sm">法定代表人：王大明</p>
+<span class="absolute -top-3 right-2 bg-green-500 text-white text-[10px] px-1 rounded">AI 自动填充</span>
+</div>
+</section>
+<section>
+<h3 class="font-bold mb-2">被告信息：</h3>
+<div class="border-2 border-red-500 bg-red-50 p-3 rounded relative">
+<p class="text-sm">名称：北京YY科技发展有限公司</p>
+<p class="text-sm text-red-600 font-medium">法定代表人：[未提供，请补充]</p>
+<span class="absolute -top-3 right-2 bg-red-500 text-white text-[10px] px-1 rounded">信息缺失</span>
+</div>
+</section>
+<section>
+<h3 class="font-bold mb-2">诉讼请求：</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-2">
+<span>1.</span>
+<div class="flex-1">
+<p class="text-sm mb-2">判令被告向原告支付货款本金人民币 5,000,000.00 元；</p>
+<div class="bg-gray-50 border border-gray-200 p-3 rounded text-xs">
+<div class="flex justify-between items-center mb-2">
+<span class="text-gray-500">金额计算公式</span>
+<button class="text-blue-600 hover:underline">切换方案</button>
+</div>
+<p class="font-mono">本金: 5,000,000.00</p>
+<p class="font-mono">利息: 5,000,000.00 × LPR(3.45%) × 4倍 × 120天 ÷ 360 = 230,000.00</p>
+<p class="font-mono font-bold mt-1 text-[#165DFF]">合计: 5,230,000.00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="font-bold mb-2">事实与理由：</h3>
+<p class="text-sm leading-relaxed text-justify relative group">
+                                    2025年10月12日，原、被告双方签署了编号为 SH-2025-1012 的《采购框架协议》。原告已按约履行了供货义务，但被告在收到第二批货物后，无正当理由拖欠货款...
+                                    <iconify-icon class="absolute -right-6 top-1 text-blue-400 opacity-0 group-hover:opacity-100 cursor-pointer" icon="mdi:link-variant" title="关联证据: 采购协议"></iconify-icon>
+</p>
+</section>
+</div>
+<!-- 冲突解决卡片 (模拟浮层) -->
+<div class="absolute top-[20%] right-[-100px] w-64 conflict-card p-4 rounded-lg shadow-xl z-20">
+<div class="flex items-center gap-2 mb-3 text-red-600">
+<iconify-icon class="text-xl" icon="mdi:alert-decagram"></iconify-icon>
+<span class="text-sm font-bold">发现信息冲突</span>
+</div>
+<p class="text-xs text-gray-600 mb-3">"合同金额"在不同材料中不一致：</p>
+<div class="space-y-2">
+<div class="p-2 bg-white border border-gray-200 rounded cursor-pointer hover:border-blue-500 transition-all" onclick="this.classList.add('border-blue-500', 'bg-blue-50')">
+<p class="text-[10px] text-gray-400">材料A: 采购协议</p>
+<p class="text-sm font-bold">5,000,000.00</p>
+</div>
+<div class="p-2 bg-white border border-gray-200 rounded cursor-pointer hover:border-blue-500 transition-all">
+<p class="text-[10px] text-gray-400">材料B: 电子邮件</p>
+<p class="text-sm font-bold">5,200,000.00</p>
+</div>
+</div>
+<button class="w-full mt-3 text-xs text-[#165DFF] font-medium">查看详情对比</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 右栏：AI 侧边面板 -->
+<div class="w-80 bg-white border-l border-gray-200 flex flex-col flex-none">
+<div class="flex border-b border-gray-100">
+<button class="flex-1 py-3 text-sm font-medium border-b-2 border-[#165DFF] text-[#165DFF]" data-panel="mapping" onclick="switchAIPanel(this, 'mapping')">字段映射</button>
+<button class="flex-1 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" data-panel="advice" onclick="switchAIPanel(this, 'advice')">AI 建议</button>
+<button class="flex-1 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" data-panel="laws" onclick="switchAIPanel(this, 'laws')">法条检索</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4">
+<!-- 字段映射面板 -->
+<div class="space-y-3" id="ai-panel-mapping">
+<div class="flex items-center justify-between text-xs">
+<span class="text-gray-500">已自动识别 12 个字段</span>
+<span class="text-green-600 flex items-center gap-1"><iconify-icon icon="mdi:check"></iconify-icon> 10 成功</span>
+</div>
+<div class="space-y-2">
+<div class="p-2 border border-gray-100 rounded bg-gray-50">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold">原告名称</span>
+<span class="text-[10px] bg-green-100 text-green-700 px-1 rounded">已映射</span>
+</div>
+<p class="text-xs text-gray-600 truncate">上海XX贸易有限公司</p>
+</div>
+<div class="p-2 border border-red-100 rounded bg-red-50">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold">被告法定代表人</span>
+<span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">缺失</span>
+</div>
+<input class="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs outline-none" placeholder="点击手动补充..." type="text"/>
+</div>
+<div class="p-2 border border-orange-100 rounded bg-orange-50">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold">合同金额</span>
+<span class="text-[10px] bg-orange-100 text-orange-700 px-1 rounded">冲突</span>
+</div>
+<p class="text-xs text-gray-600">检测到 2 处冲突，请在编辑器中确认</p>
+</div>
+</div>
+</div>
+<!-- AI 建议面板 -->
+<div class="hidden space-y-3" id="ai-panel-advice">
+<div class="flex items-center justify-between text-xs">
+<span class="text-gray-500">AI 智能建议</span>
+<span class="text-[#165DFF] flex items-center gap-1"><iconify-icon icon="mdi:auto-fix"></iconify-icon> 生成中...</span>
+</div>
+<div class="space-y-2">
+<div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+<div class="flex items-center gap-1.5 mb-1.5">
+<iconify-icon class="text-[#165DFF] text-sm" icon="mdi:lightbulb-outline"></iconify-icon>
+<span class="text-xs font-bold text-[#165DFF]">遗漏关键事实</span>
+</div>
+<p class="text-[11px] text-gray-600">建议补充被告在 2026 年 1 月发送的承诺付款函，可支撑"被告确认债务"的举证链。</p>
+<button class="mt-2 text-[10px] text-[#165DFF] font-medium hover:underline">采纳建议</button>
+</div>
+<div class="p-3 bg-orange-50 border border-orange-100 rounded-lg">
+<div class="flex items-center gap-1.5 mb-1.5">
+<iconify-icon class="text-orange-500 text-sm" icon="mdi:scale-balance"></iconify-icon>
+<span class="text-xs font-bold text-orange-600">利息计算风险</span>
+</div>
+<p class="text-[11px] text-gray-600">当前利息计算方式可能不被法院支持，建议调整为 LPR 1 倍计算，差额约 ¥92,000。</p>
+<button class="mt-2 text-[10px] text-[#165DFF] font-medium hover:underline">查看详情</button>
+</div>
+<div class="p-3 bg-green-50 border border-green-100 rounded-lg">
+<div class="flex items-center gap-1.5 mb-1.5">
+<iconify-icon class="text-green-500 text-sm" icon="mdi:check-circle-outline"></iconify-icon>
+<span class="text-xs font-bold text-green-700">文书结构完整</span>
+</div>
+<p class="text-[11px] text-gray-600">当事人信息、诉讼请求、事实与理由均已完整填写，建议补充证据清单部分。</p>
+</div>
+</div>
+</div>
+<!-- 法条检索面板 -->
+<div class="hidden space-y-3" id="ai-panel-laws">
+<div class="relative">
+<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-sm" icon="mdi:magnify"></iconify-icon>
+<input class="w-full border border-gray-200 rounded-lg pl-8 pr-3 py-2 text-xs focus:outline-none focus:border-[#165DFF]" placeholder="搜索相关法条..." type="text"/>
+</div>
+<div class="space-y-2">
+<div class="p-2.5 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">民法典</span>
+<span class="text-[10px] bg-blue-50 text-[#165DFF] px-1 rounded">高度相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第六百六十七条 · 借款合同定义</p>
+</div>
+<div class="p-2.5 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">民法典</span>
+<span class="text-[10px] bg-blue-50 text-[#165DFF] px-1 rounded">高度相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第五百七十七条 · 违约责任</p>
+</div>
+<div class="p-2.5 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">最高人民法院</span>
+<span class="text-[10px] bg-orange-50 text-orange-600 px-1 rounded">中等相关</span>
+</div>
+<p class="text-[10px] text-gray-500">关于审理民间借贷案件适用法律若干问题的规定</p>
+</div>
+<div class="p-2.5 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">民事诉讼法</span>
+<span class="text-[10px] bg-orange-50 text-orange-600 px-1 rounded">中等相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第六十五条 · 举证责任</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab: 证据材料 -->
+<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-materials">
+<div class="max-w-5xl w-full mx-auto space-y-4">
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
+<p class="text-2xl font-bold text-[#165DFF]">12</p>
+<p class="text-[10px] text-gray-500 mt-1">材料总数</p>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
+<p class="text-2xl font-bold text-green-600">8</p>
+<p class="text-[10px] text-gray-500 mt-1">已解析</p>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
+<p class="text-2xl font-bold text-orange-500">3</p>
+<p class="text-[10px] text-gray-500 mt-1">待处理</p>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
+<p class="text-2xl font-bold text-red-500">1</p>
+<p class="text-[10px] text-gray-500 mt-1">解析失败</p>
+</div>
+</div>
+<div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer">
+<iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-sm text-gray-500 mt-2">拖拽文件到此处上传，或 <span class="text-[#165DFF]">点击浏览</span></p>
+<p class="text-[10px] text-gray-400 mt-1">支持 PDF / Word / 图片 / 音频 / 视频</p>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-gray-50 border-b border-gray-100">
+<th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">文件名</th>
+<th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">类型</th>
+<th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">上传时间</th>
+<th class="text-center py-2.5 px-4 text-[11px] font-semibold text-gray-500">状态</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50">
+<tr class="hover:bg-gray-50">
+<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">采购框架协议.pdf</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">合同</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:30</td>
+<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+</tr>
+<tr class="hover:bg-gray-50">
+<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">送货单（2025年10-12月）.pdf</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">证据</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:32</td>
+<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+</tr>
+<tr class="hover:bg-gray-50">
+<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">微信聊天记录导出.txt</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">通讯</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 09:15</td>
+<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">待处理</span></td>
+</tr>
+<tr class="hover:bg-gray-50">
+<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">催款函（2026-03-15）.pdf</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">函件</td>
+<td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 10:00</td>
+<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Tab: 时间线 -->
+<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-timeline">
+<div class="max-w-4xl w-full mx-auto">
+<div class="relative pl-8 border-l-2 border-[#165DFF]/30 space-y-6">
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-[#165DFF] flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:file-sign"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">签订采购框架协议</span>
+<span class="text-[10px] text-gray-400">2025-10-12</span>
+</div>
+<p class="text-xs text-gray-500">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:file-document"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">发出催款函</span>
+<span class="text-[10px] text-gray-400">2026-03-15</span>
+</div>
+<p class="text-xs text-gray-500">原告委托律所向被告发出律师催款函</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">法院立案</span>
+<span class="text-[10px] text-gray-400">2026-06-01</span>
+</div>
+<p class="text-xs text-gray-500">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">排期开庭</span>
+<span class="text-[10px] text-gray-400">2026-08-25</span>
+</div>
+<p class="text-xs text-gray-500">第3法庭 · 合议庭审理</p>
+<span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full mt-1 inline-block">距开庭 4 天</span>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white shadow animate-pulse">
+<iconify-icon class="text-xs" icon="mdi:pencil"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border-2 border-[#165DFF] p-4 ml-4 shadow-md">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium text-[#165DFF]">当前 · 文书准备</span>
+<span class="text-[10px] text-gray-400">进行中</span>
+</div>
+<p class="text-xs text-gray-500">起草民事起诉状、准备证据清单及证据材料</p>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">当前阶段</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 客户管理 -->

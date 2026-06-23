@@ -1,0 +1,232 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-case-dynamics">
+<!-- 头部 -->
+<div class="flex-none flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors" onclick="switchView('workstation')">
+<iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
+</button>
+<h2 class="text-lg font-bold text-gray-800">案件动态</h2>
+<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">共 16 条</span>
+</div>
+<div class="flex items-center gap-2">
+<!-- 视图切换 -->
+<div class="flex items-center border border-[#E5E6EB] rounded-lg overflow-hidden">
+<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-[#165DFF] text-white transition-colors" id="dyn-view-list" onclick="switchDynamicsView('list')">
+<iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
+</button>
+<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-gray-600 hover:bg-gray-50 transition-colors" id="dyn-view-timeline" onclick="switchDynamicsView('timeline')">
+<iconify-icon icon="mdi:timeline"></iconify-icon>
+</button>
+</div>
+<!-- 发布动态 -->
+<button class="flex items-center gap-1 h-8 px-3 text-xs font-medium text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg transition-colors" onclick="openNewDynamicModal()">
+<iconify-icon icon="mdi:plus"></iconify-icon>
+                发布动态
+            </button>
+<!-- 搜索 -->
+<div class="relative">
+<input class="w-44 h-8 text-xs pl-8 pr-3 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#165DFF]" id="dynamics-search-input" oninput="searchDynamics()" placeholder="搜索动态..." type="text"/>
+<iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" icon="mdi:magnify"></iconify-icon>
+</div>
+<select class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#165DFF] bg-white">
+<option>全部类型</option>
+<option>文书</option>
+<option>开庭</option>
+<option>归档</option>
+<option>提醒</option>
+</select>
+</div>
+</div>
+<!-- 筛选标签 -->
+<div class="flex-none flex items-center gap-2">
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white" onclick="filterDynamics('all', this)">全部</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterDynamics('文书', this)">文书</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterDynamics('开庭', this)">开庭</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterDynamics('归档', this)">归档</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterDynamics('提醒', this)">提醒</button>
+</div>
+<!-- 动态列表 -->
+<div class="flex-1 min-h-0 overflow-y-auto">
+<div class="space-y-2" id="dynamics-list-view">
+<!-- 动态项 1 - 紧急 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-red-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-red-500 text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-red-100 text-red-700 font-medium px-1.5 py-0.5 rounded-full">紧急</span>
+<span class="font-medium text-sm text-gray-800">证据提交即将截止</span>
+</div>
+<p class="text-xs text-gray-500">案件：李明诉XX公司买卖合同纠纷 · 剩余 2 天</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 今天 10:30</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(0)">去处理</button>
+</div>
+</div>
+<!-- 动态项 2 - 文书 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-blue-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-blue-500 text-lg" icon="mdi:file-document-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-1.5 py-0.5 rounded-full">文书</span>
+<span class="font-medium text-sm text-gray-800">起诉状已完成</span>
+</div>
+<p class="text-xs text-gray-500">李明诉XX公司买卖合同纠纷 · 民事起诉状已由AI生成并保存</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 今天 10:30</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(1)">查看</button>
+</div>
+</div>
+<!-- 动态项 3 - 开庭 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-purple-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-purple-500 text-lg" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-purple-100 text-purple-700 font-medium px-1.5 py-0.5 rounded-full">开庭</span>
+<span class="font-medium text-sm text-gray-800">开庭日期已确定</span>
+</div>
+<p class="text-xs text-gray-500">王华借贷纠纷 · 2026-08-28 14:00 第5法庭</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 16:00</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 李律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(2)">查看日程</button>
+</div>
+</div>
+<!-- 动态项 4 - 归档 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-green-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-green-500 text-lg" icon="mdi:check-circle-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-green-100 text-green-700 font-medium px-1.5 py-0.5 rounded-full">归档</span>
+<span class="font-medium text-sm text-gray-800">案件已归档</span>
+</div>
+<p class="text-xs text-gray-500">张三合同纠纷 · 全部卷宗已完成归档</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 14:30</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(3)">查看归档</button>
+</div>
+</div>
+<!-- 动态项 5 - 提醒 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-amber-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-amber-500 text-lg" icon="mdi:calendar-check-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-amber-100 text-amber-700 font-medium px-1.5 py-0.5 rounded-full">提醒</span>
+<span class="font-medium text-sm text-gray-800">续约提醒</span>
+</div>
+<p class="text-xs text-gray-500">某科技公司法律顾问合同即将到期（2026-09-30）</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 09:00</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 系统</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(4)">去处理</button>
+</div>
+</div>
+<!-- 动态项 6 - 文书 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-blue-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-blue-500 text-lg" icon="mdi:file-compare"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-1.5 py-0.5 rounded-full">文书</span>
+<span class="font-medium text-sm text-gray-800">证据目录已更新</span>
+</div>
+<p class="text-xs text-gray-500">某科技公司股权纠纷 · 新增3份补充证据</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 2天前 11:20</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 王律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(5)">查看</button>
+</div>
+</div>
+<!-- 动态项 7 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-purple-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-purple-500 text-lg" icon="mdi:account-group-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-purple-100 text-purple-700 font-medium px-1.5 py-0.5 rounded-full">开庭</span>
+<span class="font-medium text-sm text-gray-800">合议庭组成已确定</span>
+</div>
+<p class="text-xs text-gray-500">赵六劳动争议仲裁 · 审判长：王法官</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 3天前 09:45</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 系统</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(6)">详情</button>
+</div>
+</div>
+<!-- 动态项 8 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow border-l-4 border-l-green-500">
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-green-500 text-lg" icon="mdi:file-document-check-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] bg-green-100 text-green-700 font-medium px-1.5 py-0.5 rounded-full">归档</span>
+<span class="font-medium text-sm text-gray-800">判决书已上传</span>
+</div>
+<p class="text-xs text-gray-500">王华借贷纠纷 · 一审判决书已归档</p>
+<div class="flex items-center gap-3 mt-2">
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 3天前 16:20</span>
+<span class="text-[10px] text-gray-400"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+</div>
+</div>
+<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(7)">查看</button>
+</div>
+</div>
+<!-- 底部分隔 -->
+<div class="text-center py-4">
+<span class="text-[10px] text-gray-300">— 没有更多动态 —</span>
+</div>
+</div>
+<!-- 动态搜索无结果空状态 -->
+<div class="hidden flex flex-col items-center justify-center py-12 text-gray-400" id="dynamics-empty-state">
+<iconify-icon class="text-4xl mb-3" icon="mdi:inbox-outline"></iconify-icon>
+<p class="text-sm text-gray-500">暂无匹配的动态</p>
+<p class="text-xs text-gray-400 mt-1">尝试调整筛选条件或搜索关键词</p>
+</div>
+<!-- 时间轴视图 -->
+<div class="hidden space-y-0" id="dynamics-timeline-view">
+<div class="relative pl-8 ml-4 space-y-0">
+<!-- 时间轴线 -->
+<div class="absolute left-3 top-3 bottom-3 w-0.5 bg-[#E5E6EB]"></div>
+<!-- 8条时间轴节点将通过 JS 动态生成 -->
+</div>
+</div>
+</div>
+</div>
+<!-- 附件列表 -->

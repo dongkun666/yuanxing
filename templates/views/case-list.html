@@ -1,0 +1,181 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-case-list">
+<!-- 统计卡片行 -->
+<div class="grid grid-cols-4 gap-3">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">全部案件</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">12</p>
+<p class="text-[10px] text-green-600 mt-1">↑ 较上月 +2</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:briefcase-outline"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">进行中</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">7</p>
+<p class="text-[10px] text-[#FAAD14] mt-1">● 其中3件临近期限</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#FAAD14]" icon="mdi:progress-check"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">待开庭</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">3</p>
+<p class="text-[10px] text-[#F53F3F] mt-1">● 最近：2026-08-25</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#F53F3F]" icon="mdi:gavel"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">已结案</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">5</p>
+<p class="text-[10px] text-[#86909C] mt-1">胜诉率 80%</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-green-600" icon="mdi:check-circle-outline"></iconify-icon>
+</div>
+</div>
+</div>
+</div>
+<!-- 搜索与筛选 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center gap-3 flex-wrap">
+<div class="relative flex-1 min-w-[200px]">
+<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#C9CDD4]" icon="mdi:magnify"></iconify-icon>
+<input class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="搜索案号、当事人、案由..." type="text"/>
+</div>
+<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
+<option>全部状态</option>
+<option>进行中</option>
+<option>待开庭</option>
+<option>已结案</option>
+</select>
+<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
+<option>全部案由</option>
+<option>民事</option>
+<option>商事</option>
+<option>劳动争议</option>
+<option>知识产权</option>
+</select>
+<button class="px-4 py-2 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors">新建案件</button>
+</div>
+</div>
+<!-- 案件列表 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案号</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案由</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">当事人</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">承办律师</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">状态</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">下次节点</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#F2F3F5]">
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(0)">(2026)京01民初128号</span></td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">民间借贷纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张三诉李四</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张律师</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-25 开庭</td>
+<td class="text-center py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(0)">详情</button>
+<span class="text-[#E5E6EB]">|</span>
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseAnalysis()">卷宗分析</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(1)">(2026)京02民初256号</span></td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">劳动争议仲裁</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">王五诉某科技公司</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张律师</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#FFF7E6] text-[#FAAD14] font-medium px-2 py-0.5 rounded">待开庭</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#F53F3F]">2026-08-28 开庭</td>
+<td class="text-center py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(1)">详情</button>
+<span class="text-[#E5E6EB]">|</span>
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseAnalysis()">卷宗分析</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(2)">(2026)京03民初789号</span></td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">合同纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">某公司诉赵六</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张律师</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">已结案</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#86909C]">—</td>
+<td class="text-center py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(2)">详情</button>
+<span class="text-[#E5E6EB]">|</span>
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseAnalysis()">卷宗分析</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(3)">(2026)京04民初345号</span></td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">知识产权侵权</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">A公司诉B公司</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张律师</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">证据交换中</td>
+<td class="text-center py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(3)">详情</button>
+<span class="text-[#E5E6EB]">|</span>
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseAnalysis()">卷宗分析</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openCaseDetail(4)">(2026)京05民初567号</span></td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">离婚纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">刘某诉陈某</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">张律师</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">调解中</td>
+<td class="text-center py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(4)">详情</button>
+<span class="text-[#E5E6EB]">|</span>
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseAnalysis()">卷宗分析</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 分页 -->
+<div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
+<span class="text-xs text-[#86909C]">共 12 条，当前第 1 页</span>
+<div class="flex gap-1">
+<button class="w-7 h-7 rounded bg-[#165DFF] text-white text-xs flex items-center justify-center">1</button>
+<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">2</button>
+<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">3</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 智能卷宗分析 -->

@@ -1,0 +1,405 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-account-settings">
+<div class="w-full space-y-5">
+<!-- 个人资料 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<div class="flex items-center justify-between mb-5">
+<h3 class="text-base font-semibold text-[#1D2129]">个人资料</h3>
+<button class="px-5 py-2 text-xs font-semibold rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors" id="edit-profile-btn" onclick="toggleProfileEdit()">修改</button>
+</div>
+<div class="flex gap-8">
+<!-- 左侧：头像（可点击上传） -->
+<div class="flex-shrink-0 flex flex-col items-center gap-3">
+<div class="relative group cursor-pointer" onclick="document.getElementById('avatar-upload-input').click()">
+<div class="w-24 h-24 rounded-full bg-gradient-to-br from-[#E8F3FF] to-[#D6E4FF] flex items-center justify-center overflow-hidden border-2 border-[#E5E6EB]" id="avatar-preview-display">
+<iconify-icon class="text-4xl text-[#165DFF]" icon="mdi:account-circle" id="avatar-icon-display"></iconify-icon>
+<img class="hidden w-full h-full object-cover" id="avatar-image-display"/>
+</div>
+<div class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<iconify-icon class="text-2xl text-white" icon="mdi:camera"></iconify-icon>
+</div>
+<div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border-2 border-[#165DFF] flex items-center justify-center" id="avatar-progress-display">
+<iconify-icon class="text-sm text-[#165DFF] animate-spin" icon="mdi:loading"></iconify-icon>
+</div>
+<div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-500 border-2 border-white flex items-center justify-center" id="avatar-success-display">
+<iconify-icon class="text-xs text-white" icon="mdi:check"></iconify-icon>
+</div>
+</div>
+<input accept="image/png,image/jpeg,image/jpg,image/webp" class="hidden" id="avatar-upload-input" onchange="handleAvatarUpload(event)" type="file"/>
+<p class="text-xs text-[#86909C]">点击更换头像</p>
+<p class="text-[10px] text-[#C9CDD4]">支持 JPG / PNG / WebP，建议 200×200</p>
+</div>
+<!-- 右侧：只读显示 -->
+<div class="flex-1" id="profile-display">
+<div class="grid grid-cols-2 gap-6">
+<div>
+<p class="text-xs text-[#86909C] mb-1">姓名</p>
+<p class="text-sm font-medium text-[#1D2129]">张律师</p>
+</div>
+<div>
+<p class="text-xs text-[#86909C] mb-1">手机号</p>
+<p class="text-sm font-medium text-[#1D2129]">138****6688</p>
+</div>
+<div>
+<p class="text-xs text-[#86909C] mb-1">邮箱</p>
+<p class="text-sm font-medium text-[#1D2129]">zhanglvshi@lexprime.cn</p>
+</div>
+<div>
+<p class="text-xs text-[#86909C] mb-1">律所/机构</p>
+<p class="text-sm font-medium text-[#1D2129]">元枢律师事务所</p>
+</div>
+<div>
+<p class="text-xs text-[#86909C] mb-1">执业证号</p>
+<p class="text-sm font-medium text-[#1D2129]">京1234567890</p>
+</div>
+<div>
+<p class="text-xs text-[#86909C] mb-1">专业领域</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">民商事诉讼</span>
+<span class="inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">劳动争议</span>
+<span class="inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">合同纠纷</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-[#F2F3F5]">
+<p class="text-xs text-[#86909C] mb-1">个人简介</p>
+<p class="text-sm text-[#4E5969]">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</p>
+</div>
+</div>
+<!-- 编辑表单（默认隐藏） -->
+<div class="flex-1 hidden" id="profile-edit">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">姓名 <span class="text-red-400">*</span></label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors" id="profile-name" type="text" value="张律师"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">手机号 <span class="text-red-400">*</span></label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors" id="profile-phone" onblur="validateField(this, '请输入手机号')" oninput="autoSaveProfile()" required="" type="text" value="138****6688"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">邮箱</label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors" id="profile-email" type="email" value="zhanglvshi@lexprime.cn"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">律所/机构</label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors" id="profile-firm" type="text" value="元枢律师事务所"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">执业证号</label>
+<input class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors" id="profile-license" type="text" value="京1234567890"/>
+</div>
+<div>
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">专业领域</label>
+<div class="flex flex-wrap gap-1.5" id="edit-skill-tags">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">民商事诉讼 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">劳动争议 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium">合同纠纷 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-[#86909C] text-[10px] cursor-pointer hover:bg-[#E8F3FF] hover:text-[#165DFF]" onclick="addTagInput(this); autoSaveProfile()">+ 添加</span>
+</div>
+</div>
+</div>
+<div class="mt-4">
+<label class="text-xs font-medium text-[#4E5969] block mb-1.5">个人简介</label>
+<textarea class="w-full border border-[#E5E6EB] rounded-lg px-3 py-2.5 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] transition-colors resize-none" id="profile-bio" rows="3">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</textarea>
+</div>
+<div class="mt-4 flex justify-end gap-3">
+<button class="px-4 py-2.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="cancelProfileEdit()">取消</button>
+<button class="px-6 py-2.5 text-xs font-semibold rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-2" id="profile-save-btn" onclick="saveProfile()">
+<span id="save-btn-text">保存</span>
+<span class="hidden" id="save-btn-spinner"><iconify-icon class="animate-spin text-sm" icon="mdi:loading"></iconify-icon></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 安全设置 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<div class="flex items-center justify-between mb-5">
+<h3 class="text-base font-semibold text-[#1D2129]">安全设置</h3>
+<span class="text-[10px] bg-green-50 text-green-600 font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
+<iconify-icon class="text-xs" icon="mdi:shield-check"></iconify-icon>
+                    安全等级：中
+                </span>
+</div>
+<div class="space-y-0 divide-y divide-[#F2F3F5]">
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
+<iconify-icon class="text-base text-[#4E5969]" icon="mdi:lock-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">登录密码</p>
+<p class="text-xs text-[#86909C] mt-0.5">上次修改：2026-06-01 · 强度：<span class="text-green-600 font-medium">强</span></p>
+</div>
+</div>
+<button class="text-xs text-[#165DFF] hover:underline font-medium" onclick="alert('修改密码\n\n请输入当前密码\n请输入新密码（至少8位，包含字母和数字）\n请确认新密码')">修改</button>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
+<iconify-icon class="text-base text-[#4E5969]" icon="mdi:shield-key-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">双因素认证 (2FA)</p>
+<p class="text-xs text-[#86909C] mt-0.5">增加账号安全性，推荐开启</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[10px] text-[#C9CDD4]" id="2fa-status">未开启</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" onchange="toggle2FA(this)" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
+<iconify-icon class="text-base text-[#4E5969]" icon="mdi:devices"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">登录设备管理</p>
+<p class="text-xs text-[#86909C] mt-0.5">当前 2 台设备在线：Windows PC · iPhone 15</p>
+</div>
+</div>
+<button class="text-xs text-[#165DFF] hover:underline font-medium" onclick="showDeviceManager()">管理</button>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#F7F8FA] flex items-center justify-center">
+<iconify-icon class="text-base text-[#4E5969]" icon="mdi:history"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">登录历史</p>
+<p class="text-xs text-[#86909C] mt-0.5">上次登录：2026-08-21 14:30 · 北京市</p>
+</div>
+</div>
+<button class="text-xs text-[#165DFF] hover:underline font-medium" onclick="alert('登录历史记录')">查看</button>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#FFF1F0] flex items-center justify-center">
+<iconify-icon class="text-base text-[#F53F3F]" icon="mdi:delete-alert-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">账号注销</p>
+<p class="text-xs text-[#86909C] mt-0.5">注销后将永久清除所有数据，不可恢复</p>
+</div>
+</div>
+<button class="text-xs text-[#F53F3F] hover:underline font-medium" onclick="confirmAccountDeletion()">注销账号</button>
+</div>
+</div>
+</div>
+<!-- 消息通知设置 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<div class="flex items-center justify-between mb-5">
+<h3 class="text-base font-semibold text-[#1D2129]">消息通知设置</h3>
+<button class="px-4 py-2 text-xs font-semibold rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors" onclick="saveNotificationSettings()">保存设置</button>
+</div>
+<div class="space-y-0 divide-y divide-[#F2F3F5]">
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:bell-ring-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">案件进展通知</p>
+<p class="text-xs text-[#86909C] mt-0.5">开庭提醒、期限预警、文书审核结果等</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:message-text-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">AI 对话消息</p>
+<p class="text-xs text-[#86909C] mt-0.5">AI 分析完成、生成结果推送</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:calendar-alert-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">日程提醒</p>
+<p class="text-xs text-[#86909C] mt-0.5">开庭前提醒、日程变更通知</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-base text-green-600" icon="mdi:bullhorn-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">系统公告</p>
+<p class="text-xs text-[#86909C] mt-0.5">版本更新、功能上线、产品通知</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#6C5CE7]" icon="mdi:email-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">邮件通知</p>
+<p class="text-xs text-[#86909C] mt-0.5">重要通知同步发送至绑定邮箱</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#F53F3F]" icon="mdi:cellphone"></iconify-icon>
+</div>
+<div>
+<p class="text-sm text-[#1D2129]">短信通知</p>
+<p class="text-xs text-[#86909C] mt-0.5">法定红线预警、紧急通知短信推送</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+<div class="w-9 h-5 bg-[#C9CDD4] rounded-full peer peer-checked:bg-[#165DFF] transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- 第三方账号绑定 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<h3 class="text-base font-semibold text-[#1D2129]">第三方账号绑定</h3>
+<div class="mt-4 space-y-0 divide-y divide-[#F2F3F5]">
+<!-- 微信 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#07C160]" icon="mdi:wechat"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">微信</p>
+<p class="text-xs text-[#86909C] mt-0.5">可用于扫码登录、消息推送</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1 text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded font-medium">
+<iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon>
+                            已绑定
+                        </span>
+<button class="text-xs text-[#86909C] hover:text-[#F53F3F] transition-colors" onclick="unbindAccount('微信')">解绑</button>
+</div>
+</div>
+<!-- 支付宝 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#1677FF]" icon="mdi:alipay"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">支付宝</p>
+<p class="text-xs text-[#86909C] mt-0.5">可用于支付订阅费用</p>
+</div>
+</div>
+<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors" onclick="bindAccount('支付宝')">绑定</button>
+</div>
+<!-- 手机号 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:phone"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">手机号</p>
+<p class="text-xs text-[#86909C] mt-0.5">138****6688 · 用于登录验证</p>
+</div>
+</div>
+<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="alert('更换手机号')">更换</button>
+</div>
+<!-- 邮箱 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#86909C]" icon="mdi:email-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">邮箱</p>
+<p class="text-xs text-[#86909C] mt-0.5">zhanglvshi@lexprime.cn · 接收通知</p>
+</div>
+</div>
+<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="alert('更换邮箱')">更换</button>
+</div>
+<!-- 飞书 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#3370FF]" icon="mdi:book-open-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">飞书</p>
+<p class="text-xs text-[#86909C] mt-0.5">律所内部协作通知同步</p>
+</div>
+</div>
+<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors" onclick="bindAccount('飞书')">绑定</button>
+</div>
+<!-- 企业微信 -->
+<div class="flex items-center justify-between py-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#07C160]" icon="mdi:briefcase-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-medium text-[#1D2129]">企业微信</p>
+<p class="text-xs text-[#86909C] mt-0.5">团队协作消息同步</p>
+</div>
+</div>
+<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors" onclick="bindAccount('企业微信')">绑定</button>
+</div>
+</div>
+</div>
+</div>
+</div></main>
+</div>
+<!-- 底部状态栏 -->
+<footer class="h-7 bg-white border-t border-gray-200 flex items-center justify-between px-4 text-[11px] text-gray-500 flex-none">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1">
+<iconify-icon class="text-green-500" icon="mdi:sync"></iconify-icon>
+                云端同步已完成 (12:45)
+            </span>
+<span class="flex items-center gap-1">
+<iconify-icon class="text-blue-500" icon="mdi:server-network"></iconify-icon>
+                连接至上海节点
+            </span>
+</div>
+<div class="flex items-center gap-4">
+<span class="cursor-pointer hover:text-blue-600">帮助中心</span>
+<span class="cursor-pointer hover:text-blue-600">意见反馈</span>
+<div class="h-3 w-px bg-gray-200"></div>
+<span class="font-medium text-[#165DFF] flex items-center gap-1 cursor-pointer">
+<iconify-icon icon="mdi:robot"></iconify-icon>
+                LexPrime 助手在线
+            </span>
+</div>

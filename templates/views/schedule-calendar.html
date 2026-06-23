@@ -1,0 +1,142 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-schedule-calendar">
+<div class="max-w-5xl mx-auto w-full space-y-5">
+<!-- 标题 + 返回 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1 text-xs text-[#4E5969] hover:text-[#165DFF] transition-colors" onclick="backToCaseList()">
+<iconify-icon icon="mdi:arrow-left"></iconify-icon>
+<span>返回</span>
+</button>
+<span class="text-[#E5E6EB]">|</span>
+<h3 class="text-base font-semibold text-[#1D2129]">日程管理</h3>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-xs rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors">今天</button>
+<button class="px-3 py-1.5 text-xs rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors">+ 新增</button>
+</div>
+</div>
+<!-- 庭审冲突预警条 -->
+<div class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mb-3 flex items-start gap-3" id="court-conflict-bar">
+<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-red-500 text-lg" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="flex-1">
+<div class="text-sm font-medium text-red-700">庭审时间冲突预警</div>
+<div class="text-xs text-red-600 mt-1" id="court-conflict-detail"></div>
+</div>
+<button class="text-red-400 hover:text-red-600" onclick="dismissCourtConflict()">
+<iconify-icon icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<!-- 月历头 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="flex items-center justify-between px-5 py-3 bg-[#F7F8FA] border-b border-[#E5E6EB]">
+<button class="text-sm text-[#4E5969] hover:text-[#165DFF]"><iconify-icon icon="mdi:chevron-left"></iconify-icon></button>
+<span class="text-sm font-semibold text-[#1D2129]">2026 年 8 月</span>
+<button class="text-sm text-[#4E5969] hover:text-[#165DFF]"><iconify-icon icon="mdi:chevron-right"></iconify-icon></button>
+</div>
+<div class="grid grid-cols-7 text-center text-[10px] text-[#86909C] font-medium py-2 border-b border-[#F2F3F5]">
+<span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+</div>
+<div class="grid grid-cols-7 text-center">
+<div class="py-3 text-xs text-[#C9CDD4]">27</div>
+<div class="py-3 text-xs text-[#C9CDD4]">28</div>
+<div class="py-3 text-xs text-[#C9CDD4]">29</div>
+<div class="py-3 text-xs text-[#C9CDD4]">30</div>
+<div class="py-3 text-xs text-[#C9CDD4]">31</div>
+<div class="py-3 text-xs text-[#C9CDD4]">1</div>
+<div class="py-3 text-xs text-[#C9CDD4]">2</div>
+<div class="py-3 text-xs text-[#4E5969]">3</div>
+<div class="py-3 text-xs text-[#4E5969]">4</div>
+<div class="py-3 text-xs text-[#4E5969]">5</div>
+<div class="py-3 text-xs text-[#4E5969]">6</div>
+<div class="py-3 text-xs text-[#4E5969]">7</div>
+<div class="py-3 text-xs text-[#C9CDD4]">8</div>
+<div class="py-3 text-xs text-[#C9CDD4]">9</div>
+<div class="py-3 text-xs text-[#4E5969]">10</div>
+<div class="py-3 text-xs text-[#4E5969]">11</div>
+<div class="py-3 text-xs text-[#4E5969]">12</div>
+<div class="py-3 text-xs text-[#4E5969]">13</div>
+<div class="py-3 text-xs text-[#4E5969]">14</div>
+<div class="py-3 text-xs text-[#C9CDD4]">15</div>
+<div class="py-3 text-xs text-[#C9CDD4]">16</div>
+<div class="py-3 text-xs text-[#4E5969]">17</div>
+<div class="py-3 text-xs text-[#4E5969]">18</div>
+<div class="py-3 text-xs text-[#4E5969]">19</div>
+<div class="py-3 text-xs text-[#4E5969]">20</div>
+<div class="py-3 text-xs relative">
+<span class="text-xs text-[#4E5969]">21</span>
+<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-[#165DFF]"></div>
+</div>
+<div class="py-3 text-xs text-[#C9CDD4]">22</div>
+<div class="py-3 text-xs text-[#C9CDD4]">23</div>
+<div class="py-3 text-xs text-[#4E5969]">24</div>
+<div class="py-3 text-xs relative">
+<span class="text-xs font-bold text-white bg-[#F53F3F] w-7 h-7 rounded-full flex items-center justify-center mx-auto">25</span>
+<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-[#F53F3F]"></div>
+</div>
+<div class="py-3 text-xs text-[#4E5969]">26</div>
+<div class="py-3 text-xs text-[#4E5969]">27</div>
+<div class="py-3 text-xs relative">
+<span class="text-xs text-[#4E5969]">28</span>
+<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-[#FAAD14]"></div>
+</div>
+<div class="py-3 text-xs text-[#C9CDD4]">29</div>
+<div class="py-3 text-xs text-[#C9CDD4]">30</div>
+<div class="py-3 text-xs text-[#C9CDD4]">31</div>
+<div class="py-3 text-xs text-[#C9CDD4]">1</div>
+<div class="py-3 text-xs text-[#C9CDD4]">2</div>
+<div class="py-3 text-xs text-[#C9CDD4]">3</div>
+<div class="py-3 text-xs text-[#C9CDD4]">4</div>
+<div class="py-3 text-xs text-[#C9CDD4]">5</div>
+<div class="py-3 text-xs text-[#C9CDD4]">6</div>
+</div>
+</div>
+<!-- 庭审日程列表 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<h4 class="text-sm font-semibold text-[#1D2129] mb-4">本月庭审安排</h4>
+<div class="space-y-3">
+<div class="flex items-start gap-3 p-3 rounded-lg bg-[#FFF1F0] border-l-4 border-[#F53F3F] cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(1)">
+<div class="flex-shrink-0 text-center w-10">
+<p class="text-lg font-bold text-[#F53F3F]">25</p>
+<p class="text-[10px] text-[#F53F3F]">周二</p>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<p class="text-sm font-medium text-[#1D2129]">开庭 · 民间借贷纠纷</p>
+<span class="text-[10px] bg-[#F53F3F] text-white font-medium px-2 py-0.5 rounded">今天</span>
+</div>
+<p class="text-xs text-[#4E5969] mt-0.5">(2026)京01民初128号 · 张三诉李四</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">🕐 09:30 · 北京市第一中级人民法院 第3法庭</p>
+</div>
+<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-[#FFF7E6] border-l-4 border-[#FAAD14] cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(5)">
+<div class="flex-shrink-0 text-center w-10">
+<p class="text-lg font-bold text-[#FAAD14]">28</p>
+<p class="text-[10px] text-[#FAAD14]">周五</p>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-[#1D2129]">开庭 · 劳动争议仲裁</p>
+<p class="text-xs text-[#4E5969] mt-0.5">(2026)京02民初256号 · 王五诉某科技公司</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">🕐 14:00 · 北京市劳动人事争议仲裁委员会</p>
+</div>
+<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-[#E8F3FF] border-l-4 border-[#165DFF] cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(7)">
+<div class="flex-shrink-0 text-center w-10">
+<p class="text-lg font-bold text-[#165DFF]">21</p>
+<p class="text-[10px] text-[#165DFF]">周五</p>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-[#1D2129]">证据交换 · 知识产权侵权</p>
+<p class="text-xs text-[#4E5969] mt-0.5">(2026)京04民初345号 · A公司诉B公司</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">🕐 10:00 · 北京市第四中级人民法院</p>
+</div>
+<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 案件动态列表 -->

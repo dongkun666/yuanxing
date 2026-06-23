@@ -288,24 +288,24 @@
 </main>
 </div>
 <!-- 主脚本 -->
-<script src="assets/js/script.js?v=4"></script>
-<!-- 加载视图模板 -->
+<script src="assets/js/script.js?v=5"></script>
+<!-- 预加载弹窗模板 -->
 <script>
 (function() {
-    // 动态加载视图模板
-    fetch('templates/views.html')
-        .then(function(response) { return response.text(); })
-        .then(function(html) {
-            document.getElementById('main-content').innerHTML = html;
-        })
-        .catch(function(err) { console.error('加载视图模板失败:', err); });
-    // 动态加载弹窗模板
+    // 加载弹窗模板
     fetch('templates/modals.html')
         .then(function(response) { return response.text(); })
         .then(function(html) {
             document.body.insertAdjacentHTML('beforeend', html);
         })
         .catch(function(err) { console.error('加载弹窗模板失败:', err); });
+    // 预加载工作台视图（默认显示）
+    fetch('templates/views/workstation.html')
+        .then(function(response) { return response.text(); })
+        .then(function(html) {
+            document.getElementById('main-content').innerHTML = html;
+        })
+        .catch(function(err) { console.error('加载工作台视图失败:', err); });
 })();
 </script>
 </body>

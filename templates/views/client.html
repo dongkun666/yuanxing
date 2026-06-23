@@ -1,0 +1,244 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-client">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+<!-- 顶部统计卡片 -->
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">全部客户</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">28</p>
+<p class="text-[10px] text-green-600 mt-1">↑ 较上月 +3</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:account-group-outline"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">A 级客户</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">5</p>
+<p class="text-[10px] text-[#F53F3F] mt-1">● 高价值需重点维护</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#F53F3F]" icon="mdi:star"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">本月新增</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">4</p>
+<p class="text-[10px] text-[#165DFF] mt-1">线索转化率 66%</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-green-600" icon="mdi:account-plus-outline"></iconify-icon>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs text-[#86909C]">待回访</p>
+<p class="text-2xl font-bold text-[#1D2129] mt-1">7</p>
+<p class="text-[10px] text-[#FAAD14] mt-1">● 超过 7 天未联系</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#FAAD14]" icon="mdi:phone-forward-outline"></iconify-icon>
+</div>
+</div>
+</div>
+<!-- 客户分类 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-3">
+<div class="flex items-center gap-1">
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#165DFF] text-white" onclick="switchClientTab(this, 'all')">全部客户</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchClientTab(this, 'a')">A 级</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchClientTab(this, 'b')">B 级</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchClientTab(this, 'c')">C 级</button>
+<span class="mx-2 text-[#E5E6EB]">|</span>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchClientTab(this, 'active')">活跃</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchClientTab(this, 'pending')">待回访</button>
+<span class="flex-1"></span>
+<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors">
+<iconify-icon class="text-sm" icon="mdi:download-outline"></iconify-icon>
+                    导出
+                </button>
+</div>
+</div>
+<!-- 搜索与筛选 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center gap-3 flex-wrap">
+<div class="relative flex-1 min-w-[200px]">
+<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#C9CDD4]" icon="mdi:magnify"></iconify-icon>
+<input class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="搜索客户名称、手机号、案件..." type="text"/>
+</div>
+<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
+<option>全部分级</option>
+<option>A 级</option>
+<option>B 级</option>
+<option>C 级</option>
+</select>
+<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
+<option>全部标签</option>
+<option>企业客户</option>
+<option>个人客户</option>
+<option>常规律师</option>
+</select>
+<button class="px-4 py-2 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors" onclick="showNewClientModal()">+ 新建客户</button>
+</div>
+</div>
+<!-- 客户列表 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">客户名称</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">联系方式</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案件数</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">客户分级</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">最近联系</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">状态</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#F2F3F5]">
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-[#165DFF]/10 flex items-center justify-center text-xs font-bold text-[#165DFF]">李</div>
+<span class="text-xs font-medium text-[#1D2129]">李明</span>
+</div>
+</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">138****1234</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">3</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#FFF1F0] text-[#F53F3F] font-medium px-2 py-0.5 rounded">A 级</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-18</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">活跃</span></td>
+<td class="text-center py-3 px-4">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openClientDetail(0)">详情</button>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-xs font-bold text-purple-600">王</div>
+<span class="text-xs font-medium text-[#1D2129]">王华</span>
+</div>
+</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">139****5678</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">2</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#FFF7E6] text-[#FAAD14] font-medium px-2 py-0.5 rounded">B 级</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-15</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">活跃</span></td>
+<td class="text-center py-3 px-4">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openClientDetail(1)">详情</button>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-xs font-bold text-blue-600">某</div>
+<span class="text-xs font-medium text-[#1D2129]">某科技有限公司</span>
+</div>
+</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">010-8888****</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">5</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#FFF1F0] text-[#F53F3F] font-medium px-2 py-0.5 rounded">A 级</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-14</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">活跃</span></td>
+<td class="text-center py-3 px-4">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openClientDetail(2)">详情</button>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">赵</div>
+<span class="text-xs font-medium text-[#1D2129]">赵六</span>
+</div>
+</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">136****9012</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">1</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#F7F8FA] text-[#86909C] font-medium px-2 py-0.5 rounded">C 级</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-05</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">待回访</span></td>
+<td class="text-center py-3 px-4">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openClientDetail(3)">详情</button>
+</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-xs font-bold text-green-600">张</div>
+<span class="text-xs font-medium text-[#1D2129]">张三</span>
+</div>
+</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">137****3456</td>
+<td class="py-3 px-4 text-xs text-[#4E5969]">1</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#F7F8FA] text-[#86909C] font-medium px-2 py-0.5 rounded">C 级</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-07-28</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#F2F3F5] text-[#C9CDD4] font-medium px-2 py-0.5 rounded">静默</span></td>
+<td class="text-center py-3 px-4">
+<button class="text-xs text-[#165DFF] hover:underline" onclick="openClientDetail(4)">详情</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 分页 -->
+<div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
+<span class="text-xs text-[#86909C]">共 28 位客户，当前第 1 页</span>
+<div class="flex gap-1">
+<button class="w-7 h-7 rounded bg-[#165DFF] text-white text-xs flex items-center justify-center">1</button>
+<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">2</button>
+<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">3</button>
+</div>
+</div>
+</div>
+<!-- AI 智能分析 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<div class="flex items-center gap-2 mb-4">
+<iconify-icon class="text-lg text-[#165DFF]" icon="mdi:chart-box-outline"></iconify-icon>
+<h4 class="text-sm font-semibold text-[#1D2129]">客户智能分析</h4>
+<span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded ml-auto">AI 建议</span>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="p-3 rounded-lg bg-[#F7F8FA]">
+<div class="flex items-center gap-2 mb-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:target"></iconify-icon>
+<span class="text-xs font-medium text-[#1D2129]">重点维护</span>
+</div>
+<p class="text-[10px] text-[#4E5969]">A 级客户 5 位，均在近 30 天有案件委托。建议优先跟进李明（案件即将开庭）和某科技公司（合同续约窗口期）。</p>
+</div>
+<div class="p-3 rounded-lg bg-[#F7F8FA]">
+<div class="flex items-center gap-2 mb-2">
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:bell-plus-outline"></iconify-icon>
+<span class="text-xs font-medium text-[#1D2129]">待回访提醒</span>
+</div>
+<p class="text-[10px] text-[#4E5969]">7 位客户超过 7 天未联系。赵六（劳动争议案结案后未跟进）建议本周内回访，了解后续需求。</p>
+</div>
+<div class="p-3 rounded-lg bg-[#F7F8FA]">
+<div class="flex items-center gap-2 mb-2">
+<iconify-icon class="text-base text-green-600" icon="mdi:lightbulb-outline"></iconify-icon>
+<span class="text-xs font-medium text-[#1D2129]">交叉销售</span>
+</div>
+<p class="text-[10px] text-[#4E5969]">王华（B 级）当前仅有借贷纠纷案件。其企业客户背景符合常年法律顾问服务画像，建议推荐企业法务套餐。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</div><!-- 客户详情 -->

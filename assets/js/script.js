@@ -15,23 +15,82 @@
             dynamicAttachments: []
         };
 
+        // ===== 视图缓存管理 =====
+        var viewCache = {};
+
+        // 视图文件名映射
+        var viewFileMap = {
+            'workstation': 'workstation.html',
+            'schedule-list': 'schedule-list.html',
+            'attention-list': 'attention-list.html',
+            'case-list': 'case-list.html',
+            'case-analysis': 'case-analysis.html',
+            'schedule-calendar': 'schedule-calendar.html',
+            'case-dynamics': 'case-dynamics.html',
+            'attachment-list': 'attachment-list.html',
+            'case': 'case-detail.html',
+            'client': 'client.html',
+            'client-detail': 'client-detail.html',
+            'template': 'template.html',
+            'knowledge': 'knowledge.html',
+            'ai': 'ai.html',
+            'subscription': 'subscription.html',
+            'payment': 'payment.html',
+            'payment-success': 'payment-success.html',
+            'orders': 'orders.html',
+            'member-center': 'member-center.html',
+            'account-settings': 'account-settings.html'
+        };
+
+        // 动态加载视图
+        function loadView(viewId, callback) {
+            if (viewCache[viewId]) {
+                // 已缓存，直接使用
+                if (callback) callback(viewCache[viewId]);
+                return;
+            }
+            var fileName = viewFileMap[viewId];
+            if (!fileName) {
+                console.error('未知的视图ID:', viewId);
+                return;
+            }
+            fetch('templates/views/' + fileName)
+                .then(function(response) { return response.text(); })
+                .then(function(html) {
+                    viewCache[viewId] = html;
+                    if (callback) callback(html);
+                })
+                .catch(function(err) { console.error('加载视图失败:', viewId, err); });
+        }
+
         // 视图切换逻辑
         function switchView(viewId, el) {
-            // 隐藏所有视图
-            document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
-            // 显示目标视图
             var target = document.getElementById('view-' + viewId);
             if (target) {
+                // 视图已存在，直接显示
+                document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
                 target.classList.remove('hidden');
-                // 新视图需要 flex-col
                 if (viewId === 'schedule-list' || viewId === 'attention-list') {
                     target.classList.add('flex-col');
                 }
+            } else {
+                // 视图未加载，动态加载
+                loadView(viewId, function(html) {
+                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                    var newTarget = document.getElementById('view-' + viewId);
+                    if (newTarget) {
+                        document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
+                        newTarget.classList.remove('hidden');
+                        if (viewId === 'schedule-list' || viewId === 'attention-list') {
+                            newTarget.classList.add('flex-col');
+                        }
+                    }
+                });
             }
-            
+
             // 更新侧边栏状态
             if (el) {
-                document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+                document.querySelectorAll('.sidebar-item').forEach(function(item) { item.classList.remove('active'); });
                 el.classList.add('active');
             }
 
@@ -1025,21 +1084,28 @@
             item.classList.remove('active');
         });
         if (el) el.classList.add('active');
-        
-        // 隐藏工作标签下所有视图
-        document.querySelectorAll('.view-content').forEach(function(v) {
-            v.classList.add('hidden');
-        });
-        
-        // 显示目标视图
-        var targetMap = {
-            'case-list': 'view-case-list',
-            'case-analysis': 'view-case-analysis',
-            'schedule-calendar': 'view-schedule-calendar'
-        };
-        var targetId = targetMap[viewName] || 'view-' + viewName;
+
+        var targetId = 'view-' + viewName;
         var target = document.getElementById(targetId);
-        if (target) target.classList.remove('hidden');
+        if (target) {
+            // 视图已存在，直接显示
+            document.querySelectorAll('.view-content').forEach(function(v) {
+                v.classList.add('hidden');
+            });
+            target.classList.remove('hidden');
+        } else {
+            // 视图未加载，动态加载
+            loadView(viewName, function(html) {
+                document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                var newTarget = document.getElementById(targetId);
+                if (newTarget) {
+                    document.querySelectorAll('.view-content').forEach(function(v) {
+                        v.classList.add('hidden');
+                    });
+                    newTarget.classList.remove('hidden');
+                }
+            });
+        }
     }
 
     // 打开案件详情（跳转到案件详情页，默认显示案件概览 Tab）
