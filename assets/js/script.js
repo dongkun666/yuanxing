@@ -122,7 +122,7 @@
                 aiViewMessages.innerHTML = '';
             }
             // 添加系统欢迎消息到侧边栏
-            var welcomeHtml = '<div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0"><iconify-icon icon="mdi:robot" class="text-white text-sm"></iconify-icon></div><div class="bg-[#F2F3F5] dark:bg-gray-700 rounded-xl px-3 py-2 text-xs text-gray-700 dark:text-gray-200"><p>您好！我是 LexPrime AI 助手，可以帮您：</p><ul class="list-disc pl-4 mt-1 space-y-0.5"><li>起草法律文书</li><li>检索类案与法条</li><li>分析案件策略</li><li>审查合同风险</li></ul><p class="mt-1">请问有什么可以帮您的？</p></div></div>';
+            var welcomeHtml = '<div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0"><iconify-icon icon="mdi:robot" class="text-white text-sm"></iconify-icon></div><div class="bg-[#F2F3F5] rounded-xl px-3 py-2 text-xs text-gray-700"><p>您好！我是 LexPrime AI 助手，可以帮您：</p><ul class="list-disc pl-4 mt-1 space-y-0.5"><li>起草法律文书</li><li>检索类案与法条</li><li>分析案件策略</li><li>审查合同风险</li></ul><p class="mt-1">请问有什么可以帮您的？</p></div></div>';
             
             var chatArea = document.querySelector('#chatPanel .flex-1.overflow-y-auto');
             if (chatArea) chatArea.innerHTML = welcomeHtml;
@@ -132,7 +132,7 @@
                     '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0 shadow-sm">' +
                         '<iconify-icon icon="mdi:robot" class="text-white text-base"></iconify-icon>' +
                     '</div>' +
-                    '<div class="bg-white dark:bg-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-gray-700 dark:text-gray-200 shadow-sm max-w-[80%]">' +
+                    '<div class="bg-white rounded-xl px-3.5 py-2.5 text-xs text-gray-700 shadow-sm max-w-[80%]">' +
                         '<p>您好！我是 LexPrime AI 助手，可以帮您起草文书、检索类案、分析策略、审查合同。请问有什么可以帮您的？</p>' +
                     '</div>' +
                 '</div>';
@@ -153,7 +153,7 @@
                     '<iconify-icon class="text-[10px]" icon="mdi:robot"></iconify-icon>' +
                   '</div>' +
                   '<div class="chat-bubble-ai max-w-[85%]">' +
-                    '<p class="text-xs leading-relaxed text-[#4E5969] dark:text-gray-300">已切换到对话：「<span class="font-medium text-[#165DFF]">' + title + '</span>」</p>' +
+                    '<p class="text-xs leading-relaxed text-[#4E5969]">已切换到对话：「<span class="font-medium text-[#165DFF]">' + title + '</span>」</p>' +
                     '<div class="flex items-center gap-2 mt-1.5">' +
                       '<span class="text-[10px] text-[#86909C]">刚刚</span>' +
                     '</div>' +

@@ -189,36 +189,36 @@
 </div>
 </div>
 <!-- 更多按钮（工作标签底部）+ 独立弹出菜单 -->
-<div class="mt-auto border-t border-gray-100 dark:border-gray-700 px-3 py-2 relative">
-<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] dark:hover:bg-[#2B2F36] text-[#4E5969] dark:text-gray-300 transition-colors text-xs" onclick="toggleMoreMenu('work')">
+<div class="mt-auto border-t border-gray-100 px-3 py-2 relative">
+<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] text-[#4E5969] transition-colors text-xs" onclick="toggleMoreMenu('work')">
 <iconify-icon class="text-lg" icon="mdi:dots-horizontal"></iconify-icon>
 <span class="sidebar-text">更多</span>
 </button>
 <!-- 弹出菜单 -->
-<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-gray-800 rounded-xl border border-[#E5E6EB] dark:border-gray-600 shadow-lg overflow-hidden z-50" id="moreMenuWork">
+<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-50" id="moreMenuWork">
 <div class="py-1">
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('settings')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('settings')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:cog-outline"></iconify-icon>
 <span>设置</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('upgrade')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('upgrade')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:rocket-launch-outline"></iconify-icon>
 <span>升级</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('feedback')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('feedback')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:message-text-outline"></iconify-icon>
 <span>问题反馈</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('guide')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('guide')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:book-open-outline"></iconify-icon>
 <span>用户指南</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('contact')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('contact')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:email-outline"></iconify-icon>
 <span>联系我们</span>
 </button>
-<div class="h-px bg-[#E5E6EB] dark:bg-gray-700 mx-4"></div>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] dark:hover:bg-[rgba(245,63,63,0.1)] transition-colors" onclick="handleMoreAction('logout')">
+<div class="h-px bg-[#E5E6EB] mx-4"></div>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] transition-colors" onclick="handleMoreAction('logout')">
 <iconify-icon class="text-base" icon="mdi:logout"></iconify-icon>
 <span>退出登录</span>
 </button>
@@ -229,11 +229,11 @@
 <!-- AI对话标签页内容 -->
 <div class="hidden flex flex-col h-full" id="sidebarTabAI">
 <!-- 顶部标题 -->
-<div class="flex items-center gap-2 px-4 py-3 border-b border-[#E5E6EB] dark:border-gray-700 flex-none">
+<div class="flex items-center gap-2 px-4 py-3 border-b border-[#E5E6EB] flex-none">
 <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
 </div>
-<span class="text-sm font-semibold text-[#1D2129] dark:text-gray-200">LexPrime 助手</span>
+<span class="text-sm font-semibold text-[#1D2129]">LexPrime 助手</span>
 </div>
 <!-- 菜单列表 -->
 <div class="flex-1 p-3 pt-2 overflow-y-auto">
@@ -251,30 +251,30 @@
 </div>
 </div>
 <!-- 更多按钮（AI标签底部）+ 独立弹出菜单 -->
-<div class="mt-auto border-t border-gray-100 dark:border-gray-700 px-3 py-2 relative">
-<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] dark:hover:bg-[#2B2F36] text-[#4E5969] dark:text-gray-300 transition-colors text-xs" onclick="toggleMoreMenu('ai')">
+<div class="mt-auto border-t border-gray-100 px-3 py-2 relative">
+<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] text-[#4E5969] transition-colors text-xs" onclick="toggleMoreMenu('ai')">
 <iconify-icon class="text-lg" icon="mdi:dots-horizontal"></iconify-icon>
 <span class="sidebar-text">更多</span>
 </button>
-<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-gray-800 rounded-xl border border-[#E5E6EB] dark:border-gray-600 shadow-lg overflow-hidden z-50" id="moreMenuAI">
+<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-50" id="moreMenuAI">
 <div class="py-1">
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('settings')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('settings')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:cog-outline"></iconify-icon><span>设置</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('upgrade')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('upgrade')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:rocket-launch-outline"></iconify-icon><span>升级</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('feedback')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('feedback')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:message-text-outline"></iconify-icon><span>问题反馈</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('guide')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('guide')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:book-open-outline"></iconify-icon><span>用户指南</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] dark:text-gray-300 hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] transition-colors" onclick="handleMoreAction('contact')">
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('contact')">
 <iconify-icon class="text-base text-[#86909C]" icon="mdi:email-outline"></iconify-icon><span>联系我们</span>
 </button>
-<div class="h-px bg-[#E5E6EB] dark:bg-gray-700 mx-4"></div>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] dark:hover:bg-[rgba(245,63,63,0.1)] transition-colors" onclick="handleMoreAction('logout')">
+<div class="h-px bg-[#E5E6EB] mx-4"></div>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] transition-colors" onclick="handleMoreAction('logout')">
 <iconify-icon class="text-base" icon="mdi:logout"></iconify-icon><span>退出登录</span>
 </button>
 </div>
@@ -2862,7 +2862,7 @@
 <div class="flex-1 flex flex-col overflow-hidden" id="aiViewChat">
 <!-- 顶部标题 -->
 <div class="bg-white border-b border-[#E5E6EB] px-5 py-2.5 flex items-center justify-between flex-none">
-<h2 class="text-sm font-semibold text-[#1D2129] dark:text-gray-200">新对话</h2>
+<h2 class="text-sm font-semibold text-[#1D2129]">新对话</h2>
 <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#165DFF] hover:bg-[#4080FF] rounded-lg transition-colors" onclick="startNewChat()">
 <iconify-icon class="text-xs" icon="mdi:plus"></iconify-icon>
         新建对话
@@ -2930,7 +2930,7 @@
 <!-- ====== 技能（默认隐藏） ====== -->
 <div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewSkills">
 <div class="max-w-5xl mx-auto w-full">
-<h2 class="text-base font-semibold text-[#1D2129] dark:text-gray-200 mb-4">技能库</h2>
+<h2 class="text-base font-semibold text-[#1D2129] mb-4">技能库</h2>
 <div class="grid grid-cols-3 gap-4">
 <!-- 技能卡片1 -->
 <div class="bg-white rounded-xl p-4 border border-[#E5E6EB] hover:border-[#165DFF] hover:shadow-sm transition-all cursor-default">
@@ -3017,59 +3017,59 @@
 <div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewHistory">
 <div class="max-w-3xl mx-auto w-full">
 <div class="flex items-center justify-between mb-4">
-<h2 class="text-base font-semibold text-[#1D2129] dark:text-gray-200">历史记录</h2>
+<h2 class="text-base font-semibold text-[#1D2129]">历史记录</h2>
 </div>
 <div class="relative mb-4">
 <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-[#86909C] text-sm" icon="mdi:magnify"></iconify-icon>
-<input class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-[#E5E6EB] bg-white dark:bg-gray-800 dark:border-gray-600 text-[#1D2129] dark:text-gray-200 placeholder-[#86909C] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20 transition-all" oninput="filterAIHistory(this)" placeholder="搜索历史对话..." type="text"/>
+<input class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-[#E5E6EB] bg-white text-[#1D2129] placeholder-[#86909C] focus:outline-none focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF]/20 transition-all" oninput="filterAIHistory(this)" placeholder="搜索历史对话..." type="text"/>
 </div>
 <div class="space-y-1" id="aiHistoryList">
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="买卖合同纠纷起诉状起草" onclick="selectAIHistory(this)">
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="买卖合同纠纷起诉状起草" onclick="selectAIHistory(this)">
 <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
 <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-[#1D2129] dark:text-gray-200 truncate">买卖合同纠纷起诉状起草</p>
+<p class="text-sm font-medium text-[#1D2129] truncate">买卖合同纠纷起诉状起草</p>
 <p class="text-[11px] text-[#86909C]">2026-06-10 14:30</p>
 </div>
 <iconify-icon class="text-[#C9CDD4] text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
 </div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="民间借贷利息计算咨询" onclick="selectAIHistory(this)">
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="民间借贷利息计算咨询" onclick="selectAIHistory(this)">
 <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
 <iconify-icon icon="mdi:currency-cny"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-[#1D2129] dark:text-gray-200 truncate">民间借贷利息计算咨询</p>
+<p class="text-sm font-medium text-[#1D2129] truncate">民间借贷利息计算咨询</p>
 <p class="text-[11px] text-[#86909C]">2026-06-09 10:15</p>
 </div>
 <iconify-icon class="text-[#C9CDD4] text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
 </div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="劳动争议仲裁申请分析" onclick="selectAIHistory(this)">
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="劳动争议仲裁申请分析" onclick="selectAIHistory(this)">
 <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
 <iconify-icon icon="mdi:scale-balance"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-[#1D2129] dark:text-gray-200 truncate">劳动争议仲裁申请分析</p>
+<p class="text-sm font-medium text-[#1D2129] truncate">劳动争议仲裁申请分析</p>
 <p class="text-[11px] text-[#86909C]">2026-06-08 16:00</p>
 </div>
 <iconify-icon class="text-[#C9CDD4] text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
 </div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="股权转让合同审查" onclick="selectAIHistory(this)">
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="股权转让合同审查" onclick="selectAIHistory(this)">
 <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
 <iconify-icon icon="mdi:file-sign"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-[#1D2129] dark:text-gray-200 truncate">股权转让合同审查</p>
+<p class="text-sm font-medium text-[#1D2129] truncate">股权转让合同审查</p>
 <p class="text-[11px] text-[#86909C]">2026-06-07 09:30</p>
 </div>
 <iconify-icon class="text-[#C9CDD4] text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
 </div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] dark:hover:bg-[#2B2F36] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="离婚财产分割方案咨询" onclick="selectAIHistory(this)">
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F7F8FA] cursor-pointer transition-colors border border-transparent hover:border-[#E5E6EB]" data-title="离婚财产分割方案咨询" onclick="selectAIHistory(this)">
 <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
 <iconify-icon icon="mdi:heart-broken-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-[#1D2129] dark:text-gray-200 truncate">离婚财产分割方案咨询</p>
+<p class="text-sm font-medium text-[#1D2129] truncate">离婚财产分割方案咨询</p>
 <p class="text-[11px] text-[#86909C]">2026-06-06 11:00</p>
 </div>
 <iconify-icon class="text-[#C9CDD4] text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
@@ -4533,7 +4533,7 @@
             </span>
 </div>
 </footer>
-<script src="assets/js/script.js?v=2"></script>
+<script src="assets/js/script.js?v=3"></script>
 <!-- 新建客户弹窗 -->
 <div class="hidden fixed inset-0 z-[1000] flex items-center justify-center bg-black/40" id="new-client-modal">
 <div class="bg-white rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
