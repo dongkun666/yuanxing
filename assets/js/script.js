@@ -159,6 +159,11 @@
             filterCaseList();
         }
 
+        // ===== 案件归档 =====
+        function archiveCase() {
+            showToast('案件归档功能开发中');
+        }
+
         // 视图切换逻辑
         function switchView(viewId, el) {
             var target = document.getElementById('view-' + viewId);
