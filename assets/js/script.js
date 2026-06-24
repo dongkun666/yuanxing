@@ -165,6 +165,18 @@
             showToast('案件归档功能开发中');
         }
 
+        function deleteCase(index) {
+            if (!confirm('确定要删除该案件吗？删除后不可恢复。')) return;
+            var tbody = document.getElementById('caseTableBody');
+            if (!tbody) return;
+            var rows = tbody.querySelectorAll('tr');
+            if (rows[index]) {
+                rows[index].remove();
+                showToast('案件已删除');
+                filterCaseList();
+            }
+        }
+
         // ===== 案件详情页操作 =====
         function shareCase() {
             showToast('分享案件功能开发中');
