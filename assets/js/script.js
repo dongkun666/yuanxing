@@ -1653,6 +1653,95 @@
         }
     }
 
+    // 时间线相关函数
+    function openAddTimelineModal() {
+        var modal = document.getElementById('add-timeline-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('timeline-title').value = '';
+            document.getElementById('timeline-date').value = '';
+            document.getElementById('timeline-color').value = '#165DFF';
+            document.getElementById('timeline-desc').value = '';
+            document.getElementById('timeline-tag').value = '';
+        }
+    }
+
+    function closeAddTimelineModal() {
+        var modal = document.getElementById('add-timeline-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitTimeline() {
+        var title = document.getElementById('timeline-title').value.trim();
+        var date = document.getElementById('timeline-date').value;
+        var color = document.getElementById('timeline-color').value;
+        var desc = document.getElementById('timeline-desc').value.trim();
+        var tag = document.getElementById('timeline-tag').value.trim();
+
+        if (!title) {
+            showToast('请输入事件标题');
+            return;
+        }
+        if (!date) {
+            showToast('请选择事件日期');
+            return;
+        }
+
+        var container = document.getElementById('timeline-container');
+        if (!container) {
+            showToast('时间线容器未找到');
+            return;
+        }
+
+        var tagHtml = '';
+        if (tag) {
+            tagHtml = '<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">' + tag + '</span>';
+        }
+
+        var iconClass = 'mdi:calendar';
+        if (color === '#165DFF') iconClass = 'mdi:file-document';
+        else if (color === 'orange-500') iconClass = 'mdi:file-document-outline';
+        else if (color === 'green-500') iconClass = 'mdi:gavel';
+        else if (color === 'purple-500') iconClass = 'mdi:calendar';
+        else if (color === 'red-500') iconClass = 'mdi:alert-circle';
+        else iconClass = 'mdi:clock';
+
+        var newItem = document.createElement('div');
+        newItem.className = 'relative';
+        newItem.innerHTML = '<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-' + color.split('-')[0] + (color.includes('-') ? '-' + color.split('-')[1] : '') + ' flex items-center justify-center text-white shadow">' +
+            '<iconify-icon class="text-xs" icon="' + iconClass + '"></iconify-icon>' +
+            '</div>' +
+            '<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">' +
+            '<div class="flex items-center justify-between mb-1">' +
+            '<span class="text-sm font-medium">' + title + '</span>' +
+            '<div class="flex items-center gap-2">' +
+            '<span class="text-[10px] text-gray-400">' + date + '</span>' +
+            '<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">' +
+            '<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '</div>' +
+            (desc ? '<p class="text-xs text-gray-500">' + desc + '</p>' : '') +
+            (tagHtml ? tagHtml : '') +
+            '</div>' +
+            '</div>';
+
+        container.appendChild(newItem);
+        closeAddTimelineModal();
+        showToast('时间线已添加');
+    }
+
+    function deleteTimeline(btn) {
+        if (!confirm('确定要删除这条时间线吗？')) return;
+        var item = btn.closest('.relative');
+        if (item) {
+            item.remove();
+            showToast('时间线已删除');
+        }
+    }
+
     // AI 侧边面板子标签切换
     function switchAIPanel(btn, panelName) {
         var container = btn.closest('.w-80') || btn.closest('[class*="w-80"]');
