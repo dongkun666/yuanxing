@@ -1742,6 +1742,70 @@
         }
     }
 
+    // 证件管理相关函数
+    function openUploadEvidenceModal() {
+        var modal = document.getElementById('upload-evidence-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('evidence-name').value = '';
+            document.getElementById('evidence-type').value = '企业证件';
+        }
+    }
+
+    function closeUploadEvidenceModal() {
+        var modal = document.getElementById('upload-evidence-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitEvidence() {
+        var name = document.getElementById('evidence-name').value.trim();
+        var type = document.getElementById('evidence-type').value;
+
+        if (!name) {
+            showToast('请输入证件名称');
+            return;
+        }
+
+        var list = document.getElementById('evidence-list');
+        if (!list) {
+            showToast('证件列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:card-account-details"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + type + ' · ' + dateStr + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadEvidenceModal();
+        showToast('证件已上传');
+    }
+
+    function deleteEvidence(btn) {
+        if (!confirm('确定要删除该证件吗？')) return;
+        var item = btn.closest('.flex.items-center.justify-between');
+        if (item) {
+            item.remove();
+            showToast('证件已删除');
+        }
+    }
+
     // AI 侧边面板子标签切换
     function switchAIPanel(btn, panelName) {
         var container = btn.closest('.w-80') || btn.closest('[class*="w-80"]');
