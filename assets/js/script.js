@@ -1339,11 +1339,10 @@
             if (tabName === 'overview' || tabName === 'timeline' || tabName === 'materials') {
                 target.classList.add('flex-col');
             }
-            // documents 需要 flex-row
-            if (tabName === 'documents') {
+            // documents, evidence, contract, authorization, judgment, other 需要 flex-row
+            if (tabName === 'documents' || tabName === 'evidence' || tabName === 'contract' || tabName === 'authorization' || tabName === 'judgment' || tabName === 'other') {
                 target.classList.add('flex-row');
             }
-            // 其他标签（evidence, contract, authorization, judgment, other）已有 flex-row，只需确保有 flex
         }
         document.querySelectorAll('.case-tab').forEach(function(b) {
             b.className = 'case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors';
