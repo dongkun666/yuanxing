@@ -781,23 +781,33 @@
 
         // 跳转到会员订阅页面
         function switchToSubscription() {
-            // 关闭用户菜单
             var userMenu = document.getElementById('userMenu');
             if (userMenu) userMenu.classList.add('hidden');
             
-            // 切换到工作标签
             switchSidebarTab('work');
             
-            // 隐藏所有视图，显示订阅页面
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-subscription').classList.remove('hidden');
-            
-            // 取消所有侧边栏菜单的高亮
             document.querySelectorAll('.sidebar-item').forEach(function(item) {
                 item.classList.remove('active');
             });
+
+            var target = document.getElementById('view-subscription');
+            if (target) {
+                document.querySelectorAll('.view-content').forEach(function(v) {
+                    v.classList.add('hidden');
+                });
+                target.classList.remove('hidden');
+            } else {
+                loadView('subscription', function(html) {
+                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                    var newTarget = document.getElementById('view-subscription');
+                    if (newTarget) {
+                        document.querySelectorAll('.view-content').forEach(function(v) {
+                            v.classList.add('hidden');
+                        });
+                        newTarget.classList.remove('hidden');
+                    }
+                });
+            }
         }
 
         // 年月付切换
@@ -956,17 +966,11 @@
 
         // 从支付成功页跳转
         function goToSubscription() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-subscription').classList.remove('hidden');
+            switchView('subscription');
         }
 
         function goToWorkstation() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-workstation').classList.remove('hidden');
+            switchView('workstation');
         }
 
         // 跳转到订单记录
@@ -984,10 +988,7 @@
         }
 
         function goToMemberCenter() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-member-center').classList.remove('hidden');
+            switchView('member-center');
         }
 
         // 跳转到账号设置
