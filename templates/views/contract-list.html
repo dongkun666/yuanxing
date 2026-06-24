@@ -1,0 +1,165 @@
+<div class="view-content flex-1 flex flex-col overflow-hidden" id="view-contract-list">
+    <!-- 顶部搜索栏 -->
+    <div class="bg-white border-b border-[#E5E6EB] px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <h2 class="text-lg font-bold">委托合同管理</h2>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" icon="mdi:search"></iconify-icon>
+                <input type="text" placeholder="搜索合同编号、客户名称..." class="pl-9 pr-4 py-2 text-sm border border-[#E5E6EB] rounded-lg w-64 focus:outline-none focus:border-[#165DFF]">
+            </div>
+            <button class="flex items-center gap-1.5 text-sm font-medium text-[#165DFF] hover:text-[#4080FF] bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors">
+                <iconify-icon class="text-sm" icon="mdi:filter"></iconify-icon>
+                筛选
+            </button>
+            <button class="flex items-center gap-1.5 text-sm font-medium text-white bg-[#165DFF] hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">
+                <iconify-icon class="text-sm" icon="mdi:plus"></iconify-icon>
+                新建合同
+            </button>
+        </div>
+    </div>
+    
+    <!-- 统计卡片 -->
+    <div class="p-4 grid grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+            <p class="text-xs text-gray-500 mb-1">合同总数</p>
+            <h3 class="text-xl font-bold">24</h3>
+        </div>
+        <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+            <p class="text-xs text-gray-500 mb-1">待审批</p>
+            <h3 class="text-xl font-bold text-orange-500">3</h3>
+        </div>
+        <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+            <p class="text-xs text-gray-500 mb-1">已生效</p>
+            <h3 class="text-xl font-bold text-green-500">18</h3>
+        </div>
+        <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+            <p class="text-xs text-gray-500 mb-1">已终止</p>
+            <h3 class="text-xl font-bold text-gray-400">3</h3>
+        </div>
+    </div>
+    
+    <!-- 列表内容区 -->
+    <div class="flex-1 overflow-auto px-4 pb-4">
+        <div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+            <!-- 列表表头 -->
+            <div class="bg-gray-50 px-4 py-3 flex items-center border-b border-[#E5E6EB]">
+                <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                <div class="flex-1 text-sm font-medium text-gray-600">合同编号</div>
+                <div class="w-32 text-sm font-medium text-gray-600 text-center">客户名称</div>
+                <div class="w-28 text-sm font-medium text-gray-600 text-center">签订日期</div>
+                <div class="w-24 text-sm font-medium text-gray-600 text-center">合同金额</div>
+                <div class="w-24 text-sm font-medium text-gray-600 text-center">状态</div>
+                <div class="w-20 text-sm font-medium text-gray-600 text-center">操作</div>
+            </div>
+            
+            <!-- 列表内容 -->
+            <div class="divide-y divide-[#E5E6EB]">
+                <div class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                    <div class="flex-1 text-sm text-gray-800">HT-2026-001</div>
+                    <div class="w-32 text-sm text-gray-600 text-center">北京科技有限公司</div>
+                    <div class="w-28 text-sm text-gray-600 text-center">2026-01-15</div>
+                    <div class="w-24 text-sm text-gray-800 text-center font-medium">¥5,000,000</div>
+                    <div class="w-24 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">已生效</span></div>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="查看详情">
+                            <iconify-icon class="text-xs" icon="mdi:eye"></iconify-icon>
+                        </button>
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="下载">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                    <div class="flex-1 text-sm text-gray-800">HT-2026-002</div>
+                    <div class="w-32 text-sm text-gray-600 text-center">上海贸易集团</div>
+                    <div class="w-28 text-sm text-gray-600 text-center">2026-02-20</div>
+                    <div class="w-24 text-sm text-gray-800 text-center font-medium">¥2,500,000</div>
+                    <div class="w-24 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">已生效</span></div>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="查看详情">
+                            <iconify-icon class="text-xs" icon="mdi:eye"></iconify-icon>
+                        </button>
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="下载">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                    <div class="flex-1 text-sm text-gray-800">HT-2026-003</div>
+                    <div class="w-32 text-sm text-gray-600 text-center">广州制造有限公司</div>
+                    <div class="w-28 text-sm text-gray-600 text-center">2026-03-10</div>
+                    <div class="w-24 text-sm text-gray-800 text-center font-medium">¥800,000</div>
+                    <div class="w-24 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">待审批</span></div>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="查看详情">
+                            <iconify-icon class="text-xs" icon="mdi:eye"></iconify-icon>
+                        </button>
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="下载">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                    <div class="flex-1 text-sm text-gray-800">HT-2026-004</div>
+                    <div class="w-32 text-sm text-gray-600 text-center">深圳科技股份有限公司</div>
+                    <div class="w-28 text-sm text-gray-600 text-center">2026-04-05</div>
+                    <div class="w-24 text-sm text-gray-800 text-center font-medium">¥1,200,000</div>
+                    <div class="w-24 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">已生效</span></div>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="查看详情">
+                            <iconify-icon class="text-xs" icon="mdi:eye"></iconify-icon>
+                        </button>
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="下载">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8"><input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#165DFF]"></div>
+                    <div class="flex-1 text-sm text-gray-800">HT-2026-005</div>
+                    <div class="w-32 text-sm text-gray-600 text-center">杭州网络科技有限公司</div>
+                    <div class="w-28 text-sm text-gray-600 text-center">2026-05-18</div>
+                    <div class="w-24 text-sm text-gray-800 text-center font-medium">¥3,500,000</div>
+                    <div class="w-24 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">已终止</span></div>
+                    <div class="w-20 flex items-center justify-center gap-2">
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="查看详情">
+                            <iconify-icon class="text-xs" icon="mdi:eye"></iconify-icon>
+                        </button>
+                        <button class="w-6 h-6 rounded hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-[#165DFF]" title="下载">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分页栏 -->
+            <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-[#E5E6EB]">
+                <div class="flex items-center gap-4 text-xs text-gray-500">
+                    <span>共 24 条</span>
+                    <select class="border border-[#E5E6EB] rounded px-2 py-1 text-xs focus:outline-none focus:border-[#165DFF]">
+                        <option>10条/页</option>
+                        <option>20条/页</option>
+                        <option>50条/页</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button class="w-7 h-7 rounded border border-[#E5E6EB] flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300" disabled>
+                        <iconify-icon class="text-xs" icon="mdi:chevron-left"></iconify-icon>
+                    </button>
+                    <button class="w-7 h-7 rounded border border-[#165DFF] bg-[#165DFF] text-white flex items-center justify-center text-xs">1</button>
+                    <button class="w-7 h-7 rounded border border-[#E5E6EB] flex items-center justify-center text-gray-600 hover:border-gray-300 text-xs">2</button>
+                    <button class="w-7 h-7 rounded border border-[#E5E6EB] flex items-center justify-center text-gray-600 hover:border-gray-300 text-xs">3</button>
+                    <button class="w-7 h-7 rounded border border-[#E5E6EB] flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300">
+                        <iconify-icon class="text-xs" icon="mdi:chevron-right"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
