@@ -178,6 +178,18 @@
                 if (newText && newText !== currentText) {
                     var textNode = document.createTextNode(newText);
                     el.parentNode.replaceChild(textNode, el);
+                    if (currentCaseIndex >= 0) {
+                        var tbody = document.getElementById('caseTableBody');
+                        if (tbody) {
+                            var rows = tbody.querySelectorAll('tr');
+                            if (rows[currentCaseIndex]) {
+                                var firstTd = rows[currentCaseIndex].querySelector('td:first-child');
+                                if (firstTd) {
+                                    firstTd.textContent = newText;
+                                }
+                            }
+                        }
+                    }
                     showToast('案件名已更新');
                 } else {
                     el.style.display = '';
@@ -1488,14 +1500,18 @@
     }
 
     // 打开案件详情（跳转到案件详情页，默认显示案件概览 Tab）
+    var currentCaseIndex = -1;
+    
     function openCaseDetail(index) {
         var caseMeta = [
-            { title: '(2026)京01民初128号', type: '民间借贷纠纷', status: '进行中' },
-            { title: '(2026)京02民初256号', type: '劳动争议仲裁', status: '进行中' },
-            { title: '(2026)京03民初789号', type: '合同纠纷', status: '待开庭' },
-            { title: '(2026)京04民初345号', type: '知识产权侵权', status: '已立案' },
-            { title: '(2026)京05民初567号', type: '离婚纠纷', status: '进行中' }
+            { caseName: '李明诉XX公司买卖合同纠纷', caseNumber: '(2026)京01民初128号', type: '民间借贷纠纷', status: '进行中' },
+            { caseName: '赵六劳动争议仲裁案', caseNumber: '(2026)京02民初256号', type: '劳动争议仲裁', status: '进行中' },
+            { caseName: '张三合同纠纷案', caseNumber: '(2026)京03民初789号', type: '合同纠纷', status: '待开庭' },
+            { caseName: '某科技公司股权纠纷案', caseNumber: '(2026)京04民初345号', type: '知识产权侵权', status: '已立案' },
+            { caseName: '王华借贷纠纷案', caseNumber: '(2026)京05民初567号', type: '离婚纠纷', status: '进行中' }
         ];
+        
+        currentCaseIndex = index;
         
         document.querySelectorAll('.view-content').forEach(function(v) {
             v.classList.add('hidden');
@@ -1510,7 +1526,7 @@
                 var titleEl = document.getElementById('case-detail-title');
                 var typeEl = document.getElementById('case-detail-type');
                 var statusEl = document.getElementById('case-detail-status');
-                if (titleEl) titleEl.textContent = meta.title;
+                if (titleEl) titleEl.textContent = meta.caseName;
                 if (typeEl) typeEl.textContent = meta.type;
                 if (statusEl) {
                     statusEl.textContent = meta.status;
@@ -1533,7 +1549,7 @@
                         var titleEl = document.getElementById('case-detail-title');
                         var typeEl = document.getElementById('case-detail-type');
                         var statusEl = document.getElementById('case-detail-status');
-                        if (titleEl) titleEl.textContent = meta.title;
+                        if (titleEl) titleEl.textContent = meta.caseName;
                         if (typeEl) typeEl.textContent = meta.type;
                         if (statusEl) {
                             statusEl.textContent = meta.status;
