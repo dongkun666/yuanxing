@@ -26,6 +26,9 @@
 <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-[#165DFF] text-[#165DFF] transition-colors" data-tab="overview" onclick="switchCaseTab('overview', this)">
 <iconify-icon class="mr-1.5" icon="mdi:information-outline"></iconify-icon>案件概览
             </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="timeline" onclick="switchCaseTab('timeline', this)">
+<iconify-icon class="mr-1.5" icon="mdi:timeline-outline"></iconify-icon>时间线
+            </button>
 <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="documents" onclick="switchCaseTab('documents', this)">
 <iconify-icon class="mr-1.5" icon="mdi:file-document-outline"></iconify-icon>起诉状/答辩状
             </button>
@@ -202,6 +205,75 @@
 <p class="text-sm text-gray-600 leading-relaxed">
                         2025年10月12日，原、被告双方签署编号为 SH-2025-1012 的《采购框架协议》，约定由原告向被告供应电子元器件，货款月结。截至2026年3月，原告累计供货价值人民币5,000,000.00元，被告仅支付1,200,000.00元，尚欠3,800,000.00元。经多次催讨无果，原告提起诉讼。目前已完成立案，已申请财产保全并获法院批准，正在准备开庭材料。
                     </p>
+</div>
+</div>
+</div>
+<!-- Tab: 时间线 -->
+<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-timeline">
+<div class="max-w-4xl w-full mx-auto">
+<div class="relative pl-8 border-l-2 border-[#165DFF]/30 space-y-6">
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-[#165DFF] flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:file-sign"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">签订采购框架协议</span>
+<span class="text-[10px] text-gray-400">2025-10-12</span>
+</div>
+<p class="text-xs text-gray-500">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:file-document"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">发出催款函</span>
+<span class="text-[10px] text-gray-400">2026-03-15</span>
+</div>
+<p class="text-xs text-gray-500">原告委托律所向被告发出律师催款函</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">法院立案</span>
+<span class="text-[10px] text-gray-400">2026-06-01</span>
+</div>
+<p class="text-xs text-gray-500">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white shadow">
+<iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium">排期开庭</span>
+<span class="text-[10px] text-gray-400">2026-08-25</span>
+</div>
+<p class="text-xs text-gray-500">第3法庭 · 合议庭审理</p>
+<span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full mt-1 inline-block">距开庭 4 天</span>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white shadow animate-pulse">
+<iconify-icon class="text-xs" icon="mdi:pencil"></iconify-icon>
+</div>
+<div class="bg-white rounded-xl border-2 border-[#165DFF] p-4 ml-4 shadow-md">
+<div class="flex items-center justify-between mb-1">
+<span class="text-sm font-medium text-[#165DFF]">当前 · 文书准备</span>
+<span class="text-[10px] text-gray-400">进行中</span>
+</div>
+<p class="text-xs text-gray-500">起草民事起诉状、准备证据清单及证据材料</p>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">当前阶段</span>
+</div>
+</div>
 </div>
 </div>
 </div>
