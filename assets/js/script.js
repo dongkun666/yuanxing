@@ -1318,6 +1318,9 @@
                             statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
                         }
                     }
+                    // 自动切换到案件概览 Tab
+                    var tab = document.querySelector('.case-tab[data-tab="overview"]');
+                    if (tab) switchCaseTab('overview', tab);
                 }
             });
         }

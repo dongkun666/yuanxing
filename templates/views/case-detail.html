@@ -27,13 +27,22 @@
 <iconify-icon class="mr-1.5" icon="mdi:information-outline"></iconify-icon>案件概览
             </button>
 <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="documents" onclick="switchCaseTab('documents', this)">
-<iconify-icon class="mr-1.5" icon="mdi:file-document-outline"></iconify-icon>文书管理
+<iconify-icon class="mr-1.5" icon="mdi:file-document-outline"></iconify-icon>起诉状/答辩状
             </button>
 <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="materials" onclick="switchCaseTab('materials', this)">
 <iconify-icon class="mr-1.5" icon="mdi:attachment"></iconify-icon>证据材料
             </button>
-<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="timeline" onclick="switchCaseTab('timeline', this)">
-<iconify-icon class="mr-1.5" icon="mdi:timeline-outline"></iconify-icon>时间线
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="contract" onclick="switchCaseTab('contract', this)">
+<iconify-icon class="mr-1.5" icon="mdi:file-sign"></iconify-icon>委托合同
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="authorization" onclick="switchCaseTab('authorization', this)">
+<iconify-icon class="mr-1.5" icon="mdi:certificate-outline"></iconify-icon>授权委托书
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="judgment" onclick="switchCaseTab('judgment', this)">
+<iconify-icon class="mr-1.5" icon="mdi:scale-balance"></iconify-icon>判决书/调解书
+            </button>
+<button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="other" onclick="switchCaseTab('other', this)">
+<iconify-icon class="mr-1.5" icon="mdi:folder-outline"></iconify-icon>其他文书管理
             </button>
 </div>
 </div>
@@ -41,14 +50,14 @@
 <div class="flex-1 flex">
 <!-- Tab: 案件概览 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-overview">
-<div class="max-w-5xl w-full mx-auto space-y-4">
+<div class="w-full px-4 space-y-4">
 <!-- 案件基本信息 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
                         案件基本信息
                     </h5>
-<div class="grid grid-cols-4 gap-6">
+<div class="grid grid-cols-3 gap-4">
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案号</p>
 <p class="text-sm font-medium text-gray-800">(2026)京01民初128号</p>
@@ -85,7 +94,7 @@
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">缴费情况</p>
 <p class="text-sm font-medium text-gray-800">已缴费</p>
 </div>
-<div class="col-span-3">
+<div class="col-span-2">
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">特殊约定</p>
 <p class="text-sm text-gray-800">风险代理，回款后按比例支付律师费</p>
 </div>
@@ -488,75 +497,103 @@
 </div>
 </div>
 </div>
-<!-- Tab: 时间线 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-timeline">
-<div class="max-w-4xl w-full mx-auto">
-<div class="relative pl-8 border-l-2 border-[#165DFF]/30 space-y-6">
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-[#165DFF] flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:file-sign"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">签订采购框架协议</span>
-<span class="text-[10px] text-gray-400">2025-10-12</span>
-</div>
-<p class="text-xs text-gray-500">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
-</div>
-</div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:file-document"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">发出催款函</span>
-<span class="text-[10px] text-gray-400">2026-03-15</span>
-</div>
-<p class="text-xs text-gray-500">原告委托律所向被告发出律师催款函</p>
+<!-- Tab: 委托合同 -->
+<div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-contract">
+<div class="flex-1 bg-gray-50 flex flex-col p-6">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:file-sign"></iconify-icon>
+                            委托合同
+                        </h5>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
+<div>
+<p class="text-sm font-medium">委托代理合同.pdf</p>
+<p class="text-xs text-gray-400">2026-05-15 上传</p>
 </div>
 </div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">法院立案</span>
-<span class="text-[10px] text-gray-400">2026-06-01</span>
-</div>
-<p class="text-xs text-gray-500">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
-</div>
-</div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">排期开庭</span>
-<span class="text-[10px] text-gray-400">2026-08-25</span>
-</div>
-<p class="text-xs text-gray-500">第3法庭 · 合议庭审理</p>
-<span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full mt-1 inline-block">距开庭 4 天</span>
-</div>
-</div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white shadow animate-pulse">
-<iconify-icon class="text-xs" icon="mdi:pencil"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border-2 border-[#165DFF] p-4 ml-4 shadow-md">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium text-[#165DFF]">当前 · 文书准备</span>
-<span class="text-[10px] text-gray-400">进行中</span>
-</div>
-<p class="text-xs text-gray-500">起草民事起诉状、准备证据清单及证据材料</p>
-<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">当前阶段</span>
+<div class="flex gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
 </div>
 </div>
 </div>
+<div class="mt-4 flex gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<iconify-icon icon="mdi:plus"></iconify-icon>上传委托合同
+                </button>
 </div>
 </div>
 </div>
+<!-- Tab: 授权委托书 -->
+<div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-authorization">
+<div class="flex-1 bg-gray-50 flex flex-col p-6">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:certificate-outline"></iconify-icon>
+                            授权委托书
+                        </h5>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
+<div>
+<p class="text-sm font-medium">授权委托书.pdf</p>
+<p class="text-xs text-gray-400">2026-05-20 上传</p>
 </div>
-<!-- 客户管理 -->
+</div>
+<div class="flex gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<iconify-icon icon="mdi:plus"></iconify-icon>上传授权委托书
+                </button>
+</div>
+</div>
+</div>
+<!-- Tab: 判决书/调解书 -->
+<div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-judgment">
+<div class="flex-1 bg-gray-50 flex flex-col p-6">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:scale-balance"></iconify-icon>
+                            判决书/调解书
+                        </h5>
+<div class="text-center py-8 text-gray-400">
+<iconify-icon class="text-4xl" icon="mdi:file-document-outline"></iconify-icon>
+<p class="mt-2 text-sm">暂无判决书/调解书</p>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<iconify-icon icon="mdi:plus"></iconify-icon>上传判决书/调解书
+                </button>
+</div>
+</div>
+</div>
+<!-- Tab: 其他文书管理 -->
+<div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-other">
+<div class="flex-1 bg-gray-50 flex flex-col p-6">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
+<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>
+                            其他文书管理
+                        </h5>
+<div class="text-center py-8 text-gray-400">
+<iconify-icon class="text-4xl" icon="mdi:folder-open-outline"></iconify-icon>
+<p class="mt-2 text-sm">暂无其他文书</p>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<iconify-icon icon="mdi:plus"></iconify-icon>上传其他文书
+                </button>
+</div>
+</div>
+</div>
