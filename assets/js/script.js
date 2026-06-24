@@ -170,16 +170,185 @@
             showToast('分享案件功能开发中');
         }
 
+        var currentEditSection = null;
+        var sectionConfigs = {
+            basic: {
+                title: '编辑案件基本信息',
+                fields: [
+                    { key: 'caseNumber', label: '案号', type: 'text', colSpan: 1 },
+                    { key: 'caseType', label: '案由', type: 'text', colSpan: 1 },
+                    { key: 'status', label: '案件状态', type: 'select', options: ['进行中', '已结案', '已归档', '中止审理'], colSpan: 1 },
+                    { key: 'claimAmount', label: '标的金额', type: 'text', colSpan: 1 },
+                    { key: 'contractAmount', label: '合同金额', type: 'text', colSpan: 1 },
+                    { key: 'signDate', label: '签约日期', type: 'date', colSpan: 1 },
+                    { key: 'stage', label: '代理阶段', type: 'select', options: ['一审', '二审', '再审', '执行', '仲裁'], colSpan: 1 },
+                    { key: 'preservation', label: '是否保全', type: 'select', options: ['已保全', '未保全', '保全中'], colSpan: 1 },
+                    { key: 'paymentStatus', label: '缴费情况', type: 'select', options: ['已缴费', '未缴费', '部分缴费'], colSpan: 1 },
+                    { key: 'specialTerms', label: '特殊约定', type: 'textarea', colSpan: 3 }
+                ]
+            },
+            client: {
+                title: '编辑客户信息',
+                fields: [
+                    { key: 'name', label: '客户姓名', type: 'text', colSpan: 1 },
+                    { key: 'phone', label: '客户电话', type: 'text', colSpan: 1 },
+                    { key: 'idNumber', label: '客户证件号', type: 'text', colSpan: 1 },
+                    { key: 'legalRep', label: '法定代表人', type: 'text', colSpan: 1 },
+                    { key: 'address', label: '客户地址', type: 'textarea', colSpan: 2 }
+                ]
+            },
+            opponent: {
+                title: '编辑对方信息',
+                fields: [
+                    { key: 'name', label: '对方姓名', type: 'text', colSpan: 1 },
+                    { key: 'phone', label: '对方电话', type: 'text', colSpan: 1 },
+                    { key: 'idNumber', label: '对方证件号', type: 'text', colSpan: 1 },
+                    { key: 'legalRep', label: '法定代表人', type: 'text', colSpan: 1 },
+                    { key: 'address', label: '对方地址', type: 'textarea', colSpan: 2 }
+                ]
+            },
+            claims: {
+                title: '编辑客户诉求',
+                fields: [
+                    { key: 'content', label: '客户诉求内容', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            },
+            strategy: {
+                title: '编辑办案思路',
+                fields: [
+                    { key: 'content', label: '办案思路', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            },
+            summary: {
+                title: '编辑案情简述',
+                fields: [
+                    { key: 'content', label: '案情简述', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            }
+        };
+
+        function getFieldValue(section, key) {
+            var el = document.getElementById('field-' + section + '-' + key);
+            if (!el) return '';
+            if (section === 'claims' || section === 'strategy' || section === 'summary') {
+                return el.innerText.trim();
+            }
+            return el.innerText.trim();
+        }
+
+        function setFieldValue(section, key, value) {
+            var el = document.getElementById('field-' + section + '-' + key);
+            if (!el) return;
+            if (section === 'claims') {
+                var lines = value.split('\n').filter(function(l) { return l.trim(); });
+                el.innerHTML = lines.map(function(line, i) {
+                    return '<p>' + (i + 1) + '. ' + line.replace(/^\d+\.\s*/, '') + '</p>';
+                }).join('');
+            } else if (section === 'strategy' || section === 'summary') {
+                el.innerText = value;
+            } else if (key === 'status') {
+                el.innerText = value;
+                el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' + 
+                    (value === '进行中' ? 'bg-blue-100 text-blue-700' :
+                     value === '已结案' ? 'bg-green-100 text-green-700' :
+                     value === '已归档' ? 'bg-gray-100 text-gray-700' :
+                     'bg-orange-100 text-orange-700');
+            } else if (key === 'preservation') {
+                el.innerText = value;
+                el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' + 
+                    (value === '已保全' ? 'bg-green-100 text-green-700' :
+                     value === '未保全' ? 'bg-gray-100 text-gray-700' :
+                     'bg-orange-100 text-orange-700');
+            } else if (section === 'opponent' && key === 'legalRep') {
+                el.innerText = value;
+                if (!value || value === '未提供 · 请补充') {
+                    el.className = 'text-sm text-red-500';
+                } else {
+                    el.className = 'text-sm text-gray-800';
+                }
+            } else {
+                el.innerText = value;
+            }
+        }
+
+        function renderEditForm(section) {
+            var config = sectionConfigs[section];
+            if (!config) return;
+            document.getElementById('edit-modal-title').innerText = config.title;
+            var formBody = document.getElementById('edit-form-body');
+            var html = '';
+            var fields = config.fields;
+            for (var i = 0; i < fields.length; i += 2) {
+                var field1 = fields[i];
+                var field2 = fields[i + 1];
+                var rowColSpan = (field1.colSpan || 1) + (field2 ? (field2.colSpan || 1) : 0);
+                if (field1.colSpan === 2 || (field1.colSpan === 3 && !field2)) {
+                    html += '<div class="space-y-1">';
+                    html += '<label class="block text-xs font-medium text-gray-700">' + field1.label + '</label>';
+                    html += renderFieldInput(section, field1);
+                    html += '</div>';
+                } else {
+                    html += '<div class="grid grid-cols-2 gap-4">';
+                    html += '<div class="space-y-1">';
+                    html += '<label class="block text-xs font-medium text-gray-700">' + field1.label + '</label>';
+                    html += renderFieldInput(section, field1);
+                    html += '</div>';
+                    if (field2) {
+                        html += '<div class="space-y-1">';
+                        html += '<label class="block text-xs font-medium text-gray-700">' + field2.label + '</label>';
+                        html += renderFieldInput(section, field2);
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+            }
+            formBody.innerHTML = html;
+        }
+
+        function renderFieldInput(section, field) {
+            var value = getFieldValue(section, field.key);
+            var inputClass = 'w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors';
+            if (field.type === 'textarea') {
+                var rows = field.rows || 4;
+                return '<textarea class="' + inputClass + ' resize-none" data-field="' + field.key + '" rows="' + rows + '">' + value + '</textarea>';
+            } else if (field.type === 'select') {
+                var options = field.options || [];
+                var optionsHtml = options.map(function(opt) {
+                    return '<option value="' + opt + '"' + (opt === value ? ' selected' : '') + '>' + opt + '</option>';
+                }).join('');
+                return '<select class="' + inputClass + ' appearance-none bg-white" data-field="' + field.key + '">' + optionsHtml + '</select>';
+            } else if (field.type === 'date') {
+                return '<input type="date" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            } else {
+                return '<input type="text" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            }
+        }
+
         function editSection(section) {
-            var sectionNames = {
-                basic: '案件基本信息',
-                client: '客户信息',
-                opponent: '对方信息',
-                claims: '客户诉求',
-                strategy: '办案思路',
-                summary: '案情简述'
-            };
-            showToast('编辑' + (sectionNames[section] || section) + '功能开发中');
+            currentEditSection = section;
+            renderEditForm(section);
+            document.getElementById('edit-section-modal').classList.remove('hidden');
+        }
+
+        function closeEditSectionModal() {
+            document.getElementById('edit-section-modal').classList.add('hidden');
+            currentEditSection = null;
+        }
+
+        function saveEditSection() {
+            if (!currentEditSection) return;
+            var config = sectionConfigs[currentEditSection];
+            if (!config) return;
+            var formBody = document.getElementById('edit-form-body');
+            var inputs = formBody.querySelectorAll('[data-field]');
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                var fieldKey = input.getAttribute('data-field');
+                var value = input.value;
+                setFieldValue(currentEditSection, fieldKey, value);
+            }
+            closeEditSectionModal();
+            showToast('保存成功');
         }
 
         // 视图切换逻辑
