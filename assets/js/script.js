@@ -165,6 +165,42 @@
             showToast('案件归档功能开发中');
         }
 
+        function editCaseTitle(el) {
+            if (el.tagName !== 'SPAN') return;
+            var currentText = el.textContent.trim();
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'text-sm font-medium text-gray-800 bg-transparent border border-[#165DFF] rounded px-2 py-0.5 outline-none focus:border-[#165DFF] w-auto min-w-[200px]';
+            
+            function finishEdit() {
+                var newText = input.value.trim();
+                if (newText && newText !== currentText) {
+                    var textNode = document.createTextNode(newText);
+                    el.parentNode.replaceChild(textNode, el);
+                    showToast('案件名已更新');
+                } else {
+                    el.style.display = '';
+                    input.remove();
+                }
+            }
+            
+            input.addEventListener('blur', finishEdit);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    input.value = currentText;
+                    input.blur();
+                }
+            });
+            
+            el.style.display = 'none';
+            el.parentNode.insertBefore(input, el.nextSibling);
+            input.focus();
+            input.select();
+        }
+
         function deleteCase(index) {
             if (!confirm('确定要删除该案件吗？删除后不可恢复。')) return;
             var tbody = document.getElementById('caseTableBody');
