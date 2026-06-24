@@ -1330,25 +1330,25 @@
     function switchCaseTab(tabName, btn) {
         document.querySelectorAll('[id^="case-tab-"]').forEach(function(el) {
             el.classList.add('hidden');
+            el.classList.remove('flex', 'flex-row', 'flex-col');
         });
         var target = document.getElementById('case-tab-' + tabName);
         if (target) {
             target.classList.remove('hidden');
-            target.classList.add('flex'); // 确保所有标签都有 flex 类
-            // 只对需要 flex-col 的标签添加
+            target.classList.add('flex');
             if (tabName === 'overview' || tabName === 'timeline' || tabName === 'materials') {
                 target.classList.add('flex-col');
-            }
-            // documents, evidence, contract, authorization, judgment, other 需要 flex-row
-            if (tabName === 'documents' || tabName === 'evidence' || tabName === 'contract' || tabName === 'authorization' || tabName === 'judgment' || tabName === 'other') {
+            } else {
                 target.classList.add('flex-row');
             }
         }
         document.querySelectorAll('.case-tab').forEach(function(b) {
-            b.className = 'case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors';
+            b.classList.remove('border-[#165DFF]', 'text-[#165DFF]');
+            b.classList.add('border-transparent', 'text-gray-500');
         });
         if (btn) {
-            btn.className = 'case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-[#165DFF] text-[#165DFF] transition-colors';
+            btn.classList.remove('border-transparent', 'text-gray-500');
+            btn.classList.add('border-[#165DFF]', 'text-[#165DFF]');
         }
     }
 
