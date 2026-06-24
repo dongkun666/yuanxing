@@ -1860,11 +1860,13 @@
     }
 
     function deleteContract(btn) {
-        if (!confirm('确定要删除该委托合同吗？')) return;
-        var item = btn.closest('.flex.items-center.justify-between');
-        if (item) {
-            item.remove();
-            showToast('委托合同已删除');
+        var confirmed = confirm('确定要删除该委托合同吗？');
+        if (confirmed) {
+            var item = btn.closest('.flex.items-center.justify-between');
+            if (item) {
+                item.remove();
+                showToast('委托合同已删除');
+            }
         }
     }
 
