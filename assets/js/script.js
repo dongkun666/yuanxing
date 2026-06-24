@@ -1334,15 +1334,16 @@
         var target = document.getElementById('case-tab-' + tabName);
         if (target) {
             target.classList.remove('hidden');
+            target.classList.add('flex'); // 确保所有标签都有 flex 类
             // 只对需要 flex-col 的标签添加
             if (tabName === 'overview' || tabName === 'timeline' || tabName === 'materials') {
-                target.classList.add('flex', 'flex-col');
+                target.classList.add('flex-col');
             }
             // documents 需要 flex-row
             if (tabName === 'documents') {
-                target.classList.add('flex', 'flex-row');
+                target.classList.add('flex-row');
             }
-            // 其他标签（evidence, contract, authorization, judgment, other）已有正确的 class
+            // 其他标签（evidence, contract, authorization, judgment, other）已有 flex-row，只需确保有 flex
         }
         document.querySelectorAll('.case-tab').forEach(function(b) {
             b.className = 'case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors';
