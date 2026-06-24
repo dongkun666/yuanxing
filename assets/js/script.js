@@ -166,16 +166,8 @@
         }
 
         // ===== 案件详情页操作 =====
-        function editCase() {
-            showToast('编辑案件功能开发中');
-        }
-
         function shareCase() {
             showToast('分享案件功能开发中');
-        }
-
-        function archiveCurrentCase() {
-            showToast('案件归档功能开发中');
         }
 
         // 视图切换逻辑
