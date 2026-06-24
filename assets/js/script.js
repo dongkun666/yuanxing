@@ -170,6 +170,18 @@
             showToast('分享案件功能开发中');
         }
 
+        function editSection(section) {
+            var sectionNames = {
+                basic: '案件基本信息',
+                client: '客户信息',
+                opponent: '对方信息',
+                claims: '客户诉求',
+                strategy: '办案思路',
+                summary: '案情简述'
+            };
+            showToast('编辑' + (sectionNames[section] || section) + '功能开发中');
+        }
+
         // 视图切换逻辑
         function switchView(viewId, el) {
             var target = document.getElementById('view-' + viewId);
