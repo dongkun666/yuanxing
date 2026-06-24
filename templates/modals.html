@@ -948,3 +948,173 @@
 </div>
 </div>
 </div>
+<!-- 新建案件弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center hidden" id="new-case-modal" onclick="closeNewCaseModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[800px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800">新建案件</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeNewCaseModal()">×</button>
+</div>
+<div class="p-6 space-y-5">
+<!-- 案件基本信息 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+案件基本信息
+</h5>
+<div class="grid grid-cols-3 gap-4">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">案件名 <span class="text-red-400">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-name" placeholder="请输入案件名" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">案号</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-number" placeholder="请输入案号" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">案由</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-type" placeholder="请输入案由" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">案件状态</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] appearance-none bg-white" id="new-case-status">
+<option value="进行中">进行中</option>
+<option value="待开庭">待开庭</option>
+<option value="已结案">已结案</option>
+<option value="已归档">已归档</option>
+<option value="中止审理">中止审理</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">标的金额</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-claim" placeholder="请输入标的金额" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">合同金额</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-contract" placeholder="请输入合同金额" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">签约日期</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-signDate" type="date"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">代理阶段</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] appearance-none bg-white" id="new-case-stage">
+<option value="一审">一审</option>
+<option value="二审">二审</option>
+<option value="再审">再审</option>
+<option value="执行">执行</option>
+<option value="仲裁">仲裁</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">是否保全</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] appearance-none bg-white" id="new-case-preservation">
+<option value="未保全">未保全</option>
+<option value="已保全">已保全</option>
+<option value="保全中">保全中</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">缴费情况</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] appearance-none bg-white" id="new-case-payment">
+<option value="已缴费">已缴费</option>
+<option value="未缴费">未缴费</option>
+<option value="部分缴费">部分缴费</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-xs font-medium text-gray-600 mb-1.5">特殊约定</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-case-special" placeholder="请输入特殊约定" type="text"/>
+</div>
+</div>
+</div>
+<!-- 客户信息 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-green-500" icon="mdi:account"></iconify-icon>
+客户信息
+</h5>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">客户姓名</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-client-name" placeholder="请输入客户姓名" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">客户电话</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-client-phone" placeholder="请输入客户电话" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">客户证件号</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-client-id" placeholder="请输入客户证件号" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">法定代表人</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-client-legalRep" placeholder="请输入法定代表人" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs font-medium text-gray-600 mb-1.5">客户地址</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-client-address" placeholder="请输入客户地址" type="text"/>
+</div>
+</div>
+</div>
+<!-- 对方信息 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-red-500" icon="mdi:account"></iconify-icon>
+对方信息
+</h5>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">对方姓名</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-opponent-name" placeholder="请输入对方姓名" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">对方电话</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-opponent-phone" placeholder="请输入对方电话" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">对方证件号</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-opponent-id" placeholder="请输入对方证件号" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">法定代表人</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-opponent-legalRep" placeholder="请输入法定代表人" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs font-medium text-gray-600 mb-1.5">对方地址</label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="new-opponent-address" placeholder="请输入对方地址" type="text"/>
+</div>
+</div>
+</div>
+<!-- 客户诉求 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:format-list-checks"></iconify-icon>
+客户诉求
+</h5>
+<textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] resize-none" id="new-case-claims" placeholder="请输入客户诉求，每行一项" rows="4"></textarea>
+</div>
+<!-- 办案思路 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:lightbulb-outline"></iconify-icon>
+办案思路
+</h5>
+<textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] resize-none" id="new-case-strategy" placeholder="请输入办案思路" rows="4"></textarea>
+</div>
+<!-- 案情简述 -->
+<div>
+<h5 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:text-subject"></iconify-icon>
+案情简述
+</h5>
+<textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] resize-none" id="new-case-summary" placeholder="请输入案情简述" rows="4"></textarea>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="closeNewCaseModal()">取消</button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-[#165DFF] hover:bg-blue-600 rounded-lg transition-colors" onclick="submitNewCase()">创建案件</button>
+</div>
+</div>
+</div>

@@ -228,6 +228,80 @@
             }
         }
 
+        function openNewCaseModal() {
+            var modal = document.getElementById('new-case-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeNewCaseModal() {
+            var modal = document.getElementById('new-case-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function submitNewCase() {
+            var caseName = document.getElementById('new-case-name').value.trim();
+            if (!caseName) {
+                showToast('请输入案件名');
+                return;
+            }
+
+            var caseNumber = document.getElementById('new-case-number').value.trim() || '待分配案号';
+            var caseType = document.getElementById('new-case-type').value.trim() || '暂无';
+            var status = document.getElementById('new-case-status').value;
+            var claim = document.getElementById('new-case-claim').value.trim() || '-';
+            var clientName = document.getElementById('new-client-name').value.trim() || '待补充';
+            var opponentName = document.getElementById('new-opponent-name').value.trim() || '待补充';
+
+            var statusClass = '';
+            if (status === '进行中') {
+                statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            } else if (status === '待开庭') {
+                statusClass = 'bg-amber-100 text-amber-700';
+            } else if (status === '已结案') {
+                statusClass = 'bg-green-100 text-green-700';
+            } else if (status === '已归档') {
+                statusClass = 'bg-gray-100 text-gray-600';
+            } else {
+                statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            }
+
+            var tbody = document.getElementById('caseTableBody');
+            if (tbody) {
+                var index = tbody.querySelectorAll('tr').length;
+                var tr = document.createElement('tr');
+                tr.className = 'hover:bg-[#F7F8FA] transition-colors';
+                tr.setAttribute('data-status', status);
+                tr.setAttribute('data-type', caseType);
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129]">${caseName}</td>
+                    <td class="py-3 px-4 text-xs font-medium text-[#4E5969]">${caseNumber}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${caseType}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${clientName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${opponentName}</td>
+                    <td class="text-center py-3 px-4"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded">${status}</span></td>
+                    <td class="text-center py-3 px-4 text-xs text-[#4E5969]">待安排</td>
+                    <td class="text-center py-3 px-4">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(${index})">详情</button>
+                            <span class="text-[#E5E6EB]">|</span>
+                            <button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
+                            <span class="text-[#E5E6EB]">|</span>
+                            <button class="text-xs text-red-500 hover:underline" onclick="deleteCase(${index})">删除</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                filterCaseList();
+            }
+
+            closeNewCaseModal();
+            showToast('案件创建成功');
+        }
+
         // ===== 案件详情页操作 =====
         function shareCase() {
             showToast('分享案件功能开发中');
