@@ -1806,6 +1806,68 @@
         }
     }
 
+    // 委托合同相关函数
+    function openUploadContractModal() {
+        var modal = document.getElementById('upload-contract-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('contract-name').value = '';
+        }
+    }
+
+    function closeUploadContractModal() {
+        var modal = document.getElementById('upload-contract-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitContract() {
+        var name = document.getElementById('contract-name').value.trim();
+
+        if (!name) {
+            showToast('请输入合同名称');
+            return;
+        }
+
+        var list = document.getElementById('contract-list');
+        if (!list) {
+            showToast('合同列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + dateStr + ' 上传</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteContract(this)">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadContractModal();
+        showToast('委托合同已上传');
+    }
+
+    function deleteContract(btn) {
+        if (!confirm('确定要删除该委托合同吗？')) return;
+        var item = btn.closest('.flex.items-center.justify-between');
+        if (item) {
+            item.remove();
+            showToast('委托合同已删除');
+        }
+    }
+
     // AI 侧边面板子标签切换
     function switchAIPanel(btn, panelName) {
         var container = btn.closest('.w-80') || btn.closest('[class*="w-80"]');
