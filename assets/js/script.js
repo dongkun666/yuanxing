@@ -165,8 +165,9 @@
             showToast('案件归档功能开发中');
         }
 
-        function editCaseTitle(el) {
-            if (el.tagName !== 'SPAN') return;
+        function editCaseTitle() {
+            var el = document.getElementById('case-detail-title');
+            if (!el) return;
             var currentText = el.textContent.trim();
             var input = document.createElement('input');
             input.type = 'text';
@@ -176,8 +177,7 @@
             function finishEdit() {
                 var newText = input.value.trim();
                 if (newText && newText !== currentText) {
-                    var textNode = document.createTextNode(newText);
-                    el.parentNode.replaceChild(textNode, el);
+                    el.textContent = newText;
                     if (currentCaseIndex >= 0) {
                         var tbody = document.getElementById('caseTableBody');
                         if (tbody) {
@@ -191,10 +191,11 @@
                         }
                     }
                     showToast('案件名已更新');
-                } else {
-                    el.style.display = '';
-                    input.remove();
                 }
+                el.style.display = '';
+                input.remove();
+                var editBtn = document.getElementById('case-title-edit-btn');
+                if (editBtn) editBtn.style.display = '';
             }
             
             input.addEventListener('blur', finishEdit);
@@ -208,6 +209,8 @@
             });
             
             el.style.display = 'none';
+            var editBtn = el.nextElementSibling;
+            if (editBtn) editBtn.style.display = 'none';
             el.parentNode.insertBefore(input, el.nextSibling);
             input.focus();
             input.select();
@@ -1524,14 +1527,7 @@
             if (caseMeta[index]) {
                 var meta = caseMeta[index];
                 var titleEl = document.getElementById('case-detail-title');
-                var typeEl = document.getElementById('case-detail-type');
-                var statusEl = document.getElementById('case-detail-status');
                 if (titleEl) titleEl.textContent = meta.caseName;
-                if (typeEl) typeEl.textContent = meta.type;
-                if (statusEl) {
-                    statusEl.textContent = meta.status;
-                    statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
-                }
             }
             // 切换回案件概览 Tab
             var tab = document.querySelector('.case-tab[data-tab="overview"]');
@@ -1547,14 +1543,7 @@
                     if (caseMeta[index]) {
                         var meta = caseMeta[index];
                         var titleEl = document.getElementById('case-detail-title');
-                        var typeEl = document.getElementById('case-detail-type');
-                        var statusEl = document.getElementById('case-detail-status');
                         if (titleEl) titleEl.textContent = meta.caseName;
-                        if (typeEl) typeEl.textContent = meta.type;
-                        if (statusEl) {
-                            statusEl.textContent = meta.status;
-                            statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
-                        }
                     }
                     // 自动切换到案件概览 Tab
                     var tab = document.querySelector('.case-tab[data-tab="overview"]');
