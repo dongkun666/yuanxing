@@ -742,7 +742,7 @@
 <iconify-icon class="text-[#165DFF]" icon="mdi:certificate-outline"></iconify-icon>
                             授权委托书
                         </h5>
-<div class="space-y-3">
+<div class="space-y-3" id="power-attorney-list">
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 <div class="flex items-center gap-3">
 <iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
@@ -754,11 +754,12 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteDocument(this, 'power-attorney')">删除</button>
 </div>
 </div>
 </div>
 <div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadDocumentModal('power-attorney')">
 <iconify-icon icon="mdi:plus"></iconify-icon>上传授权委托书
                 </button>
 </div>
@@ -773,7 +774,7 @@
 <iconify-icon class="text-[#165DFF]" icon="mdi:scale-balance"></iconify-icon>
                             判决书/调解书
                         </h5>
-<div class="space-y-3">
+<div class="space-y-3" id="judgment-list">
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 <div class="flex items-center gap-3">
 <iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
@@ -785,11 +786,12 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteDocument(this, 'judgment')">删除</button>
 </div>
 </div>
 </div>
 <div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadDocumentModal('judgment')">
 <iconify-icon icon="mdi:plus"></iconify-icon>上传判决书/调解书
                 </button>
 </div>
@@ -804,7 +806,7 @@
 <iconify-icon class="text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>
                             其他文书
                         </h5>
-<div class="space-y-3">
+<div class="space-y-3" id="other-doc-list">
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 <div class="flex items-center gap-3">
 <iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
@@ -816,11 +818,12 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteDocument(this, 'other')">删除</button>
 </div>
 </div>
 </div>
 <div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadDocumentModal('other')">
 <iconify-icon icon="mdi:plus"></iconify-icon>上传其他文书
                 </button>
 </div>

@@ -1267,3 +1267,31 @@
 </div>
 </div>
 </div>
+<!-- 上传文书弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center hidden" id="upload-document-modal" onclick="closeUploadDocumentModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[420px]" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800" id="upload-document-title">上传文书</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeUploadDocumentModal()">×</button>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">文件名称 <span class="text-red-400">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="document-name" placeholder="请输入文件名称" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">上传文件</label>
+<div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-[#165DFF] transition-colors cursor-pointer" onclick="document.getElementById('document-file').click()">
+<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-xs text-gray-500 mt-1">点击选择文件</p>
+<p class="text-[10px] text-gray-400 mt-0.5">支持 PDF / Word / 图片格式</p>
+<input class="hidden" id="document-file" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"/>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="closeUploadDocumentModal()">取消</button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-[#165DFF] hover:bg-blue-600 rounded-lg transition-colors" onclick="submitDocument()">上传</button>
+</div>
+</div>
+</div>

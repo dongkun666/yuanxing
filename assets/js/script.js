@@ -1934,6 +1934,90 @@
         }
     }
 
+    // 文书管理相关函数（授权委托书、判决书/调解书、其他文书通用）
+    var currentDocumentType = '';
+
+    var documentTypeMap = {
+        'power-attorney': { title: '上传授权委托书', listId: 'power-attorney-list', toast: '授权委托书已上传', deleteToast: '授权委托书已删除', subText: '' },
+        'judgment': { title: '上传判决书/调解书', listId: 'judgment-list', toast: '文书已上传', deleteToast: '文书已删除', subText: '判决文书' },
+        'other': { title: '上传其他文书', listId: 'other-doc-list', toast: '文书已上传', deleteToast: '文书已删除', subText: '其他' }
+    };
+
+    function openUploadDocumentModal(type) {
+        currentDocumentType = type;
+        var modal = document.getElementById('upload-document-modal');
+        var config = documentTypeMap[type];
+        if (modal && config) {
+            document.getElementById('upload-document-title').textContent = config.title;
+            document.getElementById('document-name').value = '';
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeUploadDocumentModal() {
+        var modal = document.getElementById('upload-document-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitDocument() {
+        var name = document.getElementById('document-name').value.trim();
+        var config = documentTypeMap[currentDocumentType];
+
+        if (!name) {
+            showToast('请输入文件名称');
+            return;
+        }
+
+        if (!config) {
+            showToast('未知文书类型');
+            return;
+        }
+
+        var list = document.getElementById(config.listId);
+        if (!list) {
+            showToast('文书列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var subInfo = config.subText ? config.subText + ' · ' + dateStr : dateStr + ' 上传';
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + subInfo + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteDocument(this, \'' + currentDocumentType + '\')">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadDocumentModal();
+        showToast(config.toast);
+    }
+
+    function deleteDocument(btn, type) {
+        var config = documentTypeMap[type];
+        var confirmed = confirm('确定要删除该文书吗？');
+        if (confirmed) {
+            var item = btn.closest('.flex.items-center.justify-between');
+            if (item) {
+                item.remove();
+                showToast(config ? config.deleteToast : '文书已删除');
+            }
+        }
+    }
+
     // AI 侧边面板子标签切换
     function switchAIPanel(btn, panelName) {
         var container = btn.closest('.w-80') || btn.closest('[class*="w-80"]');
