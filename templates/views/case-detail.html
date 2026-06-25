@@ -559,6 +559,14 @@
 <!-- Tab: 证据材料 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-materials">
 <div class="max-w-5xl w-full mx-auto space-y-4">
+<!-- 标签页切换 -->
+<div class="flex items-center gap-6 border-b border-[#E5E6EB]">
+<button class="text-sm font-medium text-[#165DFF] pb-3 border-b-2 border-[#165DFF] materials-tab active" onclick="switchMaterialsTab('overview', this)">证据概览</button>
+<button class="text-sm font-medium text-gray-500 pb-3 border-b-2 border-transparent hover:text-[#1D2129] materials-tab" onclick="switchMaterialsTab('catalog', this)">证据目录</button>
+</div>
+
+<!-- 证据概览 -->
+<div class="space-y-4" id="materials-tab-overview">
 <div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer" onclick="openUploadMaterialModal()">
 <iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
 <p class="text-sm text-gray-500 mt-2">拖拽文件到此处上传，或 <span class="text-[#165DFF]">点击浏览</span></p>
@@ -625,6 +633,91 @@
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+
+<!-- 证据目录 -->
+<div class="hidden space-y-4" id="materials-tab-catalog">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
+<div class="flex items-center justify-between mb-4">
+<h5 class="font-bold text-sm flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:folder-tree-outline"></iconify-icon>
+证据目录
+</h5>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB] flex items-center gap-1" onclick="addEvidenceCatalogItem()">
+<iconify-icon icon="mdi:plus"></iconify-icon>添加目录项
+</button>
+</div>
+<div class="space-y-2" id="evidence-catalog-list">
+<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-[#1D2129]">一、原告主体资格证据</span>
+<span class="text-[10px] text-gray-400">2 份文件</span>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+<div class="pl-6 space-y-2">
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">营业执照.pdf</span>
+</div>
+<span class="text-[10px] text-gray-400">第 1-2 页</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">法定代表人身份证明.pdf</span>
+</div>
+<span class="text-[10px] text-gray-400">第 3 页</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-[#1D2129]">二、证明案件事实的证据</span>
+<span class="text-[10px] text-gray-400">4 份文件</span>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+<div class="pl-6 space-y-2">
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">采购框架协议.pdf</span>
+</div>
+<span class="text-[10px] text-gray-400">第 4-8 页</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">送货单（2025年10-12月）.pdf</span>
+</div>
+<span class="text-[10px] text-gray-400">第 9-15 页</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">微信聊天记录导出.txt</span>
+</div>
+<span class="text-[10px] text-gray-400">第 16-20 页</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-xs text-gray-700">催款函（2026-03-15）.pdf</span>
+</div>
+<span class="text-[10px] text-gray-400">第 21-22 页</span>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

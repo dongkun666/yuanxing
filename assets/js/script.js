@@ -1653,6 +1653,21 @@
         }
     }
 
+    // 证据材料标签页切换
+    function switchMaterialsTab(tabName, btn) {
+        document.getElementById('materials-tab-overview').classList.add('hidden');
+        document.getElementById('materials-tab-catalog').classList.add('hidden');
+        document.getElementById('materials-tab-' + tabName).classList.remove('hidden');
+        document.querySelectorAll('.materials-tab').forEach(function(tab) {
+            tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
+            tab.classList.add('text-gray-500', 'border-transparent');
+        });
+        if (btn) {
+            btn.classList.remove('text-gray-500', 'border-transparent');
+            btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
+        }
+    }
+
     // 时间线相关函数
     function openAddTimelineModal() {
         var modal = document.getElementById('add-timeline-modal');
