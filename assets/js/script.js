@@ -1631,7 +1631,12 @@
         var target = document.getElementById('case-tab-' + tabName);
         if (target) {
             target.classList.remove('hidden');
-            target.classList.add('flex', 'flex-col');
+            target.classList.add('flex');
+            if (tabName === 'documents') {
+                target.classList.add('flex-row');
+            } else {
+                target.classList.add('flex-col');
+            }
         }
         document.querySelectorAll('.case-tab').forEach(function(b) {
             b.classList.remove('border-[#165DFF]', 'text-[#165DFF]');
