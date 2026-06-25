@@ -31,9 +31,6 @@
             <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="materials" onclick="switchCaseTab('materials', this)">
                 证据材料
             </button>
-            <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="evidence" onclick="switchCaseTab('evidence', this)">
-                证件管理
-            </button>
             <button class="case-tab px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="contract" onclick="switchCaseTab('contract', this)">
                 委托合同
             </button>
@@ -840,52 +837,6 @@
 </table>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<!-- Tab: 证件管理 -->
-<div class="hidden flex flex-col flex-1 overflow-hidden" id="case-tab-evidence">
-<div class="flex-1 bg-gray-50 flex flex-col p-6">
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
-<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
-<iconify-icon class="text-[#165DFF]" icon="mdi:card-account-details-outline"></iconify-icon>
-                            证件管理
-                        </h5>
-<div class="space-y-3" id="evidence-list">
-<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-<div class="flex items-center gap-3">
-<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:card-account-details"></iconify-icon>
-<div>
-<p class="text-sm font-medium">客户营业执照.pdf</p>
-<p class="text-xs text-gray-400">企业证件 · 2026-05-20</p>
-</div>
-</div>
-<div class="flex gap-2">
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
-<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>
-</div>
-</div>
-<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-<div class="flex items-center gap-3">
-<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:card-account-details"></iconify-icon>
-<div>
-<p class="text-sm font-medium">法定代表人身份证.pdf</p>
-<p class="text-xs text-gray-400">身份证件 · 2026-05-20</p>
-</div>
-</div>
-<div class="flex gap-2">
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
-<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>
-</div>
-</div>
-</div>
-<div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadEvidenceModal()">
-<iconify-icon icon="mdi:plus"></iconify-icon>上传证件
-                </button>
 </div>
 </div>
 </div>
