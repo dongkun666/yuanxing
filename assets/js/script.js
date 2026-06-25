@@ -278,20 +278,20 @@
                 tr.setAttribute('data-status', status);
                 tr.setAttribute('data-type', caseType);
                 tr.innerHTML = `
-                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129]">${caseName}</td>
-                    <td class="py-3 px-4 text-xs font-medium text-[#4E5969]">${caseNumber}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${caseType}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${clientName}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${opponentName}</td>
-                    <td class="text-center py-3 px-4"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded">${status}</span></td>
-                    <td class="text-center py-3 px-4 text-xs text-[#4E5969]">待安排</td>
-                    <td class="text-center py-3 px-4">
+                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="${caseName}">${caseName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseNumber}">${caseNumber}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseType}">${caseType}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${clientName}">${clientName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${opponentName}">${opponentName}</td>
+                    <td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded inline-block">${status}</span></td>
+                    <td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="待安排">待安排</td>
+                    <td class="text-center py-3 px-4 whitespace-nowrap">
                         <div class="flex items-center justify-center gap-2">
-                            <button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(${index})">详情</button>
-                            <span class="text-[#E5E6EB]">|</span>
-                            <button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-                            <span class="text-[#E5E6EB]">|</span>
-                            <button class="text-xs text-red-500 hover:underline" onclick="deleteCase(${index})">删除</button>
+                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(${index})">详情</button>
+                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
+                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
+                            <button class="text-xs text-red-500 hover:underline flex-shrink-0" onclick="deleteCase(${index})">删除</button>
                         </div>
                     </td>
                 `;
