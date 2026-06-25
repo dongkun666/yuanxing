@@ -638,6 +638,15 @@
 
 <!-- 证据目录 -->
 <div class="hidden space-y-4" id="materials-tab-catalog">
+<!-- 创建方式按钮 -->
+<div class="flex items-center gap-3">
+<button class="text-xs text-white bg-[#165DFF] hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors" onclick="addEvidenceCatalogItem()">
+<iconify-icon icon="mdi:plus"></iconify-icon>手动创建证据目录
+</button>
+<button class="text-xs text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors" onclick="aiCreateEvidenceCatalog()">
+<iconify-icon icon="mdi:auto-fix"></iconify-icon>AI创建证据目录
+</button>
+</div>
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
 <div class="flex items-center justify-between mb-4">
 <h5 class="font-bold text-sm flex items-center gap-2">

@@ -1668,6 +1668,47 @@
         }
     }
 
+    // AI创建证据目录
+    function aiCreateEvidenceCatalog() {
+        var catalogList = document.getElementById('evidence-catalog-list');
+        if (!catalogList) return;
+        
+        showToast('AI正在分析证据材料，生成证据目录...');
+        
+        // 模拟AI生成目录结构
+        setTimeout(function() {
+            var aiCatalogHtml = '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">' +
+                '<div class="flex items-center gap-3">' +
+                '<span class="text-sm font-medium text-[#1D2129]">三、AI智能分类</span>' +
+                '<span class="text-[10px] text-gray-400">2 份文件</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">' +
+                '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+                '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+                '</div>' +
+                '</div>' +
+                '<div class="pl-6 space-y-2">' +
+                '<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">' +
+                '<div class="flex items-center gap-2">' +
+                '<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<span class="text-xs text-gray-700">合同履约证据.pdf</span>' +
+                '</div>' +
+                '<span class="text-[10px] text-gray-400">第 23-30 页</span>' +
+                '</div>' +
+                '<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">' +
+                '<div class="flex items-center gap-2">' +
+                '<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<span class="text-xs text-gray-700">银行转账记录.pdf</span>' +
+                '</div>' +
+                '<span class="text-[10px] text-gray-400">第 31-35 页</span>' +
+                '</div>' +
+                '</div>';
+            
+            catalogList.insertAdjacentHTML('beforeend', aiCatalogHtml);
+            showToast('AI已成功生成证据目录');
+        }, 1500);
+    }
+
     // 时间线相关函数
     function openAddTimelineModal() {
         var modal = document.getElementById('add-timeline-modal');
