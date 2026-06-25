@@ -8,18 +8,36 @@
 <!-- Tailwind CSS -->
 <script src="./assets/js/tailwindcss.js"></script>
 <!-- Iconify 图标 -->
+<script>
+// 在 Iconify 加载前配置全局设置
+window.Iconify = window.Iconify || {};
+window.Iconify.api = {
+    resources: ['./assets/icons/{prefix}.json'],
+    rotate: 90,
+    timeout: 5000
+};
+window.Iconify.disableRemoteAPI = true;
+</script>
 <script src="./assets/js/iconify-icon.min.js"></script>
 <!-- Iconify 本地图标配置 -->
 <script>
 (function() {
-    // 配置 Iconify 使用本地图标数据
-    if (typeof Iconify !== 'undefined') {
-        Iconify.setAPI({
-            local: {
-                url: './assets/icons/{prefix}.json'
-            }
-        });
+    // 等待 Iconify 加载完成后添加本地图标集
+    function addLocalIconSet() {
+        if (typeof Iconify !== 'undefined' && typeof Iconify.addCollection === 'function') {
+            fetch('./assets/icons/mdi.json')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    Iconify.addCollection(data);
+                })
+                .catch(function(err) {
+                    console.warn('加载本地图标集失败:', err);
+                });
+        } else {
+            setTimeout(addLocalIconSet, 100);
+        }
     }
+    addLocalIconSet();
 })();
 </script>
 <!-- ECharts -->
