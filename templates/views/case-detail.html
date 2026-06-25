@@ -634,210 +634,444 @@
 </div>
 
 <!-- 证据目录 -->
-<div class="hidden space-y-4" id="materials-tab-catalog">
-<!-- 创建方式按钮 -->
-<div class="flex items-center gap-3">
-<button class="text-xs text-white bg-[#165DFF] hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors" onclick="addEvidenceCatalogItem()">
-<iconify-icon icon="mdi:plus"></iconify-icon>手动创建证据目录
-</button>
-<button class="text-xs text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-4 py-2 rounded-lg flex items-center gap-1.5 transition-colors" onclick="aiCreateEvidenceCatalog()">
-<iconify-icon icon="mdi:auto-fix"></iconify-icon>AI创建证据目录
-</button>
+<div class="hidden space-y-0 h-full" id="materials-tab-catalog">
+<div class="flex flex-row h-full bg-white rounded-xl border border-[#E5E6EB] overflow-hidden" style="min-height: 700px;">
+<!-- 左栏：证据分类树 -->
+<div class="w-60 bg-white border-r border-gray-200 flex flex-col flex-none">
+<div class="p-4 border-b border-gray-100">
+<h5 class="font-bold text-sm">证据分类</h5>
+<p class="text-[10px] text-gray-400 mt-1">民事诉讼证据 · 8 类</p>
 </div>
-<!-- 证据目录表格 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
-<div class="flex items-center justify-between px-5 py-4 border-b border-[#E5E6EB]">
-<h5 class="font-bold text-sm flex items-center gap-2">
-<iconify-icon class="text-[#165DFF]" icon="mdi:folder-tree-outline"></iconify-icon>
-证据目录
-</h5>
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB] flex items-center gap-1" onclick="addEvidenceCatalogItem()">
+<div class="flex-1 overflow-y-auto p-2">
+<div class="space-y-1">
+<div class="flex items-center justify-between p-2 rounded bg-blue-50 text-[#165DFF] font-semibold cursor-pointer">
+<span class="text-sm">书证</span>
+<span class="text-[10px] bg-blue-100 text-[#165DFF] px-1.5 py-0.5 rounded-full">10</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">物证</span>
+<span class="text-[10px] text-gray-400">0</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">视听资料</span>
+<span class="text-[10px] bg-blue-100 text-[#165DFF] px-1.5 py-0.5 rounded-full">2</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">电子数据</span>
+<span class="text-[10px] bg-blue-100 text-[#165DFF] px-1.5 py-0.5 rounded-full">1</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">当事人陈述</span>
+<span class="text-[10px] text-gray-400">0</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">证人证言</span>
+<span class="text-[10px] text-gray-400">0</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">鉴定意见</span>
+<span class="text-[10px] text-gray-400">0</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 text-gray-700 cursor-pointer">
+<span class="text-sm">勘验笔录</span>
+<span class="text-[10px] text-gray-400">0</span>
+</div>
+</div>
+</div>
+<div class="p-3 border-t border-gray-100 text-[10px] text-gray-400 flex items-center justify-between">
+<span>共 13 条目录项</span>
+<span class="text-[#165DFF]">已选 13 / 13</span>
+</div>
+</div>
+<!-- 中栏：证据目录详情 -->
+<div class="flex-1 bg-gray-50 flex flex-col overflow-hidden min-w-0">
+<div class="h-12 bg-white border-b border-gray-200 flex items-center px-4 gap-3 flex-none">
+<button class="text-xs text-white bg-[#165DFF] hover:bg-blue-600 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors" onclick="addEvidenceCatalogItem()">
 <iconify-icon icon="mdi:plus"></iconify-icon>添加目录项
 </button>
+<button class="text-xs text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors" onclick="aiCreateEvidenceCatalog()">
+<iconify-icon icon="mdi:auto-fix"></iconify-icon>AI 创建证据目录
+</button>
+<div class="ml-auto flex items-center gap-3 text-xs">
+<button class="text-xs bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50">历史版本</button>
+<button class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded hover:bg-blue-700">导出 PDF</button>
 </div>
-<table class="w-full text-sm" id="evidence-catalog-table">
-<thead>
-<tr class="bg-gray-50 border-b border-[#E5E6EB]">
-<th class="text-center py-3 px-4 text-[11px] font-semibold text-gray-600 w-16">编号</th>
-<th class="text-center py-3 px-4 text-[11px] font-semibold text-gray-600 w-24">证据种类</th>
-<th class="text-left py-3 px-4 text-[11px] font-semibold text-gray-600">证据材料名称</th>
-<th class="text-left py-3 px-4 text-[11px] font-semibold text-gray-600">证明对象 / 证据内容说明</th>
-<th class="text-center py-3 px-4 text-[11px] font-semibold text-gray-600 w-24">页数</th>
-<th class="text-center py-3 px-4 text-[11px] font-semibold text-gray-600 w-24">操作</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-50" id="evidence-catalog-list">
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">1</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">《小鹏汽车购买协议》（初始锁单版，含购车信息单、车况确认承诺书）</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="1.证明：双方于2026年4月订立汽车买卖合同...2.证明：合同约定整车开票价格为219800元...">1.证明：双方于2026年4月订立汽车买卖合同...2.证明：合同约定整车开票价格为219800元...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">1-5</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">2</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">机动车销售统一发票（电子发票）</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="1.证明：被告已就案涉车辆向原告开具价税合计219800元的机动车销售发票...2.证明：双方买卖合同已实际履行...">1.证明：被告已就案涉车辆向原告开具价税合计219800元的机动车销售发票...2.证明：双方买卖合同已实际履行...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">6</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div class="flex-1 overflow-y-auto p-4">
+<div class="max-w-4xl mx-auto space-y-2" id="evidence-catalog-list">
+<div data-catalog-item data-number="1" data-type="书证" data-name="《小鹏汽车购买协议》（初始锁单版，含购车信息单、车况确认承诺书）" data-description="1.证明：双方于2026年4月订立汽车买卖合同...2.证明：合同约定整车开票价格为219800元..." data-pages="1-5" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">1</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="《小鹏汽车购买协议》（初始锁单版，含购车信息单、车况确认承诺书）">《小鹏汽车购买协议》（初始锁单版，含购车信息单、车况确认承诺书）</span>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">3</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">中国工商银行境内汇款电子回单</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="证明：原告已向被告对公账户支付对应购车款项，原告已实际履行合同付款义务。">证明：原告已向被告对公账户支付对应购车款项，原告已实际履行合同付款义务。</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">7</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">1.证明：双方于2026年4月订立汽车买卖合同...2.证明：合同约定整车开票价格为219800元...</p>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">4</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">案涉车辆机动车整车合格证</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="1.证明：案涉车辆车架号为L1NSPGHB2SB002546，与合同、发票记载一致...2.证明：车辆出厂时经检验合格...">1.证明：案涉车辆车架号为L1NSPGHB2SB002546，与合同、发票记载一致...2.证明：车辆出厂时经检验合格...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">8</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">1-5</p>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">5</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">《小鹏汽车购买协议》（补充披露版，含完整车况确认承诺书）</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="证明：原告对车况提出异议后，被告才补充披露车辆完整真实车况...证明：被告前后两次披露的车况存在重大差异...">证明：原告对车况提出异议后，被告才补充披露车辆完整真实车况...证明：被告前后两次披露的车况存在重大差异...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">9-13</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">6</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">前后车况披露内容对比说明</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="直观对比被告前后两次披露的车况差异，清晰列明被告故意隐瞒的全部损伤项目...">直观对比被告前后两次披露的车况差异，清晰列明被告故意隐瞒的全部损伤项目...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">14</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">7</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded">电子数据</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">小鹏汽车交付群微信聊天记录截图</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="1.证明：原告提车时发现车辆异常后，立即在交付群中@被告工作人员...2.证明：被告工作人员回复确认收到原告的异议请求...">1.证明：原告提车时发现车辆异常后，立即在交付群中@被告工作人员...2.证明：被告工作人员回复确认收到原告的异议请求...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">15-19</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">8</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">机动车交通事故责任强制保险单（电子保单）</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="证明：原告为案涉车辆投保交强险，保费合计950元...依据交强险相关监管规定，该保单无法办理退保...">证明：原告为案涉车辆投保交强险，保费合计950元...依据交强险相关监管规定，该保单无法办理退保...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">20-33</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div data-catalog-item data-number="2" data-type="书证" data-name="机动车销售统一发票（电子发票）" data-description="1.证明：被告已就案涉车辆向原告开具价税合计219800元的机动车销售发票...2.证明：双方买卖合同已实际履行..." data-pages="6" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">2</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="机动车销售统一发票（电子发票）">机动车销售统一发票（电子发票）</span>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">9</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">机动车交通事故责任强制保险标志</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="佐证交强险投保事实与保费金额，与保险单内容相互印证。">佐证交强险投保事实与保费金额，与保险单内容相互印证。</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">34</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">1.证明：被告已就案涉车辆向原告开具价税合计219800元的机动车销售发票...2.证明：双方买卖合同已实际履行...</p>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">10</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">新能源汽车商业保险保险单（电子保单）</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="证明：原告为案涉车辆投保商业险，包含新能源汽车损失保险、第三者责任险等险种...证明原告因退保产生了保费差额损失...">证明：原告为案涉车辆投保商业险，包含新能源汽车损失保险、第三者责任险等险种...证明原告因退保产生了保费差额损失...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">35-54</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">6</p>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">11</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded">书证</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">案涉车辆后部结构损伤修复照片</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...">直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">55-61</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">12</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded">视听资料</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">案涉车辆后部结构损伤修复视频</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...">直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">见光盘</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-<tr class="hover:bg-gray-50 group">
-<td class="text-center py-3 px-4 text-xs text-gray-700">13</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded">视听资料</span></td>
-<td class="py-3 px-4 text-xs text-gray-800">被告相关责任人录音</td>
-<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="证明：被告在销售过程中故意隐瞒案涉车辆的重大事故损伤与真实车况，在原告发现问题提出异议后，才被迫补充披露完整维修记录与车况信息...">证明：被告在销售过程中故意隐瞒案涉车辆的重大事故损伤与真实车况，在原告发现问题提出异议后，才被迫补充披露完整维修记录与车况信息...</td>
-<td class="text-center py-3 px-4 text-xs text-gray-500">见光盘</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
-<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
+<div data-catalog-item data-number="3" data-type="书证" data-name="中国工商银行境内汇款电子回单" data-description="证明：原告已向被告对公账户支付对应购车款项，原告已实际履行合同付款义务。" data-pages="7" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">3</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="中国工商银行境内汇款电子回单">中国工商银行境内汇款电子回单</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">证明：原告已向被告对公账户支付对应购车款项，原告已实际履行合同付款义务。</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">7</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="4" data-type="书证" data-name="案涉车辆机动车整车合格证" data-description="1.证明：案涉车辆车架号为L1NSPGHB2SB002546，与合同、发票记载一致...2.证明：车辆出厂时经检验合格..." data-pages="8" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">4</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="案涉车辆机动车整车合格证">案涉车辆机动车整车合格证</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">1.证明：案涉车辆车架号为L1NSPGHB2SB002546，与合同、发票记载一致...2.证明：车辆出厂时经检验合格...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">8</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="5" data-type="书证" data-name="《小鹏汽车购买协议》（补充披露版，含完整车况确认承诺书）" data-description="证明：原告对车况提出异议后，被告才补充披露车辆完整真实车况...证明：被告前后两次披露的车况存在重大差异..." data-pages="9-13" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">5</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="《小鹏汽车购买协议》（补充披露版，含完整车况确认承诺书）">《小鹏汽车购买协议》（补充披露版，含完整车况确认承诺书）</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">证明：原告对车况提出异议后，被告才补充披露车辆完整真实车况...证明：被告前后两次披露的车况存在重大差异...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">9-13</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="6" data-type="书证" data-name="前后车况披露内容对比说明" data-description="直观对比被告前后两次披露的车况差异，清晰列明被告故意隐瞒的全部损伤项目..." data-pages="14" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">6</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="前后车况披露内容对比说明">前后车况披露内容对比说明</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">直观对比被告前后两次披露的车况差异，清晰列明被告故意隐瞒的全部损伤项目...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">14</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="7" data-type="电子数据" data-name="小鹏汽车交付群微信聊天记录截图" data-description="1.证明：原告提车时发现车辆异常后，立即在交付群中@被告工作人员...2.证明：被告工作人员回复确认收到原告的异议请求..." data-pages="15-19" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">7</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">电子数据</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="小鹏汽车交付群微信聊天记录截图">小鹏汽车交付群微信聊天记录截图</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">1.证明：原告提车时发现车辆异常后，立即在交付群中@被告工作人员...2.证明：被告工作人员回复确认收到原告的异议请求...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">15-19</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="8" data-type="书证" data-name="机动车交通事故责任强制保险单（电子保单）" data-description="证明：原告为案涉车辆投保交强险，保费合计950元...依据交强险相关监管规定，该保单无法办理退保..." data-pages="20-33" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">8</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="机动车交通事故责任强制保险单（电子保单）">机动车交通事故责任强制保险单（电子保单）</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">证明：原告为案涉车辆投保交强险，保费合计950元...依据交强险相关监管规定，该保单无法办理退保...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">20-33</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="9" data-type="书证" data-name="机动车交通事故责任强制保险标志" data-description="佐证交强险投保事实与保费金额，与保险单内容相互印证。" data-pages="34" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">9</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="机动车交通事故责任强制保险标志">机动车交通事故责任强制保险标志</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">佐证交强险投保事实与保费金额，与保险单内容相互印证。</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">34</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="10" data-type="书证" data-name="新能源汽车商业保险保险单（电子保单）" data-description="证明：原告为案涉车辆投保商业险，包含新能源汽车损失保险、第三者责任险等险种...证明原告因退保产生了保费差额损失..." data-pages="35-54" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">10</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="新能源汽车商业保险保险单（电子保单）">新能源汽车商业保险保险单（电子保单）</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">证明：原告为案涉车辆投保商业险，包含新能源汽车损失保险、第三者责任险等险种...证明原告因退保产生了保费差额损失...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">35-54</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="11" data-type="书证" data-name="案涉车辆后部结构损伤修复照片" data-description="直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证..." data-pages="55-61" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">11</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">书证</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="案涉车辆后部结构损伤修复照片">案涉车辆后部结构损伤修复照片</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">55-61</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="12" data-type="视听资料" data-name="案涉车辆后部结构损伤修复视频" data-description="直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证..." data-pages="见光盘" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">12</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">视听资料</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="案涉车辆后部结构损伤修复视频">案涉车辆后部结构损伤修复视频</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">直观展示案涉车辆后围板、后保险杠、行李箱等部位的维修、损伤痕迹，与被告补充披露的车况相互印证...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">见光盘</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+<div data-catalog-item data-number="13" data-type="视听资料" data-name="被告相关责任人录音" data-description="证明：被告在销售过程中故意隐瞒案涉车辆的重大事故损伤与真实车况，在原告发现问题提出异议后，才被迫补充披露完整维修记录与车况信息..." data-pages="见光盘" class="group bg-white border border-[#E5E6EB] rounded-lg p-3 hover:shadow-sm hover:border-[#165DFF] transition-all">
+<div class="flex items-start gap-3">
+<div data-catalog-number class="flex-none w-9 h-9 bg-blue-50 text-[#165DFF] rounded flex items-center justify-center text-sm font-bold">13</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1.5">
+<span data-catalog-type class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">视听资料</span>
+<span data-catalog-name class="text-sm font-medium text-gray-800 truncate" title="被告相关责任人录音">被告相关责任人录音</span>
+</div>
+<p data-catalog-description class="text-[11px] text-gray-500 leading-relaxed">证明：被告在销售过程中故意隐瞒案涉车辆的重大事故损伤与真实车况，在原告发现问题提出异议后，才被迫补充披露完整维修记录与车况信息...</p>
+</div>
+<div class="flex-none text-center w-16">
+<p class="text-[10px] text-gray-400">页数</p>
+<p data-catalog-pages class="text-xs text-gray-700 mt-0.5">见光盘</p>
+</div>
+<div class="flex-none flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity self-center">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 右栏：AI 助手 -->
+<div class="w-72 bg-white border-l border-gray-200 flex flex-col flex-none">
+<div class="flex border-b border-gray-100 flex-none">
+<button class="flex-1 py-3 text-xs font-medium border-b-2 border-[#165DFF] text-[#165DFF]" data-evidence-panel="check" onclick="switchEvidenceAIPanel(this, 'check')">完整性</button>
+<button class="flex-1 py-3 text-xs font-medium text-gray-500 hover:text-gray-700" data-evidence-panel="object" onclick="switchEvidenceAIPanel(this, 'object')">证明对象</button>
+<button class="flex-1 py-3 text-xs font-medium text-gray-500 hover:text-gray-700" data-evidence-panel="laws" onclick="switchEvidenceAIPanel(this, 'laws')">法条</button>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-2">
+<!-- 完整性检查 -->
+<div class="space-y-2" id="evidence-ai-check">
+<div class="flex items-center justify-between text-xs">
+<span class="text-gray-500">证据完整性分析</span>
+<span class="text-green-600 flex items-center gap-1"><iconify-icon icon="mdi:check-circle"></iconify-icon> 92%</span>
+</div>
+<div class="p-2.5 border border-green-100 rounded-lg bg-green-50">
+<div class="flex items-center gap-1.5 mb-1">
+<iconify-icon class="text-green-500 text-sm" icon="mdi:check-circle-outline"></iconify-icon>
+<span class="text-xs font-bold text-green-700">合同关系证据完整</span>
+</div>
+<p class="text-[11px] text-gray-600">购车协议、发票、付款凭证齐全，可证明双方存在汽车买卖合同关系。</p>
+</div>
+<div class="p-2.5 border border-orange-100 rounded-lg bg-orange-50">
+<div class="flex items-center gap-1.5 mb-1">
+<iconify-icon class="text-orange-500 text-sm" icon="mdi:alert-outline"></iconify-icon>
+<span class="text-xs font-bold text-orange-600">建议补充</span>
+</div>
+<p class="text-[11px] text-gray-600">建议补充车辆交付时的视频录像（仅 2 项视听资料），增强证据链完整性。</p>
+<button class="mt-1.5 text-[10px] text-[#165DFF] font-medium hover:underline">查看缺失项</button>
+</div>
+<div class="p-2.5 border border-blue-100 rounded-lg bg-blue-50">
+<div class="flex items-center gap-1.5 mb-1">
+<iconify-icon class="text-blue-500 text-sm" icon="mdi:lightbulb-outline"></iconify-icon>
+<span class="text-xs font-bold text-blue-600">优化建议</span>
+</div>
+<p class="text-[11px] text-gray-600">建议将"前后车况披露对比"与"损伤照片"组合使用，形成更强的证明链。</p>
+</div>
+</div>
+<!-- 证明对象分析 -->
+<div class="hidden space-y-2" id="evidence-ai-object">
+<div class="text-xs text-gray-500 mb-1">证明对象自动识别</div>
+<div class="space-y-1.5">
+<div class="p-2 border border-gray-100 rounded bg-gray-50">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-bold">合同成立</span>
+<span class="text-[10px] bg-green-100 text-green-700 px-1 rounded">4 条</span>
+</div>
+<p class="text-[11px] text-gray-600">购车协议、发票、银行回单、合格证</p>
+</div>
+<div class="p-2 border border-gray-100 rounded bg-gray-50">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-bold">违约事实</span>
+<span class="text-[10px] bg-green-100 text-green-700 px-1 rounded">5 条</span>
+</div>
+<p class="text-[11px] text-gray-600">车况对比说明、照片、视频、聊天记录、录音</p>
+</div>
+<div class="p-2 border border-gray-100 rounded bg-gray-50">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-bold">损害后果</span>
+<span class="text-[10px] bg-orange-100 text-orange-700 px-1 rounded">3 条</span>
+</div>
+<p class="text-[11px] text-gray-600">保单、保费、损失评估</p>
+</div>
+<div class="p-2 border border-red-100 rounded bg-red-50">
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-bold">过错责任</span>
+<span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">缺失</span>
+</div>
+<p class="text-[11px] text-gray-600">建议补充：被告故意隐瞒车况的直接证据</p>
+</div>
+</div>
+</div>
+<!-- 法条检索 -->
+<div class="hidden space-y-2" id="evidence-ai-laws">
+<div class="relative">
+<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-sm" icon="mdi:magnify"></iconify-icon>
+<input class="w-full border border-gray-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-[#165DFF]" placeholder="搜索相关法条..." type="text"/>
+</div>
+<div class="space-y-1.5">
+<div class="p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">民事诉讼法</span>
+<span class="text-[10px] bg-blue-50 text-[#165DFF] px-1 rounded">高度相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第六十六条 · 举证责任分配</p>
+</div>
+<div class="p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">最高人民法院</span>
+<span class="text-[10px] bg-blue-50 text-[#165DFF] px-1 rounded">高度相关</span>
+</div>
+<p class="text-[10px] text-gray-500">关于民事诉讼证据的若干规定</p>
+</div>
+<div class="p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">消费者权益保护法</span>
+<span class="text-[10px] bg-orange-50 text-orange-600 px-1 rounded">中等相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第八条 · 知情权保障</p>
+</div>
+<div class="p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-xs font-bold text-gray-800">民法典</span>
+<span class="text-[10px] bg-orange-50 text-orange-600 px-1 rounded">中等相关</span>
+</div>
+<p class="text-[10px] text-gray-500">第五百七十七条 · 违约责任</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
