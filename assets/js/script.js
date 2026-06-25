@@ -1746,7 +1746,9 @@
             '<td class="text-center py-3 px-4 text-xs text-gray-500">' + (pages || '-') + '</td>' +
             '<td class="text-center py-3 px-4">' +
             '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="previewCatalogPDF(this)">PDF浏览</button>' +
+            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="downloadCatalogItem(this)">下载</button>' +
+            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
             '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
             '</div>' +
             '</td>';
@@ -1755,6 +1757,114 @@
         closeAddEvidenceCatalogModal();
         showToast('证据目录已添加');
     }
+
+    // 编辑证据目录项
+    var editingCatalogRow = null;
+    
+    function editCatalogItem(btn) {
+        var row = btn.closest('tr');
+        if (!row) return;
+        
+        editingCatalogRow = row;
+        
+        // 获取当前行数据
+        var cells = row.querySelectorAll('td');
+        var number = cells[0]?.textContent?.trim() || '';
+        var type = cells[1]?.textContent?.trim() || '书证';
+        var name = cells[2]?.textContent?.trim() || '';
+        var description = cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '';
+        var pages = cells[4]?.textContent?.trim() || '';
+        
+        // 填充模态框
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('catalog-number').value = number;
+            document.getElementById('catalog-name').value = name;
+            document.getElementById('catalog-pages').value = pages === '-' ? '' : pages;
+            document.getElementById('catalog-description').value = description === '-' ? '' : description;
+            
+            // 设置证据种类选中状态
+            var typeRadios = document.getElementsByName('catalog-type');
+            for (var i = 0; i < typeRadios.length; i++) {
+                typeRadios[i].checked = (typeRadios[i].value === type);
+            }
+            
+            // 修改标题和按钮文字
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '编辑证据目录';
+            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
+            if (submitBtn) submitBtn.textContent = '保存';
+        }
+    }
+
+    // 覆盖提交函数以支持编辑模式
+    var originalSubmitEvidenceCatalog = submitEvidenceCatalog;
+    submitEvidenceCatalog = function() {
+        if (editingCatalogRow) {
+            // 编辑模式
+            var number = document.getElementById('catalog-number').value.trim();
+            var name = document.getElementById('catalog-name').value.trim();
+            var pages = document.getElementById('catalog-pages').value.trim();
+            var description = document.getElementById('catalog-description').value.trim();
+            
+            var typeRadios = document.getElementsByName('catalog-type');
+            var type = '书证';
+            for (var i = 0; i < typeRadios.length; i++) {
+                if (typeRadios[i].checked) {
+                    type = typeRadios[i].value;
+                    break;
+                }
+            }
+            
+            if (!name) {
+                showToast('请输入证据材料名称');
+                return;
+            }
+            
+            var typeClass = '';
+            if (type === '书证') {
+                typeClass = 'bg-blue-100 text-blue-700';
+            } else if (type === '电子数据') {
+                typeClass = 'bg-purple-100 text-purple-700';
+            } else if (type === '视听资料') {
+                typeClass = 'bg-orange-100 text-orange-700';
+            } else {
+                typeClass = 'bg-gray-100 text-gray-700';
+            }
+            
+            var cells = editingCatalogRow.querySelectorAll('td');
+            if (cells[0]) cells[0].textContent = number || '';
+            if (cells[1]) cells[1].innerHTML = '<span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span>';
+            if (cells[2]) cells[2].textContent = name;
+            if (cells[3]) {
+                cells[3].textContent = description || '-';
+                cells[3].setAttribute('title', description);
+            }
+            if (cells[4]) cells[4].textContent = pages || '-';
+            
+            editingCatalogRow = null;
+            closeAddEvidenceCatalogModal();
+            showToast('证据目录已更新');
+        } else {
+            // 新增模式 - 调用原函数
+            originalSubmitEvidenceCatalog();
+        }
+    };
+
+    // 关闭模态框时重置编辑状态
+    var originalCloseAddEvidenceCatalogModal = closeAddEvidenceCatalogModal;
+    closeAddEvidenceCatalogModal = function() {
+        editingCatalogRow = null;
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '手动创建证据目录';
+            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
+            if (submitBtn) submitBtn.textContent = '添加';
+        }
+        originalCloseAddEvidenceCatalogModal();
+    };
 
     // 删除证据目录项
     function deleteCatalogItem(btn) {
@@ -1801,7 +1911,9 @@
                     '<td class="text-center py-3 px-4 text-xs text-gray-500">' + item.pages + '</td>' +
                     '<td class="text-center py-3 px-4">' +
                     '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="previewCatalogPDF(this)">PDF浏览</button>' +
+                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="downloadCatalogItem(this)">下载</button>' +
+                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
                     '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
                     '</div>' +
                     '</td>';
@@ -1810,6 +1922,135 @@
             
             showToast('AI已成功生成证据目录（共3项）');
         }, 1500);
+    }
+
+    // PDF预览相关变量
+    var catalogPDFZoom = 1;
+    var catalogPDFCurrentPage = 1;
+    var catalogPDFTotalPage = 8;
+    var currentCatalogItem = null;
+
+    // PDF浏览
+    function previewCatalogPDF(btn) {
+        var row = btn.closest('tr');
+        if (!row) return;
+        
+        currentCatalogItem = row;
+        
+        var cells = row.querySelectorAll('td');
+        var name = cells[2]?.textContent?.trim() || '证据材料';
+        var type = cells[1]?.textContent?.trim() || '书证';
+        var description = cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '';
+        var pages = cells[4]?.textContent?.trim() || '-';
+        
+        // 计算页数
+        var totalPage = 8;
+        if (pages && pages !== '-' && pages !== '见光盘' && pages !== '见附件') {
+            var pageMatch = pages.match(/(\d+)-(\d+)/);
+            if (pageMatch) {
+                totalPage = parseInt(pageMatch[2]) - parseInt(pageMatch[1]) + 1;
+            } else if (pages.match(/^\d+$/)) {
+                totalPage = 1;
+            }
+        }
+        catalogPDFTotalPage = Math.max(1, Math.min(totalPage, 20));
+        catalogPDFCurrentPage = 1;
+        catalogPDFZoom = 1;
+        
+        // 更新PDF预览内容
+        document.getElementById('catalog-pdf-title').textContent = name + '.pdf';
+        document.getElementById('catalog-pdf-filename').textContent = name + '.pdf';
+        document.getElementById('catalog-pdf-name').textContent = name;
+        document.getElementById('catalog-pdf-info').textContent = '共 ' + catalogPDFTotalPage + ' 页 · 2.3MB';
+        document.getElementById('catalog-pdf-total-page').textContent = catalogPDFTotalPage;
+        document.getElementById('catalog-pdf-current-page').textContent = '1';
+        document.getElementById('catalog-pdf-page-num').textContent = '1';
+        document.getElementById('catalog-pdf-zoom-level').textContent = '100%';
+        document.getElementById('catalog-pdf-content').style.transform = 'scale(1)';
+        
+        // 更新PDF内容中的证据信息
+        var pdfText = document.getElementById('catalog-pdf-text');
+        if (pdfText) {
+            pdfText.innerHTML = 
+                '<p class="text-base font-bold text-center mb-4">' + name + '</p>' +
+                '<p>兹证明，以下证据材料真实有效，与本案具有关联性。</p>' +
+                '<p>一、证据名称：' + name + '</p>' +
+                '<p>二、证据种类：' + type + '</p>' +
+                '<p>三、证明对象：' + (description || '证明案件相关事实') + '</p>' +
+                '<p>四、证据内容：</p>' +
+                '<p>（此处为证据文件具体内容，根据实际文件显示。）</p>' +
+                '<p>&nbsp;</p>' +
+                '<p class="text-right">提供人：____________</p>' +
+                '<p class="text-right">日期：____________</p>';
+        }
+        
+        // 显示模态框
+        var modal = document.getElementById('catalog-pdf-preview-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+
+    // 关闭PDF预览
+    function closeCatalogPDFPreview() {
+        var modal = document.getElementById('catalog-pdf-preview-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        currentCatalogItem = null;
+    }
+
+    // 缩放PDF
+    function zoomCatalogPDF(delta) {
+        catalogPDFZoom = Math.max(0.5, Math.min(2, catalogPDFZoom + delta));
+        document.getElementById('catalog-pdf-content').style.transform = 'scale(' + catalogPDFZoom + ')';
+        document.getElementById('catalog-pdf-zoom-level').textContent = Math.round(catalogPDFZoom * 100) + '%';
+    }
+
+    // 翻页
+    function changeCatalogPDFPage(delta) {
+        catalogPDFCurrentPage = Math.max(1, Math.min(catalogPDFTotalPage, catalogPDFCurrentPage + delta));
+        document.getElementById('catalog-pdf-current-page').textContent = catalogPDFCurrentPage;
+        document.getElementById('catalog-pdf-page-num').textContent = catalogPDFCurrentPage;
+    }
+
+    // 下载证据目录项
+    function downloadCatalogItem(btn) {
+        var row = btn.closest('tr');
+        if (!row) return;
+        
+        var cells = row.querySelectorAll('td');
+        var name = cells[2]?.textContent?.trim() || '证据材料';
+        
+        showToast('正在下载：' + name);
+        
+        // 模拟下载
+        setTimeout(function() {
+            var content = '证据材料：' + name + '\n\n';
+            content += '证据种类：' + (cells[1]?.textContent?.trim() || '书证') + '\n';
+            content += '证明对象：' + (cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '') + '\n';
+            content += '页数：' + (cells[4]?.textContent?.trim() || '-') + '\n';
+            content += '\n（此为模拟下载，实际应用中将下载真实文件）';
+            
+            var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = name + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('下载完成：' + name);
+        }, 500);
+    }
+
+    // 下载当前预览的PDF
+    function downloadCurrentCatalogPDF() {
+        if (currentCatalogItem) {
+            downloadCatalogItem(currentCatalogItem.querySelector('[onclick^="downloadCatalogItem"]') || currentCatalogItem);
+        }
     }
 
     // 时间线相关函数

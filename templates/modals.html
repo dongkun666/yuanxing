@@ -1376,3 +1376,65 @@
 </div>
 </div>
 </div>
+<!-- 证据目录PDF预览弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center hidden" id="catalog-pdf-preview-modal" onclick="closeCatalogPDFPreview()">
+<div class="bg-white rounded-xl shadow-2xl w-[900px] h-[85vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+<!-- 顶部工具栏 -->
+<div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-none">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded bg-red-100 flex items-center justify-center">
+<iconify-icon class="text-red-500 text-sm" icon="mdi:file-pdf-outline"></iconify-icon>
+</div>
+<div>
+<h3 class="text-sm font-bold text-gray-800" id="catalog-pdf-title">证据材料.pdf</h3>
+<p class="text-[10px] text-gray-400" id="catalog-pdf-info">共 8 页 · 2.3MB</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1 px-3 py-1.5 text-[11px] text-[#165DFF] hover:bg-blue-50 rounded-md transition-colors" onclick="downloadCurrentCatalogPDF()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>
+下载
+</button>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeCatalogPDFPreview()">×</button>
+</div>
+</div>
+<!-- 工具栏 -->
+<div class="flex items-center gap-1 px-5 py-2.5 border-b border-gray-100 bg-gray-50 flex-none flex-wrap">
+<!-- 缩放 -->
+<div class="flex items-center gap-1 text-[11px] text-gray-400">
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="zoomCatalogPDF(-0.1)"><iconify-icon icon="mdi:magnify-minus"></iconify-icon></button>
+<span class="w-8 text-center text-[10px]" id="catalog-pdf-zoom-level">100%</span>
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="zoomCatalogPDF(0.1)"><iconify-icon icon="mdi:magnify-plus"></iconify-icon></button>
+</div>
+<div class="w-px h-5 bg-gray-200 mx-1"></div>
+<!-- 翻页 -->
+<div class="flex items-center gap-1 text-[11px] text-gray-400">
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="changeCatalogPDFPage(-1)">‹</button>
+<span><span id="catalog-pdf-current-page">1</span><span class="text-gray-300">/</span><span id="catalog-pdf-total-page">8</span></span>
+<button class="px-1.5 py-1 text-gray-600 hover:bg-gray-200 rounded" onclick="changeCatalogPDFPage(1)">›</button>
+</div>
+</div>
+<!-- PDF预览区域 -->
+<div class="flex-1 overflow-y-auto bg-gray-200 p-6 relative" id="catalog-pdf-container">
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8 min-h-[600px] relative" id="catalog-pdf-content" style="transform-origin: top center;">
+<!-- 模拟PDF内容 -->
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] text-gray-400" id="catalog-pdf-filename">证据材料.pdf</span>
+<span class="text-[10px] text-gray-400">第 <span id="catalog-pdf-page-num">1</span> 页</span>
+</div>
+<div class="space-y-3 text-xs text-gray-700 leading-relaxed" id="catalog-pdf-text">
+<p class="text-base font-bold text-center mb-4">证据材料</p>
+<p>兹证明，以下证据材料真实有效，与本案具有关联性。</p>
+<p>一、证据名称：<span id="catalog-pdf-name">证据材料</span></p>
+<p>二、证据种类：书证</p>
+<p>三、证明对象：证明案件相关事实</p>
+<p>四、证据内容：</p>
+<p>（此处为证据文件具体内容，根据实际文件显示。）</p>
+<p>&nbsp;</p>
+<p class="text-right">提供人：____________</p>
+<p class="text-right">日期：____________</p>
+</div>
+</div>
+</div>
+</div>
+</div>
