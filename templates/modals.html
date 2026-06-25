@@ -1295,3 +1295,57 @@
 </div>
 </div>
 </div>
+<!-- 添加/编辑技能弹窗 -->
+<div class="fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center hidden" id="skill-modal" onclick="closeSkillModal()">
+<div class="bg-white rounded-xl shadow-2xl w-[480px]" onclick="event.stopPropagation()">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+<h3 class="text-base font-bold text-gray-800" id="skill-modal-title">添加技能</h3>
+<button class="text-gray-400 hover:text-gray-600 text-lg leading-none" onclick="closeSkillModal()">×</button>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">技能名称 <span class="text-red-400">*</span></label>
+<input class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF]" id="skill-name" placeholder="请输入技能名称" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">技能描述 <span class="text-red-400">*</span></label>
+<textarea class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] resize-none" id="skill-desc" placeholder="请输入技能功能描述" rows="3"></textarea>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">技能图标颜色</label>
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 rounded-lg bg-blue-50 border-2 border-[#165DFF] skill-color-btn" data-color="blue" onclick="selectSkillColor('blue')"></button>
+<button class="w-8 h-8 rounded-lg bg-green-50 border-2 border-transparent skill-color-btn" data-color="green" onclick="selectSkillColor('green')"></button>
+<button class="w-8 h-8 rounded-lg bg-purple-50 border-2 border-transparent skill-color-btn" data-color="purple" onclick="selectSkillColor('purple')"></button>
+<button class="w-8 h-8 rounded-lg bg-orange-50 border-2 border-transparent skill-color-btn" data-color="orange" onclick="selectSkillColor('orange')"></button>
+<button class="w-8 h-8 rounded-lg bg-red-50 border-2 border-transparent skill-color-btn" data-color="red" onclick="selectSkillColor('red')"></button>
+<button class="w-8 h-8 rounded-lg bg-cyan-50 border-2 border-transparent skill-color-btn" data-color="cyan" onclick="selectSkillColor('cyan')"></button>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-600 mb-1.5">技能分类</label>
+<select class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] appearance-none bg-white" id="skill-category">
+<option value="法律文书">法律文书</option>
+<option value="分析">分析</option>
+<option value="审查">审查</option>
+<option value="检索">检索</option>
+<option value="计算">计算</option>
+<option value="生成">生成</option>
+<option value="提醒">提醒</option>
+<option value="其他">其他</option>
+</select>
+</div>
+<div class="flex items-center">
+<input class="sr-only peer" id="skill-enabled" type="checkbox"/>
+<label class="flex items-center cursor-pointer" for="skill-enabled">
+<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#165DFF]/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-200 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#165DFF] mr-2"></div>
+<span class="text-xs text-gray-600">启用此技能</span>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" onclick="closeSkillModal()">取消</button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-[#165DFF] hover:bg-blue-600 rounded-lg transition-colors" onclick="submitSkill()">保存</button>
+</div>
+</div>
+</div>
