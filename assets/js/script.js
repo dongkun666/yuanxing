@@ -1668,44 +1668,147 @@
         }
     }
 
+    // 手动创建证据目录 - 打开模态框
+    function addEvidenceCatalogItem() {
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            // 重置表单
+            document.getElementById('catalog-number').value = '';
+            document.getElementById('catalog-name').value = '';
+            document.getElementById('catalog-pages').value = '';
+            document.getElementById('catalog-description').value = '';
+            document.getElementById('catalog-file-name').textContent = '';
+            // 设置默认证据种类
+            var radios = document.getElementsByName('catalog-type');
+            if (radios.length > 0) radios[0].checked = true;
+            // 自动计算下一个编号
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (tbody) {
+                var rows = tbody.querySelectorAll('tr');
+                document.getElementById('catalog-number').value = rows.length + 1;
+            }
+        }
+    }
+
+    // 关闭证据目录模态框
+    function closeAddEvidenceCatalogModal() {
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // 提交证据目录
+    function submitEvidenceCatalog() {
+        var number = document.getElementById('catalog-number').value.trim();
+        var name = document.getElementById('catalog-name').value.trim();
+        var pages = document.getElementById('catalog-pages').value.trim();
+        var description = document.getElementById('catalog-description').value.trim();
+        
+        // 获取选中的证据种类
+        var typeRadios = document.getElementsByName('catalog-type');
+        var type = '书证';
+        for (var i = 0; i < typeRadios.length; i++) {
+            if (typeRadios[i].checked) {
+                type = typeRadios[i].value;
+                break;
+            }
+        }
+        
+        if (!name) {
+            showToast('请输入证据材料名称');
+            return;
+        }
+        
+        var tbody = document.getElementById('evidence-catalog-list');
+        if (!tbody) return;
+        
+        // 获取证据种类的颜色样式
+        var typeClass = '';
+        if (type === '书证') {
+            typeClass = 'bg-blue-100 text-blue-700';
+        } else if (type === '电子数据') {
+            typeClass = 'bg-purple-100 text-purple-700';
+        } else if (type === '视听资料') {
+            typeClass = 'bg-orange-100 text-orange-700';
+        } else {
+            typeClass = 'bg-gray-100 text-gray-700';
+        }
+        
+        var newRow = document.createElement('tr');
+        newRow.className = 'hover:bg-gray-50 group';
+        newRow.innerHTML = 
+            '<td class="text-center py-3 px-4 text-xs text-gray-700">' + (number || '') + '</td>' +
+            '<td class="text-center py-3 px-4"><span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span></td>' +
+            '<td class="py-3 px-4 text-xs text-gray-800">' + name + '</td>' +
+            '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + description + '">' + (description || '-') + '</td>' +
+            '<td class="text-center py-3 px-4 text-xs text-gray-500">' + (pages || '-') + '</td>' +
+            '<td class="text-center py-3 px-4">' +
+            '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+            '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+            '</div>' +
+            '</td>';
+        
+        tbody.appendChild(newRow);
+        closeAddEvidenceCatalogModal();
+        showToast('证据目录已添加');
+    }
+
+    // 删除证据目录项
+    function deleteCatalogItem(btn) {
+        if (!confirm('确定要删除该证据目录项吗？')) return;
+        var row = btn.closest('tr');
+        if (row) {
+            row.remove();
+            showToast('证据目录已删除');
+            // 重新编号
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (tbody) {
+                var rows = tbody.querySelectorAll('tr');
+                rows.forEach(function(r, index) {
+                    var numCell = r.querySelector('td:first-child');
+                    if (numCell) numCell.textContent = index + 1;
+                });
+            }
+        }
+    }
+
     // AI创建证据目录
     function aiCreateEvidenceCatalog() {
-        var catalogList = document.getElementById('evidence-catalog-list');
-        if (!catalogList) return;
-        
         showToast('AI正在分析证据材料，生成证据目录...');
         
         // 模拟AI生成目录结构
         setTimeout(function() {
-            var aiCatalogHtml = '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">' +
-                '<div class="flex items-center gap-3">' +
-                '<span class="text-sm font-medium text-[#1D2129]">三、AI智能分类</span>' +
-                '<span class="text-[10px] text-gray-400">2 份文件</span>' +
-                '</div>' +
-                '<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
-                '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
-                '</div>' +
-                '</div>' +
-                '<div class="pl-6 space-y-2">' +
-                '<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">' +
-                '<div class="flex items-center gap-2">' +
-                '<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>' +
-                '<span class="text-xs text-gray-700">合同履约证据.pdf</span>' +
-                '</div>' +
-                '<span class="text-[10px] text-gray-400">第 23-30 页</span>' +
-                '</div>' +
-                '<div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100">' +
-                '<div class="flex items-center gap-2">' +
-                '<iconify-icon class="text-gray-400" icon="mdi:file-document-outline"></iconify-icon>' +
-                '<span class="text-xs text-gray-700">银行转账记录.pdf</span>' +
-                '</div>' +
-                '<span class="text-[10px] text-gray-400">第 31-35 页</span>' +
-                '</div>' +
-                '</div>';
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (!tbody) return;
             
-            catalogList.insertAdjacentHTML('beforeend', aiCatalogHtml);
-            showToast('AI已成功生成证据目录');
+            var aiItems = [
+                { number: 14, type: '书证', typeClass: 'bg-blue-100 text-blue-700', name: 'AI分析报告', description: 'AI自动分析生成的证据关联性分析报告', pages: '见附件' },
+                { number: 15, type: '电子数据', typeClass: 'bg-purple-100 text-purple-700', name: '银行流水记录', description: '银行账户资金往来明细，证明资金流向', pages: '56-60' },
+                { number: 16, type: '视听资料', typeClass: 'bg-orange-100 text-orange-700', name: '现场勘查视频', description: '第三方机构现场勘查记录视频', pages: '见光盘' }
+            ];
+            
+            aiItems.forEach(function(item) {
+                var newRow = document.createElement('tr');
+                newRow.className = 'hover:bg-gray-50 group';
+                newRow.innerHTML = 
+                    '<td class="text-center py-3 px-4 text-xs text-gray-700">' + item.number + '</td>' +
+                    '<td class="text-center py-3 px-4"><span class="text-[10px] ' + item.typeClass + ' px-2 py-0.5 rounded">' + item.type + '</span></td>' +
+                    '<td class="py-3 px-4 text-xs text-gray-800">' + item.name + '</td>' +
+                    '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + item.description + '">' + item.description + '</td>' +
+                    '<td class="text-center py-3 px-4 text-xs text-gray-500">' + item.pages + '</td>' +
+                    '<td class="text-center py-3 px-4">' +
+                    '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+                    '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+                    '</div>' +
+                    '</td>';
+                tbody.appendChild(newRow);
+            });
+            
+            showToast('AI已成功生成证据目录（共3项）');
         }, 1500);
     }
 
