@@ -4,11 +4,6 @@
             selectedPayment: 'alipay',
             selectedDynamicType: '紧急',
             selectedExtractSource: 'case',
-            currentPDFPage: 1,
-            currentZoom: 1.0,
-            currentAnnotateColor: 'bg-yellow-300',
-            annotateHistory: [],
-            historyIndex: -1,
             batchFiles: [],
             dynamicsViewData: [],
             autoSaveTimer: null,
@@ -277,20 +272,20 @@
                 tr.setAttribute('data-status', status);
                 tr.setAttribute('data-type', caseType);
                 tr.innerHTML = `
-                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129]">${caseName}</td>
-                    <td class="py-3 px-4 text-xs font-medium text-[#4E5969]">${caseNumber}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${caseType}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${clientName}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969]">${opponentName}</td>
-                    <td class="text-center py-3 px-4"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded">${status}</span></td>
-                    <td class="text-center py-3 px-4 text-xs text-[#4E5969]">待安排</td>
-                    <td class="text-center py-3 px-4">
+                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="${caseName}">${caseName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseNumber}">${caseNumber}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseType}">${caseType}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${clientName}">${clientName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${opponentName}">${opponentName}</td>
+                    <td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded inline-block">${status}</span></td>
+                    <td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="待安排">待安排</td>
+                    <td class="text-center py-3 px-4 whitespace-nowrap">
                         <div class="flex items-center justify-center gap-2">
-                            <button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(${index})">详情</button>
-                            <span class="text-[#E5E6EB]">|</span>
-                            <button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-                            <span class="text-[#E5E6EB]">|</span>
-                            <button class="text-xs text-red-500 hover:underline" onclick="deleteCase(${index})">删除</button>
+                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(${index})">详情</button>
+                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
+                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
+                            <button class="text-xs text-red-500 hover:underline flex-shrink-0" onclick="deleteCase(${index})">删除</button>
                         </div>
                     </td>
                 `;
@@ -1637,10 +1632,10 @@
         if (target) {
             target.classList.remove('hidden');
             target.classList.add('flex');
-            if (tabName === 'overview' || tabName === 'timeline' || tabName === 'materials') {
-                target.classList.add('flex-col');
-            } else {
+            if (tabName === 'documents') {
                 target.classList.add('flex-row');
+            } else {
+                target.classList.add('flex-col');
             }
         }
         document.querySelectorAll('.case-tab').forEach(function(b) {
@@ -1651,6 +1646,397 @@
             btn.classList.remove('border-transparent', 'text-gray-500');
             btn.classList.add('border-[#165DFF]', 'text-[#165DFF]');
         }
+    }
+
+    // 证据材料标签页切换
+    function switchMaterialsTab(tabName, btn) {
+        document.getElementById('materials-tab-overview').classList.add('hidden');
+        document.getElementById('materials-tab-catalog').classList.add('hidden');
+        document.getElementById('materials-tab-' + tabName).classList.remove('hidden');
+        document.querySelectorAll('.materials-tab').forEach(function(tab) {
+            tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
+            tab.classList.add('text-gray-500', 'border-transparent');
+        });
+        if (btn) {
+            btn.classList.remove('text-gray-500', 'border-transparent');
+            btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
+        }
+    }
+
+    // 手动创建证据目录 - 打开模态框
+    function addEvidenceCatalogItem() {
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            // 重置表单
+            document.getElementById('catalog-number').value = '';
+            document.getElementById('catalog-name').value = '';
+            document.getElementById('catalog-pages').value = '';
+            document.getElementById('catalog-description').value = '';
+            // 设置默认证据种类
+            var radios = document.getElementsByName('catalog-type');
+            if (radios.length > 0) radios[0].checked = true;
+            // 自动计算下一个编号
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (tbody) {
+                var rows = tbody.querySelectorAll('tr');
+                document.getElementById('catalog-number').value = rows.length + 1;
+            }
+            // 加载证据概览文件列表
+            loadCatalogFileList();
+            // 重置已选文件
+            catalogSelectedFiles = [];
+            updateCatalogSelectedCount();
+        }
+    }
+
+    // 加载证据概览文件列表供选择
+    var catalogSelectedFiles = [];
+    
+    function loadCatalogFileList() {
+        var listContainer = document.getElementById('catalog-file-select-list');
+        if (!listContainer) return;
+        
+        var materialsList = document.getElementById('materials-list');
+        if (!materialsList) {
+            listContainer.innerHTML = '<div class="px-3 py-4 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var rows = materialsList.querySelectorAll('tr');
+        if (rows.length === 0) {
+            listContainer.innerHTML = '<div class="px-3 py-4 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var html = '';
+        rows.forEach(function(row, index) {
+            var cells = row.querySelectorAll('td');
+            var fileName = cells[0]?.textContent?.trim() || '';
+            var fileType = cells[1]?.textContent?.trim() || '';
+            var fileId = 'catalog-file-' + index;
+            
+            html += 
+                '<label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-b-0">' +
+                '<input class="accent-[#165DFF] catalog-file-checkbox" type="checkbox" id="' + fileId + '" data-name="' + fileName + '" data-type="' + fileType + '" onchange="toggleCatalogFileSelect(this)">' +
+                '<iconify-icon class="text-gray-400 text-base flex-shrink-0" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<div class="flex-1 min-w-0">' +
+                '<p class="text-[11px] text-gray-700 truncate">' + fileName + '</p>' +
+                '<p class="text-[10px] text-gray-400">' + fileType + '</p>' +
+                '</div>' +
+                '</label>';
+        });
+        
+        listContainer.innerHTML = html;
+    }
+
+    // 切换文件选择状态
+    function toggleCatalogFileSelect(checkbox) {
+        var fileName = checkbox.getAttribute('data-name');
+        var fileType = checkbox.getAttribute('data-type');
+        
+        if (checkbox.checked) {
+            catalogSelectedFiles.push({ name: fileName, type: fileType });
+        } else {
+            catalogSelectedFiles = catalogSelectedFiles.filter(function(f) { return f.name !== fileName; });
+        }
+        
+        updateCatalogSelectedCount();
+    }
+
+    // 更新已选文件数量显示
+    function updateCatalogSelectedCount() {
+        var countEl = document.getElementById('catalog-selected-count');
+        var selectedEl = document.getElementById('catalog-selected-files');
+        if (countEl) countEl.textContent = '已选 ' + catalogSelectedFiles.length + ' 个';
+        if (selectedEl) {
+            if (catalogSelectedFiles.length > 0) {
+                selectedEl.textContent = '已选择：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、');
+            } else {
+                selectedEl.textContent = '';
+            }
+        }
+    }
+
+    // 关闭证据目录模态框
+    function closeAddEvidenceCatalogModal() {
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    // 提交证据目录
+    function submitEvidenceCatalog() {
+        var number = document.getElementById('catalog-number').value.trim();
+        var name = document.getElementById('catalog-name').value.trim();
+        var pages = document.getElementById('catalog-pages').value.trim();
+        var description = document.getElementById('catalog-description').value.trim();
+        
+        // 获取选中的证据种类
+        var typeRadios = document.getElementsByName('catalog-type');
+        var type = '书证';
+        for (var i = 0; i < typeRadios.length; i++) {
+            if (typeRadios[i].checked) {
+                type = typeRadios[i].value;
+                break;
+            }
+        }
+        
+        if (!name) {
+            showToast('请输入证据材料名称');
+            return;
+        }
+        
+        var tbody = document.getElementById('evidence-catalog-list');
+        if (!tbody) return;
+        
+        // 获取证据种类的颜色样式
+        var typeClass = '';
+        if (type === '书证') {
+            typeClass = 'bg-blue-100 text-blue-700';
+        } else if (type === '电子数据') {
+            typeClass = 'bg-purple-100 text-purple-700';
+        } else if (type === '视听资料') {
+            typeClass = 'bg-orange-100 text-orange-700';
+        } else {
+            typeClass = 'bg-gray-100 text-gray-700';
+        }
+        
+        var newRow = document.createElement('tr');
+        newRow.className = 'hover:bg-gray-50 group';
+        // 保存关联文件到data属性
+        if (catalogSelectedFiles.length > 0) {
+            newRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
+        }
+        
+        // 生成关联文件显示
+        var linkedFilesHtml = '';
+        if (catalogSelectedFiles.length > 0) {
+            linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+        }
+        
+        newRow.innerHTML = 
+            '<td class="text-center py-3 px-4 text-xs text-gray-700">' + (number || '') + '</td>' +
+            '<td class="text-center py-3 px-4"><span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span></td>' +
+            '<td class="py-3 px-4 text-xs text-gray-800">' + name + linkedFilesHtml + '</td>' +
+            '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + description + '">' + (description || '-') + '</td>' +
+            '<td class="text-center py-3 px-4 text-xs text-gray-500">' + (pages || '-') + '</td>' +
+            '<td class="text-center py-3 px-4">' +
+            '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
+            '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+            '</div>' +
+            '</td>';
+        
+        tbody.appendChild(newRow);
+        closeAddEvidenceCatalogModal();
+        showToast('证据目录已添加');
+    }
+
+    // 编辑证据目录项
+    var editingCatalogRow = null;
+    
+    function editCatalogItem(btn) {
+        var row = btn.closest('tr');
+        if (!row) return;
+        
+        editingCatalogRow = row;
+        
+        // 获取当前行数据
+        var cells = row.querySelectorAll('td');
+        var number = cells[0]?.textContent?.trim() || '';
+        var type = cells[1]?.textContent?.trim() || '书证';
+        var name = cells[2]?.textContent?.trim() || '';
+        var description = cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '';
+        var pages = cells[4]?.textContent?.trim() || '';
+        
+        // 获取已关联文件（从data属性获取）
+        var linkedFiles = row.getAttribute('data-linked-files');
+        if (linkedFiles) {
+            try {
+                catalogSelectedFiles = JSON.parse(linkedFiles);
+            } catch(e) {
+                catalogSelectedFiles = [];
+            }
+        } else {
+            catalogSelectedFiles = [];
+        }
+        
+        // 填充模态框
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('catalog-number').value = number;
+            document.getElementById('catalog-name').value = name;
+            document.getElementById('catalog-pages').value = pages === '-' ? '' : pages;
+            document.getElementById('catalog-description').value = description === '-' ? '' : description;
+            
+            // 设置证据种类选中状态
+            var typeRadios = document.getElementsByName('catalog-type');
+            for (var i = 0; i < typeRadios.length; i++) {
+                typeRadios[i].checked = (typeRadios[i].value === type);
+            }
+            
+            // 修改标题和按钮文字
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '编辑证据目录';
+            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
+            if (submitBtn) submitBtn.textContent = '保存';
+            
+            // 加载文件列表并回显已选
+            loadCatalogFileList();
+            // 延迟一点设置选中状态，确保DOM已渲染
+            setTimeout(function() {
+                var checkboxes = document.querySelectorAll('.catalog-file-checkbox');
+                checkboxes.forEach(function(cb) {
+                    var fileName = cb.getAttribute('data-name');
+                    var isSelected = catalogSelectedFiles.some(function(f) { return f.name === fileName; });
+                    cb.checked = isSelected;
+                });
+                updateCatalogSelectedCount();
+            }, 50);
+        }
+    }
+
+    // 覆盖提交函数以支持编辑模式
+    var originalSubmitEvidenceCatalog = submitEvidenceCatalog;
+    submitEvidenceCatalog = function() {
+        if (editingCatalogRow) {
+            // 编辑模式
+            var number = document.getElementById('catalog-number').value.trim();
+            var name = document.getElementById('catalog-name').value.trim();
+            var pages = document.getElementById('catalog-pages').value.trim();
+            var description = document.getElementById('catalog-description').value.trim();
+            
+            var typeRadios = document.getElementsByName('catalog-type');
+            var type = '书证';
+            for (var i = 0; i < typeRadios.length; i++) {
+                if (typeRadios[i].checked) {
+                    type = typeRadios[i].value;
+                    break;
+                }
+            }
+            
+            if (!name) {
+                showToast('请输入证据材料名称');
+                return;
+            }
+            
+            var typeClass = '';
+            if (type === '书证') {
+                typeClass = 'bg-blue-100 text-blue-700';
+            } else if (type === '电子数据') {
+                typeClass = 'bg-purple-100 text-purple-700';
+            } else if (type === '视听资料') {
+                typeClass = 'bg-orange-100 text-orange-700';
+            } else {
+                typeClass = 'bg-gray-100 text-gray-700';
+            }
+            
+            var cells = editingCatalogRow.querySelectorAll('td');
+            if (cells[0]) cells[0].textContent = number || '';
+            if (cells[1]) cells[1].innerHTML = '<span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span>';
+            
+            // 更新证据名称和关联文件显示
+            if (cells[2]) {
+                var linkedFilesHtml = '';
+                if (catalogSelectedFiles.length > 0) {
+                    linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+                }
+                cells[2].innerHTML = name + linkedFilesHtml;
+            }
+            
+            // 保存关联文件到data属性
+            if (catalogSelectedFiles.length > 0) {
+                editingCatalogRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
+            } else {
+                editingCatalogRow.removeAttribute('data-linked-files');
+            }
+            
+            if (cells[3]) {
+                cells[3].textContent = description || '-';
+                cells[3].setAttribute('title', description);
+            }
+            if (cells[4]) cells[4].textContent = pages || '-';
+            
+            editingCatalogRow = null;
+            closeAddEvidenceCatalogModal();
+            showToast('证据目录已更新');
+        } else {
+            // 新增模式 - 调用原函数
+            originalSubmitEvidenceCatalog();
+        }
+    };
+
+    // 关闭模态框时重置编辑状态
+    var originalCloseAddEvidenceCatalogModal = closeAddEvidenceCatalogModal;
+    closeAddEvidenceCatalogModal = function() {
+        editingCatalogRow = null;
+        var modal = document.getElementById('add-evidence-catalog-modal');
+        if (modal) {
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '手动创建证据目录';
+            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
+            if (submitBtn) submitBtn.textContent = '添加';
+        }
+        originalCloseAddEvidenceCatalogModal();
+    };
+
+    // 删除证据目录项
+    function deleteCatalogItem(btn) {
+        if (!confirm('确定要删除该证据目录项吗？')) return;
+        var row = btn.closest('tr');
+        if (row) {
+            row.remove();
+            showToast('证据目录已删除');
+            // 重新编号
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (tbody) {
+                var rows = tbody.querySelectorAll('tr');
+                rows.forEach(function(r, index) {
+                    var numCell = r.querySelector('td:first-child');
+                    if (numCell) numCell.textContent = index + 1;
+                });
+            }
+        }
+    }
+
+    // AI创建证据目录
+    function aiCreateEvidenceCatalog() {
+        showToast('AI正在分析证据材料，生成证据目录...');
+        
+        // 模拟AI生成目录结构
+        setTimeout(function() {
+            var tbody = document.getElementById('evidence-catalog-list');
+            if (!tbody) return;
+            
+            var aiItems = [
+                { number: 14, type: '书证', typeClass: 'bg-blue-100 text-blue-700', name: 'AI分析报告', description: 'AI自动分析生成的证据关联性分析报告', pages: '见附件' },
+                { number: 15, type: '电子数据', typeClass: 'bg-purple-100 text-purple-700', name: '银行流水记录', description: '银行账户资金往来明细，证明资金流向', pages: '56-60' },
+                { number: 16, type: '视听资料', typeClass: 'bg-orange-100 text-orange-700', name: '现场勘查视频', description: '第三方机构现场勘查记录视频', pages: '见光盘' }
+            ];
+            
+            aiItems.forEach(function(item) {
+                var newRow = document.createElement('tr');
+                newRow.className = 'hover:bg-gray-50 group';
+                newRow.innerHTML = 
+                    '<td class="text-center py-3 px-4 text-xs text-gray-700">' + item.number + '</td>' +
+                    '<td class="text-center py-3 px-4"><span class="text-[10px] ' + item.typeClass + ' px-2 py-0.5 rounded">' + item.type + '</span></td>' +
+                    '<td class="py-3 px-4 text-xs text-gray-800">' + item.name + '</td>' +
+                    '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + item.description + '">' + item.description + '</td>' +
+                    '<td class="text-center py-3 px-4 text-xs text-gray-500">' + item.pages + '</td>' +
+                    '<td class="text-center py-3 px-4">' +
+                    '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
+                    '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+                    '</div>' +
+                    '</td>';
+                tbody.appendChild(newRow);
+            });
+            
+            showToast('AI已成功生成证据目录（共3项）');
+        }, 1500);
     }
 
     // 时间线相关函数
@@ -1930,6 +2316,90 @@
             if (row) {
                 row.remove();
                 showToast('证据材料已删除');
+            }
+        }
+    }
+
+    // 文书管理相关函数（授权委托书、判决书/调解书、其他文书通用）
+    var currentDocumentType = '';
+
+    var documentTypeMap = {
+        'power-attorney': { title: '上传授权委托书', listId: 'power-attorney-list', toast: '授权委托书已上传', deleteToast: '授权委托书已删除', subText: '' },
+        'judgment': { title: '上传判决书/调解书', listId: 'judgment-list', toast: '文书已上传', deleteToast: '文书已删除', subText: '判决文书' },
+        'other': { title: '上传其他文书', listId: 'other-doc-list', toast: '文书已上传', deleteToast: '文书已删除', subText: '其他' }
+    };
+
+    function openUploadDocumentModal(type) {
+        currentDocumentType = type;
+        var modal = document.getElementById('upload-document-modal');
+        var config = documentTypeMap[type];
+        if (modal && config) {
+            document.getElementById('upload-document-title').textContent = config.title;
+            document.getElementById('document-name').value = '';
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeUploadDocumentModal() {
+        var modal = document.getElementById('upload-document-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitDocument() {
+        var name = document.getElementById('document-name').value.trim();
+        var config = documentTypeMap[currentDocumentType];
+
+        if (!name) {
+            showToast('请输入文件名称');
+            return;
+        }
+
+        if (!config) {
+            showToast('未知文书类型');
+            return;
+        }
+
+        var list = document.getElementById(config.listId);
+        if (!list) {
+            showToast('文书列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var subInfo = config.subText ? config.subText + ' · ' + dateStr : dateStr + ' 上传';
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + subInfo + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteDocument(this, \'' + currentDocumentType + '\')">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadDocumentModal();
+        showToast(config.toast);
+    }
+
+    function deleteDocument(btn, type) {
+        var config = documentTypeMap[type];
+        var confirmed = confirm('确定要删除该文书吗？');
+        if (confirmed) {
+            var item = btn.closest('.flex.items-center.justify-between');
+            if (item) {
+                item.remove();
+                showToast(config ? config.deleteToast : '文书已删除');
             }
         }
     }
@@ -2904,208 +3374,6 @@
         alert('报告已导出为Markdown格式（演示功能）');
     }
     
-    // ===== PDF在线批注 - 完整功能 =====
-    // var currentPDFPage = 1; // → AppState.currentPDFPage
-    // var currentZoom = 1.0; // → AppState.currentZoom
-    // var currentAnnotateColor = 'bg-yellow-300'; // → AppState.currentAnnotateColor
-    // var annotateHistory = []; // → AppState.annotateHistory
-    // var historyIndex = -1; // → AppState.historyIndex
-    
-    function openPDFAnnotateModal() {
-        document.getElementById('pdf-annotate-modal').classList.remove('hidden');
-    }
-    function closePDFAnnotateModal() {
-        document.getElementById('pdf-annotate-modal').classList.add('hidden');
-    }
-    
-    // 工具选择
-    function setAnnotateTool(tool, btn) {
-        document.querySelectorAll('.annotate-tool-btn').forEach(function(b) {
-            b.className = 'annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-gray-600 hover:bg-gray-200 rounded-md';
-        });
-        if (btn) btn.className = 'annotate-tool-btn flex items-center gap-1 px-2.5 py-1.5 text-[11px] rounded-md bg-[#165DFF] text-white';
-        var labels = { pan: '选择', highlight: '高亮', underline: '下划线', strikethrough: '删除线', comment: '批注', draw: '画笔', shape: '形状' };
-        var label = document.getElementById('current-tool-label');
-        if (label) label.textContent = labels[tool] || '选择';
-    }
-    
-    // 颜色选择
-    function selectAnnotateColor(btn, color) {
-        document.querySelectorAll('.annotate-color-btn').forEach(function(b) {
-            b.className = 'annotate-color-btn w-5 h-5 rounded-full border border-gray-200 ' + b.getAttribute('data-color');
-        });
-        btn.className = 'annotate-color-btn w-5 h-5 rounded-full border-2 border-[#165DFF] ' + color;
-        AppState.currentAnnotateColor = color;
-    }
-    
-    // 翻页
-    function changePDFPage(delta) {
-        AppState.currentPDFPage = Math.max(1, Math.min(8, AppState.currentPDFPage + delta));
-        var el = document.getElementById('pdf-current-page');
-        if (el) el.textContent = AppState.currentPDFPage;
-    }
-    
-    // 缩放
-    function zoomPDF(delta) {
-        AppState.currentZoom = Math.max(0.5, Math.min(2.0, AppState.currentZoom + delta));
-        var content = document.getElementById('pdf-page-content');
-        if (content) {
-            content.style.transform = 'scale(' + AppState.currentZoom + ')';
-            content.style.transformOrigin = 'top center';
-        }
-        var zoomEl = document.getElementById('pdf-zoom-level');
-        if (zoomEl) zoomEl.textContent = Math.round(AppState.currentZoom * 100) + '%';
-        var zoomBar = document.getElementById('zoom-level-bar');
-        if (zoomBar) zoomBar.textContent = Math.round(AppState.currentZoom * 100) + '%';
-    }
-    
-    // 批注高亮定位
-    function focusAnnotation(id) {
-        // 高亮侧边栏对应项
-        document.querySelectorAll('.annotation-item').forEach(function(item) {
-            item.classList.remove('bg-blue-50', 'border-l-2', 'border-l-[#165DFF]');
-        });
-        var targetItem = document.querySelector('.annotation-item[data-annotation-id="' + id + '"]');
-        if (targetItem) {
-            targetItem.classList.add('bg-blue-50', 'border-l-2', 'border-l-[#165DFF]');
-            targetItem.scrollIntoView({ block: 'nearest' });
-        }
-        // 高亮页面标注
-        document.querySelectorAll('.annotate-marker, .annotate-comment').forEach(function(el) {
-            el.style.outline = 'none';
-        });
-        var targetMarker = document.querySelector('[data-annotation-id="' + id + '"]');
-        if (targetMarker) {
-            targetMarker.style.outline = '2px solid #165DFF';
-            targetMarker.style.outlineOffset = '2px';
-            targetMarker.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(function() {
-                targetMarker.style.outline = 'none';
-            }, 2000);
-        }
-    }
-    
-    // 批注筛选
-    function filterAnnotations(filter, btn) {
-        document.querySelectorAll('.ann-filter-btn').forEach(function(b) {
-            b.className = 'ann-filter-btn text-[10px] px-2 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
-        });
-        btn.className = 'ann-filter-btn text-[10px] px-2 py-1 rounded-full bg-[#165DFF] text-white';
-        
-        document.querySelectorAll('.annotation-item').forEach(function(item) {
-            if (filter === 'all') {
-                item.classList.remove('hidden');
-            } else if (filter === 'unsolved') {
-                var status = item.getAttribute('data-status');
-                if (status === 'unsolved' || status === 'processing') {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-                }
-            } else if (filter === 'solved') {
-                if (item.getAttribute('data-status') === 'solved') {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-                }
-            }
-        });
-    }
-    
-    // 撤销/重做
-    function undoAnnotation() {
-        if (AppState.historyIndex > 0) {
-            AppState.historyIndex--;
-            alert('撤销：回退到上一步操作（演示功能）');
-        } else {
-            alert('没有可撤销的操作');
-        }
-    }
-    function redoAnnotation() {
-        if (AppState.historyIndex < AppState.annotateHistory.length - 1) {
-            AppState.historyIndex++;
-            alert('重做：恢复已撤销操作（演示功能）');
-        } else {
-            alert('没有可重做的操作');
-        }
-    }
-    
-    // 新增批注（从侧边栏底部按钮触发）
-    function addNewAnnotation() {
-        // 选中批注工具
-        var commentBtn = document.querySelector('.annotate-tool-btn[data-tool="comment"]');
-        if (commentBtn) setAnnotateTool('comment', commentBtn);
-        // 打开编辑弹窗
-        document.getElementById('annotation-edit-content').value = '';
-        document.getElementById('annotation-edit-status').value = 'unsolved';
-        document.getElementById('annotation-edit-modal').classList.remove('hidden');
-    }
-    
-    // 批注编辑弹窗
-    function closeAnnotationEdit() {
-        document.getElementById('annotation-edit-modal').classList.add('hidden');
-    }
-    function saveAnnotationEdit() {
-        var content = document.getElementById('annotation-edit-content').value.trim();
-        if (!content) { alert('请输入批注内容'); return; }
-        var status = document.getElementById('annotation-edit-status').value;
-        var statusLabels = { unsolved: '未解决', processing: '处理中', solved: '已解决' };
-        var statusColors = { unsolved: 'text-yellow-600 bg-yellow-50', processing: 'text-blue-600 bg-blue-50', solved: 'text-green-600 bg-green-50' };
-        
-        // 添加新批注到 PDF 页面
-        var container = document.querySelector('#pdf-text-content');
-        if (container) {
-            var newComment = document.createElement('div');
-            newComment.className = 'annotate-comment bg-yellow-50 border-l-4 border-yellow-400 pl-3 py-2 pr-2 rounded-r text-xs relative mt-2';
-            newComment.setAttribute('data-annotation-id', 'ann-new-' + Date.now());
-            newComment.innerHTML = '<div class="flex items-center gap-1 text-yellow-600 font-medium"><iconify-icon icon="mdi:comment-text-outline" class="text-sm"></iconify-icon><span class="text-[10px]">我 · ' + new Date().toISOString().slice(0,10) + '</span><span class="text-[10px] ml-auto ' + statusColors[status].split(' ')[0] + '">' + statusLabels[status] + '</span></div><p class="text-[11px] text-gray-700 mt-0.5">' + content + '</p>';
-            container.parentNode.insertBefore(newComment, container.nextSibling);
-        }
-        
-        // 添加新批注到侧边栏
-        var panelList = document.getElementById('annotations-panel-list');
-        if (panelList) {
-            var newItem = document.createElement('div');
-            newItem.className = 'annotation-item px-4 py-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors';
-            newItem.setAttribute('data-annotation-id', 'ann-new-' + Date.now());
-            newItem.setAttribute('data-status', status);
-            newItem.setAttribute('onclick', "focusAnnotation('ann-new-" + Date.now() + "')");
-            newItem.innerHTML = '<div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-yellow-400"></span><span class="text-[10px] font-medium text-gray-600">批注</span><span class="text-[10px] text-gray-400 ml-auto">我</span></div><p class="text-[11px] text-gray-700 truncate">' + content + '</p><div class="mt-1"><span class="text-[10px] ' + statusColors[status] + ' px-1 py-0.5 rounded leading-none inline-block">' + statusLabels[status] + '</span></div>';
-            panelList.insertBefore(newItem, panelList.firstElementChild);
-        }
-        
-        updateAnnotationStats();
-        // 记录历史，关闭弹窗
-        AppState.annotateHistory.push('new');
-        AppState.historyIndex = AppState.annotateHistory.length - 1;
-        closeAnnotationEdit();
-    }
-    
-    function deleteAnnotation() {
-        if (confirm('确定删除此批注？')) {
-            closeAnnotationEdit();
-            alert('批注已删除（演示功能）');
-        }
-    }
-    
-    // 保存所有批注
-    function saveAnnotations() {
-        var count = document.querySelectorAll('.annotation-item').length;
-        alert('已保存 ' + count + ' 条批注（演示功能）\n批注数据已关联到案件：张三合同纠纷');
-    }
-    
-    // 更新统计数据
-    function updateAnnotationStats() {
-        var total = document.querySelectorAll('.annotation-item').length;
-        var unsolved = document.querySelectorAll('.annotation-item[data-status="unsolved"], .annotation-item[data-status="processing"]').length;
-        var countEl = document.getElementById('annotations-count');
-        if (countEl) countEl.textContent = total + ' 条';
-        var countBar = document.getElementById('annotations-count-bar');
-        if (countBar) countBar.textContent = total;
-        var unsolvedBar = document.getElementById('unsolved-count-bar');
-        if (unsolvedBar) unsolvedBar.textContent = unsolved;
-    }
-    
     // ===== 批量上传 =====
     // var batchFiles = []; // → AppState.batchFiles
     function openBatchUploadModal() {
@@ -3191,3 +3459,4 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
+

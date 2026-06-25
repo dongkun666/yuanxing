@@ -30,107 +30,107 @@ AI新建案件
 <!-- 案件列表 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
 <div class="overflow-x-auto">
-<table class="w-full text-sm">
+<table class="w-full text-sm table-fixed min-w-[880px]">
 <thead>
 <tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案件名</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案号</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案由</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">当事人</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">被告</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">状态</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">下次节点</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">操作</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-[150px]">案件名</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-[140px]">案号</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-[100px]">案由</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-[100px]">当事人</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-[70px]">被告</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] w-[80px]">状态</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] w-[110px]">下次节点</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] w-[160px]">操作</th>
 </tr>
 </thead>
 <tbody id="caseTableBody" class="divide-y divide-[#F2F3F5]">
 <tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="民间借贷纠纷">
-<td class="py-3 px-4 text-xs font-medium text-[#1D2129]">李明诉XX公司买卖合同纠纷</td>
-<td class="py-3 px-4 text-xs font-medium text-[#4E5969]">(2026)京01民初128号</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">民间借贷纠纷</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">张三诉李四</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">李四</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2026-08-25 开庭</td>
-<td class="text-center py-3 px-4">
+<td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="李明诉XX公司买卖合同纠纷">李明诉XX公司买卖合同纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="(2026)京01民初128号">(2026)京01民初128号</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="民间借贷纠纷">民间借贷纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="张三诉李四">张三诉李四</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="李四">李四</td>
+<td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded inline-block">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="2026-08-25 开庭">2026-08-25 开庭</td>
+<td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(0)">详情</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F53F3F] hover:underline" onclick="deleteCase(0)">删除</button>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(0)">详情</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#F53F3F] hover:underline flex-shrink-0" onclick="deleteCase(0)">删除</button>
 </div>
 </td>
 </tr>
 <tr class="hover:bg-[#F7F8FA] transition-colors" data-status="待开庭" data-type="劳动争议">
-<td class="py-3 px-4 text-xs font-medium text-[#1D2129]">赵六劳动争议仲裁案</td>
-<td class="py-3 px-4 text-xs font-medium text-[#4E5969]">(2026)京02民初256号</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">劳动争议仲裁</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">王五诉某科技公司</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">李四</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#FFF7E6] text-[#FAAD14] font-medium px-2 py-0.5 rounded">待开庭</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#F53F3F]">2026-08-28 开庭</td>
-<td class="text-center py-3 px-4">
+<td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="赵六劳动争议仲裁案">赵六劳动争议仲裁案</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="(2026)京02民初256号">(2026)京02民初256号</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="劳动争议仲裁">劳动争议仲裁</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="王五诉某科技公司">王五诉某科技公司</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="李四">李四</td>
+<td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] bg-[#FFF7E6] text-[#FAAD14] font-medium px-2 py-0.5 rounded inline-block">待开庭</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#F53F3F] truncate" title="2026-08-28 开庭">2026-08-28 开庭</td>
+<td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(1)">详情</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F53F3F] hover:underline" onclick="deleteCase(1)">删除</button>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(1)">详情</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#F53F3F] hover:underline flex-shrink-0" onclick="deleteCase(1)">删除</button>
 </div>
 </td>
 </tr>
 <tr class="hover:bg-[#F7F8FA] transition-colors" data-status="已结案" data-type="民事">
-<td class="py-3 px-4 text-xs font-medium text-[#1D2129]">张三合同纠纷案</td>
-<td class="py-3 px-4 text-xs font-medium text-[#4E5969]">(2026)京03民初789号</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">合同纠纷</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">某公司诉赵六</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">李四</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">已结案</span></td>
+<td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="张三合同纠纷案">张三合同纠纷案</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="(2026)京03民初789号">(2026)京03民初789号</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="合同纠纷">合同纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="某公司诉赵六">某公司诉赵六</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="李四">李四</td>
+<td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded inline-block">已结案</span></td>
 <td class="text-center py-3 px-4 text-xs text-[#86909C]">—</td>
-<td class="text-center py-3 px-4">
+<td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(2)">详情</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F53F3F] hover:underline" onclick="deleteCase(2)">删除</button>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(2)">详情</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#F53F3F] hover:underline flex-shrink-0" onclick="deleteCase(2)">删除</button>
 </div>
 </td>
 </tr>
 <tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="知识产权">
-<td class="py-3 px-4 text-xs font-medium text-[#1D2129]">某科技公司股权纠纷案</td>
-<td class="py-3 px-4 text-xs font-medium text-[#4E5969]">(2026)京04民初345号</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">知识产权侵权</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">A公司诉B公司</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">李四</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">证据交换中</td>
-<td class="text-center py-3 px-4">
+<td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="某科技公司股权纠纷案">某科技公司股权纠纷案</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="(2026)京04民初345号">(2026)京04民初345号</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="知识产权侵权">知识产权侵权</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="A公司诉B公司">A公司诉B公司</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="李四">李四</td>
+<td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded inline-block">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="证据交换中">证据交换中</td>
+<td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(3)">详情</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F53F3F] hover:underline" onclick="deleteCase(3)">删除</button>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(3)">详情</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#F53F3F] hover:underline flex-shrink-0" onclick="deleteCase(3)">删除</button>
 </div>
 </td>
 </tr>
 <tr class="hover:bg-[#F7F8FA] transition-colors" data-status="进行中" data-type="民事">
-<td class="py-3 px-4 text-xs font-medium text-[#1D2129]">王华借贷纠纷案</td>
-<td class="py-3 px-4 text-xs font-medium text-[#4E5969]">(2026)京05民初567号</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">离婚纠纷</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">刘某诉陈某</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">李四</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded">进行中</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">调解中</td>
-<td class="text-center py-3 px-4">
+<td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="王华借贷纠纷案">王华借贷纠纷案</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="(2026)京05民初567号">(2026)京05民初567号</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="离婚纠纷">离婚纠纷</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="刘某诉陈某">刘某诉陈某</td>
+<td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="李四">李四</td>
+<td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded inline-block">进行中</span></td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="调解中">调解中</td>
+<td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(4)">详情</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F53F3F] hover:underline" onclick="deleteCase(4)">删除</button>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(4)">详情</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<button class="text-xs text-[#F53F3F] hover:underline flex-shrink-0" onclick="deleteCase(4)">删除</button>
 </div>
 </td>
 </tr>
@@ -149,4 +149,4 @@ AI新建案件
 </div>
 </div>
 </div>
-<!-- 智能卷宗分析 -->
+
