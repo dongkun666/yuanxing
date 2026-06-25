@@ -1870,6 +1870,70 @@
         }
     }
 
+    // 证据材料相关函数
+    function openUploadMaterialModal() {
+        var modal = document.getElementById('upload-material-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('material-name').value = '';
+            document.getElementById('material-type').value = '合同';
+        }
+    }
+
+    function closeUploadMaterialModal() {
+        var modal = document.getElementById('upload-material-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitMaterial() {
+        var name = document.getElementById('material-name').value.trim();
+        var type = document.getElementById('material-type').value;
+
+        if (!name) {
+            showToast('请输入文件名称');
+            return;
+        }
+
+        var list = document.getElementById('materials-list');
+        if (!list) {
+            showToast('材料列表未找到');
+            return;
+        }
+
+        var now = new Date();
+        var dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+        var newRow = document.createElement('tr');
+        newRow.className = 'hover:bg-gray-50';
+        newRow.innerHTML = '<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">' + name + '</td>' +
+            '<td class="py-2.5 px-4 text-xs text-gray-500">' + type + '</td>' +
+            '<td class="py-2.5 px-4 text-xs text-gray-500">' + dateStr + '</td>' +
+            '<td class="text-center py-2.5 px-4">' +
+            '<div class="flex items-center justify-center gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>' +
+            '</div>' +
+            '</td>';
+
+        list.appendChild(newRow);
+        closeUploadMaterialModal();
+        showToast('证据材料已上传');
+    }
+
+    function deleteMaterial(btn) {
+        var confirmed = confirm('确定要删除该证据材料吗？');
+        if (confirmed) {
+            var row = btn.closest('tr');
+            if (row) {
+                row.remove();
+                showToast('证据材料已删除');
+            }
+        }
+    }
+
     // AI 侧边面板子标签切换
     function switchAIPanel(btn, panelName) {
         var container = btn.closest('.w-80') || btn.closest('[class*="w-80"]');

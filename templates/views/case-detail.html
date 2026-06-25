@@ -559,7 +559,7 @@
 <!-- Tab: 证据材料 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-materials">
 <div class="max-w-5xl w-full mx-auto space-y-4">
-<div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer">
+<div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer" onclick="openUploadMaterialModal()">
 <iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
 <p class="text-sm text-gray-500 mt-2">拖拽文件到此处上传，或 <span class="text-[#165DFF]">点击浏览</span></p>
 <p class="text-[10px] text-gray-400 mt-1">支持 PDF / Word / 图片 / 音频 / 视频</p>
@@ -571,33 +571,57 @@
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">文件名</th>
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">类型</th>
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">上传时间</th>
-<th class="text-center py-2.5 px-4 text-[11px] font-semibold text-gray-500">状态</th>
+<th class="text-center py-2.5 px-4 text-[11px] font-semibold text-gray-500">操作</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-gray-50">
+<tbody class="divide-y divide-gray-50" id="materials-list">
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">采购框架协议.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">合同</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:30</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">送货单（2025年10-12月）.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">证据</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:32</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">微信聊天记录导出.txt</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">通讯</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 09:15</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">待处理</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">催款函（2026-03-15）.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">函件</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 10:00</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
