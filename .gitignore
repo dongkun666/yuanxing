@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+
+# 备份文件
+*.bak
+*.bak2
+*.bak3
+*.tmp
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+npm-debug.log*
+
+# 编译产物（保留）
+# assets/css/tailwind.css  # 编译后的 CSS，需要提交
+# assets/css/tailwind-input.css  # 源 CSS，需要提交

@@ -719,23 +719,6 @@
             }
         }
 
-        // 新建对话（已合并到上方，此处保留注释占位）
-        /* function startNewChat() {
-            var msgList = document.getElementById('aiViewMessages');
-            if (msgList) {
-                msgList.innerHTML = '' +
-                    '<div class="flex gap-3">' +
-                      '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">' +
-                        '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
-                      '</div>' +
-                      '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-[#E5E6EB]">' +
-                        '<p class="text-sm leading-relaxed text-[#4E5969]">您好！我是 <span class="font-semibold text-[#165DFF]">LexPrime AI</span> 助手。请问有什么可以帮您的？</p>' +
-                        '<span class="text-[11px] text-[#86909C] mt-2 block">刚刚</span>' +
-                      '</div>' +
-                    '</div>';
-            }
-        } */
-
         // 选择历史对话
         function selectAIHistory(el) {
             var title = el.getAttribute('data-title') || '历史对话';

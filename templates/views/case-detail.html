@@ -51,7 +51,7 @@
 <!-- Tab 内容区 -->
 <div class="flex-1 flex flex-col overflow-hidden">
 <!-- Tab: 案件概览 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-overview">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-overview">
 <div class="w-full px-4 space-y-4">
 <!-- 案件基本信息 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
@@ -230,7 +230,7 @@
 </div>
 </div>
 <!-- Tab: 时间线 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-timeline">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-timeline">
 <div class="max-w-4xl w-full mx-auto">
 <div class="flex justify-between items-center mb-4">
 <h3 class="text-sm font-semibold text-gray-700">案件时间线</h3>
@@ -331,7 +331,7 @@
 </div>
 </div>
 <!-- Tab: 文书管理（保留原有的三栏布局） -->
-<div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-documents">
+<div class="hidden max-h-full h-fit flex flex-row overflow-hidden" id="case-tab-documents">
 <!-- 左栏：文书结构树 -->
 <div class="w-64 bg-white border-r border-gray-200 flex flex-col flex-none">
 <div class="p-4 border-b border-gray-100">
@@ -554,7 +554,7 @@
 </div>
 </div>
 <!-- Tab: 证据材料 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-materials">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-materials">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <!-- 标签页切换 -->
 <div class="flex items-center gap-6 border-b border-[#E5E6EB]">
@@ -842,10 +842,8 @@
 </div>
 </div>
 </div>
-</div>
-</div>
 <!-- Tab: 证件管理 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-evidence">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-evidence">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
@@ -891,7 +889,7 @@
 </div>
 </div>
 <!-- Tab: 委托合同 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-contract">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-contract">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
@@ -951,7 +949,7 @@
 </div>
 </div>
 <!-- Tab: 授权委托书 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-authorization">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-authorization">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
@@ -983,7 +981,7 @@
 </div>
 </div>
 <!-- Tab: 判决书/调解书 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-judgment">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-judgment">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
@@ -1015,7 +1013,7 @@
 </div>
 </div>
 <!-- Tab: 其他文书 -->
-<div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-other">
+<div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-[#F2F3F5]" id="case-tab-other">
 <div class="max-w-5xl w-full mx-auto space-y-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-6">
 <h5 class="font-bold text-sm mb-4 flex items-center gap-2">
