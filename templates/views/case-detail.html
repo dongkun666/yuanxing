@@ -7,18 +7,14 @@
 </button>
 <h4 class="text-lg font-bold">案件管理</h4>
 <div class="w-px h-5 bg-gray-200"></div>
-<span class="text-sm font-medium text-gray-800" id="case-detail-title">(2026)京01民初128号</span>
-<span class="text-xs text-gray-400" id="case-detail-type">民间借贷纠纷</span>
-<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full" id="case-detail-status">进行中</span>
-</div>
 <div class="flex items-center gap-2">
-<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded-lg border border-[#E5E6EB] transition-colors" onclick="editCase()">
-<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
-            </button>
-<button class="text-xs text-[#F53F3F] hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-200 transition-colors" onclick="archiveCurrentCase()">
-<iconify-icon class="mr-1" icon="mdi:archive-outline"></iconify-icon>归档
-            </button>
+<span class="text-sm font-medium text-gray-800" id="case-detail-title">李明诉XX公司买卖合同纠纷</span>
+<button class="text-gray-400 hover:text-[#165DFF] transition-colors" onclick="editCaseTitle()">
+<iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+</button>
 </div>
+</div>
+
 </div>
 <!-- Tab 导航栏 -->
 <div class="flex-none bg-white border-b border-gray-200 px-6">
@@ -59,123 +55,143 @@
 <div class="w-full px-4 space-y-4">
 <!-- 案件基本信息 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-4 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
-                        案件基本信息
+                            案件基本信息
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('basic')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
                     </h5>
 <div class="grid grid-cols-3 gap-4">
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案号</p>
-<p class="text-sm font-medium text-gray-800">(2026)京01民初128号</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-caseNumber">(2026)京01民初128号</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案由</p>
-<p class="text-sm font-medium text-gray-800">民间借贷纠纷</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-caseType">民间借贷纠纷</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">案件状态</p>
-<p><span class="text-[11px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full">进行中</span></p>
+<p><span class="text-[11px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full" id="field-basic-status">进行中</span></p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">标的金额</p>
-<p class="text-sm font-medium text-gray-800">¥5,230,000.00</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-claimAmount">¥5,230,000.00</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">合同金额</p>
-<p class="text-sm font-medium text-gray-800">¥5,000,000.00</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-contractAmount">¥5,000,000.00</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">签约日期</p>
-<p class="text-sm font-medium text-gray-800">2026-05-20</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-signDate">2026-05-20</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">代理阶段</p>
-<p class="text-sm font-medium text-gray-800">一审</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-stage">一审</p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">是否保全</p>
-<p><span class="text-[11px] bg-green-100 text-green-700 font-medium px-2 py-0.5 rounded-full">已保全</span></p>
+<p><span class="text-[11px] bg-green-100 text-green-700 font-medium px-2 py-0.5 rounded-full" id="field-basic-preservation">已保全</span></p>
 </div>
 <div>
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">缴费情况</p>
-<p class="text-sm font-medium text-gray-800">已缴费</p>
+<p class="text-sm font-medium text-gray-800" id="field-basic-paymentStatus">已缴费</p>
 </div>
 <div class="col-span-2">
 <p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">特殊约定</p>
-<p class="text-sm text-gray-800">风险代理，回款后按比例支付律师费</p>
+<p class="text-sm text-gray-800" id="field-basic-specialTerms">风险代理，回款后按比例支付律师费</p>
 </div>
 </div>
 </div>
 <!-- 客户信息 & 对方信息 -->
 <div class="grid grid-cols-2 gap-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-green-500" icon="mdi:account"></iconify-icon>
                             客户
-                        </h5>
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('client')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
+                    </h5>
 <div class="space-y-3">
 <div class="grid grid-cols-2 gap-3">
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">客户姓名</span>
-<p class="text-sm font-medium">上海XX贸易有限公司</p>
+<p class="text-sm font-medium" id="field-client-name">上海XX贸易有限公司</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">客户电话</span>
-<p class="text-sm">138-1234-5678</p>
+<p class="text-sm" id="field-client-phone">138-1234-5678</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">客户证件号</span>
-<p class="text-sm">91310000MA1G8XXXXX</p>
+<p class="text-sm" id="field-client-idNumber">91310000MA1G8XXXXX</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">法定代表人</span>
-<p class="text-sm">王大明</p>
+<p class="text-sm" id="field-client-legalRep">王大明</p>
 </div>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">客户地址</span>
-<p class="text-sm">上海市浦东新区张江高科技园区科苑路88号</p>
+<p class="text-sm" id="field-client-address">上海市浦东新区张江高科技园区科苑路88号</p>
 </div>
 </div>
 </div>
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-red-500" icon="mdi:account"></iconify-icon>
                             对方
-                        </h5>
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('opponent')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
+                    </h5>
 <div class="space-y-3">
 <div class="grid grid-cols-2 gap-3">
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">对方姓名</span>
-<p class="text-sm font-medium">北京YY科技发展有限公司</p>
+<p class="text-sm font-medium" id="field-opponent-name">北京YY科技发展有限公司</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">对方电话</span>
-<p class="text-sm">010-8888-7777</p>
+<p class="text-sm" id="field-opponent-phone">010-8888-7777</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">对方证件号</span>
-<p class="text-sm">91110000MA01XXXXX</p>
+<p class="text-sm" id="field-opponent-idNumber">91110000MA01XXXXX</p>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">法定代表人</span>
-<p class="text-sm text-red-500">未提供 · 请补充</p>
+<p class="text-sm text-red-500" id="field-opponent-legalRep">未提供 · 请补充</p>
 </div>
 </div>
 <div>
 <span class="text-[10px] text-gray-400 block mb-1">对方地址</span>
-<p class="text-sm">北京市海淀区中关村大街1号</p>
+<p class="text-sm" id="field-opponent-address">北京市海淀区中关村大街1号</p>
 </div>
 </div>
 </div>
 </div>
 <!-- 客户诉求 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:format-list-checks"></iconify-icon>
-                        客户诉求
+                            客户诉求
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('claims')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
                     </h5>
-<div class="text-sm text-gray-600 leading-relaxed space-y-2">
+<div class="text-sm text-gray-600 leading-relaxed space-y-2" id="field-claims-content">
 <p>1. 判令被告向原告支付货款本金人民币 5,000,000.00 元；</p>
 <p>2. 判令被告支付逾期利息（按LPR 4倍计算，自2026年1月1日起至实际清偿之日止）；</p>
 <p>3. 判令被告承担本案诉讼费、保全费、律师费。</p>
@@ -183,21 +199,31 @@
 </div>
 <!-- 办案思路 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:lightbulb-outline"></iconify-icon>
-                        办案思路
+                            办案思路
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('strategy')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
                     </h5>
-<p class="text-sm text-gray-600 leading-relaxed">
+<p class="text-sm text-gray-600 leading-relaxed" id="field-strategy-content">
                         本案事实清楚、证据充分，建议采取以下策略：1）以采购协议、送货单、对账单为核心证据，形成完整证据链；2）申请财产保全，查封被告银行账户及名下不动产，确保判决后可执行；3）先发律师函催告，争取庭前和解；4）如调解不成，坚持诉讼请求，重点主张逾期利息按LPR 4倍计算。
                     </p>
 </div>
 <!-- 案件情况 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<h5 class="font-bold text-sm mb-3 flex items-center gap-2">
+<h5 class="font-bold text-sm mb-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
 <iconify-icon class="text-[#165DFF]" icon="mdi:text-subject"></iconify-icon>
-                        案情简述
+                            案情简述
+                        </div>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded transition-colors" onclick="editSection('summary')">
+<iconify-icon class="mr-1" icon="mdi:pencil-outline"></iconify-icon>编辑
+                        </button>
                     </h5>
-<p class="text-sm text-gray-600 leading-relaxed">
+<p class="text-sm text-gray-600 leading-relaxed" id="field-summary-content">
                         2025年10月12日，原、被告双方签署编号为 SH-2025-1012 的《采购框架协议》，约定由原告向被告供应电子元器件，货款月结。截至2026年3月，原告累计供货价值人民币5,000,000.00元，被告仅支付1,200,000.00元，尚欠3,800,000.00元。经多次催讨无果，原告提起诉讼。目前已完成立案，已申请财产保全并获法院批准，正在准备开庭材料。
                     </p>
 </div>
@@ -206,15 +232,27 @@
 <!-- Tab: 时间线 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-timeline">
 <div class="max-w-4xl w-full mx-auto">
-<div class="relative pl-8 border-l-2 border-[#165DFF]/30 space-y-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-sm font-semibold text-gray-700">案件时间线</h3>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-blue-600 transition-colors flex items-center gap-1.5" onclick="openAddTimelineModal()">
+<iconify-icon class="text-sm" icon="mdi:plus"></iconify-icon>
+添加时间线
+</button>
+</div>
+<div class="relative pl-8 border-l-2 border-[#165DFF]/30 space-y-6" id="timeline-container">
 <div class="relative">
 <div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-[#165DFF] flex items-center justify-center text-white shadow">
 <iconify-icon class="text-xs" icon="mdi:file-sign"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">
 <div class="flex items-center justify-between mb-1">
 <span class="text-sm font-medium">签订采购框架协议</span>
+<div class="flex items-center gap-2">
 <span class="text-[10px] text-gray-400">2025-10-12</span>
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
+<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
 </div>
 <p class="text-xs text-gray-500">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
 </div>
@@ -223,10 +261,15 @@
 <div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white shadow">
 <iconify-icon class="text-xs" icon="mdi:file-document"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">
 <div class="flex items-center justify-between mb-1">
 <span class="text-sm font-medium">发出催款函</span>
+<div class="flex items-center gap-2">
 <span class="text-[10px] text-gray-400">2026-03-15</span>
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
+<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
 </div>
 <p class="text-xs text-gray-500">原告委托律所向被告发出律师催款函</p>
 </div>
@@ -235,10 +278,15 @@
 <div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white shadow">
 <iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">
 <div class="flex items-center justify-between mb-1">
 <span class="text-sm font-medium">法院立案</span>
+<div class="flex items-center gap-2">
 <span class="text-[10px] text-gray-400">2026-06-01</span>
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
+<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
 </div>
 <p class="text-xs text-gray-500">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
 </div>
@@ -247,10 +295,15 @@
 <div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white shadow">
 <iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">
 <div class="flex items-center justify-between mb-1">
 <span class="text-sm font-medium">排期开庭</span>
+<div class="flex items-center gap-2">
 <span class="text-[10px] text-gray-400">2026-08-25</span>
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
+<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
 </div>
 <p class="text-xs text-gray-500">第3法庭 · 合议庭审理</p>
 <span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full mt-1 inline-block">距开庭 4 天</span>
@@ -260,10 +313,15 @@
 <div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white shadow animate-pulse">
 <iconify-icon class="text-xs" icon="mdi:pencil"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border-2 border-[#165DFF] p-4 ml-4 shadow-md">
+<div class="bg-white rounded-xl border-2 border-[#165DFF] p-4 ml-4 shadow-md group">
 <div class="flex items-center justify-between mb-1">
 <span class="text-sm font-medium text-[#165DFF]">当前 · 文书准备</span>
+<div class="flex items-center gap-2">
 <span class="text-[10px] text-gray-400">进行中</span>
+<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
+<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
 </div>
 <p class="text-xs text-gray-500">起草民事起诉状、准备证据清单及证据材料</p>
 <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">当前阶段</span>
@@ -501,25 +559,7 @@
 <!-- Tab: 证据材料 -->
 <div class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-[#F2F3F5]" id="case-tab-materials">
 <div class="max-w-5xl w-full mx-auto space-y-4">
-<div class="grid grid-cols-4 gap-4">
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
-<p class="text-2xl font-bold text-[#165DFF]">12</p>
-<p class="text-[10px] text-gray-500 mt-1">材料总数</p>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
-<p class="text-2xl font-bold text-green-600">8</p>
-<p class="text-[10px] text-gray-500 mt-1">已解析</p>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
-<p class="text-2xl font-bold text-orange-500">3</p>
-<p class="text-[10px] text-gray-500 mt-1">待处理</p>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 text-center">
-<p class="text-2xl font-bold text-red-500">1</p>
-<p class="text-[10px] text-gray-500 mt-1">解析失败</p>
-</div>
-</div>
-<div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer">
+<div class="bg-white rounded-xl border-2 border-dashed border-[#E5E6EB] p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer" onclick="openUploadMaterialModal()">
 <iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
 <p class="text-sm text-gray-500 mt-2">拖拽文件到此处上传，或 <span class="text-[#165DFF]">点击浏览</span></p>
 <p class="text-[10px] text-gray-400 mt-1">支持 PDF / Word / 图片 / 音频 / 视频</p>
@@ -531,33 +571,57 @@
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">文件名</th>
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">类型</th>
 <th class="text-left py-2.5 px-4 text-[11px] font-semibold text-gray-500">上传时间</th>
-<th class="text-center py-2.5 px-4 text-[11px] font-semibold text-gray-500">状态</th>
+<th class="text-center py-2.5 px-4 text-[11px] font-semibold text-gray-500">操作</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-gray-50">
+<tbody class="divide-y divide-gray-50" id="materials-list">
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">采购框架协议.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">合同</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:30</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">送货单（2025年10-12月）.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">证据</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-01 14:32</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">微信聊天记录导出.txt</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">通讯</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 09:15</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">待处理</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 <tr class="hover:bg-gray-50">
 <td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">催款函（2026-03-15）.pdf</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">函件</td>
 <td class="py-2.5 px-4 text-xs text-gray-500">2026-06-02 10:00</td>
-<td class="text-center py-2.5 px-4"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">已完成</span></td>
+<td class="text-center py-2.5 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -572,7 +636,7 @@
 <iconify-icon class="text-[#165DFF]" icon="mdi:card-account-details-outline"></iconify-icon>
                             证件管理
                         </h5>
-<div class="space-y-3">
+<div class="space-y-3" id="evidence-list">
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 <div class="flex items-center gap-3">
 <iconify-icon class="text-xl text-[#165DFF]" icon="mdi:card-account-details"></iconify-icon>
@@ -584,6 +648,7 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>
 </div>
 </div>
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -597,11 +662,12 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>
 </div>
 </div>
 </div>
 <div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadEvidenceModal()">
 <iconify-icon icon="mdi:plus"></iconify-icon>上传证件
                 </button>
 </div>
@@ -616,7 +682,7 @@
 <iconify-icon class="text-[#165DFF]" icon="mdi:file-sign"></iconify-icon>
                             委托合同
                         </h5>
-<div class="space-y-3">
+<div class="space-y-3" id="contract-list">
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
 <div class="flex items-center gap-3">
 <iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
@@ -628,7 +694,7 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
-<button class="text-xs text-gray-500 hover:bg-gray-100 px-3 py-1.5 rounded border border-[#E5E6EB]">删除</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteContract(this)">删除</button>
 </div>
 </div>
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -642,7 +708,7 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
-<button class="text-xs text-gray-500 hover:bg-gray-100 px-3 py-1.5 rounded border border-[#E5E6EB]">删除</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteContract(this)">删除</button>
 </div>
 </div>
 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -656,16 +722,13 @@
 <div class="flex gap-2">
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>
 <button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>
-<button class="text-xs text-gray-500 hover:bg-gray-100 px-3 py-1.5 rounded border border-[#E5E6EB]">删除</button>
+<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteContract(this)">删除</button>
 </div>
 </div>
 </div>
 <div class="mt-4 flex gap-2">
-<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2">
+<button class="text-xs bg-[#165DFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" onclick="openUploadContractModal()">
 <iconify-icon icon="mdi:plus"></iconify-icon>上传委托合同
-                </button>
-<button class="text-xs bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200 flex items-center gap-2">
-<iconify-icon icon="mdi:file-plus"></iconify-icon>从模板创建
                 </button>
 </div>
 </div>

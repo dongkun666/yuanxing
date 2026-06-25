@@ -291,6 +291,28 @@
 <!-- 视图模板将在这里动态加载 -->
 </main>
 </div>
+<!-- 全局底部状态栏 -->
+<footer class="h-7 bg-white border-t border-gray-200 flex items-center justify-between px-4 text-[11px] text-gray-500 flex-none">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1">
+<iconify-icon class="text-green-500" icon="mdi:sync"></iconify-icon>
+                云端同步已完成 (<span id="footer-sync-time">--:--</span>)
+            </span>
+<span class="flex items-center gap-1">
+<iconify-icon class="text-blue-500" icon="mdi:server-network"></iconify-icon>
+                连接至上海节点
+            </span>
+</div>
+<div class="flex items-center gap-4">
+<span class="cursor-pointer hover:text-blue-600">帮助中心</span>
+<span class="cursor-pointer hover:text-blue-600">意见反馈</span>
+<div class="h-3 w-px bg-gray-200"></div>
+<span class="font-medium text-[#165DFF] flex items-center gap-1 cursor-pointer">
+<iconify-icon icon="mdi:robot"></iconify-icon>
+                LexPrime 助手在线
+            </span>
+</div>
+</footer>
 <!-- 主脚本 -->
 <script src="./assets/js/script.js?v=14"></script>
 <!-- 预加载弹窗模板 -->

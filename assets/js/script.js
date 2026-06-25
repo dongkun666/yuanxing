@@ -165,17 +165,327 @@
             showToast('案件归档功能开发中');
         }
 
-        // ===== 案件详情页操作 =====
-        function editCase() {
-            showToast('编辑案件功能开发中');
+        function editCaseTitle() {
+            var el = document.getElementById('case-detail-title');
+            if (!el) return;
+            var currentText = el.textContent.trim();
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'text-sm font-medium text-gray-800 bg-transparent border border-[#165DFF] rounded px-2 py-0.5 outline-none focus:border-[#165DFF] w-auto min-w-[200px]';
+            
+            function finishEdit() {
+                var newText = input.value.trim();
+                if (newText && newText !== currentText) {
+                    el.textContent = newText;
+                    if (currentCaseIndex >= 0) {
+                        var tbody = document.getElementById('caseTableBody');
+                        if (tbody) {
+                            var rows = tbody.querySelectorAll('tr');
+                            if (rows[currentCaseIndex]) {
+                                var firstTd = rows[currentCaseIndex].querySelector('td:first-child');
+                                if (firstTd) {
+                                    firstTd.textContent = newText;
+                                }
+                            }
+                        }
+                    }
+                    showToast('案件名已更新');
+                }
+                el.style.display = '';
+                input.remove();
+                var editBtn = document.getElementById('case-title-edit-btn');
+                if (editBtn) editBtn.style.display = '';
+            }
+            
+            input.addEventListener('blur', finishEdit);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    input.value = currentText;
+                    input.blur();
+                }
+            });
+            
+            el.style.display = 'none';
+            var editBtn = el.nextElementSibling;
+            if (editBtn) editBtn.style.display = 'none';
+            el.parentNode.insertBefore(input, el.nextSibling);
+            input.focus();
+            input.select();
         }
 
+        function deleteCase(index) {
+            if (!confirm('确定要删除该案件吗？删除后不可恢复。')) return;
+            var tbody = document.getElementById('caseTableBody');
+            if (!tbody) return;
+            var rows = tbody.querySelectorAll('tr');
+            if (rows[index]) {
+                rows[index].remove();
+                showToast('案件已删除');
+                filterCaseList();
+            }
+        }
+
+        function openNewCaseModal() {
+            var modal = document.getElementById('new-case-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeNewCaseModal() {
+            var modal = document.getElementById('new-case-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function submitNewCase() {
+            var caseName = document.getElementById('new-case-name').value.trim();
+            if (!caseName) {
+                showToast('请输入案件名');
+                return;
+            }
+
+            var caseNumber = document.getElementById('new-case-number').value.trim() || '待分配案号';
+            var caseType = document.getElementById('new-case-type').value.trim() || '暂无';
+            var status = document.getElementById('new-case-status').value;
+            var claim = document.getElementById('new-case-claim').value.trim() || '-';
+            var clientName = document.getElementById('new-client-name').value.trim() || '待补充';
+            var opponentName = document.getElementById('new-opponent-name').value.trim() || '待补充';
+
+            var statusClass = '';
+            if (status === '进行中') {
+                statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            } else if (status === '待开庭') {
+                statusClass = 'bg-amber-100 text-amber-700';
+            } else if (status === '已结案') {
+                statusClass = 'bg-green-100 text-green-700';
+            } else if (status === '已归档') {
+                statusClass = 'bg-gray-100 text-gray-600';
+            } else {
+                statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            }
+
+            var tbody = document.getElementById('caseTableBody');
+            if (tbody) {
+                var index = tbody.querySelectorAll('tr').length;
+                var tr = document.createElement('tr');
+                tr.className = 'hover:bg-[#F7F8FA] transition-colors';
+                tr.setAttribute('data-status', status);
+                tr.setAttribute('data-type', caseType);
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129]">${caseName}</td>
+                    <td class="py-3 px-4 text-xs font-medium text-[#4E5969]">${caseNumber}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${caseType}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${clientName}</td>
+                    <td class="py-3 px-4 text-xs text-[#4E5969]">${opponentName}</td>
+                    <td class="text-center py-3 px-4"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded">${status}</span></td>
+                    <td class="text-center py-3 px-4 text-xs text-[#4E5969]">待安排</td>
+                    <td class="text-center py-3 px-4">
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="text-xs text-[#165DFF] hover:underline" onclick="openCaseDetail(${index})">详情</button>
+                            <span class="text-[#E5E6EB]">|</span>
+                            <button class="text-xs text-[#165DFF] hover:underline" onclick="archiveCase()">归档</button>
+                            <span class="text-[#E5E6EB]">|</span>
+                            <button class="text-xs text-red-500 hover:underline" onclick="deleteCase(${index})">删除</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                filterCaseList();
+            }
+
+            closeNewCaseModal();
+            showToast('案件创建成功');
+        }
+
+        // ===== 案件详情页操作 =====
         function shareCase() {
             showToast('分享案件功能开发中');
         }
 
-        function archiveCurrentCase() {
-            showToast('案件归档功能开发中');
+        var currentEditSection = null;
+        var sectionConfigs = {
+            basic: {
+                title: '编辑案件基本信息',
+                fields: [
+                    { key: 'caseNumber', label: '案号', type: 'text', colSpan: 1 },
+                    { key: 'caseType', label: '案由', type: 'text', colSpan: 1 },
+                    { key: 'status', label: '案件状态', type: 'select', options: ['进行中', '已结案', '已归档', '中止审理'], colSpan: 1 },
+                    { key: 'claimAmount', label: '标的金额', type: 'text', colSpan: 1 },
+                    { key: 'contractAmount', label: '合同金额', type: 'text', colSpan: 1 },
+                    { key: 'signDate', label: '签约日期', type: 'date', colSpan: 1 },
+                    { key: 'stage', label: '代理阶段', type: 'select', options: ['一审', '二审', '再审', '执行', '仲裁'], colSpan: 1 },
+                    { key: 'preservation', label: '是否保全', type: 'select', options: ['已保全', '未保全', '保全中'], colSpan: 1 },
+                    { key: 'paymentStatus', label: '缴费情况', type: 'select', options: ['已缴费', '未缴费', '部分缴费'], colSpan: 1 },
+                    { key: 'specialTerms', label: '特殊约定', type: 'textarea', colSpan: 3 }
+                ]
+            },
+            client: {
+                title: '编辑客户信息',
+                fields: [
+                    { key: 'name', label: '客户姓名', type: 'text', colSpan: 1 },
+                    { key: 'phone', label: '客户电话', type: 'text', colSpan: 1 },
+                    { key: 'idNumber', label: '客户证件号', type: 'text', colSpan: 1 },
+                    { key: 'legalRep', label: '法定代表人', type: 'text', colSpan: 1 },
+                    { key: 'address', label: '客户地址', type: 'textarea', colSpan: 2 }
+                ]
+            },
+            opponent: {
+                title: '编辑对方信息',
+                fields: [
+                    { key: 'name', label: '对方姓名', type: 'text', colSpan: 1 },
+                    { key: 'phone', label: '对方电话', type: 'text', colSpan: 1 },
+                    { key: 'idNumber', label: '对方证件号', type: 'text', colSpan: 1 },
+                    { key: 'legalRep', label: '法定代表人', type: 'text', colSpan: 1 },
+                    { key: 'address', label: '对方地址', type: 'textarea', colSpan: 2 }
+                ]
+            },
+            claims: {
+                title: '编辑客户诉求',
+                fields: [
+                    { key: 'content', label: '客户诉求内容', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            },
+            strategy: {
+                title: '编辑办案思路',
+                fields: [
+                    { key: 'content', label: '办案思路', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            },
+            summary: {
+                title: '编辑案情简述',
+                fields: [
+                    { key: 'content', label: '案情简述', type: 'textarea', rows: 6, colSpan: 2 }
+                ]
+            }
+        };
+
+        function getFieldValue(section, key) {
+            var el = document.getElementById('field-' + section + '-' + key);
+            if (!el) return '';
+            if (section === 'claims' || section === 'strategy' || section === 'summary') {
+                return el.innerText.trim();
+            }
+            return el.innerText.trim();
+        }
+
+        function setFieldValue(section, key, value) {
+            var el = document.getElementById('field-' + section + '-' + key);
+            if (!el) return;
+            if (section === 'claims') {
+                var lines = value.split('\n').filter(function(l) { return l.trim(); });
+                el.innerHTML = lines.map(function(line, i) {
+                    return '<p>' + (i + 1) + '. ' + line.replace(/^\d+\.\s*/, '') + '</p>';
+                }).join('');
+            } else if (section === 'strategy' || section === 'summary') {
+                el.innerText = value;
+            } else if (key === 'status') {
+                el.innerText = value;
+                el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' + 
+                    (value === '进行中' ? 'bg-blue-100 text-blue-700' :
+                     value === '已结案' ? 'bg-green-100 text-green-700' :
+                     value === '已归档' ? 'bg-gray-100 text-gray-700' :
+                     'bg-orange-100 text-orange-700');
+            } else if (key === 'preservation') {
+                el.innerText = value;
+                el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' + 
+                    (value === '已保全' ? 'bg-green-100 text-green-700' :
+                     value === '未保全' ? 'bg-gray-100 text-gray-700' :
+                     'bg-orange-100 text-orange-700');
+            } else if (section === 'opponent' && key === 'legalRep') {
+                el.innerText = value;
+                if (!value || value === '未提供 · 请补充') {
+                    el.className = 'text-sm text-red-500';
+                } else {
+                    el.className = 'text-sm text-gray-800';
+                }
+            } else {
+                el.innerText = value;
+            }
+        }
+
+        function renderEditForm(section) {
+            var config = sectionConfigs[section];
+            if (!config) return;
+            document.getElementById('edit-modal-title').innerText = config.title;
+            var formBody = document.getElementById('edit-form-body');
+            var html = '';
+            var fields = config.fields;
+            for (var i = 0; i < fields.length; i += 2) {
+                var field1 = fields[i];
+                var field2 = fields[i + 1];
+                var rowColSpan = (field1.colSpan || 1) + (field2 ? (field2.colSpan || 1) : 0);
+                if (field1.colSpan === 2 || (field1.colSpan === 3 && !field2)) {
+                    html += '<div class="space-y-1">';
+                    html += '<label class="block text-xs font-medium text-gray-700">' + field1.label + '</label>';
+                    html += renderFieldInput(section, field1);
+                    html += '</div>';
+                } else {
+                    html += '<div class="grid grid-cols-2 gap-4">';
+                    html += '<div class="space-y-1">';
+                    html += '<label class="block text-xs font-medium text-gray-700">' + field1.label + '</label>';
+                    html += renderFieldInput(section, field1);
+                    html += '</div>';
+                    if (field2) {
+                        html += '<div class="space-y-1">';
+                        html += '<label class="block text-xs font-medium text-gray-700">' + field2.label + '</label>';
+                        html += renderFieldInput(section, field2);
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+            }
+            formBody.innerHTML = html;
+        }
+
+        function renderFieldInput(section, field) {
+            var value = getFieldValue(section, field.key);
+            var inputClass = 'w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors';
+            if (field.type === 'textarea') {
+                var rows = field.rows || 4;
+                return '<textarea class="' + inputClass + ' resize-none" data-field="' + field.key + '" rows="' + rows + '">' + value + '</textarea>';
+            } else if (field.type === 'select') {
+                var options = field.options || [];
+                var optionsHtml = options.map(function(opt) {
+                    return '<option value="' + opt + '"' + (opt === value ? ' selected' : '') + '>' + opt + '</option>';
+                }).join('');
+                return '<select class="' + inputClass + ' appearance-none bg-white" data-field="' + field.key + '">' + optionsHtml + '</select>';
+            } else if (field.type === 'date') {
+                return '<input type="date" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            } else {
+                return '<input type="text" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            }
+        }
+
+        function editSection(section) {
+            currentEditSection = section;
+            renderEditForm(section);
+            document.getElementById('edit-section-modal').classList.remove('hidden');
+        }
+
+        function closeEditSectionModal() {
+            document.getElementById('edit-section-modal').classList.add('hidden');
+            currentEditSection = null;
+        }
+
+        function saveEditSection() {
+            if (!currentEditSection) return;
+            var config = sectionConfigs[currentEditSection];
+            if (!config) return;
+            var formBody = document.getElementById('edit-form-body');
+            var inputs = formBody.querySelectorAll('[data-field]');
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                var fieldKey = input.getAttribute('data-field');
+                var value = input.value;
+                setFieldValue(currentEditSection, fieldKey, value);
+            }
+            closeEditSectionModal();
+            showToast('保存成功');
         }
 
         // 视图切换逻辑
@@ -608,23 +918,33 @@
 
         // 跳转到会员订阅页面
         function switchToSubscription() {
-            // 关闭用户菜单
             var userMenu = document.getElementById('userMenu');
             if (userMenu) userMenu.classList.add('hidden');
             
-            // 切换到工作标签
             switchSidebarTab('work');
             
-            // 隐藏所有视图，显示订阅页面
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-subscription').classList.remove('hidden');
-            
-            // 取消所有侧边栏菜单的高亮
             document.querySelectorAll('.sidebar-item').forEach(function(item) {
                 item.classList.remove('active');
             });
+
+            var target = document.getElementById('view-subscription');
+            if (target) {
+                document.querySelectorAll('.view-content').forEach(function(v) {
+                    v.classList.add('hidden');
+                });
+                target.classList.remove('hidden');
+            } else {
+                loadView('subscription', function(html) {
+                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                    var newTarget = document.getElementById('view-subscription');
+                    if (newTarget) {
+                        document.querySelectorAll('.view-content').forEach(function(v) {
+                            v.classList.add('hidden');
+                        });
+                        newTarget.classList.remove('hidden');
+                    }
+                });
+            }
         }
 
         // 年月付切换
@@ -783,17 +1103,11 @@
 
         // 从支付成功页跳转
         function goToSubscription() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-subscription').classList.remove('hidden');
+            switchView('subscription');
         }
 
         function goToWorkstation() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-workstation').classList.remove('hidden');
+            switchView('workstation');
         }
 
         // 跳转到订单记录
@@ -811,10 +1125,7 @@
         }
 
         function goToMemberCenter() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-member-center').classList.remove('hidden');
+            switchView('member-center');
         }
 
         // 跳转到账号设置
@@ -1266,14 +1577,18 @@
     }
 
     // 打开案件详情（跳转到案件详情页，默认显示案件概览 Tab）
+    var currentCaseIndex = -1;
+    
     function openCaseDetail(index) {
         var caseMeta = [
-            { title: '(2026)京01民初128号', type: '民间借贷纠纷', status: '进行中' },
-            { title: '(2026)京02民初256号', type: '劳动争议仲裁', status: '进行中' },
-            { title: '(2026)京03民初789号', type: '合同纠纷', status: '待开庭' },
-            { title: '(2026)京04民初345号', type: '知识产权侵权', status: '已立案' },
-            { title: '(2026)京05民初567号', type: '离婚纠纷', status: '进行中' }
+            { caseName: '李明诉XX公司买卖合同纠纷', caseNumber: '(2026)京01民初128号', type: '民间借贷纠纷', status: '进行中' },
+            { caseName: '赵六劳动争议仲裁案', caseNumber: '(2026)京02民初256号', type: '劳动争议仲裁', status: '进行中' },
+            { caseName: '张三合同纠纷案', caseNumber: '(2026)京03民初789号', type: '合同纠纷', status: '待开庭' },
+            { caseName: '某科技公司股权纠纷案', caseNumber: '(2026)京04民初345号', type: '知识产权侵权', status: '已立案' },
+            { caseName: '王华借贷纠纷案', caseNumber: '(2026)京05民初567号', type: '离婚纠纷', status: '进行中' }
         ];
+        
+        currentCaseIndex = index;
         
         document.querySelectorAll('.view-content').forEach(function(v) {
             v.classList.add('hidden');
@@ -1286,14 +1601,7 @@
             if (caseMeta[index]) {
                 var meta = caseMeta[index];
                 var titleEl = document.getElementById('case-detail-title');
-                var typeEl = document.getElementById('case-detail-type');
-                var statusEl = document.getElementById('case-detail-status');
-                if (titleEl) titleEl.textContent = meta.title;
-                if (typeEl) typeEl.textContent = meta.type;
-                if (statusEl) {
-                    statusEl.textContent = meta.status;
-                    statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
-                }
+                if (titleEl) titleEl.textContent = meta.caseName;
             }
             // 切换回案件概览 Tab
             var tab = document.querySelector('.case-tab[data-tab="overview"]');
@@ -1309,14 +1617,7 @@
                     if (caseMeta[index]) {
                         var meta = caseMeta[index];
                         var titleEl = document.getElementById('case-detail-title');
-                        var typeEl = document.getElementById('case-detail-type');
-                        var statusEl = document.getElementById('case-detail-status');
-                        if (titleEl) titleEl.textContent = meta.title;
-                        if (typeEl) typeEl.textContent = meta.type;
-                        if (statusEl) {
-                            statusEl.textContent = meta.status;
-                            statusEl.className = 'text-[10px] bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full';
-                        }
+                        if (titleEl) titleEl.textContent = meta.caseName;
                     }
                     // 自动切换到案件概览 Tab
                     var tab = document.querySelector('.case-tab[data-tab="overview"]');
@@ -1349,6 +1650,287 @@
         if (btn) {
             btn.classList.remove('border-transparent', 'text-gray-500');
             btn.classList.add('border-[#165DFF]', 'text-[#165DFF]');
+        }
+    }
+
+    // 时间线相关函数
+    function openAddTimelineModal() {
+        var modal = document.getElementById('add-timeline-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('timeline-title').value = '';
+            document.getElementById('timeline-date').value = '';
+            document.getElementById('timeline-color').value = '#165DFF';
+            document.getElementById('timeline-desc').value = '';
+            document.getElementById('timeline-tag').value = '';
+        }
+    }
+
+    function closeAddTimelineModal() {
+        var modal = document.getElementById('add-timeline-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitTimeline() {
+        var title = document.getElementById('timeline-title').value.trim();
+        var date = document.getElementById('timeline-date').value;
+        var color = document.getElementById('timeline-color').value;
+        var desc = document.getElementById('timeline-desc').value.trim();
+        var tag = document.getElementById('timeline-tag').value.trim();
+
+        if (!title) {
+            showToast('请输入事件标题');
+            return;
+        }
+        if (!date) {
+            showToast('请选择事件日期');
+            return;
+        }
+
+        var container = document.getElementById('timeline-container');
+        if (!container) {
+            showToast('时间线容器未找到');
+            return;
+        }
+
+        var tagHtml = '';
+        if (tag) {
+            tagHtml = '<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">' + tag + '</span>';
+        }
+
+        var iconClass = 'mdi:calendar';
+        if (color === '#165DFF') iconClass = 'mdi:file-document';
+        else if (color === 'orange-500') iconClass = 'mdi:file-document-outline';
+        else if (color === 'green-500') iconClass = 'mdi:gavel';
+        else if (color === 'purple-500') iconClass = 'mdi:calendar';
+        else if (color === 'red-500') iconClass = 'mdi:alert-circle';
+        else iconClass = 'mdi:clock';
+
+        var newItem = document.createElement('div');
+        newItem.className = 'relative';
+        newItem.innerHTML = '<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-' + color.split('-')[0] + (color.includes('-') ? '-' + color.split('-')[1] : '') + ' flex items-center justify-center text-white shadow">' +
+            '<iconify-icon class="text-xs" icon="' + iconClass + '"></iconify-icon>' +
+            '</div>' +
+            '<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">' +
+            '<div class="flex items-center justify-between mb-1">' +
+            '<span class="text-sm font-medium">' + title + '</span>' +
+            '<div class="flex items-center gap-2">' +
+            '<span class="text-[10px] text-gray-400">' + date + '</span>' +
+            '<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">' +
+            '<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '</div>' +
+            (desc ? '<p class="text-xs text-gray-500">' + desc + '</p>' : '') +
+            (tagHtml ? tagHtml : '') +
+            '</div>' +
+            '</div>';
+
+        container.appendChild(newItem);
+        closeAddTimelineModal();
+        showToast('时间线已添加');
+    }
+
+    function deleteTimeline(btn) {
+        if (!confirm('确定要删除这条时间线吗？')) return;
+        var item = btn.closest('.relative');
+        if (item) {
+            item.remove();
+            showToast('时间线已删除');
+        }
+    }
+
+    // 证件管理相关函数
+    function openUploadEvidenceModal() {
+        var modal = document.getElementById('upload-evidence-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('evidence-name').value = '';
+            document.getElementById('evidence-type').value = '企业证件';
+        }
+    }
+
+    function closeUploadEvidenceModal() {
+        var modal = document.getElementById('upload-evidence-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitEvidence() {
+        var name = document.getElementById('evidence-name').value.trim();
+        var type = document.getElementById('evidence-type').value;
+
+        if (!name) {
+            showToast('请输入证件名称');
+            return;
+        }
+
+        var list = document.getElementById('evidence-list');
+        if (!list) {
+            showToast('证件列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:card-account-details"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + type + ' · ' + dateStr + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteEvidence(this)">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadEvidenceModal();
+        showToast('证件已上传');
+    }
+
+    function deleteEvidence(btn) {
+        if (!confirm('确定要删除该证件吗？')) return;
+        var item = btn.closest('.flex.items-center.justify-between');
+        if (item) {
+            item.remove();
+            showToast('证件已删除');
+        }
+    }
+
+    // 委托合同相关函数
+    function openUploadContractModal() {
+        var modal = document.getElementById('upload-contract-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('contract-name').value = '';
+        }
+    }
+
+    function closeUploadContractModal() {
+        var modal = document.getElementById('upload-contract-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitContract() {
+        var name = document.getElementById('contract-name').value.trim();
+
+        if (!name) {
+            showToast('请输入合同名称');
+            return;
+        }
+
+        var list = document.getElementById('contract-list');
+        if (!list) {
+            showToast('合同列表未找到');
+            return;
+        }
+
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var newItem = document.createElement('div');
+        newItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        newItem.innerHTML = '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>' +
+            '<div>' +
+            '<p class="text-sm font-medium">' + name + '</p>' +
+            '<p class="text-xs text-gray-400">' + dateStr + ' 上传</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-3 py-1.5 rounded border border-[#E5E6EB]" onclick="deleteContract(this)">删除</button>' +
+            '</div>';
+
+        list.appendChild(newItem);
+        closeUploadContractModal();
+        showToast('委托合同已上传');
+    }
+
+    function deleteContract(btn) {
+        var confirmed = confirm('确定要删除该委托合同吗？');
+        if (confirmed) {
+            var item = btn.closest('.flex.items-center.justify-between');
+            if (item) {
+                item.remove();
+                showToast('委托合同已删除');
+            }
+        }
+    }
+
+    // 证据材料相关函数
+    function openUploadMaterialModal() {
+        var modal = document.getElementById('upload-material-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('material-name').value = '';
+            document.getElementById('material-type').value = '合同';
+        }
+    }
+
+    function closeUploadMaterialModal() {
+        var modal = document.getElementById('upload-material-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function submitMaterial() {
+        var name = document.getElementById('material-name').value.trim();
+        var type = document.getElementById('material-type').value;
+
+        if (!name) {
+            showToast('请输入文件名称');
+            return;
+        }
+
+        var list = document.getElementById('materials-list');
+        if (!list) {
+            showToast('材料列表未找到');
+            return;
+        }
+
+        var now = new Date();
+        var dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+        var newRow = document.createElement('tr');
+        newRow.className = 'hover:bg-gray-50';
+        newRow.innerHTML = '<td class="py-2.5 px-4 text-sm text-[#165DFF] cursor-pointer">' + name + '</td>' +
+            '<td class="py-2.5 px-4 text-xs text-gray-500">' + type + '</td>' +
+            '<td class="py-2.5 px-4 text-xs text-gray-500">' + dateStr + '</td>' +
+            '<td class="text-center py-2.5 px-4">' +
+            '<div class="flex items-center justify-center gap-2">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">预览</button>' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded border border-[#E5E6EB]">下载</button>' +
+            '<button class="text-xs text-gray-500 hover:bg-red-50 hover:text-red-500 px-2 py-1 rounded border border-[#E5E6EB]" onclick="deleteMaterial(this)">删除</button>' +
+            '</div>' +
+            '</td>';
+
+        list.appendChild(newRow);
+        closeUploadMaterialModal();
+        showToast('证据材料已上传');
+    }
+
+    function deleteMaterial(btn) {
+        var confirmed = confirm('确定要删除该证据材料吗？');
+        if (confirmed) {
+            var row = btn.closest('tr');
+            if (row) {
+                row.remove();
+                showToast('证据材料已删除');
+            }
         }
     }
 
