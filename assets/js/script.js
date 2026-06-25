@@ -33,6 +33,7 @@
             'client-detail': 'client-detail.html',
             'template': 'template.html',
             'knowledge': 'knowledge.html',
+            'skills': 'skills.html',
             'ai': 'ai.html',
             'subscription': 'subscription.html',
             'payment': 'payment.html',
