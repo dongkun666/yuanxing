@@ -1678,7 +1678,6 @@
             document.getElementById('catalog-name').value = '';
             document.getElementById('catalog-pages').value = '';
             document.getElementById('catalog-description').value = '';
-            document.getElementById('catalog-file-name').textContent = '';
             // 设置默认证据种类
             var radios = document.getElementsByName('catalog-type');
             if (radios.length > 0) radios[0].checked = true;
@@ -1687,6 +1686,79 @@
             if (tbody) {
                 var rows = tbody.querySelectorAll('tr');
                 document.getElementById('catalog-number').value = rows.length + 1;
+            }
+            // 加载证据概览文件列表
+            loadCatalogFileList();
+            // 重置已选文件
+            catalogSelectedFiles = [];
+            updateCatalogSelectedCount();
+        }
+    }
+
+    // 加载证据概览文件列表供选择
+    var catalogSelectedFiles = [];
+    
+    function loadCatalogFileList() {
+        var listContainer = document.getElementById('catalog-file-select-list');
+        if (!listContainer) return;
+        
+        var materialsList = document.getElementById('materials-list');
+        if (!materialsList) {
+            listContainer.innerHTML = '<div class="px-3 py-4 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var rows = materialsList.querySelectorAll('tr');
+        if (rows.length === 0) {
+            listContainer.innerHTML = '<div class="px-3 py-4 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var html = '';
+        rows.forEach(function(row, index) {
+            var cells = row.querySelectorAll('td');
+            var fileName = cells[0]?.textContent?.trim() || '';
+            var fileType = cells[1]?.textContent?.trim() || '';
+            var fileId = 'catalog-file-' + index;
+            
+            html += 
+                '<label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-b-0">' +
+                '<input class="accent-[#165DFF] catalog-file-checkbox" type="checkbox" id="' + fileId + '" data-name="' + fileName + '" data-type="' + fileType + '" onchange="toggleCatalogFileSelect(this)">' +
+                '<iconify-icon class="text-gray-400 text-base flex-shrink-0" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<div class="flex-1 min-w-0">' +
+                '<p class="text-[11px] text-gray-700 truncate">' + fileName + '</p>' +
+                '<p class="text-[10px] text-gray-400">' + fileType + '</p>' +
+                '</div>' +
+                '</label>';
+        });
+        
+        listContainer.innerHTML = html;
+    }
+
+    // 切换文件选择状态
+    function toggleCatalogFileSelect(checkbox) {
+        var fileName = checkbox.getAttribute('data-name');
+        var fileType = checkbox.getAttribute('data-type');
+        
+        if (checkbox.checked) {
+            catalogSelectedFiles.push({ name: fileName, type: fileType });
+        } else {
+            catalogSelectedFiles = catalogSelectedFiles.filter(function(f) { return f.name !== fileName; });
+        }
+        
+        updateCatalogSelectedCount();
+    }
+
+    // 更新已选文件数量显示
+    function updateCatalogSelectedCount() {
+        var countEl = document.getElementById('catalog-selected-count');
+        var selectedEl = document.getElementById('catalog-selected-files');
+        if (countEl) countEl.textContent = '已选 ' + catalogSelectedFiles.length + ' 个';
+        if (selectedEl) {
+            if (catalogSelectedFiles.length > 0) {
+                selectedEl.textContent = '已选择：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、');
+            } else {
+                selectedEl.textContent = '';
             }
         }
     }
@@ -1738,10 +1810,21 @@
         
         var newRow = document.createElement('tr');
         newRow.className = 'hover:bg-gray-50 group';
+        // 保存关联文件到data属性
+        if (catalogSelectedFiles.length > 0) {
+            newRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
+        }
+        
+        // 生成关联文件显示
+        var linkedFilesHtml = '';
+        if (catalogSelectedFiles.length > 0) {
+            linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+        }
+        
         newRow.innerHTML = 
             '<td class="text-center py-3 px-4 text-xs text-gray-700">' + (number || '') + '</td>' +
             '<td class="text-center py-3 px-4"><span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span></td>' +
-            '<td class="py-3 px-4 text-xs text-gray-800">' + name + '</td>' +
+            '<td class="py-3 px-4 text-xs text-gray-800">' + name + linkedFilesHtml + '</td>' +
             '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + description + '">' + (description || '-') + '</td>' +
             '<td class="text-center py-3 px-4 text-xs text-gray-500">' + (pages || '-') + '</td>' +
             '<td class="text-center py-3 px-4">' +
@@ -1773,6 +1856,18 @@
         var description = cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '';
         var pages = cells[4]?.textContent?.trim() || '';
         
+        // 获取已关联文件（从data属性获取）
+        var linkedFiles = row.getAttribute('data-linked-files');
+        if (linkedFiles) {
+            try {
+                catalogSelectedFiles = JSON.parse(linkedFiles);
+            } catch(e) {
+                catalogSelectedFiles = [];
+            }
+        } else {
+            catalogSelectedFiles = [];
+        }
+        
         // 填充模态框
         var modal = document.getElementById('add-evidence-catalog-modal');
         if (modal) {
@@ -1793,6 +1888,19 @@
             if (modalTitle) modalTitle.textContent = '编辑证据目录';
             var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
             if (submitBtn) submitBtn.textContent = '保存';
+            
+            // 加载文件列表并回显已选
+            loadCatalogFileList();
+            // 延迟一点设置选中状态，确保DOM已渲染
+            setTimeout(function() {
+                var checkboxes = document.querySelectorAll('.catalog-file-checkbox');
+                checkboxes.forEach(function(cb) {
+                    var fileName = cb.getAttribute('data-name');
+                    var isSelected = catalogSelectedFiles.some(function(f) { return f.name === fileName; });
+                    cb.checked = isSelected;
+                });
+                updateCatalogSelectedCount();
+            }, 50);
         }
     }
 
@@ -1834,7 +1942,23 @@
             var cells = editingCatalogRow.querySelectorAll('td');
             if (cells[0]) cells[0].textContent = number || '';
             if (cells[1]) cells[1].innerHTML = '<span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span>';
-            if (cells[2]) cells[2].textContent = name;
+            
+            // 更新证据名称和关联文件显示
+            if (cells[2]) {
+                var linkedFilesHtml = '';
+                if (catalogSelectedFiles.length > 0) {
+                    linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+                }
+                cells[2].innerHTML = name + linkedFilesHtml;
+            }
+            
+            // 保存关联文件到data属性
+            if (catalogSelectedFiles.length > 0) {
+                editingCatalogRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
+            } else {
+                editingCatalogRow.removeAttribute('data-linked-files');
+            }
+            
             if (cells[3]) {
                 cells[3].textContent = description || '-';
                 cells[3].setAttribute('title', description);
