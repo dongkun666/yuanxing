@@ -855,6 +855,122 @@
 </div>
 </div>
 </div>
+<!-- 证据详情板块 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="flex items-center justify-between px-5 py-4 border-b border-[#E5E6EB]">
+<h5 class="font-bold text-sm flex items-center gap-2">
+<iconify-icon class="text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+证据详情
+</h5>
+<div class="flex items-center gap-2">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-3 py-1.5 rounded border border-[#E5E6EB] flex items-center gap-1" onclick="addEvidenceDetail()">
+<iconify-icon icon="mdi:plus"></iconify-icon>添加详情
+</button>
+</div>
+</div>
+<!-- 证据详情内容区域 -->
+<div class="p-5">
+<div class="space-y-4" id="evidence-detail-list">
+<!-- 证据1详情 -->
+<div class="border border-gray-200 rounded-lg overflow-hidden">
+<div class="flex items-center justify-between px-4 py-3 bg-gray-50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">1</div>
+<div>
+<p class="text-sm font-medium text-gray-800">《小鹏汽车购买协议》（初始锁单版，含购车信息单、车况确认承诺书）</p>
+<p class="text-xs text-gray-400 mt-0.5">书证 · 第1-5页</p>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteEvidenceDetail(this)">删除</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div>
+<p class="text-xs font-medium text-gray-500 mb-1.5">证明对象</p>
+<p class="text-sm text-gray-700 leading-relaxed">1.证明：双方于2026年4月订立汽车买卖合同，就案涉车辆买卖达成合意。<br>2.证明：合同约定整车开票价格为219800元整，首付款30%，定金5000元。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">证据内容</p>
+<p class="text-sm text-gray-700 leading-relaxed">原告与被告于2026年4月签署《小鹏汽车购买协议》，约定原告向被告购买小鹏P7+汽车一辆，车架号L1NSPGHB2SB002546，合同总价款219800元。原告支付定金5000元，首付款62940元，余款通过银行贷款支付。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">关联文件</p>
+<div class="flex flex-wrap gap-2">
+<span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">采购框架协议.pdf</span>
+<span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">发票.pdf</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 证据2详情 -->
+<div class="border border-gray-200 rounded-lg overflow-hidden">
+<div class="flex items-center justify-between px-4 py-3 bg-gray-50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">2</div>
+<div>
+<p class="text-sm font-medium text-gray-800">机动车销售统一发票（电子发票）</p>
+<p class="text-xs text-gray-400 mt-0.5">书证 · 第6页</p>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteEvidenceDetail(this)">删除</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div>
+<p class="text-xs font-medium text-gray-500 mb-1.5">证明对象</p>
+<p class="text-sm text-gray-700 leading-relaxed">1.证明：被告已就案涉车辆向原告开具价税合计219800元的机动车销售发票。<br>2.证明：双方买卖合同已实际履行。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">证据内容</p>
+<p class="text-sm text-gray-700 leading-relaxed">被告于2026年4月25日向原告开具机动车销售统一发票，发票代码：144031900240，发票号码：No.12345678，价税合计219800元，税率13%，税额25468.14元。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">关联文件</p>
+<div class="flex flex-wrap gap-2">
+<span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">发票.pdf</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 证据3详情 -->
+<div class="border border-gray-200 rounded-lg overflow-hidden">
+<div class="flex items-center justify-between px-4 py-3 bg-gray-50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">3</div>
+<div>
+<p class="text-sm font-medium text-gray-800">中国工商银行境内汇款电子回单</p>
+<p class="text-xs text-gray-400 mt-0.5">书证 · 第7页</p>
+</div>
+</div>
+<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteEvidenceDetail(this)">删除</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div>
+<p class="text-xs font-medium text-gray-500 mb-1.5">证明对象</p>
+<p class="text-sm text-gray-700 leading-relaxed">证明：原告已向被告对公账户支付对应购车款项，原告已实际履行合同付款义务。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">证据内容</p>
+<p class="text-sm text-gray-700 leading-relaxed">原告通过中国工商银行网上银行向被告账户（账号：6222021234567890，开户行：中国工商银行XX支行）汇款62940元，附言：P7+购车首付款。汇款时间：2026年4月26日。</p>
+</div>
+<div class="border-t border-gray-100 pt-3">
+<p class="text-xs font-medium text-gray-500 mb-1.5">关联文件</p>
+<div class="flex flex-wrap gap-2">
+<span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">汇款凭证.pdf</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- Tab: 证件管理 -->
 <div class="hidden flex flex-row flex-1 overflow-hidden" id="case-tab-evidence">
 <div class="flex-1 bg-gray-50 flex flex-col p-6">

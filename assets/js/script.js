@@ -3853,3 +3853,226 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
+
+    // 证据详情相关函数
+    var detailSelectedFiles = [];
+    
+    // 打开添加证据详情模态框
+    function addEvidenceDetail() {
+        var modal = document.getElementById('add-evidence-detail-modal');
+        if (!modal) return;
+        
+        modal.classList.remove('hidden');
+        
+        // 重置表单
+        document.getElementById('detail-evidence-select').value = '';
+        document.getElementById('detail-name').value = '';
+        document.getElementById('detail-pages').value = '';
+        document.getElementById('detail-type').value = '书证';
+        document.getElementById('detail-proof-object').value = '';
+        document.getElementById('detail-content').value = '';
+        
+        // 加载证据目录下拉选项
+        loadEvidenceSelectOptions();
+        
+        // 加载文件列表
+        loadDetailFileList();
+        detailSelectedFiles = [];
+        updateDetailSelectedCount();
+    }
+    
+    // 加载证据目录下拉选项
+    function loadEvidenceSelectOptions() {
+        var select = document.getElementById('detail-evidence-select');
+        if (!select) return;
+        
+        var tbody = document.getElementById('evidence-catalog-list');
+        var options = '<option value="">-- 从证据目录中选择 --</option>';
+        
+        if (tbody) {
+            var rows = tbody.querySelectorAll('tr');
+            rows.forEach(function(row, index) {
+                var cells = row.querySelectorAll('td');
+                var name = cells[2]?.textContent?.trim() || '';
+                var type = cells[1]?.textContent?.trim() || '';
+                var pages = cells[4]?.textContent?.trim() || '';
+                if (name) {
+                    options += '<option value="' + index + '" data-name="' + name + '" data-type="' + type + '" data-pages="' + pages + '">' + name + '</option>';
+                }
+            });
+        }
+        
+        select.innerHTML = options;
+    }
+    
+    // 证据选择改变时自动填充
+    function onEvidenceSelectChange() {
+        var select = document.getElementById('detail-evidence-select');
+        if (!select) return;
+        
+        var selectedOption = select.options[select.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            document.getElementById('detail-name').value = selectedOption.getAttribute('data-name') || '';
+            document.getElementById('detail-pages').value = selectedOption.getAttribute('data-pages') === '-' ? '' : selectedOption.getAttribute('data-pages') || '';
+            // 设置证据种类
+            var type = selectedOption.getAttribute('data-type') || '';
+            var typeSelect = document.getElementById('detail-type');
+            if (typeSelect) {
+                var options = typeSelect.options;
+                for (var i = 0; i < options.length; i++) {
+                    if (options[i].value === type) {
+                        typeSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    // 加载文件列表
+    function loadDetailFileList() {
+        var listContainer = document.getElementById('detail-file-select-list');
+        if (!listContainer) return;
+        
+        var materialsList = document.getElementById('materials-list');
+        if (!materialsList) {
+            listContainer.innerHTML = '<div class="px-3 py-3 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var rows = materialsList.querySelectorAll('tr');
+        if (rows.length === 0) {
+            listContainer.innerHTML = '<div class="px-3 py-3 text-center text-[11px] text-gray-400">暂无上传的证据材料</div>';
+            return;
+        }
+        
+        var html = '';
+        rows.forEach(function(row, index) {
+            var cells = row.querySelectorAll('td');
+            var fileName = cells[0]?.textContent?.trim() || '';
+            var fileType = cells[1]?.textContent?.trim() || '';
+            
+            html += 
+                '<label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-b-0">' +
+                '<input class="accent-[#165DFF] detail-file-checkbox" type="checkbox" data-name="' + fileName + '" data-type="' + fileType + '" onchange="toggleDetailFileSelect(this)">' +
+                '<iconify-icon class="text-gray-400 text-sm flex-shrink-0" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<span class="text-[11px] text-gray-700 truncate">' + fileName + '</span>' +
+                '</label>';
+        });
+        
+        listContainer.innerHTML = html;
+    }
+    
+    // 切换文件选择
+    function toggleDetailFileSelect(checkbox) {
+        var fileName = checkbox.getAttribute('data-name');
+        var fileType = checkbox.getAttribute('data-type');
+        
+        if (checkbox.checked) {
+            detailSelectedFiles.push({ name: fileName, type: fileType });
+        } else {
+            detailSelectedFiles = detailSelectedFiles.filter(function(f) { return f.name !== fileName; });
+        }
+        
+        updateDetailSelectedCount();
+    }
+    
+    // 更新已选文件数量
+    function updateDetailSelectedCount() {
+        var countEl = document.getElementById('detail-selected-count');
+        if (countEl) countEl.textContent = '已选 ' + detailSelectedFiles.length + ' 个';
+    }
+    
+    // 关闭模态框
+    function closeAddEvidenceDetailModal() {
+        var modal = document.getElementById('add-evidence-detail-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+    
+    // 提交证据详情
+    function submitEvidenceDetail() {
+        var name = document.getElementById('detail-name').value.trim();
+        var pages = document.getElementById('detail-pages').value.trim();
+        var type = document.getElementById('detail-type').value;
+        var proofObject = document.getElementById('detail-proof-object').value.trim();
+        var content = document.getElementById('detail-content').value.trim();
+        
+        if (!name) {
+            showToast('请输入或选择证据名称');
+            return;
+        }
+        
+        if (!proofObject) {
+            showToast('请输入证明对象');
+            return;
+        }
+        
+        var detailList = document.getElementById('evidence-detail-list');
+        if (!detailList) return;
+        
+        var itemCount = detailList.querySelectorAll('.border.border-gray-200').length + 1;
+        
+        // 生成关联文件标签
+        var linkedFilesHtml = '';
+        if (detailSelectedFiles.length > 0) {
+            linkedFilesHtml = '<div class="flex flex-wrap gap-2">' +
+                detailSelectedFiles.map(function(f) {
+                    return '<span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">' + f.name + '</span>';
+                }).join('') +
+                '</div>';
+        } else {
+            linkedFilesHtml = '<span class="text-xs text-gray-400">暂无关联文件</span>';
+        }
+        
+        var newDetail = document.createElement('div');
+        newDetail.className = 'border border-gray-200 rounded-lg overflow-hidden';
+        newDetail.innerHTML = 
+            '<div class="flex items-center justify-between px-4 py-3 bg-gray-50">' +
+            '<div class="flex items-center gap-3">' +
+            '<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600">' + itemCount + '</div>' +
+            '<div>' +
+            '<p class="text-sm font-medium text-gray-800">' + name + '</p>' +
+            '<p class="text-xs text-gray-400 mt-0.5">' + type + ' · ' + (pages || '-') + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
+            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteEvidenceDetail(this)">删除</button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-4 space-y-3">' +
+            '<div>' +
+            '<p class="text-xs font-medium text-gray-500 mb-1.5">证明对象</p>' +
+            '<p class="text-sm text-gray-700 leading-relaxed">' + proofObject.replace(/\n/g, '<br>') + '</p>' +
+            '</div>' +
+            (content ? '<div class="border-t border-gray-100 pt-3"><p class="text-xs font-medium text-gray-500 mb-1.5">证据内容</p><p class="text-sm text-gray-700 leading-relaxed">' + content.replace(/\n/g, '<br>') + '</p></div>' : '') +
+            '<div class="border-t border-gray-100 pt-3">' +
+            '<p class="text-xs font-medium text-gray-500 mb-1.5">关联文件</p>' +
+            linkedFilesHtml +
+            '</div>' +
+            '</div>';
+        
+        detailList.appendChild(newDetail);
+        closeAddEvidenceDetailModal();
+        showToast('证据详情已添加');
+    }
+    
+    // 删除证据详情
+    function deleteEvidenceDetail(btn) {
+        if (!confirm('确定要删除该证据详情吗？')) return;
+        
+        var detailItem = btn.closest('.border.border-gray-200');
+        if (detailItem) {
+            detailItem.remove();
+            // 重新编号
+            var detailList = document.getElementById('evidence-detail-list');
+            if (detailList) {
+                var items = detailList.querySelectorAll('.border.border-gray-200');
+                items.forEach(function(item, index) {
+                    var numBadge = item.querySelector('.rounded-full');
+                    if (numBadge) numBadge.textContent = index + 1;
+                });
+            }
+            showToast('证据详情已删除');
+        }
+    }
