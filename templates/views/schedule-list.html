@@ -1,26 +1,26 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-schedule-list">
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-schedule-list">
 <div class="max-w-6xl mx-auto w-full space-y-4 flex flex-col flex-1 min-h-0">
 <!-- 头部 -->
 <div class="flex-none flex items-center justify-between mb-4">
 <div class="flex items-center gap-3">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors" onclick="switchView('workstation')">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary transition-colors" onclick="switchView('workstation')">
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
-<h2 class="text-lg font-bold text-gray-800">今日日程</h2>
-<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">共 12 项</span>
+<h2 class="text-lg font-bold text-fg-primary">今日日程</h2>
+<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 12 项</span>
 </div>
-<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-[#165DFF] hover:bg-[#165DFF]/90 rounded-lg transition-colors" onclick="openScheduleModal()">
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="openScheduleModal()">
 <iconify-icon icon="mdi:plus"></iconify-icon>
             新建日程
         </button>
 </div>
 <!-- 筛选标签 -->
 <div class="flex-none flex items-center gap-2 mb-4">
-<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white" onclick="filterSchedule('all', this)">全部</button>
-<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterSchedule('开庭', this)">开庭</button>
-<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterSchedule('会议', this)">会议</button>
-<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterSchedule('待办', this)">待办</button>
-<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterSchedule('其他', this)">其他</button>
+<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" onclick="filterSchedule('all', this)">全部</button>
+<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterSchedule('开庭', this)">开庭</button>
+<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterSchedule('会议', this)">会议</button>
+<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterSchedule('待办', this)">待办</button>
+<button class="filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterSchedule('其他', this)">其他</button>
 </div>
 <!-- 日程列表 -->
 <div class="flex-1 min-h-0 overflow-y-auto">
@@ -28,19 +28,19 @@
 <!-- 日程卡片 1 -->
 <div class="arco-card p-4 flex items-start gap-4 border-l-4 border-l-purple-500">
 <div class="flex-shrink-0 text-center w-12">
-<div class="text-xs text-gray-400">09:00</div>
+<div class="text-xs text-fg-tertiary">09:00</div>
 <div class="text-[10px] text-gray-300">- 11:00</div>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">开庭</span>
-<span class="font-medium text-sm text-gray-800">李明诉XX公司买卖合同纠纷</span>
+<span class="text-xs bg-wiki-tint text-wiki px-2 py-0.5 rounded-full">开庭</span>
+<span class="font-medium text-sm text-fg-primary">李明诉XX公司买卖合同纠纷</span>
 </div>
-<div class="text-xs text-gray-500">朝阳区人民法院 第3法庭</div>
+<div class="text-xs text-fg-tertiary">朝阳区人民法院 第3法庭</div>
 </div>
 <div class="flex-shrink-0 flex items-center gap-2">
-<span class="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">待进行</span>
-<button class="text-gray-400 hover:text-gray-600" onclick="alert('查看详情')">
+<span class="text-xs text-success bg-green-50 px-2 py-0.5 rounded-full">待进行</span>
+<button class="text-fg-tertiary hover:text-fg-secondary" onclick="alert('查看详情')">
 <iconify-icon class="text-lg" icon="mdi:chevron-right"></iconify-icon>
 </button>
 </div>
@@ -48,19 +48,19 @@
 <!-- 日程卡片 2 -->
 <div class="arco-card p-4 flex items-start gap-4 border-l-4 border-l-blue-500">
 <div class="flex-shrink-0 text-center w-12">
-<div class="text-xs text-gray-400">14:00</div>
+<div class="text-xs text-fg-tertiary">14:00</div>
 <div class="text-[10px] text-gray-300">- 15:30</div>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">会议</span>
-<span class="font-medium text-sm text-gray-800">王华借贷纠纷 - 策略讨论</span>
+<span class="text-xs bg-brand-tint text-brand px-2 py-0.5 rounded-full">会议</span>
+<span class="font-medium text-sm text-fg-primary">王华借贷纠纷 - 策略讨论</span>
 </div>
-<div class="text-xs text-gray-500">线上会议 · 参会人：张律师、李律师</div>
+<div class="text-xs text-fg-tertiary">线上会议 · 参会人：张律师、李律师</div>
 </div>
 <div class="flex-shrink-0 flex items-center gap-2">
-<span class="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">进行中</span>
-<button class="text-gray-400 hover:text-gray-600">
+<span class="text-xs text-warning bg-warning-tint px-2 py-0.5 rounded-full">进行中</span>
+<button class="text-fg-tertiary hover:text-fg-secondary">
 <iconify-icon class="text-lg" icon="mdi:chevron-right"></iconify-icon>
 </button>
 </div>
@@ -68,19 +68,19 @@
 <!-- 日程卡片 3 -->
 <div class="arco-card p-4 flex items-start gap-4 border-l-4 border-l-green-500">
 <div class="flex-shrink-0 text-center w-12">
-<div class="text-xs text-gray-400">16:00</div>
+<div class="text-xs text-fg-tertiary">16:00</div>
 <div class="text-[10px] text-gray-300">- 16:30</div>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">待办</span>
-<span class="font-medium text-sm text-gray-800">提交张三合同纠纷补充证据</span>
+<span class="text-xs bg-success-tint text-success px-2 py-0.5 rounded-full">待办</span>
+<span class="font-medium text-sm text-fg-primary">提交张三合同纠纷补充证据</span>
 </div>
-<div class="text-xs text-gray-500">截止时间：今日 17:00</div>
+<div class="text-xs text-fg-tertiary">截止时间：今日 17:00</div>
 </div>
 <div class="flex-shrink-0 flex items-center gap-2">
 <span class="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full">紧急</span>
-<button class="text-gray-400 hover:text-gray-600">
+<button class="text-fg-tertiary hover:text-fg-secondary">
 <iconify-icon class="text-lg" icon="mdi:chevron-right"></iconify-icon>
 </button>
 </div>
@@ -88,19 +88,19 @@
 <!-- 日程卡片 4 -->
 <div class="arco-card p-4 flex items-start gap-4 border-l-4 border-l-amber-500">
 <div class="flex-shrink-0 text-center w-12">
-<div class="text-xs text-gray-400">10:30</div>
+<div class="text-xs text-fg-tertiary">10:30</div>
 <div class="text-[10px] text-gray-300">- 11:30</div>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
 <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">其他</span>
-<span class="font-medium text-sm text-gray-800">律所月度合伙人会议</span>
+<span class="font-medium text-sm text-fg-primary">律所月度合伙人会议</span>
 </div>
-<div class="text-xs text-gray-500">大会议室 · 全体合伙人参加</div>
+<div class="text-xs text-fg-tertiary">大会议室 · 全体合伙人参加</div>
 </div>
 <div class="flex-shrink-0 flex items-center gap-2">
-<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">待进行</span>
-<button class="text-gray-400 hover:text-gray-600">
+<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">待进行</span>
+<button class="text-fg-tertiary hover:text-fg-secondary">
 <iconify-icon class="text-lg" icon="mdi:chevron-right"></iconify-icon>
 </button>
 </div>
@@ -108,19 +108,19 @@
 <!-- 日程卡片 5 -->
 <div class="arco-card p-4 flex items-start gap-4 border-l-4 border-l-purple-500">
 <div class="flex-shrink-0 text-center w-12">
-<div class="text-xs text-gray-400">15:00</div>
+<div class="text-xs text-fg-tertiary">15:00</div>
 <div class="text-[10px] text-gray-300">- 17:00</div>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">开庭</span>
-<span class="font-medium text-sm text-gray-800">某科技公司股权纠纷二审</span>
+<span class="text-xs bg-wiki-tint text-wiki px-2 py-0.5 rounded-full">开庭</span>
+<span class="font-medium text-sm text-fg-primary">某科技公司股权纠纷二审</span>
 </div>
-<div class="text-xs text-gray-500">北京市高级人民法院 第8法庭</div>
+<div class="text-xs text-fg-tertiary">北京市高级人民法院 第8法庭</div>
 </div>
 <div class="flex-shrink-0 flex items-center gap-2">
-<span class="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">待进行</span>
-<button class="text-gray-400 hover:text-gray-600">
+<span class="text-xs text-success bg-green-50 px-2 py-0.5 rounded-full">待进行</span>
+<button class="text-fg-tertiary hover:text-fg-secondary">
 <iconify-icon class="text-lg" icon="mdi:chevron-right"></iconify-icon>
 </button>
 </div>

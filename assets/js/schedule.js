@@ -1,0 +1,896 @@
+/**
+ * 日程/工作台/案件动态模块
+ * 包含: 日程 CRUD + 冲突检测 + 案件动态 + 工作台待办 + 庭审冲突预警
+ * 加载: 在 script.js 之前同步加载
+ */
+
+
+
+        function loadView(viewId, callback) {
+            // 开发模式下跳过缓存
+            if (!isDevMode && viewCache[viewId]) {
+                // 已缓存，直接使用
+                if (callback) callback(viewCache[viewId]);
+                return;
+            }
+            var fileName = viewFileMap[viewId];
+            if (!fileName) {
+                console.error('未知的视图ID:', viewId);
+                return;
+            }
+            // 加时间戳绕过 HTTP 缓存
+            var url = 'templates/views/' + fileName + '?_t=' + Date.now();
+            fetch(url)
+                .then(function(response) { return response.text(); })
+                .then(function(html) {
+                    viewCache[viewId] = html;
+                    if (callback) callback(html);
+                })
+                .catch(function(err) { console.error('加载视图失败:', viewId, err); });
+        }
+
+        function toggleTodo(el) {
+            var cb = el.querySelector('input[type="checkbox"]');
+            if (cb) {
+                cb.checked = !cb.checked;
+                el.querySelectorAll('.text-gray-800').forEach(function(t) {
+                    t.classList.toggle('line-through');
+                    t.classList.toggle('text-gray-300');
+                });
+                el.querySelectorAll('.text-gray-400').forEach(function(t) {
+                    t.classList.toggle('line-through');
+                    t.classList.toggle('text-gray-300');
+                });
+            }
+        }
+
+        function editSchedule(btn) {
+            var item = btn.closest('[onclick*="toggleTodo"]') || btn.parentElement.parentElement;
+            var timeEl = item.querySelector('.text-sm.font-bold');
+            var titleEl = item.querySelector('.text-sm.font-medium');
+            var descEl = item.querySelector('.text-xs.text-gray-400');
+            
+            if (titleEl) {
+                var currentTitle = titleEl.textContent;
+                var newTitle = prompt('修改日程事项：', currentTitle);
+                if (newTitle && newTitle.trim() !== '') {
+                    titleEl.textContent = newTitle.trim();
+                }
+            }
+            if (descEl) {
+                var currentDesc = descEl.textContent;
+                var newDesc = prompt('修改案件/描述：', currentDesc);
+                if (newDesc && newDesc.trim() !== '') {
+                    descEl.textContent = newDesc.trim();
+                }
+            }
+        }
+
+        function deleteSchedule(btn) {
+            if (confirm('确定删除此日程吗？')) {
+                var item = btn.closest('[onclick*="toggleTodo"]');
+                if (item) {
+                    item.remove();
+                }
+            }
+        }
+
+    function switchToList(viewName, el) {
+        // 更新侧边栏选中状态
+        document.querySelectorAll('.sidebar-item').forEach(function(item) {
+            item.classList.remove('active');
+        });
+        if (el) el.classList.add('active');
+
+        var targetId = 'view-' + viewName;
+        var target = document.getElementById(targetId);
+        if (target && !isDevMode) {
+            // 视图已存在，直接显示
+            document.querySelectorAll('.view-content').forEach(function(v) {
+                v.classList.add('hidden');
+            });
+            target.classList.remove('hidden');
+        } else {
+            // 视图未加载 / dev 模式下强制刷新: 移除旧 target 后重新 fetch
+            if (target) target.remove();
+            // 视图未加载，动态加载
+            loadView(viewName, function(html) {
+                document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                var newTarget = document.getElementById(targetId);
+                if (newTarget) {
+                    document.querySelectorAll('.view-content').forEach(function(v) {
+                        v.classList.add('hidden');
+                    });
+                    newTarget.classList.remove('hidden');
+                }
+            });
+        }
+    }
+
+    function openScheduleCalendar() {
+        document.querySelectorAll('.view-content').forEach(function(v) {
+            v.classList.add('hidden');
+        });
+        var calView = document.getElementById('view-schedule-calendar');
+        if (calView) calView.classList.remove('hidden');
+        // 标记日程冲突
+        setTimeout(function() { markCalendarConflicts(); checkCourtConflicts(); }, 50);
+    }
+
+    function markCalendarConflicts() {
+        var calDates = document.querySelectorAll('#view-schedule-calendar .grid.grid-cols-7 .py-3');
+        calDates.forEach(function(cell) {
+            // 清除旧的标记
+            var oldConflict = cell.querySelector('.schedule-conflict-marker');
+            if (oldConflict) oldConflict.remove();
+            var oldRedDot = cell.querySelector('.schedule-conflict-red');
+            if (oldRedDot) oldRedDot.remove();
+            var oldCourt = cell.querySelector('.court-schedule-marker');
+            if (oldCourt) oldCourt.remove();
+        });
+
+        // 按日期分组日程
+        var dateGroups = {};
+        scheduleData.forEach(function(item) {
+            if (!dateGroups[item.date]) dateGroups[item.date] = [];
+            dateGroups[item.date].push(item);
+        });
+
+        // 为开庭日程添加特殊标记（红色外边框）
+        scheduleData.forEach(function(item) {
+            if (item.type !== '开庭') return;
+            var dayNum = parseInt(item.date.split('-')[2]);
+            calDates.forEach(function(cell) {
+                var cellText = cell.textContent.trim();
+                var cellDay = parseInt(cellText);
+                if (cellDay === dayNum) {
+                    // 添加开庭标记：红色小徽章
+                    if (!cell.querySelector('.court-schedule-marker')) {
+                        var courtMarker = document.createElement('span');
+                        courtMarker.className = 'court-schedule-marker text-[8px] text-red-600 font-medium block leading-none mt-0.5';
+                        courtMarker.textContent = '开庭';
+                        cell.appendChild(courtMarker);
+                    }
+                }
+            });
+        });
+
+        // 对每组的日程检查时间重叠
+        Object.keys(dateGroups).forEach(function(dateKey) {
+            var items = dateGroups[dateKey];
+            var hasConflict = false;
+            for (var i = 0; i < items.length && !hasConflict; i++) {
+                for (var j = i + 1; j < items.length && !hasConflict; j++) {
+                    if (items[i].time < items[j].endTime && items[j].time < items[i].endTime) {
+                        hasConflict = true;
+                    }
+                }
+            }
+            if (!hasConflict) return;
+
+            // 对应到日历单元格：从日期字符串提取日数
+            var dayNum = parseInt(dateKey.split('-')[2]);
+            calDates.forEach(function(cell) {
+                var cellText = cell.textContent.trim();
+                var cellDay = parseInt(cellText);
+                if (cellDay === dayNum) {
+                    var conflictMarker = document.createElement('span');
+                    conflictMarker.className = 'schedule-conflict-red w-1.5 h-1.5 rounded-full bg-red-500 inline-block mx-auto mt-0.5';
+                    // 移除原有指示点（蓝色/红色），只标记冲突
+                    var existingDots = cell.querySelectorAll('.rounded-full');
+                    existingDots.forEach(function(d) {
+                        if (!d.classList.contains('schedule-conflict-red')) {
+                            d.style.display = 'none';
+                        }
+                    });
+                    cell.appendChild(conflictMarker);
+                }
+            });
+        });
+    }
+
+
+    function getTodayDate() {
+        const d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+
+    function getFutureDate(days) {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+
+    function checkScheduleConflict(date, time) {
+        if (!date || !time) return null;
+        const conflicts = scheduleData.filter(item => {
+            if (item.date !== date) return false;
+            if (time >= item.time && time < item.endTime) return true;
+            return false;
+        });
+        return conflicts.length > 0 ? conflicts : null;
+    }
+
+
+    function checkAndShowConflict() {
+        const date = document.getElementById('sched-date').value;
+        const time = document.getElementById('sched-time').value;
+        const warningEl = document.getElementById('schedule-conflict-warning');
+        const detailEl = document.getElementById('schedule-conflict-detail');
+        if (!warningEl || !detailEl) return;
+        const conflicts = checkScheduleConflict(date, time);
+        if (conflicts && conflicts.length > 0) {
+            detailEl.innerHTML = conflicts.map(c =>
+                '• <span class="font-medium">' + c.title + '</span><br><span class="text-amber-600">' + c.time + ' - ' + c.endTime + '</span>'
+            ).join('<br>');
+            warningEl.classList.remove('hidden');
+        } else {
+            warningEl.classList.add('hidden');
+        }
+    }
+
+
+    function bindScheduleConflictCheck() {
+        const dateInput = document.getElementById('sched-date');
+        const timeInput = document.getElementById('sched-time');
+        if (dateInput) dateInput.addEventListener('change', checkAndShowConflict);
+        if (timeInput) timeInput.addEventListener('change', checkAndShowConflict);
+    }
+
+    function openScheduleModal() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('sched-date').value = today;
+        document.getElementById('sched-time').value = '09:00';
+        document.getElementById('schedule-modal').classList.remove('hidden');
+        // 检查当天冲突并绑定监听
+        setTimeout(function() {
+            checkAndShowConflict();
+            bindScheduleConflictCheck();
+        }, 100);
+    }
+
+
+    function closeScheduleModal() {
+        document.getElementById('schedule-modal').classList.add('hidden');
+    }
+
+
+    function saveSchedule() {
+        const title = document.getElementById('sched-title').value.trim();
+        const date = document.getElementById('sched-date').value;
+        const time = document.getElementById('sched-time').value;
+        if (!title) {
+            alert('请输入日程标题');
+            return;
+        }
+        if (!date) {
+            alert('请选择日期');
+            return;
+        }
+        if (!time) {
+            alert('请选择时间');
+            return;
+        }
+        const type = document.querySelector('input[name="sched-type"]:checked')?.value || '其他';
+        const caseVal = document.getElementById('sched-case').value;
+        const note = document.getElementById('sched-note').value.trim();
+        const remind = document.querySelector('input[name="sched-remind"]:checked')?.value || '60';
+        
+        // 冲突检测
+        const conflicts = checkScheduleConflict(date, time);
+        if (conflicts && conflicts.length > 0) {
+            // 暂存待保存日程
+            const endHour = parseInt(time.split(':')[0]) + 1;
+            const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
+            const caseSelect = document.getElementById('sched-case');
+            const caseName = caseSelect.options[caseSelect.selectedIndex]?.text || '';
+            pendingSchedule = {
+                id: scheduleData.length + 1,
+                title: title,
+                date: date,
+                time: time,
+                endTime: endTime,
+                type: type,
+                caseName: caseName,
+                location: note || '',
+                note: '',
+                remind: remind
+            };
+            showConflictResolve(conflicts);
+            return; // 等待用户选择
+        }
+        
+        const sched = { title, date, time, type, case: caseVal, note, remind };
+        
+        // 保存到日程数据
+        const endHour = parseInt(time.split(':')[0]) + 1;
+        const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
+        scheduleData.push({
+            id: scheduleData.length + 1,
+            title: title,
+            date: date,
+            time: time,
+            endTime: endTime,
+            type: type,
+            location: note || ''
+        });
+        
+        closeScheduleModal();
+        alert('日程已创建！');
+        updateTodayScheduleBadge();
+    }
+
+    function updateTodayScheduleBadge() {
+        const badge = document.getElementById('today-schedule-badge');
+        if (!badge) return;
+        const today = getTodayDate();
+        const count = scheduleData.filter(s => s.date === today).length;
+        badge.textContent = count;
+    }
+
+    function filterSchedule(type, btn) {
+        document.querySelectorAll('#view-schedule-list .filter-btn').forEach(b => {
+            b.className = 'filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
+        });
+        btn.className = 'filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
+        document.querySelectorAll('#view-schedule-list .arco-card').forEach(card => {
+            try {
+                var tagEl = card.querySelector('.rounded-full:first-child');
+                var tag = tagEl ? tagEl.textContent.trim() : '';
+                if (type === 'all' || tag === type) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            } catch(e) {
+                // 防御性：如果提取失败，跳过该卡片
+                card.classList.remove('hidden');
+            }
+        });
+    }
+
+    function filterAttention(type, btn) {
+        document.querySelectorAll('#view-attention-list .att-filter-btn').forEach(b => {
+            b.className = 'att-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
+        });
+        btn.className = 'att-filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
+        document.querySelectorAll('#view-attention-list .bg-white.rounded-xl').forEach(card => {
+            var tagEl = card.querySelector('.rounded-full:first-child');
+            var tag = tagEl ? tagEl.textContent.trim() : '';
+            if (type === 'all' || tag === type) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    function filterDynamics(type, btn) {
+        document.querySelectorAll('#view-case-dynamics .dyn-filter-btn').forEach(b => {
+            b.className = 'dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
+        });
+        btn.className = 'dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
+        document.querySelectorAll('#view-case-dynamics .bg-white.rounded-xl').forEach(card => {
+            const tag = card.querySelector('.rounded-full:first-child')?.textContent.trim();
+            if (type === 'all' || tag === type) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+        searchDynamics(); // 结合搜索关键词
+    }
+
+
+    function openScheduleDetail(id) {
+        const item = scheduleData.find(s => s.id === id);
+        if (!item) return;
+        currentDetailScheduleId = id;
+        
+        document.getElementById('sdetail-title').textContent = item.title;
+        document.getElementById('sdetail-date').textContent = item.date;
+        document.getElementById('sdetail-time').textContent = item.time + ' - ' + (item.endTime || '');
+        document.getElementById('sdetail-location').textContent = item.location || '未设置';
+        document.getElementById('sdetail-case').textContent = item.caseName || '未关联案件';
+        document.getElementById('sdetail-note').textContent = item.note || '无';
+        
+        // 类型徽章
+        const badge = document.getElementById('sdetail-type-badge');
+        const typeColors = { '开庭': ['bg-purple-100', 'text-purple-700'], '会议': ['bg-blue-100', 'text-blue-700'], '待办': ['bg-green-100', 'text-green-700'], '其他': ['bg-amber-100', 'text-amber-700'] };
+        const colors = typeColors[item.type] || ['bg-gray-100', 'text-gray-700'];
+        badge.className = 'text-xs px-2 py-0.5 rounded-full ' + colors.join(' ');
+        badge.textContent = item.type;
+        
+        // 头部左边框颜色
+        const header = document.getElementById('sdetail-header');
+        const borderColors = { '开庭': '#7c3aed', '会议': '#3b82f6', '待办': '#22c55e', '其他': '#f59e0b' };
+        header.style.borderLeftColor = borderColors[item.type] || '#165DFF';
+        
+        // 提醒文本
+        const remindMap = { '0': '不提醒', '15': '提前 15 分钟', '60': '提前 1 小时', '1440': '提前 1 天' };
+        document.getElementById('sdetail-remind').textContent = remindMap[item.remind] || '不提醒';
+        
+        // 检查冲突
+        checkDetailConflict(item);
+        
+        document.getElementById('sdetail-note-row').classList.toggle('hidden', !item.note);
+        document.getElementById('schedule-detail-modal').classList.remove('hidden');
+    }
+
+
+    function closeScheduleDetail() {
+        document.getElementById('schedule-detail-modal').classList.add('hidden');
+        currentDetailScheduleId = null;
+    }
+
+
+    function checkDetailConflict(item) {
+        const warningEl = document.getElementById('sdetail-conflict');
+        const detailEl = document.getElementById('sdetail-conflict-detail');
+        
+        const conflicts = scheduleData.filter(s => 
+            s.id !== item.id && s.date === item.date &&
+            item.time < s.endTime && item.endTime > s.time
+        );
+        
+        if (conflicts.length > 0) {
+            detailEl.innerHTML = conflicts.map(c => 
+                '• <span class="font-medium">' + c.title + '</span> (' + c.time + '-' + (c.endTime||'') + ')'
+            ).join('<br>');
+            warningEl.classList.remove('hidden');
+        } else {
+            warningEl.classList.add('hidden');
+        }
+    }
+
+
+    function editScheduleFromDetail() {
+        closeScheduleDetail();
+        openScheduleModal();
+    }
+
+
+    function deleteScheduleFromDetail() {
+        if (!currentDetailScheduleId) return;
+        if (confirm('确定要删除该日程吗？')) {
+            const idx = scheduleData.findIndex(s => s.id === currentDetailScheduleId);
+            if (idx > -1) scheduleData.splice(idx, 1);
+            closeScheduleDetail();
+            alert('日程已删除');
+            if (typeof openScheduleCalendar === 'function') openScheduleCalendar();
+        }
+    }
+
+
+    function showConflictResolve(conflicts) {
+        const listEl = document.getElementById('conflict-list');
+        listEl.innerHTML = conflicts.map(c => 
+            '<div class="flex items-center gap-3 bg-red-50 rounded-lg p-3">' +
+                '<iconify-icon icon="mdi:calendar-remove-outline" class="text-red-400 text-lg"></iconify-icon>' +
+                '<div class="flex-1">' +
+                    '<div class="text-sm font-medium text-red-700">' + c.title + '</div>' +
+                    '<div class="text-xs text-red-500">' + c.time + ' - ' + (c.endTime||'') + '</div>' +
+                '</div>' +
+            '</div>'
+        ).join('');
+        
+        // 推荐空闲时段
+        const slotsEl = document.getElementById('suggested-slots');
+        const date = pendingSchedule.date;
+        const busyPeriods = conflicts.map(c => ({ start: c.time, end: c.endTime }));
+        const suggestions = suggestFreeSlots(date, busyPeriods);
+        slotsEl.innerHTML = suggestions.map(s => 
+            '<button onclick="selectSuggestedSlot(\'' + s.start + '\',\'' + s.end + '\')" class="text-xs px-3 py-1.5 rounded-full border border-[#165DFF] text-[#165DFF] hover:bg-blue-50 transition-colors">' + s.start + ' - ' + s.end + '</button>'
+        ).join('');
+        
+        document.getElementById('conflict-resolve-modal').classList.remove('hidden');
+    }
+
+
+    function closeConflictResolve() {
+        document.getElementById('conflict-resolve-modal').classList.add('hidden');
+        pendingSchedule = null;
+    }
+
+
+    function conflictResolveAction(action) {
+        if (action === 'cancel') {
+            closeConflictResolve();
+            return;
+        }
+        if (action === 'ignore') {
+            closeConflictResolve();
+            if (pendingSchedule) {
+                scheduleData.push(pendingSchedule);
+                pendingSchedule = null;
+                alert('日程已创建（含冲突）');
+            }
+            return;
+        }
+        if (action === 'reschedule') {
+            closeConflictResolve();
+            if (pendingSchedule) {
+                scheduleData.push(pendingSchedule);
+                pendingSchedule = null;
+                alert('日程已调整至推荐时段');
+            }
+            return;
+        }
+    }
+
+
+    function selectSuggestedSlot(start, end) {
+        if (pendingSchedule) {
+            pendingSchedule.time = start;
+            pendingSchedule.endTime = end;
+        }
+        document.getElementById('sched-time').value = start;
+    }
+
+
+    function suggestFreeSlots(date, busyPeriods) {
+        const allSlots = [];
+        for (let h = 8; h < 20; h++) {
+            allSlots.push({ start: String(h).padStart(2,'0') + ':00', end: String(h+1).padStart(2,'0') + ':00' });
+        }
+        return allSlots.filter(slot => 
+            !busyPeriods.some(busy => slot.start < busy.end && slot.end > busy.start)
+        ).slice(0, 4);
+    }
+
+    function checkCourtConflicts() {
+        const courtSchedules = scheduleData.filter(s => s.type === '开庭');
+        const conflicts = [];
+        
+        for (let i = 0; i < courtSchedules.length; i++) {
+            for (let j = i + 1; j < courtSchedules.length; j++) {
+                const a = courtSchedules[i], b = courtSchedules[j];
+                if (a.date === b.date && a.time < b.endTime && a.endTime > b.time) {
+                    conflicts.push({ a, b });
+                }
+            }
+        }
+        
+        const bar = document.getElementById('court-conflict-bar');
+        const detail = document.getElementById('court-conflict-detail');
+        
+        if (conflicts.length > 0) {
+            detail.innerHTML = conflicts.map(c => 
+                '• <span class="font-medium">' + c.a.title + '</span> 与 <span class="font-medium">' + c.b.title + '</span> 时间重叠（' + c.a.date + ' ' + c.a.time + '-' + c.b.endTime + '）'
+            ).join('<br>');
+            bar.classList.remove('hidden');
+        } else {
+            bar.classList.add('hidden');
+        }
+        
+        return conflicts;
+    }
+
+
+    function dismissCourtConflict() {
+        document.getElementById('court-conflict-bar').classList.add('hidden');
+    }
+
+    function openCaseDynamicDetail(index) {
+        var dynamics = [
+            { type: '紧急', typeClass: 'bg-red-100 text-red-700', title: '举证期限即将截止', caseName: '张三合同纠纷', time: '2026-06-10 14:30', handler: '李明', description: '张三合同纠纷一案的举证期限将于2026年6月23日截止，请尽快整理并提交相关证据材料，避免因逾期导致证据失权。', files: ['证据目录_v3.xlsx (256KB)', '举证期限告知书.pdf (1.2MB)'], note: '请务必在截止日前完成证据交换，已通知对方代理人。', action: '去处理' },
+            { type: '文书', typeClass: 'bg-blue-100 text-blue-700', title: '起诉状已完成', caseName: '李四借贷纠纷', time: '2026-06-09 16:20', handler: '王芳', description: '李四借贷纠纷案的民事起诉状已完成最终审核，经合伙人确认无误，可安排打印盖章后提交法院立案。', files: ['民事起诉状_终稿.docx (45KB)'], note: '已安排下周一早提交立案庭。', action: '查看文书' },
+            { type: '文书', typeClass: 'bg-blue-100 text-blue-700', title: '证据目录已更新', caseName: '王五股权转让纠纷', time: '2026-06-08 11:00', handler: '赵磊', description: '根据最新补充的银行流水和股权变更登记材料，已更新证据目录，新增证据5-8号，请确认是否完整。', files: ['证据目录_更新版.xlsx (128KB)', '补充材料_银行流水.pdf (3.5MB)'], note: '', action: '查看详情' },
+            { type: '开庭', typeClass: 'bg-purple-100 text-purple-700', title: '开庭日期已确定', caseName: '赵六劳动争议', time: '2026-06-07 09:00', handler: '陈静', description: '赵六诉某科技公司劳动争议案，经与法院沟通，开庭时间定于2026年7月15日上午9:00，在市劳动争议仲裁委员会第一仲裁庭。', files: ['开庭传票.pdf (0.5MB)'], note: '请提前30分钟到达，带齐证据原件。', action: '查看详情' },
+            { type: '开庭', typeClass: 'bg-purple-100 text-purple-700', title: '合议庭组成已确定', caseName: '孙七建设工程合同纠纷', time: '2026-06-06 15:00', handler: '刘强', description: '孙七建设工程合同纠纷案合议庭成员已确定，审判长：张明法官，审判员：李华、王丽。当事人对合议庭成员如申请回避，需在5日内提出。', files: ['合议庭组成通知书.pdf (0.3MB)'], note: '已与当事人确认无回避申请。', action: '查看详情' },
+            { type: '归档', typeClass: 'bg-green-100 text-green-700', title: '案件已归档', caseName: '周八借款纠纷', time: '2026-06-05 17:00', handler: '李明', description: '周八借款纠纷案已结案归档。判决已生效，案卷材料已按档案管理规定整理完毕，存放于档案室第3柜第12号。', files: ['结案报告.docx (32KB)', '判决书.pdf (0.8MB)'], note: '归档编号：2026-0312', action: '查看归档' },
+            { type: '归档', typeClass: 'bg-green-100 text-green-700', title: '判决书已上传', caseName: '吴九房屋租赁合同纠纷', time: '2026-06-04 14:00', handler: '王芳', description: '吴九房屋租赁合同纠纷案一审判决书已收到并上传系统。判决结果：被告支付租金及违约金合计￥45,600。双方是否上诉待确认。', files: ['一审判决书.pdf (1.1MB)'], note: '已通知当事人查收判决书，上诉期限15天。', action: '查看判决书' },
+            { type: '提醒', typeClass: 'bg-amber-100 text-amber-700', title: '续约提醒', caseName: '常年法律顾问 - 某科技公司', time: '2026-06-03 10:00', handler: '系统自动', description: '某科技公司常年法律顾问服务合同将于2026年7月1日到期，如需续约请提前30天联系客户沟通续约事宜。', files: ['顾问合同_2025.pdf (0.6MB)'], note: '客户满意度较高，建议主动联系续约。', action: '查看详情' }
+        ];
+        var d = dynamics[index] || dynamics[0];
+        document.getElementById('detail-type-badge').textContent = d.type;
+        document.getElementById('detail-type-badge').className = 'text-[10px] font-medium px-1.5 py-0.5 rounded-full ' + d.typeClass;
+        document.getElementById('detail-title').textContent = d.title;
+        document.getElementById('detail-case-name').textContent = d.caseName;
+        document.getElementById('detail-time').textContent = d.time;
+        document.getElementById('detail-handler').textContent = d.handler;
+        document.getElementById('detail-description').textContent = d.description;
+        document.getElementById('detail-note').textContent = d.note || '暂无备注';
+        document.getElementById('detail-action-btn').textContent = d.action;
+        
+        // 动态渲染关联文件
+        var filesContainer = document.getElementById('detail-files-list');
+        if (filesContainer) {
+            var filesHtml = '';
+            var fileIcons = {
+                'xlsx': 'mdi:file-excel-outline',
+                'xls': 'mdi:file-excel-outline',
+                'pdf': 'mdi:file-pdf-outline',
+                'doc': 'mdi:file-word-outline',
+                'docx': 'mdi:file-word-outline',
+                'jpg': 'mdi:file-image-outline',
+                'png': 'mdi:file-image-outline',
+                'gif': 'mdi:file-image-outline'
+            };
+            var fileColors = {
+                'xlsx': 'bg-green-100 text-green-500',
+                'xls': 'bg-green-100 text-green-500',
+                'pdf': 'bg-red-100 text-red-500',
+                'doc': 'bg-blue-100 text-blue-500',
+                'docx': 'bg-blue-100 text-blue-500',
+                'jpg': 'bg-purple-100 text-purple-500',
+                'png': 'bg-purple-100 text-purple-500',
+                'gif': 'bg-purple-100 text-purple-500'
+            };
+            
+            (d.files || []).forEach(function(f) {
+                var ext = f.split('(')[0].split('.').pop().trim().toLowerCase();
+                var icon = fileIcons[ext] || 'mdi:file-document-outline';
+                var color = fileColors[ext] || 'bg-gray-100 text-gray-500';
+                var name = f.split('(')[0].trim();
+                var sizeMatch = f.match(/\(([^)]+)\)/);
+                var sizeStr = sizeMatch ? sizeMatch[1] : '';
+                filesHtml += '<div class="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5 hover:bg-gray-100 transition-colors cursor-pointer">' +
+                    '<div class="w-8 h-8 rounded-lg ' + color.split(' ')[0] + ' flex items-center justify-center flex-shrink-0">' +
+                        '<iconify-icon icon="' + icon + '" class="' + color.split(' ')[1] + ' text-base"></iconify-icon>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<p class="text-xs font-medium text-gray-700 truncate">' + name + '</p>' +
+                        '<p class="text-[10px] text-gray-400">' + sizeStr + '</p>' +
+                    '</div>' +
+                    '<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0">预览</button>' +
+                '</div>';
+            });
+            filesContainer.innerHTML = filesHtml;
+        }
+        
+        document.getElementById('case-dynamic-detail-modal').classList.remove('hidden');
+    }
+
+    function closeCaseDynamicDetail() {
+        document.getElementById('case-dynamic-detail-modal').classList.add('hidden');
+    }
+
+    function searchDynamics() {
+        var keyword = document.getElementById('dynamics-search-input').value.trim().toLowerCase();
+        document.querySelectorAll('#view-case-dynamics .bg-white.rounded-xl').forEach(function(card) {
+            var text = card.textContent.toLowerCase();
+            if (keyword === '' || text.indexOf(keyword) !== -1) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+        var visibleCount = document.querySelectorAll('#view-case-dynamics .bg-white.rounded-xl:not(.hidden)').length;
+        var totalCount = document.querySelectorAll('#view-case-dynamics .bg-white.rounded-xl').length;
+        var countEl = document.querySelector('#view-case-dynamics h2 + span');
+        if (countEl) countEl.textContent = '共 ' + visibleCount + ' / ' + totalCount + ' 条';
+        
+        // 显示/隐藏空状态
+        var emptyState = document.getElementById('dynamics-empty-state');
+        if (emptyState) {
+            if (visibleCount === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+    }
+
+    function selectDynamicType(btn, type) {
+        document.querySelectorAll('.dyn-type-option').forEach(function(b) {
+            b.className = 'dyn-type-option text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
+        });
+        btn.className = 'dyn-type-option text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
+        AppState.selectedDynamicType = type;
+    }
+
+    function openNewDynamicModal() {
+        document.getElementById('new-dynamic-modal').classList.remove('hidden');
+    }
+
+    function closeNewDynamicModal() {
+        document.getElementById('new-dynamic-modal').classList.add('hidden');
+    }
+
+
+    function handleDynamicFileSelect(input) {
+        var files = input.files;
+        for (var i = 0; i < files.length; i++) {
+            addDynamicFile(files[i]);
+        }
+        input.value = '';
+    }
+
+
+    function handleDynamicFileDrop(event) {
+        var files = event.dataTransfer.files;
+        for (var i = 0; i < files.length; i++) {
+            addDynamicFile(files[i]);
+        }
+    }
+
+
+    function addDynamicFile(file) {
+        var size = file.size;
+        var sizeStr = '';
+        if (size < 1024) sizeStr = size + 'B';
+        else if (size < 1024 * 1024) sizeStr = (size / 1024).toFixed(1) + 'KB';
+        else sizeStr = (size / 1024 / 1024).toFixed(1) + 'MB';
+        
+        var icon = 'mdi:file-document-outline';
+        var ext = file.name.split('.').pop().toLowerCase();
+        if (['png','jpg','jpeg','gif','webp'].indexOf(ext) !== -1) icon = 'mdi:file-image-outline';
+        else if (['pdf'].indexOf(ext) !== -1) icon = 'mdi:file-pdf-outline';
+        else if (['doc','docx'].indexOf(ext) !== -1) icon = 'mdi:file-word-outline';
+        else if (['xls','xlsx'].indexOf(ext) !== -1) icon = 'mdi:file-excel-outline';
+        
+        var fileId = 'dyn_file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        
+        AppState.dynamicAttachments.push({
+            id: fileId,
+            name: file.name,
+            size: sizeStr,
+            icon: icon,
+            file: file
+        });
+        
+        renderDynamicFilePreview();
+    }
+
+
+    function removeDynamicFile(fileId) {
+        AppState.dynamicAttachments = AppState.dynamicAttachments.filter(function(f) { return f.id !== fileId; });
+        renderDynamicFilePreview();
+    }
+
+
+    function renderDynamicFilePreview() {
+        var container = document.getElementById('dynamic-file-preview-list');
+        if (!container) return;
+        
+        if (AppState.dynamicAttachments.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+        container.classList.remove('hidden');
+        
+        var html = '';
+        AppState.dynamicAttachments.forEach(function(f) {
+            html += '<div class="flex items-center gap-2 bg-white rounded-lg border border-[#E5E6EB] px-3 py-2">' +
+                '<iconify-icon icon="' + f.icon + '" class="text-base text-[#165DFF] flex-shrink-0"></iconify-icon>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<p class="text-xs text-gray-700 truncate">' + f.name + '</p>' +
+                    '<p class="text-[10px] text-gray-400">' + f.size + '</p>' +
+                '</div>' +
+                '<button onclick="removeDynamicFile(\'' + f.id + '\')" class="text-gray-400 hover:text-red-500 flex-shrink-0">' +
+                    '<iconify-icon icon="mdi:close-circle"></iconify-icon>' +
+                '</button>' +
+            '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    
+    function submitNewDynamic() {
+        var title = document.getElementById('new-dynamic-title').value.trim();
+        if (!title) { alert('请填写动态标题'); return; }
+        var desc = document.getElementById('new-dynamic-desc').value.trim();
+        var caseName = document.getElementById('new-dynamic-case').value || '未关联案件';
+        var isUrgent = document.getElementById('new-dynamic-urgent').checked;
+        var now = new Date();
+        var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        var typeColorMap = {
+            '紧急': { border: 'border-l-red-500', bg: 'bg-red-50', icon: 'mdi:alert-circle-outline', iconColor: 'text-red-500', tagBg: 'bg-red-100', tagText: 'text-red-700' },
+            '文书': { border: 'border-l-blue-500', bg: 'bg-blue-50', icon: 'mdi:file-document-outline', iconColor: 'text-blue-500', tagBg: 'bg-blue-100', tagText: 'text-blue-700' },
+            '开庭': { border: 'border-l-purple-500', bg: 'bg-purple-50', icon: 'mdi:gavel', iconColor: 'text-purple-500', tagBg: 'bg-purple-100', tagText: 'text-purple-700' },
+            '归档': { border: 'border-l-green-500', bg: 'bg-green-50', icon: 'mdi:archive-outline', iconColor: 'text-green-500', tagBg: 'bg-green-100', tagText: 'text-green-700' },
+            '提醒': { border: 'border-l-amber-500', bg: 'bg-amber-50', icon: 'mdi:bell-outline', iconColor: 'text-amber-500', tagBg: 'bg-amber-100', tagText: 'text-amber-700' }
+        };
+        var colors = typeColorMap[AppState.selectedDynamicType] || typeColorMap['提醒'];
+        // 构建附件标签行
+        var attachHtml = '';
+        if (AppState.dynamicAttachments.length > 0) {
+            attachHtml = '<div class="flex items-center gap-2 mt-1.5">' +
+                AppState.dynamicAttachments.map(function(a) {
+                    return '<span class="inline-flex items-center gap-1 text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full"><iconify-icon icon="' + a.icon + '" class="text-xs"></iconify-icon>' + escapeHtml(a.name) + '</span>';
+                }).join('') +
+            '</div>';
+        }
+        var cardHtml = '<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow ' + colors.border + '">' +
+            '<div class="flex items-start gap-3">' +
+                '<div class="w-9 h-9 rounded-lg ' + colors.bg + ' flex items-center justify-center flex-shrink-0">' +
+                    '<iconify-icon icon="' + colors.icon + '" class="' + colors.iconColor + ' text-lg"></iconify-icon>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<div class="flex items-center gap-2 mb-1">' +
+                        '<span class="text-[10px] ' + colors.tagBg + ' ' + colors.tagText + ' font-medium px-1.5 py-0.5 rounded-full">' + (isUrgent ? '紧急' : AppState.selectedDynamicType) + '</span>' +
+                        '<span class="font-medium text-sm text-gray-800">' + escapeHtml(title) + '</span>' +
+                    '</div>' +
+                    '<p class="text-xs text-gray-500">案件：' + escapeHtml(caseName) + ' · ' + (escapeHtml(desc.substring(0,30)) || '暂无详细描述') + '</p>' +
+                    attachHtml +
+                    '<div class="flex items-center gap-3 mt-2">' +
+                        '<span class="text-[10px] text-gray-400"><iconify-icon icon="mdi:clock-outline" class="mr-0.5"></iconify-icon>' + timeStr + '</span>' +
+                        '<span class="text-[10px] text-gray-400"><iconify-icon icon="mdi:account-outline" class="mr-0.5"></iconify-icon>我</span>' +
+                    '</div>' +
+                '</div>' +
+                '<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="alert(\'' + escapeHtml(title) + '\\n\\n案件：' + escapeHtml(caseName) + '\\n' + (escapeHtml(desc.substring(0,50)) || '') + '\\n\\n附件：' + (AppState.dynamicAttachments.length > 0 ? AppState.dynamicAttachments.map(function(a){return escapeHtml(a.name)}).join(', ') : '无') + '\')">查看</button>' +
+            '</div>' +
+        '</div>';
+        var listContainer = document.querySelector('#dynamics-list-view');
+        if (listContainer) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = cardHtml;
+            listContainer.insertBefore(tempDiv.firstElementChild, listContainer.firstElementChild);
+        }
+        var totalCards = document.querySelectorAll('#view-case-dynamics .bg-white.rounded-xl').length;
+        var countEl = document.querySelector('#view-case-dynamics h2 + span');
+        if (countEl) countEl.textContent = '共 ' + totalCards + ' 条';
+        closeNewDynamicModal();
+        document.getElementById('new-dynamic-title').value = '';
+        document.getElementById('new-dynamic-desc').value = '';
+        document.getElementById('new-dynamic-case').value = '';
+        document.getElementById('new-dynamic-urgent').checked = false;
+        AppState.selectedDynamicType = '紧急';
+        document.querySelectorAll('.dyn-type-option').forEach(function(b, i) {
+            b.className = 'dyn-type-option text-xs px-3 py-1.5 rounded-full ' + (i === 0 ? 'bg-[#165DFF] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+        });
+        // 重置附件
+        AppState.dynamicAttachments = [];
+        renderDynamicFilePreview();
+    }
+
+
+    function switchDynamicsView(view) {
+        var listBtn = document.getElementById('dyn-view-list');
+        var tlBtn = document.getElementById('dyn-view-timeline');
+        var listView = document.getElementById('dynamics-list-view');
+        var tlView = document.getElementById('dynamics-timeline-view');
+        
+        if (view === 'timeline') {
+            listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-gray-600 hover:bg-gray-50 transition-colors';
+            tlBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-[#165DFF] text-white transition-colors';
+            listView.classList.add('hidden');
+            tlView.classList.remove('hidden');
+            renderDynamicsTimeline();
+        } else {
+            tlBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-gray-600 hover:bg-gray-50 transition-colors';
+            listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-[#165DFF] text-white transition-colors';
+            tlView.classList.add('hidden');
+            listView.classList.remove('hidden');
+        }
+    }
+
+
+    function renderDynamicsTimeline() {
+        var container = document.querySelector('#dynamics-timeline-view .relative.pl-8');
+        if (!container) return;
+        if (container.querySelectorAll('.dyn-tl-item').length > 0) return;
+        
+        var htmlStr = '';
+        AppState.dynamicsViewData.forEach(function(d, i) {
+            var dotColor = d.iconColor.replace('text-', 'border-');
+            htmlStr += '<div class="dyn-tl-item relative pb-6">' +
+                '<div class="absolute left-[-22px] top-1 w-3 h-3 rounded-full border-2 bg-white ' + (dotColor || 'border-blue-500') + '"></div>' +
+                '<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer" onclick="openCaseDynamicDetail(' + i + ')">' +
+                    '<div class="flex items-start gap-3">' +
+                        '<div class="w-8 h-8 rounded-lg ' + d.typeClass.split(' ')[0].replace('text-', 'bg-').replace('-700', '-50') + ' flex items-center justify-center flex-shrink-0">' +
+                            '<iconify-icon icon="' + d.icon + '" class="' + d.iconColor + ' text-base"></iconify-icon>' +
+                        '</div>' +
+                        '<div class="flex-1 min-w-0">' +
+                            '<div class="flex items-center gap-2 mb-0.5">' +
+                                '<span class="text-[10px] ' + d.typeClass + ' font-medium px-1.5 py-0.5 rounded-full">' + d.type + '</span>' +
+                                '<span class="font-medium text-sm text-gray-800">' + d.title + '</span>' +
+                            '</div>' +
+                            '<p class="text-xs text-gray-500">' + d.caseName + ' · ' + d.desc + '</p>' +
+                            '<span class="text-[10px] text-gray-400 mt-1 inline-block">' + d.time + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        });
+        container.insertAdjacentHTML('beforeend', htmlStr);
+    }
