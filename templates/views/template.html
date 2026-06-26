@@ -1,10 +1,844 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-template">
-<div class="flex items-center justify-center h-full">
-<div class="text-center">
-<iconify-icon class="text-6xl text-[#C9CDD4] mb-4" icon="mdi:file-document-outline"></iconify-icon>
-<h3 class="text-lg font-medium text-[#86909C]">模板管理</h3>
-<p class="text-sm text-[#C9CDD4] mt-1">功能开发中，敬请期待</p>
+<div class="view-content hidden flex-1 flex flex-col min-h-0" id="view-template">
+<div>
+<!-- 顶部栏 -->
+<div class="flex-none px-6 py-3 bg-white border-b border-gray-200 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-lg text-[#165DFF]" icon="mdi:book-multiple-outline"></iconify-icon>
+<h4 class="text-lg font-bold">模板管理</h4>
+<span class="text-xs text-gray-400">个人模板 · 官方模板</span>
+</div>
+</div>
+<!-- 主体 -->
+<div class="flex-1 overflow-y-auto p-6 bg-[#F2F3F5]">
+<div class="max-w-7xl mx-auto space-y-4">
+<!-- Tab 切换 + 视图切换 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-6 border-b border-[#E5E6EB]">
+<button class="text-sm font-medium text-[#165DFF] pb-3 border-b-2 border-[#165DFF] template-tab active" onclick="switchTemplateTab('personal', this)">个人模板</button>
+<button class="text-sm font-medium text-gray-500 pb-3 border-b-2 border-transparent hover:text-[#1D2129] template-tab" onclick="switchTemplateTab('official', this)">官方模板</button>
+</div>
+<div class="flex items-center gap-1 bg-white rounded-lg border border-[#E5E6EB] p-0.5">
+<button class="template-view-btn p-1.5 rounded bg-blue-50 text-[#165DFF]" data-view="list" onclick="switchTemplateView('list', this)" title="列表视图">
+<iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
+</button>
+<button class="template-view-btn p-1.5 rounded text-gray-500 hover:text-gray-700" data-view="card" onclick="switchTemplateView('card', this)" title="卡片视图">
+<iconify-icon icon="mdi:view-grid-outline"></iconify-icon>
+</button>
+</div>
+</div>
+<!-- 个人模板 (默认) -->
+<div class="space-y-4" id="template-tab-personal">
+<!-- 标题行: 我的模板 + 操作按钮 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-3 flex items-center justify-between" id="personal-header">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:account-circle-outline"></iconify-icon>
+<span class="text-sm font-bold text-gray-800">我的模板</span>
+<span class="text-xs text-gray-400 template-view-header-count">共 3 个</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<button class="text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-3 py-1 rounded flex items-center gap-1" onclick="openUploadTemplateModal()">
+<iconify-icon icon="mdi:cloud-upload-outline"></iconify-icon>上传模板
+</button>
+<button class="text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-3 py-1 rounded flex items-center gap-1" onclick="openCategoryManageModal()">
+<iconify-icon icon="mdi:folder-cog-outline"></iconify-icon>分类管理
+</button>
+<button class="text-[#165DFF] bg-[#EEF3FF] hover:bg-[#E5EBFF] px-3 py-1 rounded flex items-center gap-1 sort-btn" onclick="sortPersonalTemplates(this)">
+<iconify-icon icon="mdi:sort-variant"></iconify-icon>按时间排序
+</button>
+</div>
+</div>
+<!-- 分类筛选 tab (列表/卡片视图共享) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-2 flex items-center gap-2 flex-wrap" id="personal-category-tabs">
+<button class="personal-category-tab text-xs px-3 py-1 rounded-full bg-[#165DFF] text-white font-medium" data-category="all" onclick="filterPersonalByCategory('all', this)">全部 (3)</button>
+<button class="personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]" data-category="诉状类" onclick="filterPersonalByCategory('诉状类', this)">诉状类 (1)</button>
+<button class="personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]" data-category="答辩类" onclick="filterPersonalByCategory('答辩类', this)">答辩类 (1)</button>
+<button class="personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]" data-category="合同类" onclick="filterPersonalByCategory('合同类', this)">合同类 (1)</button>
+</div>
+<!-- 列表视图 (默认显示) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden template-view template-view-list">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-gray-50 border-b border-[#E5E6EB]">
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600">模板名称</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-24">分类</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-24">创建人</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-40">更新时间</th>
+<th class="text-center py-3 px-5 text-[11px] font-semibold text-gray-600 w-32">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50">
+<tr class="hover:bg-gray-50 group" data-template-category="诉状类">
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">起诉状-借款合同 v1</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">诉状类</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">张律师</td>
+<td class="py-3 px-5 text-xs text-gray-500">2026-06-15 14:30</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">使用</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded">删除</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="答辩类">
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">答辩状-买卖合同 v2</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">答辩类</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">李律师</td>
+<td class="py-3 px-5 text-xs text-gray-500">2026-06-18 10:15</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">使用</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded">删除</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="合同类">
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">律师函-催款函 v1</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-medium">合同类</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">王律师</td>
+<td class="py-3 px-5 text-xs text-gray-500">2026-06-20 16:40</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">使用</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded">删除</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 卡片视图 (隐藏) -->
+<div class="hidden grid grid-cols-4 gap-4 template-view template-view-card">
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="诉状类">>
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">诉状类</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">起诉状-借款合同 v1</h4>
+<div class="flex items-center justify-between text-[10px] text-gray-400 pt-3 border-t border-gray-100">
+<span class="flex items-center gap-1"><iconify-icon icon="mdi:account-outline"></iconify-icon>张律师</span>
+<span>2026-06-15</span>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="答辩类">>
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">答辩类</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">答辩状-买卖合同 v2</h4>
+<div class="flex items-center justify-between text-[10px] text-gray-400 pt-3 border-t border-gray-100">
+<span class="flex items-center gap-1"><iconify-icon icon="mdi:account-outline"></iconify-icon>李律师</span>
+<span>2026-06-18</span>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="合同类">>
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-medium">合同类</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">律师函-催款函 v1</h4>
+<div class="flex items-center justify-between text-[10px] text-gray-400 pt-3 border-t border-gray-100">
+<span class="flex items-center gap-1"><iconify-icon icon="mdi:account-outline"></iconify-icon>王律师</span>
+<span>2026-06-20</span>
 </div>
 </div>
 </div>
-<!-- 视图6：知识库管理 -->
+</div>
+<!-- 官方模板 -->
+<div class="hidden space-y-4" id="template-tab-official">
+<!-- 标题行 (列表/卡片视图共享) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-3 flex items-center gap-2" id="official-header">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:seal-variant"></iconify-icon>
+<span class="text-sm font-bold text-gray-800">官方模板</span>
+<span class="text-xs text-gray-400">司法部 / 最高法权威发布, 持续更新</span>
+</div>
+<!-- 一级分类筛选 (列表/卡片视图共享) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-2 flex items-center gap-2 text-xs flex-wrap" id="official-category-filter">
+<button class="official-category-tab bg-[#165DFF] text-white border border-[#165DFF] px-2.5 py-1 rounded hover:bg-[#0E4AD8]" data-category="all" onclick="filterOfficialByCategory('all', this)">全部</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="民商事" onclick="filterOfficialByCategory('民商事', this)">民商事</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="刑事自诉" onclick="filterOfficialByCategory('刑事自诉', this)">刑事自诉</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="知识产权" onclick="filterOfficialByCategory('知识产权', this)">知识产权</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="海事" onclick="filterOfficialByCategory('海事', this)">海事</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="环境资源" onclick="filterOfficialByCategory('环境资源', this)">环境资源</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="行政" onclick="filterOfficialByCategory('行政', this)">行政</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="国家赔偿" onclick="filterOfficialByCategory('国家赔偿', this)">国家赔偿</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="执行" onclick="filterOfficialByCategory('执行', this)">执行</button>
+<button class="official-category-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-category="其他" onclick="filterOfficialByCategory('其他', this)">其他</button>
+</div>
+<!-- 二级筛选: 文书类型 (列表/卡片视图共享) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-2 flex items-center gap-2 text-xs flex-wrap" id="official-type-filter">
+<span class="text-gray-400">文书类型:</span>
+<button class="official-type-tab bg-[#165DFF] text-white border border-[#165DFF] px-2.5 py-1 rounded hover:bg-[#0E4AD8]" data-type="all" onclick="filterOfficialByType('all', this)">全部</button>
+<button class="official-type-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-type="起诉状" onclick="filterOfficialByType('起诉状', this)">起诉状</button>
+<button class="official-type-tab bg-white border border-gray-200 px-2.5 py-1 rounded hover:bg-gray-50 text-gray-600" data-type="答辩状" onclick="filterOfficialByType('答辩状', this)">答辩状</button>
+</div>
+<!-- 列表视图 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden template-view template-view-list">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-gray-50 border-b border-[#E5E6EB]">
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-16">序号</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600">模板名称</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-24">分类</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-20">版本</th>
+<th class="text-left py-3 px-5 text-[11px] font-semibold text-gray-600 w-24">格式</th>
+<th class="text-center py-3 px-5 text-[11px] font-semibold text-gray-600 w-44 whitespace-nowrap">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50">
+<tr class="hover:bg-gray-50 group" data-template-category="民商事" data-template-type="起诉状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">1</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">民间借贷纠纷民事起诉状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v2.1</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="民商事" data-template-type="答辩状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">2</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">买卖合同纠纷民事答辩状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.5</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="民商事" data-template-type="申请书">
+<td class="py-3 px-5 text-center text-xs text-gray-500">3</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">财产保全申请书</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.2</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="刑事自诉" data-template-type="起诉状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">4</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">侮辱案刑事自诉状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded font-medium">刑事自诉</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.0</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="知识产权" data-template-type="答辩状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">5</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">商标无效行政答辩状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">知识产权</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v2.0</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="海事" data-template-type="起诉状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">6</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">船舶碰撞损害责任纠纷民事起诉状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">海事</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.3</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="环境资源" data-template-type="起诉状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">7</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">生态环境损害赔偿诉讼民事起诉状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">环境资源</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.8</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="行政" data-template-type="起诉状">
+<td class="py-3 px-5 text-center text-xs text-gray-500">8</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">行政处罚行政起诉状</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">行政</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.5</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="国家赔偿" data-template-type="申请书">
+<td class="py-3 px-5 text-center text-xs text-gray-500">9</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">错误执行赔偿国家赔偿申请书</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded font-medium">国家赔偿</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.2</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="执行" data-template-type="申请书">
+<td class="py-3 px-5 text-center text-xs text-gray-500">10</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">不予执行申请书</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">执行</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v2.2</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="执行" data-template-type="申请书">
+<td class="py-3 px-5 text-center text-xs text-gray-500">11</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">强制执行申请书</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">执行</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.0</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+<tr class="hover:bg-gray-50 group" data-template-category="其他" data-template-type="其他">
+<td class="py-3 px-5 text-center text-xs text-gray-500">12</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">法律意见书</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-medium">其他</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.5</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 group" data-template-category="其他" data-template-type="其他">
+<td class="py-3 px-5 text-center text-xs text-gray-500">13</td>
+<td class="py-3 px-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">律师函</span>
+</div>
+</td>
+<td class="py-3 px-5"><span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-medium">其他</span></td>
+<td class="py-3 px-5 text-xs text-gray-600">v1.0</td>
+<td class="py-3 px-5 text-xs text-gray-500">.docx</td>
+<td class="py-3 px-5 text-center w-44">
+<div class="flex items-center justify-center gap-1 whitespace-nowrap">
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">下载</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">预览</button>
+<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded whitespace-nowrap">使用</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 卡片视图 (官方) -->
+<div id="official-card-grid" class="grid gap-4 template-view template-view-card">
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="民商事" data-template-type="起诉状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">民间借贷纠纷民事起诉状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded mr-1.5">起诉状</span>v2.1 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="民商事" data-template-type="答辩状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">买卖合同纠纷民事答辩状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded mr-1.5">答辩状</span>v1.5 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="民商事" data-template-type="申请书" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">民商事</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">财产保全申请书</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mr-1.5">申请书</span>v1.2 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="刑事自诉" data-template-type="起诉状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded font-medium">刑事自诉</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">侮辱案刑事自诉状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded mr-1.5">起诉状</span>v1.0 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="知识产权" data-template-type="答辩状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">知识产权</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">商标无效行政答辩状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded mr-1.5">答辩状</span>v2.0 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="海事" data-template-type="起诉状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded font-medium">海事</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">船舶碰撞损害责任纠纷民事起诉状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded mr-1.5">起诉状</span>v1.3 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="环境资源" data-template-type="起诉状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">环境资源</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">生态环境损害赔偿诉讼民事起诉状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded mr-1.5">起诉状</span>v1.8 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="行政" data-template-type="起诉状" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">行政</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">行政处罚行政起诉状</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded mr-1.5">起诉状</span>v1.5 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="国家赔偿" data-template-type="申请书" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded font-medium">国家赔偿</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">错误执行赔偿国家赔偿申请书</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mr-1.5">申请书</span>v1.2 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="执行" data-template-type="申请书" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">执行</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">不予执行申请书</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mr-1.5">申请书</span>v2.2 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="执行" data-template-type="申请书" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">执行</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">强制执行申请书</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded mr-1.5">申请书</span>v1.0 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="其他" data-template-type="其他" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-medium">其他</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">法律意见书</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded mr-1.5">其他</span>v1.5 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+<div class="bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group" data-template-category="其他" data-template-type="其他" onclick="previewOfficialTemplate(this)">
+<div class="flex items-start justify-between mb-3">
+<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-medium">其他</span>
+</div>
+<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">律师函</h4>
+<p class="text-[10px] text-gray-400 mb-3"><span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded mr-1.5">其他</span>v1.0 · .docx · <span class="text-gray-300">2024-09</span></p>
+<div class="flex items-center justify-between text-[11px] pt-3 border-t border-gray-100">
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:download-outline"></iconify-icon>下载
+</button>
+<button class="text-[#165DFF] hover:bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:eye-outline"></iconify-icon>预览
+</button>
+<button class="text-white bg-[#165DFF] hover:bg-[#0E4AD8] px-2.5 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation()">
+<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用
+</button>
+</div>
+</div>
+</div>
+<!-- 空状态 (filter 0 张时显示) -->
+<div id="official-card-empty" class="hidden bg-white rounded-xl border border-[#E5E6EB] py-16 text-center" style="display: none;">
+<div class="text-5xl mb-3 grayscale opacity-30">📋</div>
+<p class="text-sm text-gray-500">暂无符合条件的官方模板</p>
+<p class="text-xs text-gray-400 mt-1">请尝试切换其他分类或文书类型</p>
+</div>
+<!-- 底部统计 -->
+<div class="flex items-center justify-between text-xs text-gray-400 px-1 py-2">
+<span>显示 <span id="official-card-count" class="text-[#165DFF] font-medium">13</span> / 共 <span id="official-card-total" class="text-gray-600">13</span> 个模板</span>
+<span class="text-[10px] text-gray-300">司法部 / 最高法权威发布</span>
+</div>
+
+<!-- 分类管理弹窗 -->
+<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="category-manage-modal" onclick="if(event.target===this) closeCategoryManageModal()">
+<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+<!-- 弹窗头部 -->
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-lg text-[#165DFF]" icon="mdi:folder-cog-outline"></iconify-icon>
+<h3 class="text-base font-bold">个人模板分类管理</h3>
+</div>
+<button class="text-gray-400 hover:text-gray-600" onclick="closeCategoryManageModal()">
+<iconify-icon icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<!-- 新建分类输入区 -->
+<div class="px-6 py-4 border-b border-gray-100">
+<label class="text-xs text-gray-500 mb-2 block">新建分类</label>
+<div class="flex items-center gap-2">
+<input class="flex-1 bg-[#F7F8FA] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:bg-white" id="new-category-input" placeholder="如：劳动仲裁类、知识产权类..." type="text" maxlength="20" onkeydown="if(event.key===\u0027Enter\u0027) addCategory()"/>
+<button class="text-sm text-white bg-[#165DFF] hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1" onclick="addCategory()">
+<iconify-icon icon="mdi:plus"></iconify-icon>添加
+</button>
+</div>
+</div>
+<!-- 分类列表 -->
+<div class="flex-1 overflow-y-auto p-6">
+<div class="text-xs text-gray-500 mb-3" id="category-list-count">共 3 个分类</div>
+<div class="space-y-2" id="category-list">
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="诉状类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">诉状类</span>
+<span class="text-[10px] text-gray-400">(2 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027诉状类\u0027)">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="答辩类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">答辩类</span>
+<span class="text-[10px] text-gray-400">(1 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027答辩类\u0027)">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="合同类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-gray-800 font-medium">合同类</span>
+<span class="text-[10px] text-gray-400">(1 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027合同类\u0027)">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+</div>
+</div>
+<!-- 弹窗底部 -->
+<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end">
+<button class="text-sm bg-white border border-gray-200 hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeCategoryManageModal()">关闭</button>
+</div>
+</div>
+</div>
+
+<!-- 上传模板弹窗 -->
+<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="upload-template-modal" onclick="if(event.target===this) closeUploadTemplateModal()">
+<div class="bg-white rounded-xl w-[520px] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+<!-- 头部 -->
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-lg text-[#165DFF]" icon="mdi:cloud-upload-outline"></iconify-icon>
+<h3 class="text-base font-bold">上传模板</h3>
+<span class="text-xs text-gray-400">个人模板</span>
+</div>
+<button class="text-gray-400 hover:text-gray-600" onclick="closeUploadTemplateModal()">
+<iconify-icon icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<!-- 主体 -->
+<div class="px-6 py-4 space-y-4">
+<div>
+<label class="text-xs text-gray-500 mb-1.5 block">模板名称 <span class="text-red-500">*</span></label>
+<input class="w-full bg-[#F7F8FA] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:bg-white" id="upload-template-name" placeholder="如：起诉状-借款合同 v3" maxlength="50" type="text"/>
+</div>
+<div>
+<label class="text-xs text-gray-500 mb-1.5 block">所属分类 <span class="text-red-500">*</span></label>
+<select class="w-full bg-[#F7F8FA] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#165DFF] focus:bg-white" id="upload-template-category">
+<option value="">请选择分类</option>
+</select>
+</div>
+<div>
+<label class="text-xs text-gray-500 mb-1.5 block">文件格式</label>
+<div class="flex items-center gap-4 text-sm">
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input checked class="text-[#165DFF] focus:ring-[#165DFF]" name="upload-template-format" type="radio" value="docx"/><span>.docx</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input class="text-[#165DFF] focus:ring-[#165DFF]" name="upload-template-format" type="radio" value="pdf"/><span>.pdf</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input class="text-[#165DFF] focus:ring-[#165DFF]" name="upload-template-format" type="radio" value="txt"/><span>.txt</span>
+</label>
+</div>
+</div>
+<div>
+<label class="text-xs text-gray-500 mb-1.5 block">模板文件 <span class="text-red-500">*</span></label>
+<div class="border-2 border-dashed border-[#E5E6EB] rounded-lg p-6 text-center hover:border-[#165DFF] transition-colors cursor-pointer" id="upload-template-dropzone" onclick="document.getElementById('upload-template-file').click()">
+<iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-sm text-gray-500 mt-2" id="upload-template-filename">点击或拖拽文件到此处</p>
+<p class="text-[10px] text-gray-400 mt-1">支持 .docx / .pdf / .txt, 单文件最大 10MB</p>
+<input accept=".docx,.pdf,.txt" class="hidden" id="upload-template-file" type="file" onchange="document.getElementById('upload-template-filename').textContent = this.files[0] ? this.files[0].name : '点击或拖拽文件到此处'"/>
+</div>
+</div>
+</div>
+<!-- 底部 -->
+<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end gap-2">
+<button class="text-sm bg-white border border-gray-200 hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeUploadTemplateModal()">取消</button>
+<button class="text-sm text-white bg-[#165DFF] hover:bg-blue-600 px-4 py-1.5 rounded-lg flex items-center gap-1.5" onclick="submitUploadTemplate()">
+<iconify-icon icon="mdi:cloud-upload-outline"></iconify-icon>上传
+</button>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
