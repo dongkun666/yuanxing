@@ -1821,20 +1821,21 @@
     var editingCatalogRow = null;
     
     function editCatalogItem(btn) {
-        var card = btn.closest('[data-catalog-item]');
-        if (!card) return;
+        var row = btn.closest('tr');
+        if (!row) return;
         
-        editingCatalogRow = card;
+        editingCatalogRow = row;
         
-        // 从 data-* 属性读取
-        var number = card.dataset.number || '';
-        var type = card.dataset.type || '书证';
-        var name = card.dataset.name || '';
-        var description = card.dataset.description || '';
-        var pages = card.dataset.pages || '';
+        // 获取当前行数据
+        var cells = row.querySelectorAll('td');
+        var number = cells[0]?.textContent?.trim() || '';
+        var type = cells[1]?.textContent?.trim() || '书证';
+        var name = cells[2]?.textContent?.trim() || '';
+        var description = cells[3]?.getAttribute('title') || cells[3]?.textContent?.trim() || '';
+        var pages = cells[4]?.textContent?.trim() || '';
         
         // 获取已关联文件（从data属性获取）
-        var linkedFiles = card.getAttribute('data-linked-files');
+        var linkedFiles = row.getAttribute('data-linked-files');
         if (linkedFiles) {
             try {
                 catalogSelectedFiles = JSON.parse(linkedFiles);
@@ -1916,34 +1917,18 @@
                 typeClass = 'bg-gray-100 text-gray-700';
             }
             
-            // 更新 data-* 属性
-            editingCatalogRow.dataset.number = number || '';
-            editingCatalogRow.dataset.type = type;
-            editingCatalogRow.dataset.name = name;
-            editingCatalogRow.dataset.description = description || '';
-            editingCatalogRow.dataset.pages = pages || '';
+            var cells = editingCatalogRow.querySelectorAll('td');
+            if (cells[0]) cells[0].textContent = number || '';
+            if (cells[1]) cells[1].innerHTML = '<span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span>';
             
-            // 更新可视内容
-            var numDiv = editingCatalogRow.querySelector('[data-catalog-number]');
-            if (numDiv) numDiv.textContent = number || '';
-            
-            var typeSpan = editingCatalogRow.querySelector('[data-catalog-type]');
-            if (typeSpan) {
-                typeSpan.className = 'text-[10px] ' + typeClass + ' px-1.5 py-0.5 rounded';
-                typeSpan.textContent = type;
+            // 更新证据名称和关联文件显示
+            if (cells[2]) {
+                var linkedFilesHtml = '';
+                if (catalogSelectedFiles.length > 0) {
+                    linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+                }
+                cells[2].innerHTML = name + linkedFilesHtml;
             }
-            
-            var nameSpan = editingCatalogRow.querySelector('[data-catalog-name]');
-            if (nameSpan) {
-                nameSpan.textContent = name;
-                nameSpan.setAttribute('title', name);
-            }
-            
-            var descEl = editingCatalogRow.querySelector('[data-catalog-description]');
-            if (descEl) descEl.textContent = description || '-';
-            
-            var pagesEl = editingCatalogRow.querySelector('[data-catalog-pages]');
-            if (pagesEl) pagesEl.textContent = pages || '-';
             
             // 保存关联文件到data属性
             if (catalogSelectedFiles.length > 0) {
@@ -1951,6 +1936,12 @@
             } else {
                 editingCatalogRow.removeAttribute('data-linked-files');
             }
+            
+            if (cells[3]) {
+                cells[3].textContent = description || '-';
+                cells[3].setAttribute('title', description);
+            }
+            if (cells[4]) cells[4].textContent = pages || '-';
             
             editingCatalogRow = null;
             closeAddEvidenceCatalogModal();
@@ -2412,25 +2403,6 @@
         var activePanel = container.querySelector('#ai-panel-' + panelName);
         if (activePanel) activePanel.classList.remove('hidden');
     }
-
-    // 证据目录 AI 面板切换 (3 tab: 完整性/证明对象/法条)
-    function switchEvidenceAIPanel(btn, panelName) {
-        var container = btn.closest('.w-72') || document;
-        var tabs = container.querySelectorAll('[data-evidence-panel]');
-        tabs.forEach(function(b) {
-            b.classList.remove('border-b-2', 'border-[#165DFF]', 'text-[#165DFF]');
-            b.classList.add('text-gray-500', 'hover:text-gray-700');
-        });
-        btn.classList.add('border-b-2', 'border-[#165DFF]', 'text-[#165DFF]');
-        btn.classList.remove('text-gray-500', 'hover:text-gray-700');
-        ['check', 'object', 'laws'].forEach(function(name) {
-            var panel = document.getElementById('evidence-ai-' + name);
-            if (panel) panel.classList.add('hidden');
-        });
-        var active = document.getElementById('evidence-ai-' + panelName);
-        if (active) active.classList.remove('hidden');
-    }
-
 
     // 打开智能卷宗分析
     function openCaseAnalysis() {
