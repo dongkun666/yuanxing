@@ -309,6 +309,21 @@
             showToast('分享案件功能开发中');
         }
 
+        // ===== 归档管理操作 =====
+        function openArchiveDetail(id) {
+            showToast('打开归档详情 #' + id + ' (功能开发中)');
+        }
+        function restoreArchive() {
+            if (confirm('确定要恢复此归档案件？恢复后会重新出现在案件列表中。')) {
+                showToast('归档已恢复', 'success');
+            }
+        }
+        function deleteArchive() {
+            if (confirm('确定要永久删除此归档？此操作不可恢复。')) {
+                showToast('归档已删除', 'success');
+            }
+        }
+
         var currentEditSection = null;
         var sectionConfigs = {
             basic: {
