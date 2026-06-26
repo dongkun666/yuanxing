@@ -326,6 +326,9 @@ window.Iconify.disableRemoteAPI = true;
             </span>
 </div>
 </footer>
+<!-- Phase 3 P0: API 客户端 + Auth - 在所有模块之前 -->
+<script src="./assets/js/api.js?v=1"></script>
+<script src="./assets/js/auth.js?v=1"></script>
 <!-- 模块拆分 (按业务域) - 在主脚本之前加载 -->
 <script src="./assets/js/cases.js?v=1"></script>
 <script src="./assets/js/clients.js?v=1"></script>
@@ -335,7 +338,7 @@ window.Iconify.disableRemoteAPI = true;
 <script src="./assets/js/templates.js?v=1"></script>
 <script src="./assets/js/account.js?v=1"></script>
 <!-- 主脚本 (路由 + 全局状态 + 弹窗通用) -->
-<script src="./assets/js/script.js?v=16"></script>
+<script src="./assets/js/script.js?v=17"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {

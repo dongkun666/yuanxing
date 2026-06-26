@@ -7,7 +7,10 @@
             batchFiles: [],
             dynamicsViewData: [],
             autoSaveTimer: null,
-            dynamicAttachments: []
+            dynamicAttachments: [],
+            // Phase 3 P0: Auth 状态 (auth.js 会填充)
+            user: null,
+            token: null,
         };
 
         // ===== 视图缓存管理 =====
@@ -15,6 +18,7 @@
 
         // 视图文件名映射
         var viewFileMap = {
+            'login': 'login.html',
             'workstation': 'workstation.html',
             'schedule-list': 'schedule-list.html',
             'attention-list': 'attention-list.html',
@@ -791,6 +795,121 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
+
+    // ===== Phase 3 P0: Login 表单处理 (依赖 auth.js 已加载) =====
+    function initLoginView() {
+        var loginTabBtn = document.getElementById('login-tab-btn');
+        var registerTabBtn = document.getElementById('register-tab-btn');
+        var loginForm = document.getElementById('login-form');
+        var registerForm = document.getElementById('register-form');
+        var demoBtn = document.getElementById('demo-login-btn');
+        var loginError = document.getElementById('login-error');
+        var registerError = document.getElementById('register-error');
+
+        if (loginTabBtn && registerTabBtn) {
+            loginTabBtn.addEventListener('click', function() {
+                loginTabBtn.classList.add('bg-white', 'text-brand', 'shadow-sm');
+                loginTabBtn.classList.remove('text-fg-secondary');
+                registerTabBtn.classList.remove('bg-white', 'text-brand', 'shadow-sm');
+                registerTabBtn.classList.add('text-fg-secondary');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            });
+            registerTabBtn.addEventListener('click', function() {
+                registerTabBtn.classList.add('bg-white', 'text-brand', 'shadow-sm');
+                registerTabBtn.classList.remove('text-fg-secondary');
+                loginTabBtn.classList.remove('bg-white', 'text-brand', 'shadow-sm');
+                loginTabBtn.classList.add('text-fg-secondary');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            });
+        }
+
+        function showError(el, msg) {
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+        function hideError(el) {
+            if (!el) return;
+            el.textContent = '';
+            el.classList.add('hidden');
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideError(loginError);
+                var email = document.getElementById('login-email').value.trim();
+                var password = document.getElementById('login-password').value;
+                var res = await Auth.login(email, password);
+                if (res.ok) {
+                    showToast('登录成功, 欢迎 ' + (res.user.displayName || res.user.email));
+                    switchView('workstation');
+                } else {
+                    showError(loginError, res.error || '登录失败');
+                }
+            });
+        }
+
+        if (registerForm) {
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideError(registerError);
+                var name = document.getElementById('register-name').value.trim();
+                var email = document.getElementById('register-email').value.trim();
+                var password = document.getElementById('register-password').value;
+                if (password.length < 6) {
+                    showError(registerError, '密码至少 6 位');
+                    return;
+                }
+                var res = await Auth.register(email, password, name);
+                if (res.ok) {
+                    showToast('注册成功, 欢迎 ' + (res.user.displayName || res.user.email));
+                    switchView('workstation');
+                } else {
+                    showError(registerError, res.error || '注册失败');
+                }
+            });
+        }
+
+        if (demoBtn) {
+            demoBtn.addEventListener('click', async function() {
+                var res = await Auth.demoLogin();
+                if (res.ok) {
+                    showToast('进入 Demo 模式');
+                    switchView('workstation');
+                } else {
+                    showToast('Demo 模式失败');
+                }
+            });
+        }
+    }
+
+    // 启动时: 未登录 → login, 已登录 → workstation
+    (function() {
+        var startView = (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn())
+            ? 'workstation'
+            : 'login';
+        // 等 DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() { switchView(startView); });
+        } else {
+            switchView(startView);
+        }
+        // login view 加载后绑定事件
+        var origSwitchView = switchView;
+        // 不重写, 改用 MutationObserver 监听 view-login 出现
+        var observer = new MutationObserver(function() {
+            if (document.getElementById('view-login') && !document.getElementById('view-login').classList.contains('hidden')) {
+                initLoginView();
+                observer.disconnect();
+            }
+        });
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    })();
 
 
     // 页面加载时检查 template 视图是否需要修复 DOM 重组

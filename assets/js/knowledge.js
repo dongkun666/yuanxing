@@ -58,36 +58,123 @@
         if (active) active.classList.remove('hidden');
     }
 
+    /**
+     * AI 编译 - 接真后端 (ai-service):
+     *   1) POST /api/ocr   (如果用户选择了文件, 提取文本)
+     *   2) POST /v1/generate (LLM 编译为 Wiki 页)
+     * 后端不可达时回退到本地模拟状态 (原 5% → 100% 进度条)
+     *
+     * Phase 3 P0: 接 ai-service (Python FastAPI :8088)
+     */
     function startCompile(btn) {
         var row = btn.closest('tr');
         if (!row) return;
-        // 找到状态 cell (3rd td)
         var cells = row.querySelectorAll('td');
         var statusCell = cells[2];
         var impactCell = cells[3];
         var actionCell = cells[5];
-        // 状态: 待编译 → 编译中
-        statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">编译中 5%</span></div><div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5"><div class="bg-[#165DFF] h-1 rounded-full" style="width: 5%"></div></div>';
-        impactCell.innerHTML = '<span class="text-[10px] text-[#86909C]">预估中...</span>';
-        actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewCompileProgress(this)">查看进度</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#86909C] hover:underline" onclick="cancelCompile(this)">取消</button>';
 
-        // 模拟进度
+        // 找原始资料名称 (1st td)
+        var rawName = (cells[0] ? cells[0].textContent.trim() : '');
+        var rawType = (cells[1] ? cells[1].textContent.trim() : 'document');
+
+        // 状态: 待编译 → 编译中
+        statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-tint text-brand"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">编译中 5%</span></div><div class="w-full bg-bg-subtle rounded-full h-1 mt-1.5"><div class="bg-brand h-1 rounded-full" style="width: 5%"></div></div>';
+        impactCell.innerHTML = '<span class="text-[10px] text-fg-tertiary">OCR 提取中...</span>';
+        actionCell.innerHTML = '<button class="text-brand hover:underline" onclick="viewCompileProgress(this)">查看进度</button><span class="text-fg-disabled mx-1">|</span><button class="text-fg-tertiary hover:underline" onclick="cancelCompile(this)">取消</button>';
+
+        // 内部模拟定时器 (fallback 时用)
         var pct = 5;
-        var timer = setInterval(function() {
-            pct += 7;
-            if (pct >= 100) {
-                pct = 100;
-                clearInterval(timer);
-                statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
-                impactCell.innerHTML = '<span class="text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">6</span> Wiki 页<br><span class="text-[#86909C]">刚刚</span></span>';
-                actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>';
-            } else {
-                var fill = statusCell.querySelector('div div div');
-                if (fill) fill.style.width = pct + '%';
-                var txt = statusCell.querySelector('span.font-medium');
-                if (txt) txt.textContent = '编译中 ' + pct + '%';
-            }
-        }, 200);
+        var timer = null;
+        var backendOk = false;
+
+        function updateProgress(p, label) {
+            var fill = statusCell.querySelector('div div div');
+            if (fill) fill.style.width = p + '%';
+            var txt = statusCell.querySelector('span.font-medium');
+            if (txt) txt.textContent = label || ('编译中 ' + p + '%');
+        }
+
+        function completeSuccess(wikiPageCount) {
+            if (timer) clearInterval(timer);
+            statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-tint text-success"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
+            impactCell.innerHTML = '<span class="text-[10px] text-fg-secondary"><span class="font-medium text-wiki">' + (wikiPageCount || 6) + '</span> Wiki 页<br><span class="text-fg-tertiary">刚刚</span></span>';
+            actionCell.innerHTML = '<button class="text-brand hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-fg-disabled mx-1">|</span><button class="text-brand hover:underline" onclick="recompile(this)">重新编译</button>';
+        }
+
+        function fallbackToMock() {
+            // 后端不可达, 用本地模拟进度
+            if (backendOk) return;
+            backendOk = false;
+            if (timer) clearInterval(timer);
+            pct = 5;
+            impactCell.innerHTML = '<span class="text-[10px] text-fg-tertiary">本地模拟 (后端未启动)</span>';
+            timer = setInterval(function() {
+                pct += 7;
+                if (pct >= 100) {
+                    completeSuccess(6);
+                } else {
+                    updateProgress(pct);
+                }
+            }, 200);
+        }
+
+        // ===== 尝试调真后端 =====
+        // 注意: 当前 row 没有真实文件 (mock UI), 直接调 LLM 编译 (假设 OCR 已完成)
+        // 真实场景: 用户上传 PDF → 先 OCR → 再 LLM
+        if (typeof API !== 'undefined' && API.knowledge && API.knowledge.compile) {
+            // 准备 mock 文本 (真实文件会从 OCR 拿)
+            var mockText = rawName + ' - 模拟原始资料文本内容...';
+            updateProgress(15, 'OCR 提取中...');
+
+            API.ocr.extract(new Blob([mockText], { type: 'text/plain' }))
+                .then(function(ocrRes) {
+                    updateProgress(40, 'LLM 编译中...');
+                    if (!ocrRes.ok) {
+                        console.warn('[knowledge] OCR 后端不可达, 回退 mock:', ocrRes.error);
+                        throw new Error('OCR fail');
+                    }
+                    var rawText = (ocrRes.data && ocrRes.data.text) || mockText;
+                    return API.knowledge.compile(rawText, {
+                        source: rawType,
+                        metadata: { name: rawName },
+                    });
+                })
+                .then(function(llmRes) {
+                    if (!llmRes.ok) {
+                        console.warn('[knowledge] LLM 后端不可达, 回退 mock:', llmRes.error);
+                        throw new Error('LLM fail');
+                    }
+                    backendOk = true;
+                    if (timer) clearInterval(timer);
+                    // LLM 完成: 估算生成的 Wiki 页数 (completion 长度 / 200 字符)
+                    var completion = (llmRes.data && llmRes.data.completion) || '';
+                    var wikiCount = Math.max(1, Math.min(12, Math.ceil(completion.length / 300)));
+                    if (typeof showToast === 'function') {
+                        showToast('LLM 编译完成 (用时 ' + ((llmRes.data && llmRes.data.latency_ms) || 0).toFixed(0) + 'ms)');
+                    }
+                    completeSuccess(wikiCount);
+                })
+                .catch(function(err) {
+                    console.warn('[knowledge] 后端链路失败, 回退 mock:', err.message);
+                    fallbackToMock();
+                });
+
+            // 超时保护: 5s 后端没响应 → fallback
+            setTimeout(function() {
+                if (!backendOk && pct < 100) {
+                    // 检查进度条还在动没
+                    var fill = statusCell.querySelector('div div div');
+                    if (fill && parseInt(fill.style.width || '0') < 60) {
+                        console.warn('[knowledge] 后端超时 (5s), 回退 mock');
+                        fallbackToMock();
+                    }
+                }
+            }, 5000);
+        } else {
+            // api.js 还没加载 (异常), 直接 mock
+            fallbackToMock();
+        }
     }
 
 
