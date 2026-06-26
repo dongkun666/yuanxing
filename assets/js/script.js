@@ -608,199 +608,22 @@
         }
 
         // AI 子标签页切换
-        function switchAITab(tab) {
-            // 切换按钮高亮
-            document.querySelectorAll('.ai-subtab-btn').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            var activeBtn = document.querySelector('.ai-subtab-btn[data-ai-tab="' + tab + '"]');
-            if (activeBtn) activeBtn.classList.add('active');
-
-            // 切换内容区
-            document.getElementById('aiTabNew').classList.add('hidden');
-            document.getElementById('aiTabSkills').classList.add('hidden');
-            document.getElementById('aiTabHistory').classList.add('hidden');
-
-            if (tab === 'new') {
-                document.getElementById('aiTabNew').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.remove('hidden');
-            } else if (tab === 'skills') {
-                document.getElementById('aiTabSkills').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.add('hidden');
-            } else if (tab === 'history') {
-                document.getElementById('aiTabHistory').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.add('hidden');
-            }
-
-            // 重置滚动
-            document.getElementById('aiSubContent').scrollTop = 0;
-        }
 
         // 新建对话（合并版：同时清空侧边栏和主视图消息）
-        function startNewChat() {
-            // 清空侧边栏聊天消息
-            var chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) {
-                chatMessages.innerHTML = '';
-            }
-            // 清空右侧主视图聊天消息
-            var aiViewMessages = document.getElementById('aiViewMessages');
-            if (aiViewMessages) {
-                aiViewMessages.innerHTML = '';
-            }
-            // 添加系统欢迎消息到侧边栏
-            var welcomeHtml = '<div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0"><iconify-icon icon="mdi:robot" class="text-white text-sm"></iconify-icon></div><div class="bg-[#F2F3F5] rounded-xl px-3 py-2 text-xs text-gray-700"><p>您好！我是 LexPrime AI 助手，可以帮您：</p><ul class="list-disc pl-4 mt-1 space-y-0.5"><li>起草法律文书</li><li>检索类案与法条</li><li>分析案件策略</li><li>审查合同风险</li></ul><p class="mt-1">请问有什么可以帮您的？</p></div></div>';
-            
-            var chatArea = document.querySelector('#chatPanel .flex-1.overflow-y-auto');
-            if (chatArea) chatArea.innerHTML = welcomeHtml;
-            
-            if (aiViewMessages) {
-                aiViewMessages.innerHTML = '<div class="flex items-start gap-2.5 px-4 py-3">' +
-                    '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0 shadow-sm">' +
-                        '<iconify-icon icon="mdi:robot" class="text-white text-base"></iconify-icon>' +
-                    '</div>' +
-                    '<div class="bg-white rounded-xl px-3.5 py-2.5 text-xs text-gray-700 shadow-sm max-w-[80%]">' +
-                        '<p>您好！我是 LexPrime AI 助手，可以帮您起草文书、检索类案、分析策略、审查合同。请问有什么可以帮您的？</p>' +
-                    '</div>' +
-                '</div>';
-            }
-        }
 
         // 选择历史对话
-        function selectHistory(el) {
-            var title = el.getAttribute('data-title') || '历史对话';
-            // 切换到新对话标签页
-            switchAITab('new');
-
-            // 清空消息列表，显示新欢迎语+用户模拟消息
-            var msgList = document.getElementById('chatMessages');
-            msgList.innerHTML = '' +
-                '<div class="flex gap-2.5 chat-message-ai">' +
-                  '<div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0 mt-0.5">' +
-                    '<iconify-icon class="text-[10px]" icon="mdi:robot"></iconify-icon>' +
-                  '</div>' +
-                  '<div class="chat-bubble-ai max-w-[85%]">' +
-                    '<p class="text-xs leading-relaxed text-[#4E5969]">已切换到对话：「<span class="font-medium text-[#165DFF]">' + title + '</span>」</p>' +
-                    '<div class="flex items-center gap-2 mt-1.5">' +
-                      '<span class="text-[10px] text-[#86909C]">刚刚</span>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>';
-
-            document.getElementById('aiSubContent').scrollTop = 0;
-        }
 
         // 历史对话搜索过滤
-        function filterHistory() {
-            var keyword = document.getElementById('historySearch').value.toLowerCase().trim();
-            var items = document.querySelectorAll('#historyList .history-item');
-            items.forEach(function(item) {
-                var title = item.getAttribute('data-title') || '';
-                if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
 
         // AI视图切换（左侧菜单点击 -> 右侧内容切换）
-        function switchAIView(viewId, el) {
-            // 更新侧边栏菜单高亮
-            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(function(item) { item.classList.remove('active'); });
-            if (el) el.classList.add('active');
-            
-            // 获取AI子视图元素
-            var aiViewChat = document.getElementById('aiViewChat');
-            var aiViewSkills = document.getElementById('aiViewSkills');
-            var aiViewHistory = document.getElementById('aiViewHistory');
-            
-            // 如果AI视图尚未加载，先加载它
-            var viewAI = document.getElementById('view-ai');
-            if (!viewAI) {
-                loadView('ai', function(html) {
-                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
-                    // 加载完成后切换子视图
-                    switchAIViewSubView(viewId);
-                });
-                return;
-            }
-            
-            // 隐藏所有AI子视图
-            if (aiViewChat) aiViewChat.classList.add('hidden');
-            if (aiViewSkills) aiViewSkills.classList.add('hidden');
-            if (aiViewHistory) aiViewHistory.classList.add('hidden');
-            
-            // 显示目标视图
-            switchAIViewSubView(viewId);
-        }
         
         // AI子视图切换辅助函数
-        function switchAIViewSubView(viewId) {
-            var aiViewChat = document.getElementById('aiViewChat');
-            var aiViewSkills = document.getElementById('aiViewSkills');
-            var aiViewHistory = document.getElementById('aiViewHistory');
-            
-            if (viewId === 'chat' && aiViewChat) {
-                aiViewChat.classList.remove('hidden');
-            } else if (viewId === 'skills' && aiViewSkills) {
-                aiViewSkills.classList.remove('hidden');
-            } else if (viewId === 'history' && aiViewHistory) {
-                aiViewHistory.classList.remove('hidden');
-            }
-        }
 
         // 选择历史对话
-        function selectAIHistory(el) {
-            var title = el.getAttribute('data-title') || '历史对话';
-            // 切换到新对话视图
-            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(item => item.classList.remove('active'));
-            document.querySelector('#sidebarTabAI .sidebar-item').classList.add('active');
-            
-            document.getElementById('aiViewChat').classList.remove('hidden');
-            document.getElementById('aiViewSkills').classList.add('hidden');
-            document.getElementById('aiViewHistory').classList.add('hidden');
-            
-            var msgList = document.getElementById('aiViewMessages');
-            if (msgList) {
-                msgList.innerHTML = '' +
-                    '<div class="flex gap-3">' +
-                      '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">' +
-                        '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
-                      '</div>' +
-                      '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-[#E5E6EB]">' +
-                        '<p class="text-sm leading-relaxed text-[#4E5969]">已切换到对话：<span class="font-semibold text-[#165DFF]">' + title + '</span></p>' +
-                        '<span class="text-[11px] text-[#86909C] mt-2 block">刚刚</span>' +
-                      '</div>' +
-                    '</div>';
-            }
-        }
 
         // 过滤历史记录
-        function filterAIHistory(input) {
-            var keyword = input.value.toLowerCase().trim();
-            var items = document.querySelectorAll('#aiHistoryList > div');
-            items.forEach(function(item) {
-                var title = item.getAttribute('data-title') || '';
-                if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
 
         // 更多菜单切换（每个标签各自独立菜单）
-        function toggleMoreMenu(tab) {
-            var menuId = tab === 'work' ? 'moreMenuWork' : 'moreMenuAI';
-            var menu = document.getElementById(menuId);
-            // 关闭另一个菜单（如果有打开的）
-            var otherId = tab === 'work' ? 'moreMenuAI' : 'moreMenuWork';
-            var otherMenu = document.getElementById(otherId);
-            if (otherMenu) otherMenu.classList.add('hidden');
-            // 切换当前菜单
-            menu.classList.toggle('hidden');
-        }
 
         // 点击页面其他位置关闭所有菜单
         document.addEventListener('click', function(e) {
@@ -824,26 +647,6 @@
         });
 
         // 更多菜单操作
-        function handleMoreAction(action) {
-            document.getElementById('moreMenuWork').classList.add('hidden');
-            document.getElementById('moreMenuAI').classList.add('hidden');
-            if (action === 'settings') {
-                switchSidebarTab('work');
-                alert('设置功能开发中');
-            } else if (action === 'upgrade') {
-                alert('升级功能开发中');
-            } else if (action === 'feedback') {
-                alert('问题反馈功能开发中');
-            } else if (action === 'guide') {
-                alert('用户指南功能开发中');
-            } else if (action === 'contact') {
-                alert('联系我们功能开发中');
-            } else if (action === 'logout') {
-                if (confirm('确认退出登录？')) {
-                    showToast('已退出登录');
-                }
-            }
-        }
 
         // 待办事项切换
         function toggleTodo(el) {
@@ -895,30 +698,10 @@
         }
 
         // 通知面板切换
-        function toggleNotifications(event) {
-            if (event) event.stopPropagation();
-            var panel = document.getElementById('notificationPanel');
-            panel.classList.toggle('hidden');
-        }
 
         // 全部已读
-        function markAllNotifications() {
-            var dots = document.querySelectorAll('#notificationPanel span.rounded-full.bg-\\[\\#165DFF\\]');
-            dots.forEach(function(dot) {
-                dot.classList.remove('bg-[#165DFF]');
-                dot.classList.add('bg-transparent');
-            });
-            // 隐藏小红点
-            var badge = document.querySelector('button[onclick*="toggleNotifications"] .w-2.h-2');
-            if (badge) badge.classList.add('hidden');
-        }
 
         // 用户菜单切换
-        function toggleUserMenu(event) {
-            if (event) event.stopPropagation();
-            var menu = document.getElementById('userMenu');
-            menu.classList.toggle('hidden');
-        }
 
         // 初始加载
         window.onload = function() {
@@ -926,463 +709,43 @@
         };
 
         // 跳转到会员订阅页面
-        function switchToSubscription() {
-            var userMenu = document.getElementById('userMenu');
-            if (userMenu) userMenu.classList.add('hidden');
-            
-            switchSidebarTab('work');
-            
-            document.querySelectorAll('.sidebar-item').forEach(function(item) {
-                item.classList.remove('active');
-            });
-
-            var target = document.getElementById('view-subscription');
-            if (target) {
-                document.querySelectorAll('.view-content').forEach(function(v) {
-                    v.classList.add('hidden');
-                });
-                target.classList.remove('hidden');
-            } else {
-                loadView('subscription', function(html) {
-                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
-                    var newTarget = document.getElementById('view-subscription');
-                    if (newTarget) {
-                        document.querySelectorAll('.view-content').forEach(function(v) {
-                            v.classList.add('hidden');
-                        });
-                        newTarget.classList.remove('hidden');
-                    }
-                });
-            }
-        }
 
         // 年月付切换
         // var isYearly = false; // → AppState.isYearly
 
-        function toggleBilling() {
-            AppState.isYearly = !AppState.isYearly;
-            var toggle = document.getElementById('billing-toggle');
-            var knob = document.getElementById('billing-knob');
-            var monthlyLabel = document.getElementById('monthly-label');
-            var yearlyLabel = document.getElementById('yearly-label');
-            
-            if (AppState.isYearly) {
-                toggle.style.backgroundColor = '#165DFF';
-                knob.style.transform = 'translateX(24px)';
-                monthlyLabel.style.color = '#86909C';
-                yearlyLabel.style.color = '#1D2129';
-                
-                // 专业版：¥299/月 → ¥2399/年（省 ¥1199）
-                document.getElementById('pro-price').textContent = '¥2,399';
-                document.getElementById('pro-period').textContent = '/年';
-                document.getElementById('pro-tip').textContent = '年付省 ¥1,189';
-                
-                // 企业版：¥899/月 → ¥7,199/年
-                document.getElementById('enterprise-price').textContent = '¥7,199';
-                document.getElementById('enterprise-period').textContent = '/年';
-                document.getElementById('enterprise-tip').textContent = '年付省 ¥3,589';
-            } else {
-                toggle.style.backgroundColor = '#165DFF';
-                knob.style.transform = 'translateX(0)';
-                monthlyLabel.style.color = '#1D2129';
-                yearlyLabel.style.color = '#86909C';
-                
-                document.getElementById('pro-price').textContent = '¥299';
-                document.getElementById('pro-period').textContent = '/月';
-                document.getElementById('pro-tip').textContent = '最适合个人律师';
-                
-                document.getElementById('enterprise-price').textContent = '¥899';
-                document.getElementById('enterprise-period').textContent = '/月';
-                document.getElementById('enterprise-tip').textContent = '适合律所及团队';
-            }
-        }
-
         // 跳转到支付页面
-        function showPayment(plan) {
-            var planNames = {
-                'free': '免费版',
-                'professional': '专业版',
-                'enterprise': '企业版'
-            };
-            var planDesc = {
-                'free': '基础功能体验',
-                'professional': '最适合个人律师',
-                'enterprise': '适合律所及团队'
-            };
-            var planPrice = {
-                'free': '¥0',
-                'professional': AppState.isYearly ? '¥2,399' : '¥299',
-                'enterprise': AppState.isYearly ? '¥7,199' : '¥899'
-            };
-            
-            if (plan === 'free') {
-                // 免费版直接提示
-                alert('免费版无需支付，可直接使用。如需要更多功能，请选择专业版或企业版。');
-                return;
-            }
-            
-            var billingText = AppState.isYearly ? '年付' : '月付';
-            document.getElementById('payment-plan-name').textContent = planNames[plan] + ' · ' + billingText;
-            document.getElementById('payment-plan-desc').textContent = planDesc[plan];
-            document.getElementById('payment-amount').textContent = planPrice[plan];
-            document.getElementById('payment-subtotal').textContent = planPrice[plan];
-            document.getElementById('payment-total').textContent = planPrice[plan];
-            document.getElementById('pay-button-amount').textContent = planPrice[plan];
-            
-            // 切换视图
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-payment').classList.remove('hidden');
-        }
 
         // 返回订阅页面
-        function backToSubscription() {
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-subscription').classList.remove('hidden');
-        }
 
         // 支付方式选择
         // var selectedPayment = 'alipay'; // → AppState.selectedPayment
 
-        function selectPaymentMethod(el, method) {
-            AppState.selectedPayment = method;
-            document.querySelectorAll('.payment-method').forEach(function(btn) {
-                btn.classList.remove('border-[#165DFF]', 'bg-[#F2F7FF]');
-                btn.classList.add('border-[#E5E6EB]');
-                var dot = btn.querySelector('.w-5.h-5');
-                if (dot) {
-                    dot.classList.remove('border-[#165DFF]');
-                    dot.classList.add('border-[#E5E6EB]');
-                    var inner = dot.querySelector('.w-2\\.5');
-                    if (inner) inner.remove();
-                }
-            });
-            el.classList.remove('border-[#E5E6EB]');
-            el.classList.add('border-[#165DFF]', 'bg-[#F2F7FF]');
-            var dot = el.querySelector('.w-5.h-5');
-            if (dot) {
-                dot.classList.remove('border-[#E5E6EB]');
-                dot.classList.add('border-[#165DFF]');
-                var inner = document.createElement('div');
-                inner.className = 'w-2.5 h-2.5 rounded-full bg-[#165DFF]';
-                dot.appendChild(inner);
-            }
-        }
-
         // 支付成功
-        function paySuccess() {
-            // 获取当前支付信息
-            var planEl = document.getElementById('payment-plan-name');
-            var amountEl = document.getElementById('payment-total');
-            var planName = planEl ? planEl.textContent : '专业版 · 月付';
-            var amount = amountEl ? amountEl.textContent : '¥299';
-            
-            var methodNames = {'alipay': '支付宝', 'wechat': '微信支付', 'unionpay': '银联支付'};
-            var methodName = methodNames[AppState.selectedPayment] || '支付宝';
-            
-            // 填充成功页信息
-            document.getElementById('success-plan-info').textContent = planName + ' 已生效';
-            document.getElementById('success-plan').textContent = planName;
-            document.getElementById('success-amount').textContent = amount;
-            document.getElementById('success-payment-method').textContent = methodName;
-            
-            // 生成订单号和到期时间
-            var now = new Date();
-            var orderNo = 'LP' + now.getFullYear() + 
-                String(now.getMonth()+1).padStart(2,'0') + 
-                String(now.getDate()).padStart(2,'0') + '001';
-            document.getElementById('success-order-no').textContent = orderNo;
-            
-            var expiry = new Date(now);
-            expiry.setMonth(expiry.getMonth() + 1);
-            document.getElementById('success-expiry').textContent = 
-                expiry.getFullYear() + '-' + 
-                String(expiry.getMonth()+1).padStart(2,'0') + '-' + 
-                String(expiry.getDate()).padStart(2,'0');
-            
-            // 切换视图
-            document.querySelectorAll('.view-content').forEach(function(v) {
-                v.classList.add('hidden');
-            });
-            document.getElementById('view-payment-success').classList.remove('hidden');
-        }
 
         // 从支付成功页跳转
-        function goToSubscription() {
-            switchView('subscription');
-        }
-
-        function goToWorkstation() {
-            switchView('workstation');
-        }
 
         // 跳转到订单记录
-        function switchToOrders() {
-            var userMenu = document.getElementById('userMenu');
-            if (userMenu) userMenu.classList.add('hidden');
-            switchView('orders');
-        }
 
         // 跳转到会员中心
-        function switchToMemberCenter() {
-            var userMenu = document.getElementById('userMenu');
-            if (userMenu) userMenu.classList.add('hidden');
-            switchView('member-center');
-        }
-
-        function goToMemberCenter() {
-            switchView('member-center');
-        }
 
         // 跳转到账号设置
-        function switchToAccountSettings() {
-            var userMenu = document.getElementById('userMenu');
-            if (userMenu) userMenu.classList.add('hidden');
-            switchView('account-settings');
-        }
     // 切换个人资料编辑模式
     // 切换个人资料编辑模式
-    function toggleProfileEdit() {
-        var display = document.getElementById('profile-display');
-        var edit = document.getElementById('profile-edit');
-        var btn = document.getElementById('edit-profile-btn');
-        
-        if (display && edit && btn) {
-            var isEditing = !edit.classList.contains('hidden');
-            if (isEditing) {
-                // 当前是编辑模式 → 切回只读
-                cancelProfileEdit();
-            } else {
-                // 当前是只读模式 → 切到编辑
-                display.classList.add('hidden');
-                edit.classList.remove('hidden');
-                // 隐藏右上角按钮
-                btn.classList.add('hidden');
-            }
-        }
-    }
 
     // 取消编辑，切回只读（不保存更改）
-    function cancelProfileEdit() {
-        var display = document.getElementById('profile-display');
-        var edit = document.getElementById('profile-edit');
-        var btn = document.getElementById('edit-profile-btn');
-        if (display && edit && btn) {
-            edit.classList.add('hidden');
-            display.classList.remove('hidden');
-            // 显示「修改」按钮
-            btn.classList.remove('hidden');
-            btn.textContent = '修改';
-            btn.className = 'px-5 py-2 text-xs font-semibold rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors';
-        }
-    }
 
     // 保存个人资料
-    function saveProfile() {
-        var name = document.getElementById('profile-name');
-        var phone = document.getElementById('profile-phone');
-        var email = document.getElementById('profile-email');
-        var firm = document.getElementById('profile-firm');
-        var license = document.getElementById('profile-license');
-        var bio = document.getElementById('profile-bio');
-        
-        // 校验必填
-        if (!name || !name.value.trim()) {
-            alert('请输入姓名');
-            if (name) name.focus();
-            return;
-        }
-        if (!phone || !phone.value.trim()) {
-            alert('请输入手机号');
-            if (phone) phone.focus();
-            return;
-        }
-        
-        // 手机号格式校验
-        var phoneVal = phone.value.trim();
-        if (!/^1\d{10}$/.test(phoneVal) && !/^\d{3,4}\*{4}\d{4}$/.test(phoneVal)) {
-            if (!confirm('手机号格式异常，是否仍要保存？')) return;
-        }
-        
-        // 邮箱格式校验
-        var emailVal = email ? email.value.trim() : '';
-        if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-            if (!confirm('邮箱格式不正确，是否仍要保存？')) return;
-        }
-        
-        // 更新只读区域的显示内容
-        var displayGrid = document.querySelector('#profile-display .grid.grid-cols-2');
-        if (displayGrid) {
-            var displayItems = displayGrid.querySelectorAll('div');
-            if (displayItems.length >= 6) {
-                // 姓名
-                var nameP = displayItems[0].querySelector('p.text-sm');
-                if (nameP) nameP.textContent = name.value.trim();
-                
-                // 手机号
-                var phoneP = displayItems[1].querySelector('p.text-sm');
-                if (phoneP) phoneP.textContent = phone.value.trim();
-                
-                // 邮箱
-                var emailP = displayItems[2].querySelector('p.text-sm');
-                if (emailP) emailP.textContent = email.value.trim() || '未设置';
-                
-                // 律所
-                var firmP = displayItems[3].querySelector('p.text-sm');
-                if (firmP) firmP.textContent = firm.value.trim() || '未设置';
-                
-                // 执业证号
-                var licenseP = displayItems[4].querySelector('p.text-sm');
-                if (licenseP) licenseP.textContent = license.value.trim() || '未设置';
-                
-                // 专业领域（从编辑区同步标签到只读区）
-                var editTags = document.querySelectorAll('#edit-skill-tags .inline-flex');
-                var displayTagsContainer = displayItems[5].querySelector('.flex.flex-wrap');
-                if (displayTagsContainer && editTags.length > 0) {
-                    displayTagsContainer.innerHTML = '';
-                    editTags.forEach(function(tag) {
-                        var tagText = tag.textContent.replace('×', '').replace('+ 添加', '').trim();
-                        if (tagText) {
-                            var span = document.createElement('span');
-                            span.className = 'inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
-                            span.textContent = tagText;
-                            displayTagsContainer.appendChild(span);
-                        }
-                    });
-                }
-            }
-        }
-        
-        // 更新个人简介
-        var displayBio = document.querySelector('#profile-display .border-t p.text-sm');
-        if (displayBio && bio) {
-            displayBio.textContent = bio.value.trim() || '未填写';
-        }
-        
-        // 更新左侧头像下方的名称
-        var avatarName = document.querySelector('#profile-display + .flex-shrink-0 p.text-xs, #profile-display').closest('.flex').querySelector('.flex-shrink-0 p.text-xs');
-        // 更靠谱：找父级 flex 容器中的左侧 p
-        var profileContainer = document.querySelector('#profile-display')?.closest('.flex');
-        if (profileContainer) {
-            var nameUnderAvatar = profileContainer.querySelector('.flex-shrink-0 p.text-xs');
-            if (nameUnderAvatar) nameUnderAvatar.textContent = name.value.trim();
-        }
-        
-        // 显示保存成功提示
-        showSaveSuccess('个人资料已保存成功');
-        
-        // 切回只读模式
-        cancelProfileEdit();
-    }
     
     // 保存成功提示
-    function showSaveSuccess(msg) {
-        var existing = document.getElementById('save-toast');
-        if (existing) existing.remove();
-        
-        var toast = document.createElement('div');
-        toast.id = 'save-toast';
-        toast.className = 'fixed top-4 right-4 z-[999] bg-green-50 border border-green-200 text-green-700 text-sm px-5 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in';
-        toast.innerHTML = '<iconify-icon icon="mdi:check-circle" class="text-green-600 text-lg"></iconify-icon><span>' + msg + '</span><button onclick="this.parentElement.remove()" class="ml-2 text-green-400 hover:text-green-600"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>';
-        document.body.appendChild(toast);
-        
-        setTimeout(function() {
-            if (toast.parentElement) {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(function() { if (toast.parentElement) toast.remove(); }, 300);
-            }
-        }, 3000);
-    }
 
     // 添加专业领域标签
-    function addTagInput(el) {
-        var tag = prompt('请输入专业领域名称：');
-        if (tag && tag.trim()) {
-            var span = document.createElement('span');
-            span.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
-            span.innerHTML = tag.trim() + ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
-            el.parentNode.insertBefore(span, el);
-        }
-    }
 
     // 头像预览
     // 头像上传处理
-    function handleAvatarUpload(event) {
-        var file = event.target.files[0];
-        if (!file) return;
-        
-        // 校验文件大小（5MB）
-        if (file.size > 5 * 1024 * 1024) {
-            showSaveSuccess('头像文件大小不能超过 5MB');
-            return;
-        }
-        
-        // 校验文件类型
-        var allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            showSaveSuccess('仅支持 JPG、PNG、WebP 格式的图片');
-            return;
-        }
-        
-        // 显示上传中状态
-        var progress = document.getElementById('avatar-progress-display');
-        var success = document.getElementById('avatar-success-display');
-        if (progress) progress.classList.remove('hidden');
-        if (success) success.classList.add('hidden');
-        
-        // 模拟上传延迟后显示预览
-        setTimeout(function() {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var img = document.getElementById('avatar-image-display');
-                var icon = document.getElementById('avatar-icon-display');
-                var preview = document.getElementById('avatar-preview-display');
-                
-                if (img && icon && preview) {
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    icon.style.display = 'none';
-                    preview.style.backgroundImage = 'none';
-                }
-                
-                // 显示成功状态
-                if (progress) progress.classList.add('hidden');
-                if (success) success.classList.remove('hidden');
-                
-                // 显示保存成功提示
-                showSaveSuccess('头像上传成功');
-                
-                // 3秒后隐藏成功标识
-                setTimeout(function() {
-                    if (success) success.classList.add('hidden');
-                }, 3000);
-            };
-            reader.readAsDataURL(file);
-        }, 800);
-    }
 
     // 删除专业领域标签
-    function removeTag(btn) {
-        var tag = btn.closest('span');
-        if (tag) {
-            tag.remove();
-        }
-    }
 
     // 添加专业领域标签（增强版）
-    function showAddTagDialog(el) {
-        var tag = prompt('请输入专业领域名称：\n（如：知识产权、刑事辩护、婚姻家事等）');
-        if (tag && tag.trim()) {
-            var span = document.createElement('span');
-            span.className = 'inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#E8F3FF] text-[#165DFF] text-xs font-medium';
-            span.innerHTML = tag.trim() + ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500 transition-colors"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
-            el.parentNode.insertBefore(span, el);
-        }
-    }
 
     // 职业认证 - 证件文件上传
     function handleCertUpload(event) {
@@ -1407,12 +770,6 @@
     }
 
     // 职业认证 - 移除已上传文件
-    function removeCertFile() {
-        var preview = document.getElementById('cert-file-preview');
-        var upload = document.getElementById('cert-upload');
-        if (preview) preview.classList.add('hidden');
-        if (upload) upload.value = '';
-    }
 
     // 职业认证 - 提交审核
     function submitCertification() {
@@ -1420,55 +777,10 @@
     }
 
     // 双因素认证切换
-    function toggle2FA(checkbox) {
-        var status = document.getElementById('2fa-status');
-        if (checkbox.checked) {
-            if (confirm('开启双因素认证将提高账号安全性。\n\n建议使用 Authenticator App（如 Google Authenticator、Microsoft Authenticator）或短信验证码。\n\n是否继续开启？')) {
-                status.textContent = '已开启';
-                status.className = 'text-[10px] text-green-600 font-medium';
-            } else {
-                checkbox.checked = false;
-            }
-        } else {
-            if (confirm('关闭双因素认证将降低账号安全等级，确定要关闭吗？')) {
-                status.textContent = '未开启';
-                status.className = 'text-[10px] text-[#C9CDD4]';
-            } else {
-                checkbox.checked = true;
-            }
-        }
-    }
 
     // 设备管理
-    function showDeviceManager() {
-        var deviceInfo = 
-            '📱 当前登录设备\n' +
-            '━━━━━━━━━━━━━━━━━━\n' +
-            '1️⃣ Windows PC\n' +
-            '   浏览器：Chrome 120.0\n' +
-            '   IP：192.168.1.100\n' +
-            '   最近活动：现在\n' +
-            '   [当前设备]\n\n' +
-            '2️⃣ iPhone 15\n' +
-            '   系统：iOS 18.0\n' +
-            '   IP：192.168.1.101\n' +
-            '   最近活动：2 小时前\n' +
-            '   [点击移除此设备]';
-        alert(deviceInfo);
-    }
 
     // 账号注销确认
-    function confirmAccountDeletion() {
-        var step1 = confirm('⚠️ 确认要注销账号吗？\n\n注销后：\n· 所有案件数据将被永久清除\n· 所有文书和材料将无法恢复\n· 您的会员权益将立即终止\n\n此操作不可撤销！');
-        if (step1) {
-            var step2 = prompt('请输入「确认注销」以继续操作：');
-            if (step2 === '确认注销') {
-                alert('您的账号注销申请已提交。\n系统将在 7 天冷静期后执行注销。\n在此期间重新登录可取消注销。');
-            } else {
-                alert('输入不正确，注销操作已取消。');
-            }
-        }
-    }
 
     // ========== 客户管理增强功能 ==========
     // 客户分类切换
@@ -1499,25 +811,6 @@
     var _knowledgeType = 'all';
     var _knowledgeSearch = '';
     var _knowledgeSort = null; // { field, dir }
-
-    function applyKnowledgeFilter() {
-        var rows = document.querySelectorAll('#view-knowledge tbody tr[data-knowledge-type]');
-        var visible = 0;
-        var kw = (_knowledgeSearch || '').toLowerCase().trim();
-        rows.forEach(function(tr) {
-            var t = tr.getAttribute('data-knowledge-type');
-            var title = (tr.getAttribute('data-title') || '').toLowerCase();
-            var matchType = (_knowledgeType === 'all') || (t === _knowledgeType);
-            var matchKw = !kw || title.indexOf(kw) >= 0;
-            tr.style.display = (matchType && matchKw) ? '' : 'none';
-            if (matchType && matchKw) visible++;
-        });
-        // 更新底部「共 X 篇」
-        var totalSpan = document.getElementById('kb-total-count');
-        if (totalSpan) {
-            totalSpan.textContent = '共 ' + visible + ' 篇文档，当前第 1 页';
-        }
-    }
 
     function triggerKnowledgeSearch(keyword) {
         var input = document.getElementById('kb-search-input');
@@ -1589,132 +882,8 @@
     })();
 
     // ===== LLM Wiki 风格 3 Tab 切换 =====
-    function switchKnowledgeMainTab(name, el) {
-        // 1. 切换 tab 样式
-        var tabs = document.querySelectorAll('#view-knowledge [id^="kb-tab-"]');
-        tabs.forEach(function(t) {
-            t.classList.remove('bg-[#F2F5FF]', 'text-[#165DFF]');
-            t.classList.add('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-            // 数字 badge 改灰
-            var badge = t.querySelector('span:last-child');
-            if (badge) {
-                badge.classList.remove('bg-white', 'text-[#165DFF]');
-                if (name === 'lint' && t.id === 'kb-tab-lint') {
-                    badge.classList.add('bg-[#FFF3E0]', 'text-[#FAAD14]');
-                } else {
-                    badge.classList.add('bg-[#F2F3F5]', 'text-[#4E5969]');
-                }
-            }
-        });
-        el.classList.remove('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-        el.classList.add('bg-[#F2F5FF]', 'text-[#165DFF]');
-        // 当前 tab 的数字 badge 蓝底
-        var activeBadge = el.querySelector('span:last-child');
-        if (activeBadge && name === 'ingest') {
-            activeBadge.classList.remove('bg-[#F2F3F5]', 'text-[#4E5969]');
-            activeBadge.classList.add('bg-white', 'text-[#165DFF]');
-        }
-
-        // 2. 切换 panel
-        var panels = document.querySelectorAll('#view-knowledge .kb-panel');
-        panels.forEach(function(p) { p.classList.add('hidden'); });
-        var active = document.getElementById('kb-panel-' + name);
-        if (active) active.classList.remove('hidden');
-    }
 
     // ===== AI 编译 (Ingest) 交互 =====
-    function startCompile(btn) {
-        var row = btn.closest('tr');
-        if (!row) return;
-        // 找到状态 cell (3rd td)
-        var cells = row.querySelectorAll('td');
-        var statusCell = cells[2];
-        var impactCell = cells[3];
-        var actionCell = cells[5];
-        // 状态: 待编译 → 编译中
-        statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">编译中 5%</span></div><div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5"><div class="bg-[#165DFF] h-1 rounded-full" style="width: 5%"></div></div>';
-        impactCell.innerHTML = '<span class="text-[10px] text-[#86909C]">预估中...</span>';
-        actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewCompileProgress(this)">查看进度</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#86909C] hover:underline" onclick="cancelCompile(this)">取消</button>';
-
-        // 模拟进度
-        var pct = 5;
-        var timer = setInterval(function() {
-            pct += 7;
-            if (pct >= 100) {
-                pct = 100;
-                clearInterval(timer);
-                statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
-                impactCell.innerHTML = '<span class="text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">6</span> Wiki 页<br><span class="text-[#86909C]">刚刚</span></span>';
-                actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>';
-            } else {
-                var fill = statusCell.querySelector('div div div');
-                if (fill) fill.style.width = pct + '%';
-                var txt = statusCell.querySelector('span.font-medium');
-                if (txt) txt.textContent = '编译中 ' + pct + '%';
-            }
-        }, 200);
-    }
-
-    function cancelCompile(btn) {
-        if (!confirm('确定取消本次 AI 编译？已完成的中间结果会保留。')) return;
-        var row = btn.closest('tr');
-        if (!row) return;
-        var cells = row.querySelectorAll('td');
-        var statusCell = cells[2];
-        var actionCell = cells[5];
-        statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]"><iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon><span class="text-[10px] font-medium">待编译</span></span>';
-        actionCell.innerHTML = '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
-    }
-
-    function recompile(btn) {
-        if (!confirm('确定重新编译？LLM 会重新阅读原始资料并更新相关 Wiki 页面。')) return;
-        var row = btn.closest('tr');
-        if (!row) return;
-        var cells = row.querySelectorAll('td');
-        var statusCell = cells[2];
-        var actionCell = cells[5];
-        statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">重新编译 10%</span></div><div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5"><div class="bg-[#165DFF] h-1 rounded-full" style="width: 10%"></div></div>';
-        actionCell.innerHTML = '<button class="text-[#86909C] cursor-not-allowed">编译中...</button>';
-        // 自动完成
-        setTimeout(function() {
-            statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
-            actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>';
-        }, 3000);
-    }
-
-    function viewCompileProgress(btn) {
-        var row = btn.closest('tr');
-        var name = row ? row.querySelector('.text-xs.font-medium')?.textContent : '资料';
-        alert('AI 编译进度:\n\n资料: ' + name + '\n阶段: 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接\n\n预估剩余: 2 分钟');
-    }
-
-    function viewWikiPages(btn) {
-        // 跳到 Wiki 页面
-        if (typeof switchKnowledgeMainTab === 'function') {
-            var wikiTab = document.getElementById('kb-tab-wiki');
-            if (wikiTab) {
-                switchKnowledgeMainTab('wiki', wikiTab);
-            }
-        }
-    }
-
-    function runLintNow() {
-        var btn = event.currentTarget;
-        var orig = btn.innerHTML;
-        btn.innerHTML = '<iconify-icon class="text-sm animate-spin" icon="mdi:loading"></iconify-icon>巡检中...';
-        btn.disabled = true;
-        setTimeout(function() {
-            btn.innerHTML = '<iconify-icon class="text-sm" icon="mdi:check-circle"></iconify-icon>巡检完成';
-            setTimeout(function() {
-                btn.innerHTML = orig;
-                btn.disabled = false;
-            }, 1500);
-        }, 2500);
-    }
-
-    function simulateUpload() {
-        alert('上传资料:\n\n支持 PDF / Word / 扫描件 / 网页 URL\n上传后状态为「待编译」,可手动触发「AI 编译」,或开启自动编译。');
-    }
 
     // 打开客户详情
     function openClientDetail(index) {
@@ -1912,592 +1081,34 @@
     }
 
     // 模板管理 - 标签页切换
-    function switchTemplateTab(tabName, btn) {
-        document.getElementById('template-tab-personal').classList.add('hidden');
-        document.getElementById('template-tab-official').classList.add('hidden');
-        document.getElementById('template-tab-' + tabName).classList.remove('hidden');
-        document.querySelectorAll('.template-tab').forEach(function(tab) {
-            tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
-            tab.classList.add('text-gray-500', 'border-transparent');
-        });
-        if (btn) {
-            btn.classList.remove('text-gray-500', 'border-transparent');
-            btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
-        }
-    }
 
     // 修复 template 视图 DOM 重组: 浏览器把 official tab 内的卡片视图和孤儿卡片飘到主体 div 直接子级
-    function fixTemplateViewDOM() {
-        var main = document.querySelector('.max-w-7xl.mx-auto.space-y-4');
-        if (!main) return;
-        var personal = document.getElementById('template-tab-personal');
-        var official = document.getElementById('template-tab-official');
-        if (!personal || !official) return;
-        var personalCardView = personal.querySelector('.template-view-card');
-        var officialCardView = official.querySelector('.template-view-card');
-        // 备用: official tab 内 template-view-card 飘出时, 找 main 中第一个非 personal 的 template-view-card
-        if (!officialCardView) {
-            var allCards = document.querySelectorAll('.template-view-card');
-            for (var j = 0; j < allCards.length; j++) {
-                if (allCards[j] !== personalCardView) {
-                    officialCardView = allCards[j];
-                    break;
-                }
-            }
-        }
-        var orphans = [];
-        for (var i = 0; i < main.children.length; i++) {
-            var c = main.children[i];
-            if (c === personal || c === official) continue;
-            if (c.classList && c.classList.contains('fixed')) continue;
-            if (c.className && (c.className.indexOf('rounded-xl') !== -1 || c.className.indexOf('template-view-card') !== -1)) {
-                orphans.push(c);
-            }
-        }
-        if (!orphans.length) return;
-        orphans.forEach(function(el) {
-            if (el.classList.contains('template-view-card')) {
-                var cards = el.querySelectorAll('[data-template-category]');
-                var firstCat = cards[0] ? cards[0].getAttribute('data-template-category') : '';
-                if (firstCat === '诉状类' || firstCat === '答辩类' || firstCat === '合同类') {
-                    if (personalCardView && el !== personalCardView) {
-                        while (el.firstChild) personalCardView.appendChild(el.firstChild);
-                        el.parentNode.removeChild(el);
-                    }
-                } else {
-                    if (officialCardView && el !== officialCardView) {
-                        while (el.firstChild) officialCardView.appendChild(el.firstChild);
-                        el.parentNode.removeChild(el);
-                    }
-                }
-                return;
-            }
-            var cat = el.getAttribute('data-template-category');
-            if (!cat) return;
-            if (cat === '诉状类' || cat === '答辩类' || cat === '合同类') {
-                if (personalCardView) personalCardView.appendChild(el);
-            } else {
-                if (officialCardView) officialCardView.appendChild(el);
-            }
-        });
-    }
 
     // 模板管理 - 列表/卡片视图切换
-    function switchTemplateView(viewName, btn) {
-        document.querySelectorAll('.template-view-btn').forEach(function(b) {
-            b.classList.remove('bg-blue-50', 'text-[#165DFF]');
-            b.classList.add('text-gray-500', 'hover:text-gray-700');
-        });
-        if (btn) {
-            btn.classList.add('bg-blue-50', 'text-[#165DFF]');
-            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
-        }
-        // 切换 personal + official 两个 tab 内的视图
-        ['personal', 'official'].forEach(function(tab) {
-            var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
-            var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
-            if (viewName === 'list') {
-                if (listView) listView.classList.remove('hidden');
-                if (cardView) cardView.classList.add('hidden');
-            } else {
-                if (listView) listView.classList.add('hidden');
-                if (cardView) cardView.classList.remove('hidden');
-            }
-        });
-        // 切到卡片视图时同步调用官方模板 filter, 让 grid 列数按可见卡片数适配
-        if (viewName === 'card' && typeof applyOfficialFilter === 'function') {
-            applyOfficialFilter();
-        }
-    }
 
     // 上传模板弹窗 (占位)
-    function openUploadTemplateModal() {
-        var modal = document.getElementById('upload-template-modal');
-        if (!modal) return;
-        // 同步分类下拉
-        var sel = document.getElementById('upload-template-category');
-        if (sel) {
-            sel.innerHTML = '<option value="">请选择分类</option>';
-            var cats = document.querySelectorAll('.category-item');
-            cats.forEach(function(item) {
-                var name = item.getAttribute('data-category');
-                var opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                sel.appendChild(opt);
-            });
-        }
-        // 重置表单
-        var nameInput = document.getElementById('upload-template-name');
-        if (nameInput) nameInput.value = '';
-        var fileInput = document.getElementById('upload-template-file');
-        if (fileInput) fileInput.value = '';
-        var filename = document.getElementById('upload-template-filename');
-        if (filename) filename.textContent = '点击或拖拽文件到此处';
-        modal.classList.remove('hidden');
-    }
-
-    function closeUploadTemplateModal() {
-        var modal = document.getElementById('upload-template-modal');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    function submitUploadTemplate() {
-        var name = (document.getElementById('upload-template-name').value || '').trim();
-        var category = document.getElementById('upload-template-category').value;
-        var fileInput = document.getElementById('upload-template-file');
-        var file = fileInput.files[0];
-        if (!name) { showToast('请输入模板名称'); return; }
-        if (!category) { showToast('请选择分类'); return; }
-        if (!file) { showToast('请选择文件'); return; }
-        // 格式校验
-        var ext = file.name.split('.').pop().toLowerCase();
-        if (['docx', 'pdf', 'txt'].indexOf(ext) < 0) {
-            showToast('仅支持 .docx / .pdf / .txt 格式');
-            return;
-        }
-        if (file.size > 10 * 1024 * 1024) {
-            showToast('文件大小不能超过 10MB');
-            return;
-        }
-        // 取文件大小
-        var sizeKb = Math.round(file.size / 1024);
-        var sizeText = sizeKb < 1024 ? sizeKb + ' KB' : (sizeKb / 1024).toFixed(1) + ' MB';
-        // 选中的格式 radio
-        var fmtRadio = document.querySelector('input[name="upload-template-format"]:checked');
-        var fmt = fmtRadio ? fmtRadio.value : ext;
-        // 类型徽章颜色 (按分类)
-        var colorCls = {
-            '诉状类': 'bg-blue-100 text-blue-700',
-            '答辩类': 'bg-purple-100 text-purple-700',
-            '合同类': 'bg-orange-100 text-orange-700',
-            '申请类': 'bg-green-100 text-green-700'
-        };
-        var cls = colorCls[category] || 'bg-gray-100 text-gray-600';
-        // 当前用户 (mock 张律师)
-        var creator = '张律师';
-        var now = new Date();
-        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
-        var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-        // 创建新行, 插到 tbody 顶部
-        var tbody = document.querySelector('#template-tab-personal tbody');
-        if (!tbody) { showToast('模板列表不存在'); return; }
-        var tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-50 group';
-        tr.setAttribute('data-template-category', category);
-        tr.innerHTML = '<td class="py-3 px-5">' +
-            '<div class="flex items-center gap-2">' +
-            '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>' +
-            '<span class="text-sm text-gray-800 font-medium">' + name.replace(/</g, '&lt;') + '</span>' +
-            '<span class="text-[10px] text-gray-400">(' + sizeText + ')</span>' +
-            '</div>' +
-            '</td>' +
-            '<td class="py-3 px-5"><span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + category + '</span></td>' +
-            '<td class="py-3 px-5 text-xs text-gray-600">' + creator + '</td>' +
-            '<td class="py-3 px-5 text-xs text-gray-500">' + timeStr + '</td>' +
-            '<td class="py-3 px-5 text-center">' +
-            '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">使用</button>' +
-            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deletePersonalTemplate(this)">删除</button>' +
-            '</div>' +
-            '</td>';
-        tbody.insertBefore(tr, tbody.firstChild);
-        // 同时添加到卡片视图
-        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
-        if (cardContainer) {
-            var card = document.createElement('div');
-            card.className = 'bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group';
-            card.setAttribute('data-template-category', category);
-            card.innerHTML = '<div class="flex items-start justify-between mb-3">' +
-                '<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>' +
-                '<span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + category + '</span>' +
-                '</div>' +
-                '<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">' + name.replace(/</g, '&lt;') + '</h4>' +
-                '<div class="flex items-center justify-between text-[10px] text-gray-400 pt-3 border-t border-gray-100">' +
-                '<span class="flex items-center gap-1"><iconify-icon icon="mdi:account-outline"></iconify-icon>' + creator + '</span>' +
-                '<span>' + timeStr + '</span>' +
-                '</div>';
-            cardContainer.insertBefore(card, cardContainer.firstChild);
-        }
-        // 更新"全部"标签数字
-        if (typeof updateAllCategoryCount === 'function') updateAllCategoryCount();
-        // 更新对应分类标签数字
-        var tabBtn = document.querySelector('.personal-category-tab[data-category="' + category + '"]');
-        if (tabBtn) {
-            var m = tabBtn.textContent.match(/\((\d+)\)/);
-            if (m) tabBtn.textContent = category + ' (' + (parseInt(m[1]) + 1) + ')';
-        }
-        // 更新弹窗内分类数
-        var item = document.querySelector('.category-item[data-category="' + category + '"]');
-        if (item) {
-            var countSpan = item.querySelector('span.text-\\[10px\\]');
-            if (countSpan) {
-                var cm = countSpan.textContent.match(/\d+/);
-                if (cm) countSpan.textContent = '(' + (parseInt(cm[0]) + 1) + ' 个模板)';
-            }
-        }
-        // 更新标题栏"共 N 个"数字
-        var headerCount = document.querySelector('.template-view-header-count');
-        if (headerCount) {
-            var hm = headerCount.textContent.match(/\d+/);
-            if (hm) headerCount.textContent = '共 ' + (parseInt(hm[0]) + 1) + ' 个';
-        }
-        closeUploadTemplateModal();
-        showToast('模板「' + name + '」已上传');
-    }
 
     // 删除个人模板 (客户端模拟)
-    function deletePersonalTemplate(btn) {
-        if (!confirm('确定删除该模板?')) return;
-        var tr = btn.closest('tr');
-        if (!tr) return;
-        var category = tr.getAttribute('data-template-category');
-        var rowName = tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '';
-        tr.remove();
-        // 同步删除卡片视图中的对应卡片
-        document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
-            var cardName = card.querySelector('h4') ? card.querySelector('h4').textContent.trim() : '';
-            if (card.getAttribute('data-template-category') === category && (rowName === '' || cardName === rowName || cardName.indexOf(rowName.split(' (')[0]) === 0)) {
-                card.remove();
-            }
-        });
-        if (typeof updateAllCategoryCount === 'function') updateAllCategoryCount();
-        if (category) {
-            var tabBtn = document.querySelector('.personal-category-tab[data-category="' + category + '"]');
-            if (tabBtn) {
-                var m = tabBtn.textContent.match(/\((\d+)\)/);
-                if (m) {
-                    var n = Math.max(0, parseInt(m[1]) - 1);
-                    tabBtn.textContent = category + ' (' + n + ')';
-                }
-            }
-        }
-        showToast('已删除');
-    }
 
     // 分类管理 - 弹窗控制
-    function openCategoryManageModal() {
-        var modal = document.getElementById('category-manage-modal');
-        if (modal) modal.classList.remove('hidden');
-    }
-    function closeCategoryManageModal() {
-        var modal = document.getElementById('category-manage-modal');
-        if (modal) modal.classList.add('hidden');
-    }
 
     // 分类管理 - 新增/删除 (客户端模拟, 不持久化)
-    function addCategory() {
-        var input = document.getElementById('new-category-input');
-        var name = (input.value || '').trim();
-        if (!name) {
-            showToast('请输入分类名称');
-            return;
-        }
-        if (name.length > 20) {
-            showToast('分类名称不能超过 20 个字符');
-            return;
-        }
-        // 检查重名
-        var exists = Array.from(document.querySelectorAll('.category-item')).some(function(el) {
-            return el.getAttribute('data-category') === name;
-        });
-        if (exists) {
-            showToast('该分类已存在');
-            return;
-        }
-        // 创建新分类项 (弹窗内)
-        var list = document.getElementById('category-list');
-        var countEl = document.getElementById('category-list-count');
-        var div = document.createElement('div');
-        div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
-        div.setAttribute('data-category', name);
-        div.innerHTML = '<div class="flex items-center gap-3">' +
-            '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>' +
-            '<span class="text-sm text-gray-800 font-medium">' + name + '</span>' +
-            '<span class="text-[10px] text-gray-400">(0 个模板)</span>' +
-            '</div>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, "\\'") + '\')">' +
-            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
-        list.appendChild(div);
-        // 同步添加到个人模板标签栏
-        var tabs = document.getElementById('personal-category-tabs');
-        if (tabs) {
-            var tabBtn = document.createElement('button');
-            tabBtn.className = 'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
-            tabBtn.setAttribute('data-category', name);
-            tabBtn.setAttribute('onclick', "filterPersonalByCategory('" + name.replace(/'/g, "\\'") + "', this)");
-            tabBtn.textContent = name + ' (0)';
-            tabs.appendChild(tabBtn);
-        }
-        // 同步更新"全部"标签的数字
-        updateAllCategoryCount();
-        input.value = '';
-        // 更新计数
-        var total = list.querySelectorAll('.category-item').length;
-        if (countEl) countEl.textContent = '共 ' + total + ' 个分类';
-        showToast('分类「' + name + '」已添加');
-    }
 
     // 按时间排序个人模板 (desc/asc 切换)
     var _personalSortOrder = null; // null = 默认顺序, 'desc' = 最新的在前面, 'asc' = 最旧的在前
-    function sortPersonalTemplates(btn) {
-        // 切换顺序
-        if (_personalSortOrder === 'desc') {
-            _personalSortOrder = 'asc';
-        } else {
-            _personalSortOrder = 'desc';
-        }
-        var order = _personalSortOrder;
-        // 解析行的时间字符串 (第 4 列 td)
-        function parseTime(tr) {
-            var tds = tr.querySelectorAll('td');
-            var timeStr = tds.length >= 4 ? (tds[3].textContent || '').trim() : '';
-            var d = new Date(timeStr.replace(/-/g, '/'));
-            return isNaN(d.getTime()) ? 0 : d.getTime();
-        }
-        // 排序 tbody
-        var tbody = document.querySelector('#template-tab-personal tbody');
-        if (tbody) {
-            var rows = Array.from(tbody.querySelectorAll('tr[data-template-category]'));
-            rows.sort(function(a, b) {
-                var ta = parseTime(a), tb = parseTime(b);
-                return order === 'desc' ? (tb - ta) : (ta - tb);
-            });
-            rows.forEach(function(r) { tbody.appendChild(r); });
-        }
-        // 同步排序卡片视图 (按卡片底部时间排序)
-        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
-        if (cardContainer) {
-            var cards = Array.from(cardContainer.querySelectorAll('div[data-template-category]'));
-            cards.sort(function(a, b) {
-                var ta = 0, tb = 0;
-                var timeSpans = a.querySelectorAll('span');
-                var taStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
-                var dA = new Date(taStr.replace(/-/g, '/'));
-                ta = isNaN(dA.getTime()) ? 0 : dA.getTime();
-                timeSpans = b.querySelectorAll('span');
-                var tbStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
-                var dB = new Date(tbStr.replace(/-/g, '/'));
-                tb = isNaN(dB.getTime()) ? 0 : dB.getTime();
-                return order === 'desc' ? (tb - ta) : (ta - tb);
-            });
-            cards.forEach(function(c) { cardContainer.appendChild(c); });
-        }
-        // 按钮视觉反馈
-        if (btn) {
-            document.querySelectorAll('.sort-btn').forEach(function(b) {
-                b.classList.remove('bg-[#165DFF]', 'text-white');
-                b.classList.add('text-[#165DFF]', 'bg-[#EEF3FF]');
-            });
-            btn.classList.add('bg-[#165DFF]', 'text-white');
-            btn.classList.remove('text-[#165DFF]', 'bg-[#EEF3FF]');
-            // 更新图标方向
-            var icon = btn.querySelector('iconify-icon');
-            if (icon) {
-                icon.setAttribute('icon', order === 'desc' ? 'mdi:sort-variant' : 'mdi:sort-reverse-variant');
-            }
-        }
-        // 重新应用当前分类筛选 (排序后保持筛选)
-        var activeTab = document.querySelector('.personal-category-tab.bg-\\[\\#165DFF\\]');
-        if (activeTab) {
-            var cat = activeTab.getAttribute('data-category');
-            filterPersonalByCategory(cat, activeTab);
-        }
-        showToast(order === 'desc' ? '已按时间降序排列' : '已按时间升序排列');
-    }
 
     // 同步更新"全部"标签的数字
-    function updateAllCategoryCount() {
-        var allTab = document.querySelector('.personal-category-tab[data-category="all"]');
-        if (allTab) {
-            var total = document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').length;
-            allTab.textContent = '全部 (' + total + ')';
-        }
-    }
 
     // 按分类筛选个人模板
-    function filterPersonalByCategory(category, btn) {
-        // 更新 active 样式
-        document.querySelectorAll('.personal-category-tab').forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'font-medium');
-            b.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'font-medium');
-            btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
-        }
-        // 筛选列表行
-        document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').forEach(function(tr) {
-            if (category === 'all' || tr.getAttribute('data-template-category') === category) {
-                tr.style.display = '';
-            } else {
-                tr.style.display = 'none';
-            }
-        });
-        // 筛选卡片
-        document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
-            if (category === 'all' || card.getAttribute('data-template-category') === category) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
 
     // 官方模板: 一级分类筛选 + 二级文书类型筛选 + 搜索
     var _officialCategory = 'all';
     var _officialType = 'all';
     var _officialSearch = '';
 
-    function filterOfficialByCategory(category, btn) {
-        _officialCategory = category;
-        // 更新一级 active 样式
-        var officialTabs = document.querySelectorAll('.official-category-tab');
-        officialTabs.forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        }
-        // 二级筛选: 执行/其他 不显示起诉/答辩类型
-        var typeFilter = document.getElementById('official-type-filter');
-        if (typeFilter) {
-            if (category === '执行' || category === '其他') {
-                typeFilter.classList.add('hidden');
-            } else {
-                typeFilter.classList.remove('hidden');
-            }
-        }
-        // 切到「执行/其他」时强制 type 回到 all
-        if (category === '执行' || category === '其他') {
-            _officialType = 'all';
-            filterOfficialByType('all', document.querySelector('.official-type-tab[data-type="all"]'));
-            return;
-        }
-        applyOfficialFilter();
-    }
-
-    function filterOfficialByType(type, btn) {
-        _officialType = type;
-        // 更新二级 active 样式
-        document.querySelectorAll('.official-type-tab').forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        }
-        applyOfficialFilter();
-    }
-
-    function applyOfficialFilter() {
-        // 读取搜索词
-        var searchEl = document.getElementById('official-search');
-        if (searchEl) _officialSearch = searchEl.value.trim().toLowerCase();
-        // 清除按钮显隐
-        var clearEl = document.getElementById('official-search-clear');
-        if (clearEl) {
-            if (_officialSearch) { clearEl.classList.remove('hidden'); }
-            else { clearEl.classList.add('hidden'); }
-        }
-        // 双重过滤: cat + type + search
-        var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
-        rows.forEach(function(tr) {
-            var cat = tr.getAttribute('data-template-category');
-            var typ = tr.getAttribute('data-template-type');
-            var title = (tr.querySelector('td:first-child') ? tr.querySelector('td:first-child').textContent : '').toLowerCase();
-            var catMatch = _officialCategory === 'all' || cat === _officialCategory;
-            var typeMatch = _officialType === 'all' || typ === _officialType;
-            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
-            tr.style.display = (catMatch && typeMatch && searchMatch) ? '' : 'none';
-        });
-        var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
-        var visibleCount = 0;
-        cards.forEach(function(card) {
-            var cat = card.getAttribute('data-template-category');
-            var typ = card.getAttribute('data-template-type');
-            var titleEl = card.querySelector('h4');
-            var title = titleEl ? titleEl.textContent.toLowerCase() : '';
-            var catMatch = _officialCategory === 'all' || cat === _officialCategory;
-            var typeMatch = _officialType === 'all' || typ === _officialType;
-            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
-            var visible = catMatch && typeMatch && searchMatch;
-            card.style.display = visible ? '' : 'none';
-            if (visible) visibleCount++;
-        });
-        // 动态调整 grid 列数: 1-2 张用 2 列, 3-4 张用 3 列, 5+ 张用 4 列
-        var grid = document.getElementById('official-card-grid');
-        if (grid) {
-            var cols = visibleCount === 0 ? 4 : visibleCount <= 2 ? 2 : visibleCount <= 4 ? 3 : 4;
-            grid.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
-        }
-        // 0 张时显示空状态
-        var emptyEl = document.getElementById('official-card-empty');
-        if (emptyEl) {
-            if (visibleCount === 0) {
-                emptyEl.classList.remove('hidden');
-                emptyEl.style.display = 'block';
-            } else {
-                emptyEl.classList.add('hidden');
-                emptyEl.style.display = 'none';
-            }
-        }
-        // 底部统计: 当前命中数
-        var countEl = document.getElementById('official-card-count');
-        if (countEl) countEl.textContent = visibleCount;
-        var totalEl = document.getElementById('official-card-total');
-        if (totalEl) totalEl.textContent = cards.length;
-    }
-
     // 清除搜索
-    function clearOfficialSearch() {
-        var searchEl = document.getElementById('official-search');
-        if (searchEl) searchEl.value = '';
-        applyOfficialFilter();
-    }
 
     // 官方模板卡片预览 (占位)
-    function previewOfficialTemplate(cardEl) {
-        var titleEl = cardEl.querySelector('h4');
-        var title = titleEl ? titleEl.textContent.trim() : '未命名模板';
-        var cat = cardEl.dataset.templateCategory || '';
-        var typ = cardEl.dataset.templateType || '';
-        if (typeof showToast === 'function') {
-            showToast('预览「' + title + '」(分类: ' + cat + ' · 类型: ' + typ + ')');
-        } else {
-            alert('预览「' + title + '」(分类: ' + cat + ' · 类型: ' + typ + ')');
-        }
-    }
-
-    function deleteCategory(name) {
-        // 检查该分类下是否还有模板 (在个人模板表格中)
-        var rows = document.querySelectorAll('#template-tab-personal tbody tr');
-        var hasTemplate = Array.from(rows).some(function(tr) {
-            var badge = tr.querySelector('td:nth-child(2) span');
-            return badge && badge.textContent.trim() === name;
-        });
-        if (hasTemplate) {
-            showToast('该分类下还有模板, 请先删除模板');
-            return;
-        }
-        if (!confirm('确定删除分类「' + name + '」?')) return;
-        var item = document.querySelector('.category-item[data-category="' + name + '"]');
-        if (item) item.remove();
-        // 同步移除个人模板标签栏按钮
-        var tabBtn = document.querySelector('.personal-category-tab[data-category="' + name + '"]');
-        if (tabBtn) tabBtn.remove();
-        var countEl = document.getElementById('category-list-count');
-        var list = document.getElementById('category-list');
-        if (countEl && list) {
-            var total = list.querySelectorAll('.category-item').length;
-            countEl.textContent = '共 ' + total + ' 个分类';
-        }
-        showToast('分类「' + name + '」已删除');
-    }
 
     // 手动创建证据目录 - 打开模态框
     function addEvidenceCatalogItem() {
@@ -3388,101 +1999,17 @@
     }
 
     // 字段校验（必填）
-    function validateField(el, msg) {
-        if (!el.value.trim()) {
-            el.classList.add('border-red-400', 'bg-[#FFF0F0]');
-            el.classList.remove('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (!errorEl) {
-                errorEl = document.createElement('p');
-                errorEl.className = 'field-error text-[10px] text-red-400 mt-1';
-                errorEl.textContent = msg;
-                el.parentNode.appendChild(errorEl);
-            }
-        } else {
-            el.classList.remove('border-red-400', 'bg-[#FFF0F0]');
-            el.classList.add('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (errorEl) errorEl.remove();
-        }
-    }
 
     // 邮箱格式校验
-    function validateEmail(el) {
-        var val = el.value.trim();
-        if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-            el.classList.add('border-[#FAAD14]', 'bg-[#FFF7E6]');
-            el.classList.remove('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (!errorEl) {
-                errorEl = document.createElement('p');
-                errorEl.className = 'field-error text-[10px] text-[#FAAD14] mt-1';
-                errorEl.textContent = '邮箱格式不正确';
-                el.parentNode.appendChild(errorEl);
-            }
-        } else {
-            el.classList.remove('border-[#FAAD14]', 'bg-[#FFF7E6]');
-            el.classList.add('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (errorEl) errorEl.remove();
-        }
-    }
 
     // 自动保存（防抖）
     // var autoSaveTimer = null;
 
-    function autoSaveProfile() {
-        if (AppState.autoSaveTimer) clearTimeout(AppState.autoSaveTimer);
-
-        var saveBtn = document.getElementById('profile-save-btn');
-        var saveText = document.getElementById('save-btn-text');
-        var saveSpinner = document.getElementById('save-btn-spinner');
-        if (saveBtn) {
-            saveBtn.classList.remove('bg-[#165DFF]');
-            saveBtn.classList.add('bg-[#4080FF]', 'cursor-default', 'opacity-80');
-        }
-        if (saveText) saveText.textContent = '保存中...';
-        if (saveSpinner) saveSpinner.classList.remove('hidden');
-
-        AppState.autoSaveTimer = setTimeout(function() {
-            if (saveBtn) {
-                saveBtn.classList.remove('bg-[#4080FF]', 'cursor-default', 'opacity-80');
-                saveBtn.classList.add('bg-[#165DFF]');
-            }
-            if (saveText) saveText.textContent = '已保存';
-            if (saveSpinner) saveSpinner.classList.add('hidden');
-
-            setTimeout(function() {
-                if (saveText && saveText.textContent === '已保存') {
-                    saveText.textContent = '保存';
-                }
-            }, 2000);
-        }, 1500);
-    }
-
     // 保存通知设置
-    function saveNotificationSettings() {
-        var toggles = document.querySelectorAll('.notif-toggle');
-        var enabled = [];
-        var disabled = [];
-        toggles.forEach(function(t, i) {
-            if (t.checked) enabled.push(i);
-            else disabled.push(i);
-        });
-        showSaveSuccess('通知设置已保存');
-    }
 
     // 绑定第三方账号
-    function bindAccount(name) {
-        showSaveSuccess('正在跳转至' + name + '授权页面...');
-    }
 
     // 解绑第三方账号
-    function unbindAccount(name) {
-        if (confirm('确定要解绑' + name + '吗？解绑后可能影响相关功能使用。')) {
-            showSaveSuccess(name + '已解绑');
-        }
-    }
 
     // ===== 日程冲突检测（模拟数据） =====
     const scheduleData = [
@@ -4208,34 +2735,10 @@
     
     // ===== AI一键提取要点 =====
     // var selectedExtractSource = 'case';
-    function selectExtractSource(btn, source) {
-        document.querySelectorAll('.extract-source-btn').forEach(function(b) {
-            b.className = 'extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
-        });
-        btn.className = 'extract-source-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
-        AppState.selectedExtractSource = source;
-    }
     function openAIExtractModal() {
         document.getElementById('extract-result-area').classList.add('hidden');
         document.getElementById('extract-loading').classList.add('hidden');
         document.getElementById('ai-extract-modal').classList.remove('hidden');
-    }
-    function closeAIExtractModal() {
-        document.getElementById('ai-extract-modal').classList.add('hidden');
-    }
-    function startAIExtract() {
-        document.getElementById('extract-loading').classList.remove('hidden');
-        document.getElementById('extract-result-area').classList.add('hidden');
-        setTimeout(function() {
-            document.getElementById('extract-loading').classList.add('hidden');
-            document.getElementById('extract-result-area').classList.remove('hidden');
-        }, 2000);
-    }
-    function copyExtractResult() {
-        showToast('提取结果已复制到剪贴板');
-    }
-    function exportExtractResult() {
-        alert('报告已导出为Markdown格式（演示功能）');
     }
     
     // ===== 批量上传 =====
@@ -4323,7 +2826,6 @@
         document.body.appendChild(toast);
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
-
 
 
     // 页面加载时检查 template 视图是否需要修复 DOM 重组

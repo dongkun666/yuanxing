@@ -420,7 +420,7 @@
 <div>
 <div class="flex items-center justify-between mb-2">
 <span class="text-xs font-medium text-gray-700">附件上传</span>
-<button class="flex items-center gap-1 text-[11px] text-[#165DFF] hover:underline" onclick="openBatchUploadModal()">
+<button class="flex items-center gap-1 text-[10px] text-[#165DFF] hover:underline" onclick="openBatchUploadModal()">
 <iconify-icon icon="mdi:folder-multiple-outline"></iconify-icon>
                         批量上传
                     </button>
@@ -506,8 +506,8 @@
 <div class="flex items-center justify-between">
 <h4 class="text-xs font-semibold text-gray-600">提取结果</h4>
 <div class="flex items-center gap-2">
-<button class="text-[11px] text-[#165DFF] hover:underline" onclick="copyExtractResult()">复制结果</button>
-<button class="text-[11px] text-[#165DFF] hover:underline" onclick="exportExtractResult()">导出报告</button>
+<button class="text-[10px] text-[#165DFF] hover:underline" onclick="copyExtractResult()">复制结果</button>
+<button class="text-[10px] text-[#165DFF] hover:underline" onclick="exportExtractResult()">导出报告</button>
 </div>
 </div>
 <!-- 关键事实 -->
@@ -575,7 +575,7 @@
 <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#165DFF] transition-colors cursor-pointer bg-gray-50/50" onclick="document.getElementById('batch-file-input').click()" ondragleave="this.classList.remove('border-[#165DFF]','bg-blue-50/50')" ondragover="event.preventDefault();this.classList.add('border-[#165DFF]','bg-blue-50/50')" ondrop="event.preventDefault();this.classList.remove('border-[#165DFF]','bg-blue-50/50');handleBatchDrop(event)">
 <iconify-icon class="text-4xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
 <p class="text-sm text-gray-500 mt-2">拖拽文件到此处，或<span class="text-[#165DFF] font-medium">点击选择</span></p>
-<p class="text-[11px] text-gray-400 mt-1">支持批量选择，最多 20 个文件</p>
+<p class="text-[10px] text-gray-400 mt-1">支持批量选择，最多 20 个文件</p>
 <input accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.txt" class="hidden" id="batch-file-input" multiple="" onchange="handleBatchSelect(this)" type="file"/>
 </div>
 <!-- 批量上传进度 -->
@@ -1028,7 +1028,7 @@
 <label class="block text-xs font-medium text-gray-600 mb-1.5">关联证据文件</label>
 <div class="border border-gray-200 rounded-lg overflow-hidden">
 <div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
-<span class="text-[11px] text-gray-500">从已有证据材料中选择</span>
+<span class="text-[10px] text-gray-500">从已有证据材料中选择</span>
 <span class="text-[10px] text-gray-400" id="catalog-selected-count">已选 0 个</span>
 </div>
 <div class="max-h-40 overflow-y-auto" id="catalog-file-select-list">
