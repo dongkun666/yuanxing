@@ -1469,6 +1469,25 @@
         // 显示对应客户（实际项目中筛选数据）
     }
 
+    // 知识库管理 - 分类切换
+    function switchKnowledgeTab(el, type) {
+        document.querySelectorAll('#view-knowledge .flex.items-center.gap-1.flex-wrap button').forEach(function(btn) {
+            btn.classList.remove('bg-[#165DFF]', 'text-white');
+            btn.classList.add('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
+        });
+        el.classList.remove('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
+        el.classList.add('bg-[#165DFF]', 'text-white');
+        // 筛选表格行
+        var rows = document.querySelectorAll('#view-knowledge tbody tr[data-knowledge-type]');
+        var visibleCount = 0;
+        rows.forEach(function(tr) {
+            var t = tr.getAttribute('data-knowledge-type');
+            var match = (type === 'all') || (t === type);
+            tr.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+    }
+
     // 打开客户详情
     function openClientDetail(index) {
         var clients = [
@@ -1549,13 +1568,15 @@
 
         var targetId = 'view-' + viewName;
         var target = document.getElementById(targetId);
-        if (target) {
+        if (target && !isDevMode) {
             // 视图已存在，直接显示
             document.querySelectorAll('.view-content').forEach(function(v) {
                 v.classList.add('hidden');
             });
             target.classList.remove('hidden');
         } else {
+            // 视图未加载 / dev 模式下强制刷新: 移除旧 target 后重新 fetch
+            if (target) target.remove();
             // 视图未加载，动态加载
             loadView(viewName, function(html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
