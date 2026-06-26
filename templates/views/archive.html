@@ -1,96 +1,96 @@
 <div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-archive">
 <!-- 搜索与筛选 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="bg-white rounded-xl border border-bg-border p-4">
 <div class="flex items-center gap-3 flex-wrap">
 <div class="relative flex-1 min-w-[200px]">
-<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#C9CDD4]" icon="mdi:magnify"></iconify-icon>
-<input id="archiveSearchInput" class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" placeholder="搜索案号、当事人..." type="text" oninput="filterArchiveList()"/>
+<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-disabled" icon="mdi:magnify"></iconify-icon>
+<input id="archiveSearchInput" class="w-full border border-bg-border rounded-lg pl-9 pr-3 py-2 text-xs text-fg-secondary focus:outline-none focus:border-brand transition-colors" placeholder="搜索案号、当事人..." type="text" oninput="filterArchiveList()"/>
 </div>
-<select id="archiveYearFilter" class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white cursor-pointer" onchange="filterArchiveList()">
+<select id="archiveYearFilter" class="border border-bg-border rounded-lg px-3 py-2 text-xs text-fg-secondary focus:outline-none focus:border-brand appearance-none bg-white cursor-pointer" onchange="filterArchiveList()">
 <option value="">全部年份</option>
 <option value="2026">2026年</option>
 <option value="2025">2025年</option>
 <option value="2024">2024年</option>
 </select>
-<select id="archiveTypeFilter" class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white cursor-pointer" onchange="filterArchiveList()">
+<select id="archiveTypeFilter" class="border border-bg-border rounded-lg px-3 py-2 text-xs text-fg-secondary focus:outline-none focus:border-brand appearance-none bg-white cursor-pointer" onchange="filterArchiveList()">
 <option value="">全部案由</option>
 <option value="民事">民事</option>
 <option value="商事">商事</option>
 <option value="劳动争议">劳动争议</option>
 </select>
-<span id="archiveResultCount" class="text-xs text-[#86909C] ml-auto"></span>
-<button class="px-4 py-2 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1.5">
+<span id="archiveResultCount" class="text-xs text-fg-tertiary ml-auto"></span>
+<button class="px-4 py-2 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1.5">
 <iconify-icon class="text-sm" icon="mdi:download-outline"></iconify-icon>
 批量导出
 </button>
 </div>
 </div>
 <!-- 归档列表 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
 <div class="overflow-x-auto">
 <table class="w-full text-sm">
 <thead>
-<tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">
-<input type="checkbox" class="w-4 h-4 rounded border-[#E5E6EB] cursor-pointer" onchange="toggleAllArchive(this)"/>
+<tr class="bg-bg-subtle border-b border-bg-border">
+<th class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">
+<input type="checkbox" class="w-4 h-4 rounded border-bg-border cursor-pointer" onchange="toggleAllArchive(this)"/>
 </th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案号</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">案由</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">原告</th>
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969]">被告</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">归档时间</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">操作</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">案号</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">案由</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">原告</th>
+<th class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">被告</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary">归档时间</th>
+<th class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary">操作</th>
 </tr>
 </thead>
 <tbody id="archiveTableBody" class="divide-y divide-[#F2F3F5]">
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-year="2025">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-[#E5E6EB] cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openArchiveDetail(0)">(2025)京01民终456号</span></td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">房屋买卖合同纠纷</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">陈某某</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">某某房地产公司</td>
-<td class="text-center py-3 px-4 text-xs text-[#86909C]">2025-12-15</td>
+<tr class="hover:bg-bg-subtle transition-colors" data-year="2025">
+<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
+<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(0)">(2025)京01民终456号</span></td>
+<td class="py-3 px-4 text-xs text-fg-secondary">房屋买卖合同纠纷</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">陈某某</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">某某房地产公司</td>
+<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2025-12-15</td>
 <td class="text-center py-3 px-4">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openArchiveDetail(0)">查看</button>
+<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(0)">查看</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F5222D] hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-year="2025">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-[#E5E6EB] cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openArchiveDetail(1)">(2025)京02民终789号</span></td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">借款合同纠纷</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">赵某某</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">王某某</td>
-<td class="text-center py-3 px-4 text-xs text-[#86909C]">2025-11-20</td>
+<tr class="hover:bg-bg-subtle transition-colors" data-year="2025">
+<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
+<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(1)">(2025)京02民终789号</span></td>
+<td class="py-3 px-4 text-xs text-fg-secondary">借款合同纠纷</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">赵某某</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">王某某</td>
+<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2025-11-20</td>
 <td class="text-center py-3 px-4">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openArchiveDetail(1)">查看</button>
+<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(1)">查看</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F5222D] hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-year="2024">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-[#E5E6EB] cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-[#165DFF] cursor-pointer hover:underline" onclick="openArchiveDetail(2)">(2024)京01民终123号</span></td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">劳动争议</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">孙某某</td>
-<td class="py-3 px-4 text-xs text-[#4E5969]">某某科技公司</td>
-<td class="text-center py-3 px-4 text-xs text-[#86909C]">2024-12-01</td>
+<tr class="hover:bg-bg-subtle transition-colors" data-year="2024">
+<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
+<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(2)">(2024)京01民终123号</span></td>
+<td class="py-3 px-4 text-xs text-fg-secondary">劳动争议</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">孙某某</td>
+<td class="py-3 px-4 text-xs text-fg-secondary">某某科技公司</td>
+<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2024-12-01</td>
 <td class="text-center py-3 px-4">
 <div class="flex items-center justify-center gap-2">
-<button class="text-xs text-[#165DFF] hover:underline" onclick="openArchiveDetail(2)">查看</button>
+<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(2)">查看</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#165DFF] hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
 <span class="text-[#E5E6EB]">|</span>
-<button class="text-xs text-[#F5222D] hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
 </div>
 </td>
 </tr>
@@ -99,12 +99,12 @@
 </div>
 <!-- 分页 -->
 <div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
-<select id="archivePageSize" class="border border-[#E5E6EB] rounded px-2 py-1 text-xs text-[#4E5969] focus:outline-none cursor-pointer" onchange="filterArchiveList()">
+<select id="archivePageSize" class="border border-bg-border rounded px-2 py-1 text-xs text-fg-secondary focus:outline-none cursor-pointer" onchange="filterArchiveList()">
 <option value="10">每页 10 条</option>
 <option value="20">每页 20 条</option>
 <option value="50">每页 50 条</option>
 </select>
-<span id="archivePaginationInfo" class="text-xs text-[#86909C]"></span>
+<span id="archivePaginationInfo" class="text-xs text-fg-tertiary"></span>
 <div class="flex gap-1" id="archivePaginationBtns"></div>
 </div>
 </div>
@@ -181,7 +181,7 @@ function filterArchiveList() {
         for (var i = 1; i <= totalPages; i++) {
             var btn = document.createElement('button');
             btn.className = 'w-7 h-7 rounded text-xs flex items-center justify-center ' +
-                (i === archiveCurrentPage ? 'bg-[#165DFF] text-white' : 'bg-white hover:bg-[#F7F8FA] text-[#4E5969] border border-[#E5E6EB]');
+                (i === archiveCurrentPage ? 'bg-brand text-white' : 'bg-white hover:bg-bg-subtle text-fg-secondary border border-bg-border');
             btn.textContent = i;
             btn.onclick = (function(page) {
                 return function() {

@@ -2,14 +2,14 @@
 <!-- 头部 -->
 <div class="flex-none flex items-center justify-between">
 <div class="flex items-center gap-3">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" onclick="switchView('workstation')">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-secondary transition-colors" onclick="switchView('workstation')">
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
-<h2 class="text-lg font-bold text-gray-800">附件列表</h2>
-<span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">共 24 个文件</span>
+<h2 class="text-lg font-bold text-fg-primary">附件列表</h2>
+<span class="text-[10px] bg-bg text-fg-tertiary px-2 py-0.5 rounded-full">共 24 个文件</span>
 </div>
 <div class="flex items-center gap-2">
-<button class="flex items-center gap-1 h-8 px-3 text-xs font-medium text-white bg-[#165DFF] hover:bg-blue-500 rounded-lg transition-colors" onclick="openBatchUploadModal()">
+<button class="flex items-center gap-1 h-8 px-3 text-xs font-medium text-white bg-brand hover:bg-brand-tint30 rounded-lg transition-colors" onclick="openBatchUploadModal()">
 <iconify-icon icon="mdi:upload"></iconify-icon>
                 上传文件
             </button>
@@ -17,7 +17,7 @@
 </div>
 <!-- 筛选/搜索栏 -->
 <div class="flex-none flex items-center gap-2">
-<select class="h-8 text-xs px-2.5 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 focus:outline-none focus:border-[#165DFF]">
+<select class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
 <option>全部分类</option>
 <option>文书文件</option>
 <option>证据材料</option>
@@ -25,7 +25,7 @@
 <option>图片</option>
 <option>其他</option>
 </select>
-<select class="h-8 text-xs px-2.5 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 focus:outline-none focus:border-[#165DFF]">
+<select class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
 <option>全部案件</option>
 <option>张三合同纠纷</option>
 <option>李四借贷纠纷</option>
@@ -33,253 +33,253 @@
 <option>赵六劳动争议</option>
 </select>
 <div class="relative flex-1 max-w-xs">
-<input class="w-full h-8 text-xs pl-8 pr-3 border border-[#E5E6EB] rounded-lg bg-white text-gray-600 placeholder-gray-400 focus:outline-none focus:border-[#165DFF]" oninput="console.log('搜索附件：'+this.value)" placeholder="搜索文件名..." type="text"/>
-<iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" icon="mdi:magnify"></iconify-icon>
+<input class="w-full h-8 text-xs pl-8 pr-3 border border-bg-border rounded-lg bg-white text-fg-secondary placeholder-gray-400 focus:outline-none focus:border-brand" oninput="console.log('搜索附件：'+this.value)" placeholder="搜索文件名..." type="text"/>
+<iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
 </div>
-<div class="flex items-center border border-[#E5E6EB] rounded-lg overflow-hidden">
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-[#165DFF] text-white"><iconify-icon icon="mdi:grid-view"></iconify-icon></button>
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-gray-600 hover:bg-gray-50"><iconify-icon icon="mdi:format-list-bulleted"></iconify-icon></button>
+<div class="flex items-center border border-bg-border rounded-lg overflow-hidden">
+<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white"><iconify-icon icon="mdi:grid-view"></iconify-icon></button>
+<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50"><iconify-icon icon="mdi:format-list-bulleted"></iconify-icon></button>
 </div>
 </div>
 <!-- 附件网格 -->
 <div class="flex-1 min-h-0 overflow-y-auto">
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
 <!-- 文件卡片 x 24 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">起诉状_张三合同纠纷.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：张三合同纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">起诉状_张三合同纠纷.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：张三合同纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">2.3MB</span>
-<span class="text-[10px] text-gray-400">2026-06-10</span>
+<span class="text-[10px] text-fg-tertiary">2.3MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-10</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
 <iconify-icon class="text-green-500 text-xl" icon="mdi:file-excel-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">证据目录_v3.xlsx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：张三合同纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">证据目录_v3.xlsx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：张三合同纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">256KB</span>
-<span class="text-[10px] text-gray-400">2026-06-10</span>
+<span class="text-[10px] text-fg-tertiary">256KB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-10</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
-<div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-blue-500 text-xl" icon="mdi:file-word-outline"></iconify-icon>
+<div class="w-10 h-10 rounded-xl bg-brand-tint3 flex items-center justify-center">
+<iconify-icon class="text-brand text-xl" icon="mdi:file-word-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">民事起诉状_终稿.docx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：李四借贷纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">民事起诉状_终稿.docx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：李四借贷纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">45KB</span>
-<span class="text-[10px] text-gray-400">2026-06-09</span>
+<span class="text-[10px] text-fg-tertiary">45KB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-09</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">举证期限告知书.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：张三合同纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">举证期限告知书.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：张三合同纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">1.2MB</span>
-<span class="text-[10px] text-gray-400">2026-06-09</span>
+<span class="text-[10px] text-fg-tertiary">1.2MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-09</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
 <iconify-icon class="text-purple-500 text-xl" icon="mdi:file-image-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">证据照片_现场勘验.jpg</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：王五股权转让纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">证据照片_现场勘验.jpg</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：王五股权转让纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">3.5MB</span>
-<span class="text-[10px] text-gray-400">2026-06-08</span>
+<span class="text-[10px] text-fg-tertiary">3.5MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-08</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">开庭传票.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：赵六劳动争议</p>
+<p class="text-xs font-medium text-fg-primary truncate">开庭传票.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：赵六劳动争议</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">0.5MB</span>
-<span class="text-[10px] text-gray-400">2026-06-07</span>
+<span class="text-[10px] text-fg-tertiary">0.5MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-07</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
-<div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-blue-500 text-xl" icon="mdi:file-word-outline"></iconify-icon>
+<div class="w-10 h-10 rounded-xl bg-brand-tint3 flex items-center justify-center">
+<iconify-icon class="text-brand text-xl" icon="mdi:file-word-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">补充材料_银行流水.docx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：王五股权转让纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">补充材料_银行流水.docx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：王五股权转让纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">3.5MB</span>
-<span class="text-[10px] text-gray-400">2026-06-08</span>
+<span class="text-[10px] text-fg-tertiary">3.5MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-08</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center">
-<iconify-icon class="text-gray-500 text-xl" icon="mdi:file-document-outline"></iconify-icon>
+<iconify-icon class="text-fg-tertiary text-xl" icon="mdi:file-document-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">合议庭组成通知书.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：孙七建设工程合同纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">合议庭组成通知书.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：孙七建设工程合同纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">0.3MB</span>
-<span class="text-[10px] text-gray-400">2026-06-06</span>
+<span class="text-[10px] text-fg-tertiary">0.3MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-06</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">结案报告.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：周八借款纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">结案报告.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：周八借款纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">32KB</span>
-<span class="text-[10px] text-gray-400">2026-06-05</span>
+<span class="text-[10px] text-fg-tertiary">32KB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-05</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon>
 </div>
-<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="text-gray-400 hover:text-[#165DFF] mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
-<button class="text-gray-400 hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
+<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-fg-tertiary hover:text-brand mr-1"><iconify-icon icon="mdi:download"></iconify-icon></button>
+<button class="text-fg-tertiary hover:text-red-500"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>
 </span>
 </div>
-<p class="text-xs font-medium text-gray-700 truncate">一审判决书.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：吴九房屋租赁合同纠纷</p>
+<p class="text-xs font-medium text-fg-primary truncate">一审判决书.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：吴九房屋租赁合同纠纷</p>
 <div class="flex items-center justify-between mt-2">
-<span class="text-[10px] text-gray-400">1.1MB</span>
-<span class="text-[10px] text-gray-400">2026-06-04</span>
+<span class="text-[10px] text-fg-tertiary">1.1MB</span>
+<span class="text-[10px] text-fg-tertiary">2026-06-04</span>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center"><iconify-icon class="text-green-500 text-xl" icon="mdi:file-excel-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">证据目录_更新版.xlsx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：王五股权转让纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">128KB</span><span class="text-[10px] text-gray-400">2026-06-08</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">证据目录_更新版.xlsx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：王五股权转让纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">128KB</span><span class="text-[10px] text-fg-tertiary">2026-06-08</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
-<div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-blue-500 text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">代理词_张三案.docx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：张三合同纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">38KB</span><span class="text-[10px] text-gray-400">2026-06-03</span></div>
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-brand-tint3 flex items-center justify-center"><iconify-icon class="text-brand text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
+<p class="text-xs font-medium text-fg-primary truncate">代理词_张三案.docx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：张三合同纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">38KB</span><span class="text-[10px] text-fg-tertiary">2026-06-03</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center"><iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">顾问合同_2025.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：某科技公司</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">0.6MB</span><span class="text-[10px] text-gray-400">2026-06-03</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">顾问合同_2025.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：某科技公司</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">0.6MB</span><span class="text-[10px] text-fg-tertiary">2026-06-03</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center"><iconify-icon class="text-purple-500 text-xl" icon="mdi:file-image-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">现场勘验照片2.jpg</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：王五股权转让纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">2.1MB</span><span class="text-[10px] text-gray-400">2026-06-07</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">现场勘验照片2.jpg</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：王五股权转让纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">2.1MB</span><span class="text-[10px] text-fg-tertiary">2026-06-07</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
-<div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-blue-500 text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">答辩状_初稿.docx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：李四借贷纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">52KB</span><span class="text-[10px] text-gray-400">2026-06-02</span></div>
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-brand-tint3 flex items-center justify-center"><iconify-icon class="text-brand text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
+<p class="text-xs font-medium text-fg-primary truncate">答辩状_初稿.docx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：李四借贷纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">52KB</span><span class="text-[10px] text-fg-tertiary">2026-06-02</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center"><iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">和解协议书_草案.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：赵六劳动争议</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">0.8MB</span><span class="text-[10px] text-gray-400">2026-06-01</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">和解协议书_草案.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：赵六劳动争议</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">0.8MB</span><span class="text-[10px] text-fg-tertiary">2026-06-01</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center"><iconify-icon class="text-green-500 text-xl" icon="mdi:file-excel-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">费用结算表.xlsx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：张三合同纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">96KB</span><span class="text-[10px] text-gray-400">2026-05-28</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">费用结算表.xlsx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：张三合同纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">96KB</span><span class="text-[10px] text-fg-tertiary">2026-05-28</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
-<div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><iconify-icon class="text-gray-500 text-xl" icon="mdi:file-document-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">律师工作记录.txt</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：周八借款纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">15KB</span><span class="text-[10px] text-gray-400">2026-05-25</span></div>
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><iconify-icon class="text-fg-tertiary text-xl" icon="mdi:file-document-outline"></iconify-icon></div>
+<p class="text-xs font-medium text-fg-primary truncate">律师工作记录.txt</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：周八借款纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">15KB</span><span class="text-[10px] text-fg-tertiary">2026-05-25</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center"><iconify-icon class="text-red-500 text-xl" icon="mdi:file-pdf-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">调查笔录.pdf</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：孙七建设工程合同纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">0.4MB</span><span class="text-[10px] text-gray-400">2026-05-20</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">调查笔录.pdf</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：孙七建设工程合同纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">0.4MB</span><span class="text-[10px] text-fg-tertiary">2026-05-20</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center"><iconify-icon class="text-purple-500 text-xl" icon="mdi:file-image-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">合同扫描件_盖章版.png</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：吴九房屋租赁合同纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">5.2MB</span><span class="text-[10px] text-gray-400">2026-05-15</span></div>
+<p class="text-xs font-medium text-fg-primary truncate">合同扫描件_盖章版.png</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：吴九房屋租赁合同纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">5.2MB</span><span class="text-[10px] text-fg-tertiary">2026-05-15</span></div>
 </div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-sm transition-shadow cursor-pointer group">
-<div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><iconify-icon class="text-blue-500 text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
-<p class="text-xs font-medium text-gray-700 truncate">上诉状_草稿.docx</p>
-<p class="text-[10px] text-gray-400 mt-1">案件：吴九房屋租赁合同纠纷</p>
-<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-gray-400">41KB</span><span class="text-[10px] text-gray-400">2026-05-10</span></div>
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
+<div class="w-10 h-10 rounded-xl bg-brand-tint3 flex items-center justify-center"><iconify-icon class="text-brand text-xl" icon="mdi:file-word-outline"></iconify-icon></div>
+<p class="text-xs font-medium text-fg-primary truncate">上诉状_草稿.docx</p>
+<p class="text-[10px] text-fg-tertiary mt-1">案件：吴九房屋租赁合同纠纷</p>
+<div class="flex items-center justify-between mt-2"><span class="text-[10px] text-fg-tertiary">41KB</span><span class="text-[10px] text-fg-tertiary">2026-05-10</span></div>
 </div>
 </div>
 </div>

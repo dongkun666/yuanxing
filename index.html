@@ -327,12 +327,15 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 </footer>
 <!-- 模块拆分 (按业务域) - 在主脚本之前加载 -->
+<script src="./assets/js/cases.js?v=1"></script>
+<script src="./assets/js/clients.js?v=1"></script>
+<script src="./assets/js/schedule.js?v=1"></script>
 <script src="./assets/js/knowledge.js?v=1"></script>
 <script src="./assets/js/ai.js?v=1"></script>
 <script src="./assets/js/templates.js?v=1"></script>
 <script src="./assets/js/account.js?v=1"></script>
-<!-- 主脚本 (案件 + 客户 + 日程 + 弹窗 + 路由) -->
-<script src="./assets/js/script.js?v=15"></script>
+<!-- 主脚本 (路由 + 全局状态 + 弹窗通用) -->
+<script src="./assets/js/script.js?v=16"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {

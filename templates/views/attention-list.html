@@ -2,25 +2,25 @@
 <!-- 头部 -->
 <div class="flex-none flex items-center justify-between">
 <div class="flex items-center gap-3">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors" onclick="switchView('workstation')">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary transition-colors" onclick="switchView('workstation')">
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
-<h2 class="text-lg font-bold text-gray-800">需要关注</h2>
-<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">共 5 项</span>
+<h2 class="text-lg font-bold text-fg-primary">需要关注</h2>
+<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 5 项</span>
 </div>
 </div>
 <!-- 筛选标签 -->
 <div class="flex-none flex items-center gap-2">
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white" onclick="filterAttention('all', this)">全部</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterAttention('待处理', this)">待处理</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterAttention('逾期', this)">逾期</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" onclick="filterAttention('提醒', this)">提醒</button>
+<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" onclick="filterAttention('all', this)">全部</button>
+<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('待处理', this)">待处理</button>
+<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('逾期', this)">逾期</button>
+<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('提醒', this)">提醒</button>
 </div>
 <!-- 关注列表 - 网格卡片布局 -->
 <div class="flex-none">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 <!-- 卡片 1: 逾期 - 举证期限即将截止 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-red-500 min-h-[140px]">
+<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-red-500 min-h-[140px]">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-red-500 text-xl" icon="mdi:clock-alert-outline"></iconify-icon>
@@ -28,95 +28,95 @@
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
 <span class="text-[10px] bg-red-100 text-red-700 font-medium px-1.5 py-0.5 rounded-full">逾期</span>
-<span class="font-medium text-sm text-gray-800 truncate">举证期限即将截止</span>
+<span class="font-medium text-sm text-fg-primary truncate">举证期限即将截止</span>
 </div>
-<p class="text-xs text-gray-500 truncate">案件：张三合同纠纷 · 截止日期：2026-06-20</p>
+<p class="text-xs text-fg-tertiary truncate">案件：张三合同纠纷 · 截止日期：2026-06-20</p>
 </div>
 <iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
 <span class="text-[10px] text-red-500 font-medium">已逾期 3 天</span>
-<button class="text-[10px] text-[#165DFF] hover:underline">去处理</button>
+<button class="text-[10px] text-brand hover:underline">去处理</button>
 </div>
 </div>
 <!-- 卡片 2: 待处理 - 王华借贷纠纷上诉状待审核 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
+<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-warning-tint flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-orange-500 text-xl" icon="mdi:file-document-edit-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-orange-100 text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
-<span class="font-medium text-sm text-gray-800 truncate">王华借贷纠纷上诉状待审核</span>
+<span class="text-[10px] bg-warning-tint text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
+<span class="font-medium text-sm text-fg-primary truncate">王华借贷纠纷上诉状待审核</span>
 </div>
-<p class="text-xs text-gray-500 truncate">提交人：李律师 · 已等待 2 天</p>
+<p class="text-xs text-fg-tertiary truncate">提交人：李律师 · 已等待 2 天</p>
 </div>
 <iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
 <span class="text-[10px] text-orange-500 font-medium">优先级：高</span>
-<button class="text-[10px] text-[#165DFF] hover:underline">去处理</button>
+<button class="text-[10px] text-brand hover:underline">去处理</button>
 </div>
 </div>
 <!-- 卡片 3: 提醒 - 明日开庭提醒 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
+<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-blue-500 text-xl" icon="mdi:calendar-check-outline"></iconify-icon>
+<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-brand text-xl" icon="mdi:calendar-check-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-1.5 py-0.5 rounded-full">提醒</span>
-<span class="font-medium text-sm text-gray-800 truncate">明日开庭提醒</span>
+<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">提醒</span>
+<span class="font-medium text-sm text-fg-primary truncate">明日开庭提醒</span>
 </div>
-<p class="text-xs text-gray-500 truncate">李明诉XX公司买卖合同纠纷 · 朝阳法院 09:00</p>
+<p class="text-xs text-fg-tertiary truncate">李明诉XX公司买卖合同纠纷 · 朝阳法院 09:00</p>
 </div>
 <iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-blue-500 font-medium">距离开庭 18h</span>
-<button class="text-[10px] text-[#165DFF] hover:underline">查看详情</button>
+<span class="text-[10px] text-brand font-medium">距离开庭 18h</span>
+<button class="text-[10px] text-brand hover:underline">查看详情</button>
 </div>
 </div>
 <!-- 卡片 4: 待处理 - 某科技公司案代理费发票待开具 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
+<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+<div class="w-10 h-10 rounded-lg bg-warning-tint flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-orange-500 text-xl" icon="mdi:account-cash-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-orange-100 text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
-<span class="font-medium text-sm text-gray-800 truncate">某科技公司案代理费发票待开具</span>
+<span class="text-[10px] bg-warning-tint text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
+<span class="font-medium text-sm text-fg-primary truncate">某科技公司案代理费发票待开具</span>
 </div>
-<p class="text-xs text-gray-500 truncate">金额：¥50,000 · 客户要求本周内提供</p>
+<p class="text-xs text-fg-tertiary truncate">金额：¥50,000 · 客户要求本周内提供</p>
 </div>
 <iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
 <span class="text-[10px] text-orange-500 font-medium">截止：本周五</span>
-<button class="text-[10px] text-[#165DFF] hover:underline">去处理</button>
+<button class="text-[10px] text-brand hover:underline">去处理</button>
 </div>
 </div>
 <!-- 卡片5: 提醒 - 某劳动争议案调解方案待确认 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
+<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-blue-500 text-xl" icon="mdi:handshake-outline"></iconify-icon>
+<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-brand text-xl" icon="mdi:handshake-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-blue-100 text-blue-700 font-medium px-1.5 py-0.5 rounded-full">提醒</span>
-<span class="font-medium text-sm text-gray-800 truncate">某劳动争议案调解方案待确认</span>
+<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">提醒</span>
+<span class="font-medium text-sm text-fg-primary truncate">某劳动争议案调解方案待确认</span>
 </div>
-<p class="text-xs text-gray-500 truncate">对方已同意调解 · 建议方案已生成 · 请尽快确认</p>
+<p class="text-xs text-fg-tertiary truncate">对方已同意调解 · 建议方案已生成 · 请尽快确认</p>
 </div>
 <iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-blue-500 font-medium">待回复：2 天</span>
-<button class="text-[10px] text-[#165DFF] hover:underline">确认方案</button>
+<span class="text-[10px] text-brand font-medium">待回复：2 天</span>
+<button class="text-[10px] text-brand hover:underline">确认方案</button>
 </div>
 </div>
 </div>

@@ -3,19 +3,19 @@
 <div class="grid grid-cols-4 gap-3">
 <div class="arco-card p-4 flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-xs mb-1">当前案件数</p>
+<p class="text-fg-tertiary text-xs mb-1">当前案件数</p>
 <h3 class="text-2xl font-bold">12</h3>
 <p class="text-[10px] text-green-500 mt-1 flex items-center">
 <iconify-icon icon="mdi:arrow-up"></iconify-icon> 20% 较上月
                             </p>
 </div>
-<div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-[#165DFF]">
+<div class="w-12 h-12 bg-brand-tint3 rounded-full flex items-center justify-center text-brand">
 <iconify-icon class="text-xl" icon="mdi:briefcase-outline"></iconify-icon>
 </div>
 </div>
 <div class="arco-card p-4 flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-xs mb-1">即将开庭</p>
+<p class="text-fg-tertiary text-xs mb-1">即将开庭</p>
 <h3 class="text-2xl font-bold">3</h3>
 <p class="text-[10px] text-red-500 mt-1 flex items-center">
 <iconify-icon icon="mdi:calendar-alert"></iconify-icon> 最近：6月25日
@@ -27,25 +27,25 @@
 </div>
 <div class="arco-card p-4 flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-xs mb-1">待处理案件</p>
+<p class="text-fg-tertiary text-xs mb-1">待处理案件</p>
 <h3 class="text-2xl font-bold">5</h3>
 <p class="text-[10px] text-orange-500 mt-1 flex items-center">
 <iconify-icon icon="mdi:clock-outline"></iconify-icon> 3 份即将超期
                             </p>
 </div>
-<div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-orange-600">
+<div class="w-12 h-12 bg-warning-tint rounded-full flex items-center justify-center text-warning">
 <iconify-icon class="text-xl" icon="mdi:file-clock-outline"></iconify-icon>
 </div>
 </div>
 <div class="arco-card p-4 flex items-center justify-between">
 <div>
-<p class="text-gray-500 text-xs mb-1">已完结案件</p>
+<p class="text-fg-tertiary text-xs mb-1">已完结案件</p>
 <h3 class="text-2xl font-bold">36</h3>
 <p class="text-[10px] text-green-500 mt-1 flex items-center">
 <iconify-icon icon="mdi:check-circle"></iconify-icon> 全部归档完成
                             </p>
 </div>
-<div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600">
+<div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-success">
 <iconify-icon class="text-xl" icon="mdi:check-circle"></iconify-icon>
 </div>
 </div>
@@ -57,13 +57,13 @@
 <div class="arco-card p-3 h-full flex flex-col">
 <div class="flex items-center justify-between mb-3">
 <h4 class="font-bold text-sm flex items-center gap-1.5">
-<iconify-icon class="text-[#165DFF] text-sm" icon="mdi:calendar-text-outline"></iconify-icon>
+<iconify-icon class="text-brand text-sm" icon="mdi:calendar-text-outline"></iconify-icon>
                                 今日日程
-                                <span class="bg-[#165DFF] text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1" id="today-schedule-badge">5</span>
+                                <span class="bg-brand text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1" id="today-schedule-badge">5</span>
 </h4>
 <div class="flex items-center gap-1.5">
-<button class="text-[10px] text-[#165DFF] hover:underline" onclick="switchView('schedule-calendar')">查看全部</button>
-<button class="flex items-center gap-0.5 text-[10px] font-medium text-[#165DFF] hover:text-[#4080FF] bg-blue-50 hover:bg-blue-100 px-1.5 py-0.5 rounded transition-colors" onclick="openScheduleModal()" title="添加日程">
+<button class="text-[10px] text-brand hover:underline" onclick="switchView('schedule-calendar')">查看全部</button>
+<button class="flex items-center gap-0.5 text-[10px] font-medium text-brand hover:text-[#4080FF] bg-brand-tint3 hover:bg-brand-tint px-1.5 py-0.5 rounded transition-colors" onclick="openScheduleModal()" title="添加日程">
 <iconify-icon class="text-[10px]" icon="mdi:plus"></iconify-icon>
 <span>添加日程</span>
 </button>
@@ -71,108 +71,108 @@
 </div>
 <div class="flex-1 space-y-0">
 <div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF] cursor-pointer" type="checkbox"/>
+<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
 <div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-gray-800">09:00</span>
+<span class="text-sm font-bold text-fg-primary">09:00</span>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-gray-800">与 XX 律所张三律师会面</p>
-<p class="text-xs text-gray-400">合同纠纷案</p>
+<p class="text-sm font-medium text-fg-primary">与 XX 律所张三律师会面</p>
+<p class="text-xs text-fg-tertiary">合同纠纷案</p>
 </div>
 <div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
 <iconify-icon icon="mdi:account-outline"></iconify-icon>
 </div>
 <!-- 操作按钮（hover显示） -->
 <div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-blue-100 flex items-center justify-center text-[#86909C] hover:text-[#165DFF] transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
+<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
 <iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
 </button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-[#86909C] hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
+<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
 <iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
 </button>
 </div>
 </div>
 <div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF] cursor-pointer" type="checkbox"/>
+<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
 <div class="w-12 flex-none text-right">
 <span class="text-sm font-bold text-red-600">10:30</span>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-gray-800">海淀法院第3法庭开庭</p>
-<p class="text-xs text-gray-400">买卖合同纠纷案</p>
+<p class="text-sm font-medium text-fg-primary">海淀法院第3法庭开庭</p>
+<p class="text-xs text-fg-tertiary">买卖合同纠纷案</p>
 </div>
 <div class="flex-none text-gray-300 group-hover:text-red-400 transition-colors">
 <iconify-icon icon="mdi:gavel"></iconify-icon>
 </div>
 <!-- 操作按钮（hover显示） -->
 <div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-blue-100 flex items-center justify-center text-[#86909C] hover:text-[#165DFF] transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
+<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
 <iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
 </button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-[#86909C] hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
+<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
 <iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
 </button>
 </div>
 </div>
 <div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF] cursor-pointer" type="checkbox"/>
+<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
 <div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-gray-800">14:00</span>
+<span class="text-sm font-bold text-fg-primary">14:00</span>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-gray-800">客户电话沟通</p>
-<p class="text-xs text-gray-400">王华借贷纠纷案</p>
+<p class="text-sm font-medium text-fg-primary">客户电话沟通</p>
+<p class="text-xs text-fg-tertiary">王华借贷纠纷案</p>
 </div>
 <div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
 <iconify-icon icon="mdi:phone-outline"></iconify-icon>
 </div>
 <div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-blue-100 flex items-center justify-center text-[#86909C] hover:text-[#165DFF] transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
+<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
 <iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
 </button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-[#86909C] hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
+<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
 <iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
 </button>
 </div>
 </div>
 <div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF] cursor-pointer" type="checkbox"/>
+<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
 <div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-gray-800">15:30</span>
+<span class="text-sm font-bold text-fg-primary">15:30</span>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-gray-800">证据材料整理</p>
-<p class="text-xs text-gray-400">张三合同纠纷案</p>
+<p class="text-sm font-medium text-fg-primary">证据材料整理</p>
+<p class="text-xs text-fg-tertiary">张三合同纠纷案</p>
 </div>
 <div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
 <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
 </div>
 <div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-blue-100 flex items-center justify-center text-[#86909C] hover:text-[#165DFF] transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
+<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
 <iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
 </button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-[#86909C] hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
+<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
 <iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
 </button>
 </div>
 </div>
 <div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-gray-300 text-[#165DFF] focus:ring-[#165DFF] cursor-pointer" type="checkbox"/>
+<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
 <div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-gray-800">17:00</span>
+<span class="text-sm font-bold text-fg-primary">17:00</span>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-gray-800">案件讨论会议</p>
-<p class="text-xs text-gray-400">某科技公司股权纠纷案</p>
+<p class="text-sm font-medium text-fg-primary">案件讨论会议</p>
+<p class="text-xs text-fg-tertiary">某科技公司股权纠纷案</p>
 </div>
 <div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
 <iconify-icon icon="mdi:account-group-outline"></iconify-icon>
 </div>
 <div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-blue-100 flex items-center justify-center text-[#86909C] hover:text-[#165DFF] transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
+<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
 <iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
 </button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-[#86909C] hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
+<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
 <iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
 </button>
 </div>
@@ -185,12 +185,12 @@
 <div class="arco-card p-3 h-full flex flex-col">
 <div class="flex items-center justify-between mb-3">
 <h4 class="font-bold text-sm flex items-center gap-1.5">
-<iconify-icon class="text-sm text-[#F5222D]" icon="mdi:alert-circle-outline"></iconify-icon>
+<iconify-icon class="text-sm text-danger" icon="mdi:alert-circle-outline"></iconify-icon>
                                 需要关注
                                 <span class="bg-red-500 text-white text-[10px] font-bold min-w-[20px] h-[20px] flex items-center justify-center rounded-full px-1.5">2</span>
 </h4>
 <div class="flex items-center gap-1.5">
-<button class="text-[10px] text-[#165DFF] hover:underline" onclick="switchView('attention-list')">查看全部</button>
+<button class="text-[10px] text-brand hover:underline" onclick="switchView('attention-list')">查看全部</button>
 </div>
 </div>
 <div class="flex-1 space-y-2">
@@ -201,17 +201,17 @@
 <p class="text-xs font-medium text-red-800">证据提交截止 — 李明案</p>
 <p class="text-[10px] text-red-500 mt-0.5">剩余 2 天 · 请尽快提交补充证据材料</p>
 </div>
-<iconify-icon class="text-[#C9CDD4] text-sm opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-fg-disabled text-sm opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
 </div>
 </div>
-<div class="p-2 rounded-lg border border-orange-100 bg-orange-50/80 hover:bg-orange-50 transition-colors cursor-pointer group">
+<div class="p-2 rounded-lg border border-orange-100 bg-warning-tint/80 hover:bg-warning-tint transition-colors cursor-pointer group">
 <div class="flex items-center gap-2">
-<div class="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-sm">⏰</div>
+<div class="w-6 h-6 rounded-full bg-warning-tint flex items-center justify-center flex-shrink-0 text-sm">⏰</div>
 <div class="flex-1 min-w-0">
 <p class="text-xs font-medium text-orange-800">诉讼费缴纳 — 王华案</p>
 <p class="text-[10px] text-orange-500 mt-0.5">今日到期 · 请及时完成缴费</p>
 </div>
-<iconify-icon class="text-[#C9CDD4] text-sm opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-fg-disabled text-sm opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
 </div>
 </div>
 </div>
@@ -225,51 +225,51 @@
 <div class="arco-card p-3 h-full">
 <div class="flex items-center justify-between mb-3">
 <h4 class="font-bold text-sm flex items-center gap-1.5">
-<iconify-icon class="text-sm text-[#165DFF]" icon="mdi:bell-ring-outline"></iconify-icon>
+<iconify-icon class="text-sm text-brand" icon="mdi:bell-ring-outline"></iconify-icon>
                             案件动态
                         </h4>
-<button class="text-[10px] text-[#165DFF] hover:underline" onclick="switchView('case-dynamics')">查看全部</button>
+<button class="text-[10px] text-brand hover:underline" onclick="switchView('case-dynamics')">查看全部</button>
 </div>
 <div class="space-y-0">
 <div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
-<div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-<iconify-icon class="text-xs text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>
+<div class="w-6 h-6 rounded-full bg-brand-tint3 flex items-center justify-center flex-shrink-0 mt-0.5">
+<iconify-icon class="text-xs text-brand" icon="mdi:file-document-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">起诉状已完成</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">李明诉XX公司买卖合同纠纷 · 张律师</p>
+<p class="text-xs font-medium text-fg-primary">起诉状已完成</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">李明诉XX公司买卖合同纠纷 · 张律师</p>
 </div>
-<span class="text-[10px] text-[#C9CDD4] flex-shrink-0">10:30</span>
+<span class="text-[10px] text-fg-disabled flex-shrink-0">10:30</span>
 </div>
 <div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
-<div class="w-6 h-6 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-<iconify-icon class="text-xs text-[#FAAD14]" icon="mdi:clock-outline"></iconify-icon>
+<div class="w-6 h-6 rounded-full bg-warning-tint flex items-center justify-center flex-shrink-0 mt-0.5">
+<iconify-icon class="text-xs text-urgent" icon="mdi:clock-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">证据提交即将截止</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">李明案 · 剩余 2 天</p>
+<p class="text-xs font-medium text-fg-primary">证据提交即将截止</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">李明案 · 剩余 2 天</p>
 </div>
-<span class="text-[10px] text-[#F5222D] font-medium flex-shrink-0">紧急</span>
+<span class="text-[10px] text-danger font-medium flex-shrink-0">紧急</span>
 </div>
 <div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-<iconify-icon class="text-xs text-green-600" icon="mdi:check-circle-outline"></iconify-icon>
+<iconify-icon class="text-xs text-success" icon="mdi:check-circle-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">案件已归档</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">张三合同纠纷 · 归档完成</p>
+<p class="text-xs font-medium text-fg-primary">案件已归档</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">张三合同纠纷 · 归档完成</p>
 </div>
-<span class="text-[10px] text-[#C9CDD4] flex-shrink-0">昨天</span>
+<span class="text-[10px] text-fg-disabled flex-shrink-0">昨天</span>
 </div>
 <div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-<iconify-icon class="text-xs text-purple-600" icon="mdi:gavel"></iconify-icon>
+<iconify-icon class="text-xs text-wiki" icon="mdi:gavel"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">开庭日期已确定</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">王华借贷纠纷 · 2026-08-28 14:00</p>
+<p class="text-xs font-medium text-fg-primary">开庭日期已确定</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">王华借贷纠纷 · 2026-08-28 14:00</p>
 </div>
-<span class="text-[10px] text-[#C9CDD4] flex-shrink-0">昨天</span>
+<span class="text-[10px] text-fg-disabled flex-shrink-0">昨天</span>
 </div>
 </div>
 </div>
@@ -278,53 +278,53 @@
 <div class="col-span-5">
 <div class="arco-card p-3 h-full flex flex-col">
 <div class="flex items-center gap-2 mb-3 flex-none">
-<div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-[#165DFF]">
+<div class="w-7 h-7 rounded-lg bg-brand-tint3 flex items-center justify-center text-brand">
 <iconify-icon class="text-sm" icon="mdi:chart-timeline-variant"></iconify-icon>
 </div>
 <h4 class="font-bold text-sm">本周效率</h4>
-<span class="text-[10px] text-[#86909C] ml-auto bg-[#F7F8FA] px-1.5 py-0.5 rounded-full">08-14 ~ 08-20</span>
+<span class="text-[10px] text-fg-tertiary ml-auto bg-bg-subtle px-1.5 py-0.5 rounded-full">08-14 ~ 08-20</span>
 </div>
 <div class="flex-1 flex flex-col justify-between">
 <div class="grid grid-cols-3 gap-2 mb-3">
-<div class="text-center p-2.5 rounded-lg bg-[#F7F8FA] border border-[#F2F3F5]">
-<p class="text-lg font-bold text-[#165DFF]">3</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">文书生成</p>
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<p class="text-lg font-bold text-brand">3</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">文书生成</p>
 </div>
-<div class="text-center p-2.5 rounded-lg bg-[#F7F8FA] border border-[#F2F3F5]">
-<p class="text-lg font-bold text-[#165DFF]">5</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">类案检索</p>
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<p class="text-lg font-bold text-brand">5</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">类案检索</p>
 </div>
-<div class="text-center p-2.5 rounded-lg bg-[#F7F8FA] border border-[#F2F3F5]">
-<p class="text-lg font-bold text-[#165DFF]">2</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">案件跟进</p>
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<p class="text-lg font-bold text-brand">2</p>
+<p class="text-[10px] text-fg-tertiary mt-0.5">案件跟进</p>
 </div>
 </div>
 <!-- 本周进度 -->
 <div class="space-y-2.5">
 <div>
-<div class="flex justify-between text-[10px] text-[#86909C] mb-1">
+<div class="flex justify-between text-[10px] text-fg-tertiary mb-1">
 <span>案件处理</span>
-<span class="font-medium text-[#4E5969]">5/12</span>
+<span class="font-medium text-fg-secondary">5/12</span>
 </div>
-<div class="w-full h-2 bg-[#F2F3F5] rounded-full overflow-hidden">
-<div class="h-full bg-[#165DFF] rounded-full" style="width:42%"></div>
+<div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+<div class="h-full bg-brand rounded-full" style="width:42%"></div>
 </div>
 </div>
 <div>
-<div class="flex justify-between text-[10px] text-[#86909C] mb-1">
+<div class="flex justify-between text-[10px] text-fg-tertiary mb-1">
 <span>庭审准备</span>
-<span class="font-medium text-[#4E5969]">2/3</span>
+<span class="font-medium text-fg-secondary">2/3</span>
 </div>
-<div class="w-full h-2 bg-[#F2F3F5] rounded-full overflow-hidden">
-<div class="h-full bg-[#FAAD14] rounded-full" style="width:66%"></div>
+<div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+<div class="h-full bg-urgent rounded-full" style="width:66%"></div>
 </div>
 </div>
 <div>
-<div class="flex justify-between text-[10px] text-[#86909C] mb-1">
+<div class="flex justify-between text-[10px] text-fg-tertiary mb-1">
 <span>归档进度</span>
-<span class="font-medium text-[#4E5969]">1/2</span>
+<span class="font-medium text-fg-secondary">1/2</span>
 </div>
-<div class="w-full h-2 bg-[#F2F3F5] rounded-full overflow-hidden">
+<div class="w-full h-2 bg-bg rounded-full overflow-hidden">
 <div class="h-full bg-green-500 rounded-full" style="width:50%"></div>
 </div>
 </div>
@@ -340,48 +340,48 @@
 <iconify-icon icon="mdi:folder-multiple-outline"></iconify-icon>
             最近案件
         </h4>
-<button class="text-[10px] text-[#165DFF] hover:underline" onclick="switchToList('case-list', null)">查看全部</button>
+<button class="text-[10px] text-brand hover:underline" onclick="switchToList('case-list', null)">查看全部</button>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">
 <thead>
 <tr class="border-b border-gray-100">
-<th class="pb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">案件名称</th>
-<th class="pb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">角色</th>
-<th class="pb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">立案日期</th>
-<th class="pb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">状态</th>
+<th class="pb-2 text-[10px] font-semibold text-fg-tertiary uppercase tracking-wider">案件名称</th>
+<th class="pb-2 text-[10px] font-semibold text-fg-tertiary uppercase tracking-wider">角色</th>
+<th class="pb-2 text-[10px] font-semibold text-fg-tertiary uppercase tracking-wider">立案日期</th>
+<th class="pb-2 text-[10px] font-semibold text-fg-tertiary uppercase tracking-wider">状态</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-gray-50">
 <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openCaseDetail(0)">
-<td class="py-2.5 text-sm font-medium text-[#165DFF] truncate max-w-[180px]">李明诉XX公司买卖合同纠纷</td>
-<td class="py-2.5 text-sm text-gray-600">代理原告</td>
-<td class="py-2.5 text-sm text-gray-500">2026-06-10</td>
-<td class="py-2.5"><span class="bg-blue-100 text-blue-700 text-[10px] font-medium px-2 py-0.5 rounded-full">进行中</span></td>
+<td class="py-2.5 text-sm font-medium text-brand truncate max-w-[180px]">李明诉XX公司买卖合同纠纷</td>
+<td class="py-2.5 text-sm text-fg-secondary">代理原告</td>
+<td class="py-2.5 text-sm text-fg-tertiary">2026-06-10</td>
+<td class="py-2.5"><span class="bg-brand-tint text-brand text-[10px] font-medium px-2 py-0.5 rounded-full">进行中</span></td>
 </tr>
 <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openCaseDetail(1)">
-<td class="py-2.5 text-sm font-medium text-[#165DFF] truncate max-w-[180px]">王华借贷纠纷</td>
-<td class="py-2.5 text-sm text-gray-600">代理被告</td>
-<td class="py-2.5 text-sm text-gray-500">2026-06-08</td>
-<td class="py-2.5"><span class="bg-orange-100 text-orange-700 text-[10px] font-medium px-2 py-0.5 rounded-full">待开庭</span></td>
+<td class="py-2.5 text-sm font-medium text-brand truncate max-w-[180px]">王华借贷纠纷</td>
+<td class="py-2.5 text-sm text-fg-secondary">代理被告</td>
+<td class="py-2.5 text-sm text-fg-tertiary">2026-06-08</td>
+<td class="py-2.5"><span class="bg-warning-tint text-orange-700 text-[10px] font-medium px-2 py-0.5 rounded-full">待开庭</span></td>
 </tr>
 <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openCaseDetail(2)">
-<td class="py-2.5 text-sm font-medium text-[#165DFF] truncate max-w-[180px]">张三合同纠纷</td>
-<td class="py-2.5 text-sm text-gray-600">代理原告</td>
-<td class="py-2.5 text-sm text-gray-500">2026-06-05</td>
-<td class="py-2.5"><span class="bg-green-100 text-green-700 text-[10px] font-medium px-2 py-0.5 rounded-full">已归档</span></td>
+<td class="py-2.5 text-sm font-medium text-brand truncate max-w-[180px]">张三合同纠纷</td>
+<td class="py-2.5 text-sm text-fg-secondary">代理原告</td>
+<td class="py-2.5 text-sm text-fg-tertiary">2026-06-05</td>
+<td class="py-2.5"><span class="bg-success-tint text-success text-[10px] font-medium px-2 py-0.5 rounded-full">已归档</span></td>
 </tr>
 <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openCaseDetail(3)">
-<td class="py-2.5 text-sm font-medium text-[#165DFF] truncate max-w-[180px]">某科技公司股权纠纷</td>
-<td class="py-2.5 text-sm text-gray-600">代理原告</td>
-<td class="py-2.5 text-sm text-gray-500">2026-06-01</td>
-<td class="py-2.5"><span class="bg-blue-100 text-blue-700 text-[10px] font-medium px-2 py-0.5 rounded-full">进行中</span></td>
+<td class="py-2.5 text-sm font-medium text-brand truncate max-w-[180px]">某科技公司股权纠纷</td>
+<td class="py-2.5 text-sm text-fg-secondary">代理原告</td>
+<td class="py-2.5 text-sm text-fg-tertiary">2026-06-01</td>
+<td class="py-2.5"><span class="bg-brand-tint text-brand text-[10px] font-medium px-2 py-0.5 rounded-full">进行中</span></td>
 </tr>
 <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openCaseDetail(4)">
-<td class="py-2.5 text-sm font-medium text-[#165DFF] truncate max-w-[180px]">赵六劳动争议仲裁</td>
-<td class="py-2.5 text-sm text-gray-600">代理被告</td>
-<td class="py-2.5 text-sm text-gray-500">2026-05-28</td>
-<td class="py-2.5"><span class="bg-purple-100 text-purple-700 text-[10px] font-medium px-2 py-0.5 rounded-full">仲裁中</span></td>
+<td class="py-2.5 text-sm font-medium text-brand truncate max-w-[180px]">赵六劳动争议仲裁</td>
+<td class="py-2.5 text-sm text-fg-secondary">代理被告</td>
+<td class="py-2.5 text-sm text-fg-tertiary">2026-05-28</td>
+<td class="py-2.5"><span class="bg-wiki-tint text-wiki text-[10px] font-medium px-2 py-0.5 rounded-full">仲裁中</span></td>
 </tr>
 </tbody>
 </table>

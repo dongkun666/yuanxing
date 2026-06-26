@@ -1,44 +1,44 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-payment-success">
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-payment-success">
 <div class="max-w-2xl mx-auto w-full mt-16 text-center space-y-6">
 <!-- 成功动画 -->
 <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto">
 <iconify-icon class="text-4xl text-green-500" icon="mdi:check-circle"></iconify-icon>
 </div>
 <div>
-<h2 class="text-2xl font-bold text-[#1D2129]">支付成功</h2>
-<p class="text-sm text-[#86909C] mt-2" id="success-plan-info">专业版 · 月付已生效</p>
+<h2 class="text-2xl font-bold text-fg-primary">支付成功</h2>
+<p class="text-sm text-fg-tertiary mt-2" id="success-plan-info">专业版 · 月付已生效</p>
 </div>
 <!-- 订单信息卡片 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-6 text-left max-w-md mx-auto w-full">
+<div class="bg-white rounded-xl border border-bg-border p-6 text-left max-w-md mx-auto w-full">
 <div class="flex justify-between text-sm py-2">
-<span class="text-[#86909C]">订单编号</span>
-<span class="text-[#4E5969]" id="success-order-no">LP20260821001</span>
+<span class="text-fg-tertiary">订单编号</span>
+<span class="text-fg-secondary" id="success-order-no">LP20260821001</span>
 </div>
 <div class="flex justify-between text-sm py-2 border-t border-[#F2F3F5]">
-<span class="text-[#86909C]">订阅方案</span>
-<span class="text-[#4E5969]" id="success-plan">专业版 · 月付</span>
+<span class="text-fg-tertiary">订阅方案</span>
+<span class="text-fg-secondary" id="success-plan">专业版 · 月付</span>
 </div>
 <div class="flex justify-between text-sm py-2 border-t border-[#F2F3F5]">
-<span class="text-[#86909C]">支付金额</span>
-<span class="text-lg font-bold text-[#165DFF]" id="success-amount">¥299</span>
+<span class="text-fg-tertiary">支付金额</span>
+<span class="text-lg font-bold text-brand" id="success-amount">¥299</span>
 </div>
 <div class="flex justify-between text-sm py-2 border-t border-[#F2F3F5]">
-<span class="text-[#86909C]">生效时间</span>
-<span class="text-[#4E5969]">2026-08-21 15:30</span>
+<span class="text-fg-tertiary">生效时间</span>
+<span class="text-fg-secondary">2026-08-21 15:30</span>
 </div>
 <div class="flex justify-between text-sm py-2 border-t border-[#F2F3F5]">
-<span class="text-[#86909C]">到期时间</span>
-<span class="text-[#4E5969]" id="success-expiry">2026-09-21</span>
+<span class="text-fg-tertiary">到期时间</span>
+<span class="text-fg-secondary" id="success-expiry">2026-09-21</span>
 </div>
 <div class="flex justify-between text-sm py-2 border-t border-[#F2F3F5]">
-<span class="text-[#86909C]">支付方式</span>
-<span class="text-[#4E5969]" id="success-payment-method">支付宝</span>
+<span class="text-fg-tertiary">支付方式</span>
+<span class="text-fg-secondary" id="success-payment-method">支付宝</span>
 </div>
 </div>
 <!-- 操作按钮 -->
 <div class="flex gap-3 justify-center">
-<button class="px-6 py-2.5 text-sm font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="goToMemberCenter()">查看订阅</button>
-<button class="px-6 py-2.5 text-sm font-semibold rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors" onclick="goToWorkstation()">开始使用</button>
+<button class="px-6 py-2.5 text-sm font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="goToMemberCenter()">查看订阅</button>
+<button class="px-6 py-2.5 text-sm font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors" onclick="goToWorkstation()">开始使用</button>
 </div>
 </div>
 </div>
