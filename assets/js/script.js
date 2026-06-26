@@ -1477,16 +1477,101 @@
         });
         el.classList.remove('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
         el.classList.add('bg-[#165DFF]', 'text-white');
-        // 筛选表格行
+        _knowledgeType = type;
+        applyKnowledgeFilter();
+    }
+
+    var _knowledgeType = 'all';
+    var _knowledgeSearch = '';
+    var _knowledgeSort = null; // { field, dir }
+
+    function applyKnowledgeFilter() {
         var rows = document.querySelectorAll('#view-knowledge tbody tr[data-knowledge-type]');
-        var visibleCount = 0;
+        var visible = 0;
+        var kw = (_knowledgeSearch || '').toLowerCase().trim();
         rows.forEach(function(tr) {
             var t = tr.getAttribute('data-knowledge-type');
-            var match = (type === 'all') || (t === type);
-            tr.style.display = match ? '' : 'none';
-            if (match) visibleCount++;
+            var title = (tr.getAttribute('data-title') || '').toLowerCase();
+            var matchType = (_knowledgeType === 'all') || (t === _knowledgeType);
+            var matchKw = !kw || title.indexOf(kw) >= 0;
+            tr.style.display = (matchType && matchKw) ? '' : 'none';
+            if (matchType && matchKw) visible++;
         });
+        // 更新底部「共 X 篇」
+        var totalSpan = document.getElementById('kb-total-count');
+        if (totalSpan) {
+            totalSpan.textContent = '共 ' + visible + ' 篇文档，当前第 1 页';
+        }
     }
+
+    function triggerKnowledgeSearch(keyword) {
+        var input = document.getElementById('kb-search-input');
+        if (input) {
+            input.value = keyword;
+            _knowledgeSearch = keyword;
+            applyKnowledgeFilter();
+            // 滚动到搜索框位置
+            try { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e) {}
+        }
+    }
+
+    function sortKnowledgeTable(field, el) {
+        var dir;
+        if (_knowledgeSort && _knowledgeSort.field === field) {
+            dir = _knowledgeSort.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            dir = field === 'cite' ? 'desc' : 'asc'; // 引用默认降序
+        }
+        _knowledgeSort = { field: field, dir: dir };
+
+        // 重置所有 arrow
+        document.querySelectorAll('#view-knowledge .sort-arrow').forEach(function(a) {
+            a.textContent = '⇅';
+            a.classList.remove('text-[#165DFF]');
+            a.classList.add('text-[#C9CDD4]');
+        });
+        // 高亮当前
+        var arrow = el.querySelector('.sort-arrow');
+        if (arrow) {
+            arrow.textContent = dir === 'asc' ? '↑' : '↓';
+            arrow.classList.remove('text-[#C9CDD4]');
+            arrow.classList.add('text-[#165DFF]');
+        }
+
+        // 排序
+        var tbody = document.querySelector('#view-knowledge tbody');
+        if (!tbody) return;
+        var rows = Array.from(tbody.querySelectorAll('tr[data-knowledge-type]'));
+        rows.sort(function(a, b) {
+            var va, vb;
+            if (field === 'date') {
+                va = a.getAttribute('data-date') || '';
+                vb = b.getAttribute('data-date') || '';
+                return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+            } else if (field === 'cite') {
+                va = parseInt(a.getAttribute('data-cite') || '0', 10);
+                vb = parseInt(b.getAttribute('data-cite') || '0', 10);
+                return dir === 'asc' ? va - vb : vb - va;
+            } else if (field === 'title') {
+                va = a.getAttribute('data-title') || '';
+                vb = b.getAttribute('data-title') || '';
+                return dir === 'asc' ? va.localeCompare(vb, 'zh-CN') : vb.localeCompare(va, 'zh-CN');
+            }
+            return 0;
+        });
+        rows.forEach(function(r) { tbody.appendChild(r); });
+    }
+
+    // 知识库搜索框 - 实时过滤
+    (function() {
+        var input = document.getElementById('kb-search-input');
+        if (input) {
+            input.addEventListener('input', function() {
+                _knowledgeSearch = input.value;
+                applyKnowledgeFilter();
+            });
+        }
+    })();
 
     // 打开客户详情
     function openClientDetail(index) {
