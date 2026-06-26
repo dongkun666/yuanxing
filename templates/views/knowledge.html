@@ -1,501 +1,573 @@
 <div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-[#F2F3F5]" id="view-knowledge">
 <div class="max-w-6xl mx-auto w-full space-y-5">
-<!-- 顶部统计卡片 -->
+<!-- 顶部 4 概念卡 (LLM Wiki 视角) -->
 <div class="grid grid-cols-4 gap-4">
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
 <div class="flex items-center justify-between mb-1">
-<p class="text-xs text-[#86909C]">知识库总量</p>
+<p class="text-xs text-[#86909C]">原始资料 (Raw)</p>
 <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-base text-[#165DFF]" icon="mdi:bookshelf"></iconify-icon>
-</div>
-</div>
-<p class="text-2xl font-bold text-[#1D2129] leading-tight">186</p>
-<div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-green-600">↑ 较上周 +12</p>
-<svg class="overflow-visible" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 19.6 L 11.6 21.8 L 17.5 17.5 L 23.3 15.3 L 29.1 10.9 L 34.9 13.1 L 40.7 8.7 L 46.5 6.5 L 52.4 2.2 L 58.2 4.4 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#165DFF" fill-opacity="0.12"/>
-<path d="M 0.0 24.0 L 5.8 19.6 L 11.6 21.8 L 17.5 17.5 L 23.3 15.3 L 29.1 10.9 L 34.9 13.1 L 40.7 8.7 L 46.5 6.5 L 52.4 2.2 L 58.2 4.4 L 64.0 0.0" stroke="#165DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-</div>
-</div>
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
-<div class="flex items-center justify-between mb-1">
-<p class="text-xs text-[#86909C]">法律法规</p>
-<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-<iconify-icon class="text-base text-purple-600" icon="mdi:scale-balance"></iconify-icon>
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-multiple-outline"></iconify-icon>
 </div>
 </div>
 <p class="text-2xl font-bold text-[#1D2129] leading-tight">42</p>
 <div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-[#165DFF]">● 现行有效 38 部</p>
+<p class="text-[10px] text-green-600">↑ 7 天 +3</p>
 <svg class="overflow-visible" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 0.0 L 23.3 0.0 L 29.1 24.0 L 34.9 24.0 L 40.7 24.0 L 46.5 24.0 L 52.4 24.0 L 58.2 24.0 L 64.0 24.0 L 64.0 24 L 0.0 24 Z" fill="#9333EA" fill-opacity="0.12"/>
-<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 0.0 L 23.3 0.0 L 29.1 24.0 L 34.9 24.0 L 40.7 24.0 L 46.5 24.0 L 52.4 24.0 L 58.2 24.0 L 64.0 24.0" stroke="#9333EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 0.0 24.0 L 5.8 20.4 L 11.6 22.8 L 17.5 18.0 L 23.3 15.6 L 29.1 16.8 L 34.9 12.0 L 40.7 13.2 L 46.5 8.4 L 52.4 3.6 L 58.2 6.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#165DFF" fill-opacity="0.12"/>
+<path d="M 0.0 24.0 L 5.8 20.4 L 11.6 22.8 L 17.5 18.0 L 23.3 15.6 L 29.1 16.8 L 34.9 12.0 L 40.7 13.2 L 46.5 8.4 L 52.4 3.6 L 58.2 6.0 L 64.0 0.0" stroke="#165DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
 <div class="flex items-center justify-between mb-1">
-<p class="text-xs text-[#86909C]">典型案例</p>
-<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:gavel"></iconify-icon>
+<p class="text-xs text-[#86909C]">Wiki 页面</p>
+<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+<iconify-icon class="text-base text-purple-600" icon="mdi:graph-outline"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-[#1D2129] leading-tight">85</p>
+<p class="text-2xl font-bold text-[#1D2129] leading-tight">186</p>
 <div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-[#FAAD14]">● 最高法 24 件</p>
+<p class="text-[10px] text-purple-600">由 LLM 维护</p>
 <svg class="overflow-visible" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 20.6 L 11.6 20.6 L 17.5 13.7 L 23.3 10.3 L 29.1 10.3 L 34.9 6.9 L 40.7 3.4 L 46.5 3.4 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#FAAD14" fill-opacity="0.12"/>
-<path d="M 0.0 24.0 L 5.8 20.6 L 11.6 20.6 L 17.5 13.7 L 23.3 10.3 L 29.1 10.3 L 34.9 6.9 L 40.7 3.4 L 46.5 3.4 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0" stroke="#FAAD14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 0.0 24.0 L 5.8 21.1 L 11.6 18.5 L 17.5 16.0 L 23.3 13.8 L 29.1 11.3 L 34.9 8.7 L 40.7 6.5 L 46.5 4.7 L 52.4 2.9 L 58.2 1.5 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#9333EA" fill-opacity="0.12"/>
+<path d="M 0.0 24.0 L 5.8 21.1 L 11.6 18.5 L 17.5 16.0 L 23.3 13.8 L 29.1 11.3 L 34.9 8.7 L 40.7 6.5 L 46.5 4.7 L 52.4 2.9 L 58.2 1.5 L 64.0 0.0" stroke="#9333EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
 <div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
 <div class="flex items-center justify-between mb-1">
-<p class="text-xs text-[#86909C]">本月引用</p>
+<p class="text-xs text-[#86909C]">主题树</p>
 <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-base text-green-600" icon="mdi:trending-up"></iconify-icon>
+<iconify-icon class="text-base text-green-600" icon="mdi:family-tree"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-[#1D2129] leading-tight">347</p>
+<p class="text-2xl font-bold text-[#1D2129] leading-tight">13</p>
 <div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-[#86909C]">案件文书</p>
+<p class="text-[10px] text-[#FAAD14]">● 2 个待补</p>
 <svg class="overflow-visible" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 21.8 L 11.6 19.7 L 17.5 17.5 L 23.3 15.4 L 29.1 12.5 L 34.9 10.3 L 40.7 8.2 L 46.5 6.0 L 52.4 3.9 L 58.2 1.7 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#16A34A" fill-opacity="0.12"/>
-<path d="M 0.0 24.0 L 5.8 21.8 L 11.6 19.7 L 17.5 17.5 L 23.3 15.4 L 29.1 12.5 L 34.9 10.3 L 40.7 8.2 L 46.5 6.0 L 52.4 3.9 L 58.2 1.7 L 64.0 0.0" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 16.0 L 23.3 16.0 L 29.1 8.0 L 34.9 8.0 L 40.7 8.0 L 46.5 8.0 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#16A34A" fill-opacity="0.12"/>
+<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 16.0 L 23.3 16.0 L 29.1 8.0 L 34.9 8.0 L 40.7 8.0 L 46.5 8.0 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
+<div class="flex items-center justify-between mb-1">
+<p class="text-xs text-[#86909C]">巡检状态</p>
+<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:shield-check-outline"></iconify-icon>
+</div>
+</div>
+<p class="text-2xl font-bold text-[#1D2129] leading-tight">4 <span class="text-xs font-normal text-[#86909C]">项待处理</span></p>
+<div class="flex items-end justify-between mt-1.5">
+<p class="text-[10px] text-red-500">● 1 项紧急</p>
+<svg class="overflow-visible" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M 0.0 0.0 L 5.8 9.6 L 11.6 4.8 L 17.5 14.4 L 23.3 19.2 L 29.1 9.6 L 34.9 14.4 L 40.7 24.0 L 46.5 19.2 L 52.4 14.4 L 58.2 19.2 L 64.0 19.2 L 64.0 24 L 0.0 24 Z" fill="#FAAD14" fill-opacity="0.12"/>
+<path d="M 0.0 0.0 L 5.8 9.6 L 11.6 4.8 L 17.5 14.4 L 23.3 19.2 L 29.1 9.6 L 34.9 14.4 L 40.7 24.0 L 46.5 19.2 L 52.4 14.4 L 58.2 19.2 L 64.0 19.2" stroke="#FAAD14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
 </div>
-<!-- 分类筛选 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-3">
-<div class="flex items-center gap-1 flex-wrap">
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#165DFF] text-white" onclick="switchKnowledgeTab(this, 'all')">全部</button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchKnowledgeTab(this, 'law')">法律法规</button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchKnowledgeTab(this, 'interpretation')">司法解释</button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchKnowledgeTab(this, 'case')">典型案例</button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchKnowledgeTab(this, 'article')">学术文献</button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="switchKnowledgeTab(this, 'internal')">内部资料</button>
-<span class="flex-1"></span>
-<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors">
-<iconify-icon class="text-sm" icon="mdi:sort-variant"></iconify-icon>
-                    引用次数
-                </button>
-<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors">
-<iconify-icon class="text-sm" icon="mdi:download-outline"></iconify-icon>
-                    批量导出
-                </button>
+
+<!-- LLM Wiki 三大操作 Tab 切换 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-2">
+<div class="flex items-center gap-1">
+<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg bg-[#F2F5FF] text-[#165DFF] flex items-center justify-center gap-2 transition-colors" id="kb-tab-ingest" onclick="switchKnowledgeMainTab('ingest', this)">
+<iconify-icon class="text-lg" icon="mdi:upload-multiple"></iconify-icon>
+<span>摄入 (Ingest)</span>
+<span class="text-[10px] bg-white text-[#165DFF] px-1.5 py-0.5 rounded font-medium">42 原始</span>
+</button>
+<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] flex items-center justify-center gap-2 transition-colors" id="kb-tab-wiki" onclick="switchKnowledgeMainTab('wiki', this)">
+<iconify-icon class="text-lg" icon="mdi:graph"></iconify-icon>
+<span>Wiki 页面</span>
+<span class="text-[10px] bg-[#F2F3F5] text-[#4E5969] px-1.5 py-0.5 rounded font-medium">186 页</span>
+</button>
+<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-[#4E5969] hover:bg-[#F7F8FA] flex items-center justify-center gap-2 transition-colors" id="kb-tab-lint" onclick="switchKnowledgeMainTab('lint', this)">
+<iconify-icon class="text-lg" icon="mdi:shield-search"></iconify-icon>
+<span>巡检 (Lint)</span>
+<span class="text-[10px] bg-[#FFF3E0] text-[#FAAD14] px-1.5 py-0.5 rounded font-medium">4 待处理</span>
+</button>
 </div>
 </div>
-<!-- 搜索与筛选 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-4">
-<div class="flex items-center gap-3 flex-wrap">
-<div class="relative flex-1 min-w-[200px]">
-<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#C9CDD4]" icon="mdi:magnify"></iconify-icon>
-<input class="w-full border border-[#E5E6EB] rounded-lg pl-9 pr-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors" id="kb-search-input" placeholder="搜索法条、案例、文书关键词..." type="text"/>
+
+<!-- ============== Tab 1: 摄入 (Ingest) ============== -->
+<div id="kb-panel-ingest" class="kb-panel space-y-4">
+<!-- 摄入状态汇总 -->
+<div class="grid grid-cols-4 gap-3">
+<div class="bg-white rounded-lg border border-[#E5E6EB] p-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-green-600" icon="mdi:check-circle"></iconify-icon>
 </div>
-<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
-<option>全部领域</option>
-<option>民商事</option>
-<option>刑事</option>
-<option>行政</option>
-<option>知识产权</option>
-<option>劳动争议</option>
-</select>
-<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
-<option>全部来源</option>
-<option>全国人大</option>
-<option>最高人民法院</option>
-<option>最高人民检察院</option>
-<option>内部</option>
-<option>期刊</option>
-</select>
-<select class="border border-[#E5E6EB] rounded-lg px-3 py-2 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] appearance-none bg-white">
-<option>全部时间</option>
-<option>近一周</option>
-<option>近一月</option>
-<option>近一年</option>
-</select>
-<button class="px-4 py-2 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1">
-<iconify-icon class="text-sm" icon="mdi:upload-outline"></iconify-icon>
-                    上传文档
-                </button>
+<div>
+<p class="text-xs text-[#86909C]">已编译</p>
+<p class="text-xl font-bold text-[#1D2129]">22</p>
 </div>
 </div>
-<!-- 文档列表 -->
+<div class="bg-white rounded-lg border border-[#E5E6EB] p-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#165DFF]" icon="mdi:loading"></iconify-icon>
+</div>
+<div>
+<p class="text-xs text-[#86909C]">编译中</p>
+<p class="text-xl font-bold text-[#1D2129]">2</p>
+</div>
+</div>
+<div class="bg-white rounded-lg border border-[#E5E6EB] p-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#FAAD14]" icon="mdi:clock-outline"></iconify-icon>
+</div>
+<div>
+<p class="text-xs text-[#86909C]">待编译</p>
+<p class="text-xl font-bold text-[#1D2129]">8</p>
+</div>
+</div>
+<div class="bg-white rounded-lg border border-[#E5E6EB] p-3 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-red-500" icon="mdi:alert-circle"></iconify-icon>
+</div>
+<div>
+<p class="text-xs text-[#86909C]">失败</p>
+<p class="text-xl font-bold text-[#1D2129]">0</p>
+</div>
+</div>
+</div>
+
+<!-- 原始资料列表 -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
-<div class="overflow-x-auto">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center justify-between">
+<div>
+<h4 class="text-sm font-semibold text-[#1D2129] flex items-center gap-2">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-multiple"></iconify-icon>
+原始资料 (Raw Sources)
+</h4>
+<p class="text-[10px] text-[#86909C] mt-0.5">只读资料,AI 编译后生成结构化 Wiki 页面。点击「AI 编译」启动 LLM 提取与跨页面更新。</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors flex items-center gap-1">
+<iconify-icon class="text-sm" icon="mdi:filter-variant"></iconify-icon>
+筛选
+</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors flex items-center gap-1">
+<iconify-icon class="text-sm" icon="mdi:sort-variant"></iconify-icon>
+时间
+</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1" onclick="simulateUpload()">
+<iconify-icon class="text-sm" icon="mdi:upload-outline"></iconify-icon>
+上传资料
+</button>
+</div>
+</div>
 <table class="w-full text-sm">
 <thead>
 <tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
-<th class="text-left py-3 px-4 text-xs font-semibold text-[#4E5969] w-2/5 cursor-pointer hover:text-[#165DFF] select-none" onclick="sortKnowledgeTable('title', this)">文档标题<span class="sort-arrow ml-1 text-[#C9CDD4]">⇅</span></th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">类型</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">领域</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969]">来源</th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] cursor-pointer hover:text-[#165DFF] select-none" onclick="sortKnowledgeTable('date', this)">发布时间<span class="sort-arrow ml-1 text-[#C9CDD4]">⇅</span></th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] cursor-pointer hover:text-[#165DFF] select-none" onclick="sortKnowledgeTable('cite', this)">引用<span class="sort-arrow ml-1 text-[#C9CDD4]">⇅</span></th>
-<th class="text-center py-3 px-4 text-xs font-semibold text-[#4E5969] w-44">操作</th>
+<th class="text-left py-2.5 px-4 text-xs font-semibold text-[#4E5969]">资料名称</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-24">类型</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-28">状态</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-32">影响</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-28">上传时间</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-36">操作</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-[#F2F3F5]">
-<!-- 法律法规 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="law" data-knowledge-area="民商事" data-date="2020-05-28" data-cite="128" data-title="中华人民共和国民法典 (合同编)">
+<!-- 编译中 1 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
 <td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-purple-600" icon="mdi:scale-balance"></iconify-icon>
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
 </div>
 <div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">中华人民共和国民法典 (合同编)</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">编号: 2020-C-001 · 现行有效</p>
+<p class="text-xs font-medium text-[#1D2129] truncate">张明楷·刑法学中因果关系与客观归责研究.pdf</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">2.4 MB · 18 页 · 学术文献</p>
 </div>
 </div>
 </td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-purple-50 text-purple-600 font-medium px-2 py-0.5 rounded">法律法规</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">民商事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">全国人大</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2020-05-28</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">128</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">PDF</td>
 <td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]">
+<iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon>
+<span class="text-[10px] font-medium">编译中 65%</span>
 </div>
+<div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5">
+<div class="bg-[#165DFF] h-1 rounded-full" style="width: 65%"></div>
+</div>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">
+<span class="font-medium text-[#165DFF]">8</span> Wiki 页
+<br><span class="text-[#86909C]">+ 新建 2</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">3 分钟前</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="text-[#165DFF] hover:underline" onclick="viewCompileProgress(this)">查看进度</button>
+<span class="text-[#C9CDD4] mx-1">|</span>
+<button class="text-[#86909C] hover:underline" onclick="cancelCompile(this)">取消</button>
 </td>
 </tr>
-<!-- 司法解释 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="interpretation" data-knowledge-area="民商事" data-date="2020-08-18" data-cite="76" data-title="最高人民法院关于审理民间借贷案件适用法律若干问题的规定">
+<!-- 待编译 1 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
 <td class="py-3 px-4">
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:file-document-outline"></iconify-icon>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-[#1D2129] truncate">指导案例 214 号:XX 科技公司诉 YY 网络公司买卖合同纠纷案</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">判决书 · 最高人民法院 · 2024</p>
+</div>
+</div>
+</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">判决书</td>
+<td class="text-center py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]">
+<iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon>
+<span class="text-[10px] font-medium">待编译</span>
+</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">预计 ~5 页</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">1 小时前</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)">
+<iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>
+AI 编译
+</button>
+</td>
+</tr>
+<!-- 待编译 2 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-base text-purple-600" icon="mdi:file-word-box"></iconify-icon>
+</div>
+<div class="min-w-0">
+<p class="text-xs font-medium text-[#1D2129] truncate">中华人民共和国民法典(合同编).docx</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">528 KB · 64 页 · 全国人大</p>
+</div>
+</div>
+</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">Word</td>
+<td class="text-center py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]">
+<iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon>
+<span class="text-[10px] font-medium">待编译</span>
+</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">预计 ~12 页</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">2 小时前</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)">
+<iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>
+AI 编译
+</button>
+</td>
+</tr>
+<!-- 已编译 1 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
+<td class="py-3 px-4">
+<div class="flex items-center gap-2.5">
 <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#165DFF]" icon="mdi:book-open-variant"></iconify-icon>
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-pdf-box"></iconify-icon>
 </div>
 <div class="min-w-0">
 <p class="text-xs font-medium text-[#1D2129] truncate">最高人民法院关于审理民间借贷案件适用法律若干问题的规定</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">法释 [2020] 17 号 · 现行有效</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">法释 [2020] 17 号 · 最高人民法院</p>
 </div>
 </div>
 </td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-50 text-[#165DFF] font-medium px-2 py-0.5 rounded">司法解释</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">民商事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">最高法</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2020-08-18</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">76</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">PDF</td>
 <td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600">
+<iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon>
+<span class="text-[10px] font-medium">已编译</span>
+</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">
+<span class="font-medium text-purple-600">11</span> Wiki 页
+<br><span class="text-[#86909C]">更新 1 周前</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">2024-08-18</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button>
+<span class="text-[#C9CDD4] mx-1">|</span>
+<button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>
 </td>
 </tr>
-<!-- 典型案例 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="case" data-knowledge-area="民商事" data-date="2024-03-15" data-cite="52" data-title="指导案例 214 号: XX 科技公司诉 YY 网络公司买卖合同纠纷案">
+<!-- 已编译 2 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
 <td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:gavel"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">指导案例 214 号: XX 科技公司诉 YY 网络公司买卖合同纠纷案</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">最高人民法院 2024 年发布 · 合同违约责任认定</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-amber-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">典型案例</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">民商事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">最高法</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-03-15</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">52</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="case" data-knowledge-area="刑事" data-date="2022-12-30" data-cite="41" data-title="指导案例 187 号: 张某故意伤害案 - 正当防卫与防卫过当的界限">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:gavel"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">指导案例 187 号: 张某故意伤害案 - 正当防卫与防卫过当的界限</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">最高人民法院 2022 年发布 · 刑事辩护参考</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-amber-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">典型案例</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">刑事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">最高法</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2022-12-30</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">41</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<!-- 学术文献 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="article" data-knowledge-area="刑事" data-date="2024-05-20" data-cite="18" data-title="张明楷: 刑法学中的因果关系与客观归责理论研究">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-2.5">
 <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-green-600" icon="mdi:newspaper-variant-outline"></iconify-icon>
+<iconify-icon class="text-base text-green-600" icon="mdi:web"></iconify-icon>
 </div>
 <div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">张明楷: 刑法学中的因果关系与客观归责理论研究</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">《法学研究》2024 年第 3 期 · 学术参考</p>
+<p class="text-xs font-medium text-[#1D2129] truncate">王迁·网络环境下著作权侵权认定标准研究</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">《中国法学》2024 年第 1 期 · 学术文献</p>
 </div>
 </div>
 </td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">学术文献</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">刑事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">《法学研究》</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-05-20</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">18</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">网页</td>
 <td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600">
+<iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon>
+<span class="text-[10px] font-medium">已编译</span>
+</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">
+<span class="font-medium text-purple-600">6</span> Wiki 页
+<br><span class="text-[#86909C]">更新 3 天前</span>
+</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">2024-01-30</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button>
+<span class="text-[#C9CDD4] mx-1">|</span>
+<button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>
 </td>
 </tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="article" data-knowledge-area="知识产权" data-date="2024-01-30" data-cite="23" data-title="王迁: 网络环境下著作权侵权认定标准研究">
+<!-- 待编译 3 -->
+<tr class="hover:bg-[#F7F8FA] transition-colors">
 <td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-green-600" icon="mdi:newspaper-variant-outline"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">王迁: 网络环境下著作权侵权认定标准研究</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">《中国法学》2024 年第 1 期 · 知产实务</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-green-50 text-green-600 font-medium px-2 py-0.5 rounded">学术文献</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">知识产权</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">《中国法学》</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-01-30</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">23</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<!-- 内部资料 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="internal" data-knowledge-area="民商事" data-date="2024-06-12" data-cite="32" data-title="内部培训: 合同审查要点与常见风险防范 (2024 修订版)">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:office-building-outline"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">内部培训: 合同审查要点与常见风险防范 (2024 修订版)</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">律所知识库 · 65 页 · 张律师 上传</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">内部资料</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">民商事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">律所内部</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-06-12</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">32</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="internal" data-knowledge-area="劳动争议" data-date="2024-04-08" data-cite="15" data-title="实务手册: 劳动争议案件证据清单与举证指引">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:office-building-outline"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">实务手册: 劳动争议案件证据清单与举证指引</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">律所知识库 · 28 页 · 王律师 上传</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">内部资料</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">劳动争议</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">律所内部</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-04-08</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">15</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<!-- 法律法规 - 刑法 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="law" data-knowledge-area="刑事" data-date="2024-03-01" data-cite="89" data-title="中华人民共和国刑法修正案 (十二)">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-purple-600" icon="mdi:scale-balance"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">中华人民共和国刑法修正案 (十二)</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">主席令第十五号 · 2024-03-01 施行</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-purple-50 text-purple-600 font-medium px-2 py-0.5 rounded">法律法规</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">刑事</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">全国人大</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2023-12-29</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">89</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<!-- 司法解释 - 知识产权 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="interpretation" data-knowledge-area="知识产权" data-date="2024-04-25" data-cite="28" data-title="最高人民法院关于审理侵犯专利权纠纷案件应用法律若干问题的解释">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#165DFF]" icon="mdi:book-open-variant"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">最高人民法院关于审理侵犯专利权纠纷案件应用法律若干问题的解释</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">法释 [2024] 5 号 · 知产案件审理参考</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-blue-50 text-[#165DFF] font-medium px-2 py-0.5 rounded">司法解释</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">知识产权</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">最高法</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-04-25</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">28</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
-</td>
-</tr>
-<!-- 典型案例 - 行政 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="case" data-knowledge-area="行政" data-date="2023-11-08" data-cite="19" data-title="指导案例 209 号: 某公司诉市监局行政处罚案 - 听证程序合法性">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-2.5">
 <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:gavel"></iconify-icon>
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:image-outline"></iconify-icon>
 </div>
 <div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">指导案例 209 号: 某公司诉市监局行政处罚案 - 听证程序合法性</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">最高人民法院 2023 年发布 · 行政诉讼</p>
+<p class="text-xs font-medium text-[#1D2129] truncate">诉讼案件证据清单与举证指引(2024 修订版).pdf</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">律所内部 · 张律师上传 · 28 页</p>
 </div>
 </div>
 </td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-amber-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">典型案例</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">行政</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">最高法</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2023-11-08</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">19</td>
+<td class="text-center py-3 px-4 text-xs text-[#4E5969]">扫描件</td>
 <td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]">
+<iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon>
+<span class="text-[10px] font-medium">待编译</span>
+</span>
 </td>
-</tr>
-<!-- 内部资料 - 知识产权 -->
-<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-type="internal" data-knowledge-area="知识产权" data-date="2024-02-18" data-cite="11" data-title="诉讼策略库: 网络著作权侵权案件维权路径选择">
-<td class="py-3 px-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:office-building-outline"></iconify-icon>
-</div>
-<div class="min-w-0">
-<p class="text-xs font-medium text-[#1D2129] truncate">诉讼策略库: 网络著作权侵权案件维权路径选择</p>
-<p class="text-[10px] text-[#86909C] mt-0.5">律所知识库 · 18 页 · 李律师 上传</p>
-</div>
-</div>
-</td>
-<td class="text-center py-3 px-4"><span class="text-[10px] bg-orange-50 text-[#FAAD14] font-medium px-2 py-0.5 rounded">内部资料</span></td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">知识产权</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">律所内部</td>
-<td class="text-center py-3 px-4 text-xs text-[#4E5969]">2024-02-18</td>
-<td class="text-center py-3 px-4 text-xs font-medium text-[#165DFF]">11</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2 whitespace-nowrap">
-<button class="text-xs text-[#165DFF] hover:underline">查看</button>
-<button class="text-xs text-[#165DFF] hover:underline">引用</button>
-<button class="text-xs text-[#165DFF] hover:underline">下载</button>
-</div>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">预计 ~4 页</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">昨天</td>
+<td class="text-center py-3 px-4 text-xs">
+<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)">
+<iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>
+AI 编译
+</button>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<!-- 分页 -->
-<div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
-<span class="text-xs text-[#86909C]" id="kb-total-count">共 186 篇文档，当前第 1 页</span>
-<div class="flex gap-1">
-<button class="w-7 h-7 rounded bg-[#165DFF] text-white text-xs flex items-center justify-center">1</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">2</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">3</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">...</button>
-<button class="w-7 h-7 rounded hover:bg-[#F7F8FA] text-xs text-[#4E5969] flex items-center justify-center">16</button>
+</div>
+
+<!-- ============== Tab 2: Wiki 页面 ============== -->
+<div id="kb-panel-wiki" class="kb-panel hidden space-y-4">
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center justify-between">
+<div>
+<h4 class="text-sm font-semibold text-[#1D2129] flex items-center gap-2">
+<iconify-icon class="text-base text-purple-600" icon="mdi:graph"></iconify-icon>
+Wiki 知识页
+<span class="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded ml-1">由 LLM 维护</span>
+</h4>
+<p class="text-[10px] text-[#86909C] mt-0.5">每页基于原始资料自动生成,带交叉链接和反向引用。LLM 持续更新。</p>
+</div>
+<input id="kb-search-input" placeholder="搜索 Wiki 页面..." type="text" class="w-64 border border-[#E5E6EB] rounded-lg pl-3 pr-3 py-1.5 text-xs text-[#4E5969] focus:outline-none focus:border-[#165DFF] transition-colors"/>
+</div>
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-[#F7F8FA] border-b border-[#E5E6EB]">
+<th class="text-left py-2.5 px-4 text-xs font-semibold text-[#4E5969]">Wiki 页面</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-24">主题</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-28">来源 Raw</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-24">反向链接</th>
+<th class="text-center py-2.5 px-4 text-xs font-semibold text-[#4E5969] w-28">更新</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#F2F3F5]">
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-title="合同纠纷处理要点">
+<td class="py-3 px-4">
+<p class="text-xs font-medium text-[#1D2129]">合同纠纷处理要点</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">合同效力 / 违约责任 / 解除条件 / 损害赔偿</p>
+</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-[#165DFF]">民商事</span></td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">7</span> 原始</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">23 ↔</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">2 天前</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-title="民间借贷利息计算规则">
+<td class="py-3 px-4">
+<p class="text-xs font-medium text-[#1D2129]">民间借贷利息计算规则</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">利率上限 / LPR 4 倍 / 复利 / 逾期利息</p>
+</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-[#165DFF]">民商事</span></td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">3</span> 原始</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">15 ↔</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">1 周前</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-title="网络著作权侵权认定">
+<td class="py-3 px-4">
+<p class="text-xs font-medium text-[#1D2129]">网络著作权侵权认定</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">信息网络传播权 / 避风港原则 / 主观过错</p>
+</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-purple-600">知识产权</span></td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">4</span> 原始</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">11 ↔</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">3 天前</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-title="故意伤害罪辩护要点">
+<td class="py-3 px-4">
+<p class="text-xs font-medium text-[#1D2129]">故意伤害罪辩护要点</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">正当防卫 / 防卫过当 / 轻重伤鉴定</p>
+</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded bg-red-50 text-red-600">刑事</span></td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">5</span> 原始</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">9 ↔</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">1 周前</td>
+</tr>
+<tr class="hover:bg-[#F7F8FA] transition-colors" data-knowledge-title="劳动合同解除实务">
+<td class="py-3 px-4">
+<p class="text-xs font-medium text-[#1D2129]">劳动合同解除实务</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">合法解除 / 经济补偿 / 违法解除赔偿</p>
+</td>
+<td class="text-center py-3 px-4"><span class="text-[10px] px-2 py-0.5 rounded bg-amber-50 text-[#FAAD14]">劳动争议</span></td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]"><span class="font-medium text-purple-600">2</span> 原始</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#4E5969]">6 ↔</td>
+<td class="text-center py-3 px-4 text-[10px] text-[#86909C]">2 月前 ⚠</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ============== Tab 3: 巡检 (Lint) ============== -->
+<div id="kb-panel-lint" class="kb-panel hidden space-y-4">
+<!-- 巡检状态栏 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+<iconify-icon class="text-xl text-[#FAAD14]" icon="mdi:shield-search"></iconify-icon>
+</div>
+<div>
+<p class="text-sm font-semibold text-[#1D2129]">上次巡检:7 天前</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">下次自动巡检: 3 天后 · 配置: 每周一次</p>
+</div>
+</div>
+<button class="px-4 py-2 text-xs font-medium rounded-lg bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1.5" onclick="runLintNow()">
+<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>
+立即巡检
+</button>
+</div>
+
+<!-- 4 类巡检问题 -->
+<div class="grid grid-cols-2 gap-4">
+<!-- 孤儿页面 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#FA8C16]" icon="mdi:link-off"></iconify-icon>
+</div>
+<h5 class="text-sm font-semibold text-[#1D2129]">孤儿页面</h5>
+<span class="text-[10px] bg-orange-50 text-[#FA8C16] px-1.5 py-0.5 rounded font-medium">3 项</span>
+</div>
+<div class="divide-y divide-[#F2F3F5]">
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">新业态用工关系认定</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">无反向链接 · 建议: 在「劳动合同解除」加入引用</p>
+</div>
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">数据爬取合法性边界</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">无反向链接 · 建议: 在「网络著作权」加入引用</p>
+</div>
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">破产债权申报实务</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">无反向链接 · 建议: 创建主题索引页</p>
 </div>
 </div>
 </div>
-<!-- AI 知识洞察 -->
-<div class="bg-white rounded-xl border border-[#E5E6EB] p-5">
-<div class="flex items-center gap-2 mb-4">
-<iconify-icon class="text-lg text-[#165DFF]" icon="mdi:lightbulb-on-outline"></iconify-icon>
-<h4 class="text-sm font-semibold text-[#1D2129]">知识库智能洞察</h4>
-<span class="text-[10px] bg-[#E8F3FF] text-[#165DFF] font-medium px-2 py-0.5 rounded ml-auto">AI 建议</span>
+
+<!-- 过期知识 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
+<iconify-icon class="text-base text-red-500" icon="mdi:clock-alert-outline"></iconify-icon>
 </div>
-<div class="grid grid-cols-3 gap-4">
-<div class="p-3 rounded-lg bg-[#F7F8FA] cursor-pointer hover:bg-[#F2F3F5] transition-colors" onclick="triggerKnowledgeSearch('民法典')">
+<h5 class="text-sm font-semibold text-[#1D2129]">过期知识</h5>
+<span class="text-[10px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded font-medium">2 项 (1 紧急)</span>
+</div>
+<div class="divide-y divide-[#F2F3F5]">
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors bg-red-50/30">
+<div class="flex items-center gap-2">
+<p class="text-xs font-medium text-[#1D2129]">民间借贷利率上限</p>
+<span class="text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-medium">紧急</span>
+</div>
+<p class="text-[10px] text-red-500 mt-0.5">最后更新: 8 个月前 · LPR 已调整 3 次,数据可能已过时</p>
+<button class="text-[10px] text-[#165DFF] hover:underline mt-1">立即重新编译 →</button>
+</div>
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">劳动合同解除实务</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">最后更新: 2 月前 · 建议加入 2024 年新司法解释</p>
+</div>
+</div>
+</div>
+
+<!-- 内容矛盾 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-yellow-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:alert-outline"></iconify-icon>
+</div>
+<h5 class="text-sm font-semibold text-[#1D2129]">内容矛盾</h5>
+<span class="text-[10px] bg-yellow-50 text-[#FAAD14] px-1.5 py-0.5 rounded font-medium">1 项</span>
+</div>
+<div class="divide-y divide-[#F2F3F5]">
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">网络服务提供者责任</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">两个 Wiki 页面表述不一致:</p>
+<ul class="text-[10px] text-[#4E5969] mt-1 ml-3 space-y-0.5">
+<li>• 「网络著作权侵权」: 需主观过错</li>
+<li>• 「避风港原则适用」: 通知后即负责</li>
+</ul>
+<button class="text-[10px] text-[#165DFF] hover:underline mt-1.5">让 LLM 调和 →</button>
+</div>
+</div>
+</div>
+
+<!-- 缺失引用 -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] overflow-hidden">
+<div class="p-3 border-b border-[#E5E6EB] flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:link-plus"></iconify-icon>
+</div>
+<h5 class="text-sm font-semibold text-[#1D2129]">缺失引用</h5>
+<span class="text-[10px] bg-blue-50 text-[#165DFF] px-1.5 py-0.5 rounded font-medium">5 项</span>
+</div>
+<div class="divide-y divide-[#F2F3F5]">
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">合同纠纷处理要点</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">引用了 [[违约金酌减规则]] 但该页面不存在 · 建议创建</p>
+</div>
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">故意伤害罪辩护要点</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">引用了 [[伤情重新鉴定]] 但该页面不存在 · 建议创建</p>
+</div>
+<div class="p-3 hover:bg-[#F7F8FA] transition-colors">
+<p class="text-xs font-medium text-[#1D2129]">网络著作权侵权认定</p>
+<p class="text-[10px] text-[#86909C] mt-0.5">引用了 [[合理使用判断]] 但该页面不存在</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Lint 健康度 -->
+<div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 p-4">
 <div class="flex items-center gap-2 mb-2">
-<iconify-icon class="text-base text-[#165DFF]" icon="mdi:fire"></iconify-icon>
-<span class="text-xs font-medium text-[#1D2129]">高频引用</span>
-<span class="text-[10px] text-[#165DFF] ml-auto">点击搜索 →</span>
+<iconify-icon class="text-base text-[#165DFF]" icon="mdi:lightbulb-on-outline"></iconify-icon>
+<h4 class="text-sm font-semibold text-[#1D2129]">LLM 巡检建议</h4>
 </div>
-<p class="text-[10px] text-[#4E5969]">本月引用 Top 3: 民法典合同编（128 次）、刑法修正案十二（89 次）、民间借贷司法解释（76 次）。建议重点关注修订解读。</p>
-</div>
-<div class="p-3 rounded-lg bg-[#F7F8FA] cursor-pointer hover:bg-[#F2F3F5] transition-colors" onclick="triggerKnowledgeSearch('劳动争议')">
-<div class="flex items-center gap-2 mb-2">
-<iconify-icon class="text-base text-[#FAAD14]" icon="mdi:alert-circle-outline"></iconify-icon>
-<span class="text-xs font-medium text-[#1D2129]">知识缺口</span>
-<span class="text-[10px] text-[#FAAD14] ml-auto">点击搜索 →</span>
-</div>
-<p class="text-[10px] text-[#4E5969]">劳动争议领域仅有 2 篇内部资料。建议补充：劳动合同解除典型案例、新就业形态劳动关系认定相关裁判规则。</p>
-</div>
-<div class="p-3 rounded-lg bg-[#F7F8FA] cursor-pointer hover:bg-[#F2F3F5] transition-colors" onclick="triggerKnowledgeSearch('2024')">
-<div class="flex items-center gap-2 mb-2">
-<iconify-icon class="text-base text-green-600" icon="mdi:update"></iconify-icon>
-<span class="text-xs font-medium text-[#1D2129]">最近更新</span>
-<span class="text-[10px] text-green-600 ml-auto">点击搜索 →</span>
-</div>
-<p class="text-[10px] text-[#4E5969]">过去 7 天新增 12 篇文档，包括 3 件最高法新发布指导案例和 1 部新法律法规。可在搜索框输入 "2024" 快速查找。</p>
+<p class="text-[10px] text-[#4E5969]">知识库整体健康度评分 <span class="font-semibold text-[#1D2129]">82</span> / 100。已识别 11 个潜在问题。建议优先处理 <span class="text-red-500 font-semibold">1 项紧急</span>(民间借贷利率),并补充 5 个缺失引用页,可让健康度提升至 95+。</p>
+<div class="flex gap-2 mt-3">
+<button class="px-3 py-1.5 text-[10px] font-medium rounded-md bg-white border border-[#E5E6EB] text-[#4E5969] hover:bg-[#F7F8FA] transition-colors">查看趋势</button>
+<button class="px-3 py-1.5 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors">一键处理全部</button>
 </div>
 </div>
 </div>
+
 </div>
 </div>
-<!-- AI 视图 -->
