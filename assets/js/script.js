@@ -2096,9 +2096,10 @@
         });
     }
 
-    // 官方模板: 一级分类筛选 + 二级文书类型筛选
+    // 官方模板: 一级分类筛选 + 二级文书类型筛选 + 搜索
     var _officialCategory = 'all';
     var _officialType = 'all';
+    var _officialSearch = '';
 
     function filterOfficialByCategory(category, btn) {
         _officialCategory = category;
@@ -2145,23 +2146,37 @@
     }
 
     function applyOfficialFilter() {
-        // 双重过滤: cat + type
+        // 读取搜索词
+        var searchEl = document.getElementById('official-search');
+        if (searchEl) _officialSearch = searchEl.value.trim().toLowerCase();
+        // 清除按钮显隐
+        var clearEl = document.getElementById('official-search-clear');
+        if (clearEl) {
+            if (_officialSearch) { clearEl.classList.remove('hidden'); }
+            else { clearEl.classList.add('hidden'); }
+        }
+        // 双重过滤: cat + type + search
         var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
         rows.forEach(function(tr) {
             var cat = tr.getAttribute('data-template-category');
             var typ = tr.getAttribute('data-template-type');
+            var title = (tr.querySelector('td:first-child') ? tr.querySelector('td:first-child').textContent : '').toLowerCase();
             var catMatch = _officialCategory === 'all' || cat === _officialCategory;
             var typeMatch = _officialType === 'all' || typ === _officialType;
-            tr.style.display = (catMatch && typeMatch) ? '' : 'none';
+            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
+            tr.style.display = (catMatch && typeMatch && searchMatch) ? '' : 'none';
         });
         var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
         var visibleCount = 0;
         cards.forEach(function(card) {
             var cat = card.getAttribute('data-template-category');
             var typ = card.getAttribute('data-template-type');
+            var titleEl = card.querySelector('h4');
+            var title = titleEl ? titleEl.textContent.toLowerCase() : '';
             var catMatch = _officialCategory === 'all' || cat === _officialCategory;
             var typeMatch = _officialType === 'all' || typ === _officialType;
-            var visible = catMatch && typeMatch;
+            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
+            var visible = catMatch && typeMatch && searchMatch;
             card.style.display = visible ? '' : 'none';
             if (visible) visibleCount++;
         });
@@ -2187,6 +2202,13 @@
         if (countEl) countEl.textContent = visibleCount;
         var totalEl = document.getElementById('official-card-total');
         if (totalEl) totalEl.textContent = cards.length;
+    }
+
+    // 清除搜索
+    function clearOfficialSearch() {
+        var searchEl = document.getElementById('official-search');
+        if (searchEl) searchEl.value = '';
+        applyOfficialFilter();
     }
 
     // 官方模板卡片预览 (占位)

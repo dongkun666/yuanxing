@@ -169,6 +169,12 @@
 <span class="text-sm font-bold text-gray-800">官方模板</span>
 <span class="text-xs text-gray-400">司法部 / 最高法权威发布, 持续更新</span>
 </div>
+<!-- 搜索框 (列表/卡片视图共享) -->
+<div class="bg-white rounded-xl border border-[#E5E6EB] px-4 py-2 flex items-center gap-2" id="official-search-row">
+<iconify-icon class="text-base text-gray-400" icon="mdi:magnify"></iconify-icon>
+<input id="official-search" type="text" placeholder="搜索模板名称 (如: 起诉状 / 答辩状)" class="text-xs flex-1 border-0 focus:ring-0 focus:outline-none bg-transparent" oninput="applyOfficialFilter()" />
+<span id="official-search-clear" class="hidden text-xs text-gray-400 cursor-pointer hover:text-[#165DFF]" onclick="clearOfficialSearch()">清除</span>
+</div>
 <!-- 一级分类筛选 (列表/卡片视图共享) -->
 <div class="bg-white rounded-xl border border-[#E5E6EB] px-5 py-2 flex items-center gap-2 text-xs flex-wrap" id="official-category-filter">
 <button class="official-category-tab bg-[#165DFF] text-white border border-[#165DFF] px-2.5 py-1 rounded hover:bg-[#0E4AD8]" data-category="all" onclick="filterOfficialByCategory('all', this)">全部</button>
