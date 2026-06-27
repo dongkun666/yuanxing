@@ -445,6 +445,31 @@ function clearScheduleFilter() {
     filterScheduleByDate();
 }
 
+function jumpToToday() {
+    var today = new Date();
+    var y = today.getFullYear().toString();
+    var m = String(today.getMonth() + 1).padStart(2, '0');
+    var d = String(today.getDate()).padStart(2, '0');
+
+    var yearEl = document.getElementById('schedule-filter-year');
+    var monthEl = document.getElementById('schedule-filter-month');
+    var dayEl = document.getElementById('schedule-filter-day');
+
+    // 动态补今天的年份到选项 (避免 hardcoded 年份缺失)
+    if (yearEl && !Array.from(yearEl.options).some(function(o) { return o.value === y; })) {
+        var opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y + ' 年';
+        yearEl.appendChild(opt);
+    }
+
+    if (yearEl) yearEl.value = y;
+    if (monthEl) monthEl.value = m;
+    if (dayEl) dayEl.value = d;
+
+    filterScheduleByDate();
+}
+
 function openScheduleDetail(id) {
         const item = scheduleData.find(s => s.id === id);
         if (!item) return;

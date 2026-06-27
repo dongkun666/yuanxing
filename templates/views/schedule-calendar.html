@@ -11,9 +11,8 @@
 <h3 class="text-base font-semibold text-fg-primary">日程管理</h3>
 </div>
 <div class="flex items-center gap-2">
-<button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors">今天</button>
-<button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors">+ 新增</button>
-</div>
+        <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors">+ 新增</button>
+    </div>
 </div>
 <!-- 年月日筛选 -->
 <div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
@@ -73,6 +72,10 @@
         <option value="30">30 日</option>
         <option value="31">31 日</option>
     </select>
+    <button onclick="jumpToToday()" class="ml-2 px-3 py-1.5 text-xs rounded-lg border border-bg-border text-brand bg-brand-tint hover:bg-brand hover:text-white transition-colors flex items-center gap-1">
+        <iconify-icon class="text-xs" icon="mdi:calendar-today"></iconify-icon>
+        <span>今天</span>
+    </button>
     <button onclick="clearScheduleFilter()" class="ml-auto px-3 py-1.5 text-xs text-fg-tertiary hover:text-danger transition-colors flex items-center gap-1">
         <iconify-icon class="text-xs" icon="mdi:close-circle-outline"></iconify-icon>
         <span>清除筛选</span>
