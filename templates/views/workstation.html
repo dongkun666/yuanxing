@@ -63,8 +63,9 @@
 </h4>
 <div class="flex items-center gap-1.5">
 <!-- 日期切换控件: 前一天 / 年月日 / 后一天 / 回到今天 (整体 chip 风格, 白底) -->
-<div class="flex items-center gap-0.5 bg-white border border-bg-border hover:border-brand/40 rounded-lg px-1 py-0.5 transition-colors shadow-sm" id="today-schedule-date-controls">
-<button onclick="shiftTodayScheduleDate(-1)" class="w-6 h-6 rounded-md hover:bg-white text-fg-secondary hover:text-brand hover:shadow-sm flex items-center justify-center transition-all" title="前一天">
+<!-- 日期切换控件: 无外边框, 融入背景; 内部 chip 和按钮保留自身层次 -->
+<div class="flex items-center gap-0.5" id="today-schedule-date-controls">
+<button onclick="shiftTodayScheduleDate(-1)" class="w-6 h-6 rounded-md hover:bg-white text-brand hover:text-brand-dark hover:shadow-sm flex items-center justify-center transition-all" title="前一天">
 <iconify-icon icon="mdi:chevron-left" class="text-base"></iconify-icon>
 </button>
 <div class="flex items-center gap-0.5 px-1.5 py-0.5 bg-white rounded-md border border-bg-border/50 shadow-sm">
@@ -75,7 +76,7 @@
 <select data-field="day" onchange="onTodayScheduleDateChange('day', this.value)" class="bg-transparent border-0 text-xs font-medium text-fg-primary focus:outline-none cursor-pointer hover:text-brand transition-colors pr-0.5" title="日"></select>
 <span class="text-fg-tertiary text-[10px]">日</span>
 </div>
-<button onclick="shiftTodayScheduleDate(1)" class="w-6 h-6 rounded-md hover:bg-white text-fg-secondary hover:text-brand hover:shadow-sm flex items-center justify-center transition-all" title="后一天">
+<button onclick="shiftTodayScheduleDate(1)" class="w-6 h-6 rounded-md hover:bg-white text-brand hover:text-brand-dark hover:shadow-sm flex items-center justify-center transition-all" title="后一天">
 <iconify-icon icon="mdi:chevron-right" class="text-base"></iconify-icon>
 </button>
 <button onclick="resetTodayScheduleDate()" class="px-2 h-6 rounded-md text-[10px] font-medium text-brand bg-brand-tint3 hover:bg-brand-tint flex items-center gap-0.5 transition-all" title="回到今天">
