@@ -455,6 +455,52 @@
                'title="' + (done ? '已完成 (点击取消)' : '标记为完成') + '">' + icon + '</button>';
     }
 
+    // 三态过滤器 predicate
+    // scope: 'today' = 工作台「今日日程」, 'list' = 日程管理
+    // filter 值: 'all' (全部) | 'pending' (待办/未完成) | 'completed' (已完成)
+    // 默认: today='pending' (聚焦今日待办), list='all'
+    function getScheduleFilterPredicate(scope) {
+        var f = scope === 'today' ? (AppState.scheduleFilterToday || 'pending') : (AppState.scheduleFilterList || 'all');
+        if (f === 'pending') return function(s) { return !s.completed; };
+        if (f === 'completed') return function(s) { return !!s.completed; };
+        return function() { return true; }; // 'all'
+    }
+
+    // 切换三态过滤 (供工作台/日程管理的三态按钮调用)
+    // scope: 'today' | 'list'
+    // value: 'all' | 'pending' | 'completed'
+    function setScheduleFilter(scope, value) {
+        if (scope === 'today') AppState.scheduleFilterToday = value;
+        else AppState.scheduleFilterList = value;
+        // 刷新两个视图 (联动)
+        if (typeof renderScheduleList === 'function') renderScheduleList();
+        if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
+        if (typeof renderScheduleFilterTabs === 'function') renderScheduleFilterTabs();
+    }
+
+    // 渲染三态按钮组 (工作台头部 + 日程管理头部公用)
+    // containerId: 'today-schedule-filter' | 'schedule-filter-tabs'
+    // scope: 'today' | 'list'
+    function renderScheduleFilterTabs(containerId, scope) {
+        var c = document.getElementById(containerId);
+        if (!c) return;
+        var cur = scope === 'today' ? (AppState.scheduleFilterToday || 'pending') : (AppState.scheduleFilterList || 'all');
+        var opts = [
+            { value: 'all', label: '全部' },
+            { value: 'pending', label: '待办' },
+            { value: 'completed', label: '已完成' }
+        ];
+        var htmlStr = '';
+        opts.forEach(function(o) {
+            var active = cur === o.value;
+            var cls = active
+                ? 'bg-brand text-white'
+                : 'bg-bg-subtle text-fg-secondary hover:bg-bg';
+            htmlStr += '<button type="button" onclick="setScheduleFilter(\'' + scope + '\', \'' + o.value + '\')" class="text-[10px] px-2 py-0.5 rounded-full ' + cls + ' transition-colors font-medium">' + o.label + '</button>';
+        });
+        c.innerHTML = htmlStr;
+    }
+
     // localStorage 持久化
     function persistSchedule() {
         try { localStorage.setItem('lexprime_schedule_data', JSON.stringify(AppState.scheduleData)); } catch (e) { console.warn('持久化日程失败:', e); }
@@ -468,12 +514,15 @@
         var empty = document.getElementById('schedule-empty');
         var countEl = document.getElementById('schedule-count');
 
-        // 排序: 按 date+time 升序
-        var sorted = AppState.scheduleData.slice().sort(function(a, b) {
-            var ka = (a.date || '') + ' ' + (a.time || '');
-            var kb = (b.date || '') + ' ' + (b.time || '');
-            return ka < kb ? -1 : ka > kb ? 1 : 0;
-        });
+        // 排序: 未完成优先 (completed 沉底), 同状态按 date+time 升序
+        var sorted = AppState.scheduleData
+            .filter(getScheduleFilterPredicate('list'))
+            .sort(function(a, b) {
+                if (!!a.completed !== !!b.completed) return a.completed ? 1 : -1;
+                var ka = (a.date || '') + ' ' + (a.time || '');
+                var kb = (b.date || '') + ' ' + (b.time || '');
+                return ka < kb ? -1 : ka > kb ? 1 : 0;
+            });
 
         if (countEl) countEl.textContent = '共 ' + sorted.length + ' 项';
 
@@ -503,7 +552,7 @@
             var done = !!s.completed;
             var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through' : 'text-sm font-medium text-fg-primary';
 
-            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
+            htmlStr += '<div class="group ' + (done ? 'bg-bg-subtle ' : 'bg-white ') + 'rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
                 '<div class="flex items-start gap-4">' +
                     '<div class="flex-shrink-0 flex items-center justify-center pt-1">' +
                         renderScheduleCheckbox(s) +
@@ -541,6 +590,9 @@
             '</div>';
         });
         container.innerHTML = htmlStr;
+
+        // 刷新三态按钮
+        if (typeof renderScheduleFilterTabs === 'function') renderScheduleFilterTabs('schedule-filter-tabs', 'list');
     }
 
     function escapeHtml(str) {
@@ -665,7 +717,10 @@
         var today = getTodayDate();
         var items = AppState.scheduleData
             .filter(function(s) { return s.date === today; })
+            .filter(getScheduleFilterPredicate('today'))
             .sort(function(a, b) {
+                // 未完成优先 (completed 沉底), 同状态按 time 升序
+                if (!!a.completed !== !!b.completed) return a.completed ? 1 : -1;
                 var ka = (a.time || '99:99');
                 var kb = (b.time || '99:99');
                 return ka < kb ? -1 : ka > kb ? 1 : 0;
@@ -702,7 +757,7 @@
             }
             var done = !!s.completed;
             var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through truncate' : 'text-sm font-medium text-fg-primary truncate';
-            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer" data-schedule-id="' + s.id + '">' +
+            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg ' + (done ? 'bg-bg-subtle ' : '') + 'hover:bg-brand-tint3 transition-colors cursor-pointer" data-schedule-id="' + s.id + '">' +
                 '<div class="flex-none pt-0.5">' +
                     renderScheduleCheckbox(s) +
                 '</div>' +
@@ -749,6 +804,9 @@
                 if (typeof openScheduleDetail === 'function') openScheduleDetail(id);
             });
         });
+
+        // 刷新三态按钮
+        if (typeof renderScheduleFilterTabs === 'function') renderScheduleFilterTabs('today-schedule-filter', 'today');
     }
 
     function filterSchedule(type, btn) {

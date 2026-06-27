@@ -101,7 +101,11 @@
 <div class="bg-white rounded-xl border border-bg-border p-5">
 <div class="flex items-center justify-between mb-4">
     <h4 class="text-sm font-semibold text-fg-primary">本月庭审安排</h4>
-    <span class="text-xs text-fg-tertiary" id="schedule-count"></span>
+    <div class="flex items-center gap-3">
+        <!-- 三态过滤: 全部 / 待办 / 已完成 (默认全部) -->
+        <div id="schedule-filter-tabs" class="flex items-center gap-1"></div>
+        <span class="text-xs text-fg-tertiary" id="schedule-count"></span>
+    </div>
 </div>
 <div class="space-y-3" id="schedule-list"></div>
 <!-- 完全空态: 没有任何日程 -->
