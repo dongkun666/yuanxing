@@ -602,6 +602,7 @@
     // 渲染工作台「今日日程」列表 (联动日程管理: 同一份 AppState.scheduleData)
     // 排序: 按 time 升序
     // 行为: 点击行 → 打开详情; [修改] → 编辑; [删除] → 删除
+    // 限制: 工作台最多展示 5 条; 超出显示「还有 N 条 → 查看全部」
     function renderTodaySchedule() {
         var container = document.getElementById('today-schedule-list');
         var emptyEl = document.getElementById('today-schedule-empty');
@@ -629,8 +630,13 @@
             '其他': { text: 'text-amber-600', bg: 'bg-amber-50', icon: 'mdi:calendar-blank-outline', iconColor: 'text-amber-500' }
         };
 
+        // 截断: 工作台最多 5 条
+        var MAX_DISPLAY = 5;
+        var displayItems = items.slice(0, MAX_DISPLAY);
+        var overflowCount = items.length - displayItems.length;
+
         var htmlStr = '';
-        items.forEach(function(s) {
+        displayItems.forEach(function(s) {
             var c = colorMap[s.type] || colorMap['其他'];
             var isPast = false;
             if (s.time) {
@@ -663,6 +669,17 @@
                 '</div>' +
             '</div>';
         });
+
+        // 「还有 N 条 → 查看全部」
+        if (overflowCount > 0) {
+            htmlStr += '<div class="text-center pt-2 border-t border-bg-border mt-1">' +
+                '<button class="text-xs text-brand hover:text-brand-hover font-medium inline-flex items-center gap-1" onclick="switchView(\'schedule-calendar\')">' +
+                    '还有 ' + overflowCount + ' 条 · 查看全部' +
+                    '<iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>' +
+                '</button>' +
+            '</div>';
+        }
+
         container.innerHTML = htmlStr;
 
         // 绑定行点击 → 打开详情
