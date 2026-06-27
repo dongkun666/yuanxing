@@ -12,10 +12,17 @@
         document.querySelectorAll('.template-tab').forEach(function(tab) {
             tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
             tab.classList.add('text-gray-500', 'border-transparent');
+            tab.removeAttribute('data-active');
         });
         if (btn) {
             btn.classList.remove('text-gray-500', 'border-transparent');
             btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
+            btn.setAttribute('data-active', 'true');
+        }
+        // 官方 tab 仅列表视图: 切到 official 时强制把视图切换按钮对齐到 list
+        if (tabName === 'official') {
+            var listBtn = document.querySelector('.template-view-btn[data-view="list"]');
+            if (listBtn) switchTemplateView('list', listBtn);
         }
     }
 
@@ -75,6 +82,15 @@
     }
 
     function switchTemplateView(viewName, btn) {
+        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效)
+        // 检查当前激活的 tab: 官方 tab 时强制 list + 把按钮高亮对齐到 list 按钮
+        // 通过 data-active 属性追踪当前 tab (由 switchTemplateTab 设置)
+        var activeTabBtn = document.querySelector('.template-tab[data-active="true"]');
+        var activeTab = activeTabBtn ? (activeTabBtn.textContent.indexOf('个人') >= 0 ? 'personal' : 'official') : 'personal';
+        if (activeTab === 'official') {
+            viewName = 'list';
+            btn = document.querySelector('.template-view-btn[data-view="list"]');
+        }
         document.querySelectorAll('.template-view-btn').forEach(function(b) {
             b.classList.remove('bg-blue-50', 'text-[#165DFF]');
             b.classList.add('text-gray-500', 'hover:text-gray-700');
@@ -84,10 +100,12 @@
             btn.classList.remove('text-gray-500', 'hover:text-gray-700');
         }
         // 切换 personal + official 两个 tab 内的视图
+        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效), 强制 list
         ['personal', 'official'].forEach(function(tab) {
+            var effectiveView = (tab === 'official') ? 'list' : viewName;
             var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
             var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
-            if (viewName === 'list') {
+            if (effectiveView === 'list') {
                 if (listView) listView.classList.remove('hidden');
                 if (cardView) cardView.classList.add('hidden');
             } else {
