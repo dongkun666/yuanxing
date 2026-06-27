@@ -130,6 +130,10 @@
                 // 修复 template 视图: 浏览器重组 DOM 后把卡片视图和孤儿卡片放到主体 div 直接子级
                 if (viewId === 'template') {
                     fixTemplateViewDOM();
+                    // 渲染个人模板 (从 AppState.personalTemplates 数据驱动)
+                    setTimeout(function() {
+                        if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+                    }, 50);
                 }
                 // 进入日程视图: 渲染庭审列表 + 应用筛选
                 if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
@@ -159,6 +163,10 @@
                             // 延迟修复, 等 DOM 稳定
                             setTimeout(fixTemplateViewDOM, 100);
                             setTimeout(fixTemplateViewDOM, 500);
+                            // 渲染个人模板 (从 AppState.personalTemplates 数据驱动, 覆盖 hardcoded)
+                            setTimeout(function() {
+                                if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+                            }, 50);
                         }
                         // 进入日程视图: 渲染庭审列表 + 应用筛选 (DOM 已插入)
                         if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
@@ -718,6 +726,24 @@
             { id: 'n6', type: 'document', icon: 'mdi:file-pdf-box', color: 'brand', title: '合同审查完成', desc: '北京某科技公司股权回购协议审查报告已生成', timeAgo: '昨天 10:15', timestamp: Date.now() - 26 * 60 * 60 * 1000, unread: false, linkTo: 'case', linkParam: '7' },
             { id: 'n7', type: 'member', icon: 'mdi:account-star-outline', color: 'warning', title: '会员即将到期', desc: '专业版会员还剩 7 天到期, 续费可继续享 8 折优惠', timeAgo: '3 天前', timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'subscription', linkParam: '' },
             { id: 'n8', type: 'system', icon: 'mdi:update', color: 'brand', title: '系统升级通知', desc: 'LexPrime v2.1 已发布: 新增日程管理三态过滤, 工作台空态优化等', timeAgo: '5 天前', timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'workstation', linkParam: '' },
+        ];
+    })();
+
+    // 个人模板 (AppState.personalTemplates) - 持久化用户上传的模板 (含初始 mock)
+    // 字段: id, name, category, creator, updatedAt, size, fmt
+    AppState.personalTemplates = (function() {
+        try {
+            var saved = localStorage.getItem('lexprime_personal_templates');
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data)) return data;
+            }
+        } catch (e) {}
+        // 初始 mock 3 条 (来自原 hardcoded HTML)
+        return [
+            { id: 'p1', name: '起诉状-借款合同 v1', category: '诉状类', creator: '张律师', updatedAt: '2026-06-15 14:30', size: '', fmt: '.docx' },
+            { id: 'p2', name: '答辩状-买卖合同 v2', category: '答辩类', creator: '李律师', updatedAt: '2026-06-18 10:15', size: '', fmt: '.docx' },
+            { id: 'p3', name: '律师函-催款函 v1', category: '合同类', creator: '王律师', updatedAt: '2026-06-20 16:40', size: '', fmt: '.docx' }
         ];
     })();
 

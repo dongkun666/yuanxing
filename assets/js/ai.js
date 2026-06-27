@@ -197,15 +197,15 @@
             document.getElementById('moreMenuAI').classList.add('hidden');
             if (action === 'settings') {
                 switchSidebarTab('work');
-                alert('设置功能开发中');
+                switchView('account-settings');
             } else if (action === 'upgrade') {
-                alert('升级功能开发中');
+                switchView('subscription');
             } else if (action === 'feedback') {
-                alert('问题反馈功能开发中');
+                showToast('问题反馈功能开发中');
             } else if (action === 'guide') {
-                alert('用户指南功能开发中');
+                showToast('用户指南功能开发中');
             } else if (action === 'contact') {
-                alert('联系我们功能开发中');
+                showToast('联系我们功能开发中');
             } else if (action === 'logout') {
                 if (confirm('确认退出登录？')) {
                     if (typeof Auth !== 'undefined' && Auth.logout) {
