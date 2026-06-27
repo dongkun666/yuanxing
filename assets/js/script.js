@@ -990,6 +990,7 @@
         // 启动时同步通知铃铛红点状态 (按 AppState.notifications 真实未读数)
         function updateNotificationBadgeState() {
             if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
+            if (typeof startNotificationTimeRefresh === 'function') startNotificationTimeRefresh();
         }
         // login view 加载后绑定事件
         var origSwitchView = switchView;

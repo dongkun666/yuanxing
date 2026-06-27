@@ -77,6 +77,10 @@
                 warning: 'bg-warning-tint text-warning',
                 success: 'bg-success-tint text-success'
             };
+            if (items.length === 0) {
+                listEl.innerHTML = '<div class="px-3 py-8 text-center text-fg-tertiary text-xs">暂无通知</div>';
+                return;
+            }
             var htmlStr = '';
             items.forEach(function(n) {
                 var cls = colorMap[n.color] || colorMap.brand;
@@ -87,7 +91,7 @@
                     '<div class="flex-1 min-w-0">' +
                         '<p class="text-xs font-medium text-fg-primary">' + escapeHtml(n.title || '') + '</p>' +
                         '<p class="text-[11px] text-fg-tertiary mt-0.5 line-clamp-2">' + escapeHtml(n.desc || '') + '</p>' +
-                        '<p class="text-[10px] text-fg-disabled mt-1">' + escapeHtml(n.timeAgo || '') + '</p>' +
+                        '<p class="text-[10px] text-fg-disabled mt-1">' + escapeHtml(formatTimeAgo(n.timestamp)) + '</p>' +
                     '</div>' +
                     (n.unread ? '<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>' : '') +
                 '</div>';
@@ -131,7 +135,9 @@
         }
 
         // 渲染全屏通知页
-        // filter: 'all' (默认) | 'unread' | 'read'
+        // filter: 'all' (默认) | 'unread' | 'read' (状态维度)
+        // type:   'all' (默认) | 'document' | 'deadline' | 'case' | 'member' | 'system' (主题维度)
+        // 两 filter 独立并存, 叠加生效 (AND)
         function setNotificationsFilter(f) {
             if (typeof AppState === 'undefined') return;
             AppState.notificationsFilter = f;
@@ -145,21 +151,114 @@
                 }
             });
         }
+        // 类型 filter (独立维度)
+        function setNotificationsType(t) {
+            if (typeof AppState === 'undefined') return;
+            AppState.notificationsType = t;
+            renderNotificationsPage();
+            document.querySelectorAll('.notif-type-tab').forEach(function(btn) {
+                if (btn.dataset.type === t) {
+                    // active: bg-brand text-white + 保留 type-tab 前缀 (用于下次查询)
+                    var iconHtml = btn.innerHTML.match(/<iconify-icon[^>]*><\/iconify-icon>/);
+                    var iconStr = iconHtml ? iconHtml[0] + ' ' : '';
+                    btn.className = 'notif-type-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium flex items-center gap-1';
+                    btn.innerHTML = iconStr + escapeHtml(btn.dataset.type === 'all' ? '全部类型' : ({
+                        document: '文档', deadline: '截止', case: '案件', member: '会员', system: '系统'
+                    })[btn.dataset.type] || '');
+                } else {
+                    var iconHtml2 = btn.innerHTML.match(/<iconify-icon[^>]*><\/iconify-icon>/);
+                    var iconStr2 = iconHtml2 ? iconHtml2[0] + ' ' : '';
+                    var lbl = btn.dataset.type === 'all' ? '全部类型' : ({
+                        document: '文档', deadline: '截止', case: '案件', member: '会员', system: '系统'
+                    })[btn.dataset.type] || '';
+                    btn.className = 'notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1';
+                    btn.innerHTML = iconStr2 + escapeHtml(lbl);
+                }
+            });
+        }
+        // 清空通知 (一键)
+        function clearAllNotifications() {
+            if (typeof AppState === 'undefined') return;
+            if (AppState.notifications.length === 0) {
+                showToast('通知已是空的');
+                return;
+            }
+            if (!confirm('确定清空所有通知？此操作不可恢复。')) return;
+            AppState.notifications = [];
+            persistNotifications();
+            renderNotificationsPanel();
+            renderNotificationsPage();
+            updateNotificationBadge();
+            showToast('通知已清空');
+        }
+        // 「···」更多菜单 toggle
+        function toggleNotifMoreMenu(event) {
+            if (event) event.stopPropagation();
+            var menu = document.getElementById('notifMoreMenu');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            if (!menu.classList.contains('hidden')) {
+                setTimeout(function() {
+                    setupOutsideClickClose('notifMoreMenu', '[onclick*="toggleNotifMoreMenu"]');
+                }, 0);
+            }
+        }
+        // 实时时间格式化: 从 timestamp 计算 "X 分钟前 / X 小时前 / 昨天 / M月D日 / YYYY-MM-DD"
+        function formatTimeAgo(ts) {
+            if (!ts) return '';
+            var diffMs = Date.now() - ts;
+            var sec = Math.floor(diffMs / 1000);
+            if (sec < 60) return '刚刚';
+            var min = Math.floor(sec / 60);
+            if (min < 60) return min + ' 分钟前';
+            var hr = Math.floor(min / 60);
+            if (hr < 24) return hr + ' 小时前';
+            var day = Math.floor(hr / 24);
+            if (day === 1) return '昨天';
+            if (day < 7) return day + ' 天前';
+            var d = new Date(ts);
+            var y = d.getFullYear();
+            var m = d.getMonth() + 1;
+            var dd = d.getDate();
+            if (day < 365) return m + '月' + dd + '日';
+            return y + '-' + (m < 10 ? '0' + m : m) + '-' + (dd < 10 ? '0' + dd : dd);
+        }
+        // 每分钟重渲染可见通知的 timeAgo (让 "3 分钟前" 实时变 "5 分钟前")
+        var notifRefreshTimer = null;
+        function startNotificationTimeRefresh() {
+            if (notifRefreshTimer) return;
+            notifRefreshTimer = setInterval(function() {
+                if (typeof AppState === 'undefined') return;
+                renderNotificationsPanel();
+                var view = document.getElementById('view-notifications');
+                if (view && !view.classList.contains('hidden')) renderNotificationsPage();
+            }, 60 * 1000);
+        }
         function renderNotificationsPage() {
             if (typeof AppState === 'undefined') return;
             if (!AppState.notificationsFilter) AppState.notificationsFilter = 'all';
+            if (!AppState.notificationsType) AppState.notificationsType = 'all';
             var container = document.getElementById('notifications-list');
+            var countEl = document.getElementById('notifications-count');
             if (!container) return;
             var f = AppState.notificationsFilter || 'all';
+            var t = AppState.notificationsType || 'all';
             var items = AppState.notifications.slice().sort(function(a, b) {
                 // 未读优先 + 时间倒序
                 if (!!a.unread !== !!b.unread) return a.unread ? -1 : 1;
                 return (b.timestamp || 0) - (a.timestamp || 0);
             }).filter(function(n) {
-                if (f === 'unread') return n.unread;
-                if (f === 'read') return !n.unread;
+                if (f === 'unread' && !n.unread) return false;
+                if (f === 'read' && n.unread) return false;
+                if (t !== 'all' && n.type !== t) return false;
                 return true;
             });
+            // 顶部计数 (实时计算)
+            if (countEl) {
+                var total = AppState.notifications.length;
+                var show = items.length;
+                countEl.textContent = total === show ? ('共 ' + total + ' 条') : ('显示 ' + show + ' / 共 ' + total + ' 条');
+            }
             var colorMap = {
                 brand: 'bg-brand-tint text-brand',
                 danger: 'bg-danger-tint text-danger',
@@ -167,9 +266,16 @@
                 success: 'bg-success-tint text-success'
             };
             if (items.length === 0) {
+                var emptyMsg = '没有通知';
+                if (f === 'unread' && t !== 'all') emptyMsg = '没有' + typeLabel(t) + '类型的未读通知';
+                else if (f === 'read' && t !== 'all') emptyMsg = '没有' + typeLabel(t) + '类型的已读通知';
+                else if (f === 'unread') emptyMsg = '没有未读通知';
+                else if (f === 'read') emptyMsg = '没有已读通知';
+                else if (t !== 'all') emptyMsg = '没有' + typeLabel(t) + '类型的通知';
                 container.innerHTML = '<div class="text-center py-20 text-fg-tertiary">' +
                     '<iconify-icon icon="mdi:bell-check-outline" class="text-5xl mb-3"></iconify-icon>' +
-                    '<p class="text-sm">' + (f === 'unread' ? '没有未读通知' : (f === 'read' ? '没有已读通知' : '没有通知')) + '</p>' +
+                    '<p class="text-sm">' + escapeHtml(emptyMsg) + '</p>' +
+                    (AppState.notifications.length > 0 ? '<button class="mt-3 text-xs text-brand hover:text-brand-hover" onclick="setNotificationsFilter(\'all\'); setNotificationsType(\'all\');">清除筛选条件</button>' : '') +
                 '</div>';
                 return;
             }
@@ -186,11 +292,15 @@
                             (n.unread ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-brand text-white font-medium">未读</span>' : '') +
                         '</div>' +
                         '<p class="text-xs text-fg-secondary mb-1">' + escapeHtml(n.desc || '') + '</p>' +
-                        '<p class="text-[11px] text-fg-tertiary">' + escapeHtml(n.timeAgo || '') + '</p>' +
+                        '<p class="text-[11px] text-fg-tertiary">' + escapeHtml(formatTimeAgo(n.timestamp)) + '</p>' +
                     '</div>' +
                 '</div>';
             });
             container.innerHTML = htmlStr;
+        }
+        // 类型中文标签
+        function typeLabel(t) {
+            return ({ document: '文档', deadline: '截止', case: '案件', member: '会员', system: '系统' })[t] || t;
         }
 
         function toggleUserMenu(event) {
