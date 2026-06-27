@@ -421,6 +421,40 @@
         if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
     }
 
+    // 切换日程完成状态 (复选框): 完成 → 未完成 反之亦然
+    // 状态: completed = true / false
+    // 联动: persistSchedule + renderScheduleList + renderTodaySchedule + badge
+    function toggleScheduleComplete(id) {
+        var item = AppState.scheduleData.find(function(s) { return s.id === id; });
+        if (!item) return;
+        item.completed = !item.completed;
+        persistSchedule();
+        renderScheduleList();
+        if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
+        if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+        // 详情页如果开着也刷新 (避免状态不一致)
+        if (typeof currentDetailScheduleId !== 'undefined' && currentDetailScheduleId === id && typeof openScheduleDetail === 'function') {
+            openScheduleDetail(id);
+        }
+        showToast(item.completed ? '已标记为完成' : '已取消完成');
+    }
+
+    // 渲染日程"完成"复选框 (公共片段, renderScheduleList + renderTodaySchedule 共用)
+    // 参数: s = schedule item
+    // 返回: HTML 字符串 (button 模拟 checkbox, 避免 input click 与 row click 冲突)
+    function renderScheduleCheckbox(s) {
+        var done = !!s.completed;
+        var btnCls = done
+            ? 'bg-brand border-brand text-white'
+            : 'border-bg-border hover:border-brand bg-white';
+        var icon = done
+            ? '<iconify-icon icon="mdi:check-bold" class="text-xs"></iconify-icon>'
+            : '';
+        return '<button type="button" onclick="event.stopPropagation(); toggleScheduleComplete(' + s.id + ')" ' +
+               'class="w-5 h-5 rounded-full border-2 ' + btnCls + ' flex items-center justify-center transition-colors flex-none" ' +
+               'title="' + (done ? '已完成 (点击取消)' : '标记为完成') + '">' + icon + '</button>';
+    }
+
     // localStorage 持久化
     function persistSchedule() {
         try { localStorage.setItem('lexprime_schedule_data', JSON.stringify(AppState.scheduleData)); } catch (e) { console.warn('持久化日程失败:', e); }
@@ -466,9 +500,14 @@
             var weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
             var weekday = dateObj ? weekdays[dateObj.getDay()] : '';
             var isToday = s.date === today;
+            var done = !!s.completed;
+            var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through' : 'text-sm font-medium text-fg-primary';
 
-            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
+            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + (done ? ' opacity-70' : '') + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
                 '<div class="flex items-start gap-4">' +
+                    '<div class="flex-shrink-0 flex items-center justify-center pt-1">' +
+                        renderScheduleCheckbox(s) +
+                    '</div>' +
                     '<div class="flex-shrink-0 text-center w-12">' +
                         '<div class="text-lg font-bold ' + c.tagText + '">' + day + '</div>' +
                         '<div class="text-[10px] text-fg-tertiary">' + weekday + '</div>' +
@@ -476,8 +515,9 @@
                     '<div class="flex-1 min-w-0">' +
                         '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
                             '<span class="text-[10px] px-1.5 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
-                            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
+                            '<span class="' + titleCls + '">' + escapeHtml(s.title || '') + '</span>' +
                             (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
+                            (done ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-success-tint text-success font-medium">已完成</span>' : '') +
                         '</div>' +
                         '<div class="text-xs text-fg-tertiary flex items-center gap-3 flex-wrap">' +
                             '<span><iconify-icon class="text-xs" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
@@ -595,8 +635,24 @@
         const badge = document.getElementById('today-schedule-badge');
         if (!badge) return;
         const today = getTodayDate();
-        const count = AppState.scheduleData.filter(s => s.date === today).length;
-        badge.textContent = count;
+        const todayItems = AppState.scheduleData.filter(s => s.date === today);
+        const total = todayItems.length;
+        const pending = todayItems.filter(s => !s.completed).length;
+        // 优先显示未完成数; 都完成了显示总条数 (badge 用 success 色调)
+        if (pending > 0 && pending < total) {
+            badge.textContent = pending;
+            badge.classList.remove('bg-brand');
+            badge.classList.add('bg-urgent');
+        } else if (pending === 0 && total > 0) {
+            badge.textContent = total;
+            badge.classList.remove('bg-brand', 'bg-urgent');
+            badge.classList.add('bg-success');
+            badge.title = '今日日程已全部完成';
+        } else {
+            badge.textContent = total;
+            badge.classList.remove('bg-urgent', 'bg-success');
+            badge.classList.add('bg-brand');
+        }
     }
 
     // 渲染工作台「今日日程」列表 (联动日程管理: 同一份 AppState.scheduleData)
@@ -645,12 +701,17 @@
                 var end = new Date(today + 'T' + endTime + ':00');
                 isPast = now > end;
             }
-            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer" data-schedule-id="' + s.id + '">' +
+            var done = !!s.completed;
+            var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through truncate' : 'text-sm font-medium text-fg-primary truncate';
+            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer' + (done ? ' opacity-70' : '') + '" data-schedule-id="' + s.id + '">' +
+                '<div class="flex-none pt-0.5">' +
+                    renderScheduleCheckbox(s) +
+                '</div>' +
                 '<div class="w-12 flex-none text-right">' +
                     '<span class="text-sm font-bold ' + (isPast ? 'text-fg-tertiary line-through' : c.text) + '">' + (s.time || '--:--') + '</span>' +
                 '</div>' +
                 '<div class="flex-1 min-w-0">' +
-                    '<p class="text-sm font-medium text-fg-primary truncate">' + escapeHtml(s.title || '') + '</p>' +
+                    '<p class="' + titleCls + '">' + escapeHtml(s.title || '') + '</p>' +
                     '<p class="text-xs text-fg-tertiary truncate">' + escapeHtml(s.location || s.caseName || s.type || '') + '</p>' +
                 '</div>' +
                 '<div class="flex-none ' + c.iconColor + '">' +
