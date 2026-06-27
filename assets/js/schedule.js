@@ -94,7 +94,7 @@
             if (viewName === 'schedule-calendar' || viewName === 'schedule-list') {
                 setTimeout(function() {
                     if (typeof renderScheduleList === 'function') renderScheduleList();
-                    if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+                    if (typeof initScheduleFilterToToday === 'function') initScheduleFilterToToday();
                 }, 50);
             }
         } else {
@@ -109,11 +109,11 @@
                         v.classList.add('hidden');
                     });
                     newTarget.classList.remove('hidden');
-                    // 日程视图 hook: DOM 已插入, 渲染列表 + 应用筛选
+                    // 日程视图 hook: DOM 已插入, 渲染列表 + 应用筛选 + 默认筛今天
                     if (viewName === 'schedule-calendar' || viewName === 'schedule-list') {
                         setTimeout(function() {
                             if (typeof renderScheduleList === 'function') renderScheduleList();
-                            if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+                            if (typeof initScheduleFilterToToday === 'function') initScheduleFilterToToday();
                         }, 50);
                     }
                 }
@@ -541,6 +541,40 @@ function clearScheduleFilter() {
     if (yearEl) yearEl.value = '';
     if (monthEl) monthEl.value = '';
     if (dayEl) dayEl.value = '';
+    filterScheduleByDate();
+}
+
+// 进入日程管理时, 默认筛选 = 今天 (年/月/日 全部锁今天)
+// 让用户进来直接看到今天的庭审, 而不是「全部日期」无目的浏览
+function initScheduleFilterToToday() {
+    var today = new Date();
+    var y = today.getFullYear().toString();
+    var m = String(today.getMonth() + 1).padStart(2, '0');
+    var d = String(today.getDate()).padStart(2, '0');
+
+    var yearEl = document.getElementById('schedule-filter-year');
+    var monthEl = document.getElementById('schedule-filter-month');
+    var dayEl = document.getElementById('schedule-filter-day');
+
+    // 动态补年份到选项 (避免 hardcoded 缺年份)
+    if (yearEl && !Array.from(yearEl.options).some(function(o) { return o.value === y; })) {
+        var opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y + ' 年';
+        yearEl.appendChild(opt);
+    }
+    // 动态补日期到选项
+    if (dayEl && !Array.from(dayEl.options).some(function(o) { return o.value === d; })) {
+        var dopt = document.createElement('option');
+        dopt.value = d;
+        dopt.textContent = d.replace(/^0/, '') + ' 日';
+        dayEl.appendChild(dopt);
+    }
+
+    if (yearEl) yearEl.value = y;
+    if (monthEl) monthEl.value = m;
+    if (dayEl) dayEl.value = d;
+
     filterScheduleByDate();
 }
 
