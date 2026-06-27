@@ -207,6 +207,9 @@
                 alert('联系我们功能开发中');
             } else if (action === 'logout') {
                 if (confirm('确认退出登录？')) {
+                    if (typeof Auth !== 'undefined' && Auth.logout) {
+                        Auth.logout();
+                    }
                     showToast('已退出登录');
                 }
             }

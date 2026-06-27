@@ -9,6 +9,10 @@
             if (event) event.stopPropagation();
             var panel = document.getElementById('notificationPanel');
             panel.classList.toggle('hidden');
+            // 首次打开即视为已读, 隐藏铃铛上的红点
+            if (!panel.classList.contains('hidden')) {
+                markAllNotifications();
+            }
         }
 
         function markAllNotifications() {

@@ -46,119 +46,119 @@ window.Iconify.disableRemoteAPI = true;
 </head>
 <body class="h-screen flex flex-col min-w-[1024px]">
 <!-- 顶部导航栏 -->
-<header class="h-12 bg-white border-b border-[#E5E6EB] flex items-center justify-between px-4 z-50 flex-none">
+<header class="h-12 bg-white border-b border-bg-border flex items-center justify-between px-4 z-50 flex-none">
 <div class="flex items-center gap-3">
-<div class="w-8 h-8 bg-[#165DFF] rounded flex items-center justify-center">
+<div class="w-8 h-8 bg-brand rounded flex items-center justify-center">
 <iconify-icon class="text-white text-xl" icon="mdi:scale-balance"></iconify-icon>
 </div>
-<span class="text-lg font-bold tracking-tight">LexPrime <span class="text-[#165DFF]">元枢法智</span></span>
+<span class="text-lg font-bold tracking-tight">LexPrime <span class="text-brand">元枢法智</span></span>
 </div>
 <div class="flex-1 max-w-md mx-8">
 <div class="relative group">
-<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary">
 <iconify-icon icon="mdi:magnify"></iconify-icon>
 </span>
-<input class="w-full bg-[#F2F3F5] border-transparent focus:bg-white focus:border-[#165DFF] focus:ring-1 focus:ring-[#165DFF] rounded-lg py-1.5 pl-10 pr-4 text-sm transition-all outline-none" placeholder="搜索案件、文书或证据..." type="text"/>
+<input class="w-full bg-bg border-transparent focus:bg-white focus:border-brand focus:ring-1 focus:ring-brand rounded-lg py-1.5 pl-10 pr-4 text-sm transition-all outline-none" placeholder="搜索案件、文书或证据..." type="text"/>
 </div>
 </div>
 <div class="flex items-center gap-4">
-<button class="text-gray-500 hover:bg-gray-100 p-2 rounded-full relative" onclick="toggleNotifications(event)">
+<button class="text-fg-secondary hover:bg-bg-subtle p-2 rounded-full relative" onclick="toggleNotifications(event)">
 <iconify-icon class="text-xl" icon="mdi:bell-outline"></iconify-icon>
-<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger-tint0 rounded-full border-2 border-white"></span>
 </button>
 <!-- 通知弹出面板 -->
-<div class="hidden absolute top-full right-0 mt-2 w-80 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-[100]" id="notificationPanel" style="position: fixed; right: 100px; top: 48px;">
-<div class="p-3 border-b border-[#E5E6EB] flex items-center justify-between">
-<h3 class="text-sm font-semibold text-[#1D2129]">通知</h3>
-<button class="text-[11px] text-[#165DFF] hover:text-[#4080FF]" onclick="markAllNotifications()">全部已读</button>
+<div class="hidden absolute top-full right-0 mt-2 w-80 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden z-[100]" id="notificationPanel" style="position: fixed; right: 100px; top: 48px;">
+<div class="p-3 border-b border-bg-border flex items-center justify-between">
+<h3 class="text-sm font-semibold text-fg-primary">通知</h3>
+<button class="text-[11px] text-brand hover:text-brand-hover" onclick="markAllNotifications()">全部已读</button>
 </div>
 <div class="max-h-80 overflow-y-auto">
 <!-- 通知1 -->
-<div class="flex items-start gap-3 p-3 hover:bg-[#F7F8FA] border-b border-[#F2F3F5] cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-blue-50 text-[#165DFF] flex items-center justify-center flex-shrink-0">
+<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:file-document-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">起诉状已生成</p>
-<p class="text-[11px] text-[#86909C] mt-0.5">李明诉XX公司买卖合同纠纷案的起诉状已完成AI草拟</p>
-<p class="text-[10px] text-[#C9CDD4] mt-1">3 分钟前</p>
+<p class="text-xs font-medium text-fg-primary">起诉状已生成</p>
+<p class="text-[11px] text-fg-tertiary mt-0.5">李明诉XX公司买卖合同纠纷案的起诉状已完成AI草拟</p>
+<p class="text-[10px] text-fg-disabled mt-1">3 分钟前</p>
 </div>
-<div class="w-1.5 h-1.5 rounded-full bg-[#165DFF] flex-shrink-0 mt-1.5"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
 </div>
 <!-- 通知2 -->
-<div class="flex items-start gap-3 p-3 hover:bg-[#F7F8FA] border-b border-[#F2F3F5] cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">
+<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-danger-tint text-danger flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:clock-alert-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">证据提交即将截止</p>
-<p class="text-[11px] text-[#86909C] mt-0.5">王华借贷纠纷案举证期还剩2天</p>
-<p class="text-[10px] text-[#C9CDD4] mt-1">15 分钟前</p>
+<p class="text-xs font-medium text-fg-primary">证据提交即将截止</p>
+<p class="text-[11px] text-fg-tertiary mt-0.5">王华借贷纠纷案举证期还剩2天</p>
+<p class="text-[10px] text-fg-disabled mt-1">15 分钟前</p>
 </div>
-<div class="w-1.5 h-1.5 rounded-full bg-[#165DFF] flex-shrink-0 mt-1.5"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
 </div>
 <!-- 通知3 -->
-<div class="flex items-start gap-3 p-3 hover:bg-[#F7F8FA] border-b border-[#F2F3F5] cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center flex-shrink-0">
+<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-success-tint text-success flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:check-circle-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">案件已归档</p>
-<p class="text-[11px] text-[#86909C] mt-0.5">张三合同纠纷案已完成结案归档</p>
-<p class="text-[10px] text-[#C9CDD4] mt-1">1 小时前</p>
+<p class="text-xs font-medium text-fg-primary">案件已归档</p>
+<p class="text-[11px] text-fg-tertiary mt-0.5">张三合同纠纷案已完成结案归档</p>
+<p class="text-[10px] text-fg-disabled mt-1">1 小时前</p>
 </div>
-<div class="w-1.5 h-1.5 rounded-full bg-[#165DFF] flex-shrink-0 mt-1.5"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
 </div>
 <!-- 通知4 -->
-<div class="flex items-start gap-3 p-3 hover:bg-[#F7F8FA] cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center flex-shrink-0">
+<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-warning-tint text-warning flex items-center justify-center flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:calendar-clock-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-[#1D2129]">明日开庭提醒</p>
-<p class="text-[11px] text-[#86909C] mt-0.5">某科技公司股权纠纷案明日09:00开庭</p>
-<p class="text-[10px] text-[#C9CDD4] mt-1">2 小时前</p>
+<p class="text-xs font-medium text-fg-primary">明日开庭提醒</p>
+<p class="text-[11px] text-fg-tertiary mt-0.5">某科技公司股权纠纷案明日09:00开庭</p>
+<p class="text-[10px] text-fg-disabled mt-1">2 小时前</p>
 </div>
-<div class="w-1.5 h-1.5 rounded-full bg-[#165DFF] flex-shrink-0 mt-1.5"></div>
-</div>
-</div>
-<div class="p-2.5 border-t border-[#E5E6EB] text-center">
-<button class="text-[11px] text-[#165DFF] hover:text-[#4080FF] font-medium">查看全部通知</button>
+<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
 </div>
 </div>
-<div class="h-6 w-px bg-gray-200"></div>
-<div class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 px-2 rounded-lg relative" onclick="toggleUserMenu(event)">
-<img alt="User Avatar" class="w-7 h-7 rounded-full border border-gray-100" src="./assets/images/avatar.jpg"/>
-<span class="text-sm font-medium">张律师</span>
-<iconify-icon class="text-gray-400" icon="mdi:chevron-down"></iconify-icon>
-<!-- 用户下拉菜单 -->
-<div class="hidden absolute top-full right-0 mt-2 w-48 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-[100]" id="userMenu">
-<div class="py-1">
-<div class="px-4 py-2.5 border-b border-[#F2F3F5]">
-<p class="text-sm font-semibold text-[#1D2129]">张律师</p>
-<p class="text-[11px] text-[#86909C]">zhang@lexprime.cn</p>
+<div class="p-2.5 border-t border-bg-border text-center">
+<button class="text-[11px] text-brand hover:text-brand-hover font-medium">查看全部通知</button>
 </div>
-<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); switchToMemberCenter()">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:account-circle-outline"></iconify-icon>
+</div>
+<div class="h-6 w-px bg-bg-border"></div>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle p-1 px-2 rounded-lg relative" onclick="toggleUserMenu(event)">
+            <img alt="User Avatar" class="w-7 h-7 rounded-full border border-bg-border" src="./assets/images/avatar.jpg"/>
+            <span class="text-sm font-medium" id="user-display-name">张律师</span>
+            <iconify-icon class="text-fg-tertiary" icon="mdi:chevron-down"></iconify-icon>
+            <!-- 用户下拉菜单 -->
+            <div class="hidden absolute top-full right-0 mt-2 w-48 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden z-[100]" id="userMenu">
+                <div class="py-1">
+                    <div class="px-4 py-2.5 border-b border-bg-subtle">
+                        <p class="text-sm font-semibold text-fg-primary" id="user-menu-name">张律师</p>
+                        <p class="text-[11px] text-fg-tertiary" id="user-menu-email">zhang@lexprime.cn</p>
+                    </div>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchToMemberCenter()">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:account-circle-outline"></iconify-icon>
 <span>个人中心</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); switchToAccountSettings()">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:cog-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchToAccountSettings()">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:cog-outline"></iconify-icon>
 <span>账号设置</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); switchToSubscription()">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:receipt-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchToSubscription()">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:receipt-outline"></iconify-icon>
 <span>会员订阅</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="event.stopPropagation(); switchToOrders()">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:receipt-text-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchToOrders()">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:receipt-text-outline"></iconify-icon>
 <span>订单记录</span>
 </button>
-<div class="h-px bg-[#F2F3F5] mx-4"></div>
-<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] transition-colors" onclick="event.stopPropagation(); showToast('已退出登录')">
-<iconify-icon class="text-base" icon="mdi:logout"></iconify-icon>
-<span>退出登录</span>
-</button>
+<div class="h-px bg-bg mx-4"></div>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-danger hover:bg-danger-tint transition-colors" onclick="event.stopPropagation(); Auth.logout(); showToast('已退出登录');">
+            <iconify-icon class="text-base" icon="mdi:logout"></iconify-icon>
+            <span>退出登录</span>
+        </button>
 </div>
 </div>
 </div>
@@ -166,13 +166,13 @@ window.Iconify.disableRemoteAPI = true;
 </header>
 <div class="flex-1 flex overflow-hidden">
 <!-- 左侧导航栏 -->
-<aside class="w-60 bg-white border-r border-[#E5E6EB] flex flex-col relative flex-none" id="sidebar">
+<aside class="w-60 bg-white border-r border-bg-border flex flex-col relative flex-none" id="sidebar">
 <!-- 标签页切换栏 -->
 <div class="flex items-center gap-1 px-3 pt-3 pb-2">
 <button class="sidebar-tab-btn active" data-tab="work" onclick="switchSidebarTab('work')">工作</button>
 <button class="sidebar-tab-btn" data-tab="ai" onclick="switchSidebarTab('ai')">AI对话</button>
 </div>
-<div class="h-px bg-[#E5E6EB] mx-3"></div>
+<div class="h-px bg-bg-border mx-3"></div>
 <!-- 工作标签页内容 -->
 <div class="flex-1 flex flex-col overflow-hidden" id="sidebarTabWork">
 <div class="flex-1 p-3 pt-2">
@@ -206,36 +206,36 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 </div>
 <!-- 更多按钮（工作标签底部）+ 独立弹出菜单 -->
-<div class="mt-auto border-t border-gray-100 px-3 py-2 relative">
-<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] text-[#4E5969] transition-colors text-xs" onclick="toggleMoreMenu('work')">
+<div class="mt-auto border-t border-bg-border px-3 py-2 relative">
+<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-bg text-fg-secondary transition-colors text-xs" onclick="toggleMoreMenu('work')">
 <iconify-icon class="text-lg" icon="mdi:dots-horizontal"></iconify-icon>
 <span class="sidebar-text">更多</span>
 </button>
 <!-- 弹出菜单 -->
-<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-50" id="moreMenuWork">
+<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden z-50" id="moreMenuWork">
 <div class="py-1">
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('settings')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:cog-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('settings')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:cog-outline"></iconify-icon>
 <span>设置</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('upgrade')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:rocket-launch-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('upgrade')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:rocket-launch-outline"></iconify-icon>
 <span>升级</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('feedback')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:message-text-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('feedback')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:message-text-outline"></iconify-icon>
 <span>问题反馈</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('guide')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:book-open-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('guide')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:book-open-outline"></iconify-icon>
 <span>用户指南</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('contact')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:email-outline"></iconify-icon>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('contact')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:email-outline"></iconify-icon>
 <span>联系我们</span>
 </button>
-<div class="h-px bg-[#E5E6EB] mx-4"></div>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] transition-colors" onclick="handleMoreAction('logout')">
+<div class="h-px bg-bg-border mx-4"></div>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-danger hover:bg-danger-tint transition-colors" onclick="handleMoreAction('logout')">
 <iconify-icon class="text-base" icon="mdi:logout"></iconify-icon>
 <span>退出登录</span>
 </button>
@@ -246,11 +246,11 @@ window.Iconify.disableRemoteAPI = true;
 <!-- AI对话标签页内容 -->
 <div class="hidden flex flex-col h-full" id="sidebarTabAI">
 <!-- 顶部标题 -->
-<div class="flex items-center gap-2 px-4 py-3 border-b border-[#E5E6EB] flex-none">
-<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">
+<div class="flex items-center gap-2 px-4 py-3 border-b border-bg-border flex-none">
+<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white flex-shrink-0">
 <iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
 </div>
-<span class="text-sm font-semibold text-[#1D2129]">LexPrime 助手</span>
+<span class="text-sm font-semibold text-fg-primary">LexPrime 助手</span>
 </div>
 <!-- 菜单列表 -->
 <div class="flex-1 p-3 pt-2 overflow-y-auto">
@@ -268,30 +268,30 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 </div>
 <!-- 更多按钮（AI标签底部）+ 独立弹出菜单 -->
-<div class="mt-auto border-t border-gray-100 px-3 py-2 relative">
-<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#F2F3F5] text-[#4E5969] transition-colors text-xs" onclick="toggleMoreMenu('ai')">
+<div class="mt-auto border-t border-bg-border px-3 py-2 relative">
+<button class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-bg text-fg-secondary transition-colors text-xs" onclick="toggleMoreMenu('ai')">
 <iconify-icon class="text-lg" icon="mdi:dots-horizontal"></iconify-icon>
 <span class="sidebar-text">更多</span>
 </button>
-<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E5E6EB] shadow-lg overflow-hidden z-50" id="moreMenuAI">
+<div class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden z-50" id="moreMenuAI">
 <div class="py-1">
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('settings')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:cog-outline"></iconify-icon><span>设置</span>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('settings')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:cog-outline"></iconify-icon><span>设置</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('upgrade')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:rocket-launch-outline"></iconify-icon><span>升级</span>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('upgrade')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:rocket-launch-outline"></iconify-icon><span>升级</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('feedback')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:message-text-outline"></iconify-icon><span>问题反馈</span>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('feedback')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:message-text-outline"></iconify-icon><span>问题反馈</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('guide')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:book-open-outline"></iconify-icon><span>用户指南</span>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('guide')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:book-open-outline"></iconify-icon><span>用户指南</span>
 </button>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#4E5969] hover:bg-[#F7F8FA] transition-colors" onclick="handleMoreAction('contact')">
-<iconify-icon class="text-base text-[#86909C]" icon="mdi:email-outline"></iconify-icon><span>联系我们</span>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="handleMoreAction('contact')">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:email-outline"></iconify-icon><span>联系我们</span>
 </button>
-<div class="h-px bg-[#E5E6EB] mx-4"></div>
-<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-[#F53F3F] hover:bg-[#FFF0F0] transition-colors" onclick="handleMoreAction('logout')">
+<div class="h-px bg-bg-border mx-4"></div>
+<button class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-danger hover:bg-danger-tint transition-colors" onclick="handleMoreAction('logout')">
 <iconify-icon class="text-base" icon="mdi:logout"></iconify-icon><span>退出登录</span>
 </button>
 </div>
@@ -305,22 +305,22 @@ window.Iconify.disableRemoteAPI = true;
 </main>
 </div>
 <!-- 全局底部状态栏 -->
-<footer class="h-7 bg-white border-t border-gray-200 flex items-center justify-between px-4 text-[11px] text-gray-500 flex-none">
+<footer class="h-7 bg-white border-t border-bg-border flex items-center justify-between px-4 text-[11px] text-fg-secondary flex-none">
 <div class="flex items-center gap-4">
 <span class="flex items-center gap-1">
-<iconify-icon class="text-green-500" icon="mdi:sync"></iconify-icon>
+<iconify-icon class="text-success" icon="mdi:sync"></iconify-icon>
                 云端同步已完成 (<span id="footer-sync-time">--:--</span>)
             </span>
 <span class="flex items-center gap-1">
-<iconify-icon class="text-blue-500" icon="mdi:server-network"></iconify-icon>
+<iconify-icon class="text-brand" icon="mdi:server-network"></iconify-icon>
                 连接至上海节点
             </span>
 </div>
 <div class="flex items-center gap-4">
-<span class="cursor-pointer hover:text-blue-600">帮助中心</span>
-<span class="cursor-pointer hover:text-blue-600">意见反馈</span>
-<div class="h-3 w-px bg-gray-200"></div>
-<span class="font-medium text-[#165DFF] flex items-center gap-1 cursor-pointer">
+<span class="cursor-pointer hover:text-brand">帮助中心</span>
+<span class="cursor-pointer hover:text-brand">意见反馈</span>
+<div class="h-3 w-px bg-bg-border"></div>
+<span class="font-medium text-brand flex items-center gap-1 cursor-pointer">
 <iconify-icon icon="mdi:robot"></iconify-icon>
                 LexPrime 助手在线
             </span>

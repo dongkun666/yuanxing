@@ -797,6 +797,25 @@
     }
 
     // ===== Phase 3 P0: Login 表单处理 (依赖 auth.js 已加载) =====
+
+    /**
+     * 用 Auth.currentUser() 同步填充顶栏 user 信息
+     * - 用户名 + 邮箱
+     * - 在 initLoginView 启动块调用, 在 demo/普通登录成功后调用
+     */
+    function updateUserInfo() {
+        if (typeof Auth === 'undefined') return;
+        var user = Auth.currentUser();
+        var name = user && (user.displayName || user.email) || '演示律师';
+        var email = user && user.email || 'demo@lexprime.cn';
+        var nameEl = document.getElementById('user-display-name');
+        var menuNameEl = document.getElementById('user-menu-name');
+        var emailEl = document.getElementById('user-menu-email');
+        if (nameEl) nameEl.textContent = name;
+        if (menuNameEl) menuNameEl.textContent = name;
+        if (emailEl) emailEl.textContent = email;
+    }
+
     function initLoginView() {
         var loginTabBtn = document.getElementById('login-tab-btn');
         var registerTabBtn = document.getElementById('register-tab-btn');
@@ -844,6 +863,7 @@
                 var password = document.getElementById('login-password').value;
                 var res = await Auth.login(email, password);
                 if (res.ok) {
+                    updateUserInfo();
                     showToast('登录成功, 欢迎 ' + (res.user.displayName || res.user.email));
                     switchView('workstation');
                 } else {
@@ -865,6 +885,7 @@
                 }
                 var res = await Auth.register(email, password, name);
                 if (res.ok) {
+                    updateUserInfo();
                     showToast('注册成功, 欢迎 ' + (res.user.displayName || res.user.email));
                     switchView('workstation');
                 } else {
@@ -877,6 +898,7 @@
             demoBtn.addEventListener('click', async function() {
                 var res = await Auth.demoLogin();
                 if (res.ok) {
+                    updateUserInfo();
                     showToast('进入 Demo 模式');
                     switchView('workstation');
                 } else {
@@ -891,6 +913,10 @@
         var startView = (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn())
             ? 'workstation'
             : 'login';
+        // 已登录则填充顶栏 user info
+        if (startView === 'workstation' && typeof updateUserInfo === 'function') {
+            updateUserInfo();
+        }
         // 等 DOM ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() { switchView(startView); });
