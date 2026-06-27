@@ -1022,6 +1022,11 @@
             onAppReady();
         }
         function onAppReady() {
+            bootstrapApp();
+        }
+        // 公共启动入口: 同步 Auth session + 切初始 view + 通知红点
+        // 任何 view 想单独初始化可调此函数 (不用重复 Auth.restore 逻辑)
+        function bootstrapApp() {
             // Auth.restore() 在 auth.js IIFE 末尾自动跑过, 但当时 AppState 还没定义
             // (auth.js 在 script.js 之前加载), token/user 没同步到 AppState
             // 这里再调一次 restore, 把 localStorage 的 token/user 灌进 AppState
@@ -1035,6 +1040,45 @@
         function updateNotificationBadgeState() {
             if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
             if (typeof startNotificationTimeRefresh === 'function') startNotificationTimeRefresh();
+        }
+
+        // ===== 全局错误处理 (开发期诊断) =====
+        // 收集未捕获的 JS 错误 + Promise 异常到 AppState.errorLog + console.error
+        // 上限 50 条, 防止 localStorage 爆炸
+        function recordError(type, msg, file, line, stack) {
+            try {
+                if (typeof AppState === 'undefined') {
+                    console.error('[' + type + ']', msg, file, line, stack);
+                    return;
+                }
+                if (!AppState.errorLog) AppState.errorLog = [];
+                AppState.errorLog.push({
+                    ts: Date.now(),
+                    type: type,
+                    msg: msg,
+                    file: file || '',
+                    line: line || 0,
+                    stack: stack || ''
+                });
+                if (AppState.errorLog.length > 50) {
+                    AppState.errorLog.splice(0, AppState.errorLog.length - 50);
+                }
+                console.error('[' + type + ']', msg, file || '', line || '', stack || '');
+            } catch (e) {
+                // 记录错误自身失败, 静默吞掉
+            }
+        }
+        if (typeof window !== 'undefined') {
+            window.addEventListener('error', function(e) {
+                var stack = (e.error && e.error.stack) ? e.error.stack : '';
+                recordError('GlobalError', e.message || 'unknown', e.filename, e.lineno, stack);
+            });
+            window.addEventListener('unhandledrejection', function(e) {
+                var reason = e.reason;
+                var msg = reason && reason.message ? reason.message : String(reason);
+                var stack = reason && reason.stack ? reason.stack : '';
+                recordError('UnhandledPromise', msg, '', 0, stack);
+            });
         }
         // login view 加载后绑定事件
         var origSwitchView = switchView;
