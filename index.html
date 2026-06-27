@@ -64,7 +64,7 @@ window.Iconify.disableRemoteAPI = true;
 <div class="flex items-center gap-4">
 <button class="text-fg-secondary hover:bg-bg-subtle p-2 rounded-full relative" onclick="toggleNotifications(event)">
 <iconify-icon class="text-xl" icon="mdi:bell-outline"></iconify-icon>
-<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger-tint0 rounded-full border-2 border-white"></span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger-tint0 rounded-full border-2 border-white hidden"></span>
 </button>
 <!-- 通知弹出面板 -->
 <div class="hidden absolute top-full right-0 mt-2 w-80 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden z-[100]" id="notificationPanel" style="position: fixed; right: 100px; top: 48px;">
@@ -72,58 +72,9 @@ window.Iconify.disableRemoteAPI = true;
 <h3 class="text-sm font-semibold text-fg-primary">通知</h3>
 <button class="text-[11px] text-brand hover:text-brand-hover" onclick="markAllNotifications()">全部已读</button>
 </div>
-<div class="max-h-80 overflow-y-auto">
-<!-- 通知1 -->
-<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:file-document-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-fg-primary">起诉状已生成</p>
-<p class="text-[11px] text-fg-tertiary mt-0.5">李明诉XX公司买卖合同纠纷案的起诉状已完成AI草拟</p>
-<p class="text-[10px] text-fg-disabled mt-1">3 分钟前</p>
-</div>
-<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
-</div>
-<!-- 通知2 -->
-<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-danger-tint text-danger flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:clock-alert-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-fg-primary">证据提交即将截止</p>
-<p class="text-[11px] text-fg-tertiary mt-0.5">王华借贷纠纷案举证期还剩2天</p>
-<p class="text-[10px] text-fg-disabled mt-1">15 分钟前</p>
-</div>
-<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
-</div>
-<!-- 通知3 -->
-<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-success-tint text-success flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:check-circle-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-fg-primary">案件已归档</p>
-<p class="text-[11px] text-fg-tertiary mt-0.5">张三合同纠纷案已完成结案归档</p>
-<p class="text-[10px] text-fg-disabled mt-1">1 小时前</p>
-</div>
-<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
-</div>
-<!-- 通知4 -->
-<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-warning-tint text-warning flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:calendar-clock-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-xs font-medium text-fg-primary">明日开庭提醒</p>
-<p class="text-[11px] text-fg-tertiary mt-0.5">某科技公司股权纠纷案明日09:00开庭</p>
-<p class="text-[10px] text-fg-disabled mt-1">2 小时前</p>
-</div>
-<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>
-</div>
-</div>
+<div class="max-h-80 overflow-y-auto notification-list"></div>
 <div class="p-2.5 border-t border-bg-border text-center">
-<button class="text-[11px] text-brand hover:text-brand-hover font-medium">查看全部通知</button>
+<button class="text-[11px] text-brand hover:text-brand-hover font-medium" onclick="switchToNotifications()">查看全部通知</button>
 </div>
 </div>
 <div class="h-6 w-px bg-bg-border"></div>

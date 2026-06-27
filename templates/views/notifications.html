@@ -1,0 +1,30 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-notifications">
+<div class="max-w-4xl mx-auto w-full space-y-5">
+<!-- 标题 + 返回 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1 text-xs text-fg-secondary hover:text-brand transition-colors" onclick="switchView('workstation')">
+<iconify-icon icon="mdi:arrow-left"></iconify-icon>
+<span>返回</span>
+</button>
+<span class="text-bg-border">|</span>
+<h3 class="text-base font-semibold text-fg-primary">全部通知</h3>
+</div>
+<button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="markAllNotifications()">
+<iconify-icon icon="mdi:check-all"></iconify-icon>
+<span>全部已读</span>
+</button>
+</div>
+<!-- 统计 + 三态切换 -->
+<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
+<iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
+<span class="text-xs text-fg-secondary font-medium">查看</span>
+<button data-filter="all" onclick="setNotificationsFilter('all')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium">全部</button>
+<button data-filter="unread" onclick="setNotificationsFilter('unread')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">未读</button>
+<button data-filter="read" onclick="setNotificationsFilter('read')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">已读</button>
+<span class="text-[10px] text-fg-tertiary ml-auto" id="notifications-count"></span>
+</div>
+<!-- 通知列表 -->
+<div class="space-y-3" id="notifications-list"></div>
+</div>
+</div>

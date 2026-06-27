@@ -39,7 +39,8 @@
             'orders': 'orders.html',
             'member-center': 'member-center.html',
             'account-settings': 'account-settings.html',
-            'archive': 'archive.html'
+            'archive': 'archive.html',
+            'notifications': 'notifications.html'
         };
 
         // 动态加载视图
@@ -137,6 +138,12 @@
                         if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
                     }, 50);
                 }
+                // 进入通知全屏页: 渲染列表 + 同步 tab 状态
+                if (viewId === 'notifications') {
+                    setTimeout(function() {
+                        if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
+                    }, 50);
+                }
             } else {
                 // 视图未加载，动态加载
                 loadView(viewId, function(html) {
@@ -158,6 +165,12 @@
                             setTimeout(function() {
                                 if (typeof window.renderScheduleList === 'function') window.renderScheduleList();
                                 if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
+                            }, 50);
+                        }
+                        // 进入通知全屏页: 渲染列表 + 同步 tab 状态
+                        if (viewId === 'notifications') {
+                            setTimeout(function() {
+                                if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
                             }, 50);
                         }
                     }
@@ -685,6 +698,29 @@
         ];
     })();
 
+    // 通知数据 (AppState.notifications)
+    // 优先读 localStorage (持久化用户已读状态); 损坏/空则回退到 mock
+    // 字段: id, type (document/deadline/case/member/system), icon, color, title, desc, timeAgo, timestamp, unread, linkTo, linkParam
+    AppState.notifications = (function() {
+        try {
+            var saved = localStorage.getItem('lexprime_notifications');
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data) && data.length > 0) return data;
+            }
+        } catch (e) {}
+        return [
+            { id: 'n1', type: 'document', icon: 'mdi:file-document-outline', color: 'brand', title: '起诉状已生成', desc: '李明诉XX公司买卖合同纠纷案的起诉状已完成 AI 草拟', timeAgo: '3 分钟前', timestamp: Date.now() - 3 * 60 * 1000, unread: true, linkTo: 'case', linkParam: '1' },
+            { id: 'n2', type: 'deadline', icon: 'mdi:clock-alert-outline', color: 'danger', title: '证据提交即将截止', desc: '王华借贷纠纷案举证期还剩 2 天, 请尽快准备补充证据', timeAgo: '15 分钟前', timestamp: Date.now() - 15 * 60 * 1000, unread: true, linkTo: 'case', linkParam: '2' },
+            { id: 'n3', type: 'case', icon: 'mdi:check-circle-outline', color: 'success', title: '案件已归档', desc: '张三合同纠纷案已完成结案归档, 可在归档列表查阅', timeAgo: '1 小时前', timestamp: Date.now() - 60 * 60 * 1000, unread: false, linkTo: 'archive', linkParam: '' },
+            { id: 'n4', type: 'deadline', icon: 'mdi:calendar-clock-outline', color: 'warning', title: '明日开庭提醒', desc: '某科技公司股权纠纷案明日 09:00 开庭, 建议提前准备材料', timeAgo: '2 小时前', timestamp: Date.now() - 2 * 60 * 60 * 1000, unread: true, linkTo: 'schedule-calendar', linkParam: '' },
+            { id: 'n5', type: 'case', icon: 'mdi:gavel', color: 'brand', title: '新案件已立案', desc: '赵六劳动争议仲裁案已立案, 进入准备阶段', timeAgo: '昨天 16:20', timestamp: Date.now() - 24 * 60 * 60 * 1000, unread: false, linkTo: 'case', linkParam: '6' },
+            { id: 'n6', type: 'document', icon: 'mdi:file-pdf-box', color: 'brand', title: '合同审查完成', desc: '北京某科技公司股权回购协议审查报告已生成', timeAgo: '昨天 10:15', timestamp: Date.now() - 26 * 60 * 60 * 1000, unread: false, linkTo: 'case', linkParam: '7' },
+            { id: 'n7', type: 'member', icon: 'mdi:account-star-outline', color: 'warning', title: '会员即将到期', desc: '专业版会员还剩 7 天到期, 续费可继续享 8 折优惠', timeAgo: '3 天前', timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'subscription', linkParam: '' },
+            { id: 'n8', type: 'system', icon: 'mdi:update', color: 'brand', title: '系统升级通知', desc: 'LexPrime v2.1 已发布: 新增日程管理三态过滤, 工作台空态优化等', timeAgo: '5 天前', timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'workstation', linkParam: '' },
+        ];
+    })();
+
     // ===== 新建日程弹窗 =====
 
     // ===== 更新今日日程角标 =====
@@ -946,9 +982,14 @@
         }
         // 等 DOM ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() { switchView(startView); });
+            document.addEventListener('DOMContentLoaded', function() { switchView(startView); updateNotificationBadgeState(); });
         } else {
             switchView(startView);
+            updateNotificationBadgeState();
+        }
+        // 启动时同步通知铃铛红点状态 (按 AppState.notifications 真实未读数)
+        function updateNotificationBadgeState() {
+            if (typeof updateNotificationBadge === 'function') updateNotificationBadge();
         }
         // login view 加载后绑定事件
         var origSwitchView = switchView;

@@ -9,9 +9,9 @@
             if (event) event.stopPropagation();
             var panel = document.getElementById('notificationPanel');
             panel.classList.toggle('hidden');
-            // 首次打开即视为已读, 隐藏铃铛上的红点
             if (!panel.classList.contains('hidden')) {
-                markAllNotifications();
+                // 打开时渲染最新通知 (数据驱动)
+                renderNotificationsPanel();
                 // 打开后注册外部点击关闭 (延迟 0ms 避免本次 click 立即触发)
                 setTimeout(function() {
                     setupOutsideClickClose('notificationPanel', '[onclick*="toggleNotifications"]');
@@ -42,14 +42,155 @@
         }
 
         function markAllNotifications() {
-            var dots = document.querySelectorAll('#notificationPanel span.rounded-full.bg-\\[\\#165DFF\\]');
-            dots.forEach(function(dot) {
-                dot.classList.remove('bg-[#165DFF]');
-                dot.classList.add('bg-transparent');
-            });
-            // 隐藏小红点
+            AppState.notifications.forEach(function(n) { n.unread = false; });
+            persistNotifications();
+            renderNotificationsPanel();
+            if (typeof renderNotificationsPage === 'function') renderNotificationsPage();
+            updateNotificationBadge();
+            showToast('已全部标记为已读');
+        }
+
+        // localStorage 持久化
+        function persistNotifications() {
+            try { localStorage.setItem('lexprime_notifications', JSON.stringify(AppState.notifications)); } catch (e) { console.warn('持久化通知失败:', e); }
+        }
+
+        // 铃铛小红点 (未读数 > 0 才显示)
+        function updateNotificationBadge() {
             var badge = document.querySelector('button[onclick*="toggleNotifications"] .w-2.h-2');
-            if (badge) badge.classList.add('hidden');
+            if (!badge) return;
+            var unread = AppState.notifications.filter(function(n) { return n.unread; }).length;
+            if (unread === 0) badge.classList.add('hidden');
+            else badge.classList.remove('hidden');
+        }
+
+        // 渲染通知面板 (右上角下拉, 最多 5 条)
+        function renderNotificationsPanel() {
+            var panel = document.getElementById('notificationPanel');
+            if (!panel) return;
+            var listEl = panel.querySelector('.notification-list');
+            if (!listEl) return;
+            var items = AppState.notifications.slice(0, 5);
+            var colorMap = {
+                brand: 'bg-brand-tint text-brand',
+                danger: 'bg-danger-tint text-danger',
+                warning: 'bg-warning-tint text-warning',
+                success: 'bg-success-tint text-success'
+            };
+            var htmlStr = '';
+            items.forEach(function(n) {
+                var cls = colorMap[n.color] || colorMap.brand;
+                htmlStr += '<div class="flex items-start gap-3 p-3 hover:bg-bg-subtle border-b border-bg cursor-pointer" onclick="openNotification(\'' + n.id + '\', event)">' +
+                    '<div class="w-8 h-8 rounded-full ' + cls + ' flex items-center justify-center flex-shrink-0">' +
+                        '<iconify-icon class="text-sm" icon="' + escapeHtml(n.icon || 'mdi:bell-outline') + '"></iconify-icon>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<p class="text-xs font-medium text-fg-primary">' + escapeHtml(n.title || '') + '</p>' +
+                        '<p class="text-[11px] text-fg-tertiary mt-0.5 line-clamp-2">' + escapeHtml(n.desc || '') + '</p>' +
+                        '<p class="text-[10px] text-fg-disabled mt-1">' + escapeHtml(n.timeAgo || '') + '</p>' +
+                    '</div>' +
+                    (n.unread ? '<div class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0 mt-1.5"></div>' : '') +
+                '</div>';
+            });
+            listEl.innerHTML = htmlStr;
+        }
+
+        // 单条点击: 标记已读 + 跳转
+        function openNotification(id, event) {
+            if (event) event.stopPropagation();
+            var n = AppState.notifications.find(function(x) { return x.id === id; });
+            if (!n) return;
+            // 标记已读
+            if (n.unread) {
+                n.unread = false;
+                persistNotifications();
+                renderNotificationsPanel();
+                if (typeof renderNotificationsPage === 'function') renderNotificationsPage();
+                updateNotificationBadge();
+            }
+            // 跳转
+            if (n.linkTo && typeof switchView === 'function') {
+                // 关闭面板
+                var panel = document.getElementById('notificationPanel');
+                if (panel) panel.classList.add('hidden');
+                if (n.linkParam) {
+                    // 拼接 query string (例如 case-detail?id=1)
+                    switchView(n.linkTo + (n.linkTo.includes('?') ? '&' : '?') + 'id=' + n.linkParam);
+                } else {
+                    switchView(n.linkTo);
+                }
+            }
+        }
+
+        // 打开「全部通知」全屏页
+        function switchToNotifications() {
+            // 关闭面板
+            var panel = document.getElementById('notificationPanel');
+            if (panel) panel.classList.add('hidden');
+            if (typeof switchView === 'function') switchView('notifications');
+        }
+
+        // 渲染全屏通知页
+        // filter: 'all' (默认) | 'unread' | 'read'
+        function setNotificationsFilter(f) {
+            if (typeof AppState === 'undefined') return;
+            AppState.notificationsFilter = f;
+            renderNotificationsPage();
+            // 同步 tab active
+            document.querySelectorAll('.notif-filter-tab').forEach(function(btn) {
+                if (btn.dataset.filter === f) {
+                    btn.className = 'notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium';
+                } else {
+                    btn.className = 'notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium';
+                }
+            });
+        }
+        function renderNotificationsPage() {
+            if (typeof AppState === 'undefined') return;
+            if (!AppState.notificationsFilter) AppState.notificationsFilter = 'all';
+            var container = document.getElementById('notifications-list');
+            if (!container) return;
+            var f = AppState.notificationsFilter || 'all';
+            var items = AppState.notifications.slice().sort(function(a, b) {
+                // 未读优先 + 时间倒序
+                if (!!a.unread !== !!b.unread) return a.unread ? -1 : 1;
+                return (b.timestamp || 0) - (a.timestamp || 0);
+            }).filter(function(n) {
+                if (f === 'unread') return n.unread;
+                if (f === 'read') return !n.unread;
+                return true;
+            });
+            var colorMap = {
+                brand: 'bg-brand-tint text-brand',
+                danger: 'bg-danger-tint text-danger',
+                warning: 'bg-warning-tint text-warning',
+                success: 'bg-success-tint text-success'
+            };
+            if (items.length === 0) {
+                container.innerHTML = '<div class="text-center py-20 text-fg-tertiary">' +
+                    '<iconify-icon icon="mdi:bell-check-outline" class="text-5xl mb-3"></iconify-icon>' +
+                    '<p class="text-sm">' + (f === 'unread' ? '没有未读通知' : (f === 'read' ? '没有已读通知' : '没有通知')) + '</p>' +
+                '</div>';
+                return;
+            }
+            var htmlStr = '';
+            items.forEach(function(n) {
+                var cls = colorMap[n.color] || colorMap.brand;
+                htmlStr += '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer flex items-start gap-3 ' + (n.unread ? 'border-l-4 border-l-brand' : '') + '" onclick="openNotification(\'' + n.id + '\', event)">' +
+                    '<div class="w-10 h-10 rounded-full ' + cls + ' flex items-center justify-center flex-shrink-0">' +
+                        '<iconify-icon icon="' + escapeHtml(n.icon || 'mdi:bell-outline') + '"></iconify-icon>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="flex items-center gap-2 mb-1">' +
+                            '<span class="text-sm font-medium text-fg-primary">' + escapeHtml(n.title || '') + '</span>' +
+                            (n.unread ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-brand text-white font-medium">未读</span>' : '') +
+                        '</div>' +
+                        '<p class="text-xs text-fg-secondary mb-1">' + escapeHtml(n.desc || '') + '</p>' +
+                        '<p class="text-[11px] text-fg-tertiary">' + escapeHtml(n.timeAgo || '') + '</p>' +
+                    '</div>' +
+                '</div>';
+            });
+            container.innerHTML = htmlStr;
         }
 
         function toggleUserMenu(event) {
