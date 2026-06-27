@@ -464,30 +464,34 @@
             var weekday = dateObj ? weekdays[dateObj.getDay()] : '';
             var isToday = s.date === today;
 
-            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '">' +
+            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-5 hover:shadow-md transition-all border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
                 '<div class="flex items-start gap-4">' +
-                    '<div class="flex-shrink-0 text-center w-12">' +
-                        '<div class="text-lg font-bold ' + c.tagText + '">' + day + '</div>' +
-                        '<div class="text-[10px] text-fg-tertiary">' + weekday + '</div>' +
+                    '<div class="flex-shrink-0 text-center w-14">' +
+                        '<div class="text-2xl font-bold ' + c.tagText + ' leading-tight">' + day + '</div>' +
+                        '<div class="text-xs text-fg-tertiary mt-0.5">' + weekday + '</div>' +
                     '</div>' +
                     '<div class="flex-1 min-w-0">' +
-                        '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
-                            '<span class="text-[10px] px-1.5 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
-                            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
-                            (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
+                        '<div class="flex items-center gap-2 mb-1.5 flex-wrap">' +
+                            '<span class="text-xs px-2 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
+                            '<span class="font-semibold text-base text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
+                            (isToday ? '<span class="text-xs px-2 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
                         '</div>' +
-                        '<div class="text-xs text-fg-tertiary flex items-center gap-3 flex-wrap">' +
-                            '<span><iconify-icon class="text-xs" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
-                            (s.location ? '<span><iconify-icon class="text-xs" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
+                        '<div class="text-sm text-fg-secondary flex items-center gap-3 flex-wrap">' +
+                            '<span><iconify-icon class="text-sm" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
+                            (s.location ? '<span><iconify-icon class="text-sm" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
                         '</div>' +
                     '</div>' +
                     '<div class="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                        '<button class="text-[10px] text-brand hover:bg-brand-tint3 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
-                            '<iconify-icon class="text-xs" icon="mdi:pencil-outline"></iconify-icon>' +
+                        '<button class="text-xs text-fg-secondary hover:bg-bg-subtle px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleDetail(' + s.id + ')" title="详情">' +
+                            '<iconify-icon class="text-sm" icon="mdi:eye-outline"></iconify-icon>' +
+                            '<span>详情</span>' +
+                        '</button>' +
+                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
+                            '<iconify-icon class="text-sm" icon="mdi:pencil-outline"></iconify-icon>' +
                             '<span>修改</span>' +
                         '</button>' +
-                        '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
-                            '<iconify-icon class="text-xs" icon="mdi:trash-can-outline"></iconify-icon>' +
+                        '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
+                            '<iconify-icon class="text-sm" icon="mdi:trash-can-outline"></iconify-icon>' +
                             '<span>删除</span>' +
                         '</button>' +
                     '</div>' +
@@ -501,6 +505,86 @@
         return String(str).replace(/[&<>"']/g, function(m) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
         });
+    }
+
+    // 日期格式化为中文: "2026-06-27" → "2026年6月27日 周六"
+    function formatDateCN(dateStr) {
+        if (!dateStr) return '';
+        var d = new Date(dateStr + 'T00:00:00');
+        if (isNaN(d.getTime())) return dateStr;
+        var weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
+        return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + weekdays[d.getDay()];
+    }
+
+    // ===== 详情页 CTA 按钮 =====
+
+    // 跳到关联案件详情
+    function goToCaseFromDetail() {
+        if (!currentDetailScheduleId) return;
+        var item = AppState.scheduleData.find(function(s) { return s.id === currentDetailScheduleId; });
+        if (!item || !item.caseId) {
+            showToast('该日程未关联案件');
+            return;
+        }
+        closeScheduleDetail();
+        switchView('case');
+        // 触发案件详情
+        setTimeout(function() {
+            if (typeof openCaseDetail === 'function') {
+                openCaseDetail(item.caseId);
+            }
+        }, 100);
+    }
+
+    // 打开案件分析 (从详情页)
+    function openCaseAnalysisFromDetail() {
+        if (!currentDetailScheduleId) return;
+        var item = AppState.scheduleData.find(function(s) { return s.id === currentDetailScheduleId; });
+        if (!item || !item.caseId) {
+            showToast('该日程未关联案件, 无案件分析');
+            return;
+        }
+        closeScheduleDetail();
+        if (typeof openCaseAnalysis === 'function') openCaseAnalysis(item.caseId);
+        else switchView('case-analysis');
+    }
+
+    // 生成准备清单 (mock 演示)
+    function generatePrepChecklistFromDetail() {
+        if (!currentDetailScheduleId) return;
+        var item = AppState.scheduleData.find(function(s) { return s.id === currentDetailScheduleId; });
+        if (!item) return;
+        var checklist = [
+            '✓ 携带律师执业证、身份证',
+            '✓ 准备起诉状/答辩状副本',
+            '✓ 整理证据材料原件及复印件',
+            '✓ 提前 30 分钟到达 ' + (item.location || '庭审地点'),
+            '✓ 确认着装 (律师袍或正装)',
+            '✓ 庭审前再次核实案号 ' + (item.caseName || '')
+        ];
+        if (typeof showToast === 'function') showToast('准备清单已生成 (' + checklist.length + ' 项)');
+        console.log('[庭审准备清单]', checklist.join('\n'));
+    }
+
+    // 打开 AI 庭审助手 (mock)
+    function openAITrialCoach() {
+        if (typeof showToast === 'function') showToast('AI 庭审助手功能开发中...');
+    }
+
+    // 复制日程
+    function duplicateSchedule() {
+        if (!currentDetailScheduleId) return;
+        var item = AppState.scheduleData.find(function(s) { return s.id === currentDetailScheduleId; });
+        if (!item) return;
+        var copy = Object.assign({}, item, {
+            id: Date.now(),
+            title: item.title + ' (副本)'
+        });
+        AppState.scheduleData.push(copy);
+        persistSchedule();
+        showToast('日程已复制');
+        renderScheduleList();
+        if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
     }
 
     function updateTodayScheduleBadge() {
@@ -689,33 +773,78 @@ function openScheduleDetail(id) {
         const item = AppState.scheduleData.find(s => s.id === id);
         if (!item) return;
         currentDetailScheduleId = id;
-        
+
         document.getElementById('sdetail-title').textContent = item.title;
-        document.getElementById('sdetail-date').textContent = item.date;
+        document.getElementById('sdetail-date').textContent = formatDateCN(item.date);
         document.getElementById('sdetail-time').textContent = item.time + ' - ' + (item.endTime || '');
         document.getElementById('sdetail-location').textContent = item.location || '未设置';
         document.getElementById('sdetail-case').textContent = item.caseName || '未关联案件';
-        document.getElementById('sdetail-note').textContent = item.note || '无';
-        
+        document.getElementById('sdetail-note').textContent = item.note || '';
+
         // 类型徽章
         const badge = document.getElementById('sdetail-type-badge');
         const typeColors = { '开庭': ['bg-purple-100', 'text-purple-700'], '会议': ['bg-blue-100', 'text-blue-700'], '待办': ['bg-green-100', 'text-green-700'], '其他': ['bg-amber-100', 'text-amber-700'] };
         const colors = typeColors[item.type] || ['bg-gray-100', 'text-gray-700'];
-        badge.className = 'text-xs px-2 py-0.5 rounded-full ' + colors.join(' ');
+        badge.className = 'text-xs px-2.5 py-1 rounded-full font-medium ' + colors.join(' ');
         badge.textContent = item.type;
-        
+
         // 头部左边框颜色
         const header = document.getElementById('sdetail-header');
         const borderColors = { '开庭': '#7c3aed', '会议': '#3b82f6', '待办': '#22c55e', '其他': '#f59e0b' };
         header.style.borderLeftColor = borderColors[item.type] || '#165DFF';
-        
-        // 提醒文本
-        const remindMap = { '0': '不提醒', '15': '提前 15 分钟', '60': '提前 1 小时', '1440': '提前 1 天' };
-        document.getElementById('sdetail-remind').textContent = remindMap[item.remind] || '不提醒';
-        
+
+        // 倒计时: 距今多少天/小时/已开始/已过
+        var countdownEl = document.getElementById('sdetail-countdown');
+        var countdownIcon = document.getElementById('sdetail-countdown-icon');
+        if (countdownEl && item.date && item.time) {
+            var target = new Date(item.date + 'T' + item.time + ':00');
+            var now = new Date();
+            var diffMs = target.getTime() - now.getTime();
+            var absMin = Math.abs(Math.floor(diffMs / 60000));
+            var days = Math.floor(absMin / (60 * 24));
+            var hours = Math.floor((absMin % (60 * 24)) / 60);
+            var mins = absMin % 60;
+            var timeText;
+            var iconName = 'mdi:calendar-clock-outline';
+            if (diffMs > 0) {
+                // 未来
+                timeText = days > 0 ? '还有 ' + days + ' 天' + (hours > 0 ? ' ' + hours + ' 小时' : '')
+                    : hours > 0 ? '还有 ' + hours + ' 小时' + (mins > 0 ? ' ' + mins + ' 分' : '')
+                    : '还有 ' + mins + ' 分钟';
+                iconName = days === 0 ? 'mdi:alarm-light-outline' : (days <= 3 ? 'mdi:alarm' : 'mdi:calendar-clock-outline');
+            } else if (Math.abs(diffMs) < 60 * 60 * 1000) {
+                // 1 小时内已过
+                timeText = '刚刚开始 / 进行中';
+                iconName = 'mdi:progress-clock';
+            } else {
+                // 已过
+                timeText = '已过 ' + days + ' 天' + (hours > 0 ? ' ' + hours + ' 小时' : '');
+                iconName = 'mdi:calendar-check-outline';
+            }
+            countdownEl.textContent = timeText;
+            if (countdownIcon) countdownIcon.setAttribute('icon', iconName);
+        }
+
+        // 提醒文本 (头部 + 主体)
+        var remindMap = { '0': '不提醒', '15': '提前 15 分钟', '60': '提前 1 小时', '1440': '提前 1 天' };
+        var remindText = remindMap[item.remind] || '不提醒';
+        var remindTopEl = document.getElementById('sdetail-remind-text');
+        if (remindTopEl) remindTopEl.textContent = '🔔 ' + remindText;
+        document.getElementById('sdetail-remind').textContent = remindText;
+
+        // 关联案件: 显示「查看」按钮
+        var caseLink = document.getElementById('sdetail-case-link');
+        if (caseLink) {
+            if (item.caseId) {
+                caseLink.classList.remove('hidden');
+            } else {
+                caseLink.classList.add('hidden');
+            }
+        }
+
         // 检查冲突
         checkDetailConflict(item);
-        
+
         document.getElementById('sdetail-note-row').classList.toggle('hidden', !item.note);
         document.getElementById('schedule-detail-modal').classList.remove('hidden');
     }
