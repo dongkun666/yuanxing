@@ -29,7 +29,31 @@
         function toggleUserMenu(event) {
             if (event) event.stopPropagation();
             var menu = document.getElementById('userMenu');
-            menu.classList.toggle('hidden');
+            if (!menu) return;
+            if (menu.classList.contains('hidden')) {
+                // 打开: 移除 hidden + 延迟添加全局 click 监听 (避免本次 click 立刻触发关闭)
+                menu.classList.remove('hidden');
+                setTimeout(function() {
+                    document.addEventListener('click', closeUserMenuOnOutside);
+                }, 0);
+            } else {
+                // 关闭
+                menu.classList.add('hidden');
+                document.removeEventListener('click', closeUserMenuOnOutside);
+            }
+        }
+
+        // 全局 click 监听: 点击 userMenu 或触发器外时关闭菜单
+        function closeUserMenuOnOutside(e) {
+            var menu = document.getElementById('userMenu');
+            if (!menu) return;
+            var trigger = document.querySelector('[onclick*="toggleUserMenu"]');
+            // 点击菜单内部或触发器自身 → 不关闭
+            if (menu.contains(e.target)) return;
+            if (trigger && trigger.contains(e.target)) return;
+            // 否则关闭 + 移除监听
+            menu.classList.add('hidden');
+            document.removeEventListener('click', closeUserMenuOnOutside);
         }
 
         function switchToSubscription() {
