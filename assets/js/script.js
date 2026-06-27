@@ -1033,8 +1033,27 @@
             if (typeof Auth !== 'undefined' && Auth.restore) {
                 Auth.restore();
             }
+            // 渲染应用版本号 (从 index.html inline script 注入的 window.APP_VERSION)
+            renderAppVersion();
             switchView(startView);
             updateNotificationBadgeState();
+        }
+        // ===== 应用版本号渲染 =====
+        // 从 window.APP_VERSION / APP_BUILD / APP_GIT_SHA 读取 (index.html 顶部 inline)
+        // 未来 build manifest 可覆盖 window.APP_VERSION, 此函数无需改动
+        function renderAppVersion() {
+            var el = document.getElementById('footer-version');
+            if (!el) return;
+            var version = (typeof window.APP_VERSION === 'string') ? window.APP_VERSION : 'dev';
+            var build = window.APP_BUILD || '';
+            var sha = window.APP_GIT_SHA || '';
+            // 显示: v0.7.0
+            el.innerHTML = '<iconify-icon class="text-fg-tertiary" icon="mdi:tag-outline"></iconify-icon> ' + version;
+            // title 悬浮提示: 构建时间 + SHA (开发期诊断)
+            var tipParts = [];
+            if (build) tipParts.push('构建 ' + build);
+            if (sha) tipParts.push('SHA ' + sha);
+            if (tipParts.length) el.title = tipParts.join(' · ');
         }
         // 启动时同步通知铃铛红点状态 (按 AppState.notifications 真实未读数)
         function updateNotificationBadgeState() {

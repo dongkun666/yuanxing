@@ -8,6 +8,13 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23165DFF'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'%3E%E5%AE%AA%3C/text%3E%3C/svg%3E"/>
 <!-- Tailwind CSS -->
 <link rel="stylesheet" href="./assets/css/tailwind.css">
+<!-- 应用全局元数据 (供 footer 版本号 + 调试用) -->
+<script>
+    // 应用版本号 (build manifest 同步位)
+    window.APP_VERSION = 'v0.7.0';
+    window.APP_BUILD = '2026.06.28';
+    window.APP_GIT_SHA = '15384b2';
+</script>
 <!-- Iconify 图标 -->
 <script>
 // 在 Iconify 加载前配置全局设置
@@ -262,7 +269,8 @@ window.Iconify.disableRemoteAPI = true;
 <iconify-icon class="text-success" icon="mdi:sync"></iconify-icon>
                 云端同步已完成 (<span id="footer-sync-time">--:--</span>)
             </span>
-<span class="flex items-center gap-1" id="footer-version">
+<!-- SSR 占位: JS 加载完成后由 renderAppVersion() 替换 -->
+<span class="flex items-center gap-1" id="footer-version" title="构建时间 2026.06.28 · SHA 15384b2">
 <iconify-icon class="text-fg-tertiary" icon="mdi:tag-outline"></iconify-icon>
                 v0.7.0
             </span>
