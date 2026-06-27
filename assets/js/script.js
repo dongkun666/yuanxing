@@ -1017,8 +1017,17 @@
         }
         // 等 DOM ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() { switchView(startView); updateNotificationBadgeState(); });
+            document.addEventListener('DOMContentLoaded', function() { onAppReady(); });
         } else {
+            onAppReady();
+        }
+        function onAppReady() {
+            // Auth.restore() 在 auth.js IIFE 末尾自动跑过, 但当时 AppState 还没定义
+            // (auth.js 在 script.js 之前加载), token/user 没同步到 AppState
+            // 这里再调一次 restore, 把 localStorage 的 token/user 灌进 AppState
+            if (typeof Auth !== 'undefined' && Auth.restore) {
+                Auth.restore();
+            }
             switchView(startView);
             updateNotificationBadgeState();
         }
