@@ -164,6 +164,132 @@
 </div>
 </div>
 </div>
+<!-- 分类管理弹窗 (与两个 tab 同级, 否则点个人模板时 modal 在 hidden 父元素内看不到) -->
+<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="category-manage-modal" onclick="if(event.target===this) closeCategoryManageModal()">
+<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+<!-- 弹窗头部 -->
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-lg text-brand" icon="mdi:folder-cog-outline"></iconify-icon>
+<h3 class="text-base font-bold">个人模板分类管理</h3>
+</div>
+<button class="text-fg-tertiary hover:text-fg-secondary" onclick="closeCategoryManageModal()">
+<iconify-icon icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<!-- 新建分类输入区 -->
+<div class="px-6 py-4 border-b border-gray-100">
+<label class="text-xs text-fg-tertiary mb-2 block">新建分类</label>
+<div class="flex items-center gap-2">
+<input class="flex-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="new-category-input" placeholder="如：劳动仲裁类、知识产权类..." type="text" maxlength="20" onkeydown="if(event.key==='Enter') addCategory()"/>
+<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1" onclick="addCategory()">
+<iconify-icon icon="mdi:plus"></iconify-icon>添加
+</button>
+</div>
+</div>
+<!-- 分类列表 -->
+<div class="flex-1 overflow-y-auto p-6">
+<div class="text-xs text-fg-tertiary mb-3" id="category-list-count">共 3 个分类</div>
+<div class="space-y-2" id="category-list">
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="诉状类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-fg-primary font-medium">诉状类</span>
+<span class="text-[10px] text-fg-tertiary">(2 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory('诉状类')">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="答辩类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-fg-primary font-medium">答辩类</span>
+<span class="text-[10px] text-fg-tertiary">(1 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory('答辩类')">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="合同类">
+<div class="flex items-center gap-3">
+<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
+<span class="text-sm text-fg-primary font-medium">合同类</span>
+<span class="text-[10px] text-fg-tertiary">(1 个模板)</span>
+</div>
+<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory('合同类')">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
+</button>
+</div>
+</div>
+</div>
+<!-- 弹窗底部 -->
+<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end">
+<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeCategoryManageModal()">关闭</button>
+</div>
+</div>
+</div>
+
+<!-- 上传模板弹窗 (与两个 tab 同级) -->
+<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="upload-template-modal" onclick="if(event.target===this) closeUploadTemplateModal()">
+<div class="bg-white rounded-xl w-[520px] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+<!-- 头部 -->
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-lg text-brand" icon="mdi:cloud-upload-outline"></iconify-icon>
+<h3 class="text-base font-bold">上传模板</h3>
+<span class="text-xs text-fg-tertiary">个人模板</span>
+</div>
+<button class="text-fg-tertiary hover:text-fg-secondary" onclick="closeUploadTemplateModal()">
+<iconify-icon icon="mdi:close"></iconify-icon>
+</button>
+</div>
+<!-- 主体 -->
+<div class="px-6 py-4 space-y-4">
+<div>
+<label class="text-xs text-fg-tertiary mb-1.5 block">模板名称 <span class="text-red-500">*</span></label>
+<input class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-name" placeholder="如：起诉状-借款合同 v3" maxlength="50" type="text"/>
+</div>
+<div>
+<label class="text-xs text-fg-tertiary mb-1.5 block">所属分类 <span class="text-red-500">*</span></label>
+<select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-category">
+<option value="">请选择分类</option>
+</select>
+</div>
+<div>
+<label class="text-xs text-fg-tertiary mb-1.5 block">文件格式</label>
+<div class="flex items-center gap-4 text-sm">
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input checked class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="docx"/><span>.docx</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="pdf"/><span>.pdf</span>
+</label>
+<label class="flex items-center gap-1.5 cursor-pointer">
+<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="txt"/><span>.txt</span>
+</label>
+</div>
+</div>
+<div>
+<label class="text-xs text-fg-tertiary mb-1.5 block">模板文件 <span class="text-red-500">*</span></label>
+<div class="border-2 border-dashed border-bg-border rounded-lg p-6 text-center hover:border-brand transition-colors cursor-pointer" id="upload-template-dropzone" onclick="document.getElementById('upload-template-file').click()">
+<iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
+<p class="text-sm text-fg-tertiary mt-2" id="upload-template-filename">点击或拖拽文件到此处</p>
+<p class="text-[10px] text-fg-tertiary mt-1">支持 .docx / .pdf / .txt, 单文件最大 10MB</p>
+<input accept=".docx,.pdf,.txt" class="hidden" id="upload-template-file" type="file" onchange="document.getElementById('upload-template-filename').textContent = this.files[0] ? this.files[0].name : '点击或拖拽文件到此处'"/>
+</div>
+</div>
+</div>
+<!-- 底部 -->
+<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end gap-2">
+<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeUploadTemplateModal()">取消</button>
+<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-1.5 rounded-lg flex items-center gap-1.5" onclick="submitUploadTemplate()">
+<iconify-icon icon="mdi:cloud-upload-outline"></iconify-icon>上传
+</button>
+</div>
+</div>
+</div>
+
 <!-- 官方模板 -->
 <div class="hidden space-y-4" id="template-tab-official">
 <!-- 标题行 (列表/卡片视图共享) -->
@@ -717,132 +843,9 @@
 <span class="text-[10px] text-gray-300">司法部 / 最高法权威发布</span>
 </div>
 
-<!-- 分类管理弹窗 -->
-<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="category-manage-modal" onclick="if(event.target===this) closeCategoryManageModal()">
-<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
-<!-- 弹窗头部 -->
-<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-<div class="flex items-center gap-2">
-<iconify-icon class="text-lg text-brand" icon="mdi:folder-cog-outline"></iconify-icon>
-<h3 class="text-base font-bold">个人模板分类管理</h3>
+<!-- 分类管理弹窗已移至两个 tab 同级 (修复: 点个人模板时 modal 在 hidden 父元素内看不到) -->
+<!-- 上传模板弹窗已移至两个 tab 同级 -->
 </div>
-<button class="text-fg-tertiary hover:text-fg-secondary" onclick="closeCategoryManageModal()">
-<iconify-icon icon="mdi:close"></iconify-icon>
-</button>
-</div>
-<!-- 新建分类输入区 -->
-<div class="px-6 py-4 border-b border-gray-100">
-<label class="text-xs text-fg-tertiary mb-2 block">新建分类</label>
-<div class="flex items-center gap-2">
-<input class="flex-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="new-category-input" placeholder="如：劳动仲裁类、知识产权类..." type="text" maxlength="20" onkeydown="if(event.key===\u0027Enter\u0027) addCategory()"/>
-<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1" onclick="addCategory()">
-<iconify-icon icon="mdi:plus"></iconify-icon>添加
-</button>
-</div>
-</div>
-<!-- 分类列表 -->
-<div class="flex-1 overflow-y-auto p-6">
-<div class="text-xs text-fg-tertiary mb-3" id="category-list-count">共 3 个分类</div>
-<div class="space-y-2" id="category-list">
-<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="诉状类">
-<div class="flex items-center gap-3">
-<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
-<span class="text-sm text-fg-primary font-medium">诉状类</span>
-<span class="text-[10px] text-fg-tertiary">(2 个模板)</span>
-</div>
-<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027诉状类\u0027)">
-<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
-</button>
-</div>
-<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="答辩类">
-<div class="flex items-center gap-3">
-<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
-<span class="text-sm text-fg-primary font-medium">答辩类</span>
-<span class="text-[10px] text-fg-tertiary">(1 个模板)</span>
-</div>
-<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027答辩类\u0027)">
-<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
-</button>
-</div>
-<div class="category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100" data-category="合同类">
-<div class="flex items-center gap-3">
-<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>
-<span class="text-sm text-fg-primary font-medium">合同类</span>
-<span class="text-[10px] text-fg-tertiary">(1 个模板)</span>
-</div>
-<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\u0027合同类\u0027)">
-<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除
-</button>
-</div>
-</div>
-</div>
-<!-- 弹窗底部 -->
-<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end">
-<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeCategoryManageModal()">关闭</button>
-</div>
-</div>
-</div>
-
-<!-- 上传模板弹窗 -->
-<div class="hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center" id="upload-template-modal" onclick="if(event.target===this) closeUploadTemplateModal()">
-<div class="bg-white rounded-xl w-[520px] flex flex-col shadow-2xl" onclick="event.stopPropagation()">
-<!-- 头部 -->
-<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-<div class="flex items-center gap-2">
-<iconify-icon class="text-lg text-brand" icon="mdi:cloud-upload-outline"></iconify-icon>
-<h3 class="text-base font-bold">上传模板</h3>
-<span class="text-xs text-fg-tertiary">个人模板</span>
-</div>
-<button class="text-fg-tertiary hover:text-fg-secondary" onclick="closeUploadTemplateModal()">
-<iconify-icon icon="mdi:close"></iconify-icon>
-</button>
-</div>
-<!-- 主体 -->
-<div class="px-6 py-4 space-y-4">
-<div>
-<label class="text-xs text-fg-tertiary mb-1.5 block">模板名称 <span class="text-red-500">*</span></label>
-<input class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-name" placeholder="如：起诉状-借款合同 v3" maxlength="50" type="text"/>
-</div>
-<div>
-<label class="text-xs text-fg-tertiary mb-1.5 block">所属分类 <span class="text-red-500">*</span></label>
-<select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-category">
-<option value="">请选择分类</option>
-</select>
-</div>
-<div>
-<label class="text-xs text-fg-tertiary mb-1.5 block">文件格式</label>
-<div class="flex items-center gap-4 text-sm">
-<label class="flex items-center gap-1.5 cursor-pointer">
-<input checked class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="docx"/><span>.docx</span>
-</label>
-<label class="flex items-center gap-1.5 cursor-pointer">
-<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="pdf"/><span>.pdf</span>
-</label>
-<label class="flex items-center gap-1.5 cursor-pointer">
-<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="txt"/><span>.txt</span>
-</label>
-</div>
-</div>
-<div>
-<label class="text-xs text-fg-tertiary mb-1.5 block">模板文件 <span class="text-red-500">*</span></label>
-<div class="border-2 border-dashed border-bg-border rounded-lg p-6 text-center hover:border-brand transition-colors cursor-pointer" id="upload-template-dropzone" onclick="document.getElementById('upload-template-file').click()">
-<iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>
-<p class="text-sm text-fg-tertiary mt-2" id="upload-template-filename">点击或拖拽文件到此处</p>
-<p class="text-[10px] text-fg-tertiary mt-1">支持 .docx / .pdf / .txt, 单文件最大 10MB</p>
-<input accept=".docx,.pdf,.txt" class="hidden" id="upload-template-file" type="file" onchange="document.getElementById('upload-template-filename').textContent = this.files[0] ? this.files[0].name : '点击或拖拽文件到此处'"/>
-</div>
-</div>
-</div>
-<!-- 底部 -->
-<div class="px-6 py-3 border-t border-gray-100 flex items-center justify-end gap-2">
-<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeUploadTemplateModal()">取消</button>
-<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-1.5 rounded-lg flex items-center gap-1.5" onclick="submitUploadTemplate()">
-<iconify-icon icon="mdi:cloud-upload-outline"></iconify-icon>上传
-</button>
-</div>
-</div>
-</div>
-</div></div>
 </div>
 </div>
 </div>
