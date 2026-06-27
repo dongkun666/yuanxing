@@ -247,20 +247,17 @@
             添加时间线
         </button>
 </div>
-<!-- 时间线容器: 左侧主轴线 (从第一个节点圆心到最后一个节点圆心) -->
-<div class="relative space-y-4" id="timeline-container">
-<!-- 主轴贯穿线 (对齐所有节点圆心 x=18px; z-0 让节点 z-10 覆盖) -->
-<div class="absolute left-[18px] top-[18px] bottom-[18px] w-0.5 bg-brand-tint z-0"></div>
+<!-- 时间线容器: CSS Grid 列布局 (节点列 48px + 卡片列 1fr) - 根治 absolute + overflow 重叠 -->
+<div class="space-y-0" id="timeline-container">
 <!-- 节点 1: 已完成 - 绿 (合同签订) -->
-<div class="relative timeline-item" data-status="completed">
-<!-- 左轨道线 (从节点底部连到下个节点顶部) -->
-<!-- 局部左轨道已移到 timeline-container (贯穿主轴线) -->
-<!-- 节点圆形 (圆心对齐 18px) -->
-<div class="absolute left-[18px] top-2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-green-500 flex items-center justify-center shadow-sm">
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-green-500 flex items-center justify-center shadow-sm z-10">
 <iconify-icon class="text-base text-green-500" icon="mdi:check"></iconify-icon>
 </div>
-<!-- 卡片 (ml-14=56px: 节点圆心 18 + 圆半径 18 + 间隔 20) -->
-<div class="relative ml-14 bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden">
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
 <div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
 <div class="p-4 pl-5">
 <div class="flex items-start justify-between mb-1.5">
@@ -282,12 +279,14 @@
 </div>
 </div>
 <!-- 节点 2: 已完成 - 橙 (催款函) -->
-<div class="relative timeline-item" data-status="completed">
-<!-- 局部左轨道已移到 timeline-container (贯穿主轴线) -->
-<div class="absolute left-[18px] top-2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-orange-500 flex items-center justify-center shadow-sm">
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-orange-500 flex items-center justify-center shadow-sm z-10">
 <iconify-icon class="text-base text-orange-500" icon="mdi:file-document"></iconify-icon>
 </div>
-<div class="relative ml-14 bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden">
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
 <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
 <div class="p-4 pl-5">
 <div class="flex items-start justify-between mb-1.5">
@@ -309,12 +308,14 @@
 </div>
 </div>
 <!-- 节点 3: 已完成 - 蓝 (立案) -->
-<div class="relative timeline-item" data-status="completed">
-<!-- 局部左轨道已移到 timeline-container (贯穿主轴线) -->
-<div class="absolute left-[18px] top-2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center shadow-sm">
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center shadow-sm z-10">
 <iconify-icon class="text-base text-blue-500" icon="mdi:gavel"></iconify-icon>
 </div>
-<div class="relative ml-14 bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden">
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
 <div class="p-4 pl-5">
 <div class="flex items-start justify-between mb-1.5">
@@ -336,12 +337,14 @@
 </div>
 </div>
 <!-- 节点 4: 待办 - 紫 (开庭排期) -->
-<div class="relative timeline-item" data-status="upcoming">
-<!-- 局部左轨道已移到 timeline-container (贯穿主轴线) -->
-<div class="absolute left-[18px] top-2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center shadow-sm">
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="upcoming">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center shadow-sm z-10">
 <iconify-icon class="text-base text-purple-500" icon="mdi:calendar-clock"></iconify-icon>
 </div>
-<div class="relative ml-14 bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden">
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
 <div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div>
 <div class="p-4 pl-5">
 <div class="flex items-start justify-between mb-1.5">
@@ -366,12 +369,15 @@
 </div>
 </div>
 </div>
-<!-- 节点 5: 当前 - 品牌蓝 (文书准备) - 双倍尺寸 + pulse ring -->
-<div class="relative timeline-item" data-status="current">
-<div class="absolute left-[18px] top-1 -translate-x-1/2 w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-lg ring-4 ring-brand-tint animate-pulse">
+<!-- 节点 5: 当前 - 品牌蓝 (文书准备) - 双倍尺寸 + pulse ring, 无连线 (最后节点) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="current">
+<div class="relative flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-lg ring-4 ring-brand-tint animate-pulse z-10">
 <iconify-icon class="text-lg" icon="mdi:pencil-ruler"></iconify-icon>
 </div>
-<div class="relative ml-14 bg-white rounded-xl border-2 border-brand shadow-lg group overflow-hidden">
+<!-- 最后节点: 无连线 -->
+</div>
+<div class="relative bg-white rounded-xl border-2 border-brand shadow-lg group overflow-hidden">
 <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand"></div>
 <div class="p-4 pl-5">
 <div class="flex items-start justify-between mb-1.5">
@@ -400,8 +406,6 @@
 <iconify-icon class="text-xs text-orange-500" icon="mdi:clock-alert-outline"></iconify-icon>
                             证据清单 待整理
                         </span>
-</div>
-</div>
 </div>
 </div>
 </div>
