@@ -90,6 +90,13 @@
                 v.classList.add('hidden');
             });
             target.classList.remove('hidden');
+            // 日程视图 hook: 渲染列表 + 应用筛选
+            if (viewName === 'schedule-calendar' || viewName === 'schedule-list') {
+                setTimeout(function() {
+                    if (typeof renderScheduleList === 'function') renderScheduleList();
+                    if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+                }, 50);
+            }
         } else {
             // 视图未加载 / dev 模式下强制刷新: 移除旧 target 后重新 fetch
             if (target) target.remove();
@@ -102,6 +109,13 @@
                         v.classList.add('hidden');
                     });
                     newTarget.classList.remove('hidden');
+                    // 日程视图 hook: DOM 已插入, 渲染列表 + 应用筛选
+                    if (viewName === 'schedule-calendar' || viewName === 'schedule-list') {
+                        setTimeout(function() {
+                            if (typeof renderScheduleList === 'function') renderScheduleList();
+                            if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+                        }, 50);
+                    }
                 }
             });
         }
@@ -131,13 +145,13 @@
 
         // 按日期分组日程
         var dateGroups = {};
-        scheduleData.forEach(function(item) {
+        AppState.scheduleData.forEach(function(item) {
             if (!dateGroups[item.date]) dateGroups[item.date] = [];
             dateGroups[item.date].push(item);
         });
 
         // 为开庭日程添加特殊标记（红色外边框）
-        scheduleData.forEach(function(item) {
+        AppState.scheduleData.forEach(function(item) {
             if (item.type !== '开庭') return;
             var dayNum = parseInt(item.date.split('-')[2]);
             calDates.forEach(function(cell) {
@@ -205,7 +219,7 @@
 
     function checkScheduleConflict(date, time) {
         if (!date || !time) return null;
-        const conflicts = scheduleData.filter(item => {
+        const conflicts = AppState.scheduleData.filter(item => {
             if (item.date !== date) return false;
             if (time >= item.time && time < item.endTime) return true;
             return false;
@@ -262,71 +276,156 @@
         const date = document.getElementById('sched-date').value;
         const time = document.getElementById('sched-time').value;
         if (!title) {
-            alert('请输入日程标题');
+            showToast('请输入日程标题');
             return;
         }
         if (!date) {
-            alert('请选择日期');
+            showToast('请选择日期');
             return;
         }
         if (!time) {
-            alert('请选择时间');
+            showToast('请选择时间');
             return;
         }
         const type = document.querySelector('input[name="sched-type"]:checked')?.value || '其他';
-        const caseVal = document.getElementById('sched-case').value;
+        const caseSelect = document.getElementById('sched-case');
+        const caseVal = caseSelect ? caseSelect.value : '';
+        const caseName = caseSelect && caseSelect.selectedIndex >= 0 ? (caseSelect.options[caseSelect.selectedIndex].text || '') : '';
         const note = document.getElementById('sched-note').value.trim();
         const remind = document.querySelector('input[name="sched-remind"]:checked')?.value || '60';
-        
+
+        // 计算结束时间 (默认 +1 小时)
+        const endHour = parseInt(time.split(':')[0]) + 1;
+        const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
+
         // 冲突检测
         const conflicts = checkScheduleConflict(date, time);
         if (conflicts && conflicts.length > 0) {
             // 暂存待保存日程
-            const endHour = parseInt(time.split(':')[0]) + 1;
-            const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
-            const caseSelect = document.getElementById('sched-case');
-            const caseName = caseSelect.options[caseSelect.selectedIndex]?.text || '';
             pendingSchedule = {
-                id: scheduleData.length + 1,
+                id: Date.now(),
                 title: title,
                 date: date,
                 time: time,
                 endTime: endTime,
                 type: type,
+                caseId: caseVal,
                 caseName: caseName,
                 location: note || '',
-                note: '',
+                note: note,
                 remind: remind
             };
             showConflictResolve(conflicts);
             return; // 等待用户选择
         }
-        
-        const sched = { title, date, time, type, case: caseVal, note, remind };
-        
+
         // 保存到日程数据
-        const endHour = parseInt(time.split(':')[0]) + 1;
-        const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
-        scheduleData.push({
-            id: scheduleData.length + 1,
+        const newItem = {
+            id: Date.now(),
             title: title,
             date: date,
             time: time,
             endTime: endTime,
             type: type,
-            location: note || ''
-        });
-        
+            caseId: caseVal,
+            caseName: caseName,
+            location: note || '',
+            note: note,
+            remind: remind
+        };
+        AppState.scheduleData.push(newItem);
+        persistSchedule();
         closeScheduleModal();
-        alert('日程已创建！');
-        updateTodayScheduleBadge();
+        showToast('日程已创建');
+        // 重置表单 + 刷新列表 + 保持筛选
+        document.getElementById('sched-title').value = '';
+        document.getElementById('sched-note').value = '';
+        renderScheduleList();
+        if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+        if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+    }
+
+    // localStorage 持久化
+    function persistSchedule() {
+        try { localStorage.setItem('lexprime_schedule_data', JSON.stringify(AppState.scheduleData)); } catch (e) { console.warn('持久化日程失败:', e); }
+    }
+
+    // 渲染庭审日程列表 (calendar 视图的"本月庭审安排")
+    // 按日期升序, 同日按时间升序, 当前日期打"今天"标
+    function renderScheduleList() {
+        var container = document.getElementById('schedule-list');
+        if (!container) return;
+        var empty = document.getElementById('schedule-empty');
+        var countEl = document.getElementById('schedule-count');
+
+        // 排序: 按 date+time 升序
+        var sorted = AppState.scheduleData.slice().sort(function(a, b) {
+            var ka = (a.date || '') + ' ' + (a.time || '');
+            var kb = (b.date || '') + ' ' + (b.time || '');
+            return ka < kb ? -1 : ka > kb ? 1 : 0;
+        });
+
+        if (countEl) countEl.textContent = '共 ' + sorted.length + ' 项';
+
+        if (sorted.length === 0) {
+            container.innerHTML = '';
+            if (empty) empty.classList.remove('hidden');
+            return;
+        }
+        if (empty) empty.classList.add('hidden');
+
+        var today = getTodayDate();
+        var colorMap = {
+            '开庭': { border: 'border-l-purple-500', tagBg: 'bg-purple-100', tagText: 'text-purple-700' },
+            '会议': { border: 'border-l-blue-500', tagBg: 'bg-blue-100', tagText: 'text-blue-700' },
+            '待办': { border: 'border-l-green-500', tagBg: 'bg-green-100', tagText: 'text-green-700' },
+            '其他': { border: 'border-l-amber-500', tagBg: 'bg-amber-100', tagText: 'text-amber-700' }
+        };
+
+        var htmlStr = '';
+        sorted.forEach(function(s) {
+            var c = colorMap[s.type] || colorMap['其他'];
+            var dateObj = s.date ? new Date(s.date + 'T00:00:00') : null;
+            var day = dateObj ? dateObj.getDate() : '?';
+            var weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
+            var weekday = dateObj ? weekdays[dateObj.getDay()] : '';
+            var isToday = s.date === today;
+
+            htmlStr += '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '">' +
+                '<div class="flex items-start gap-4">' +
+                    '<div class="flex-shrink-0 text-center w-12">' +
+                        '<div class="text-lg font-bold ' + c.tagText + '">' + day + '</div>' +
+                        '<div class="text-[10px] text-fg-tertiary">' + weekday + '</div>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
+                            '<span class="text-[10px] px-1.5 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
+                            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
+                            (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
+                        '</div>' +
+                        '<div class="text-xs text-fg-tertiary flex items-center gap-3 flex-wrap">' +
+                            '<span><iconify-icon class="text-xs" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
+                            (s.location ? '<span><iconify-icon class="text-xs" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
+                        '</div>' +
+                    '</div>' +
+                    (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-warning-tint text-warning">准备</span>' : '') +
+                '</div>' +
+            '</div>';
+        });
+        container.innerHTML = htmlStr;
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function(m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
     }
 
     function updateTodayScheduleBadge() {
         const badge = document.getElementById('today-schedule-badge');
         if (!badge) return;
         const today = getTodayDate();
-        const count = scheduleData.filter(s => s.date === today).length;
+        const count = AppState.scheduleData.filter(s => s.date === today).length;
         badge.textContent = count;
     }
 
@@ -471,7 +570,7 @@ function jumpToToday() {
 }
 
 function openScheduleDetail(id) {
-        const item = scheduleData.find(s => s.id === id);
+        const item = AppState.scheduleData.find(s => s.id === id);
         if (!item) return;
         currentDetailScheduleId = id;
         
@@ -516,7 +615,7 @@ function openScheduleDetail(id) {
         const warningEl = document.getElementById('sdetail-conflict');
         const detailEl = document.getElementById('sdetail-conflict-detail');
         
-        const conflicts = scheduleData.filter(s => 
+        const conflicts = AppState.scheduleData.filter(s => 
             s.id !== item.id && s.date === item.date &&
             item.time < s.endTime && item.endTime > s.time
         );
@@ -541,8 +640,8 @@ function openScheduleDetail(id) {
     function deleteScheduleFromDetail() {
         if (!currentDetailScheduleId) return;
         if (confirm('确定要删除该日程吗？')) {
-            const idx = scheduleData.findIndex(s => s.id === currentDetailScheduleId);
-            if (idx > -1) scheduleData.splice(idx, 1);
+            const idx = AppState.scheduleData.findIndex(s => s.id === currentDetailScheduleId);
+            if (idx > -1) AppState.scheduleData.splice(idx, 1);
             closeScheduleDetail();
             alert('日程已删除');
             if (typeof openScheduleCalendar === 'function') openScheduleCalendar();
@@ -589,7 +688,7 @@ function openScheduleDetail(id) {
         if (action === 'ignore') {
             closeConflictResolve();
             if (pendingSchedule) {
-                scheduleData.push(pendingSchedule);
+                AppState.scheduleData.push(pendingSchedule);
                 pendingSchedule = null;
                 alert('日程已创建（含冲突）');
             }
@@ -598,7 +697,7 @@ function openScheduleDetail(id) {
         if (action === 'reschedule') {
             closeConflictResolve();
             if (pendingSchedule) {
-                scheduleData.push(pendingSchedule);
+                AppState.scheduleData.push(pendingSchedule);
                 pendingSchedule = null;
                 alert('日程已调整至推荐时段');
             }
@@ -627,7 +726,7 @@ function openScheduleDetail(id) {
     }
 
     function checkCourtConflicts() {
-        const courtSchedules = scheduleData.filter(s => s.type === '开庭');
+        const courtSchedules = AppState.scheduleData.filter(s => s.type === '开庭');
         const conflicts = [];
         
         for (let i = 0; i < courtSchedules.length; i++) {

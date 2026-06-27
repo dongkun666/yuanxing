@@ -130,6 +130,13 @@
                 if (viewId === 'template') {
                     fixTemplateViewDOM();
                 }
+                // 进入日程视图: 渲染庭审列表 + 应用筛选
+                if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
+                    setTimeout(function() {
+                        if (typeof window.renderScheduleList === 'function') window.renderScheduleList();
+                        if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
+                    }, 50);
+                }
             } else {
                 // 视图未加载，动态加载
                 loadView(viewId, function(html) {
@@ -145,6 +152,13 @@
                             // 延迟修复, 等 DOM 稳定
                             setTimeout(fixTemplateViewDOM, 100);
                             setTimeout(fixTemplateViewDOM, 500);
+                        }
+                        // 进入日程视图: 渲染庭审列表 + 应用筛选 (DOM 已插入)
+                        if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
+                            setTimeout(function() {
+                                if (typeof window.renderScheduleList === 'function') window.renderScheduleList();
+                                if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
+                            }, 50);
                         }
                     }
                 });
@@ -647,16 +661,22 @@
 
     // 解绑第三方账号
 
-    // ===== 日程冲突检测（模拟数据） =====
-    const scheduleData = [
-        { id: 1, title: '李明诉XX公司买卖合同纠纷开庭', date: getTodayDate(), time: '09:00', endTime: '11:00', type: '开庭', location: '朝阳区人民法院 第3法庭' },
-        { id: 2, title: '王华借贷纠纷 - 策略讨论', date: getTodayDate(), time: '14:00', endTime: '15:30', type: '会议', location: '线上会议' },
-        { id: 3, title: '提交张三合同纠纷补充证据', date: getTodayDate(), time: '16:00', endTime: '16:30', type: '待办', location: '' },
-        { id: 4, title: '律所月度合伙人会议', date: getTodayDate(), time: '10:30', endTime: '11:30', type: '其他', location: '大会议室' },
-        { id: 5, title: '某科技公司股权纠纷二审开庭', date: getTodayDate(), time: '15:00', endTime: '17:00', type: '开庭', location: '北京市高级人民法院 第8法庭' },
-        { id: 6, title: '赵六劳动争议仲裁开庭', date: getFutureDate(1), time: '09:00', endTime: '12:00', type: '开庭', location: '朝阳区劳动仲裁委' },
-        { id: 7, title: '张三合同纠纷证据交换', date: getFutureDate(2), time: '14:00', endTime: '16:00', type: '开庭', location: '海淀区人民法院' },
-    ];
+    // ===== 日程冲突检测（移到 AppState 让 schedule.js 可访问） =====
+    AppState.scheduleData = (function() {
+        try {
+            var saved = localStorage.getItem('lexprime_schedule_data');
+            if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return [
+            { id: 1, title: '李明诉XX公司买卖合同纠纷开庭', date: getTodayDate(), time: '09:00', endTime: '11:00', type: '开庭', location: '朝阳区人民法院 第3法庭' },
+            { id: 2, title: '王华借贷纠纷 - 策略讨论', date: getTodayDate(), time: '14:00', endTime: '15:30', type: '会议', location: '线上会议' },
+            { id: 3, title: '提交张三合同纠纷补充证据', date: getTodayDate(), time: '16:00', endTime: '16:30', type: '待办', location: '' },
+            { id: 4, title: '律所月度合伙人会议', date: getTodayDate(), time: '10:30', endTime: '11:30', type: '其他', location: '大会议室' },
+            { id: 5, title: '某科技公司股权纠纷二审开庭', date: getTodayDate(), time: '15:00', endTime: '17:00', type: '开庭', location: '北京市高级人民法院 第8法庭' },
+            { id: 6, title: '赵六劳动争议仲裁开庭', date: getFutureDate(1), time: '09:00', endTime: '12:00', type: '开庭', location: '朝阳区劳动仲裁委' },
+            { id: 7, title: '张三合同纠纷证据交换', date: getFutureDate(2), time: '14:00', endTime: '16:00', type: '开庭', location: '海淀区人民法院' },
+        ];
+    })();
 
     // ===== 新建日程弹窗 =====
 

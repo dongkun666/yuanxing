@@ -11,7 +11,10 @@
 <h3 class="text-base font-semibold text-fg-primary">日程管理</h3>
 </div>
 <div class="flex items-center gap-2">
-        <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors">+ 新增</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="openScheduleModal()">
+            <iconify-icon icon="mdi:plus"></iconify-icon>
+            <span>新增</span>
+        </button>
     </div>
 </div>
 <!-- 年月日筛选 -->
@@ -96,49 +99,21 @@
 </div>
 <!-- 庭审日程列表 -->
 <div class="bg-white rounded-xl border border-bg-border p-5">
-<h4 class="text-sm font-semibold text-fg-primary mb-4">本月庭审安排</h4>
-<div class="space-y-3">
-        <div class="flex items-start gap-3 p-3 rounded-lg bg-danger-tint border-l-4 border-danger cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-25" data-year="2026" data-month="08" data-day="25" onclick="openScheduleDetail(1)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-danger">25</p>
-<p class="text-[10px] text-danger">周二</p>
+<div class="flex items-center justify-between mb-4">
+    <h4 class="text-sm font-semibold text-fg-primary">本月庭审安排</h4>
+    <span class="text-xs text-fg-tertiary" id="schedule-count"></span>
 </div>
-<div class="flex-1">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-fg-primary">开庭 · 民间借贷纠纷</p>
-<span class="text-[10px] bg-[#F5222D] text-white font-medium px-2 py-0.5 rounded">今天</span>
+<div class="space-y-3" id="schedule-list"></div>
+<!-- 完全空态: 没有任何日程 -->
+<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-empty">
+    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-plus-outline"></iconify-icon>
+    <p class="text-sm">还没有日程安排</p>
+    <button onclick="openScheduleModal()" class="mt-3 px-4 py-1.5 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1 mx-auto">
+        <iconify-icon icon="mdi:plus"></iconify-icon>
+        <span>新建第一个日程</span>
+    </button>
 </div>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京01民初128号 · 张三诉李四</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 09:30 · 北京市第一中级人民法院 第3法庭</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-warning-tint border-l-4 border-[#FAAD14] cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-28" data-year="2026" data-month="08" data-day="28" onclick="openScheduleDetail(5)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-urgent">28</p>
-<p class="text-[10px] text-urgent">周五</p>
-</div>
-<div class="flex-1">
-<p class="text-sm font-medium text-fg-primary">开庭 · 劳动争议仲裁</p>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京02民初256号 · 王五诉某科技公司</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 14:00 · 北京市劳动人事争议仲裁委员会</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-brand-tint border-l-4 border-brand cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-21" data-year="2026" data-month="08" data-day="21" onclick="openScheduleDetail(7)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-brand">21</p>
-<p class="text-[10px] text-brand">周五</p>
-</div>
-<div class="flex-1">
-<p class="text-sm font-medium text-fg-primary">证据交换 · 知识产权侵权</p>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京04民初345号 · A公司诉B公司</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 10:00 · 北京市第四中级人民法院</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
-</div>
-<!-- 空态 -->
+<!-- 筛选空态: 有日程但被筛掉 -->
 <div class="hidden text-center py-10 text-fg-tertiary" id="schedule-no-result">
     <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-search-outline"></iconify-icon>
     <p class="text-sm">当前筛选条件下没有庭审安排</p>
