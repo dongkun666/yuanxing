@@ -728,7 +728,38 @@
         updateTodayScheduleBadge();
         if (items.length === 0) {
             container.innerHTML = '';
-            if (emptyEl) emptyEl.classList.remove('hidden');
+            if (emptyEl) {
+                // 空态文案: 根据 filter 智能提示 (避免「日程不见了」的误判)
+                var f = AppState.scheduleFilterToday || 'pending';
+                var todayAll = AppState.scheduleData.filter(function(s) { return s.date === today; });
+                var todayDone = todayAll.filter(function(s) { return s.completed; }).length;
+                if (f === 'pending' && todayDone > 0) {
+                    // 用户在「待办」视图, 但今天所有日程都已完成 → 引导切到「已完成」看历史
+                    emptyEl.innerHTML =
+                        '<iconify-icon icon="mdi:check-circle" class="text-3xl mb-2 text-success"></iconify-icon>' +
+                        '<p class="text-xs">今日待办已全部完成 🎉</p>' +
+                        '<p class="text-[10px] text-fg-tertiary mt-0.5 mb-2">' + todayDone + ' 项已完成</p>' +
+                        '<div class="flex items-center gap-1.5">' +
+                            '<button onclick="setScheduleFilter(\'today\', \'completed\')" class="px-2.5 py-1 text-[10px] text-brand bg-brand-tint3 hover:bg-brand-tint rounded transition-colors">查看已完成</button>' +
+                            '<button onclick="setScheduleFilter(\'today\', \'all\')" class="px-2.5 py-1 text-[10px] text-fg-secondary bg-bg-subtle hover:bg-bg rounded transition-colors">查看全部</button>' +
+                        '</div>';
+                } else if (f === 'completed' && todayDone === 0) {
+                    emptyEl.innerHTML =
+                        '<iconify-icon icon="mdi:calendar-check-outline" class="text-3xl mb-2 text-fg-tertiary"></iconify-icon>' +
+                        '<p class="text-xs">今日还没有已完成日程</p>' +
+                        '<button onclick="setScheduleFilter(\'today\', \'pending\')" class="mt-2 px-2.5 py-1 text-[10px] text-brand bg-brand-tint3 hover:bg-brand-tint rounded transition-colors">查看待办</button>';
+                } else {
+                    // 默认空态 (没有任何日程) — 恢复新建日程按钮
+                    emptyEl.innerHTML =
+                        '<iconify-icon icon="mdi:calendar-check-outline" class="text-3xl mb-2 text-fg-tertiary"></iconify-icon>' +
+                        '<p class="text-xs">今日没有日程</p>' +
+                        '<button onclick="openScheduleModal()" class="mt-3 px-3 py-1 text-xs text-brand bg-brand-tint3 hover:bg-brand-tint rounded transition-colors flex items-center gap-1">' +
+                            '<iconify-icon icon="mdi:plus"></iconify-icon>' +
+                            '<span>新建日程</span>' +
+                        '</button>';
+                }
+                emptyEl.classList.remove('hidden');
+            }
             return;
         }
         if (emptyEl) emptyEl.classList.add('hidden');
