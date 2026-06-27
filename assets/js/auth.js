@@ -3,6 +3,9 @@
  * Phase 3 P0 - 后端 auth 端点未到位, 暂走 demo 模式 (API.auth.demo/login)
  *
  * 依赖: API (api.js), AppState (main.js)
+ *
+ * 当前架构: IIFE + globalThis 双绑定
+ * 评估过 ES module 化, ROI 不高 (见 docs/es-module-roi.md), 暂保留 IIFE
  */
 
 (function() {
