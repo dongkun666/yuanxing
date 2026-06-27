@@ -12,7 +12,33 @@
             // 首次打开即视为已读, 隐藏铃铛上的红点
             if (!panel.classList.contains('hidden')) {
                 markAllNotifications();
+                // 打开后注册外部点击关闭 (延迟 0ms 避免本次 click 立即触发)
+                setTimeout(function() {
+                    setupOutsideClickClose('notificationPanel', '[onclick*="toggleNotifications"]');
+                }, 0);
             }
+        }
+
+        // 通用外部点击关闭 helper
+        // panelId: 弹出框元素 ID
+        // triggerSelector: 触发按钮 selector (可省略, 默认通过 [onclick*="toggle${panelId}"] 推断)
+        // 注册一个 document click 监听, 点击 panel 或 trigger 外时关闭 panel
+        // 多次调用幂等 (同 listener 函数引用不会重复注册)
+        function setupOutsideClickClose(panelId, triggerSelector) {
+            var handlerName = 'close' + panelId.charAt(0).toUpperCase() + panelId.slice(1) + 'OnOutside';
+            // 复用同一个全局 listener 函数 (避免重复注册)
+            if (!window[handlerName]) {
+                window[handlerName] = function(e) {
+                    var panel = document.getElementById(panelId);
+                    if (!panel || panel.classList.contains('hidden')) return;
+                    // 推断 trigger: 优先用传入的 selector, 否则找 onclick 含 toggleXXX 的元素
+                    var trig = triggerSelector ? document.querySelector(triggerSelector) : document.querySelector('[onclick*="toggle' + panelId.charAt(0).toUpperCase() + panelId.slice(1) + '"]');
+                    if (panel.contains(e.target)) return;
+                    if (trig && trig.contains(e.target)) return;
+                    panel.classList.add('hidden');
+                };
+            }
+            document.addEventListener('click', window[handlerName]);
         }
 
         function markAllNotifications() {
@@ -31,29 +57,15 @@
             var menu = document.getElementById('userMenu');
             if (!menu) return;
             if (menu.classList.contains('hidden')) {
-                // 打开: 移除 hidden + 延迟添加全局 click 监听 (避免本次 click 立刻触发关闭)
+                // 打开: 移除 hidden + 延迟注册外部点击关闭 (避免本次 click 立刻触发关闭)
                 menu.classList.remove('hidden');
                 setTimeout(function() {
-                    document.addEventListener('click', closeUserMenuOnOutside);
+                    setupOutsideClickClose('userMenu', '[onclick*="toggleUserMenu"]');
                 }, 0);
             } else {
                 // 关闭
                 menu.classList.add('hidden');
-                document.removeEventListener('click', closeUserMenuOnOutside);
             }
-        }
-
-        // 全局 click 监听: 点击 userMenu 或触发器外时关闭菜单
-        function closeUserMenuOnOutside(e) {
-            var menu = document.getElementById('userMenu');
-            if (!menu) return;
-            var trigger = document.querySelector('[onclick*="toggleUserMenu"]');
-            // 点击菜单内部或触发器自身 → 不关闭
-            if (menu.contains(e.target)) return;
-            if (trigger && trigger.contains(e.target)) return;
-            // 否则关闭 + 移除监听
-            menu.classList.add('hidden');
-            document.removeEventListener('click', closeUserMenuOnOutside);
         }
 
         function switchToSubscription() {
