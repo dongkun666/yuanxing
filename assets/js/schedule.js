@@ -216,6 +216,128 @@
         return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
 
+    // ===== 工作台「今日日程」日期切换 =====
+    // 把 'YYYY-MM-DD' 解析成 Date 对象 (本地时间)
+    function parseDateStr(s) {
+        if (!s) return new Date();
+        var parts = s.split('-');
+        return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+    // 把 Date 格式化成 'YYYY-MM-DD'
+    function formatDate(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    // 设置查看的日期 (任意合法日期字符串)
+    function setTodayScheduleDate(dateStr) {
+        if (typeof AppState === 'undefined') return;
+        AppState.todayScheduleDate = dateStr;
+        renderTodayScheduleDateControls();
+        renderTodaySchedule();
+    }
+    // 前后翻页 (delta = -1 前一天 / +1 后一天)
+    function shiftTodayScheduleDate(delta) {
+        var cur = parseDateStr(AppState.todayScheduleDate);
+        cur.setDate(cur.getDate() + delta);
+        setTodayScheduleDate(formatDate(cur));
+    }
+    // 回到今天
+    function resetTodayScheduleDate() {
+        setTodayScheduleDate(getTodayDate());
+    }
+    // select onchange 回调
+    function onTodayScheduleDateChange(field, val) {
+        if (!AppState.todayScheduleDate) return;
+        var parts = AppState.todayScheduleDate.split('-');
+        var y = parseInt(parts[0]);
+        var m = parseInt(parts[1]);
+        var d = parseInt(parts[2]);
+        if (field === 'year') y = parseInt(val);
+        if (field === 'month') m = parseInt(val);
+        if (field === 'day') d = parseInt(val);
+        // 校验日期合法 (e.g. 2月30日自动回滚到月末)
+        var newDate = new Date(y, m - 1, d);
+        setTodayScheduleDate(formatDate(newDate));
+    }
+    // 渲染日期控件: 填充 3 个 select 的 options + 同步选中值
+    function renderTodayScheduleDateControls() {
+        var container = document.getElementById('today-schedule-date-controls');
+        if (!container) return;
+        var dateStr = AppState.todayScheduleDate || getTodayDate();
+        var parts = dateStr.split('-');
+        var y = parseInt(parts[0]);
+        var m = parseInt(parts[1]);
+        var d = parseInt(parts[2]);
+        var todayStr = getTodayDate();
+        // 年: 当前年 -2 ~ 当前年 +5 (8 年范围, 覆盖历史 + 未来计划)
+        var yearSel = container.querySelector('select[data-field="year"]');
+        if (yearSel) {
+            var currentYear = parseInt(todayStr.split('-')[0]);
+            yearSel.innerHTML = '';
+            for (var i = currentYear - 2; i <= currentYear + 5; i++) {
+                var opt = document.createElement('option');
+                opt.value = String(i);
+                opt.textContent = String(i);
+                if (i === y) opt.selected = true;
+                yearSel.appendChild(opt);
+            }
+        }
+        // 月: 1-12
+        var monthSel = container.querySelector('select[data-field="month"]');
+        if (monthSel) {
+            monthSel.innerHTML = '';
+            for (var i = 1; i <= 12; i++) {
+                var opt = document.createElement('option');
+                opt.value = String(i);
+                opt.textContent = String(i);
+                if (i === m) opt.selected = true;
+                monthSel.appendChild(opt);
+            }
+        }
+        // 日: 根据年/月动态生成 (28/29/30/31)
+        var daySel = container.querySelector('select[data-field="day"]');
+        if (daySel) {
+            daySel.innerHTML = '';
+            var daysInMonth = new Date(y, m, 0).getDate();
+            for (var i = 1; i <= daysInMonth; i++) {
+                var opt = document.createElement('option');
+                opt.value = String(i);
+                opt.textContent = String(i);
+                if (i === d) opt.selected = true;
+                daySel.appendChild(opt);
+            }
+        }
+        // 「回到今天」按钮: 仅在非今天时显示, 今天时隐藏
+        var todayBtn = container.querySelector('[title="回到今天"]');
+        if (todayBtn) {
+            if (dateStr === todayStr) todayBtn.classList.add('hidden');
+            else todayBtn.classList.remove('hidden');
+        }
+        // 标题文案: 今天时显示「今日」, 非今天时显示「YYYY年M月D日」
+        var titleEl = document.querySelector('#view-workstation h4');
+        if (titleEl) {
+            // 找含「今日日程」的 h4
+            var allH4 = document.querySelectorAll('#view-workstation h4');
+            for (var i = 0; i < allH4.length; i++) {
+                if (allH4[i].textContent.indexOf('日程') >= 0) {
+                    var iconHtml = allH4[i].innerHTML.match(/<iconify-icon[^>]*><\/iconify-icon>/);
+                    var iconStr = iconHtml ? iconHtml[0] : '';
+                    var newLabel = dateStr === todayStr ? '今日日程' : formatDateLabel(dateStr) + ' 日程';
+                    // 保留 icon + badge
+                    var badgeHtml = '';
+                    var badge = allH4[i].querySelector('#today-schedule-badge');
+                    if (badge) badgeHtml = badge.outerHTML;
+                    allH4[i].innerHTML = iconStr + ' ' + newLabel + ' ' + badgeHtml;
+                    break;
+                }
+            }
+        }
+    }
+    // 中文日期标签: 2026-06-28 → 2026年6月28日
+    function formatDateLabel(dateStr) {
+        var parts = dateStr.split('-');
+        return parts[0] + '年' + parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
+    }
+
 
     function checkScheduleConflict(date, time) {
         if (!date || !time) return null;
@@ -714,7 +836,9 @@
         var container = document.getElementById('today-schedule-list');
         var emptyEl = document.getElementById('today-schedule-empty');
         if (!container) return;
-        var today = getTodayDate();
+        var today = AppState.todayScheduleDate || getTodayDate();
+        // 同步日期控件状态 (options + 选中值) — 防止 controls 在初始时未渲染
+        renderTodayScheduleDateControls();
         var items = AppState.scheduleData
             .filter(function(s) { return s.date === today; })
             .filter(getScheduleFilterPredicate('today'))

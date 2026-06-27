@@ -191,10 +191,11 @@
                 el.classList.add('active');
             }
 
-            // 切换 workstation 时刷新今日日程角标
+            // 切换 workstation 时刷新今日日程角标 + 日期控件
             if (viewId === 'workstation') {
                 setTimeout(function() {
                     if (typeof window.updateTodayScheduleBadge === 'function') window.updateTodayScheduleBadge();
+                    if (typeof window.renderTodayScheduleDateControls === 'function') window.renderTodayScheduleDateControls();
                     if (typeof window.renderTodaySchedule === 'function') window.renderTodaySchedule();
                 }, 50);
             }
@@ -727,6 +728,14 @@
             { id: 'n7', type: 'member', icon: 'mdi:account-star-outline', color: 'warning', title: '会员即将到期', desc: '专业版会员还剩 7 天到期, 续费可继续享 8 折优惠', timeAgo: '3 天前', timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'subscription', linkParam: '' },
             { id: 'n8', type: 'system', icon: 'mdi:update', color: 'brand', title: '系统升级通知', desc: 'LexPrime v2.1 已发布: 新增日程管理三态过滤, 工作台空态优化等', timeAgo: '5 天前', timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'workstation', linkParam: '' },
         ];
+    })();
+
+    // 工作台「今日日程」当前查看的日期 (AppState.todayScheduleDate)
+    // 字符串 'YYYY-MM-DD', 默认今天, 用户可前后翻页查看历史/未来日程
+    // 不持久化 (用户关掉浏览器重新打开默认回到今天, 避免「上次看的是几号」困惑)
+    AppState.todayScheduleDate = (function() {
+        var d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     })();
 
     // 个人模板 (AppState.personalTemplates) - 持久化用户上传的模板 (含初始 mock)
