@@ -288,6 +288,9 @@ window.Iconify.disableRemoteAPI = true;
 <!-- Phase 3 P0: API 客户端 + Auth - 在所有模块之前 -->
 <script src="./assets/js/api.js?v=1"></script>
 <script src="./assets/js/auth.js?v=1"></script>
+<!-- IIFE 拆分 (2026-06-28) - 全局状态 + 路由必须先于业务模块加载 -->
+<script src="./assets/js/app-state.js?v=18"></script>
+<script src="./assets/js/router.js?v=18"></script>
 <!-- 模块拆分 (按业务域) - 在主脚本之前加载 -->
 <script src="./assets/js/cases.js?v=1"></script>
 <script src="./assets/js/clients.js?v=1"></script>
@@ -296,8 +299,10 @@ window.Iconify.disableRemoteAPI = true;
 <script src="./assets/js/ai.js?v=1"></script>
 <script src="./assets/js/templates.js?v=1"></script>
 <script src="./assets/js/account.js?v=1"></script>
-<!-- 主脚本 (路由 + 全局状态 + 弹窗通用) -->
-<script src="./assets/js/script.js?v=17"></script>
+<!-- 主脚本 (helper 函数 + 案件/客户/模板配置) -->
+<script src="./assets/js/script.js?v=18"></script>
+<!-- 启动流程 (必须最后 - 依赖 Auth/AppState/router/script 全部就绪) -->
+<script src="./assets/js/bootstrap.js?v=18"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {

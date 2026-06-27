@@ -1,0 +1,226 @@
+/**
+ * Router 模块 - 视图路由 + 视图缓存 + 动态加载
+ * 拆分自 script.js + schedule.js (2026-06-28 IIFE 拆分计划)
+ *
+ * 加载顺序: 在 app-state.js 之后, schedule.js 之前
+ * 依赖: AppState (app-state.js)
+ *
+ * 暴露: viewCache, viewFileMap, isDevMode, loadView, switchView, switchSidebarTab
+ * 全部 globalThis 双绑定, 兼容 HTML inline onclick (router.someFunc)
+ */
+
+(function() {
+    'use strict';
+
+    // ===== 视图缓存管理 =====
+    var viewCache = {};
+
+    // ===== 视图文件名映射 =====
+    var viewFileMap = {
+        'login': 'login.html',
+        'workstation': 'workstation.html',
+        'schedule-list': 'schedule-list.html',
+        'attention-list': 'attention-list.html',
+        'case-list': 'case-list.html',
+        'case-analysis': 'case-analysis.html',
+        'schedule-calendar': 'schedule-calendar.html',
+        'case-dynamics': 'case-dynamics.html',
+        'attachment-list': 'attachment-list.html',
+        'case': 'case-detail.html',
+        'client': 'client.html',
+        'client-detail': 'client-detail.html',
+        'template': 'template.html',
+        'knowledge': 'knowledge.html',
+        'ai': 'ai.html',
+        'subscription': 'subscription.html',
+        'payment': 'payment.html',
+        'payment-success': 'payment-success.html',
+        'orders': 'orders.html',
+        'member-center': 'member-center.html',
+        'account-settings': 'account-settings.html',
+        'archive': 'archive.html',
+        'notifications': 'notifications.html'
+    };
+
+    // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
+    var isDevMode = window.location.search.indexOf('dev=1') !== -1 ||
+                     window.location.search.indexOf('dev=') !== -1 && /dev=(\d+)/.test(window.location.search) && RegExp.$1 !== '0';
+
+    /**
+     * 动态加载视图 HTML, 已缓存直接复用
+     * (从 schedule.js 搬过来, schedule.js 不该有视图加载基础设施)
+     */
+    function loadView(viewId, callback) {
+        if (!isDevMode && viewCache[viewId]) {
+            if (callback) callback(viewCache[viewId]);
+            return;
+        }
+        var fileName = viewFileMap[viewId];
+        if (!fileName) {
+            console.error('未知的视图ID:', viewId);
+            return;
+        }
+        var url = 'templates/views/' + fileName + '?_t=' + Date.now();
+        fetch(url)
+            .then(function(response) { return response.text(); })
+            .then(function(html) {
+                viewCache[viewId] = html;
+                if (callback) callback(html);
+            })
+            .catch(function(err) { console.error('加载视图失败:', viewId, err); });
+    }
+
+    /**
+     * 切换视图: 已加载直接显示, 未加载动态 fetch 后插入
+     */
+    function switchView(viewId, el) {
+        var target = document.getElementById('view-' + viewId);
+        if (target) {
+            document.querySelectorAll('.view-content').forEach(function(view) { view.classList.add('hidden'); });
+            target.classList.remove('hidden');
+            if (viewId === 'schedule-list' || viewId === 'attention-list') {
+                target.classList.add('flex-col');
+            }
+            if (viewId === 'template') {
+                if (typeof fixTemplateViewDOM === 'function') fixTemplateViewDOM();
+                setTimeout(function() {
+                    if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+                }, 50);
+            }
+            if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
+                setTimeout(function() {
+                    if (typeof window.renderScheduleList === 'function') window.renderScheduleList();
+                    if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
+                }, 50);
+            }
+            if (viewId === 'notifications') {
+                setTimeout(function() {
+                    if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
+                }, 50);
+            }
+        } else {
+            loadView(viewId, function(html) {
+                document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                var newTarget = document.getElementById('view-' + viewId);
+                if (newTarget) {
+                    document.querySelectorAll('.view-content').forEach(function(view) { view.classList.add('hidden'); });
+                    newTarget.classList.remove('hidden');
+                    if (viewId === 'schedule-list' || viewId === 'attention-list') {
+                        newTarget.classList.add('flex-col');
+                    }
+                    if (viewId === 'template') {
+                        setTimeout(fixTemplateViewDOM, 100);
+                        setTimeout(fixTemplateViewDOM, 500);
+                        setTimeout(function() {
+                            if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+                        }, 50);
+                    }
+                    if (viewId === 'schedule-calendar' || viewId === 'schedule-list') {
+                        setTimeout(function() {
+                            if (typeof window.renderScheduleList === 'function') window.renderScheduleList();
+                            if (typeof window.filterScheduleByDate === 'function') window.filterScheduleByDate();
+                        }, 50);
+                    }
+                    if (viewId === 'notifications') {
+                        setTimeout(function() {
+                            if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
+                        }, 50);
+                    }
+                }
+            });
+        }
+
+        // 更新侧边栏状态
+        if (el) {
+            document.querySelectorAll('.sidebar-item').forEach(function(item) { item.classList.remove('active'); });
+            el.classList.add('active');
+        }
+
+        // 切换 workstation 时刷新今日日程角标 + 日期控件
+        if (viewId === 'workstation') {
+            setTimeout(function() {
+                if (typeof window.updateTodayScheduleBadge === 'function') window.updateTodayScheduleBadge();
+                if (typeof window.renderTodayScheduleDateControls === 'function') window.renderTodayScheduleDateControls();
+                if (typeof window.renderTodaySchedule === 'function') window.renderTodaySchedule();
+            }, 50);
+        }
+    }
+
+    /**
+     * 侧边栏 tab 切换 (工作 / AI 对话)
+     */
+    function switchSidebarTab(tab) {
+        var tabWork = document.getElementById('sidebarTabWork');
+        var tabAI = document.getElementById('sidebarTabAI');
+        var btns = document.querySelectorAll('.sidebar-tab-btn');
+
+        btns.forEach(function(btn) { btn.classList.remove('active'); });
+
+        if (tab === 'work') {
+            if (tabWork) tabWork.classList.remove('hidden');
+            if (tabAI) tabAI.classList.add('hidden');
+            if (btns[0]) btns[0].classList.add('active');
+
+            var viewAI = document.getElementById('view-ai');
+            if (viewAI) viewAI.classList.add('hidden');
+            var ws = document.getElementById('view-workstation');
+            if (ws) ws.classList.remove('hidden');
+        } else {
+            if (tabWork) tabWork.classList.add('hidden');
+            if (tabAI) tabAI.classList.remove('hidden');
+            if (btns[1]) btns[1].classList.add('active');
+
+            document.querySelectorAll('.sidebar-item').forEach(function(item) { item.classList.remove('active'); });
+            document.querySelectorAll('.view-content').forEach(function(v) { v.classList.add('hidden'); });
+
+            var viewAI = document.getElementById('view-ai');
+            if (!viewAI) {
+                loadView('ai', function(html) {
+                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                    var newViewAI = document.getElementById('view-ai');
+                    if (newViewAI) newViewAI.classList.remove('hidden');
+                    var aiViewChat = document.getElementById('aiViewChat');
+                    if (aiViewChat) aiViewChat.classList.remove('hidden');
+                });
+            } else {
+                viewAI.classList.remove('hidden');
+                var aiViewChat = document.getElementById('aiViewChat');
+                if (aiViewChat) aiViewChat.classList.remove('hidden');
+                var aiViewSkills = document.getElementById('aiViewSkills');
+                if (aiViewSkills) aiViewSkills.classList.add('hidden');
+                var aiViewHistory = document.getElementById('aiViewHistory');
+                if (aiViewHistory) aiViewHistory.classList.add('hidden');
+            }
+        }
+    }
+
+    // ===== 双绑定 (globalThis) =====
+    globalThis.viewCache = viewCache;
+    globalThis.viewFileMap = viewFileMap;
+    globalThis.isDevMode = isDevMode;
+    globalThis.loadView = loadView;
+    globalThis.switchView = switchView;
+    globalThis.switchSidebarTab = switchSidebarTab;
+
+    // ===== 全局 click 监听: 关菜单 + 关通知面板 =====
+    document.addEventListener('click', function(e) {
+        var menuWork = document.getElementById('moreMenuWork');
+        var menuAI = document.getElementById('moreMenuAI');
+        var isClickInBtn = e.target.closest('[onclick*="toggleMoreMenu"]');
+        if (!isClickInBtn) {
+            if (menuWork) menuWork.classList.add('hidden');
+            if (menuAI) menuAI.classList.add('hidden');
+        }
+
+        var panel = document.getElementById('notificationPanel');
+        var notifBtn = document.querySelector('[onclick*="toggleNotifications"]');
+        if (panel && notifBtn && !panel.contains(e.target) && !notifBtn.contains(e.target)) {
+            panel.classList.add('hidden');
+        }
+    });
+
+    // ===== window.onload 占位 (原 script.js 留空, 保留以防未来用) =====
+    window.onload = function() {
+        // 页面加载完毕
+    };
+})();

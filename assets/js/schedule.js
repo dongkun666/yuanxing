@@ -6,29 +6,7 @@
 
 
 
-        function loadView(viewId, callback) {
-            // 开发模式下跳过缓存
-            if (!isDevMode && viewCache[viewId]) {
-                // 已缓存，直接使用
-                if (callback) callback(viewCache[viewId]);
-                return;
-            }
-            var fileName = viewFileMap[viewId];
-            if (!fileName) {
-                console.error('未知的视图ID:', viewId);
-                return;
-            }
-            // 加时间戳绕过 HTTP 缓存
-            var url = 'templates/views/' + fileName + '?_t=' + Date.now();
-            fetch(url)
-                .then(function(response) { return response.text(); })
-                .then(function(html) {
-                    viewCache[viewId] = html;
-                    if (callback) callback(html);
-                })
-                .catch(function(err) { console.error('加载视图失败:', viewId, err); });
-        }
-
+        // loadView 已迁移到 router.js (2026-06-28 IIFE 拆分)
         function toggleTodo(el) {
             var cb = el.querySelector('input[type="checkbox"]');
             if (cb) {
