@@ -62,22 +62,25 @@
                                 <span class="bg-brand text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1" id="today-schedule-badge">5</span>
 </h4>
 <div class="flex items-center gap-1.5">
-<!-- 日期切换控件: 前一天 / 年月日 / 后一天 -->
-<div class="flex items-center gap-0.5 text-[10px]" id="today-schedule-date-controls">
-<button onclick="shiftTodayScheduleDate(-1)" class="w-5 h-5 rounded hover:bg-bg-subtle text-fg-secondary hover:text-brand flex items-center justify-center transition-colors" title="前一天">
-<iconify-icon icon="mdi:chevron-left" class="text-sm"></iconify-icon>
+<!-- 日期切换控件: 前一天 / 年月日 / 后一天 / 回到今天 (整体 chip 风格) -->
+<div class="flex items-center gap-0.5 bg-bg-subtle hover:bg-bg border border-bg-border hover:border-bg-border/80 rounded-lg px-1 py-0.5 transition-colors" id="today-schedule-date-controls">
+<button onclick="shiftTodayScheduleDate(-1)" class="w-6 h-6 rounded-md hover:bg-white text-fg-secondary hover:text-brand hover:shadow-sm flex items-center justify-center transition-all" title="前一天">
+<iconify-icon icon="mdi:chevron-left" class="text-base"></iconify-icon>
 </button>
-<select data-field="year" onchange="onTodayScheduleDateChange('year', this.value)" class="bg-transparent border-0 text-[10px] text-fg-secondary hover:text-brand focus:outline-none cursor-pointer pr-0.5" title="年"></select>
+<div class="flex items-center gap-0.5 px-1.5 py-0.5 bg-white rounded-md border border-bg-border/50 shadow-sm">
+<select data-field="year" onchange="onTodayScheduleDateChange('year', this.value)" class="bg-transparent border-0 text-xs font-medium text-fg-primary focus:outline-none cursor-pointer hover:text-brand transition-colors pr-0.5" title="年"></select>
 <span class="text-fg-tertiary text-[10px]">年</span>
-<select data-field="month" onchange="onTodayScheduleDateChange('month', this.value)" class="bg-transparent border-0 text-[10px] text-fg-secondary hover:text-brand focus:outline-none cursor-pointer pr-0.5" title="月"></select>
+<select data-field="month" onchange="onTodayScheduleDateChange('month', this.value)" class="bg-transparent border-0 text-xs font-medium text-fg-primary focus:outline-none cursor-pointer hover:text-brand transition-colors pr-0.5" title="月"></select>
 <span class="text-fg-tertiary text-[10px]">月</span>
-<select data-field="day" onchange="onTodayScheduleDateChange('day', this.value)" class="bg-transparent border-0 text-[10px] text-fg-secondary hover:text-brand focus:outline-none cursor-pointer pr-0.5" title="日"></select>
+<select data-field="day" onchange="onTodayScheduleDateChange('day', this.value)" class="bg-transparent border-0 text-xs font-medium text-fg-primary focus:outline-none cursor-pointer hover:text-brand transition-colors pr-0.5" title="日"></select>
 <span class="text-fg-tertiary text-[10px]">日</span>
-<button onclick="shiftTodayScheduleDate(1)" class="w-5 h-5 rounded hover:bg-bg-subtle text-fg-secondary hover:text-brand flex items-center justify-center transition-colors" title="后一天">
-<iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+</div>
+<button onclick="shiftTodayScheduleDate(1)" class="w-6 h-6 rounded-md hover:bg-white text-fg-secondary hover:text-brand hover:shadow-sm flex items-center justify-center transition-all" title="后一天">
+<iconify-icon icon="mdi:chevron-right" class="text-base"></iconify-icon>
 </button>
-<button onclick="resetTodayScheduleDate()" class="px-1.5 h-5 rounded text-[10px] text-fg-tertiary hover:text-brand hover:bg-bg-subtle transition-colors" title="回到今天">
-<iconify-icon icon="mdi:calendar-today" class="text-sm"></iconify-icon>
+<button onclick="resetTodayScheduleDate()" class="px-2 h-6 rounded-md text-[10px] font-medium text-brand bg-brand-tint3 hover:bg-brand-tint flex items-center gap-0.5 transition-all" title="回到今天">
+<iconify-icon icon="mdi:calendar-today" class="text-xs"></iconify-icon>
+<span>今天</span>
 </button>
 </div>
 <button class="text-[10px] text-brand hover:underline" onclick="switchView('schedule-calendar')">查看全部</button>
