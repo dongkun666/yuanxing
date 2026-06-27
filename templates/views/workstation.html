@@ -70,111 +70,15 @@
 </div>
 </div>
 <div class="flex-1 space-y-0">
-<div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
-<div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-fg-primary">09:00</span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary">与 XX 律所张三律师会面</p>
-<p class="text-xs text-fg-tertiary">合同纠纷案</p>
-</div>
-<div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
-<iconify-icon icon="mdi:account-outline"></iconify-icon>
-</div>
-<!-- 操作按钮（hover显示） -->
-<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
-<iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
-</button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
-<iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
+<div id="today-schedule-list" class="space-y-0.5"></div>
+<div id="today-schedule-empty" class="hidden flex flex-col items-center justify-center py-8 text-fg-tertiary">
+<iconify-icon icon="mdi:calendar-check-outline" class="text-3xl mb-2 text-fg-tertiary"></iconify-icon>
+<p class="text-xs">今日没有日程</p>
+<button onclick="openScheduleModal()" class="mt-3 px-3 py-1 text-xs text-brand bg-brand-tint3 hover:bg-brand-tint rounded transition-colors flex items-center gap-1">
+<iconify-icon icon="mdi:plus"></iconify-icon>
+<span>新建日程</span>
 </button>
 </div>
-</div>
-<div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
-<div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-red-600">10:30</span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary">海淀法院第3法庭开庭</p>
-<p class="text-xs text-fg-tertiary">买卖合同纠纷案</p>
-</div>
-<div class="flex-none text-gray-300 group-hover:text-red-400 transition-colors">
-<iconify-icon icon="mdi:gavel"></iconify-icon>
-</div>
-<!-- 操作按钮（hover显示） -->
-<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
-<iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
-</button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
-<iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
-</button>
-</div>
-</div>
-<div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
-<div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-fg-primary">14:00</span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary">客户电话沟通</p>
-<p class="text-xs text-fg-tertiary">王华借贷纠纷案</p>
-</div>
-<div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
-<iconify-icon icon="mdi:phone-outline"></iconify-icon>
-</div>
-<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
-<iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
-</button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
-<iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
-</button>
-</div>
-</div>
-<div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
-<div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-fg-primary">15:30</span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary">证据材料整理</p>
-<p class="text-xs text-fg-tertiary">张三合同纠纷案</p>
-</div>
-<div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
-<iconify-icon icon="mdi:file-document-outline"></iconify-icon>
-</div>
-<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
-<iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
-</button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
-<iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
-</button>
-</div>
-</div>
-<div class="flex items-start gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer" onclick="toggleTodo(this)">
-<input class="mt-1 w-3.5 h-3.5 rounded border-bg-border text-brand focus:ring-brand cursor-pointer" type="checkbox"/>
-<div class="w-12 flex-none text-right">
-<span class="text-sm font-bold text-fg-primary">17:00</span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary">案件讨论会议</p>
-<p class="text-xs text-fg-tertiary">某科技公司股权纠纷案</p>
-</div>
-<div class="flex-none text-gray-300 group-hover:text-blue-400 transition-colors">
-<iconify-icon icon="mdi:account-group-outline"></iconify-icon>
-</div>
-<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
-<button class="w-5 h-5 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); editSchedule(this)" title="修改">
-<iconify-icon class="text-[10px]" icon="mdi:pencil"></iconify-icon>
-</button>
-<button class="w-5 h-5 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteSchedule(this)" title="删除">
-<iconify-icon class="text-[10px]" icon="mdi:close"></iconify-icon>
-</button>
 </div>
 </div>
 </div>

@@ -172,7 +172,10 @@
 
             // 切换 workstation 时刷新今日日程角标
             if (viewId === 'workstation') {
-                setTimeout(updateTodayScheduleBadge, 50);
+                setTimeout(function() {
+                    if (typeof window.updateTodayScheduleBadge === 'function') window.updateTodayScheduleBadge();
+                    if (typeof window.renderTodaySchedule === 'function') window.renderTodaySchedule();
+                }, 50);
             }
         }
 

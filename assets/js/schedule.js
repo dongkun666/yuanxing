@@ -356,6 +356,7 @@
                 renderScheduleList();
                 if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
                 if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+                if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
             }
             return;
         }
@@ -402,6 +403,7 @@
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+        if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
     }
 
     // 删除日程 (从卡片按钮触发)
@@ -416,6 +418,7 @@
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+        if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
     }
 
     // localStorage 持久化
@@ -464,34 +467,34 @@
             var weekday = dateObj ? weekdays[dateObj.getDay()] : '';
             var isToday = s.date === today;
 
-            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-5 hover:shadow-md transition-all border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
+            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
                 '<div class="flex items-start gap-4">' +
-                    '<div class="flex-shrink-0 text-center w-14">' +
-                        '<div class="text-2xl font-bold ' + c.tagText + ' leading-tight">' + day + '</div>' +
-                        '<div class="text-xs text-fg-tertiary mt-0.5">' + weekday + '</div>' +
+                    '<div class="flex-shrink-0 text-center w-12">' +
+                        '<div class="text-lg font-bold ' + c.tagText + '">' + day + '</div>' +
+                        '<div class="text-[10px] text-fg-tertiary">' + weekday + '</div>' +
                     '</div>' +
                     '<div class="flex-1 min-w-0">' +
-                        '<div class="flex items-center gap-2 mb-1.5 flex-wrap">' +
-                            '<span class="text-xs px-2 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
-                            '<span class="font-semibold text-base text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
-                            (isToday ? '<span class="text-xs px-2 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
+                        '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
+                            '<span class="text-[10px] px-1.5 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
+                            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(s.title || '') + '</span>' +
+                            (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
                         '</div>' +
-                        '<div class="text-sm text-fg-secondary flex items-center gap-3 flex-wrap">' +
-                            '<span><iconify-icon class="text-sm" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
-                            (s.location ? '<span><iconify-icon class="text-sm" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
+                        '<div class="text-xs text-fg-tertiary flex items-center gap-3 flex-wrap">' +
+                            '<span><iconify-icon class="text-xs" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
+                            (s.location ? '<span><iconify-icon class="text-xs" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
                         '</div>' +
                     '</div>' +
                     '<div class="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                        '<button class="text-xs text-fg-secondary hover:bg-bg-subtle px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleDetail(' + s.id + ')" title="详情">' +
-                            '<iconify-icon class="text-sm" icon="mdi:eye-outline"></iconify-icon>' +
+                        '<button class="text-sm text-fg-secondary hover:bg-bg-subtle px-2.5 py-1 rounded flex items-center gap-1" onclick="event.stopPropagation(); openScheduleDetail(' + s.id + ')" title="详情">' +
+                            '<iconify-icon icon="mdi:eye-outline"></iconify-icon>' +
                             '<span>详情</span>' +
                         '</button>' +
-                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
-                            '<iconify-icon class="text-sm" icon="mdi:pencil-outline"></iconify-icon>' +
+                        '<button class="text-sm text-brand hover:bg-brand-tint3 px-2.5 py-1 rounded flex items-center gap-1" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
+                            '<iconify-icon icon="mdi:pencil-outline"></iconify-icon>' +
                             '<span>修改</span>' +
                         '</button>' +
-                        '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
-                            '<iconify-icon class="text-sm" icon="mdi:trash-can-outline"></iconify-icon>' +
+                        '<button class="text-sm text-red-500 hover:bg-red-50 px-2.5 py-1 rounded flex items-center gap-1" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
+                            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>' +
                             '<span>删除</span>' +
                         '</button>' +
                     '</div>' +
@@ -585,6 +588,7 @@
         showToast('日程已复制');
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+        if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
     }
 
     function updateTodayScheduleBadge() {
@@ -593,6 +597,81 @@
         const today = getTodayDate();
         const count = AppState.scheduleData.filter(s => s.date === today).length;
         badge.textContent = count;
+    }
+
+    // 渲染工作台「今日日程」列表 (联动日程管理: 同一份 AppState.scheduleData)
+    // 排序: 按 time 升序
+    // 行为: 点击行 → 打开详情; [修改] → 编辑; [删除] → 删除
+    function renderTodaySchedule() {
+        var container = document.getElementById('today-schedule-list');
+        var emptyEl = document.getElementById('today-schedule-empty');
+        if (!container) return;
+        var today = getTodayDate();
+        var items = AppState.scheduleData
+            .filter(function(s) { return s.date === today; })
+            .sort(function(a, b) {
+                var ka = (a.time || '99:99');
+                var kb = (b.time || '99:99');
+                return ka < kb ? -1 : ka > kb ? 1 : 0;
+            });
+        updateTodayScheduleBadge();
+        if (items.length === 0) {
+            container.innerHTML = '';
+            if (emptyEl) emptyEl.classList.remove('hidden');
+            return;
+        }
+        if (emptyEl) emptyEl.classList.add('hidden');
+
+        var colorMap = {
+            '开庭': { text: 'text-purple-600', bg: 'bg-purple-50', icon: 'mdi:gavel', iconColor: 'text-purple-500' },
+            '会议': { text: 'text-blue-600', bg: 'bg-blue-50', icon: 'mdi:account-group-outline', iconColor: 'text-blue-500' },
+            '待办': { text: 'text-green-600', bg: 'bg-green-50', icon: 'mdi:check-circle-outline', iconColor: 'text-green-500' },
+            '其他': { text: 'text-amber-600', bg: 'bg-amber-50', icon: 'mdi:calendar-blank-outline', iconColor: 'text-amber-500' }
+        };
+
+        var htmlStr = '';
+        items.forEach(function(s) {
+            var c = colorMap[s.type] || colorMap['其他'];
+            var isPast = false;
+            if (s.time) {
+                var endTime = s.endTime || (parseInt(s.time.split(':')[0]) + 1) + ':' + s.time.split(':')[1];
+                var now = new Date();
+                var end = new Date(today + 'T' + endTime + ':00');
+                isPast = now > end;
+            }
+            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer" data-schedule-id="' + s.id + '">' +
+                '<div class="w-12 flex-none text-right">' +
+                    '<span class="text-sm font-bold ' + (isPast ? 'text-fg-tertiary line-through' : c.text) + '">' + (s.time || '--:--') + '</span>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<p class="text-sm font-medium text-fg-primary truncate">' + escapeHtml(s.title || '') + '</p>' +
+                    '<p class="text-xs text-fg-tertiary truncate">' + escapeHtml(s.location || s.caseName || s.type || '') + '</p>' +
+                '</div>' +
+                '<div class="flex-none ' + c.iconColor + '">' +
+                    '<iconify-icon icon="' + c.icon + '"></iconify-icon>' +
+                '</div>' +
+                '<div class="flex-none flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-1">' +
+                    '<button class="w-6 h-6 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); openScheduleDetail(' + s.id + ')" title="详情">' +
+                        '<iconify-icon class="text-sm" icon="mdi:eye-outline"></iconify-icon>' +
+                    '</button>' +
+                    '<button class="w-6 h-6 rounded hover:bg-brand-tint flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
+                        '<iconify-icon class="text-sm" icon="mdi:pencil"></iconify-icon>' +
+                    '</button>' +
+                    '<button class="w-6 h-6 rounded hover:bg-red-100 flex items-center justify-center text-fg-tertiary hover:text-red-500 transition-colors" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
+                        '<iconify-icon class="text-sm" icon="mdi:close"></iconify-icon>' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        });
+        container.innerHTML = htmlStr;
+
+        // 绑定行点击 → 打开详情
+        container.querySelectorAll('[data-schedule-id]').forEach(function(row) {
+            row.addEventListener('click', function() {
+                var id = Number(row.getAttribute('data-schedule-id'));
+                if (typeof openScheduleDetail === 'function') openScheduleDetail(id);
+            });
+        });
     }
 
     function filterSchedule(type, btn) {
