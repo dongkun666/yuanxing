@@ -451,7 +451,7 @@
             ? '<iconify-icon icon="mdi:check-bold" class="text-xs"></iconify-icon>'
             : '';
         return '<button type="button" onclick="event.stopPropagation(); toggleScheduleComplete(' + s.id + ')" ' +
-               'class="w-5 h-5 rounded-full border-2 ' + btnCls + ' flex items-center justify-center transition-colors flex-none" ' +
+               'class="w-4 h-4 rounded border-2 ' + btnCls + ' flex items-center justify-center transition-colors flex-none" ' +
                'title="' + (done ? '已完成 (点击取消)' : '标记为完成') + '">' + icon + '</button>';
     }
 
@@ -503,7 +503,7 @@
             var done = !!s.completed;
             var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through' : 'text-sm font-medium text-fg-primary';
 
-            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + (done ? ' opacity-70' : '') + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
+            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 cursor-pointer ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '" onclick="openScheduleDetail(' + s.id + ')">' +
                 '<div class="flex items-start gap-4">' +
                     '<div class="flex-shrink-0 flex items-center justify-center pt-1">' +
                         renderScheduleCheckbox(s) +
@@ -517,7 +517,6 @@
                             '<span class="text-[10px] px-1.5 py-0.5 rounded-full ' + c.tagBg + ' ' + c.tagText + ' font-medium">' + (s.type || '其他') + '</span>' +
                             '<span class="' + titleCls + '">' + escapeHtml(s.title || '') + '</span>' +
                             (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-urgent text-white font-medium">今天</span>' : '') +
-                            (done ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-success-tint text-success font-medium">已完成</span>' : '') +
                         '</div>' +
                         '<div class="text-xs text-fg-tertiary flex items-center gap-3 flex-wrap">' +
                             '<span><iconify-icon class="text-xs" icon="mdi:clock-time-four-outline"></iconify-icon> ' + (s.time || '') + (s.endTime ? ' - ' + s.endTime : '') + '</span>' +
@@ -703,7 +702,7 @@
             }
             var done = !!s.completed;
             var titleCls = done ? 'text-sm font-medium text-fg-tertiary line-through truncate' : 'text-sm font-medium text-fg-primary truncate';
-            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer' + (done ? ' opacity-70' : '') + '" data-schedule-id="' + s.id + '">' +
+            htmlStr += '<div class="group flex items-start gap-2 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer" data-schedule-id="' + s.id + '">' +
                 '<div class="flex-none pt-0.5">' +
                     renderScheduleCheckbox(s) +
                 '</div>' +
