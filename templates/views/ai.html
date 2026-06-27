@@ -51,7 +51,7 @@
 <!-- 输入区 -->
 <div class="flex-none px-6 pb-4 pt-2 max-w-4xl mx-auto w-full">
 <div class="bg-white rounded-xl border border-bg-border p-3 shadow-sm">
-<textarea class="w-full bg-transparent border-0 outline-none text-sm text-fg-primary placeholder-[#86909C] resize-none focus:ring-0 leading-relaxed" placeholder="输入您的问题，支持多行输入..." rows="2"></textarea>
+<textarea id="aiChatInput" class="w-full bg-transparent border-0 outline-none text-sm text-fg-primary placeholder-[#86909C] resize-none focus:ring-0 leading-relaxed" placeholder="输入您的问题，支持多行输入... (Enter 发送, Shift+Enter 换行)" rows="2" onkeydown="handleAIInputKeydown(event)"></textarea>
 <div class="flex items-center justify-between mt-2 pt-2 border-t border-bg-border">
 <div class="flex items-center gap-2">
 <button class="w-7 h-7 rounded-md hover:bg-bg flex items-center justify-center text-fg-tertiary transition-colors" title="上传文件">
@@ -61,8 +61,8 @@
 <iconify-icon class="text-sm" icon="mdi:microphone"></iconify-icon>
 </button>
 </div>
-<button class="w-9 h-9 rounded-lg bg-brand hover:bg-brand-hover text-white flex items-center justify-center transition-colors">
-<iconify-icon class="text-sm" icon="mdi:send"></iconify-icon>
+<button id="aiSendBtn" class="w-9 h-9 rounded-lg bg-brand hover:bg-brand-hover text-white flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onclick="sendAIMessage()">
+<iconify-icon id="aiSendIcon" class="text-sm" icon="mdi:send"></iconify-icon>
 </button>
 </div>
 </div>
