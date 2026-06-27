@@ -15,6 +15,69 @@
 <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors">+ 新增</button>
 </div>
 </div>
+<!-- 年月日筛选 -->
+<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
+    <iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
+    <span class="text-xs text-fg-secondary font-medium">日期筛选</span>
+    <select id="schedule-filter-year" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部年份</option>
+        <option value="2026" selected>2026 年</option>
+    </select>
+    <select id="schedule-filter-month" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部月份</option>
+        <option value="01">1 月</option>
+        <option value="02">2 月</option>
+        <option value="03">3 月</option>
+        <option value="04">4 月</option>
+        <option value="05">5 月</option>
+        <option value="06">6 月</option>
+        <option value="07">7 月</option>
+        <option value="08" selected>8 月</option>
+        <option value="09">9 月</option>
+        <option value="10">10 月</option>
+        <option value="11">11 月</option>
+        <option value="12">12 月</option>
+    </select>
+    <select id="schedule-filter-day" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部日期</option>
+        <option value="01">1 日</option>
+        <option value="02">2 日</option>
+        <option value="03">3 日</option>
+        <option value="04">4 日</option>
+        <option value="05">5 日</option>
+        <option value="06">6 日</option>
+        <option value="07">7 日</option>
+        <option value="08">8 日</option>
+        <option value="09">9 日</option>
+        <option value="10">10 日</option>
+        <option value="11">11 日</option>
+        <option value="12">12 日</option>
+        <option value="13">13 日</option>
+        <option value="14">14 日</option>
+        <option value="15">15 日</option>
+        <option value="16">16 日</option>
+        <option value="17">17 日</option>
+        <option value="18">18 日</option>
+        <option value="19">19 日</option>
+        <option value="20">20 日</option>
+        <option value="21">21 日</option>
+        <option value="22">22 日</option>
+        <option value="23">23 日</option>
+        <option value="24">24 日</option>
+        <option value="25">25 日</option>
+        <option value="26">26 日</option>
+        <option value="27">27 日</option>
+        <option value="28">28 日</option>
+        <option value="29">29 日</option>
+        <option value="30">30 日</option>
+        <option value="31">31 日</option>
+    </select>
+    <button onclick="clearScheduleFilter()" class="ml-auto px-3 py-1.5 text-xs text-fg-tertiary hover:text-danger transition-colors flex items-center gap-1">
+        <iconify-icon class="text-xs" icon="mdi:close-circle-outline"></iconify-icon>
+        <span>清除筛选</span>
+    </button>
+    <span class="text-[10px] text-fg-tertiary ml-1" id="schedule-filter-count"></span>
+</div>
 <!-- 庭审冲突预警条 -->
 <div class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mb-3 flex items-start gap-3" id="court-conflict-bar">
 <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
@@ -32,7 +95,7 @@
 <div class="bg-white rounded-xl border border-bg-border p-5">
 <h4 class="text-sm font-semibold text-fg-primary mb-4">本月庭审安排</h4>
 <div class="space-y-3">
-<div class="flex items-start gap-3 p-3 rounded-lg bg-danger-tint border-l-4 border-danger cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(1)">
+        <div class="flex items-start gap-3 p-3 rounded-lg bg-danger-tint border-l-4 border-danger cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-25" data-year="2026" data-month="08" data-day="25" onclick="openScheduleDetail(1)">
 <div class="flex-shrink-0 text-center w-10">
 <p class="text-lg font-bold text-danger">25</p>
 <p class="text-[10px] text-danger">周二</p>
@@ -47,7 +110,7 @@
 </div>
 <button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
 </div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-warning-tint border-l-4 border-[#FAAD14] cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(5)">
+<div class="flex items-start gap-3 p-3 rounded-lg bg-warning-tint border-l-4 border-[#FAAD14] cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-28" data-year="2026" data-month="08" data-day="28" onclick="openScheduleDetail(5)">
 <div class="flex-shrink-0 text-center w-10">
 <p class="text-lg font-bold text-urgent">28</p>
 <p class="text-[10px] text-urgent">周五</p>
@@ -59,7 +122,7 @@
 </div>
 <button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
 </div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-brand-tint border-l-4 border-brand cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(7)">
+<div class="flex items-start gap-3 p-3 rounded-lg bg-brand-tint border-l-4 border-brand cursor-pointer hover:shadow-sm transition-shadow" data-date="2026-08-21" data-year="2026" data-month="08" data-day="21" onclick="openScheduleDetail(7)">
 <div class="flex-shrink-0 text-center w-10">
 <p class="text-lg font-bold text-brand">21</p>
 <p class="text-[10px] text-brand">周五</p>
@@ -71,6 +134,12 @@
 </div>
 <button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
 </div>
+</div>
+<!-- 空态 -->
+<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-no-result">
+    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-search-outline"></iconify-icon>
+    <p class="text-sm">当前筛选条件下没有庭审安排</p>
+    <button onclick="clearScheduleFilter()" class="mt-3 px-4 py-1.5 text-xs text-brand hover:bg-brand-tint rounded-lg transition-colors">清除筛选</button>
 </div>
 </div>
 </div>

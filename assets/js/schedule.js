@@ -384,7 +384,68 @@
     }
 
 
-    function openScheduleDetail(id) {
+    function filterScheduleByDate() {
+    var yearEl = document.getElementById('schedule-filter-year');
+    var monthEl = document.getElementById('schedule-filter-month');
+    var dayEl = document.getElementById('schedule-filter-day');
+    if (!yearEl || !monthEl || !dayEl) return;
+    var year = yearEl.value;
+    var month = monthEl.value;
+    var day = dayEl.value;
+
+    var cards = document.querySelectorAll('#view-schedule-calendar [data-date]');
+    var visible = 0;
+
+    cards.forEach(function(card) {
+        var dateStr = card.getAttribute('data-date') || '';
+        var parts = dateStr.split('-');
+        var cy = parts[0] || '';
+        var cm = parts[1] || '';
+        var cd = parts[2] || '';
+
+        var show = true;
+        if (year && cy !== year) show = false;
+        if (show && month && cm !== month) show = false;
+        if (show && day && cd !== day) show = false;
+
+        if (show) {
+            card.classList.remove('hidden');
+            visible++;
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+
+    var countEl = document.getElementById('schedule-filter-count');
+    if (countEl) {
+        if (year || month || day) {
+            countEl.textContent = '已筛选 ' + visible + ' / ' + cards.length + ' 项';
+        } else {
+            countEl.textContent = '';
+        }
+    }
+
+    var noResult = document.getElementById('schedule-no-result');
+    if (noResult) {
+        if (visible === 0 && (year || month || day)) {
+            noResult.classList.remove('hidden');
+        } else {
+            noResult.classList.add('hidden');
+        }
+    }
+}
+
+function clearScheduleFilter() {
+    var yearEl = document.getElementById('schedule-filter-year');
+    var monthEl = document.getElementById('schedule-filter-month');
+    var dayEl = document.getElementById('schedule-filter-day');
+    if (yearEl) yearEl.value = '';
+    if (monthEl) monthEl.value = '';
+    if (dayEl) dayEl.value = '';
+    filterScheduleByDate();
+}
+
+function openScheduleDetail(id) {
         const item = scheduleData.find(s => s.id === id);
         if (!item) return;
         currentDetailScheduleId = id;
