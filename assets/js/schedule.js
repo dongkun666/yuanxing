@@ -253,10 +253,43 @@
         if (timeInput) timeInput.addEventListener('change', checkAndShowConflict);
     }
 
-    function openScheduleModal() {
+    function openScheduleModal(scheduleId) {
+        _editingScheduleId = scheduleId || null;
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('sched-date').value = today;
-        document.getElementById('sched-time').value = '09:00';
+        const titleEl = document.getElementById('schedule-modal-title');
+        // 标题动态切换
+        if (titleEl) titleEl.textContent = _editingScheduleId ? '修改日程' : '新建日程';
+
+        if (_editingScheduleId) {
+            // 编辑模式: 预填表单
+            var item = AppState.scheduleData.find(function(s) { return s.id === _editingScheduleId; });
+            if (item) {
+                document.getElementById('sched-title').value = item.title || '';
+                document.getElementById('sched-date').value = item.date || today;
+                document.getElementById('sched-time').value = item.time || '09:00';
+                document.getElementById('sched-note').value = item.location || '';
+                var caseSel = document.getElementById('sched-case');
+                if (caseSel) caseSel.value = item.caseId || '';
+                // 单选 type
+                var typeRadios = document.querySelectorAll('input[name="sched-type"]');
+                typeRadios.forEach(function(r) { r.checked = (r.value === (item.type || '其他')); });
+                // 单选 remind
+                var remindRadios = document.querySelectorAll('input[name="sched-remind"]');
+                remindRadios.forEach(function(r) { r.checked = (r.value === String(item.remind || '60')); });
+            }
+        } else {
+            // 新建模式: 默认今天 + 09:00 + 清空
+            document.getElementById('sched-date').value = today;
+            document.getElementById('sched-time').value = '09:00';
+            document.getElementById('sched-title').value = '';
+            document.getElementById('sched-note').value = '';
+            // 默认单选
+            var defaultType = document.querySelector('input[name="sched-type"][value="开庭"]');
+            if (defaultType) defaultType.checked = true;
+            var defaultRemind = document.querySelector('input[name="sched-remind"][value="60"]');
+            if (defaultRemind) defaultRemind.checked = true;
+        }
+
         document.getElementById('schedule-modal').classList.remove('hidden');
         // 检查当天冲突并绑定监听
         setTimeout(function() {
@@ -265,9 +298,12 @@
         }, 100);
     }
 
+    // 当前正在编辑的日程 id (null = 新建模式)
+    var _editingScheduleId = null;
 
     function closeScheduleModal() {
         document.getElementById('schedule-modal').classList.add('hidden');
+        _editingScheduleId = null;
     }
 
 
@@ -298,7 +334,33 @@
         const endHour = parseInt(time.split(':')[0]) + 1;
         const endTime = String(endHour).padStart(2,'0') + ':' + time.split(':')[1];
 
-        // 冲突检测
+        if (_editingScheduleId) {
+            // 修改模式: 直接更新现有项 (跳过冲突检测 - 用户已在编辑自己)
+            var idx = AppState.scheduleData.findIndex(function(s) { return s.id === _editingScheduleId; });
+            if (idx > -1) {
+                AppState.scheduleData[idx] = Object.assign({}, AppState.scheduleData[idx], {
+                    title: title,
+                    date: date,
+                    time: time,
+                    endTime: endTime,
+                    type: type,
+                    caseId: caseVal,
+                    caseName: caseName,
+                    location: note || '',
+                    note: note,
+                    remind: remind
+                });
+                persistSchedule();
+                closeScheduleModal();
+                showToast('日程已更新');
+                renderScheduleList();
+                if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+                if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+            }
+            return;
+        }
+
+        // 新建模式: 冲突检测
         const conflicts = checkScheduleConflict(date, time);
         if (conflicts && conflicts.length > 0) {
             // 暂存待保存日程
@@ -319,7 +381,7 @@
             return; // 等待用户选择
         }
 
-        // 保存到日程数据
+        // 新建模式: push 到日程数据
         const newItem = {
             id: Date.now(),
             title: title,
@@ -337,9 +399,20 @@
         persistSchedule();
         closeScheduleModal();
         showToast('日程已创建');
-        // 重置表单 + 刷新列表 + 保持筛选
-        document.getElementById('sched-title').value = '';
-        document.getElementById('sched-note').value = '';
+        renderScheduleList();
+        if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
+        if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+    }
+
+    // 删除日程 (从卡片按钮触发)
+    function deleteScheduleItem(id) {
+        var item = AppState.scheduleData.find(function(s) { return s.id === id; });
+        if (!item) return;
+        if (!confirm('确定删除「' + item.title + '」吗？')) return;
+        var idx = AppState.scheduleData.findIndex(function(s) { return s.id === id; });
+        if (idx > -1) AppState.scheduleData.splice(idx, 1);
+        persistSchedule();
+        showToast('日程已删除');
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
@@ -391,7 +464,7 @@
             var weekday = dateObj ? weekdays[dateObj.getDay()] : '';
             var isToday = s.date === today;
 
-            htmlStr += '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '">' +
+            htmlStr += '<div class="group bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 ' + c.border + '" data-date="' + (s.date || '') + '" data-year="' + (dateObj ? dateObj.getFullYear() : '') + '" data-month="' + (dateObj ? String(dateObj.getMonth()+1).padStart(2,'0') : '') + '" data-day="' + (dateObj ? String(dateObj.getDate()).padStart(2,'0') : '') + '" data-schedule-id="' + s.id + '">' +
                 '<div class="flex items-start gap-4">' +
                     '<div class="flex-shrink-0 text-center w-12">' +
                         '<div class="text-lg font-bold ' + c.tagText + '">' + day + '</div>' +
@@ -408,7 +481,16 @@
                             (s.location ? '<span><iconify-icon class="text-xs" icon="mdi:map-marker-outline"></iconify-icon> ' + escapeHtml(s.location) + '</span>' : '') +
                         '</div>' +
                     '</div>' +
-                    (isToday ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-warning-tint text-warning">准备</span>' : '') +
+                    '<div class="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+                        '<button class="text-[10px] text-brand hover:bg-brand-tint3 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); openScheduleModal(' + s.id + ')" title="修改">' +
+                            '<iconify-icon class="text-xs" icon="mdi:pencil-outline"></iconify-icon>' +
+                            '<span>修改</span>' +
+                        '</button>' +
+                        '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded flex items-center gap-0.5" onclick="event.stopPropagation(); deleteScheduleItem(' + s.id + ')" title="删除">' +
+                            '<iconify-icon class="text-xs" icon="mdi:trash-can-outline"></iconify-icon>' +
+                            '<span>删除</span>' +
+                        '</button>' +
+                    '</div>' +
                 '</div>' +
             '</div>';
         });
