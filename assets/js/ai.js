@@ -145,8 +145,9 @@
         function selectAIHistory(el) {
             var title = el.getAttribute('data-title') || '历史对话';
             // 切换到新对话视图
-            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(item => item.classList.remove('active'));
-            document.querySelector('#sidebarTabAI .sidebar-item').classList.add('active');
+            var aiTabs = document.querySelectorAll('#sidebarTabAI .sidebar-item');
+            aiTabs.forEach(item => item.classList.remove('active'));
+            if (aiTabs[0]) aiTabs[0].classList.add('active');
             
             document.getElementById('aiViewChat').classList.remove('hidden');
             document.getElementById('aiViewSkills').classList.add('hidden');

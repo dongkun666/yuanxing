@@ -287,6 +287,37 @@
             }
         }
 
+        // 归档列表筛选 (归档视图搜索/年份/类型)
+        function filterArchiveList() {
+            // 触发归档表的重新筛选 - 占位实现, 真实表格行筛选由 renderArchiveTable 读取 input 值
+            if (typeof renderArchiveTable === 'function') {
+                renderArchiveTable();
+            } else {
+                // 退化为本地筛选: 按搜索词 hide/show tbody tr
+                var tbody = document.getElementById('archiveTableBody');
+                if (!tbody) return;
+                var search = (document.getElementById('archiveSearchInput')?.value || '').toLowerCase();
+                var year = document.getElementById('archiveYearFilter')?.value || '';
+                var type = document.getElementById('archiveTypeFilter')?.value || '';
+                tbody.querySelectorAll('tr').forEach(function(tr) {
+                    var haystack = tr.textContent.toLowerCase();
+                    var show = (!search || haystack.indexOf(search) > -1)
+                            && (!year || haystack.indexOf(year) > -1)
+                            && (!type || tr.getAttribute('data-archive-type') === type);
+                    tr.style.display = show ? '' : 'none';
+                });
+            }
+        }
+
+        // 全选/取消全选 归档 checkbox
+        function toggleAllArchive(masterCb) {
+            var tbody = document.getElementById('archiveTableBody');
+            if (!tbody) return;
+            tbody.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+                cb.checked = masterCb.checked;
+            });
+        }
+
 
         function getFieldValue(section, key) {
             var el = document.getElementById('field-' + section + '-' + key);

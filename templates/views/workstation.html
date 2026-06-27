@@ -1,4 +1,4 @@
-<div class="view-content flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-workstation">
+﻿<div class="view-content flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-workstation">
 <!-- 顶部统计卡片 -->
 <div class="grid grid-cols-4 gap-3">
 <div class="arco-card p-4 flex items-center justify-between">
@@ -63,7 +63,7 @@
 </h4>
 <div class="flex items-center gap-1.5">
 <button class="text-[10px] text-brand hover:underline" onclick="switchView('schedule-calendar')">查看全部</button>
-<button class="flex items-center gap-0.5 text-[10px] font-medium text-brand hover:text-[#4080FF] bg-brand-tint3 hover:bg-brand-tint px-1.5 py-0.5 rounded transition-colors" onclick="openScheduleModal()" title="添加日程">
+<button class="flex items-center gap-0.5 text-[10px] font-medium text-brand hover:text-brand-hover bg-brand-tint3 hover:bg-brand-tint px-1.5 py-0.5 rounded transition-colors" onclick="openScheduleModal()" title="添加日程">
 <iconify-icon class="text-[10px]" icon="mdi:plus"></iconify-icon>
 <span>添加日程</span>
 </button>
@@ -121,7 +121,6 @@
 </div>
 </div>
 </div>
-</div>
 <!-- 双栏：案件动态 + 本周效率 -->
 <div class="grid grid-cols-12 gap-3">
 <!-- 左栏：案件动态 -->
@@ -135,7 +134,7 @@
 <button class="text-[10px] text-brand hover:underline" onclick="switchView('case-dynamics')">查看全部</button>
 </div>
 <div class="space-y-0">
-<div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
+<div class="flex items-start gap-2.5 py-2 border-b border-bg-border last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-brand-tint3 flex items-center justify-center flex-shrink-0 mt-0.5">
 <iconify-icon class="text-xs text-brand" icon="mdi:file-document-outline"></iconify-icon>
 </div>
@@ -145,7 +144,7 @@
 </div>
 <span class="text-[10px] text-fg-disabled flex-shrink-0">10:30</span>
 </div>
-<div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
+<div class="flex items-start gap-2.5 py-2 border-b border-bg-border last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-warning-tint flex items-center justify-center flex-shrink-0 mt-0.5">
 <iconify-icon class="text-xs text-urgent" icon="mdi:clock-outline"></iconify-icon>
 </div>
@@ -155,7 +154,7 @@
 </div>
 <span class="text-[10px] text-danger font-medium flex-shrink-0">紧急</span>
 </div>
-<div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
+<div class="flex items-start gap-2.5 py-2 border-b border-bg-border last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 mt-0.5">
 <iconify-icon class="text-xs text-success" icon="mdi:check-circle-outline"></iconify-icon>
 </div>
@@ -165,7 +164,7 @@
 </div>
 <span class="text-[10px] text-fg-disabled flex-shrink-0">昨天</span>
 </div>
-<div class="flex items-start gap-2.5 py-2 border-b border-[#F2F3F5] last:border-b-0">
+<div class="flex items-start gap-2.5 py-2 border-b border-bg-border last:border-b-0">
 <div class="w-6 h-6 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 mt-0.5">
 <iconify-icon class="text-xs text-wiki" icon="mdi:gavel"></iconify-icon>
 </div>
@@ -190,15 +189,15 @@
 </div>
 <div class="flex-1 flex flex-col justify-between">
 <div class="grid grid-cols-3 gap-2 mb-3">
-<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-bg-border">
 <p class="text-lg font-bold text-brand">3</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">文书生成</p>
 </div>
-<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-bg-border">
 <p class="text-lg font-bold text-brand">5</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">类案检索</p>
 </div>
-<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-[#F2F3F5]">
+<div class="text-center p-2.5 rounded-lg bg-bg-subtle border border-bg-border">
 <p class="text-lg font-bold text-brand">2</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">案件跟进</p>
 </div>
@@ -292,5 +291,6 @@
 </div>
 </div>
 </div>
-</div>
 <!-- 今日日程列表 -->
+
+

@@ -1,4 +1,4 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-case-list">
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-case-list">
 <!-- 搜索与筛选 -->
 <div class="bg-white rounded-xl border border-bg-border p-4">
 <div class="flex items-center gap-3 flex-wrap">
@@ -43,7 +43,7 @@ AI新建案件
 <th class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-[160px]">操作</th>
 </tr>
 </thead>
-<tbody id="caseTableBody" class="divide-y divide-[#F2F3F5]">
+<tbody id="caseTableBody" class="divide-y divide-bg">
 <tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="民间借贷纠纷">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="李明诉XX公司买卖合同纠纷">李明诉XX公司买卖合同纠纷</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京01民初128号">(2026)京01民初128号</td>
@@ -55,9 +55,9 @@ AI新建案件
 <td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(0)">详情</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(0)">删除</button>
 </div>
 </td>
@@ -73,9 +73,9 @@ AI新建案件
 <td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(1)">详情</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(1)">删除</button>
 </div>
 </td>
@@ -91,9 +91,9 @@ AI新建案件
 <td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(2)">详情</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(2)">删除</button>
 </div>
 </td>
@@ -109,9 +109,9 @@ AI新建案件
 <td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(3)">详情</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(3)">删除</button>
 </div>
 </td>
@@ -127,9 +127,9 @@ AI新建案件
 <td class="text-center py-3 px-4 whitespace-nowrap">
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(4)">详情</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-<span class="text-[#E5E6EB] flex-shrink-0">|</span>
+<span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(4)">删除</button>
 </div>
 </td>
@@ -138,7 +138,7 @@ AI新建案件
 </table>
 </div>
 <!-- 分页 -->
-<div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F3F5]">
+<div class="flex items-center justify-between px-4 py-3 border-t border-bg-border">
 <select id="casePageSize" class="border border-bg-border rounded px-2 py-1 text-xs text-fg-secondary focus:outline-none cursor-pointer" onchange="filterCaseList()">
 <option value="10">每页 10 条</option>
 <option value="20">每页 20 条</option>
@@ -149,4 +149,6 @@ AI新建案件
 </div>
 </div>
 </div>
+
+
 

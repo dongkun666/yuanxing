@@ -666,10 +666,14 @@
 
     // ===== 日程冲突检测（移到 AppState 让 schedule.js 可访问） =====
     AppState.scheduleData = (function() {
+        // 优先读 localStorage (持久化用户日程); 损坏/空则回退到 mock 数据
         try {
             var saved = localStorage.getItem('lexprime_schedule_data');
-            if (saved) return JSON.parse(saved);
-        } catch (e) {}
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data)) return data;
+            }
+        } catch (e) { /* corrupted storage, fall through to mock */ }
         return [
             { id: 1, title: '李明诉XX公司买卖合同纠纷开庭', date: getTodayDate(), time: '09:00', endTime: '11:00', type: '开庭', location: '朝阳区人民法院 第3法庭' },
             { id: 2, title: '王华借贷纠纷 - 策略讨论', date: getTodayDate(), time: '14:00', endTime: '15:30', type: '会议', location: '线上会议' },
