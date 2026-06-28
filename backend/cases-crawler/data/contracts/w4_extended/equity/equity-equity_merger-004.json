@@ -1,0 +1,131 @@
+{
+  "template_id": "equity-equity_merger-004",
+  "contract_type": "股权合同",
+  "industry": "合并",
+  "title": "公司合并协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合并双方",
+      "text": "甲方 (存续公司) 与乙方 (注销公司) 拟进行吸收合并。"
+    },
+    {
+      "index": 2,
+      "title": "合并方式",
+      "text": "甲方以股权置换方式吸收合并乙方, 乙方股东获得甲方股权。"
+    },
+    {
+      "index": 3,
+      "title": "股权置换",
+      "text": "乙方股东按乙方股权价值人民币 80 万元 置换为甲方股权。"
+    },
+    {
+      "index": 4,
+      "title": "债权债务",
+      "text": "合并前甲乙双方的债权债务由合并后的甲方承继。"
+    },
+    {
+      "index": 5,
+      "title": "工商变更",
+      "text": "双方应于本合同签订后 30 日内办理工商变更登记。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "股权置换",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "工商变更",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "合并方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "合并双方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "公司合并协议",
+    "合并常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于公司合并协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_merger",
+    "variant_idx": 4,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

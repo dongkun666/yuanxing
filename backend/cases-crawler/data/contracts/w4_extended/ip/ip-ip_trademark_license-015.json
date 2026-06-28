@@ -1,0 +1,136 @@
+{
+  "template_id": "ip-ip_trademark_license-015",
+  "contract_type": "知识产权合同",
+  "industry": "商标许可",
+  "title": "商标许可使用合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "许可商标",
+      "text": "甲方为商标 (注册号 ZL78674907.X) 的注册人。"
+    },
+    {
+      "index": 2,
+      "title": "被许可方",
+      "text": "乙方拟在经营周转商品/服务上使用甲方商标。"
+    },
+    {
+      "index": 3,
+      "title": "许可方式",
+      "text": "5 (独占/排他/普通) 许可。"
+    },
+    {
+      "index": 4,
+      "title": "许可期限",
+      "text": "许可期限 3 年, 自 2027-04-07 起至 2029-12-24 止。"
+    },
+    {
+      "index": 5,
+      "title": "许可费",
+      "text": "许可费总额人民币 50 万元, 乙方按按里程碑支付支付。"
+    },
+    {
+      "index": 6,
+      "title": "质量监督",
+      "text": "乙方使用商标的商品质量应符合甲方要求, 甲方有权监督检查。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "许可商标",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "质量监督",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "许可费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "被许可方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "商标许可使用合同",
+    "商标许可常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于商标许可使用合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "ip",
+    "skeleton": "ip_trademark_license",
+    "variant_idx": 15,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

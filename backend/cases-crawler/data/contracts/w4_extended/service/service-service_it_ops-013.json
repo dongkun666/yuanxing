@@ -1,0 +1,137 @@
+{
+  "template_id": "service-service_it_ops-013",
+  "contract_type": "服务合同",
+  "industry": "IT 运维",
+  "title": "IT 运维服务合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "服务内容",
+      "text": "乙方为甲方提供购车IT 运维服务。"
+    },
+    {
+      "index": 2,
+      "title": "服务期限",
+      "text": "服务期自 2026-11-09 起至 2027-07-26 止, 共 3 个月。"
+    },
+    {
+      "index": 3,
+      "title": "服务费用",
+      "text": "服务费每月人民币 5000 元。"
+    },
+    {
+      "index": 4,
+      "title": "服务级别",
+      "text": "乙方应提供 7×24 小时的故障响应服务, 严重故障 2 小时内响应。"
+    },
+    {
+      "index": 5,
+      "title": "SLA",
+      "text": "乙方应保证服务可用性不低于 99.5%。"
+    },
+    {
+      "index": 6,
+      "title": "数据安全",
+      "text": "乙方应按 ISO 27001 标准保护甲方数据。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "SLA",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "数据安全",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "服务内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "服务期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "IT 运维服务合同",
+    "IT 运维常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于IT 运维服务合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "service",
+    "skeleton": "service_it_ops",
+    "variant_idx": 13,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

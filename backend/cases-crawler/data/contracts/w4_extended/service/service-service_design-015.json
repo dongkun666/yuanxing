@@ -1,0 +1,136 @@
+{
+  "template_id": "service-service_design-015",
+  "contract_type": "服务合同",
+  "industry": "设计服务",
+  "title": "设计服务合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "设计内容",
+      "text": "乙方为甲方提供经营周转设计服务。"
+    },
+    {
+      "index": 2,
+      "title": "设计阶段",
+      "text": "设计分初稿、修改稿、定稿三个阶段, 乙方应按阶段交付。"
+    },
+    {
+      "index": 3,
+      "title": "设计费用",
+      "text": "设计费总额人民币 20 万元。"
+    },
+    {
+      "index": 4,
+      "title": "付款方式",
+      "text": "签订合同付 30%, 初稿交付付 30%, 定稿交付付 40%。"
+    },
+    {
+      "index": 5,
+      "title": "知识产权",
+      "text": "甲方付清全部设计费后, 设计成果的知识产权归甲方所有。"
+    },
+    {
+      "index": 6,
+      "title": "修改与确认",
+      "text": "甲方在初稿阶段可提出修改意见, 定稿后修改另行收费。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "知识产权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "付款方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "设计费用",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "修改与确认",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "设计服务合同",
+    "设计服务常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于设计服务合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "service",
+    "skeleton": "service_design",
+    "variant_idx": 15,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,131 @@
+{
+  "template_id": "sales-sales_software_license-008",
+  "contract_type": "销售合同",
+  "industry": "软件",
+  "title": "软件许可销售合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "软件",
+      "text": "甲方向乙方购买购车软件许可。"
+    },
+    {
+      "index": 2,
+      "title": "许可范围",
+      "text": "许可为非独家、不可转让的使用权, 限 5 个用户。"
+    },
+    {
+      "index": 3,
+      "title": "许可费用",
+      "text": "许可费人民币 500 万元。"
+    },
+    {
+      "index": 4,
+      "title": "维护",
+      "text": "乙方提供 10 年 的免费升级及技术支持。"
+    },
+    {
+      "index": 5,
+      "title": "知识产权",
+      "text": "软件知识产权归乙方所有, 甲方仅取得使用权。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "许可范围",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "知识产权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "维护",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "许可费用",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "软件许可销售合同",
+    "软件常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于软件许可销售合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_software_license",
+    "variant_idx": 8,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

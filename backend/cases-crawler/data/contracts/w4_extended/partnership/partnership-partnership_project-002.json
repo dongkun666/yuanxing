@@ -1,0 +1,136 @@
+{
+  "template_id": "partnership-partnership_project-002",
+  "contract_type": "合伙协议",
+  "industry": "项目合伙",
+  "title": "项目合伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合伙项目",
+      "text": "甲乙共同投资项目执行项目。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "甲方出资人民币 80 万元 (占 10%), 乙方出资人民币 200 万元 (占剩余份额)。"
+    },
+    {
+      "index": 3,
+      "title": "项目期限",
+      "text": "项目期限 18 个月, 自 2027-06-15 起至 2028-10-24 止。"
+    },
+    {
+      "index": 4,
+      "title": "事务执行",
+      "text": "由甲方负责项目执行, 乙方负责财务监督。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "项目利润按出资比例分配, 项目结束后一次性结算。"
+    },
+    {
+      "index": 6,
+      "title": "风险承担",
+      "text": "项目亏损按出资比例承担。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "风险承担",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "合伙项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "项目合伙协议",
+    "项目合伙常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于项目合伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_project",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,136 @@
+{
+  "template_id": "labor-labor_subsidiary-016",
+  "contract_type": "劳动合同",
+  "industry": "子公司",
+  "title": "子公司员工借调至母公司协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借调关系",
+      "text": "乙方 (员工) 原系甲方子公司员工, 借调至丙方 (母公司) 工作。"
+    },
+    {
+      "index": 2,
+      "title": "借调期限",
+      "text": "借调期自 2027-01-13 起至 2026-12-18 止, 共 2 年。"
+    },
+    {
+      "index": 3,
+      "title": "工资支付",
+      "text": "乙方借调期间工资由丙方支付, 工资标准为人民币 300 万元。"
+    },
+    {
+      "index": 4,
+      "title": "社会保险",
+      "text": "乙方社会保险仍由甲方子公司缴纳。"
+    },
+    {
+      "index": 5,
+      "title": "工作考核",
+      "text": "乙方在丙方工作期间的考核由丙方负责。"
+    },
+    {
+      "index": 6,
+      "title": "退回",
+      "text": "借调期满, 乙方应返回甲方子公司。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "借调期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "社会保险",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "借调关系",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "工资支付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "子公司员工借调至母公司协议",
+    "子公司常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于子公司员工借调至母公司协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_subsidiary",
+    "variant_idx": 16,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

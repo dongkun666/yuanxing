@@ -1,0 +1,141 @@
+{
+  "template_id": "loan-inter_company_loan-009",
+  "contract_type": "借款合同",
+  "industry": "企业拆借",
+  "title": "关联企业间借款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借款双方",
+      "text": "甲方 (出借方) 与乙方 (借款方) 同属一关联方体系。"
+    },
+    {
+      "index": 2,
+      "title": "借款金额",
+      "text": "借款金额人民币 50 万元。"
+    },
+    {
+      "index": 3,
+      "title": "借款用途",
+      "text": "用于乙方项目执行。"
+    },
+    {
+      "index": 4,
+      "title": "借款期限",
+      "text": "借款期限 1 个月, 自 2026-10-11 起至 2027-04-10 止。"
+    },
+    {
+      "index": 5,
+      "title": "利息",
+      "text": "借款年利率 18%, 不超过金融企业同期同类贷款利率水平。"
+    },
+    {
+      "index": 6,
+      "title": "税务条款",
+      "text": "双方应按税法规定代扣代缴相关税费。"
+    },
+    {
+      "index": 7,
+      "title": "还款",
+      "text": "乙方应于到期日按季支付本金及利息。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "税务条款",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利息",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "借款金额",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "借款双方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "关联企业间借款合同",
+    "企业拆借常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于关联企业间借款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "inter_company_loan",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

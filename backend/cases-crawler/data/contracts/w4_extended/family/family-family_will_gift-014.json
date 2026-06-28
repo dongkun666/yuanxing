@@ -1,0 +1,131 @@
+{
+  "template_id": "family-family_will_gift-014",
+  "contract_type": "婚姻家事合同",
+  "industry": "遗赠扶养",
+  "title": "遗赠扶养协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "遗赠人",
+      "text": "甲方为遗赠人, 年事已高, 需要扶养。"
+    },
+    {
+      "index": 2,
+      "title": "扶养人",
+      "text": "乙方愿意承担对甲方的生养死葬义务。"
+    },
+    {
+      "index": 3,
+      "title": "遗赠财产",
+      "text": "甲方去世后, 其遗产 (位于武汉市朝阳区某路 88 号的房产, 价值约人民币 80 万元) 遗赠给乙方。"
+    },
+    {
+      "index": 4,
+      "title": "扶养义务",
+      "text": "乙方应在甲方生前尽到生活照料、医疗陪护、丧葬料理等扶养义务。"
+    },
+    {
+      "index": 5,
+      "title": "协议期限",
+      "text": "本协议自 2026-09-19 起生效, 至甲方去世时终止。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "扶养人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "遗赠人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "扶养义务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "遗赠财产",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "遗赠扶养协议",
+    "遗赠扶养常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于遗赠扶养协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_will_gift",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

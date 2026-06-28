@@ -1,0 +1,146 @@
+{
+  "template_id": "construction-construction_general-006",
+  "contract_type": "工程承揽合同",
+  "industry": "建筑工程",
+  "title": "建设工程施工合同 (标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "工程概况",
+      "text": "工程名称: 原材料采购, 工程地点: 苏州市天河区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "工程内容",
+      "text": "工程内容: 施工图范围内的全部内容。"
+    },
+    {
+      "index": 3,
+      "title": "合同工期",
+      "text": "合同工期 3 年, 自 2026-11-27 起至 2032-04-09 止。"
+    },
+    {
+      "index": 4,
+      "title": "合同价款",
+      "text": "合同价款人民币 1 万元, 包含全部工程内容。"
+    },
+    {
+      "index": 5,
+      "title": "质量标准",
+      "text": "工程质量应符合国家现行施工质量验收规范, 达到合格标准。"
+    },
+    {
+      "index": 6,
+      "title": "付款",
+      "text": "发包人按工程进度支付工程款, 详见《工程款支付计划表》。"
+    },
+    {
+      "index": 7,
+      "title": "竣工验收",
+      "text": "工程完工后, 双方应共同组织竣工验收。"
+    },
+    {
+      "index": 8,
+      "title": "保修",
+      "text": "工程保修期 3 年, 自竣工验收合格之日起计算。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "质量标准",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "合同工期",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "工程概况",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建设工程施工合同 (标准版)",
+    "建筑工程常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建设工程施工合同 (标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_general",
+    "variant_idx": 6,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,136 @@
+{
+  "template_id": "construction-construction_procurement-017",
+  "contract_type": "工程承揽合同",
+  "industry": "建材采购",
+  "title": "建设工程材料采购合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "材料",
+      "text": "甲方向乙方购买购车。"
+    },
+    {
+      "index": 2,
+      "title": "规格与数量",
+      "text": "规格 10, 数量 12 吨。"
+    },
+    {
+      "index": 3,
+      "title": "单价与总价",
+      "text": "单价人民币 150 万元/吨, 总价人民币 10 万元。"
+    },
+    {
+      "index": 4,
+      "title": "质量",
+      "text": "材料质量应符合国家标准及工程技术规格。"
+    },
+    {
+      "index": 5,
+      "title": "交付",
+      "text": "乙方应于 2028-01-25 前交付, 交货地点为甲方工地。"
+    },
+    {
+      "index": 6,
+      "title": "验收",
+      "text": "甲方应于收货后 7 日内验收, 不合格的由乙方负责退换。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "材料",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "规格与数量",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "验收",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建设工程材料采购合同",
+    "建材采购常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建设工程材料采购合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_procurement",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

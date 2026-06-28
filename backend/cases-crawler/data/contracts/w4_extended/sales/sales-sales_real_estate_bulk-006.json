@@ -1,0 +1,131 @@
+{
+  "template_id": "sales-sales_real_estate_bulk-006",
+  "contract_type": "销售合同",
+  "industry": "商业地产",
+  "title": "商业地产批量买卖合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "标的",
+      "text": "甲方将位于深圳市南山区某路 88 号的商业用房批量出售给乙方, 总面积 10000 平方米。"
+    },
+    {
+      "index": 2,
+      "title": "单价与总价",
+      "text": "单价人民币 3 万元/平方米, 总价人民币 15 万元。"
+    },
+    {
+      "index": 3,
+      "title": "付款",
+      "text": "乙方按分期支付 (12 期)支付房款。"
+    },
+    {
+      "index": 4,
+      "title": "交付",
+      "text": "甲方应于 2030-06-23 前将符合交付条件的房屋交付乙方。"
+    },
+    {
+      "index": 5,
+      "title": "过户",
+      "text": "双方应于交付后 30 日内办理房屋过户登记。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "交付",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "单价与总价",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "商业地产批量买卖合同",
+    "商业地产常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于商业地产批量买卖合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_real_estate_bulk",
+    "variant_idx": 6,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

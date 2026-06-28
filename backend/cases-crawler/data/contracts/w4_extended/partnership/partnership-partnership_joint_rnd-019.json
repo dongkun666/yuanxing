@@ -1,0 +1,132 @@
+{
+  "template_id": "partnership-partnership_joint_rnd-019",
+  "contract_type": "合伙协议",
+  "industry": "联合研发",
+  "title": "联合研发合伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "联合研发",
+      "text": "甲乙共同投入研发原材料采购项目。"
+    },
+    {
+      "index": 2,
+      "title": "投入",
+      "text": "甲方投入研发人员及设备 (作价人民币 50 万元), 乙方投入研发资金人民币 500 万元。"
+    },
+    {
+      "index": 3,
+      "title": "研发期限",
+      "text": "研发期限 2 年, 自 2026-11-27 起至 2032-04-25 止。"
+    },
+    {
+      "index": 4,
+      "title": "知识产权",
+      "text": "联合研发产生的知识产权由双方共有, 商业化收益按比例分配。"
+    },
+    {
+      "index": 5,
+      "title": "后续开发",
+      "text": "后续改进技术的知识产权归属按双方约定。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "知识产权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "联合研发",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "后续开发",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "投入",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "联合研发合伙协议",
+    "联合研发常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于联合研发合伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_joint_rnd",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

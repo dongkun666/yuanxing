@@ -1,0 +1,131 @@
+{
+  "template_id": "family-family_visitation-010",
+  "contract_type": "婚姻家事合同",
+  "industry": "探望",
+  "title": "探望权协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "探望权人",
+      "text": "甲方为探望权人, 乙方为抚养方。"
+    },
+    {
+      "index": 2,
+      "title": "探望安排",
+      "text": "甲方每月可探望子女 20 次, 每次 3 个月。"
+    },
+    {
+      "index": 3,
+      "title": "探望方式",
+      "text": "探望方式包括: 接走、就地、视频等。"
+    },
+    {
+      "index": 4,
+      "title": "通知",
+      "text": "甲方应于每次探望前 3 日通知乙方, 乙方应予以配合。"
+    },
+    {
+      "index": 5,
+      "title": "费用",
+      "text": "探望期间的交通费等由甲方自行承担。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "通知",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "探望权人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "探望方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "探望安排",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "探望权协议",
+    "探望常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于探望权协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_visitation",
+    "variant_idx": 10,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

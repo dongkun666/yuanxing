@@ -1,0 +1,136 @@
+{
+  "template_id": "equity-equity_proxy_holding-008",
+  "contract_type": "股权合同",
+  "industry": "股权代持",
+  "title": "股权代持协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "代持股权",
+      "text": "乙方 (名义股东) 代甲方 (实际出资人) 持有目标公司 3% 股权。"
+    },
+    {
+      "index": 2,
+      "title": "代持原因",
+      "text": "代持原因为教育。"
+    },
+    {
+      "index": 3,
+      "title": "代持期限",
+      "text": "代持期限 6 个月, 自 2026-09-10 起至 2027-08-23 止。"
+    },
+    {
+      "index": 4,
+      "title": "出资",
+      "text": "甲方为股权的实际出资人, 享有实际股东权利。"
+    },
+    {
+      "index": 5,
+      "title": "显名",
+      "text": "经甲方书面要求, 乙方应在合理期限内将代持股权变更登记至甲方名下。"
+    },
+    {
+      "index": 6,
+      "title": "税费",
+      "text": "代持涉及的税费由双方按法律规定承担。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "代持股权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "显名",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "代持期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "出资",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权代持协议",
+    "股权代持常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权代持协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_proxy_holding",
+    "variant_idx": 8,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,132 @@
+{
+  "template_id": "house-house_agency_rent-016",
+  "contract_type": "房屋合同",
+  "industry": "房产中介",
+  "title": "房屋租赁居间合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "委托事项",
+      "text": "乙方 (居间方) 为甲方提供房屋租赁居间服务。"
+    },
+    {
+      "index": 2,
+      "title": "居间服务内容",
+      "text": "乙方提供房源信息、带看、协助签订租赁合同等服务。"
+    },
+    {
+      "index": 3,
+      "title": "居间报酬",
+      "text": "居间成功的, 甲方应按月租金的 50% 或一次性 8 万元向乙方支付居间报酬。"
+    },
+    {
+      "index": 4,
+      "title": "独家委托",
+      "text": "本合同为非独家委托, 甲方可同时委托其他居间方。"
+    },
+    {
+      "index": 5,
+      "title": "费用承担",
+      "text": "居间过程中产生的相关费用由甲方承担。"
+    },
+    {
+      "index": 6,
+      "title": "争议管辖",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "独家委托",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "居间服务内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "居间报酬",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "委托事项",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "房屋租赁居间合同",
+    "房产中介常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于房屋租赁居间合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_agency_rent",
+    "variant_idx": 16,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

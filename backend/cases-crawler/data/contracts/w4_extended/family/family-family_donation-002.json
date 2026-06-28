@@ -1,0 +1,132 @@
+{
+  "template_id": "family-family_donation-002",
+  "contract_type": "婚姻家事合同",
+  "industry": "赠与",
+  "title": "夫妻间赠与协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "赠与人",
+      "text": "甲方为赠与人, 拟将装修赠与乙方。"
+    },
+    {
+      "index": 2,
+      "title": "受赠人",
+      "text": "乙方为受赠人, 接受甲方赠与。"
+    },
+    {
+      "index": 3,
+      "title": "赠与财产",
+      "text": "赠与财产: 位于郑州市海淀区某路 88 号的房产 (价值约人民币 5000 元)。"
+    },
+    {
+      "index": 4,
+      "title": "过户",
+      "text": "双方应于本合同签订后 30 日内办理房屋过户登记。"
+    },
+    {
+      "index": 5,
+      "title": "撤销",
+      "text": "本赠与为夫妻间赠与, 适用《民法典》第六百六十三条, 赠与人在变更或撤销时应予考虑。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "赠与人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "撤销",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "过户",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "受赠人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "夫妻间赠与协议",
+    "赠与常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于夫妻间赠与协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_donation",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

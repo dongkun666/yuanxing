@@ -1,0 +1,142 @@
+{
+  "template_id": "construction-construction_renovation_owner-014",
+  "contract_type": "工程承揽合同",
+  "industry": "家装",
+  "title": "家装施工合同 (业主版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "装修内容",
+      "text": "装修内容: 项目执行, 装修地点: 郑州市南山区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "承包人",
+      "text": "承包人为乙方 (装修公司)。"
+    },
+    {
+      "index": 3,
+      "title": "装修方式",
+      "text": "乙方包工包料 (除甲方自购主材外)。"
+    },
+    {
+      "index": 4,
+      "title": "装修价款",
+      "text": "装修价款人民币 500 万元。"
+    },
+    {
+      "index": 5,
+      "title": "工期",
+      "text": "工期 1 年, 自 2026-12-15 起至 2028-04-26 止。"
+    },
+    {
+      "index": 6,
+      "title": "付款",
+      "text": "合同签订付 30%, 水电完成付 30%, 泥木完成付 30%, 竣工验收付 10%。"
+    },
+    {
+      "index": 7,
+      "title": "环保",
+      "text": "装修材料应符合《室内装饰装修材料有害物质限量》国家标准。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "环保",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "装修内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "承包人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "家装施工合同 (业主版)",
+    "家装常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于家装施工合同 (业主版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_renovation_owner",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

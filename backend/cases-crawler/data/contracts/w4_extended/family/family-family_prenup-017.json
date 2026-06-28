@@ -1,0 +1,136 @@
+{
+  "template_id": "family-family_prenup-017",
+  "contract_type": "婚姻家事合同",
+  "industry": "婚前协议",
+  "title": "婚前财产协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "协议双方",
+      "text": "甲方与乙方拟登记结婚, 为明确双方婚前及婚后财产归属, 签订本协议。"
+    },
+    {
+      "index": 2,
+      "title": "婚前财产",
+      "text": "甲方婚前财产: 购房, 详见《甲方婚前财产清单》。"
+    },
+    {
+      "index": 3,
+      "title": "乙方婚前财产",
+      "text": "乙方婚前财产: 购房, 详见《乙方婚前财产清单》。"
+    },
+    {
+      "index": 4,
+      "title": "婚后财产",
+      "text": "婚后所得财产按法定夫妻共同财产制处理, 双方另有约定的从其约定。"
+    },
+    {
+      "index": 5,
+      "title": "债务",
+      "text": "婚前个人债务由个人承担, 婚后共同债务由双方共同承担。"
+    },
+    {
+      "index": 6,
+      "title": "公证",
+      "text": "本协议应经公证机关公证, 自双方签字之日起生效。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "婚前财产",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "公证",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "乙方婚前财产",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "债务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "婚前财产协议",
+    "婚前协议常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于婚前财产协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_prenup",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,132 @@
+{
+  "template_id": "family-family_will_handwritten-020",
+  "contract_type": "婚姻家事合同",
+  "industry": "遗嘱",
+  "title": "自书遗嘱",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "立遗嘱人",
+      "text": "立遗嘱人: 甲方, 身份证号: LX-210776。"
+    },
+    {
+      "index": 2,
+      "title": "遗嘱内容",
+      "text": "本人神志清醒, 兹立遗嘱如下: 本人去世后, 全部遗产 (包括装修) 由乙方继承。"
+    },
+    {
+      "index": 3,
+      "title": "遗嘱执行",
+      "text": "本遗嘱由丙方 (遗嘱执行人) 负责执行。"
+    },
+    {
+      "index": 4,
+      "title": "撤销权",
+      "text": "立遗嘱人有权随时撤销或变更本遗嘱。"
+    },
+    {
+      "index": 5,
+      "title": "形式要件",
+      "text": "本遗嘱为自书遗嘱, 由立遗嘱人亲笔书写、签名, 注明年月日。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "立遗嘱人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "撤销权",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "形式要件",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "遗嘱内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "自书遗嘱",
+    "遗嘱常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于自书遗嘱场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_will_handwritten",
+    "variant_idx": 20,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,143 @@
+{
+  "template_id": "labor-labor_manager-001",
+  "contract_type": "劳动合同",
+  "industry": "高管",
+  "title": "高管聘任合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "聘任岗位",
+      "text": "甲方聘任乙方担任原材料采购职务, 任期 2 年。"
+    },
+    {
+      "index": 2,
+      "title": "薪酬",
+      "text": "乙方年薪人民币 500 万元, 由基本年薪 + 绩效奖金构成。"
+    },
+    {
+      "index": 3,
+      "title": "绩效考核",
+      "text": "甲方每年度对乙方进行绩效考核, 考核结果与绩效奖金挂钩。"
+    },
+    {
+      "index": 4,
+      "title": "股权激励",
+      "text": "乙方有权参与甲方股权激励计划, 具体方案另行约定。"
+    },
+    {
+      "index": 5,
+      "title": "竞业禁止",
+      "text": "乙方在任职期间及离职后 2 年内, 不得从事与甲方相竞争的业务。"
+    },
+    {
+      "index": 6,
+      "title": "保密义务",
+      "text": "乙方对在任职期间接触到的甲方商业秘密负有保密义务。"
+    },
+    {
+      "index": 7,
+      "title": "解除与赔偿",
+      "text": "高管解除合同的, 应按《劳动合同法》及甲方规章制度承担相应责任。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "竞业禁止",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "保密义务",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "解除与赔偿",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "绩效考核",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "高管聘任合同",
+    "高管常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于高管聘任合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_manager",
+    "variant_idx": 1,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

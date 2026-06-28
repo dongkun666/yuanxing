@@ -1,0 +1,131 @@
+{
+  "template_id": "agency-agency_marriage-005",
+  "contract_type": "委托代理",
+  "industry": "婚姻",
+  "title": "婚姻家事代理委托合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "委托事项",
+      "text": "甲方委托乙方律师代理医疗婚姻家事案件。"
+    },
+    {
+      "index": 2,
+      "title": "代理阶段",
+      "text": "代理阶段按实际案件需要单独约定。"
+    },
+    {
+      "index": 3,
+      "title": "律师费",
+      "text": "律师费总额人民币 150 万元。"
+    },
+    {
+      "index": 4,
+      "title": "情感考量",
+      "text": "婚姻家事案件涉及情感因素, 乙方应在法律框架内最大化维护甲方合法权益。"
+    },
+    {
+      "index": 5,
+      "title": "保密义务",
+      "text": "乙方对委托事项负有严格保密义务。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "情感考量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "保密义务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "律师费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "委托事项",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "婚姻家事代理委托合同",
+    "婚姻常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于婚姻家事代理委托合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "agency",
+    "skeleton": "agency_marriage",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

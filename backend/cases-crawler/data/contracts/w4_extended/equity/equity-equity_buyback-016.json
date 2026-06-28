@@ -1,0 +1,132 @@
+{
+  "template_id": "equity-equity_buyback-016",
+  "contract_type": "股权合同",
+  "industry": "股权回购",
+  "title": "股权回购协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "回购股权",
+      "text": "甲方 (目标公司) 回购乙方持有的目标公司 20% 股权。"
+    },
+    {
+      "index": 2,
+      "title": "回购触发",
+      "text": "回购触发事由: 购房 (如上市失败 / 业绩未达标 / 股东退出等)。"
+    },
+    {
+      "index": 3,
+      "title": "回购价款",
+      "text": "回购价款人民币 1 万元, 按约定方式计算。"
+    },
+    {
+      "index": 4,
+      "title": "回购程序",
+      "text": "甲方应在回购触发后 30 日内召开股东会审议回购事宜。"
+    },
+    {
+      "index": 5,
+      "title": "工商变更",
+      "text": "回购完成后, 双方应办理工商变更登记。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "回购股权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "回购触发",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "工商变更",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "回购程序",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权回购协议",
+    "股权回购常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权回购协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_buyback",
+    "variant_idx": 16,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

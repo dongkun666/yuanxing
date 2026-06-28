@@ -1,0 +1,141 @@
+{
+  "template_id": "labor-labor_borrow-009",
+  "contract_type": "劳动合同",
+  "industry": "借调",
+  "title": "员工借调协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借调关系",
+      "text": "甲方 (原单位) 将乙方 (员工) 借调至丙方 (借调单位) 工作。"
+    },
+    {
+      "index": 2,
+      "title": "借调期限",
+      "text": "借调期自 2026-12-25 起至 2032-06-03 止, 共 3 个月。"
+    },
+    {
+      "index": 3,
+      "title": "工作岗位",
+      "text": "乙方在丙方从事经营周转工作。"
+    },
+    {
+      "index": 4,
+      "title": "工资支付",
+      "text": "乙方借调期间工资由甲方发放, 丙方按月向甲方支付借调费用人民币 15 万元。"
+    },
+    {
+      "index": 5,
+      "title": "社会保险",
+      "text": "甲方继续为乙方缴纳社会保险及住房公积金。"
+    },
+    {
+      "index": 6,
+      "title": "工伤处理",
+      "text": "乙方在借调期间发生工伤的, 由丙方承担工伤保险责任, 甲方配合办理。"
+    },
+    {
+      "index": 7,
+      "title": "退回",
+      "text": "借调期满, 乙方应返回甲方工作。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "工伤处理",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "退回",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "工资支付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "借调关系",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "员工借调协议",
+    "借调常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于员工借调协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_borrow",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

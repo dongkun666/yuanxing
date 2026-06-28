@@ -1,0 +1,142 @@
+{
+  "template_id": "construction-construction_subcontract-011",
+  "contract_type": "工程承揽合同",
+  "industry": "工程分包",
+  "title": "建设工程分包合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "分包工程",
+      "text": "分包工程: 经营周转。"
+    },
+    {
+      "index": 2,
+      "title": "总承包合同",
+      "text": "总承包合同编号 LX-697144, 总承包人为甲方。"
+    },
+    {
+      "index": 3,
+      "title": "分包人",
+      "text": "分包人为乙方。"
+    },
+    {
+      "index": 4,
+      "title": "分包价款",
+      "text": "分包价款人民币 200 万元。"
+    },
+    {
+      "index": 5,
+      "title": "工期",
+      "text": "分包工期 1 个月, 自 2026-09-28 起至 2026-11-06 止。"
+    },
+    {
+      "index": 6,
+      "title": "质量",
+      "text": "分包工程质量应符合总承包合同要求。"
+    },
+    {
+      "index": 7,
+      "title": "付款",
+      "text": "总承包人按分包工程进度支付分包款。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "分包工程",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "总承包合同",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建设工程分包合同",
+    "工程分包常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建设工程分包合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_subcontract",
+    "variant_idx": 11,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

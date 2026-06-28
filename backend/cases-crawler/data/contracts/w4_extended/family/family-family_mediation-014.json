@@ -1,0 +1,131 @@
+{
+  "template_id": "family-family_mediation-014",
+  "contract_type": "婚姻家事合同",
+  "industry": "婚姻调解",
+  "title": "婚姻调解协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "调解双方",
+      "text": "甲方与乙方为夫妻关系, 因医疗产生矛盾。"
+    },
+    {
+      "index": 2,
+      "title": "调解机构",
+      "text": "经 XX 婚姻调解委员会调解, 双方达成如下协议: "
+    },
+    {
+      "index": 3,
+      "title": "和解内容",
+      "text": "双方应互敬互爱, 共同维护婚姻关系, 具体和解事项: 医疗。"
+    },
+    {
+      "index": 4,
+      "title": "履行",
+      "text": "双方应按本协议履行各自义务。"
+    },
+    {
+      "index": 5,
+      "title": "违约",
+      "text": "一方违反协议的, 另一方有权向人民法院起诉。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "调解双方",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "违约",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "调解机构",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "和解内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "婚姻调解协议",
+    "婚姻调解常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于婚姻调解协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_mediation",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

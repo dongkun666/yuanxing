@@ -1,0 +1,137 @@
+{
+  "template_id": "labor-labor_resignation-018",
+  "contract_type": "劳动合同",
+  "industry": "辞职",
+  "title": "员工辞职申请书",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "员工信息",
+      "text": "乙方 (员工) 系甲方员工, 担任装修职务。"
+    },
+    {
+      "index": 2,
+      "title": "辞职理由",
+      "text": "乙方因个人原因提出辞职。"
+    },
+    {
+      "index": 3,
+      "title": "最后工作日",
+      "text": "乙方应于 2030-04-27 完成工作交接, 此日期为最后工作日。"
+    },
+    {
+      "index": 4,
+      "title": "工作交接",
+      "text": "乙方应按甲方要求办理工作交接, 返还公司财产。"
+    },
+    {
+      "index": 5,
+      "title": "工资结算",
+      "text": "甲方应于乙方最后工作日结清全部工资及未休年假补偿。"
+    },
+    {
+      "index": 6,
+      "title": "保密与竞业",
+      "text": "乙方继续履行原合同中的保密及竞业禁止义务。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "保密与竞业",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "辞职理由",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "员工信息",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "工作交接",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "员工辞职申请书",
+    "辞职常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于员工辞职申请书场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_resignation",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,131 @@
+{
+  "template_id": "sales-sales_digital-014",
+  "contract_type": "销售合同",
+  "industry": "数码",
+  "title": "数码产品买卖合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "产品",
+      "text": "甲方向乙方购买技术升级。"
+    },
+    {
+      "index": 2,
+      "title": "数量与价格",
+      "text": "数量 10台, 单价人民币 150 万元。"
+    },
+    {
+      "index": 3,
+      "title": "质量",
+      "text": "产品应为全新原厂正品, 具备完整包装、说明书、保修卡。"
+    },
+    {
+      "index": 4,
+      "title": "保修",
+      "text": "产品按厂家三包政策享受保修, 保修期 10 年。"
+    },
+    {
+      "index": 5,
+      "title": "验收",
+      "text": "甲方应于收到产品后 7 日内验收, 异议期内未提出异议的视为合格。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "验收",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "数量与价格",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "产品",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "数码产品买卖合同",
+    "数码常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于数码产品买卖合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_digital",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

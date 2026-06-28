@@ -1,0 +1,141 @@
+{
+  "template_id": "loan-consumer_loan_installment-013",
+  "contract_type": "借款合同",
+  "industry": "消费金融",
+  "title": "消费分期贷款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "贷款金额",
+      "text": "贷款金额人民币 100 万元。"
+    },
+    {
+      "index": 2,
+      "title": "贷款用途",
+      "text": "用于购买技术升级, 不得用于其他用途。"
+    },
+    {
+      "index": 3,
+      "title": "贷款期限与期数",
+      "text": "贷款期限 3 个月, 共 3 期, 每月为一期。"
+    },
+    {
+      "index": 4,
+      "title": "贷款利率与 IRR",
+      "text": "贷款年利率 36%, IRR 不超过 36%。"
+    },
+    {
+      "index": 5,
+      "title": "还款方式",
+      "text": "等额本息预付 30% + 验收 70%, 每月 10 日为还款日。"
+    },
+    {
+      "index": 6,
+      "title": "提前还款",
+      "text": "借款人可提前还款, 但应支付未结清本金的 3%作为补偿。"
+    },
+    {
+      "index": 7,
+      "title": "逾期违约",
+      "text": "逾期按日千分之三计收罚息, 并按1000 元收取一次性违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "提前还款",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "逾期违约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "贷款金额",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "还款方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "消费分期贷款合同",
+    "消费金融常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于消费分期贷款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "consumer_loan_installment",
+    "variant_idx": 13,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

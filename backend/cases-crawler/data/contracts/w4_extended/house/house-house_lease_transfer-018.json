@@ -1,0 +1,141 @@
+{
+  "template_id": "house-house_lease_transfer-018",
+  "contract_type": "房屋合同",
+  "industry": "转租",
+  "title": "房屋转租合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "转租标的",
+      "text": "乙方 (原承租人) 将位于天津市西湖区某路 88 号的房屋转租给丙方使用。"
+    },
+    {
+      "index": 2,
+      "title": "原租赁合同",
+      "text": "原租赁合同编号 LX-368720, 甲方为原出租人。"
+    },
+    {
+      "index": 3,
+      "title": "转租期限",
+      "text": "转租期自 2027-05-24 起至 2027-07-23 止, 不得超过原租赁合同剩余期限。"
+    },
+    {
+      "index": 4,
+      "title": "转租租金",
+      "text": "月租金人民币 150 万元, 丙方应于每月 5 日前支付。"
+    },
+    {
+      "index": 5,
+      "title": "原出租人同意",
+      "text": "甲方 (原出租人) 同意乙方将房屋转租给丙方。"
+    },
+    {
+      "index": 6,
+      "title": "权利义务",
+      "text": "丙方享有原租赁合同中乙方的权利, 承担相应义务。"
+    },
+    {
+      "index": 7,
+      "title": "违约责任",
+      "text": "丙方逾期支付租金的, 按月 2%加收违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议管辖",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "原出租人同意",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "违约责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "转租期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "转租标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "房屋转租合同",
+    "转租常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于房屋转租合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_lease_transfer",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

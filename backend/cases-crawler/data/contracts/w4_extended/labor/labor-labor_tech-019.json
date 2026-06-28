@@ -1,0 +1,141 @@
+{
+  "template_id": "labor-labor_tech-019",
+  "contract_type": "劳动合同",
+  "industry": "技术",
+  "title": "技术岗位劳动合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合同期限",
+      "text": "本合同为固定期限劳动合同, 期限 5 年。"
+    },
+    {
+      "index": 2,
+      "title": "工作内容",
+      "text": "乙方从事装修技术工作。"
+    },
+    {
+      "index": 3,
+      "title": "工作时间",
+      "text": "乙方实行标准工时制, 因项目需要可适当加班, 甲方按规定支付加班费。"
+    },
+    {
+      "index": 4,
+      "title": "薪酬",
+      "text": "乙方月工资人民币 200 万元, 包含基本工资 + 绩效工资。"
+    },
+    {
+      "index": 5,
+      "title": "知识产权",
+      "text": "乙方在任职期间产生的与工作相关的知识产权归甲方所有。"
+    },
+    {
+      "index": 6,
+      "title": "保密义务",
+      "text": "乙方对在任职期间接触到的甲方技术秘密负有保密义务。"
+    },
+    {
+      "index": 7,
+      "title": "竞业禁止",
+      "text": "乙方在离职后 1 年内, 不得在与甲方有竞争关系的企业任职。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "知识产权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "保密义务",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "工作时间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "工作内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "技术岗位劳动合同",
+    "技术常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于技术岗位劳动合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_tech",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

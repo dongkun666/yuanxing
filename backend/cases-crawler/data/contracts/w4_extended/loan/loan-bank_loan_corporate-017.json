@@ -1,0 +1,147 @@
+{
+  "template_id": "loan-bank_loan_corporate-017",
+  "contract_type": "借款合同",
+  "industry": "银行借款",
+  "title": "银行企业流动资金借款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借款金额与种类",
+      "text": "借款币种: 人民币; 借款金额: 500 万元; 借款种类: 流动资金贷款。"
+    },
+    {
+      "index": 2,
+      "title": "借款用途",
+      "text": "借款仅用于经营周转, 不得用于固定资产、股权或证券投资。"
+    },
+    {
+      "index": 3,
+      "title": "借款期限",
+      "text": "借款期限 10 年, 自 2027-04-02 起至 2029-04-07 止。"
+    },
+    {
+      "index": 4,
+      "title": "利率与计结息",
+      "text": "借款年利率 15%, 按月结息, 结息日为每月 20 日。"
+    },
+    {
+      "index": 5,
+      "title": "提款条件",
+      "text": "借款人满足首笔用款前提条件后, 方可提款。"
+    },
+    {
+      "index": 6,
+      "title": "还款",
+      "text": "借款人应于 2029-04-07 前一次性偿还全部借款本金及利息。"
+    },
+    {
+      "index": 7,
+      "title": "担保",
+      "text": "本合同项下债务由无担保。"
+    },
+    {
+      "index": 8,
+      "title": "违约与提前到期",
+      "text": "借款人未按约定用途使用借款或未按期支付利息的, 贷款人有权宣布借款提前到期。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "借款用途",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "违约与提前到期",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "担保",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "借款金额与种类",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "银行企业流动资金借款合同",
+    "银行借款常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于银行企业流动资金借款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "bank_loan_corporate",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

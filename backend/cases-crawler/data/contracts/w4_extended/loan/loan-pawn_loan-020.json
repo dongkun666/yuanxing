@@ -1,0 +1,141 @@
+{
+  "template_id": "loan-pawn_loan-020",
+  "contract_type": "借款合同",
+  "industry": "典当",
+  "title": "典当借款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "当物",
+      "text": "乙方以其所有的汽车作为当物质押给甲方。"
+    },
+    {
+      "index": 2,
+      "title": "当金",
+      "text": "当金人民币 3 万元。"
+    },
+    {
+      "index": 3,
+      "title": "当期",
+      "text": "当期自 2026-09-18 起至 2030-04-29 止, 共 1 个月。"
+    },
+    {
+      "index": 4,
+      "title": "当金费率",
+      "text": "月费率 1%, 综合费率不超过 综合费率不超过 4.7%。"
+    },
+    {
+      "index": 5,
+      "title": "赎当与续当",
+      "text": "乙方可在当期届满前赎当; 续当应于届满前 5 日内向甲方提出书面申请。"
+    },
+    {
+      "index": 6,
+      "title": "绝当",
+      "text": "当期届满后 5 日内, 乙方既不赎当也不续当的, 视为绝当。"
+    },
+    {
+      "index": 7,
+      "title": "绝当处理",
+      "text": "绝当后, 甲方可按《典当管理办法》相关规定处置当物。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "绝当",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "当金费率",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "当物",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "当金",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "典当借款合同",
+    "典当常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于典当借款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "pawn_loan",
+    "variant_idx": 20,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

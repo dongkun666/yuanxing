@@ -1,0 +1,137 @@
+{
+  "template_id": "house-house_rent_short_term-009",
+  "contract_type": "房屋合同",
+  "industry": "短租",
+  "title": "短租租赁合同 (日租)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于南京市天河区某路 88 号的房屋短租给乙方使用, 配套齐全。"
+    },
+    {
+      "index": 2,
+      "title": "租赁期限",
+      "text": "租赁期自 2026-10-09 起至 2027-09-24 止, 共 10 年。"
+    },
+    {
+      "index": 3,
+      "title": "租金",
+      "text": "总租金人民币 20 万元, 乙方应于入住前一次性支付。"
+    },
+    {
+      "index": 4,
+      "title": "押金",
+      "text": "乙方向甲方支付押金, 退房时无息退还 (扣除损坏部分)。"
+    },
+    {
+      "index": 5,
+      "title": "使用规范",
+      "text": "乙方应合理使用房屋及设施, 不得从事违法活动或大型聚会。"
+    },
+    {
+      "index": 6,
+      "title": "退房",
+      "text": "乙方应于到期日下午 14:00 前办理退房手续, 逾期按日租金 1.5 倍收费。"
+    },
+    {
+      "index": 7,
+      "title": "争议管辖",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "使用规范",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "退房",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "租赁标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "押金",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "短租租赁合同 (日租)",
+    "短租常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于短租租赁合同 (日租)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_rent_short_term",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

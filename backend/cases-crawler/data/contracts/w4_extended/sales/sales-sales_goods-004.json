@@ -1,0 +1,141 @@
+{
+  "template_id": "sales-sales_goods-004",
+  "contract_type": "销售合同",
+  "industry": "商品买卖",
+  "title": "商品买卖合同(标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "标的物",
+      "text": "甲方向乙方购买技术升级。"
+    },
+    {
+      "index": 2,
+      "title": "数量与单价",
+      "text": "数量 3件, 单价人民币 8 万元。"
+    },
+    {
+      "index": 3,
+      "title": "价款",
+      "text": "总价款人民币 3 万元。"
+    },
+    {
+      "index": 4,
+      "title": "交付",
+      "text": "甲方应于 2030-03-16 前将标的物交付乙方, 交付地点为乙方指定地点。"
+    },
+    {
+      "index": 5,
+      "title": "质量",
+      "text": "甲方保证标的物符合国家质量标准及双方约定的技术规格。"
+    },
+    {
+      "index": 6,
+      "title": "验收",
+      "text": "乙方应于收到标的物后 7 日内验收, 异议期内未提出异议的视为合格。"
+    },
+    {
+      "index": 7,
+      "title": "付款",
+      "text": "乙方应于验收合格后 30 日内一次性付清全部价款。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "验收",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "交付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "数量与单价",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "商品买卖合同(标准版)",
+    "商品买卖常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于商品买卖合同(标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_goods",
+    "variant_idx": 4,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

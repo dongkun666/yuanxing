@@ -1,0 +1,136 @@
+{
+  "template_id": "construction-construction_transport-006",
+  "contract_type": "工程承揽合同",
+  "industry": "公路运输",
+  "title": "货物运输合同 (公路)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "托运人",
+      "text": "托运人为甲方。"
+    },
+    {
+      "index": 2,
+      "title": "承运人",
+      "text": "承运人为乙方。"
+    },
+    {
+      "index": 3,
+      "title": "货物",
+      "text": "货物: 购车, 数量: 18 件。"
+    },
+    {
+      "index": 4,
+      "title": "运输",
+      "text": "自 2027-04-06 起运, 至 2026-09-03 到达, 运输路线: 长沙市武侯区某路 88 号 至 长沙市武侯区某路 88 号。"
+    },
+    {
+      "index": 5,
+      "title": "运费",
+      "text": "运费人民币 10 万元。"
+    },
+    {
+      "index": 6,
+      "title": "运输责任",
+      "text": "乙方对运输过程中货物的损毁、灭失承担责任, 除非能证明是因不可抗力或甲方过错。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "运输责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "运费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "承运人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "托运人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "货物运输合同 (公路)",
+    "公路运输常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于货物运输合同 (公路)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_transport",
+    "variant_idx": 6,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

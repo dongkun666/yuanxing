@@ -1,0 +1,137 @@
+{
+  "template_id": "loan-education_loan-005",
+  "contract_type": "借款合同",
+  "industry": "教育贷款",
+  "title": "教育培训分期贷款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "贷款金额",
+      "text": "贷款金额人民币 200 万元。"
+    },
+    {
+      "index": 2,
+      "title": "贷款用途",
+      "text": "用于支付语言培训培训费用。"
+    },
+    {
+      "index": 3,
+      "title": "贷款期限",
+      "text": "贷款期限 18 个月, 共 18 期。"
+    },
+    {
+      "index": 4,
+      "title": "贷款利率",
+      "text": "贷款年利率 12%。"
+    },
+    {
+      "index": 5,
+      "title": "还款方式",
+      "text": "等额本息预付 30% + 验收 70%, 每月 15 日为还款日。"
+    },
+    {
+      "index": 6,
+      "title": "退课与提前还款",
+      "text": "学员退课的, 培训机构应协助办理提前还款手续。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "退课与提前还款",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "贷款金额",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "贷款用途",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "还款方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "教育培训分期贷款合同",
+    "教育贷款常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于教育培训分期贷款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "education_loan",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

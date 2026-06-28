@@ -1,0 +1,137 @@
+{
+  "template_id": "sales-sales_bulk-018",
+  "contract_type": "销售合同",
+  "industry": "大宗商品",
+  "title": "大宗商品买卖合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "商品",
+      "text": "甲方向乙方购买购车。"
+    },
+    {
+      "index": 2,
+      "title": "数量",
+      "text": "数量 3吨, 允许 ±5% 溢短装。"
+    },
+    {
+      "index": 3,
+      "title": "单价与总价",
+      "text": "单价人民币 50 万元/吨, 总价约人民币 200 万元。"
+    },
+    {
+      "index": 4,
+      "title": "质量标准",
+      "text": "质量按国标 GB/T xxx 执行。"
+    },
+    {
+      "index": 5,
+      "title": "交付",
+      "text": "自 2026-09-07 至 2032-04-24 期间分批交付, 具体提货时间由乙方提前 7 日通知。"
+    },
+    {
+      "index": 6,
+      "title": "结算",
+      "text": "双方按批次结算, 每批次提货后 5 日内付款。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "质量标准",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "结算",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "交付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "商品",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "大宗商品买卖合同",
+    "大宗商品常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于大宗商品买卖合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_bulk",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

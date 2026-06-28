@@ -1,0 +1,136 @@
+{
+  "template_id": "sales-sales_fmcg-019",
+  "contract_type": "销售合同",
+  "industry": "快消品",
+  "title": "快消品经销合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "产品",
+      "text": "甲方授权乙方在合肥市天河区某路 88 号区域内销售经营周转。"
+    },
+    {
+      "index": 2,
+      "title": "授权性质",
+      "text": "本合同为非独家经销, 甲方有权在该区域内发展其他经销商。"
+    },
+    {
+      "index": 3,
+      "title": "销售目标",
+      "text": "乙方年度销售目标为人民币 80 万元。"
+    },
+    {
+      "index": 4,
+      "title": "进货价格",
+      "text": "乙方进货价格为甲方建议零售价的 20%。"
+    },
+    {
+      "index": 5,
+      "title": "市场支持",
+      "text": "甲方按销售额的 0.9%% 向乙方支付市场推广费。"
+    },
+    {
+      "index": 6,
+      "title": "账期",
+      "text": "甲方给予乙方 60 天的账期。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "市场支持",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "账期",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "授权性质",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "产品",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "快消品经销合同",
+    "快消品常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于快消品经销合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_fmcg",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

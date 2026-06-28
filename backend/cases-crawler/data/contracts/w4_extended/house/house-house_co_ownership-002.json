@@ -1,0 +1,136 @@
+{
+  "template_id": "house-house_co_ownership-002",
+  "contract_type": "房屋合同",
+  "industry": "共有",
+  "title": "房屋共有协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "共有标的",
+      "text": "甲方与乙方共同购买位于东莞市天河区某路 88 号的房屋, 按份共有。"
+    },
+    {
+      "index": 2,
+      "title": "共有份额",
+      "text": "甲方占 25%, 乙方占剩余份额。"
+    },
+    {
+      "index": 3,
+      "title": "购房款分摊",
+      "text": "购房款按份额比例分摊, 一方垫付的部分另一方应在 2027-02-09 前偿还。"
+    },
+    {
+      "index": 4,
+      "title": "使用权",
+      "text": "共有期间, 双方应合理使用房屋, 重大事项应经双方一致同意。"
+    },
+    {
+      "index": 5,
+      "title": "处分",
+      "text": "任何一方转让其份额的, 另一方在同等条件下有优先购买权。"
+    },
+    {
+      "index": 6,
+      "title": "分割",
+      "text": "因离婚、继承等需要分割房屋的, 按份额比例进行。"
+    },
+    {
+      "index": 7,
+      "title": "争议管辖",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "处分",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "分割",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "使用权",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "共有标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "房屋共有协议",
+    "共有常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于房屋共有协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_co_ownership",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

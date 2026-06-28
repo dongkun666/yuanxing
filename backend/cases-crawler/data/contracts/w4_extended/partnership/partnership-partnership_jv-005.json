@@ -1,0 +1,131 @@
+{
+  "template_id": "partnership-partnership_jv-005",
+  "contract_type": "合伙协议",
+  "industry": "中外合资",
+  "title": "中外合资经营企业合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合资企业",
+      "text": "甲方 (中方) 与乙方 (外方) 共同投资设立原材料采购合资企业。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "甲方出资人民币 300 万元 (占 3%), 乙方出资 USD 20 万元 (占剩余份额)。"
+    },
+    {
+      "index": 3,
+      "title": "合资期限",
+      "text": "合资期限 6 个月, 自 2027-03-19 起至 2030-01-12 止。"
+    },
+    {
+      "index": 4,
+      "title": "董事会",
+      "text": "董事会为最高权力机构, 重大事项需经董事会一致通过。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "合资企业利润按出资比例分配, 亏损亦按出资比例承担。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "合资企业",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "董事会",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "中外合资经营企业合同",
+    "中外合资常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于中外合资经营企业合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_jv",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

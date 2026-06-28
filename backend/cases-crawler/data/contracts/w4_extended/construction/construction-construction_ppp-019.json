@@ -1,0 +1,141 @@
+{
+  "template_id": "construction-construction_ppp-019",
+  "contract_type": "工程承揽合同",
+  "industry": "PPP",
+  "title": "PPP 项目合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "项目",
+      "text": "项目名称: 教育, 项目地点: 无锡市西湖区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "政府方",
+      "text": "政府方为甲方。"
+    },
+    {
+      "index": 3,
+      "title": "社会资本方",
+      "text": "社会资本方为乙方。"
+    },
+    {
+      "index": 4,
+      "title": "合作期限",
+      "text": "合作期限 1 年, 自 2027-04-20 起至 2027-08-24 止。"
+    },
+    {
+      "index": 5,
+      "title": "投资额",
+      "text": "项目投资总额人民币 150 万元。"
+    },
+    {
+      "index": 6,
+      "title": "回报机制",
+      "text": "乙方通过教育 (使用者付费/政府付费/可行性缺口补助) 收回投资并获得合理回报。"
+    },
+    {
+      "index": 7,
+      "title": "移交",
+      "text": "合作期满, 乙方将项目无偿移交给政府方。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "移交",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "回报机制",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "政府方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "社会资本方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "PPP 项目合同",
+    "PPP常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于PPP 项目合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_ppp",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

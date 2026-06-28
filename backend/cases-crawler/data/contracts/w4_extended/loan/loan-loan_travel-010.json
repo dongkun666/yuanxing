@@ -1,0 +1,137 @@
+{
+  "template_id": "loan-loan_travel-010",
+  "contract_type": "借款合同",
+  "industry": "旅游分期",
+  "title": "旅游分期付款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "旅游费用",
+      "text": "旅游费用总计人民币 150 万元。"
+    },
+    {
+      "index": 2,
+      "title": "付款方式",
+      "text": "乙方选择分期付款, 分 36 期支付。"
+    },
+    {
+      "index": 3,
+      "title": "首付款",
+      "text": "乙方应于签订本合同之日支付首付款人民币 1 万元。"
+    },
+    {
+      "index": 4,
+      "title": "分期付款",
+      "text": "余款按按月支付, 每月 15 日前支付。"
+    },
+    {
+      "index": 5,
+      "title": "旅游服务",
+      "text": "甲方应按欧洲15 日旅游服务, 不得擅自变更行程。"
+    },
+    {
+      "index": 6,
+      "title": "退团",
+      "text": "乙方退团的, 已支付费用按旅游合同退费规定处理, 不影响未结清分期款的支付义务。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "退团",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "分期付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "付款方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "旅游服务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "旅游分期付款合同",
+    "旅游分期常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于旅游分期付款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "loan_travel",
+    "variant_idx": 10,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

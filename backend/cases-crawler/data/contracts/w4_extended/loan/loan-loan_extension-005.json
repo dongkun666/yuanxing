@@ -1,0 +1,137 @@
+{
+  "template_id": "loan-loan_extension-005",
+  "contract_type": "借款合同",
+  "industry": "展期",
+  "title": "借款展期合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "原合同",
+      "text": "原合同编号 LX-222544, 签订日期 2025-12-31。"
+    },
+    {
+      "index": 2,
+      "title": "展期金额",
+      "text": "展期金额人民币 8 万元。"
+    },
+    {
+      "index": 3,
+      "title": "展期期限",
+      "text": "展期期限 18 个月, 自 2026-12-31 起至 2028-06-30 止。"
+    },
+    {
+      "index": 4,
+      "title": "展期利率",
+      "text": "展期期间利率 18%。"
+    },
+    {
+      "index": 5,
+      "title": "担保延续",
+      "text": "原担保 (如保证 / 抵押 / 质押) 继续有效, 担保期间相应顺延。"
+    },
+    {
+      "index": 6,
+      "title": "其他条款",
+      "text": "原合同其他条款继续有效。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "展期利率",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "展期金额",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "担保延续",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "展期期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "借款展期合同",
+    "展期常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于借款展期合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "loan_extension",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

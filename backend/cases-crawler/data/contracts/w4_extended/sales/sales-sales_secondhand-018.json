@@ -1,0 +1,131 @@
+{
+  "template_id": "sales-sales_secondhand-018",
+  "contract_type": "销售合同",
+  "industry": "二手",
+  "title": "二手物品买卖合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "物品",
+      "text": "甲方向乙方出售装修。"
+    },
+    {
+      "index": 2,
+      "title": "物品状况",
+      "text": "甲方保证物品实际状况与描述一致, 乙方已现场查看确认。"
+    },
+    {
+      "index": 3,
+      "title": "价款",
+      "text": "总价款人民币 3 万元。"
+    },
+    {
+      "index": 4,
+      "title": "交付",
+      "text": "双方应于 2027-04-14 前办理物品交付, 风险自交付时转移。"
+    },
+    {
+      "index": 5,
+      "title": "瑕疵担保",
+      "text": "甲方对物品承担 3 年 的瑕疵担保责任。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "瑕疵担保",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "物品",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "交付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "物品状况",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "二手物品买卖合同",
+    "二手常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于二手物品买卖合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_secondhand",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

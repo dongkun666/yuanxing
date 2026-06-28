@@ -1,0 +1,142 @@
+{
+  "template_id": "loan-personal_loan_detailed-009",
+  "contract_type": "借款合同",
+  "industry": "个人借款",
+  "title": "个人借款合同(详细版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借款金额与币种",
+      "text": "借款金额为人民币 3 万元整 (¥3000000元), 大写: 伍万元整。"
+    },
+    {
+      "index": 2,
+      "title": "借款用途",
+      "text": "乙方应将借款用于项目执行, 不得挪作他用。"
+    },
+    {
+      "index": 3,
+      "title": "借款期限与起止日",
+      "text": "借款期限自 2027-05-27 起至 2027-03-03 止。"
+    },
+    {
+      "index": 4,
+      "title": "利息约定",
+      "text": "借款年利率 12%, 自实际放款之日起按日计息。"
+    },
+    {
+      "index": 5,
+      "title": "还款方式与还款计划",
+      "text": "乙方应于每月 15 日按季支付当期本息。"
+    },
+    {
+      "index": 6,
+      "title": "担保方式",
+      "text": "本合同项下借款由质押担保。"
+    },
+    {
+      "index": 7,
+      "title": "违约责任",
+      "text": "乙方逾期还款的, 按月 3%加收违约金, 甲方有权宣布借款提前到期。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "因本合同发生的争议, 任何一方均可向丙方住所地法院起诉。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "利息约定",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "违约责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "担保方式",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "还款方式与还款计划",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "个人借款合同(详细版)",
+    "个人借款常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于个人借款合同(详细版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "personal_loan_detailed",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

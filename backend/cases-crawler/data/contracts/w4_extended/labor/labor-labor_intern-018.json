@@ -1,0 +1,137 @@
+{
+  "template_id": "labor-labor_intern-018",
+  "contract_type": "劳动合同",
+  "industry": "实习",
+  "title": "实习协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "实习期限",
+      "text": "实习期自 2026-10-08 起至 2028-10-03 止。"
+    },
+    {
+      "index": 2,
+      "title": "实习内容",
+      "text": "乙方在甲方装修岗位实习。"
+    },
+    {
+      "index": 3,
+      "title": "实习补贴",
+      "text": "甲方按月支付实习补贴人民币 80 万元。"
+    },
+    {
+      "index": 4,
+      "title": "工作时间",
+      "text": "乙方每周工作 5 天, 每天不超过 8 小时。"
+    },
+    {
+      "index": 5,
+      "title": "安全与保险",
+      "text": "甲方为乙方购买实习责任险, 保障实习期间的安全。"
+    },
+    {
+      "index": 6,
+      "title": "保密义务",
+      "text": "乙方对在实习期间接触到的甲方商业秘密负有保密义务。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "保密义务",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "实习期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "工作时间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "实习内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "实习协议",
+    "实习常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于实习协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_intern",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}
