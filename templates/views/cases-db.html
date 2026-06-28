@@ -60,20 +60,28 @@
 
     <!-- 搜索 + 筛选 -->
     <div class="bg-white rounded-xl border border-bg-border p-4 space-y-3">
+      <!-- 高频案由 tab -->
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-brand text-white font-medium transition-colors" data-pill="all" onclick="filterCasesByPill(this, 'all')">全部</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="合同纠纷" onclick="filterCasesByPill(this, '合同纠纷')">合同纠纷</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="婚姻家事" onclick="filterCasesByPill(this, '婚姻家事')">婚姻家事</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="侵权责任" onclick="filterCasesByPill(this, '侵权责任')">侵权责任</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="知识产权" onclick="filterCasesByPill(this, '知识产权')">知识产权</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="刑事" onclick="filterCasesByPill(this, '刑事')">刑事</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="执行" onclick="filterCasesByPill(this, '执行')">执行</button>
+        <button class="cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors" data-pill="行政" onclick="filterCasesByPill(this, '行政')">行政</button>
+      </div>
       <div class="flex items-center gap-2 flex-wrap">
         <div class="flex-1 relative min-w-[240px]">
           <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base" icon="mdi:magnify"></iconify-icon>
           <input type="text" id="cases-db-search" placeholder="搜索案号 / 案由 / 全文 / 法条..." class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
         </div>
-        <select id="cases-db-cause-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
-          <option value="all">全部案由</option>
-          <option value="合同纠纷">合同纠纷</option>
-          <option value="婚姻家事">婚姻家事</option>
-          <option value="侵权责任">侵权责任</option>
-          <option value="刑事">刑事</option>
-          <option value="行政">行政</option>
-          <option value="知识产权">知识产权</option>
-          <option value="执行">执行</option>
+        <select id="cases-db-court-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+          <option value="all">全部法院</option>
+          <option value="最高人民法院">最高人民法院</option>
+          <option value="高级人民法院">高级人民法院</option>
+          <option value="中级人民法院">中级人民法院</option>
+          <option value="基层人民法院">基层人民法院</option>
         </select>
         <select id="cases-db-source-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
           <option value="all">全部来源</option>
@@ -87,6 +95,12 @@
           <option value="2023">2023</option>
           <option value="2022">2022</option>
           <option value="2021">2021</option>
+        </select>
+        <select id="cases-db-sort" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+          <option value="lex_score_desc">按 Lex 评分</option>
+          <option value="year_desc">按年份</option>
+          <option value="view_count_desc">按浏览量</option>
+          <option value="law_refs_desc">按法条引用</option>
         </select>
       </div>
       <div class="flex items-center justify-between text-[10px] text-fg-tertiary">

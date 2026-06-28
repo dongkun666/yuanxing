@@ -86,11 +86,18 @@
         var allCases = getActiveCases();
         var search = (document.getElementById('cases-db-search') || {}).value || '';
         var causeFilter = (document.getElementById('cases-db-cause-filter') || {}).value || 'all';
+        var courtFilter = (document.getElementById('cases-db-court-filter') || {}).value || 'all';
         var sourceFilter = (document.getElementById('cases-db-source-filter') || {}).value || 'all';
         var yearFilter = (document.getElementById('cases-db-year-filter') || {}).value || 'all';
+        var sortBy = (document.getElementById('cases-db-sort') || {}).value || 'lex_score_desc';
 
         var filtered = allCases.filter(function(c) {
             if (causeFilter !== 'all' && c.cause_category !== causeFilter) return false;
+            // 法院级别 (前匹配)
+            if (courtFilter !== 'all') {
+                var court = c.court || '';
+                if (court.indexOf(courtFilter) < 0) return false;
+            }
             // source 在 API 返回中可能没有, fallback 时跳过
             if (sourceFilter !== 'all' && c.source && c.source !== sourceFilter) return false;
             if (yearFilter !== 'all' && String(c.year) !== yearFilter) return false;
@@ -102,8 +109,16 @@
             return true;
         });
 
-        // 排序: lex_score desc
-        filtered.sort(function(a, b) { return (b.lex_score || 0) - (a.lex_score || 0); });
+        // 排序
+        if (sortBy === 'year_desc') {
+            filtered.sort(function(a, b) { return (b.year || 0) - (a.year || 0); });
+        } else if (sortBy === 'view_count_desc') {
+            filtered.sort(function(a, b) { return (b.view_count || 0) - (a.view_count || 0); });
+        } else if (sortBy === 'law_refs_desc') {
+            filtered.sort(function(a, b) { return (b.legal_basis_count || 0) - (a.legal_basis_count || 0); });
+        } else {
+            filtered.sort(function(a, b) { return (b.lex_score || 0) - (a.lex_score || 0); });
+        }
 
         // 更新统计
         var elTotal = document.getElementById('cases-db-stat-total');
@@ -158,6 +173,7 @@
                 +   '<div class="flex items-center gap-1 text-[10px] text-fg-tertiary whitespace-nowrap">'
                 +     '<iconify-icon class="text-xs text-amber-500" icon="mdi:star"></iconify-icon>'
                 +     (c.lex_score || 0)
+                +     (c.view_count ? '<span class="text-fg-disabled ml-1">· ' + c.view_count + ' 浏览</span>' : '')
                 +   '</div>'
                 + '</div>'
                 + '<div class="flex items-center gap-3 text-[10px] text-fg-tertiary flex-wrap">'
@@ -182,6 +198,34 @@
         if (typeof showToast === 'function') {
             showToast('查看判例: ' + (c.case_name || '').substring(0, 30) + '... (开发中)');
         }
+    };
+
+    // 高频案由 tab (律师 80% 用前 6 个案由, 1-click 切换)
+    window.filterCasesByPill = function(btn, cause) {
+        // 切 active 样式
+        document.querySelectorAll('.cases-db-pill').forEach(function(el) {
+            el.className = 'cases-db-pill text-[11px] px-3 py-1 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg-hover font-medium transition-colors';
+        });
+        btn.className = 'cases-db-pill text-[11px] px-3 py-1 rounded-full bg-brand text-white font-medium transition-colors';
+        // 同步到隐藏 select (兼容 renderCasesDb 内部读取)
+        // 总重新填充 (防止空 select 残留)
+        var sel = document.getElementById('cases-db-cause-filter');
+        if (!sel) {
+            sel = document.createElement('select');
+            sel.id = 'cases-db-cause-filter';
+            sel.style.display = 'none';
+            document.body.appendChild(sel);
+        }
+        sel.innerHTML = '<option value="all">全部</option>'
+            + '<option value="合同纠纷">合同纠纷</option>'
+            + '<option value="婚姻家事">婚姻家事</option>'
+            + '<option value="侵权责任">侵权责任</option>'
+            + '<option value="刑事">刑事</option>'
+            + '<option value="行政">行政</option>'
+            + '<option value="知识产权">知识产权</option>'
+            + '<option value="执行">执行</option>';
+        sel.value = cause;
+        renderCasesDb();
     };
 
     // ============================================================
@@ -399,6 +443,8 @@
             prefix + '-type-filter',
             prefix + '-source-filter',
             prefix + '-year-filter',
+            prefix + '-court-filter',
+            prefix + '-sort',
             prefix + '-status-filter',
             prefix + '-region-filter',
             prefix + '-zxgk-only'
