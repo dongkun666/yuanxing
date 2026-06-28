@@ -10,6 +10,7 @@ PRD: § 5.4 Skill Hub + § 5.7 类案大数据
 Track: E-skills · T-REF-22 (subagent RPC)
 """
 from typing import Optional
+import time
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
@@ -20,7 +21,7 @@ from skills.caselaw.retrieval import (
     RetrievalInput, RetrievalConfig, FallbackSQLStore,
     run_skill, CaseHit,
 )
-from skills.caselaw.language_guard import DISCLAIMER_FULL, check_narrative
+from skills.caselaw.language_guard import DISCLAIMER_FULL, check_narrative, sanitize_input
 from core.db import Database
 
 
@@ -110,15 +111,15 @@ async def caselaw_search(req: SearchRequest):
     if req.facts and any(kw in req.facts for kw in ["胜诉率", "预计判赔"]):
         logger.warning(f"facts 包含触发关键词, 已自动脱敏: case_id={req.case_id}")
 
-    # 构造 RetrievalInput
+    # 构造 RetrievalInput + W7 输入消毒
     ri = RetrievalInput(
-        cause=req.cause,
-        facts=req.facts,
-        court=req.court,
-        judge_name=req.judge_name,
+        cause=sanitize_input(req.cause),
+        facts=sanitize_input(req.facts),
+        court=sanitize_input(req.court) if req.court else req.court,
+        judge_name=sanitize_input(req.judge_name) if req.judge_name else req.judge_name,
         year_from=req.year_from,
         year_to=req.year_to,
-        region=req.region,
+        region=sanitize_input(req.region) if req.region else req.region,
         case_type=req.case_type,
         procedure=req.procedure,
         amount_dispute=req.amount_dispute,
@@ -134,12 +135,55 @@ async def caselaw_search(req: SearchRequest):
         embedding_model="BAAI/bge-small-zh-v1.5",
     )
 
-    # 数据库连接
+    # 数据库连接 (AsyncSession, 用异步 metadata_filter)
+    t0 = time.time()
     try:
         db = Database()
         async with db.session() as session:
             store = FallbackSQLStore(session)
-            output = run_skill(ri, store, config)
+            # 异步 metadata filter (避免 sync/async 不匹配)
+            candidates = await store.metadata_filter_async(ri, candidate_limit=500)
+            hits = store.vector_search(ri, candidates)
+            # 手动 run_skill 流程 (避免重复 metadata_filter)
+            from skills.caselaw.retrieval import compress_context, compute_statistics, compute_traffic_light
+            compressed, trace = compress_context(hits, budget=config.context_token_budget)
+            stats = compute_statistics(compressed, ri)
+            traffic = compute_traffic_light(stats)
+            latency_ms = int((time.time() - t0) * 1000)
+
+            output_dict = {
+                "query_meta": {
+                    "cause": ri.cause,
+                    "cause_category": compressed[0].case_type if compressed else None,
+                    "searched_at": time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime()),
+                    "latency_ms": latency_ms,
+                    "total_candidates": len(candidates),
+                    "returned_count": len(compressed),
+                    "filters_applied": {
+                        k: v for k, v in ri.__dict__.items()
+                        if v is not None and k not in ("facts", "top_k", "include_judge_style",
+                                                       "include_amount_stats", "case_id")
+                    },
+                    "vector_store": config.vector_store,
+                    "embedding_model": config.embedding_model,
+                },
+                "results": [h.__dict__ for h in compressed],
+                "statistics": stats,
+                "trajectory": trace.to_dict(),
+                "disclaimer": DISCLAIMER_FULL,
+                "ui_hints": {
+                    "traffic_light": traffic,
+                    "show_bar_chart": bool(stats["support_rate_aggregate"]["yearly_breakdown"]),
+                    "show_box_plot": stats["amount_stats"].get("median_cny") is not None,
+                    "show_judge_card": stats["judge_style"] is not None and
+                                        stats["judge_style"].get("sample_size", 0) >= 5,
+                },
+            }
+            class _O:
+                def to_dict(self): return output_dict
+            output = _O()
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f"检索失败: {e}")
         raise HTTPException(500, f"检索失败: {str(e)}")

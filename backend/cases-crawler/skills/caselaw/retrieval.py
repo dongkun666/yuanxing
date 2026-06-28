@@ -146,13 +146,20 @@ class VectorStore:
 
 
 class FallbackSQLStore(VectorStore):
-    """PostgreSQL/SQLite 兜底实现 — 不依赖 embedding, 用关键词 + 时间衰减打分。"""
+    """PostgreSQL/SQLite 兜底实现 — 不依赖 embedding, 用关键词 + 时间衰减打分。
+
+    W7: 同步接口 (在 sync context 调用). E2E 测试时可在 async context 中包一层.
+    """
 
     def __init__(self, db_session):
         self.db = db_session
 
     def metadata_filter(self, ri: RetrievalInput, candidate_limit: int = 500) -> List[CaseHit]:
-        from sqlalchemy import select, or_, func
+        """同步版 metadata filter (假设 db 是 sync Session).
+
+        如果 db 是 AsyncSession, 调用方应使用 metadata_filter_async.
+        """
+        from sqlalchemy import select, or_
         from core.models import Case  # cases-crawler models
 
         stmt = select(Case).limit(candidate_limit)
@@ -178,7 +185,42 @@ class FallbackSQLStore(VectorStore):
         if ri.procedure:
             stmt = stmt.where(Case.procedure == ri.procedure)
 
-        rows = self.db.execute(stmt).scalars().all()
+        # 兼容 sync / async session
+        import inspect
+        result = self.db.execute(stmt)
+        if inspect.iscoroutine(result):
+            # async session: 抛错让调用方用 async 版
+            raise RuntimeError(
+                "FallbackSQLStore.metadata_filter 不支持 AsyncSession. "
+                "请使用 metadata_filter_async 或在 sync context 调用。"
+            )
+        rows = result.scalars().all()
+        return [self._row_to_hit(r) for r in rows]
+
+    async def metadata_filter_async(self, ri: RetrievalInput, candidate_limit: int = 500) -> List[CaseHit]:
+        """异步版 metadata filter (AsyncSession)."""
+        from sqlalchemy import select, or_
+        from core.models import Case
+
+        stmt = select(Case).limit(candidate_limit)
+        if ri.cause:
+            stmt = stmt.where(or_(Case.cause.like(f"%{ri.cause}%"),
+                                  Case.cause_category == ri.cause))
+        if ri.court:
+            stmt = stmt.where(Case.court.like(f"%{ri.court}%"))
+        if ri.year_from:
+            stmt = stmt.where(Case.year >= ri.year_from)
+        if ri.year_to:
+            stmt = stmt.where(Case.year <= ri.year_to)
+        if ri.region:
+            stmt = stmt.where(Case.region == ri.region)
+        if ri.case_type:
+            stmt = stmt.where(Case.case_type == ri.case_type)
+        if ri.procedure:
+            stmt = stmt.where(Case.procedure == ri.procedure)
+
+        result = await self.db.execute(stmt)
+        rows = result.scalars().all()
         return [self._row_to_hit(r) for r in rows]
 
     def vector_search(self, ri: RetrievalInput, candidates: List[CaseHit]) -> List[CaseHit]:
