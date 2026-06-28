@@ -28,6 +28,7 @@
 | 14 | [`14-references-from-products.md`](./14-references-from-products.md) | 附录: 借鉴 6 个 AI Agent 产品 (Claude Code / MiniMax Code / Kimi Code / AutoClaw / Codex / WorkBuddy / TRAE Work) | 2026-06-28 新增 | ~250 |
 | 15 | [`15-tasks-from-references.md`](./15-tasks-from-references.md) | 附录: 借鉴实施任务拆分 (T-REF-01~14, P0/P1/P2 分级, 跨 5 agent 协作) | 2026-06-28 新增 | ~250 |
 | 16 | [`16-ai-agent-references.md`](./16-ai-agent-references.md) | **附录: AI Agent 借鉴与实施 (8 产品真实架构 + T-REF-15~25)** | 2026-06-28 新增 | ~350 |
+| 17 | [`17-team-roadmap.md`](./17-team-roadmap.md) | **附录: 团队路线图 (Phase 4 P0 排序 + Phase 5 招 3 agent JD)** | 2026-06-28 新增 | ~400 |
 
 ## 按 Track 拆分 (开发任务)
 
@@ -49,11 +50,12 @@ Phase 4 任务分派按 Track 拆, 详见 [`./tracks/README.md`](./tracks/README
 ## 怎么用这套文档
 
 1. **战略 / 市场 / 投资人** → `01-product-positioning.md` + `02-target-users.md` + `09-business-model.md`
-2. **产品经理 / 律师顾问** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `08-roadmap.md` + `16-ai-agent-references.md` (8 产品真实架构 + T-REF-15~25)
-3. **全栈工程师** → `06-architecture.md` + `07-data-security.md` + `tracks/*.md` (按 Track 接任务) + `16-ai-agent-references.md` (T-REF-15/16/21/23/24)
+2. **产品经理 / 律师顾问** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `08-roadmap.md` + `16-ai-agent-references.md` + `17-team-roadmap.md` (Phase 4 P0 排序 + Phase 5 招聘 JD)
+3. **全栈工程师** → `06-architecture.md` + `07-data-security.md` + `tracks/*.md` + `16-ai-agent-references.md` (T-REF-16/21) + `17-team-roadmap.md` § 17.1.2 Phase 4 lex-coder P0 排序
 4. **UI 设计师** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `16-ai-agent-references.md` (T-REF-04/09/24)
-5. **AI / RAG 工程师** → `05-knowledge-base.md` + `04-cross-cutting.md` § 5.4 Skill Hub + § 5.5 AI 对话 + `06-architecture.md` + `16-ai-agent-references.md` (T-REF-17/18/19/20/22/25)
-6. **数据工程师** → `06-architecture.md` § 7.7 数据原则 + `04-cross-cutting.md` § 5.7 类案大数据 + `16-ai-agent-references.md` (T-REF-22)
+5. **AI / RAG 工程师** → `05-knowledge-base.md` + `04-cross-cutting.md` § 5.4-5.7 + `06-architecture.md` + `16-ai-agent-references.md` (T-REF-17~20/22/25)
+6. **数据工程师** → `06-architecture.md` § 7.7 + `04-cross-cutting.md` § 5.7 + `16-ai-agent-references.md` (T-REF-22)
+9. **HR / 招聘** (Phase 5+) → `17-team-roadmap.md` § 17.2 Phase 5 招聘 3 agent JD (lex-security / lex-electron / lex-mobile)
 7. **BD / 运营** → `02-target-users.md` + `09-business-model.md` § 10.3 推广策略 + `10-success-metrics.md`
 8. **测试 / QA** → `11-risks-compliance.md` § 12.2 合规风险 + `04-cross-cutting.md` § 5.7 类案界面语言规范
 
