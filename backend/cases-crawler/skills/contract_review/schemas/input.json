@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lexprime.skill.contract-review.input.v1",
+  "title": "合同风险审查 Skill 输入 Schema",
+  "description": "律师在 Skill UI 填写的合同审查条件。所有字段都是 optional 但至少要有 contract_text 或 contract_file_id 之一。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_type"],
+  "properties": {
+    "contract_type": {
+      "type": "string",
+      "enum": [
+        "房屋租赁",
+        "借款合同",
+        "劳动合同",
+        "服务合同",
+        "销售合同",
+        "合伙协议",
+        "委托代理",
+        "其他"
+      ],
+      "description": "合同类型 (8 大类, LexPrime 自动识别后律师可手动覆盖)"
+    },
+    "contract_text": {
+      "type": "string",
+      "description": "合同文本 (律师直接粘贴或 OCR 后内容)",
+      "maxLength": 50000
+    },
+    "contract_file_id": {
+      "type": "string",
+      "description": "合同文件 ID (上传 PDF / Word / 图片 OCR 后, LexPrime 主系统分配的文件 ID)"
+    },
+    "stance": {
+      "type": "string",
+      "enum": ["甲方", "乙方", "丙方", "审查方"],
+      "default": "审查方",
+      "description": "律师代表的立场 (影响审查重点 + 谈判策略方向)"
+    },
+    "industry": {
+      "type": "string",
+      "description": "所属行业 (用于行业特定条款匹配, 例: '互联网', '制造业', '金融')",
+      "maxLength": 32
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "合同标的金额 (元)"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "description": "管辖地 (省/直辖市, 用于匹配地方性法规 + 司法实践)",
+      "maxLength": 32
+    },
+    "focus_areas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "违约责任",
+          "争议管辖",
+          "合同效力",
+          "付款条款",
+          "知识产权",
+          "保密条款",
+          "不可抗力",
+          "解除终止",
+          "转让条款",
+          "担保条款"
+        ]
+      },
+      "description": "律师特别关注的条款领域 (空数组 = 全量审查)"
+    },
+    "include_suggestion": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否生成修改建议 (致命/重大风险必须生成)"
+    },
+    "include_negotiation_strategy": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否生成谈判策略"
+    },
+    "include_version_diff": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否与历史版本比对 (需 contract_file_id 关联历史版本)"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["zh-CN", "en-US"],
+      "default": "zh-CN",
+      "description": "合同语言 (影响审查规则与法律依据)"
+    },
+    "case_id": {
+      "type": "string",
+      "description": "关联的案件 ID (LexPrime 主系统案件, 用于结果归档)"
+    }
+  },
+  "examples": [
+    {
+      "contract_type": "房屋租赁",
+      "stance": "乙方",
+      "industry": "个人租赁",
+      "amount": 60000,
+      "jurisdiction": "上海",
+      "focus_areas": ["违约责任", "争议管辖"],
+      "include_suggestion": true,
+      "include_negotiation_strategy": true,
+      "contract_text": "甲方将位于上海市浦东新区某某路 123 号房屋出租给乙方..."
+    }
+  ]
+}

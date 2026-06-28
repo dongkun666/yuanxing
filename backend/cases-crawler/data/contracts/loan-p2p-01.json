@@ -1,0 +1,110 @@
+{
+  "template_id": "loan-p2p-01",
+  "contract_type": "借款合同",
+  "industry": "民间借贷",
+  "title": "民间借贷合同(高利息版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借款金额",
+      "text": "借款 20 万元。"
+    },
+    {
+      "index": 2,
+      "title": "利率",
+      "text": "月利率 3%(年化 36%)。"
+    },
+    {
+      "index": 3,
+      "title": "期限",
+      "text": "借款期限 6 个月。"
+    },
+    {
+      "index": 4,
+      "title": "违约",
+      "text": "逾期按日 5% 加收违约金。"
+    },
+    {
+      "index": 5,
+      "title": "管辖",
+      "text": "向出借人住所地法院起诉。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "违约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条",
+        "《最高人民法院关于适用〈中华人民共和国民法典〉合同编通则若干问题的解释》第六十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为'按 LPR × 1.5 倍' 或'按日万分之五' 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "违约",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条"
+      ],
+      "risk_description": "提前解约违约金约定过高, 司法实践中可能调减。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为'标的物所在地 / 合同签订地 / 双方住所地任一' 或约定仲裁条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "违约",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "管辖",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

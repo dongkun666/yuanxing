@@ -1,0 +1,114 @@
+{
+  "template_id": "house-rent-commercial-01",
+  "contract_type": "房屋租赁",
+  "industry": "商业租赁",
+  "title": "商铺租赁合同(商场版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于北京市朝阳区某某商场 B1 层 88 号商铺出租给乙方, 面积 60 平方米。"
+    },
+    {
+      "index": 2,
+      "title": "租赁期限",
+      "text": "租赁期 3 年, 自 2026 年 9 月 1 日起至 2029 年 8 月 31 日止。"
+    },
+    {
+      "index": 3,
+      "title": "租金及支付",
+      "text": "月租金 30000 元, 按季度支付。乙方逾期支付的, 按日加收 3% 违约金。"
+    },
+    {
+      "index": 4,
+      "title": "转租限制",
+      "text": "未经甲方书面同意, 乙方不得将商铺转租、转让或以其他方式让渡。"
+    },
+    {
+      "index": 5,
+      "title": "装修条款",
+      "text": "乙方装修需经甲方审批, 装修费用由乙方承担, 退租时不得拆除。"
+    },
+    {
+      "index": 6,
+      "title": "争议管辖",
+      "text": "争议提交北京仲裁委员会仲裁。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "租金及支付",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条",
+        "《最高人民法院关于适用〈中华人民共和国民法典〉合同编通则若干问题的解释》第六十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为'按 LPR × 1.5 倍' 或'按日万分之五' 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "租金及支付",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条"
+      ],
+      "risk_description": "提前解约违约金约定过高, 司法实践中可能调减。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "租金及支付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "转租限制",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "装修条款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

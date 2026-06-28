@@ -1,0 +1,76 @@
+{
+  "$schema": "https://agentskills.io/schemas/skill-manifest.v1.json",
+  "id": "lexprime.skill.contract-review",
+  "name": "合同风险审查",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "owner_agent": "lex-ai",
+  "reviewer_agent": "lex-pm",
+  "lawyer_review_required": true,
+  "description": {
+    "zh": "对律师上传的合同文本进行逐条审查, 输出三级风险标注 (致命/重大/建议) + 修改建议 + 谈判策略 + 版本比对。**仅呈现客观风险描述与法律依据, 不对合同结果作任何确定性判断或预测** (例如: '该条款可能构成显失公平' 是允许的; '本合同必将败诉' 是禁止的)。",
+    "en": "Clause-by-clause contract review with 3-tier risk annotation (fatal / major / advisory), modification suggestions, negotiation strategy, and version diff. Outputs objective risk descriptions and legal basis — never makes deterministic predictions (e.g. 'This clause may constitute manifest unfairness' is allowed; 'This contract will lose' is forbidden)."
+  },
+  "category": "review",
+  "tags": ["contract-review", "risk-annotation", "clause-level", "neutral-language", "version-diff"],
+  "entrypoint": "skill:main",
+  "runtime": {
+    "model": {
+      "primary": "qwen2.5:7b",
+      "fallback": ["qwen2.5:14b", "qwen2.5:72b"]
+    },
+    "embedding": {
+      "primary": "BAAI/bge-small-zh-v1.5",
+      "fallback": "BAAI/bge-large-zh-v1.5",
+      "vector_store": "lancedb",
+      "vector_store_fallback": "milvus"
+    },
+    "context_window": 8000,
+    "context_strategy": "trajectory_compression",
+    "load_strategy": "lazy",
+    "load_timeout_ms": 3000
+  },
+  "inputs": {
+    "schema_file": "schemas/input.json",
+    "example_file": "schemas/input.example.json"
+  },
+  "outputs": {
+    "schema_file": "schemas/output.json",
+    "example_file": "schemas/output.example.json"
+  },
+  "prompt_files": [
+    "prompt.md",
+    "language_policy.md"
+  ],
+  "permissions": {
+    "read": ["contracts", "risk_annotations", "legal_basis"],
+    "write": ["contract_reviews"],
+    "network": "offline-only",
+    "external_apis": []
+  },
+  "compliance": {
+    "language_policy": "neutral-only",
+    "disclaimer_required": true,
+    "disclaimer_text_file": "disclaimer.md",
+    "forbidden_phrases_check": "tests/test_contract_review_skill.py",
+    "data_sources": ["contract_templates", "risk_annotations", "legal_basis_library"],
+    "min_lawyer_reviewers": 3,
+    "accuracy_target": 0.85,
+    "risk_tiers": ["fatal", "major", "advisory"]
+  },
+  "dependencies": {
+    "lexprime_module": ">=0.7.0",
+    "python_packages": ["lancedb>=0.6", "sentence-transformers>=2.7", "pydantic>=2.9", "tiktoken>=0.7"]
+  },
+  "metrics": {
+    "p95_latency_ms_target": 2000,
+    "load_time_ms_target": 3000,
+    "fatal_major_accuracy_target": 0.85,
+    "suggestion_usefulness_target": 0.70,
+    "false_statement_rate_target": 0.0
+  },
+  "tracked_references": ["T-REF-17", "T-REF-18", "T-REF-22", "T-REF-25"],
+  "tracks": ["E-skills"],
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}
