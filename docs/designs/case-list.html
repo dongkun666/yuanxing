@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案件列表 · LexPrime 设计系统原型</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { DEFAULT:'#165DFF', hover:'#4080FF', active:'#0E4AD8',
+                   tint:'#E8F3FF', tint2:'#EEF3FF', tint3:'#F2F7FF', tint4:'#E5EBFF' },
+          bg: { DEFAULT:'#F2F3F5', subtle:'#F7F8FA', border:'#E5E6EB' },
+          fg: { primary:'#1D2129', secondary:'#4E5969', tertiary:'#86909C', disabled:'#C9CDD4' },
+          success: { DEFAULT:'#00B42A', tint:'#E8FFEA' },
+          warning: { DEFAULT:'#FF7D00', tint:'#FFF7E6' },
+          danger:  { DEFAULT:'#F5222D', tint:'#FFF1F0' },
+          urgent:  { DEFAULT:'#FA8C16', tint:'#FFF3E0' },
+          ai: { DEFAULT:'#6C5CE7', tint:'#EDEBFF' },
+        },
+        fontSize: { xs:'12px', sm:'14px', base:'16px', lg:'20px', xl:'24px', '2xl':'32px' },
+        boxShadow: {
+          'card': '0 2px 8px rgba(29,33,41,0.06)',
+          'card-hover': '0 4px 12px rgba(29,33,41,0.08)',
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+</style>
+</head>
+<body class="bg-bg-subtle text-fg-primary text-sm">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- 左侧栏 (复用) -->
+  <aside class="w-[220px] bg-white border-r border-bg-border flex flex-col">
+    <div class="h-14 px-5 flex items-center gap-2 border-b border-bg-border">
+      <div class="w-8 h-8 rounded-md bg-brand flex items-center justify-center text-white font-bold text-base">元</div>
+      <div>
+        <div class="text-sm font-bold leading-tight">元枢法智</div>
+        <div class="text-[10px] text-fg-tertiary leading-tight">LexPrime</div>
+      </div>
+    </div>
+    <nav class="flex-1 py-3 space-y-1 overflow-y-auto">
+      <div class="px-5 py-1 text-[10px] font-medium text-fg-tertiary tracking-wider">主导航</div>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:view-dashboard-outline" class="text-base"></iconify-icon><span>工作台</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md bg-brand text-white shadow-sm">
+        <iconify-icon icon="mdi:briefcase-outline" class="text-base"></iconify-icon><span>案件管理</span>
+        <span class="ml-auto bg-warning text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">12</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:account-multiple-outline" class="text-base"></iconify-icon><span>客户管理</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:calendar-month-outline" class="text-base"></iconify-icon><span>日程中心</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:file-document-multiple-outline" class="text-base"></iconify-icon><span>文书中心</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:gavel" class="text-base"></iconify-icon><span>庭审模拟</span>
+        <span class="ml-auto inline-flex items-center gap-0.5 text-[10px] text-ai"><iconify-icon icon="mdi:sparkles"></iconify-icon> AI</span>
+      </a>
+    </nav>
+    <div class="p-3 border-t border-bg-border flex items-center gap-2">
+      <div class="w-9 h-9 rounded-full bg-brand-tint text-brand flex items-center justify-center font-semibold">王</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium truncate">王律师</div>
+        <div class="text-[10px] text-fg-tertiary">个人版 · 试用 28 天</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主区 -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- 顶部 -->
+    <header class="h-14 bg-white border-b border-bg-border px-6 flex items-center gap-4">
+      <nav class="flex items-center gap-2 text-sm">
+        <span class="text-fg-tertiary">案件管理</span>
+        <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
+        <span class="text-fg-primary font-medium">全部案件</span>
+      </nav>
+      <div class="flex-1"></div>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:download-outline"></iconify-icon> 导出
+      </button>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:filter-variant"></iconify-icon> 高级筛选
+      </button>
+      <button class="h-9 px-4 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+        <iconify-icon icon="mdi:plus"></iconify-icon>
+        新建案件
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- 页面标题 + Tab -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-semibold">案件管理</h1>
+          <p class="text-xs text-fg-tertiary mt-0.5">共 12 件进行中 · 3 件紧急 · 36 件已归档</p>
+        </div>
+      </div>
+
+      <!-- Tab 切换 -->
+      <div class="bg-white rounded-md shadow-card p-1 inline-flex">
+        <button class="px-4 py-1.5 bg-brand text-white rounded text-sm font-medium shadow-sm">全部 (12)</button>
+        <button class="px-4 py-1.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded text-sm">进行中 (5)</button>
+        <button class="px-4 py-1.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded text-sm flex items-center gap-1.5">
+          紧急 <span class="bg-danger text-white text-[10px] font-bold px-1.5 rounded-sm">3</span>
+        </button>
+        <button class="px-4 py-1.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded text-sm">已立案 (2)</button>
+        <button class="px-4 py-1.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded text-sm">已归档 (36)</button>
+      </div>
+
+      <!-- 筛选条 -->
+      <div class="bg-white rounded-md shadow-card p-4">
+        <div class="flex items-center gap-3">
+          <div class="flex-1 relative">
+            <iconify-icon icon="mdi:magnify" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary"></iconify-icon>
+            <input type="text" placeholder="搜索案件名称 / 案号 / 当事人..."
+                   class="w-full h-9 pl-9 pr-3 bg-white border border-bg-border rounded-md text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all">
+          </div>
+
+          <select class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm focus:outline-none focus:border-brand cursor-pointer">
+            <option>全部案由</option>
+            <option>民商事</option><option>婚姻家事</option><option>劳动争议</option>
+          </select>
+          <select class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm focus:outline-none focus:border-brand cursor-pointer">
+            <option>全部阶段</option>
+            <option>接案</option><option>委托手续</option>
+            <option>文书撰写</option><option>立案预审</option>
+            <option>庭审准备</option><option>归档</option>
+          </select>
+          <select class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm focus:outline-none focus:border-brand cursor-pointer">
+            <option>最近更新</option>
+            <option>创建时间</option><option>开庭日期</option>
+          </select>
+
+          <button class="h-9 px-3 text-fg-tertiary hover:text-brand text-sm flex items-center gap-1">
+            <iconify-icon icon="mdi:refresh"></iconify-icon> 重置
+          </button>
+        </div>
+
+        <!-- 活跃筛选 chip -->
+        <div class="flex items-center gap-2 mt-3">
+          <span class="text-xs text-fg-tertiary">已筛选:</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-tint text-brand rounded-sm text-xs">
+            民商事
+            <button class="hover:text-brand-active"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>
+          </span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-tint text-brand rounded-sm text-xs">
+            庭审准备
+            <button class="hover:text-brand-active"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>
+          </span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-danger-tint text-danger rounded-sm text-xs">
+            紧急
+            <button class="hover:text-danger"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>
+          </span>
+        </div>
+      </div>
+
+      <!-- 列表 -->
+      <div class="bg-white rounded-md shadow-card overflow-hidden">
+        <!-- 列表头 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 bg-bg-subtle border-b border-bg-border text-xs text-fg-tertiary font-medium">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div>案件名称 / 案号</div>
+          <div>案由</div>
+          <div>当前阶段</div>
+          <div>下次日程</div>
+          <div>状态</div>
+          <div class="text-center">操作</div>
+        </div>
+
+        <!-- 行 1 (选中态演示: bg-brand text-white) -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 bg-brand text-white items-center cursor-pointer">
+          <div><input type="checkbox" checked class="rounded"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">张某诉李某房屋买卖合同纠纷</div>
+            <div class="text-[10px] opacity-80 font-mono">(2026)京0105民初1234号</div>
+          </div>
+          <div class="text-xs">民商事</div>
+          <div class="text-xs">开庭准备</div>
+          <div class="text-xs font-mono">06-28 15:00 开庭</div>
+          <div><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 text-white rounded-sm text-xs font-medium">
+            <span class="w-1.5 h-1.5 bg-white rounded-full"></span> 紧急
+          </span></div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-white/20 flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 行 2 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 hover:bg-brand-tint3 cursor-pointer items-center border-t border-bg-border transition-colors">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">陈女士离婚财产分割纠纷</div>
+            <div class="text-[10px] text-fg-tertiary font-mono">(2026)京0102民初5678号</div>
+          </div>
+          <div class="text-xs">婚姻家事</div>
+          <div class="text-xs">委托手续</div>
+          <div class="text-xs text-fg-secondary font-mono">06-28 17:30 会面</div>
+          <div><span class="inline-flex items-center gap-1 px-2 py-0.5 bg-warning-tint text-warning rounded-sm text-xs font-medium">
+            <span class="w-1.5 h-1.5 bg-warning rounded-full"></span> 进行中
+          </span></div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-brand-tint text-fg-tertiary hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 行 3 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 hover:bg-brand-tint3 cursor-pointer items-center border-t border-bg-border transition-colors">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">王某民间借贷纠纷案</div>
+            <div class="text-[10px] text-fg-tertiary font-mono">(2026)京0101民初9012号</div>
+          </div>
+          <div class="text-xs">民间借贷</div>
+          <div class="text-xs">立案预审</div>
+          <div class="text-xs text-fg-secondary font-mono">06-30 09:00 立案</div>
+          <div>
+            <div class="flex items-center gap-1">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-success-tint text-success rounded-sm text-xs font-medium">
+                <span class="w-1.5 h-1.5 bg-success rounded-full"></span> 已立案
+              </span>
+              <span class="inline-flex items-center gap-0.5 text-[10px] text-ai">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 预审
+              </span>
+            </div>
+          </div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-brand-tint text-fg-tertiary hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 行 4 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 hover:bg-brand-tint3 cursor-pointer items-center border-t border-bg-border transition-colors">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">刘某劳动合同争议仲裁案</div>
+            <div class="text-[10px] text-fg-tertiary font-mono">(2026)京劳仲字第345号</div>
+          </div>
+          <div class="text-xs">劳动争议</div>
+          <div class="text-xs">文书撰写</div>
+          <div class="text-xs text-fg-secondary font-mono">07-05 答辩期届满</div>
+          <div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-danger-tint text-danger rounded-sm text-xs font-medium">
+              <span class="w-1.5 h-1.5 bg-danger rounded-full"></span> 紧急
+            </span>
+          </div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-brand-tint text-fg-tertiary hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 行 5 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 hover:bg-brand-tint3 cursor-pointer items-center border-t border-bg-border transition-colors">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">赵某交通事故人身损害赔偿</div>
+            <div class="text-[10px] text-fg-tertiary font-mono">(2026)京0108民初4567号</div>
+          </div>
+          <div class="text-xs">侵权责任</div>
+          <div class="text-xs">接案</div>
+          <div class="text-xs text-fg-tertiary font-mono">—</div>
+          <div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-bg-subtle text-fg-secondary rounded-sm text-xs font-medium">
+              <span class="w-1.5 h-1.5 bg-fg-tertiary rounded-full"></span> 草稿
+            </span>
+          </div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-brand-tint text-fg-tertiary hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 行 6 -->
+        <div class="grid grid-cols-[40px_1fr_120px_120px_140px_120px_80px] gap-4 px-4 py-3 hover:bg-brand-tint3 cursor-pointer items-center border-t border-bg-border transition-colors">
+          <div><input type="checkbox" class="rounded border-bg-border"></div>
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">ABC科技公司股权纠纷</div>
+            <div class="text-[10px] text-fg-tertiary font-mono">(2026)京0105民初7890号</div>
+          </div>
+          <div class="text-xs">公司商事</div>
+          <div class="text-xs">文书撰写</div>
+          <div class="text-xs text-fg-secondary font-mono">07-10 听证</div>
+          <div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-warning-tint text-warning rounded-sm text-xs font-medium">
+              <span class="w-1.5 h-1.5 bg-warning rounded-full"></span> 进行中
+            </span>
+          </div>
+          <div class="text-center">
+            <button class="w-7 h-7 rounded hover:bg-brand-tint text-fg-tertiary hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="flex items-center justify-between px-4 py-3 bg-bg-subtle border-t border-bg-border">
+          <span class="text-xs text-fg-tertiary">显示 1-6 / 共 12 件</span>
+          <div class="flex items-center gap-1">
+            <button class="h-7 w-7 rounded text-fg-tertiary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:chevron-left" class="text-base"></iconify-icon>
+            </button>
+            <button class="h-7 min-w-7 px-2 rounded bg-brand text-white text-xs font-medium">1</button>
+            <button class="h-7 min-w-7 px-2 rounded text-fg-secondary hover:bg-brand-tint hover:text-brand text-xs">2</button>
+            <button class="h-7 w-7 rounded text-fg-tertiary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
+              <iconify-icon icon="mdi:chevron-right" class="text-base"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 空状态演示 (隐藏, 注释保留) -->
+      <!--
+      <div class="bg-white rounded-md shadow-card p-12 text-center">
+        <iconify-icon icon="mdi:briefcase-search-outline" class="text-5xl text-fg-disabled"></iconify-icon>
+        <h3 class="text-base font-medium mt-3">暂无符合条件的案件</h3>
+        <p class="text-xs text-fg-tertiary mt-1">尝试调整筛选条件, 或新建一个案件</p>
+        <button class="mt-4 h-9 px-4 bg-brand text-white rounded-md text-sm">+ 新建案件</button>
+      </div>
+      -->
+
+    </div>
+  </main>
+</div>
+
+<div class="fixed bottom-3 right-3 text-[10px] text-fg-tertiary bg-white/80 backdrop-blur px-2 py-1 rounded shadow-sm">
+  LexPrime 设计系统 v1 · case-list.html
+</div>
+
+</body>
+</html>
