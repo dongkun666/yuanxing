@@ -39,7 +39,9 @@
         'member-center': 'member-center.html',
         'account-settings': 'account-settings.html',
         'archive': 'archive.html',
-        'notifications': 'notifications.html'
+        'notifications': 'notifications.html',
+        'deadline': 'deadline.html',
+        'zhixing': 'zhixing.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====

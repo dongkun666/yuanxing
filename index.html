@@ -162,6 +162,16 @@ window.Iconify.disableRemoteAPI = true;
 <iconify-icon class="text-xl mr-3" icon="mdi:bookshelf"></iconify-icon>
 <span class="sidebar-text">知识库管理</span>
 </div>
+            <div class="sidebar-item" onclick="switchView('deadline', this)">
+                <iconify-icon class="text-xl mr-3" icon="mdi:clock-alert-outline"></iconify-icon>
+                <span class="sidebar-text">法律期限</span>
+                <span class="ml-auto text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded-full font-medium">新</span>
+            </div>
+            <div class="sidebar-item" onclick="switchView('zhixing', this)">
+                <iconify-icon class="text-xl mr-3" icon="mdi:account-cancel-outline"></iconify-icon>
+                <span class="sidebar-text">失信查询</span>
+                <span class="ml-auto text-[9px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded-full font-medium">新</span>
+            </div>
 </div>
 <!-- 更多按钮（工作标签底部）+ 独立弹出菜单 -->
 <div class="mt-auto border-t border-bg-border px-3 py-2 relative">
@@ -309,6 +319,10 @@ window.Iconify.disableRemoteAPI = true;
 <script src="./assets/js/script.js?v=18"></script>
 <!-- 启动流程 (必须最后 - 依赖 Auth/AppState/router/script 全部就绪) -->
 <script src="./assets/js/bootstrap.js?v=18"></script>
+<!-- Phase 3.1 (2026-06-28): 法律期限计算器 -->
+<script src="./assets/js/deadline.js?v=21"></script>
+<!-- Phase 3.1-2 (2026-06-28): 失信被执行人查询 -->
+<script src="./assets/js/zhixing.js?v=21"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {
