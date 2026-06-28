@@ -26,7 +26,8 @@
 | 12 | [`12-team.md`](./12-team.md) | 团队 | §14 | ~50-200 |
 | 13 | [`13-appendix.md`](./13-appendix.md) | 附录 (版本/决策/相关文档/核心机制) | §15 | ~50-200 |
 | 14 | [`14-references-from-products.md`](./14-references-from-products.md) | 附录: 借鉴 6 个 AI Agent 产品 (Claude Code / MiniMax Code / Kimi Code / AutoClaw / Codex / WorkBuddy / TRAE Work) | 2026-06-28 新增 | ~250 |
-| 15 | [`15-tasks-from-references.md`](./15-tasks-from-references.md) | 附录: 借鉴实施任务拆分 (12 个可执行任务, P0/P1/P2 分级, 跨 5 agent 协作) | 2026-06-28 新增 | ~250 |
+| 15 | [`15-tasks-from-references.md`](./15-tasks-from-references.md) | 附录: 借鉴实施任务拆分 (T-REF-01~14, P0/P1/P2 分级, 跨 5 agent 协作) | 2026-06-28 新增 | ~250 |
+| 16 | [`16-ai-agent-references.md`](./16-ai-agent-references.md) | **附录: AI Agent 借鉴与实施 (8 产品真实架构 + T-REF-15~25)** | 2026-06-28 新增 | ~350 |
 
 ## 按 Track 拆分 (开发任务)
 
@@ -48,11 +49,11 @@ Phase 4 任务分派按 Track 拆, 详见 [`./tracks/README.md`](./tracks/README
 ## 怎么用这套文档
 
 1. **战略 / 市场 / 投资人** → `01-product-positioning.md` + `02-target-users.md` + `09-business-model.md`
-2. **产品经理 / 律师顾问** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `08-roadmap.md` + `14-references-from-products.md` (借鉴清单) + `15-tasks-from-references.md` (任务拆分)
-3. **全栈工程师** → `06-architecture.md` + `07-data-security.md` + `tracks/*.md` (按 Track 接任务) + `14-references-from-products.md` (T-REF-01/03/10)
-4. **UI 设计师** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `14-references-from-products.md` (T-REF-04/09/10)
-5. **AI / RAG 工程师** → `05-knowledge-base.md` + `04-cross-cutting.md` § 5.4 Skill Hub + § 5.5 AI 对话 + `06-architecture.md` + `14-references-from-products.md` (T-REF-02/05/06/07/08)
-6. **数据工程师** → `06-architecture.md` § 7.7 数据原则 + `04-cross-cutting.md` § 5.7 类案大数据 + `14-references-from-products.md` (T-REF-08)
+2. **产品经理 / 律师顾问** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `08-roadmap.md` + `16-ai-agent-references.md` (8 产品真实架构 + T-REF-15~25)
+3. **全栈工程师** → `06-architecture.md` + `07-data-security.md` + `tracks/*.md` (按 Track 接任务) + `16-ai-agent-references.md` (T-REF-15/16/21/23/24)
+4. **UI 设计师** → `02-target-users.md` + `03-core-steps.md` + `04-cross-cutting.md` + `16-ai-agent-references.md` (T-REF-04/09/24)
+5. **AI / RAG 工程师** → `05-knowledge-base.md` + `04-cross-cutting.md` § 5.4 Skill Hub + § 5.5 AI 对话 + `06-architecture.md` + `16-ai-agent-references.md` (T-REF-17/18/19/20/22/25)
+6. **数据工程师** → `06-architecture.md` § 7.7 数据原则 + `04-cross-cutting.md` § 5.7 类案大数据 + `16-ai-agent-references.md` (T-REF-22)
 7. **BD / 运营** → `02-target-users.md` + `09-business-model.md` § 10.3 推广策略 + `10-success-metrics.md`
 8. **测试 / QA** → `11-risks-compliance.md` § 12.2 合规风险 + `04-cross-cutting.md` § 5.7 类案界面语言规范
 
