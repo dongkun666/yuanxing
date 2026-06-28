@@ -198,8 +198,11 @@
             if (action === 'settings') {
                 switchSidebarTab('work');
                 switchView('account-settings');
-            } else if (action === 'upgrade') {
-                switchView('subscription');
+            } else if (action === 'check-update') {
+                var current = (window.APP_VERSION || '0.7.0');
+                if (typeof showToast === 'function') {
+                    showToast('当前版本: v' + current + ' · 已是最新版本');
+                }
             } else if (action === 'feedback') {
                 showToast('问题反馈功能开发中');
             } else if (action === 'guide') {
