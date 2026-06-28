@@ -41,7 +41,9 @@
         'archive': 'archive.html',
         'notifications': 'notifications.html',
         'deadline': 'deadline.html',
-        'zhixing': 'zhixing.html'
+        'zhixing': 'zhixing.html',
+        'case-progress': 'case-progress.html',
+        'ai-doc': 'ai-doc.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
