@@ -1,0 +1,259 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 4: W4-W6 接力 (LanceDB + 合同扩量 + 评审准备 + UI 设计)'
+  max_concurrency: 4
+  max_consecutive_failures: 2
+  max_cycles: 4
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  # Task 1: LanceDB + BGE embedding 接入 Skill 2 (lex-ai, W4)
+  - id: 'w4-lancedb-bge'
+    title: 'W4 LanceDB + BGE embedding 接入 Skill 2 合同审查'
+    prompt: |
+      接力 W3 (commit 67215d0 + b9a2eb4 已完成 SKILL.md + manifest + 50+ 合同模板), 启动 W4 接入向量检索。
+
+      必读文档:
+      - PRD § 5.4 Skill Hub + § 6 个人知识库
+      - docs/prd/05-knowledge-base.md
+      - docs/prd/04-cross-cutting.md § 5.7 类案大数据
+      - Skill 1 (类案检索) commit 568d817 (LanceDB + BGE 复用基础)
+      - Skill 2 (合同审查) W3 commit b9a2eb4
+      - T-REF-22 subagent RPC (附录 16)
+
+      W4 工作范围:
+      1. **LanceDB 本地部署** (W4 1):
+         - pip install lancedb
+         - LanceDB 0.5+ 配置 (本地路径: backend/cases-crawler/data/lancedb/)
+         - 与现有 SQLite (lexprime.db) 共存
+      2. **BGE embedding** (W4 1-2):
+         - 选型: BAAI/bge-small-zh-v1.5 (中文友好, 模型小 ~93MB)
+         - 离线下载 (huggingface 或镜像)
+         - Embedding 服务封装: backend/cases-crawler/core/embeddings.py
+         - 单条合同 embedding < 100ms (CPU 推理)
+      3. **Skill 2 合同索引** (W4 2-3):
+         - 50+ 合同模板 (W3 已入库) → 条款级 embedding
+         - 每份合同 5+ 风险标注样本 embedding
+         - 索引: contract_embeddings (id, contract_id, clause_id, risk_level, embedding, metadata)
+         - LanceDB 表: contract_clauses + contract_risks
+      4. **检索算法升级** (W4 3):
+         - LLM 审查 + LanceDB 相似度检索 (双路召回)
+         - 风险匹配: "新合同 + 致命条款 → 召回历史致命样本"
+         - JSON 输出含 retrieval_evidence[] (引用历史样本 ID + 相似度)
+      5. **单元测试**:
+         - LanceDB 增删查改 (>= 10 case)
+         - BGE embedding 性能 (< 100ms P95)
+         - 检索准确率 (>= 80% top-5 召回)
+      6. 必跑: ruff 0 + pytest 100%
+      7. git commit + push
+
+      Stop when (W4 末):
+      - LanceDB 部署 + BGE embedding 服务就位
+      - 50+ 合同 + 250+ 风险标注样本 embedding 入库
+      - 检索算法升级 (LLM + LanceDB 双路)
+      - 检索 P95 < 200ms
+      - 检索 top-5 准确率 >= 80%
+      - pytest 100% + ruff 0
+      - git log 显示 3+ W4 commits
+    assigned_to: 'lex-ai'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W4 LanceDB+BGE:
+      1. LanceDB 本地部署 (data/lancedb/ 存在 + 索引表 contract_clauses / contract_risks)
+      2. BGE embedding 服务封装 (core/embeddings.py + 测试 < 100ms P95)
+      3. 50+ 合同 + 250+ 风险标注样本 embedding 入库 (查询数量验证)
+      4. 检索算法双路召回 (LLM + LanceDB) + retrieval_evidence JSON 输出
+      5. 检索 P95 < 200ms (benchmark)
+      6. 检索 top-5 准确率 >= 80% (自己跑 benchmark)
+      7. pytest 100% pass + ruff 0
+      8. git log 显示 3+ W4 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+
+  # Task 2: 合同模板扩量 50+ → 5000+ (lex-data, W4)
+  - id: 'w4-data-contract-extension'
+    title: 'W4 合同模板扩量 50+ → 5000+ (各行业/各类型)'
+    prompt: |
+      W3 已入库 50+ 合同模板 (租房/借款/劳动合同/服务/销售), W4 扩量到 5000+, 覆盖律师实务高频合同类型。
+
+      必读文档:
+      - PRD § 3.12 当事人文书 § 3.12.2 各类合同
+      - docs/prd/04-cross-cutting.md § 5.6
+      - Skill 2 commit 67215d0 (50+ 模板 baseline)
+      - backend/cases-crawler/data/raw/contracts/
+
+      W4 工作范围:
+      1. **扩量到 5000+ 合同模板** (W4 1-3):
+         - 律师实务高频类型 (10 大类, 各 500+):
+           - 借款合同 (含民间借贷/金融借款/抵押担保)
+           - 房屋买卖/租赁/中介
+           - 劳动合同 (含劳务派遣/灵活用工)
+           - 服务合同 (含咨询/技术/医疗/教育)
+           - 销售合同 (含批发/零售/电商)
+           - 股权转让/股东协议
+           - 知识产权 (许可/转让/保密)
+           - 婚姻家事 (婚前协议/离婚协议/遗嘱)
+           - 保险合同
+           - 建设工程/承揽/物流
+         - 每份模板: 标题 + 全文 + 5+ 风险标注 (致命/重大/建议) + 适用场景 + 律师备注
+      2. **数据清洗 + 去重** (W4 3):
+         - 模板去重 (Levenshtein 距离 < 5% 视为重复)
+         - 格式统一 (Markdown 结构化字段)
+         - 敏感信息脱敏 (当事人名/身份证号/账号)
+      3. **数据索引 + 检索** (W4 4):
+         - SQLite 表: contract_templates (id, category, title, content, risk_annotations, created_at)
+         - 全文索引 (FTS5) 用于快速检索
+         - 跟 Skill 2 (合同审查) LanceDB 索引同步
+      4. **必跑**: 数据完整性 + 重复检测 + 索引性能
+
+      Stop when (W4 末):
+      - 5000+ 合同模板入库 (10 大类, 各 500+)
+      - 去重后唯一率 >= 95%
+      - SQLite 索引 + FTS5 全文检索就位
+      - 跟 LanceDB 同步 (lex-ai 任务协作)
+      - git log 显示 3+ W4 commits
+    assigned_to: 'lex-data'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W4 合同扩量:
+      1. 5000+ 合同模板入库 (SQLite count(*) 验证)
+      2. 10 大类各 >= 500 (SQLite group by category)
+      3. 去重唯一率 >= 95%
+      4. SQLite 索引 + FTS5 全文检索就位
+      5. 跟 LanceDB 同步 (lex-ai task 协作, 引用外键)
+      6. git log 显示 3+ W4 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+
+  # Task 3: 律师顾问评审准备 (lex-pm, W4)
+  - id: 'w4-lawyer-review-prep'
+    title: 'W4 律师顾问评审准备 (文档 + 评分表 + #7 #8 访谈排期)'
+    prompt: |
+      W3 已完成访谈 #3 #4 模板 (commit 1c6b674), W4 启动律师顾问评审准备工作 (实际评审由总指挥 42081 在 7/19-7/26 实地访谈律师)。
+
+      必读文档:
+      - PRD § 3.21 自适应个性化引擎 + § 5.4 Skill Hub
+      - Skill 1 (类案检索) W7 commit 9c5a8ae 律师评审模板
+      - Skill 2 (合同审查) W3 commit b9a2eb4 SKILL.md
+      - docs/interviews/analysis-w1-w3.md
+      - docs/interviews/schedule.md
+
+      W4 工作范围:
+      1. **律师评审文档 v2** (W4 1):
+         - 复用 Skill 1 W7 commit 9c5a8ae 律师评审模板 (4 位律师评审报告)
+         - 扩展 Skill 2 评审框架 (致命/重大/建议 三级 + 修改建议实用性 + 谈判策略)
+         - 输出 docs/skills/contract-review/review-template.md (律师评审模板)
+      2. **评分表** (W4 1-2):
+         - 致命/重大/建议 三级识别准确率 (target >= 85%)
+         - 修改建议实用性 (target >= 70% 律师认可)
+         - 谈判策略可执行性 (target >= 65% 律师认可)
+         - LLM 输出中立性 (target: 0 违规"必败/必胜"等表述)
+         - 输出 docs/skills/contract-review/scoring-rubric.md
+      3. **访谈排期 #7 #8** (W4 2):
+         - 至少 5 位律师 (单飞 1 + 小所 2 + 中所 1 + 企业法务 1)
+         - 7/19-7/26 期间 (与总指挥协调)
+         - 排期写入 docs/interviews/schedule.md
+      4. **测试合同 5 份** (W4 2-3):
+         - 选 5 份典型合同 (租房 + 借款 + 劳动 + 服务 + 销售)
+         - 用 Skill 2 (W3 完成) 跑审查 + 记录结果
+         - 律师实地访谈时给律师评分对照 (LLM vs 律师人工)
+      5. **PRD 反馈**:
+         - 评审中发现 Skill 2 不足 → 反馈给 Mavis + lex-ai
+         - 写入 PRD (Skill 2 W5 UI 调整)
+
+      Stop when (W4 末):
+      - review-template.md + scoring-rubric.md 就位
+      - #7 #8 访谈排期 5 位律师 (W6 期间)
+      - 5 份测试合同 LLM 审查结果记录
+      - git log 显示 3+ W4 commits
+    assigned_to: 'lex-pm'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W4 律师评审准备:
+      1. docs/skills/contract-review/review-template.md 存在 (Skill 1+2 评审框架)
+      2. docs/skills/contract-review/scoring-rubric.md 存在 (5 项评分维度)
+      3. #7 #8 访谈排期 5 位律师 (W6 7/19-7/26) 写入 schedule.md
+      4. 5 份测试合同 LLM 审查结果记录 (跟律师评分对照)
+      5. git log 显示 3+ W4 commits
+
+      PASS/FAIL 报告.
+    max_retries: 1
+
+  # Task 4: 合同审查 UI v1 设计 (lex-design, W4)
+  - id: 'w4-contract-review-ui-design'
+    title: 'W4 合同审查 UI v1 设计 (上传 + 风险高亮 + 修改建议 + 谈判策略)'
+    prompt: |
+      Skill 2 (合同审查) W3 后端完成, W4 启动 UI v1 设计 (lex-coder W5 实施)。
+
+      必读文档:
+      - PRD § 3.12.2 各类合同 + § 5.4 Skill Hub
+      - docs/design-system.md (W1 已交付, 品牌色 #165DFF)
+      - docs/designs/ (W1 3 个原型: workstation/case-list/case-detail)
+      - Skill 2 SKILL.md (W3 commit b9a2eb4)
+      - docs/prd/16-ai-agent-references.md § 16.4.7 Ask/Plan/Craft 模式 (WorkBuddy 借鉴)
+
+      W4 工作范围:
+      1. **UI 信息架构** (W4 1):
+         - 5 个核心页面:
+           1. **上传页** (上传合同 + 选择立场 + 启动审查)
+           2. **审查结果页** (致命/重大/建议 三级高亮 + 条款定位)
+           3. **修改建议详情页** (条款级建议 + 法条引用 + 历史样本)
+           4. **谈判策略弹窗** (策略类型 + 适用场景 + 历史案例)
+           5. **导出报告页** (Word / PDF 导出 + 邮件发送给律师)
+      2. **UI 设计稿** (W4 2-3):
+         - HTML + Tailwind (高保真, 跟 W1 设计系统一致)
+         - 致命风险 = bg-red-100 + 红边框 + 警告图标
+         - 重大风险 = bg-amber-100 + 黄边框
+         - 建议风险 = bg-blue-50 + 蓝边框
+         - 风险高亮: 合同正文中条款级颜色 + 悬浮提示
+         - 落地路径: docs/designs/contract-review/*.html (5 个页面)
+      3. **设计交付物**:
+         - docs/designs/contract-review/01-upload.html
+         - docs/designs/contract-review/02-review-result.html
+         - docs/designs/contract-review/03-suggestion-detail.html
+         - docs/designs/contract-review/04-negotiation.html
+         - docs/designs/contract-review/05-export.html
+         - docs/designs/contract-review/README.md (设计说明)
+      4. **律师评审 (内部)** (W4 3):
+         - 设计稿给律师顾问评审
+         - 收集反馈 → 调整
+         - 输出 docs/designs/contract-review/review-by-lawyer.md
+      5. **git commit + push**
+
+      Stop when (W4 末):
+      - 5 个 HTML 高保真原型 + README.md
+      - 设计系统与 W1 一致 (#165DFF 品牌色 + 风险色)
+      - 律师评审反馈整理
+      - git log 显示 3+ W4 commits
+    assigned_to: 'lex-design'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W4 合同审查 UI 设计:
+      1. docs/designs/contract-review/ 5 个 HTML 文件 + README.md 全部存在
+      2. 设计系统与 W1 一致 (颜色 #165DFF + 风险色)
+      3. 风险高亮 (致命/重大/建议 三级) 在原型里实现
+      4. 律师评审反馈整理 (review-by-lawyer.md)
+      5. git log 显示 3+ W4 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+
+  # Final: W4 集成验证
+  - id: 'w4-integration'
+    title: 'W4 集成验证 (LanceDB + 合同扩量 + 评审准备 + UI 设计 联动)'
+    role: 'verify-as-task'
+    prompt: |
+      验证 W4 四个 Track 集成:
+      1. LanceDB 索引 + 合同扩量数据是否同步 (lex-ai + lex-data 协作)
+      2. 律师评审准备 (lex-pm) 是否引用 UI 设计稿 (lex-design)
+      3. 四个 agent deliverable 无冲突
+      4. 四个 agent 全部 git commit + push
+
+      输出 W4 总结 + W5 建议 (一句话: 下个 plan 启 UI 实施 + 律师访谈)。
+    assigned_to: 'verifier'
+    depends_on: ['w4-lancedb-bge', 'w4-data-contract-extension', 'w4-lawyer-review-prep', 'w4-contract-review-ui-design']
+    max_retries: 1
