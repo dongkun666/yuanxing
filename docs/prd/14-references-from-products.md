@@ -17,26 +17,34 @@
 | 5 | **Codex** | OpenAI | 云端沙箱 + GPT-5 编程 Agent, 多任务并行 + 自动 PR + 三档风险 | [官网](https://openai.com/codex/) |
 | 6 | **WorkBuddy** | 腾讯云 CodeBuddy | 腾讯版 OpenClaw, 桌面客户端, Ask/Plan/Craft 三模式 + IM 远程 | [官网](https://workbuddy.tencent.com) |
 | 7 | **TRAE Work** | 字节跳动 | 原 TRAE SOLO 升级, "AI Coding → AI Working", Builder 模式 + Trae Rules | [官网](https://www.trae.com.cn) |
+| 8 | **Hermes Agent** | Nous Research | **"self-improving" 闭环** — Agent 任务后自动创建 Skill / Skill 使用中自我改进 / FTS5 跨 session 检索 + LLM 摘要 / Honcho 对话式用户建模 / 兼容 agentskills.io 开放标准 / 6 个 terminal backend (local/Docker/SSH/Singularity/Modal/Daytona) / OpenClaw 一键迁移 | [GitHub](https://github.com/NousResearch/hermes-agent) (205k ⭐ / 36.9k forks) |
 
 ---
 
 ## 14.2 共性能力矩阵
 
-| 能力 | Claude Code | MiniMax | Kimi Code | AutoClaw | Codex | WorkBuddy | TRAE Work |
-|---|---|---|---|---|---|---|---|
-| 终端 CLI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (IDE) |
-| 桌面客户端 | ❌ | ❌ | ❌ | ✅ | ✅ (macOS) | ✅ | ✅ |
-| Skills/Plugins 系统 | ✅ (SkillTool) | ✅ (bundled + user) | ✅ | ✅ (50+) | ✅ | ✅ (20+) | ✅ |
-| MCP 协议 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 子智能体 / 多 Agent | ✅ (AgentTool + Coordinator) | ⚠️ 内部 | ✅ (千级) | ⚠️ 内部 | ✅ (并行) | ✅ (并行) | ✅ (自定义 Agent) |
-| 记忆系统 | ✅ (memdir) | ✅ 三层 | ✅ 长上下文 | ⚠️ | ⚠️ | ✅ (SOUL.md) | ✅ (Trae Rules) |
-| 反思 / 复盘 | ⚠️ | ✅ (每日 cron) | ❌ | ⚠️ | ❌ | ❌ | ❌ |
-| 权限 / 风险评估 | ✅ (4 档 + LLM 守门) | ✅ (四级 + LLM) | ⚠️ | ⚠️ | ✅ (3 档) | ⚠️ | ⚠️ |
-| IM 远程接入 | ❌ | ❌ | ❌ | ✅ (飞书/钉钉/微信) | ❌ | ✅ (微信/企微/QQ) | ❌ |
-| LSP / IDE Bridge | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| 本地优先 | ⚠️ | ✅ | ✅ | ✅ | ❌ (云端) | ✅ | ⚠️ |
-| 视觉编程 (图→码) | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| 跨平台 (Win/Mac) | ✅ | ✅ | ✅ | ✅ | ⚠️ | ✅ | ✅ |
+| 能力 | Claude Code | MiniMax | Kimi Code | AutoClaw | Codex | WorkBuddy | TRAE Work | Hermes Agent |
+|---|---|---|---|---|---|---|---|---|
+| 终端 CLI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (IDE) | ✅ |
+| 桌面客户端 | ❌ | ❌ | ❌ | ✅ | ✅ (macOS) | ✅ | ✅ | ✅ (Hermes Desktop) |
+| Skills/Plugins 系统 | ✅ (SkillTool) | ✅ (bundled + user) | ✅ | ✅ (50+) | ✅ | ✅ (20+) | ✅ | ✅ (autonomous creation + self-improve + agentskills.io) |
+| MCP 协议 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 子智能体 / 多 Agent | ✅ (AgentTool + Coordinator) | ⚠️ 内部 | ✅ (千级) | ⚠️ 内部 | ✅ (并行) | ✅ (并行) | ✅ (自定义 Agent) | ✅ (RPC 子智能体 + 零 context 协作) |
+| 记忆系统 | ✅ (memdir) | ✅ 三层 | ✅ 长上下文 | ⚠️ | ⚠️ | ✅ (SOUL.md) | ✅ (Trae Rules) | ✅ (agent-curated + FTS5 + Honcho) |
+| 反思 / 复盘 | ⚠️ | ✅ (每日 cron) | ❌ | ⚠️ | ❌ | ❌ | ❌ | ✅ (autonomous skill creation + dialectic) |
+| 权限 / 风险评估 | ✅ (4 档 + LLM 守门) | ✅ (四级 + LLM) | ⚠️ | ⚠️ | ✅ (3 档) | ⚠️ | ⚠️ | ✅ (command approval + container isolation) |
+| IM 远程接入 | ❌ | ❌ | ❌ | ✅ (飞书/钉钉/微信) | ❌ | ✅ (微信/企微/QQ) | ❌ | ✅ (Telegram/Discord/Slack/WhatsApp/Signal/Email) |
+| LSP / IDE Bridge | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ❌ |
+| 本地优先 | ⚠️ | ✅ | ✅ | ✅ | ❌ (云端) | ✅ | ⚠️ | ✅ (本地/容器/serverless 可选) |
+| 视觉编程 (图→码) | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| 跨平台 (Win/Mac) | ✅ | ✅ | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ (含 PowerShell 原生) |
+| 自我进化 / learning loop | ❌ | ⚠️ (反思) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅✅ (核心卖点, 唯一拥有) |
+| 标准化 Skill 格式 | ❌ | ❌ | ❌ | ⚠️ (plugin.json) | ❌ | ❌ | ❌ | ✅ (agentskills.io open standard) |
+| 跨 session 检索 + LLM 摘要 | ⚠️ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ (FTS5 + LLM summarization) |
+| 案件级 context 文件 | ✅ (AGENTS.md) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ (Context Files 自动注入) |
+| 语音转写 | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ (voice memo transcription) |
+| Docker 镜像 / 离线包 | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ (含 MinGit 隔离 + uv 包管理) |
+| OpenClaw 一键迁移 | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ (hermes claw migrate) |
 
 ✅ = 主打, ⚠️ = 部分支持, ❌ = 无
 
@@ -182,6 +190,55 @@
 
 ---
 
+### 14.3.9 Hermes Agent 核心借鉴 ([PRD §1.2 战略原则 #3](../01-product-positioning.md))
+
+**借鉴点 (优先级 P0-P2)**:
+
+17. **"self-improving" 闭环 — Agent 任务后自动创建 Skill + Skill 使用中自我改进** (来源: Hermes Agent 核心, **优先级 P0**)
+    - Hermes Agent 的 "closed learning loop" 是其唯一差异化卖点
+    - 4 个组件: ① Agent-curated memory with periodic nudges ② Autonomous skill creation after complex tasks ③ Skills self-improve during use ④ FTS5 session search with LLM summarization
+    - **LexPrime 应用** (升级 T-REF-07): 反思引擎不仅 "总结今天改了哪些文书", 而是 **"识别今天反复处理的案由, 提议自动生成一个 Skill"** — 律师处理 5 次以上"民间借贷起诉状", AI 自动提议 "民间借贷起诉状 Skill v0.1" (输入: 借款合同 + 当事人信息 → 输出: 标准化起诉状 + 证据清单)
+    - 律师可批准 / 修改 / 拒绝 — 不强制生成, 律师掌控权
+
+18. **agentskills.io 开放标准 + Honcho dialectic 用户建模** (来源: Hermes Agent, **优先级 P1**)
+    - Hermes 兼容 [agentskills.io](https://agentskills.io) 开放 Skill 格式标准, 跟 OpenClaw/AutoClaw 互通
+    - [Honcho](https://github.com/plastic-labs/honcho) dialectic 用户建模: 不是 AI 单方面提取律师偏好, 而是 **AI 主动 push 律师"您是不是在第 3 段总是加风险提示? 我下次会自动加"** + 律师确认 / 反驳
+    - **LexPrime 应用** (升级 T-REF-02 + T-REF-07):
+      - 9 个官方 Skill 走 agentskills.io 格式 (frontmatter: name/description/version/inputs/outputs/dependencies)
+      - 反思引擎不只是 LLM 反思, 而是 **dialectic 双向**: 律师给反馈 + AI 主动确认 + 律师可反驳
+    - 借鉴价值: 开放标准让律所上传的私有 Skill 跟生态互通, dialectic 提升风格学习准确率
+
+19. **Context Files (案件级 AGENTS.md) 自动注入** (来源: Hermes Agent + Claude Code, **优先级 P1**)
+    - Hermes 在每个项目根目录找 `AGENTS.md`, 自动注入 context
+    - **LexPrime 应用** (升级 T-REF-05 Memory): 每个案件文件夹自动有 `case-notes.md` (律师写案情 + AI 摘要), 律师跟 AI 对话时自动注入对应 case 的 context
+    - 借鉴价值: 律师不用每次重复 "这个案子的背景是..." — AI 自动从案件级 context 文件读取
+
+20. **多设备同步 (Mac/Win/iPad) — 不走云端, 走本地同步** (来源: Hermes Agent "Runs anywhere, not just your laptop", **优先级 P2**)
+    - Hermes 通过云 VM (Modal/Daytona) 跑, Telegram 远程访问
+    - **LexPrime 反借鉴云端**, 但借鉴 "Runs anywhere": 律所律师有 Mac 笔记本 + iPad + Win 台式机, 通过**本地网络** (律所 WiFi / 飞秋 / 内网 SMB) 同步案件数据
+    - 数据不上公网, 律所 IT 完全掌控
+    - **LexPrime 应用** (新任务 T-REF-16): LexPrime Agent + 案件数据 + Memory 三层走 **局域网同步**, 类似 Git 但只同步案件 metadata (不强同步大文件)
+
+21. **语音转写 (Voice memo transcription)** (来源: Hermes Agent, **优先级 P2**)
+    - 律师开车 / 通勤时口述案情, 自动转文字入档
+    - **LexPrime 应用** (新任务 T-REF-15): 律师在 LexPrime 桌面端按录音键, Whisper 本地推理转中文, 存入案件 notes.md
+    - 完全本地推理 (Whisper.cpp 或 sherpa-onnx), 不上云
+    - 借鉴价值: 律师通勤时间可入档, **提升用户粘性 + 律师满意度**
+
+22. **Docker 镜像 + 离线包 (律所私有部署)** (来源: Hermes Agent (含 MinGit 隔离 + uv) + AutoClaw (一键安装), **优先级 P1**)
+    - Hermes 的 PowerShell 一行安装包: 自动装 uv + Python 3.11 + Node.js + ripgrep + ffmpeg + MinGit (~45MB)
+    - AutoClaw 1 分钟本地部署
+    - **LexPrime 应用** (升级 T-DEV 现有 Docker Compose): 律所 IT 可一键部署 LexPrime Agent + LexPrime Backend + LexPrime DB 到律所内网服务器, 律师客户端走浏览器访问
+    - **借鉴实现**: 类似 AutoClaw 的 1 分钟安装, 但走 Docker Compose + 离线依赖 (Python wheels + Node modules + 模型权重)
+    - 注: 这是 PRD §7.5 已有规划, 升级现有实施, 不新增任务
+
+23. **Trajectory compression (执行轨迹压缩, 喂给反思引擎)** (来源: Hermes Agent, **优先级 P1**)
+    - Hermes `trajectory_compressor.py` 把 agent 执行轨迹压缩, 既能喂下代模型训练, 也用于反思引擎数据源
+    - **LexPrime 应用** (升级 T-REF-06 microCompact): 不仅是压缩 context, 而是 **把轨迹结构化落盘** (tool name / args / result / latency / success), 反思引擎从中提取 "律师在哪步经常手动修改 AI 输出"
+    - 借鉴价值: 反思引擎有结构化数据源, 不用 LLM 全文反思, 启发式 fallback 也能跑
+
+---
+
 ## 14.4 反借鉴 (LexPrime 不学什么)
 
 | 来源 | 反借鉴理由 |
@@ -193,6 +250,11 @@
 | **AutoClaw 50+ Skills 大杂烩** | 战略原则 "AI 辅助、不替代律师" 要求官方严控 Skill 质量, 律所私有 Skill 走审核制 |
 | **Kimi Code 视觉编程 (图→码)** | LexPrime OCR 走 PaddleOCR (中文专精), 通用视觉模型精度不够, 工程上不划算 |
 | **Codex 三档风险分级 (Suggest/Auto Edit/Full Auto)** | LexPrime 风险等级是 4 档 (低/中/高/关键), 跟 PRD §8.3 对齐; Codex 的 3 档不够细 |
+| **Hermes 6 个 terminal backend 含 Modal/Daytona serverless** | LexPrime 本地/律所私有部署, 不用 serverless 唤醒; Modal/Daytona 意味着依赖云厂商 |
+| **Hermes 跨 Telegram/Discord/Slack/WhatsApp/Signal/Email gateway** | LexPrime 数据不上公网 (§8.1 第一性原则), IM 通道过云违反本地优先; LexPrime 走局域网同步 (T-REF-16) |
+| **Hermes Nous Portal 一站式云订阅 (300+ 模型 + Tool Gateway)** | LexPrime 模型本地推理 (Qwen2.5-72B 本地化), 不用云模型订阅; Tool Gateway 走公网违反本地优先 |
+| **Hermes voice memo transcription 默认走 OpenAI Whisper API** | LexPrime 走 Whisper.cpp / sherpa-onnx 本地推理 (T-REF-15), 律师案件录音不上云 |
+| **Hermes autonomous skill creation 默认自动** | LexPrime 反思引擎提议 Skill 后, **必须律师批准** 才生成 (律师掌控权, 不能让 AI 自动产生新 Skill 绕过"AI 辅助不替代律师"原则) |
 
 ---
 
@@ -215,14 +277,21 @@
 | P0 | 3. Skill 工具调用 schema | §4 §5.4 | Phase 4 |
 | P0 | 7. 四级授权 + LLM 风险评估 | §7 §8.3 | Phase 4 (Track A + F) |
 | P0 | 8. Permission Hook 系统 | §7 §8.3 | Phase 4 |
+| P0 | **17. Self-improving 闭环 (Agent 任务后提议自动生成 Skill)** | §1.2 #3 §5.6 | **Phase 4 (升级 T-REF-07)** |
 | P1 | 4. 三层记忆架构 | §5.5 §5.6 | Phase 5 |
 | P1 | 5. 每日反思 / 复盘 | §5.6 | Phase 5 |
 | P1 | 6. Working Memory 上下文压缩 | §6 §7.5 | Phase 5 |
 | P1 | 9. Ask/Plan/Craft 三模式 | §3 | Phase 4 (Track D + E) |
 | P1 | 10. Builder 模式 | §3 | Phase 5 |
+| P1 | **18. agentskills.io 开放标准 + Honcho dialectic 用户建模** | §4 §5.6 | **Phase 5 (升级 T-REF-02 + T-REF-07)** |
+| P1 | **19. Context Files 案件级 AGENTS.md 自动注入** | §5.6 | **Phase 5 (升级 T-REF-05)** |
+| P1 | **22. Docker 镜像 + 离线包律所私有部署** | §7.5 | **Phase 4 (升级现有, 不新增任务)** |
+| P1 | **23. Trajectory compression 结构化反思数据源** | §5.6 | **Phase 5 (升级 T-REF-06)** |
 | P2 | 11. CLI ↔ Desktop Bridge | §6 §7.5 | Phase 5 |
 | P2 | 13. Sub-Agent 派发 | §4 §7.5 | Phase 5 |
 | P2 | 14. Team 多智能体协作 | §4 | Phase 5 (企业版) |
+| P2 | **15. 语音转写 (Whisper 本地推理)** | §4 | **Phase 5 (新任务 T-REF-15)** |
+| P2 | **20. 多设备局域网同步 (Mac/Win/iPad)** | §7.5 | **Phase 5 (新任务 T-REF-16)** |
 | P3 | 16. IM 远程接入 | §4 | 暂缓 / 不做 |
 
 ---

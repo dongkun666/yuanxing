@@ -13,17 +13,19 @@
 | 编号 | 借鉴源 | 任务标题 | 分配 agent | 优先级 | 估时 | 依赖 |
 |---|---|---|---|---|---|---|
 | T-REF-01 | 借鉴 7+8 | 四级授权 + LLM 风险评估 + Permission Hook | lex-coder | P0 | 2 周 | Track A W2 |
-| T-REF-02 | 借鉴 1+2+3 | Skill 系统 v1 (官方 9 Skill + 律所私有仓库) | lex-ai + lex-coder | P0 | 4 周 | Track A |
+| T-REF-02 | 借鉴 1+2+3+**18** | Skill 系统 v1 (官方 9 Skill + 律所私有仓库 + **agentskills.io 开放标准**) | lex-ai + lex-coder + **lex-pm** | P0 | 4 周 | Track A |
 | T-REF-03 | 借鉴 8 | 律所自定义 Hook 规则 | lex-coder + lex-ai | P0 | 2 周 | T-REF-01 |
 | T-REF-04 | 借鉴 9 | Ask/Plan/Craft 三模式切换 UI | lex-design + lex-coder | P0 | 2 周 | Track D (试用版) |
-| T-REF-05 | 借鉴 5+6 | Memory 三层架构 (Working/Session/Persistent) | lex-ai + lex-coder | P1 | 4 周 | Track J (知识库) |
-| T-REF-06 | 借鉴 6 | microCompact 上下文压缩 | lex-ai | P1 | 1 周 | T-REF-05 |
-| T-REF-07 | 借鉴 5 | 每日反思 / 风格学习引擎 | lex-ai + lex-pm | P1 | 4 周 | T-REF-05 |
+| T-REF-05 | 借鉴 5+6+**19** | Memory 三层架构 (Working/Session/Persistent) + **Context Files 案件级 AGENTS.md 自动注入** | lex-ai + lex-coder | P1 | 4 周 | Track J (知识库) |
+| T-REF-06 | 借鉴 6+**23** | microCompact 上下文压缩 + **Trajectory compression 结构化数据源** | lex-ai | P1 | 1 周 | T-REF-05 |
+| T-REF-07 | 借鉴 5+**17+18** | 每日反思 / 风格学习引擎 + **Self-improving 闭环 (提议自动生成 Skill) + Honcho dialectic 双向反思** | lex-ai + lex-pm | P1 | 4 周 | T-REF-05 |
 | T-REF-08 | 借鉴 13 | Sub-Agent 派发 (类案并行检索) | lex-data + lex-ai | P1 | 3 周 | Track J |
 | T-REF-09 | 借鉴 10 | Builder 模式 (律所新人 onboarding) | lex-design + lex-ai | P2 | 3 周 | T-REF-04 |
 | T-REF-10 | 借鉴 11 | Desktop ↔ Word/WPS 剪贴板 Bridge | lex-coder + lex-design | P2 | 3 周 | Track A |
 | T-REF-11 | 借鉴 14 | Team 多智能体 (企业版 5+ 人协作) | lex-ai + lex-pm | P2 | 6 周 | T-REF-08 |
 | T-REF-12 | 借鉴 1 | Skill 商店 (律所级私有 Skill 审核/发布) | lex-pm + lex-coder | P2 | 4 周 | T-REF-02 |
+| **T-REF-13** | **借鉴 21** | **语音转写 (Whisper 本地推理, 律师口述案情)** | **lex-ai + lex-coder** | **P2** | **3 周** | **Track A** |
+| **T-REF-14** | **借鉴 20** | **多设备局域网同步 (Mac/Win/iPad, 律所内网 SMB/Wifi)** | **lex-coder + lex-design** | **P2** | **4 周** | **T-REF-01 + T-REF-05** |
 
 ---
 
@@ -283,20 +285,69 @@
 
 ---
 
+### T-REF-13: 语音转写 (律师口述案情 → 案件 notes.md)  ← lex-ai + lex-coder
+
+**借鉴源**: Hermes Agent voice memo transcription
+
+**描述**:
+- LexPrime 桌面端新增录音按钮, 律师按下后开始录音
+- **Whisper 本地推理** (Whisper.cpp 或 sherpa-onnx), 不上云
+- 转写后的中文文本自动存入当前案件的 `case-notes.md`, 标注时间戳 + 来源 (语音/手动)
+- 借鉴 Hermes 的"案件级 context" 思路: 转写文本立即注入下次 AI 对话 context
+- 律所隐私: 录音文件存本地, 转写完后可删除原音频 (默认 7 天自动清理)
+
+**验收**:
+- 中文转写准确率 > 95% (Whisper large-v3)
+- 转写延迟 < 1s (流式)
+- 完全本地, 0 网络请求
+- 律师可手动编辑转写文本
+
+**依赖**: Track A (Auth) + T-REF-05 (案件级 context)
+**借鉴源文件**: Hermes Agent `voice/` 模块
+**借鉴实现**: `whisper.cpp` + `sherpa-onnx` (中文专精模型)
+
+---
+
+### T-REF-14: 多设备局域网同步 (Mac/Win/iPad, 律所内网)  ← lex-coder + lex-design
+
+**借鉴源**: Hermes Agent "Runs anywhere, not just your laptop" (反借鉴云端, 借鉴"任意设备")
+
+**描述**:
+- 律师在律所内有多设备: Mac 笔记本 + Win 台式机 + iPad (庭审用)
+- LexPrime 数据 (案件 + Memory + Skill 配置) 通过**律所局域网**同步, 不上公网
+- 同步协议: 自研轻量 (基于 CRDT 思想 + SQLite 双向同步), 跟 Git 类似但只同步 metadata
+- 同步触发: 设备上线 (mDNS 发现) / 律师手动触发 / 定时 (5 分钟)
+- 冲突解决: 律师文书类 last-write-wins (按时间戳), 案件 metadata CRDT
+- 律所 IT 视角: 设备加入律所 WiFi 即自动同步, 离开 WiFi 走本地缓存
+
+**验收**:
+- 3 设备间同步延迟 < 30s (律所千兆局域网)
+- 离线编辑后再上线, 自动合并无冲突
+- 完全局域网, 0 公网请求
+- 同步日志可查 (类似 git log)
+
+**依赖**: T-REF-01 (Auth 设备授权) + T-REF-05 (Memory 同步)
+**借鉴源**: Hermes Agent 跨设备架构, Git 同步思想
+**反借鉴**: Hermes 走 Modal/Daytona 云 VM, LexPrime 走律所内网
+
+---
+
 ## 15.3 任务依赖图
 
 ```
 Track A (Auth W2)
   ↓
-T-REF-01 (四级授权) ──→ T-REF-03 (Hook 规则)
+T-REF-01 (四级授权) ──→ T-REF-03 (Hook 规则) ──→ T-REF-14 (多设备同步)
   ↓                        ↓
 Track D (试用版) ──→ T-REF-04 (三模式)
   ↓                        ↓
-Track J (知识库) ──→ T-REF-05 (Memory) ──→ T-REF-06 (microCompact)
+Track J (知识库) ──→ T-REF-05 (Memory + Context Files) ──→ T-REF-06 (microCompact + Trajectory)
                             ↓
-                          T-REF-07 (反思引擎)
+                          T-REF-07 (反思 + Self-improving + dialectic)
+                            ↓
+                          T-REF-13 (语音转写)
 
-Track E (Skill) ──→ T-REF-02 (Skill 系统) ──→ T-REF-12 (Skill 商店)
+Track E (Skill) ──→ T-REF-02 (Skill + agentskills.io) ──→ T-REF-12 (Skill 商店)
                                             ↓
                                           T-REF-08 (Sub-Agent) ──→ T-REF-11 (Team)
                                                                        ↑
@@ -310,14 +361,14 @@ T-REF-01 ──→ T-REF-10 (剪贴板 Bridge)
 
 ### Phase 4 剩余 (Week 5-12)
 - W5-6: T-REF-01 (P0 权限) 并行 Track B/D
-- W7-8: T-REF-02 (P0 Skill 系统 v1) 并行 Track E
+- W7-8: T-REF-02 (P0 Skill 系统 v1 + agentskills.io) 并行 Track E
 - W9-10: T-REF-03 (P0 Hook 规则) + T-REF-04 (P0 三模式 UI)
-- W11-12: T-REF-05 (P1 Memory) 启动
+- W11-12: T-REF-05 (P1 Memory + Context Files) 启动
 
 ### Phase 5 (Week 13-24)
-- W13-16: T-REF-06 (microCompact) + T-REF-07 (反思引擎)
-- W17-20: T-REF-08 (Sub-Agent) + T-REF-09 (Builder) + T-REF-10 (剪贴板)
-- W21-24: T-REF-11 (Team) + T-REF-12 (Skill 商店) — 企业版
+- W13-16: T-REF-06 (microCompact + Trajectory) + T-REF-07 (反思 + Self-improving + dialectic)
+- W17-20: T-REF-08 (Sub-Agent) + T-REF-09 (Builder) + T-REF-10 (剪贴板) + **T-REF-13 (语音转写)**
+- W21-24: T-REF-11 (Team) + T-REF-12 (Skill 商店) + **T-REF-14 (多设备同步)** — 企业版
 
 ---
 
@@ -335,11 +386,11 @@ T-REF-01 ──→ T-REF-10 (剪贴板 Bridge)
 
 ## 15.6 跨 agent 协作要点
 
-- **lex-coder**: 负责 T-REF-01/03/10 的 backend 实现, 提供 API 给其他 agent
-- **lex-design**: 负责 T-REF-04/09/10 的 UI 设计, 跟 v1 设计系统对齐
-- **lex-ai**: 负责 T-REF-02/05/06/07/08 的 LLM/RAG 实现, Memory + Skill 核心
+- **lex-coder**: 负责 T-REF-01/03/10/14 的 backend 实现, 提供 API 给其他 agent
+- **lex-design**: 负责 T-REF-04/09/10/14 的 UI 设计, 跟 v1 设计系统对齐
+- **lex-ai**: 负责 T-REF-02/05/06/07/08/13 的 LLM/RAG 实现, Memory + Skill + 语音核心
 - **lex-data**: 负责 T-REF-08 的 Sub-Agent 数据源接入
-- **lex-pm**: 负责 T-REF-07/11/12 的产品验证 + PMF 反馈
+- **lex-pm**: 负责 T-REF-07/11/12 的产品验证 + PMF 反馈 + Skill 标准化讨论 (agentskills.io)
 
 每个任务开始前, owner agent 拉一个 1-page 实施 spec (从本附录展开), 提交到 plan workspace。
 
