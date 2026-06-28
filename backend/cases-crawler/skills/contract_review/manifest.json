@@ -42,6 +42,7 @@
     "prompt.md",
     "language_policy.md"
   ],
+  "skill_doc_file": "SKILL.md",
   "permissions": {
     "read": ["contracts", "risk_annotations", "legal_basis"],
     "write": ["contract_reviews"],
