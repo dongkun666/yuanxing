@@ -1,12 +1,17 @@
 """
 LexPrime Auth SQLAlchemy ORM 模型
-2026-06-28 · W1 脚手架
+2026-06-28 · W1 脚手架 → 2026-06-29 · W2 业务表 → 2026-06-29 · W3 扩展表
 
-4 表设计:
+W1+W2 (4 表):
 - User           认证实体 (email + password + 角色 + 状态)
 - LawyerProfile  律师扩展档案 (1-to-1 with User) - 执业证 / 律所 / 审核状态
 - Token          Refresh Token 持久化 (含设备/IP/撤销标记)
 - OTPLog         邮箱/手机验证码 (purpose: register/reset/login/2fa/license_verify)
+
+W3 (3 新表):
+- EmailVerification       邮箱验证长 token (24h 过期, 一次性)
+- TotpBackupCode          TOTP 一次性恢复码 (10 个, hashed)
+- LicenseReviewLog        律师执业证审核状态变迁审计
 
 与现有 core/models.py 的 Lawyer/Firm 解耦:
 - User 是认证层, LawyerProfile 是业务档案层
@@ -214,3 +219,101 @@ class OTPLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     __table_args__ = (Index("idx_otp_target_purpose", "target", "purpose"),)
+
+
+# ========== EmailVerification (W3: 邮箱验证长 token) ==========
+class EmailVerification(Base):
+    """
+    邮箱验证长 token (W3)
+
+    - token_hash 存 sha256 (跟密码一样原则)
+    - 24h 过期 (auth_email_verify_ttl_hours)
+    - 一次性: consumed_at 非空 = 已用
+    - 重复发送会撤销旧 token (防滥用)
+    """
+    __tablename__ = "auth_email_verifications"
+
+    id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    email: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
+    purpose: Mapped[str] = mapped_column(String(32), default="verify_email", nullable=False)
+    # purpose: verify_email / reset_password / change_email
+
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, nullable=False)
+    consumed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+
+    ip_address: Mapped[Optional[str]] = mapped_column(String(64))
+    user_agent: Mapped[Optional[str]] = mapped_column(Text)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    # Relationships (单向足够, 不反向查回 user)
+    __table_args__ = (Index("idx_email_verify_user_purpose", "user_id", "purpose"),)
+
+
+# ========== TotpBackupCode (W3: TOTP 一次性恢复码) ==========
+class TotpBackupCode(Base):
+    """
+    TOTP 一次性恢复码 (W3)
+
+    - 用户绑定 TOTP 时生成 10 个 (auth_totp_backup_codes_count)
+    - 用 bcrypt 哈希存 (跟密码一样), 不存明文
+    - 一次性: consumed_at 非空 = 已用
+    - 用完后 user 可重置 (W3 POST /api/auth/totp/reset)
+    """
+    __tablename__ = "auth_totp_backup_codes"
+
+    id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(
+        BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    code_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    # 短码标记 (前 4 位明文, 帮助用户识别"哪一组")
+    code_prefix: Mapped[str] = mapped_column(String(8), nullable=False)
+
+    consumed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+    consumed_ip: Mapped[Optional[str]] = mapped_column(String(64))
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (Index("idx_totp_backup_user", "user_id"),)
+
+
+# ========== LicenseReviewLog (W3: 律师执业证审核审计) ==========
+class LicenseReviewLog(Base):
+    """
+    律师执业证审核状态变迁审计 (W3)
+
+    状态机: pending → ai_reviewing → human_reviewing → approved / rejected
+    每一步变迁记录一条 (from_status / to_status / actor / reason / ai_score)
+    人工复审管理员只能看到状态 + 操作历史, 不允许改 OCR 数据
+    """
+    __tablename__ = "auth_license_review_logs"
+
+    id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
+    profile_id: Mapped[int] = mapped_column(
+        BigIntFK, ForeignKey("auth_lawyer_profiles.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    user_id: Mapped[int] = mapped_column(
+        BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+
+    from_status: Mapped[Optional[str]] = mapped_column(String(16))
+    to_status: Mapped[str] = mapped_column(String(16), nullable=False)
+    actor_type: Mapped[str] = mapped_column(String(16), default="system", nullable=False)
+    # actor_type: system / ai / admin / user (user = 用户自己上传触发)
+    actor_id: Mapped[Optional[int]] = mapped_column(
+        BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL")
+    )
+
+    ai_score: Mapped[Optional[float]] = mapped_column()  # 0.0 - 1.0
+    reason: Mapped[Optional[str]] = mapped_column(Text)
+    extra: Mapped[Optional[dict]] = mapped_column(JSON)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (Index("idx_license_review_profile", "profile_id"),)

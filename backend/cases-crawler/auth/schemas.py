@@ -200,3 +200,127 @@ class MeResponse(BaseModel):
     last_login_at: Optional[datetime]
     created_at: datetime
     profile: Optional[LawyerProfileOut] = None
+
+
+# ========== W3: Email Verification ==========
+class EmailSendRequest(BaseModel):
+    """
+    POST /api/auth/email/send - 触发发送邮箱验证邮件
+
+    - user 必须已登录
+    - purpose 默认 verify_email (后续扩展 reset_password / change_email)
+    """
+
+    purpose: str = Field(
+        "verify_email",
+        pattern="^(verify_email|reset_password|change_email)$",
+        description="用途",
+    )
+
+
+class EmailSendResponse(BaseModel):
+    """发送响应 (dev mode: 返回 dev_only_token 用于测试)"""
+
+    message: str
+    code: str = "ok"
+    dev_only_token: Optional[str] = Field(
+        None,
+        description="开发模式 token 明文 (生产应改为邮件链接, 不返回)",
+    )
+
+
+class EmailVerifyRequest(BaseModel):
+    """POST /api/auth/email/verify - 验证 token"""
+
+    token: str = Field(..., min_length=32, max_length=128)
+
+
+# ========== W3: TOTP ==========
+class TotpSetupRequest(BaseModel):
+    """POST /api/auth/totp/setup - 启动 2FA 绑定"""
+
+    password: str = Field(..., min_length=1, max_length=128, description="当前密码二次确认")
+
+
+class TotpSetupResponse(BaseModel):
+    """TOTP setup 响应 (前端展示 QR + 提示用户保存 backup codes)"""
+
+    secret: str = Field(..., description="base32 secret, 用户可手动输入 authenticator")
+    qr_code_data_uri: str = Field(..., description="QR code data URI, <img src=...>")
+    provisioning_uri: str = Field(..., description="otpauth:// URI")
+    backup_codes: List[str] = Field(..., description="10 个一次性恢复码, 仅本次返回")
+    is_2fa_enabled: bool = Field(False, description="setup 后为 False, verify 后才 True")
+
+
+class TotpVerifyRequest(BaseModel):
+    """POST /api/auth/totp/verify - 启用 2FA (setup 后用) 或 登录验证"""
+
+    code: str = Field(..., min_length=6, max_length=8, description="6 位 TOTP 或 8 位 backup code")
+
+
+class TotpVerifyResponse(BaseModel):
+    """TOTP verify 响应"""
+
+    verified: bool
+    is_2fa_enabled: bool
+    method: str = Field(..., description="totp / backup_code")
+
+
+class TotpDisableRequest(BaseModel):
+    """POST /api/auth/totp/disable - 关闭 2FA"""
+
+    password: str = Field(..., min_length=1, max_length=128)
+    code: str = Field(..., min_length=6, max_length=8)
+
+
+# ========== W3: Lawyer License ==========
+class LicenseUploadRequest(BaseModel):
+    """POST /api/auth/lawyer-license/upload"""
+
+    image_base64: str = Field(..., min_length=100, description="执业证图片/PDF base64")
+    filename: str = Field(..., min_length=1, max_length=255)
+
+
+class LicenseUploadResponse(BaseModel):
+    """上传响应"""
+
+    license_status: str
+    ai_score: Optional[float] = None
+    reason: Optional[str] = None
+    ocr_confidence: Optional[float] = None
+    extracted_fields: Optional[dict] = None
+
+
+class LicenseReviewLogOut(BaseModel):
+    """审核日志响应"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    from_status: Optional[str]
+    to_status: str
+    actor_type: str
+    actor_id: Optional[int]
+    ai_score: Optional[float]
+    reason: Optional[str]
+    created_at: datetime
+
+
+class LicenseStatusResponse(BaseModel):
+    """GET /api/auth/lawyer-license/status"""
+
+    license_status: str
+    license_image_url: Optional[str]
+    license_reject_reason: Optional[str]
+    license_submitted_at: Optional[datetime]
+    license_reviewed_at: Optional[datetime]
+    ocr_data: Optional[dict] = None
+    review_logs: List[LicenseReviewLogOut] = []
+
+
+class LicenseReviewRequest(BaseModel):
+    """POST /api/auth/lawyer-license/review (admin)"""
+
+    profile_id: int = Field(..., ge=1)
+    decision: str = Field(..., pattern="^(approved|rejected)$")
+    reason: str = Field(..., min_length=1, max_length=500)
