@@ -2,7 +2,7 @@
   "$schema": "https://agentskills.io/schemas/skill-manifest.v1.json",
   "id": "lexprime.skill.contract-review",
   "name": "合同风险审查",
-  "version": "0.1.0-draft",
+  "version": "0.2.0-w4",
   "status": "draft",
   "owner_agent": "lex-ai",
   "reviewer_agent": "lex-pm",
@@ -65,13 +65,22 @@
   },
   "metrics": {
     "p95_latency_ms_target": 2000,
+    "p95_retrieval_ms_target": 200,
     "load_time_ms_target": 3000,
     "fatal_major_accuracy_target": 0.85,
+    "retrieval_top5_accuracy_target": 0.80,
     "suggestion_usefulness_target": 0.70,
     "false_statement_rate_target": 0.0
   },
   "tracked_references": ["T-REF-17", "T-REF-18", "T-REF-22", "T-REF-25"],
   "tracks": ["E-skills"],
   "created_at": "2026-06-29",
-  "updated_at": "2026-06-29"
+  "updated_at": "2026-06-29",
+  "w4_changelog": [
+    "feat(embeddings): BAAI/bge-small-zh-v1.5 中文 embedding 服务 (CPU P95 < 10ms)",
+    "feat(lancedb_index): ContractRiskIndex (contract_clauses + contract_risks 两表, 280+ 风险样本)",
+    "feat(reviewer): W4 双路召回 (LLM 规则 + LanceDB 相似风险样本), retrieval_evidence[] 字段",
+    "feat(scripts): index_contracts.py 一次性灌库 (56 模板 → 265 条款 + 280 风险标注)",
+    "test: test_contract_review_lancedb.py 20/20 PASSED, 全套 43/43"
+  ]
 }

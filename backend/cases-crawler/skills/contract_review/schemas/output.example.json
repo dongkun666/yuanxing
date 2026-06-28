@@ -40,7 +40,35 @@
       "modification_suggestion": "建议修改为: '逾期支付的, 每逾期一天, 按当期应付租金的万分之五 (年化 1.825%) 加收违约金。' 或采用'逾期 × LPR × 1.5 倍' 等司法保护上限内表述。",
       "modified_clause_template": "乙方应于每月 5 日前向甲方支付当月租金人民币 5000 元整。逾期支付的, 自逾期之日起, 按当期应付租金为基数, 按全国银行间同业拆借中心公布的同期 LPR 的 1.5 倍计算逾期违约金, 直至实际清偿之日止。",
       "stance_impact": "不利",
-      "reviewer_confidence": 0.95
+      "reviewer_confidence": 0.95,
+      "retrieval_evidence": [
+        {
+          "sample_id": "loan-p2p-01::clause-4::ann-0",
+          "contract_id": "loan-p2p-01",
+          "contract_type": "借款合同",
+          "clause_id": "loan-p2p-01::clause-4",
+          "clause_title": "违约责任",
+          "risk_level": "fatal",
+          "risk_categories": ["违约金过高"],
+          "risk_description": "该条款违约金按日 5% 计算, 司法实践中通常被认定为过高并调减。",
+          "modification_suggestion": "建议修改为'按 LPR × 1.5 倍' 等司法保护上限内表述。",
+          "similarity": 0.974,
+          "source": "contract_risks_index"
+        },
+        {
+          "sample_id": "loan-guaranteed-01::clause-4::ann-0",
+          "contract_id": "loan-guaranteed-01",
+          "contract_type": "借款合同",
+          "clause_id": "loan-guaranteed-01::clause-4",
+          "clause_title": "违约责任",
+          "risk_level": "fatal",
+          "risk_categories": ["违约金过高"],
+          "risk_description": "逾期按日 0.5% 加收违约金, 司法实践中通常被调减。",
+          "modification_suggestion": "建议修改为'按 LPR × 1.5 倍'。",
+          "similarity": 0.973,
+          "source": "contract_risks_index"
+        }
+      ]
     },
     {
       "clause_id": "clause-6",
@@ -114,6 +142,13 @@
     "show_diff_panel": false,
     "show_strategy_modal": true,
     "highlight_clauses": ["clause-3", "clause-6"],
-    "export_format": ["word", "pdf", "markdown"]
+    "export_format": ["word", "pdf", "markdown"],
+    "retrieval_stats": {
+      "index_enabled": true,
+      "embedding_model": "BAAI/bge-small-zh-v1.5",
+      "fatal_major_clauses": 2,
+      "clauses_with_evidence": 2,
+      "recall_pct": 100.0
+    }
   }
 }

@@ -24,6 +24,11 @@ data/*.db-journal
 !data/processed/.gitkeep
 !data/licenses/.gitkeep
 
+# W4: LanceDB 向量库 (平台相关二进制, 用 scripts/index_contracts.py 重建)
+data/lancedb/
+data/lancedb_test*/
+!data/lancedb/.gitkeep
+
 # 日志
 logs/*
 !logs/.gitkeep

@@ -4,6 +4,11 @@ LexPrime 合同风险审查 Skill — 审查算法参考实现 (v0.1.0-draft)
 T-REF-22: 类案子 Agent RPC 模式 (审查 + 风险分类 + 策略生成, 不污染主上下文)
 T-REF-25: RAG 上下文压缩 (Token 超 8000 自动压)
 
+W4 升级 (LanceDB + BGE 双路召回):
+- 致命/重大风险条款 → 检索历史风险样本 (top 5), 引用为 retrieval_evidence
+- 检索走本地 LanceDB (data/lancedb/), 零联网
+- 降级: 索引未就位时, retrieval_evidence = []
+
 设计原则:
 1. **零联网**: 全部走本地 contracts + risk_annotations 数据
 2. **条款优先**: 按"第X条"标号拆分条款, 每条款独立审查
@@ -11,6 +16,7 @@ T-REF-25: RAG 上下文压缩 (Token 超 8000 自动压)
 4. **立场感知**: 律师立场 (甲方/乙方/丙方/审查方) 影响风险等级和策略方向
 5. **Token 预算**: 全链路 8000 token 硬上限
 6. **语言规范**: 任何 narrative 字段必须通过 language_guard
+7. **双路召回 (W4)**: LLM 规则审查 + LanceDB 相似风险样本
 
 依赖 (见 requirements.txt):
 - lancedb>=0.6
@@ -67,6 +73,65 @@ from skills.contract_review.language_guard import (  # noqa: E402
 )
 
 
+# ===== W4: 索引懒加载 =====
+
+_RISK_INDEX_SINGLETON: Optional[Any] = None
+_RISK_INDEX_FAILED: bool = False
+
+
+def _get_risk_index():
+    """懒加载合同风险索引 (W4 LanceDB)。
+
+    Returns:
+        ContractRiskIndex 实例, 或 None (索引未就位 / 加载失败)
+    """
+    global _RISK_INDEX_SINGLETON, _RISK_INDEX_FAILED
+    if _RISK_INDEX_SINGLETON is not None:
+        return _RISK_INDEX_SINGLETON
+    if _RISK_INDEX_FAILED:
+        return None
+    try:
+        # 相对路径 (从 cases-crawler/ 启)
+        from core.lancedb_index import (  # noqa: PLC0415
+            IndexConfig,
+            get_contract_index,
+        )
+        cfg = IndexConfig(
+            lancedb_path="data/lancedb",
+            default_top_k=5,
+            max_top_k=10,
+        )
+        idx = get_contract_index(cfg)
+        if idx.has_risks():
+            _RISK_INDEX_SINGLETON = idx
+            return idx
+        # 索引为空, 标记失败, 后续 fallback
+        _RISK_INDEX_FAILED = True
+        return None
+    except Exception:  # noqa: BLE001
+        _RISK_INDEX_FAILED = True
+        return None
+
+
+def reset_risk_index() -> None:
+    """重置风险索引单例 (测试用)。"""
+    global _RISK_INDEX_SINGLETON, _RISK_INDEX_FAILED
+    _RISK_INDEX_SINGLETON = None
+    _RISK_INDEX_FAILED = False
+    try:
+        from core.lancedb_index import reset_index as _reset  # noqa: PLC0415
+        _reset()
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def set_risk_index(idx: Any) -> None:
+    """强制设置索引 (测试注入)。"""
+    global _RISK_INDEX_SINGLETON, _RISK_INDEX_FAILED
+    _RISK_INDEX_SINGLETON = idx
+    _RISK_INDEX_FAILED = False
+
+
 # ===== Token 计数 (T-REF-25) =====
 
 def count_tokens(text: str) -> int:
@@ -86,6 +151,9 @@ class ReviewerConfig:
     latency_p95_target_ms: int = 2000
     max_clauses: int = 200
     use_compression_threshold: float = 0.9
+    # W4: 相似风险样本检索 top_k (双路召回)
+    retrieval_top_k: int = 5
+    retrieval_enabled: bool = True
 
 
 # ===== 输入 =====
@@ -323,6 +391,78 @@ def lookup_legal_basis(risk_categories: List[str]) -> List[str]:
                 seen.add(law)
                 out.append(law)
     return out[:5]
+
+
+# ===== W4: 相似风险样本检索 (双路召回) =====
+
+@dataclass
+class RetrievalEvidence:
+    """相似风险样本引用 (W4 双路召回的输出)。"""
+    sample_id: str               # 历史样本 ID (例: house-rent-residential-01::clause-3::ann-0)
+    contract_id: str             # 历史合同 ID
+    contract_type: str
+    clause_id: str
+    clause_title: str
+    risk_level: str
+    risk_categories: List[str]
+    risk_description: str
+    modification_suggestion: str
+    similarity: float            # cosine 相似度 (0-1)
+    source: str = "contract_risks_index"   # 数据源: contract_risks_index / fallback
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+def retrieve_similar_risks(clause: Clause,
+                              ri: ReviewerInput,
+                              top_k: int = 5,
+                              same_contract_type: bool = True) -> List[RetrievalEvidence]:
+    """检索与某条新条款相似的历史风险样本 (W4)。
+
+    用途: 致命/重大风险条款需要 "双路召回" ——
+    - LLM 规则审查 (FATAL_KEYWORDS / MAJOR_KEYWORDS 正则) → 主结论
+    - LanceDB 相似样本召回 (BGE embedding + cosine 距离) → 旁证
+
+    Args:
+        clause: 目标条款
+        ri: 输入
+        top_k: 返回 top_k
+        same_contract_type: 是否只检索同合同类型 (默认 True, metadata 过滤)
+
+    Returns:
+        List[RetrievalEvidence] (按 similarity 降序, 0 条表示索引未就位)
+    """
+    idx = _get_risk_index()
+    if idx is None:
+        return []
+
+    contract_type = ri.contract_type if same_contract_type else None
+    try:
+        hits = idx.search_similar_risks(
+            clause.clause_text,
+            top_k=top_k,
+            risk_level=None,  # 不过滤, 让 fatal/major 都能召回
+            contract_type=contract_type,
+        )
+    except Exception:  # noqa: BLE001
+        return []
+
+    out: List[RetrievalEvidence] = []
+    for h in hits:
+        out.append(RetrievalEvidence(
+            sample_id=h.id,
+            contract_id=h.contract_id,
+            contract_type=h.contract_type,
+            clause_id=h.clause_id,
+            clause_title=h.clause_title,
+            risk_level=h.risk_level,
+            risk_categories=h.risk_categories,
+            risk_description=h.risk_description,
+            modification_suggestion=h.modification_suggestion,
+            similarity=h.similarity,
+        ))
+    return out
 
 
 # ===== 风险描述生成 =====
@@ -720,6 +860,8 @@ def run_skill(ri: ReviewerInput,
 
     # Step 3: 条款级审查
     clause_reviews: List[ClauseReview] = []
+    retrieval_total = 0
+    retrieval_used = 0
     for clause in clauses:
         risk_level, risk_categories = classify_clause_risk(clause, ri)
 
@@ -743,6 +885,20 @@ def run_skill(ri: ReviewerInput,
         # 置信度 (基于关键词命中数)
         confidence = min(1.0, 0.5 + 0.1 * len(risk_categories))
 
+        # W4: 致命/重大风险条款 → 检索相似历史风险样本 (双路召回)
+        retrieval_evidence: List[Dict[str, Any]] = []
+        if config.retrieval_enabled and risk_level in (RISK_LEVEL_FATAL, RISK_LEVEL_MAJOR):
+            retrieval_total += 1
+            evidences = retrieve_similar_risks(
+                clause, ri, top_k=config.retrieval_top_k, same_contract_type=True
+            )
+            if evidences:
+                retrieval_used += 1
+                # 保留 top 3, 避免 narrative 冗长
+                retrieval_evidence = [e.to_dict() for e in evidences[:3]]
+                # 提升 confidence (有旁证)
+                confidence = min(1.0, confidence + 0.1 * len(retrieval_evidence))
+
         clause_reviews.append(ClauseReview(
             clause_id=clause.clause_id,
             clause_index=clause.clause_index,
@@ -757,6 +913,8 @@ def run_skill(ri: ReviewerInput,
             stance_impact=stance_impact,
             reviewer_confidence=confidence,
         ))
+        # 把 retrieval_evidence 挂到 review 上 (动态属性, 不破坏 ClauseReview schema)
+        clause_reviews[-1].retrieval_evidence = retrieval_evidence  # type: ignore[attr-defined]
 
     t_review_ms = int((time.time() - t0) * 1000)
 
@@ -781,6 +939,15 @@ def run_skill(ri: ReviewerInput,
     # Step 7: UI 提示
     traffic = compute_traffic_light(risk_summary)
 
+    # Step 8 (W4): 整体检索统计
+    retrieval_stats = {
+        "index_enabled": _get_risk_index() is not None,
+        "embedding_model": config.embedding_model,
+        "fatal_major_clauses": retrieval_total,
+        "clauses_with_evidence": retrieval_used,
+        "recall_pct": round(retrieval_used / retrieval_total * 100, 2) if retrieval_total else 0.0,
+    }
+
     return ReviewerOutput(
         query_meta={
             "contract_type": ri.contract_type,
@@ -794,7 +961,7 @@ def run_skill(ri: ReviewerInput,
             "model_used": config.model,
             "embedding_model": config.embedding_model,
         },
-        clause_reviews=[asdict(r) for r in clause_reviews],
+        clause_reviews=[_serialize_review(r) for r in clause_reviews],
         risk_summary=risk_summary,
         negotiation_strategy=neg_strategy,
         version_diff=version_diff,
@@ -807,8 +974,17 @@ def run_skill(ri: ReviewerInput,
             "highlight_clauses": [r.clause_id for r in clause_reviews
                                    if r.risk_level in (RISK_LEVEL_FATAL, RISK_LEVEL_MAJOR)][:10],
             "export_format": ["word", "pdf", "markdown"],
+            "retrieval_stats": retrieval_stats,
         },
     )
+
+
+def _serialize_review(r: ClauseReview) -> Dict[str, Any]:
+    """把 ClauseReview 转 dict, 附带 retrieval_evidence 字段 (W4)。"""
+    d = asdict(r)
+    # 动态属性 (W4 双路召回) 不会进 asdict, 手动补
+    d["retrieval_evidence"] = getattr(r, "retrieval_evidence", [])
+    return d
 
 
 # ===== CLI =====

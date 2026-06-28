@@ -94,6 +94,41 @@
             "minimum": 0,
             "maximum": 1,
             "description": "审查置信度 (0-1, 用于 UI 提示)"
+          },
+          "retrieval_evidence": {
+            "type": "array",
+            "maxItems": 5,
+            "description": "W4 相似历史风险样本 (双路召回), 仅 fatal/major 风险条款返回",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sample_id", "contract_id", "clause_id", "risk_level", "similarity"],
+              "properties": {
+                "sample_id": {"type": "string", "description": "历史样本 ID (格式: {contract_id}::clause-{idx}::ann-{n})"},
+                "contract_id": {"type": "string", "description": "历史合同模板 ID"},
+                "contract_type": {"type": "string"},
+                "clause_id": {"type": "string"},
+                "clause_title": {"type": "string"},
+                "risk_level": {"type": "string", "enum": ["fatal", "major", "advisory"]},
+                "risk_categories": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "risk_description": {"type": "string"},
+                "modification_suggestion": {"type": "string"},
+                "similarity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "cosine 相似度 (BGE 归一化后 dot product)"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": ["contract_risks_index", "fallback"],
+                  "description": "数据源: contract_risks_index = LanceDB 真实检索, fallback = 索引未就位"
+                }
+              }
+            }
           }
         }
       }
@@ -254,6 +289,18 @@
           "type": "array",
           "items": {"type": "string", "enum": ["word", "pdf", "markdown"]},
           "description": "支持的导出格式"
+        },
+        "retrieval_stats": {
+          "type": "object",
+          "description": "W4 双路召回统计 (LanceDB 索引就位 + 旁证命中率)",
+          "additionalProperties": false,
+          "properties": {
+            "index_enabled": {"type": "boolean", "description": "LanceDB 索引是否就位"},
+            "embedding_model": {"type": "string"},
+            "fatal_major_clauses": {"type": "integer", "description": "致命/重大风险条款总数"},
+            "clauses_with_evidence": {"type": "integer", "description": "成功召回旁证的条款数"},
+            "recall_pct": {"type": "number", "description": "旁证命中率 (0-100)"}
+          }
         }
       }
     }
