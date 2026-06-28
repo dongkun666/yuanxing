@@ -86,7 +86,17 @@
 <span>巡检 (Lint)</span>
 <span class="text-[10px] bg-urgent-tint text-urgent px-1.5 py-0.5 rounded font-medium">4 待处理</span>
 </button>
+<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-colors" id="kb-tab-judicial" onclick="switchKnowledgeMainTab('judicial', this)">
+<iconify-icon class="text-lg" icon="mdi:bookshelf"></iconify-icon>
+<span>司法观点</span>
+<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">12 条</span>
+</button>
 </div>
+</div>
+
+<!-- ============== Tab 4: 司法观点库 (与知识库集成) ============== -->
+<div id="kb-panel-judicial" class="kb-panel hidden space-y-4">
+<!-- 内容由 judicial.js 动态渲染 -->
 </div>
 
 <!-- ============== Tab 1: 摄入 (Ingest) ============== -->
