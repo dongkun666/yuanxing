@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "居间报酬",
-      "text": "居间成功的, 甲方应按月租金的 50% 或一次性 50 万元向乙方支付居间报酬。"
+      "text": "居间成功的, 甲方应按月租金的 50% 或一次性 80 万元向乙方支付居间报酬。"
     },
     {
       "index": 4,
@@ -42,14 +42,14 @@
       "clause_title": "独家委托",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "违法条款"
+        "金额异常",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,13 +57,14 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "管辖连接点异常"
+        "表述模糊",
+        "争议管辖不利"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
@@ -72,19 +73,34 @@
       "clause_title": "费用承担",
       "risk_level": "advisory",
       "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "居间服务内容",
+      "risk_level": "advisory",
+      "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "居间服务内容",
+      "clause_index": 3,
+      "clause_title": "居间报酬",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -95,21 +111,6 @@
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "委托事项",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

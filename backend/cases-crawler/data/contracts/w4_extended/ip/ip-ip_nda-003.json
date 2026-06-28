@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "保密信息",
-      "text": "保密信息包括装修 (技术信息 / 商业信息 / 客户名单等)。"
+      "text": "保密信息包括原材料采购 (技术信息 / 商业信息 / 客户名单等)。"
     },
     {
       "index": 4,
       "title": "保密期限",
-      "text": "保密期限 2 年, 自 2026-12-17 起至 2027-09-12 止, 即便合同终止后仍有效。"
+      "text": "保密期限 3 年, 自 2027-02-06 起至 2027-09-13 止, 即便合同终止后仍有效。"
     },
     {
       "index": 5,
@@ -37,12 +37,12 @@
     {
       "index": 7,
       "title": "违约责任",
-      "text": "乙方违反保密义务的, 应一次性支付违约金人民币 30 万元。"
+      "text": "乙方违反保密义务的, 应一次性支付违约金人民币 80 万元。"
     },
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,11 +52,11 @@
       "clause_title": "保密信息",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "金额异常"
+        "违法条款",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
@@ -67,14 +67,14 @@
       "clause_title": "脱密义务",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "违约金过高"
+        "隐含义务",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《民法典》第五百八十五条 (违约金)"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,13 +82,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "管辖连接点异常"
+        "争议管辖不利",
+        "举证困难"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
@@ -97,29 +97,29 @@
       "clause_title": "违约责任",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
+        "举证困难",
         "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "保密义务",
+      "clause_index": 2,
+      "clause_title": "接收方",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

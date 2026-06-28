@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "触发条件",
-      "text": "强制随售的触发条件: 医疗。"
+      "text": "强制随售的触发条件: 技术升级。"
     },
     {
       "index": 4,
@@ -47,13 +47,13 @@
       "clause_title": "强制随售权",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "显失公平"
+        "显失公平",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,14 +62,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "争议管辖不利"
+        "管辖连接点异常",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
       "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
@@ -85,7 +84,7 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -93,19 +92,19 @@
       "clause_title": "协议主体",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "触发条件",
+      "clause_index": 6,
+      "clause_title": "对价",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -114,7 +113,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

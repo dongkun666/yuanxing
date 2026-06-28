@@ -17,17 +17,17 @@
     {
       "index": 3,
       "title": "定作内容",
-      "text": "定作内容: 装修。"
+      "text": "定作内容: 教育。"
     },
     {
       "index": 4,
       "title": "定作价款",
-      "text": "定作价款人民币 5 万元。"
+      "text": "定作价款人民币 5000 元。"
     },
     {
       "index": 5,
       "title": "交付",
-      "text": "乙方应于 2030-04-30 前将定作物交付甲方, 交付地点为甲方指定地点。"
+      "text": "乙方应于 2027-02-14 前将定作物交付甲方, 交付地点为甲方指定地点。"
     },
     {
       "index": 6,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,13 +52,13 @@
       "clause_title": "质量",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "违约金过高"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,13 +67,13 @@
       "clause_title": "交付",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
+        "违法条款",
         "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
@@ -83,14 +83,13 @@
       "risk_level": "major",
       "risk_categories": [
         "表述模糊",
-        "举证困难"
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
@@ -102,19 +101,19 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "定作人",
+      "clause_index": 2,
+      "clause_title": "承揽人",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"

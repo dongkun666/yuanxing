@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "工程概况",
-      "text": "工程名称: 经营周转, 工程地点: 厦门市武侯区某路 88 号。"
+      "text": "工程名称: 购房, 工程地点: 北京市西湖区某路 88 号。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "合同工期",
-      "text": "合同工期 6 个月, 自 2026-12-10 起至 2027-05-30 止。"
+      "text": "合同工期 5 年, 自 2026-11-06 起至 2027-03-13 止。"
     },
     {
       "index": 4,
       "title": "合同价款",
-      "text": "合同价款人民币 20 万元, 包含全部工程内容。"
+      "text": "合同价款人民币 3 万元, 包含全部工程内容。"
     },
     {
       "index": 5,
@@ -42,12 +42,12 @@
     {
       "index": 8,
       "title": "保修",
-      "text": "工程保修期 6 个月, 自竣工验收合格之日起计算。"
+      "text": "工程保修期 5 年, 自竣工验收合格之日起计算。"
     },
     {
       "index": 9,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -57,13 +57,13 @@
       "clause_title": "质量标准",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "重大遗漏"
+        "隐含义务",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -72,13 +72,13 @@
       "clause_title": "合同工期",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
+        "违约金过高",
         "显失公平"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
@@ -87,15 +87,31 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "解除权失衡"
+        "管辖连接点异常",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "合同价款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
-      "stance_impact": "不利"
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 7,
@@ -110,21 +126,6 @@
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "工程内容",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

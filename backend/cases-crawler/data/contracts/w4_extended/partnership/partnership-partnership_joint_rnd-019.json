@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "联合研发",
-      "text": "甲乙共同投入研发原材料采购项目。"
+      "text": "甲乙共同投入研发技术升级项目。"
     },
     {
       "index": 2,
       "title": "投入",
-      "text": "甲方投入研发人员及设备 (作价人民币 50 万元), 乙方投入研发资金人民币 500 万元。"
+      "text": "甲方投入研发人员及设备 (作价人民币 3 万元), 乙方投入研发资金人民币 300 万元。"
     },
     {
       "index": 3,
       "title": "研发期限",
-      "text": "研发期限 2 年, 自 2026-11-27 起至 2032-04-25 止。"
+      "text": "研发期限 10 年, 自 2027-04-06 起至 2032-01-10 止。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "知识产权",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "违约金过高"
+        "显失公平",
+        "重大遗漏"
       ],
       "legal_basis": [
         "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,14 +57,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "管辖连接点异常"
+        "表述模糊",
+        "举证困难"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
@@ -73,29 +73,14 @@
       "clause_title": "联合研发",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "后续开发",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -107,10 +92,24 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "联合研发",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

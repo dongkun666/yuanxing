@@ -12,7 +12,7 @@
     {
       "index": 2,
       "title": "认购金额",
-      "text": "乙方认购金额人民币 150 万元。"
+      "text": "乙方认购金额人民币 3 万元。"
     },
     {
       "index": 3,
@@ -22,7 +22,7 @@
     {
       "index": 4,
       "title": "基金期限",
-      "text": "基金期限 18 个月。"
+      "text": "基金期限 6 个月。"
     },
     {
       "index": 5,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -43,18 +43,19 @@
       "risk_level": "major",
       "risk_categories": [
         "解除权失衡",
-        "管辖连接点异常"
+        "举证困难"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "基金",
+      "clause_index": 5,
+      "clause_title": "收益分配",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -63,7 +64,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -72,28 +73,26 @@
       "clause_title": "收益分配",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "认购金额",
+      "clause_index": 5,
+      "clause_title": "收益分配",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
@@ -106,10 +105,10 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

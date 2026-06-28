@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "分包工程",
-      "text": "分包工程: 医疗。"
+      "text": "分包工程: 教育。"
     },
     {
       "index": 2,
       "title": "总承包合同",
-      "text": "总承包合同编号 LX-351697, 总承包人为甲方。"
+      "text": "总承包合同编号 LX-124331, 总承包人为甲方。"
     },
     {
       "index": 3,
@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "分包价款",
-      "text": "分包价款人民币 30 万元。"
+      "text": "分包价款人民币 1 万元。"
     },
     {
       "index": 5,
       "title": "工期",
-      "text": "分包工期 3 个月, 自 2027-04-09 起至 2028-09-28 止。"
+      "text": "分包工期 3 年, 自 2026-12-03 起至 2027-06-10 止。"
     },
     {
       "index": 6,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由标的物所在地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "分包工程",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "显失公平"
+        "显失公平",
+        "隐含义务"
       ],
       "legal_basis": [
         "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,14 +67,14 @@
       "clause_title": "质量",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "金额异常"
+        "重大遗漏",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,30 +82,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "管辖连接点异常"
+        "管辖连接点异常",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
-    },
-    {
-      "clause_index": 7,
-      "clause_title": "付款",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
     },
     {
       "clause_index": 2,
@@ -116,7 +101,22 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "付款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "聘任岗位",
-      "text": "甲方聘任乙方担任原材料采购职务, 任期 1 年。"
+      "text": "甲方聘任乙方担任教育职务, 任期 1 年。"
     },
     {
       "index": 2,
       "title": "薪酬",
-      "text": "乙方年薪人民币 1 万元, 由基本年薪 + 绩效奖金构成。"
+      "text": "乙方年薪人民币 50 万元, 由基本年薪 + 绩效奖金构成。"
     },
     {
       "index": 3,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "竞业禁止",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "隐含义务"
+        "隐含义务",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,14 +67,14 @@
       "clause_title": "保密义务",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "金额异常"
+        "金额异常",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
       "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -83,12 +83,13 @@
       "risk_level": "major",
       "risk_categories": [
         "争议管辖不利",
-        "解除权失衡"
+        "举证困难"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
@@ -98,13 +99,13 @@
       "risk_level": "major",
       "risk_categories": [
         "解除权失衡",
-        "争议管辖不利"
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -112,8 +113,8 @@
       "clause_title": "股权激励",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"

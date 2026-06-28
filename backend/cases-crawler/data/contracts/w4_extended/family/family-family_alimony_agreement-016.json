@@ -12,12 +12,12 @@
     {
       "index": 2,
       "title": "抚养费金额",
-      "text": "甲方每月支付子女抚养费人民币 50 万元, 含生活费、教育费、医疗费等。"
+      "text": "甲方每月支付子女抚养费人民币 5000 元, 含生活费、教育费、医疗费等。"
     },
     {
       "index": 3,
       "title": "支付方式",
-      "text": "甲方应于每月 5 日前将抚养费支付至乙方指定账户。"
+      "text": "甲方应于每月 25 日前将抚养费支付至乙方指定账户。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "逾期",
-      "text": "甲方逾期支付的, 应按月 1%向乙方支付违约金。"
+      "text": "甲方逾期支付的, 应按日万分之五向乙方支付违约金。"
     },
     {
       "index": 6,
@@ -42,14 +42,14 @@
       "clause_title": "抚养费金额",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "违约金过高"
+        "违约金过高",
+        "显失公平"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,14 +57,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
+        "表述模糊",
         "争议管辖不利"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -72,14 +73,14 @@
       "clause_title": "调整",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -93,7 +94,7 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
@@ -102,14 +103,14 @@
       "clause_title": "逾期",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

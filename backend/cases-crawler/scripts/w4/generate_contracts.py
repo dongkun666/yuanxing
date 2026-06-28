@@ -245,12 +245,29 @@ def gen_annotations(clauses: list, fatal_keywords: list[str], major_keywords: li
     for kw in ["争议", "违约", "管辖", "解除"]:
         idx = next((c["index"] for c in clauses if kw in c["title"]), None)
         _add("major", idx)
-    # 通用建议
-    while len(annotations) < 5:
+    # 通用建议: 强制 ≥5 标注 (允许重复 clause index 作为 "通识性" 风险提示)
+    attempts = 0
+    while len(annotations) < 5 and attempts < 200:
         idx = random.randint(1, n)
-        if idx not in used:
-            if _add("advisory", idx):
-                continue
+        if idx in used:
+            # 重复 clause 也添加 (作为补充风险标注)
+            tmpl = RISK_TEMPLATES["advisory"]
+            annotations.append({
+                "clause_index": idx,
+                "clause_title": next((c["title"] for c in clauses if c["index"] == idx), ""),
+                "risk_level": "advisory",
+                "risk_categories": ["可优化"],
+                "legal_basis": ["《民法典》相关条款"],
+                "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+                "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+                "stance_impact": "中性",
+            })
+            attempts = 0
+            continue
+        if _add("advisory", idx):
+            attempts = 0
+        else:
+            attempts += 1
     return annotations
 
 

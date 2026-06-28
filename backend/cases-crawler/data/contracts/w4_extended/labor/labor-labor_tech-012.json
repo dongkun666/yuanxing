@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "合同期限",
-      "text": "本合同为固定期限劳动合同, 期限 3 个月。"
+      "text": "本合同为固定期限劳动合同, 期限 10 年。"
     },
     {
       "index": 2,
       "title": "工作内容",
-      "text": "乙方从事购车技术工作。"
+      "text": "乙方从事装修技术工作。"
     },
     {
       "index": 3,
@@ -22,7 +22,7 @@
     {
       "index": 4,
       "title": "薪酬",
-      "text": "乙方月工资人民币 500 万元, 包含基本工资 + 绩效工资。"
+      "text": "乙方月工资人民币 200 万元, 包含基本工资 + 绩效工资。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,12 +53,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违法条款",
-        "显失公平"
+        "金额异常"
       ],
       "legal_basis": [
         "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,14 +67,14 @@
       "clause_title": "保密义务",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "违法条款"
+        "显失公平",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》第五百八十五条 (违约金)"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -83,19 +83,34 @@
       "risk_level": "major",
       "risk_categories": [
         "表述模糊",
-        "举证困难"
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
       "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "工作内容",
+      "clause_index": 1,
+      "clause_title": "合同期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "工作时间",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -106,21 +121,6 @@
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "薪酬",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

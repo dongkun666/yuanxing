@@ -1,0 +1,141 @@
+{
+  "template_id": "construction-construction_curtain_wall-009",
+  "contract_type": "工程承揽合同",
+  "industry": "幕墙工程",
+  "title": "幕墙工程施工合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "工程内容",
+      "text": "工程内容: 经营周转 (玻璃幕墙 / 金属幕墙 / 石材幕墙)。"
+    },
+    {
+      "index": 2,
+      "title": "工程地点",
+      "text": "工程地点: 东莞市武侯区某路 88 号。"
+    },
+    {
+      "index": 3,
+      "title": "承包人",
+      "text": "承包人为乙方。"
+    },
+    {
+      "index": 4,
+      "title": "工程价款",
+      "text": "工程价款人民币 15 万元。"
+    },
+    {
+      "index": 5,
+      "title": "工期",
+      "text": "工期 1 个月, 自 2027-02-11 起至 2030-03-06 止。"
+    },
+    {
+      "index": 6,
+      "title": "安全",
+      "text": "幕墙施工属高空作业, 乙方应严格遵守安全规范。"
+    },
+    {
+      "index": 7,
+      "title": "保修",
+      "text": "工程保修期 1 个月。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "安全",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "保修",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "工程价款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "工期",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "幕墙工程施工合同",
+    "幕墙工程常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于幕墙工程施工合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_curtain_wall",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

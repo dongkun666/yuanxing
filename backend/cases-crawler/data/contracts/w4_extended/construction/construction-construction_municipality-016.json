@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "工程内容",
-      "text": "工程内容: 经营周转 (道路/桥梁/给排水等市政工程)。"
+      "text": "工程内容: 购车 (道路/桥梁/给排水等市政工程)。"
     },
     {
       "index": 2,
       "title": "工程地点",
-      "text": "工程地点: 东莞市西湖区某路 88 号。"
+      "text": "工程地点: 厦门市浦东新区某路 88 号。"
     },
     {
       "index": 3,
@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "工程价款",
-      "text": "工程价款人民币 5 万元。"
+      "text": "工程价款人民币 50 万元。"
     },
     {
       "index": 5,
       "title": "工期",
-      "text": "工期 5 年, 自 2027-01-10 起至 2029-05-15 止。"
+      "text": "工期 3 年, 自 2027-05-27 起至 2029-04-16 止。"
     },
     {
       "index": 6,
@@ -47,7 +47,7 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
+        "解除权失衡",
         "举证困难"
       ],
       "legal_basis": [
@@ -55,42 +55,27 @@
         "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "工程内容",
+      "clause_index": 2,
+      "clause_title": "工程地点",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
       "clause_index": 4,
       "clause_title": "工程价款",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "工程地点",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -100,7 +85,7 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -116,6 +101,21 @@
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "质量",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

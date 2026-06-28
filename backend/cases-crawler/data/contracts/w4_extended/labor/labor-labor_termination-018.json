@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "原合同",
-      "text": "原劳动合同编号 LX-295546, 签订日期 2025-12-31。"
+      "text": "原劳动合同编号 LX-357817, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
       "title": "解除日期",
-      "text": "双方同意原劳动合同于 2031-09-16 解除。"
+      "text": "双方同意原劳动合同于 2029-03-31 解除。"
     },
     {
       "index": 3,
       "title": "经济补偿",
-      "text": "甲方支付乙方经济补偿金人民币 100 万元, 双方确认再无其他争议。"
+      "text": "甲方支付乙方经济补偿金人民币 8 万元, 双方确认再无其他争议。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "经济补偿",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "隐含义务"
+        "违约金过高",
+        "显失公平"
       ],
       "legal_basis": [
         "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,14 +62,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "管辖连接点异常"
+        "管辖连接点异常",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -77,15 +77,14 @@
       "clause_title": "解除日期",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "争议管辖不利"
+        "举证困难",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
@@ -99,8 +98,8 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -108,13 +107,13 @@
       "clause_title": "社保转移",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

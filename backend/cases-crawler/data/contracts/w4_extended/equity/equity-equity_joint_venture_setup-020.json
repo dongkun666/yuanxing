@@ -12,7 +12,7 @@
     {
       "index": 2,
       "title": "出资",
-      "text": "甲方出资人民币 100 万元 (占 15%), 乙方出资 USD 500 万元 (占剩余份额)。"
+      "text": "甲方出资人民币 500 万元 (占 3%), 乙方出资 USD 15 万元 (占剩余份额)。"
     },
     {
       "index": 3,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "出资",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "金额异常"
+        "违法条款",
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,14 +57,14 @@
       "clause_title": "治理结构",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "违法条款"
+        "重大遗漏",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -72,14 +72,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "表述模糊"
+        "表述模糊",
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
@@ -98,18 +98,18 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "合资双方",
+      "clause_index": 4,
+      "clause_title": "股东会",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

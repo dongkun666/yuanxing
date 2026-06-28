@@ -12,12 +12,12 @@
     {
       "index": 2,
       "title": "委托事项",
-      "text": "甲方将其持有的目标公司 20% 股权的投票权委托给乙方行使。"
+      "text": "甲方将其持有的目标公司 8% 股权的投票权委托给乙方行使。"
     },
     {
       "index": 3,
       "title": "委托期限",
-      "text": "委托期限 1 个月, 自 2026-12-30 起至 2032-06-15 止。"
+      "text": "委托期限 1 个月, 自 2026-12-11 起至 2028-02-06 止。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -43,12 +43,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "显失公平"
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -57,13 +57,13 @@
       "clause_title": "撤销",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "隐含义务"
+        "隐含义务",
+        "违法条款"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -72,13 +72,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "管辖连接点异常"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
@@ -91,7 +92,7 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -108,8 +109,8 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

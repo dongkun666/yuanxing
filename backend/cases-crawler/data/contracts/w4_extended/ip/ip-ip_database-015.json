@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "数据库",
-      "text": "甲方为购房数据库的权利人。"
+      "text": "甲方为技术升级数据库的权利人。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "使用期限",
-      "text": "使用期限 3 个月, 自 2027-06-20 起至 2027-04-23 止。"
+      "text": "使用期限 2 年, 自 2027-02-10 起至 2027-11-02 止。"
     },
     {
       "index": 4,
       "title": "使用费",
-      "text": "使用费人民币 100 万元。"
+      "text": "使用费人民币 5000 元。"
     },
     {
       "index": 5,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由标的物所在地或合同签订地管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,20 +42,50 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "表述模糊"
+        "争议管辖不利",
+        "举证困难"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
       "clause_index": 3,
       "clause_title": "使用期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "禁止行为",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "数据库",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -73,44 +103,14 @@
       "clause_title": "使用方式",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "数据库",
-      "risk_level": "advisory",
-      "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "使用费",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

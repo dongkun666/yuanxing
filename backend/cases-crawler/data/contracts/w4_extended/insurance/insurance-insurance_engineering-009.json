@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "保险标的",
-      "text": "保险标的: 位于杭州市黄浦区某路 88 号的原材料采购工程, 造价人民币 500 万元。"
+      "text": "保险标的: 位于青岛市南山区某路 88 号的原材料采购工程, 造价人民币 30 万元。"
     },
     {
       "index": 4,
@@ -27,17 +27,17 @@
     {
       "index": 5,
       "title": "保险期间",
-      "text": "保险期间 1 个月, 自 2026-08-28 起至 2032-03-09 止, 与工期一致。"
+      "text": "保险期间 2 年, 自 2027-01-26 起至 2029-04-28 止, 与工期一致。"
     },
     {
       "index": 6,
       "title": "保险费",
-      "text": "保险费人民币 150 万元。"
+      "text": "保险费人民币 3 万元。"
     },
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,16 +47,30 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
+        "管辖连接点异常",
         "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "保险期间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 2,
@@ -78,29 +92,14 @@
       "clause_title": "投保人",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 6,
-      "clause_title": "保险费",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -114,8 +113,8 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

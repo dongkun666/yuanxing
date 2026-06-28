@@ -12,12 +12,12 @@
     {
       "index": 2,
       "title": "强制随售权",
-      "text": "如持有 10% 以上股权的股东 (主导股东) 拟向第三方转让股权, 主导股东有权要求其他股东按相同条件一并转让。"
+      "text": "如持有 3% 以上股权的股东 (主导股东) 拟向第三方转让股权, 主导股东有权要求其他股东按相同条件一并转让。"
     },
     {
       "index": 3,
       "title": "触发条件",
-      "text": "强制随售的触发条件: 装修。"
+      "text": "强制随售的触发条件: 医疗。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "强制随售权",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "隐含义务"
+        "违法条款",
+        "金额异常"
       ],
       "legal_basis": [
         "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,23 +62,23 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "管辖连接点异常"
+        "解除权失衡",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "配合义务",
+      "clause_index": 6,
+      "clause_title": "对价",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
@@ -88,23 +88,8 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 6,
-      "clause_title": "对价",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "通知",
+      "clause_index": 1,
+      "clause_title": "协议主体",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -113,7 +98,22 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "通知",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

@@ -7,22 +7,22 @@
     {
       "index": 1,
       "title": "转租标的",
-      "text": "乙方 (原承租人) 将位于上海市武侯区某路 88 号的房屋转租给丙方使用。"
+      "text": "乙方 (原承租人) 将位于上海市南山区某路 88 号的房屋转租给丙方使用。"
     },
     {
       "index": 2,
       "title": "原租赁合同",
-      "text": "原租赁合同编号 LX-381952, 甲方为原出租人。"
+      "text": "原租赁合同编号 LX-943017, 甲方为原出租人。"
     },
     {
       "index": 3,
       "title": "转租期限",
-      "text": "转租期自 2026-11-22 起至 2027-11-21 止, 不得超过原租赁合同剩余期限。"
+      "text": "转租期自 2026-12-15 起至 2029-10-15 止, 不得超过原租赁合同剩余期限。"
     },
     {
       "index": 4,
       "title": "转租租金",
-      "text": "月租金人民币 20 万元, 丙方应于每月 5 日前支付。"
+      "text": "月租金人民币 5 万元, 丙方应于每月 5 日前支付。"
     },
     {
       "index": 5,
@@ -37,12 +37,12 @@
     {
       "index": 7,
       "title": "违约责任",
-      "text": "丙方逾期支付租金的, 按月 1%加收违约金。"
+      "text": "丙方逾期支付租金的, 按日千分之一加收违约金。"
     },
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由丙方住所地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,13 +53,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "隐含义务",
-        "重大遗漏"
+        "违法条款"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,14 +67,14 @@
       "clause_title": "违约责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "金额异常"
+        "显失公平",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
       "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,44 +82,44 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "解除权失衡"
+        "争议管辖不利",
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 6,
-      "clause_title": "权利义务",
+      "clause_index": 3,
+      "clause_title": "转租期限",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "转租标的",
+      "clause_index": 2,
+      "clause_title": "原租赁合同",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "项目",
-      "text": "甲乙共同投资项目执行影视项目。"
+      "text": "甲乙共同投资教育影视项目。"
     },
     {
       "index": 2,
       "title": "出资",
-      "text": "甲方出资人民币 5 万元 (占 1%), 乙方出资人民币 15 万元 (占剩余份额)。"
+      "text": "甲方出资人民币 1 万元 (占 2%), 乙方出资人民币 15 万元 (占剩余份额)。"
     },
     {
       "index": 3,
       "title": "项目周期",
-      "text": "项目周期 2 年, 自 2026-09-19 起至 2029-01-08 止。"
+      "text": "项目周期 5 年, 自 2026-10-18 起至 2032-04-09 止。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由标的物所在地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "收益分配",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "违法条款"
+        "违法条款",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,14 +57,14 @@
       "clause_title": "署名权",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
+        "金额异常",
         "重大遗漏"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -72,14 +72,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "举证困难"
+        "争议管辖不利",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
@@ -93,7 +93,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
@@ -102,13 +102,13 @@
       "clause_title": "项目周期",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

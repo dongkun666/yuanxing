@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "转让商标",
-      "text": "甲方将其拥有的商标 (注册号 ZL55552881.X) 转让给乙方。"
+      "text": "甲方将其拥有的商标 (注册号 ZL49591898.X) 转让给乙方。"
     },
     {
       "index": 2,
       "title": "转让价款",
-      "text": "转让价款人民币 5000 元。"
+      "text": "转让价款人民币 500 万元。"
     },
     {
       "index": 3,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由标的物所在地或合同签订地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "转让商标",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "显失公平"
+        "显失公平",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,11 +57,11 @@
       "clause_title": "近似商标",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
+        "违法条款",
         "显失公平"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》合同编通则解释第六十五条"
       ],
       "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
@@ -72,15 +72,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "解除权失衡"
+        "争议管辖不利",
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -95,7 +95,7 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -103,14 +103,14 @@
       "clause_title": "变更登记",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

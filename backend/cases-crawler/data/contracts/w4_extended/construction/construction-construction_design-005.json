@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "设计内容",
-      "text": "设计内容: 购车。"
+      "text": "设计内容: 医疗。"
     },
     {
       "index": 2,
@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "设计费",
-      "text": "设计费人民币 300 万元, 按阶段支付。"
+      "text": "设计费人民币 200 万元, 按阶段支付。"
     },
     {
       "index": 5,
       "title": "设计周期",
-      "text": "方案设计 3 年, 初步设计 3 年, 施工图设计 3 年。"
+      "text": "方案设计 5 年, 初步设计 5 年, 施工图设计 5 年。"
     },
     {
       "index": 6,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由标的物所在地或合同签订地管辖。"
+      "text": "争议由北京仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,13 +52,13 @@
       "clause_title": "设计内容",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "违法条款"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,13 +67,13 @@
       "clause_title": "设计变更",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "隐含义务"
+        "显失公平",
+        "违法条款"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -82,29 +82,30 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "管辖连接点异常"
+        "解除权失衡",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "设计周期",
+      "clause_index": 4,
+      "clause_title": "设计费",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -112,14 +113,14 @@
       "clause_title": "知识产权",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

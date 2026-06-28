@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "实习期限",
-      "text": "实习期自 2026-12-28 起至 2028-06-18 止。"
+      "text": "实习期自 2027-06-14 起至 2031-11-24 止。"
     },
     {
       "index": 2,
       "title": "实习内容",
-      "text": "乙方在甲方项目执行岗位实习。"
+      "text": "乙方在甲方购房岗位实习。"
     },
     {
       "index": 3,
       "title": "实习补贴",
-      "text": "甲方按月支付实习补贴人民币 500 万元。"
+      "text": "甲方按月支付实习补贴人民币 8 万元。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由标的物所在地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "保密义务",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "显失公平"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
         "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,14 +62,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "解除权失衡"
+        "争议管辖不利",
+        "举证困难"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
@@ -81,25 +82,10 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "实习内容",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -107,14 +93,29 @@
       "clause_title": "实习补贴",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "实习内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

@@ -22,22 +22,22 @@
     {
       "index": 4,
       "title": "保险责任",
-      "text": "乙方对甲方在泰国15 日旅行期间因意外伤害、疾病、行李丢失、航班延误等产生的损失, 按本合同约定承担保险责任。"
+      "text": "乙方对甲方在澳洲7 日旅行期间因意外伤害、疾病、行李丢失、航班延误等产生的损失, 按本合同约定承担保险责任。"
     },
     {
       "index": 5,
       "title": "保险金额",
-      "text": "保险金额人民币 5 万元。"
+      "text": "保险金额人民币 20 万元。"
     },
     {
       "index": 6,
       "title": "保险费",
-      "text": "保险费人民币 1 万元。"
+      "text": "保险费人民币 500 万元。"
     },
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由标的物所在地或合同签订地管辖。"
+      "text": "争议由标的物所在地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,19 +47,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "表述模糊"
+        "管辖连接点异常",
+        "解除权失衡"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "保险人",
+      "clause_index": 4,
+      "clause_title": "保险责任",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -68,22 +68,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "保险金额",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -99,22 +84,37 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 4,
-      "clause_title": "保险责任",
+      "clause_index": 2,
+      "clause_title": "保险人",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "投保人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

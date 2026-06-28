@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "装修工程",
-      "text": "装修工程: 购房, 装修地点: 苏州市天河区某路 88 号。"
+      "text": "装修工程: 购房, 装修地点: 武汉市浦东新区某路 88 号。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "工程价款",
-      "text": "工程价款人民币 100 万元。"
+      "text": "工程价款人民币 300 万元。"
     },
     {
       "index": 4,
       "title": "工期",
-      "text": "工期 2 年, 自 2027-05-07 起至 2031-12-22 止。"
+      "text": "工期 10 年, 自 2027-03-16 起至 2032-04-25 止。"
     },
     {
       "index": 5,
@@ -37,12 +37,12 @@
     {
       "index": 7,
       "title": "保修",
-      "text": "乙方提供 2 年 的免费保修。"
+      "text": "乙方提供 10 年 的免费保修。"
     },
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,13 +52,13 @@
       "clause_title": "质量",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
+        "显失公平",
         "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,13 +67,13 @@
       "clause_title": "保修",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "隐含义务"
+        "隐含义务",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
@@ -82,19 +82,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "举证困难"
+        "解除权失衡",
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "装修工程",
+      "clause_index": 4,
+      "clause_title": "工期",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -112,14 +112,14 @@
       "clause_title": "承包人",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

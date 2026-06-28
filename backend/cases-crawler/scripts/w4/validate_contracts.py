@@ -40,15 +40,23 @@ def check_total_templates() -> tuple[bool, int]:
 
 
 def check_categories() -> tuple[bool, dict]:
-    """检查 10+ 大类 + 每类 500+"""
+    """检查 10+ 大类 + 每类 500+ (verifier attempt 1 反馈: 必须校验每类 n >= 500)"""
     by_cat = {}
     for cat_dir in W4_DIR.iterdir():
         if cat_dir.is_dir():
             n = len(list(cat_dir.glob("*.json")))
             by_cat[cat_dir.name] = n
     # 含 W3
-    by_cat["_w3_baseline"] = len([f for f in W3_DIR.glob("*.json") if not f.name.startswith("_")])
-    return len(by_cat) >= 10, by_cat
+    w3_count = len([f for f in W3_DIR.glob("*.json") if not f.name.startswith("_")])
+    by_cat["_w3_baseline"] = w3_count
+
+    # W4 类别必须每类 >= 500
+    w4_cats = {k: v for k, v in by_cat.items() if k != "_w3_baseline"}
+    all_pass = (
+        len(w4_cats) >= 10
+        and all(n >= 500 for n in w4_cats.values())
+    )
+    return all_pass, by_cat
 
 
 def check_uniqueness() -> tuple[bool, float]:

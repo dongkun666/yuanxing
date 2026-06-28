@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "合伙企业",
-      "text": "甲乙丙三方共同投资设立技术升级 (以下简称合伙企业)。"
+      "text": "甲乙丙三方共同投资设立项目执行 (以下简称合伙企业)。"
     },
     {
       "index": 2,
       "title": "出资",
-      "text": "甲方出资人民币 50 万元, 占 1%; 乙方出资人民币 100 万元, 占剩余份额; 丙方以按季支付出资, 占剩余份额。"
+      "text": "甲方出资人民币 5000 元, 占 15%; 乙方出资人民币 100 万元, 占剩余份额; 丙方以按里程碑支付出资, 占剩余份额。"
     },
     {
       "index": 3,
       "title": "合伙期限",
-      "text": "合伙期限 1 年, 自 2027-05-18 起至 2027-09-02 止。"
+      "text": "合伙期限 3 个月, 自 2027-03-26 起至 2027-12-28 止。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "出资",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "重大遗漏"
+        "违约金过高",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》合同编通则解释第六十五条"
       ],
       "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -63,13 +63,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "金额异常",
-        "违法条款"
+        "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,44 +77,43 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
+        "争议管辖不利",
         "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 6,
-      "clause_title": "入伙与退伙",
+      "clause_index": 2,
+      "clause_title": "出资",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "事务执行",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

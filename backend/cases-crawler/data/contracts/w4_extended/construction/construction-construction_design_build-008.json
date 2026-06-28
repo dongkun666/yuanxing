@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "项目",
-      "text": "项目名称: 医疗, 项目地点: 成都市南山区某路 88 号。"
+      "text": "项目名称: 购房, 项目地点: 广州市南山区某路 88 号。"
     },
     {
       "index": 2,
@@ -27,12 +27,12 @@
     {
       "index": 5,
       "title": "合同价款",
-      "text": "合同价款人民币 300 万元。"
+      "text": "合同价款人民币 5000 元。"
     },
     {
       "index": 6,
       "title": "工期",
-      "text": "工期 5 年, 自 2027-06-29 起至 2028-10-02 止。"
+      "text": "工期 1 个月, 自 2026-11-04 起至 2029-06-19 止。"
     },
     {
       "index": 7,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由标的物所在地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "质量",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
+        "违法条款",
         "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -68,43 +68,43 @@
       "risk_level": "major",
       "risk_categories": [
         "解除权失衡",
-        "举证困难"
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "承包范围",
+      "clause_index": 6,
+      "clause_title": "工期",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "发包人",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "合同价款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -112,14 +112,14 @@
       "clause_title": "承包人",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

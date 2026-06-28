@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "遗赠财产",
-      "text": "甲方去世后, 其遗产 (位于长沙市黄浦区某路 88 号的房产, 价值约人民币 300 万元) 遗赠给乙方。"
+      "text": "甲方去世后, 其遗产 (位于重庆市海淀区某路 88 号的房产, 价值约人民币 50 万元) 遗赠给乙方。"
     },
     {
       "index": 4,
@@ -27,12 +27,12 @@
     {
       "index": 5,
       "title": "协议期限",
-      "text": "本协议自 2027-06-30 起生效, 至甲方去世时终止。"
+      "text": "本协议自 2027-04-21 起生效, 至甲方去世时终止。"
     },
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "扶养人",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
+        "显失公平",
         "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,13 +57,13 @@
       "clause_title": "遗赠人",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "隐含义务"
+        "显失公平",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
@@ -73,15 +73,29 @@
       "risk_level": "major",
       "risk_categories": [
         "争议管辖不利",
-        "表述模糊"
+        "举证困难"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "遗赠财产",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 5,
@@ -95,21 +109,6 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 3,
-      "clause_title": "遗赠财产",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

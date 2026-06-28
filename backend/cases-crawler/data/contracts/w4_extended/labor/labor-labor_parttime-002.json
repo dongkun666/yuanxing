@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "合同期限",
-      "text": "本合同为非全日制劳动合同, 期限 5 年。"
+      "text": "本合同为非全日制劳动合同, 期限 10 年。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "劳动报酬",
-      "text": "乙方小时工资人民币 500 万元, 结算周期不超过 15 日。"
+      "text": "乙方小时工资人民币 8 万元, 结算周期不超过 15 日。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由丙方住所地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "劳动报酬",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "违法条款"
+        "金额异常",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
       "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,15 +57,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "表述模糊"
+        "争议管辖不利",
+        "举证困难"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -73,14 +73,14 @@
       "clause_title": "解除",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "举证困难"
+        "表述模糊",
+        "争议管辖不利"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
@@ -94,7 +94,7 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -107,7 +107,7 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

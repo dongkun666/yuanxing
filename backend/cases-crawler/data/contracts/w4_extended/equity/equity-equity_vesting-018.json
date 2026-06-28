@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "激励对象",
-      "text": "乙方为目标公司购房岗位员工。"
+      "text": "乙方为目标公司原材料采购岗位员工。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "成熟安排",
-      "text": "股权分 6 期成熟, 自授予日起每满 1 年成熟 25%。"
+      "text": "股权分 3 期成熟, 自授予日起每满 1 年成熟 25%。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,11 +42,11 @@
       "clause_title": "成熟安排",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "金额异常"
+        "金额异常",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》第五百八十五条 (违约金)"
       ],
       "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
@@ -64,27 +64,27 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "授予股权",
+      "clause_index": 1,
+      "clause_title": "激励对象",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "激励对象",
+      "clause_index": 2,
+      "clause_title": "授予股权",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -94,22 +94,22 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 5,
-      "clause_title": "未成熟股权",
+      "clause_index": 4,
+      "clause_title": "成熟条件",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "合伙律师事务所",
-      "text": "甲方、乙方、丙方共同设立教育律师事务所。"
+      "text": "甲方、乙方、丙方共同设立技术升级律师事务所。"
     },
     {
       "index": 2,
       "title": "出资",
-      "text": "各方出资人民币 50 万元, 份额均等。"
+      "text": "各方出资人民币 200 万元, 份额均等。"
     },
     {
       "index": 3,
       "title": "合伙期限",
-      "text": "合伙期限 5 年, 自 2026-09-04 起至 2027-10-22 止。"
+      "text": "合伙期限 1 个月, 自 2027-01-23 起至 2031-08-20 止。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "执业责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "金额异常"
+        "金额异常",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,14 +62,14 @@
       "clause_title": "利润分配",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "重大遗漏"
+        "金额异常",
+        "显失公平"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,42 +77,40 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "表述模糊"
-      ],
-      "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
-      ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
-      "stance_impact": "不利"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "合伙人会议",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
+        "举证困难",
+        "解除权失衡"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "合伙律师事务所",
+      "clause_index": 2,
+      "clause_title": "出资",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

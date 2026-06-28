@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "特许人",
-      "text": "甲方为医疗品牌的特许人, 拥有注册商标及经营资源。"
+      "text": "甲方为技术升级品牌的特许人, 拥有注册商标及经营资源。"
     },
     {
       "index": 2,
@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "加盟费",
-      "text": "加盟费人民币 1 万元, 乙方应于本合同签订之日一次性支付。"
+      "text": "加盟费人民币 100 万元, 乙方应于本合同签订之日一次性支付。"
     },
     {
       "index": 5,
       "title": "持续费用",
-      "text": "乙方应按月支付特许经营持续指导费 (销售额的 1%)。"
+      "text": "乙方应按月支付特许经营持续指导费 (销售额的 2%)。"
     },
     {
       "index": 6,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由北京仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -48,13 +48,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "金额异常"
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,14 +62,14 @@
       "clause_title": "统一管理",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "违法条款"
+        "显失公平",
+        "金额异常"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,7 +77,7 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
+        "解除权失衡",
         "管辖连接点异常"
       ],
       "legal_basis": [
@@ -85,7 +85,7 @@
         "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
@@ -97,25 +97,25 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 4,
-      "clause_title": "加盟费",
+      "clause_index": 5,
+      "clause_title": "持续费用",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

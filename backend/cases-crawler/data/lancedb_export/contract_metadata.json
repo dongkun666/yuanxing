@@ -1,5 +1,5 @@
 {
-  "total": 5716,
+  "total": 6076,
   "embedding_method": "hash_pseudo_embedding_384dim",
   "embedding_note": "LexPrime W4 自建伪 embedding, 实际应使用 sentence-transformers BGE 中文模型",
   "schema": {

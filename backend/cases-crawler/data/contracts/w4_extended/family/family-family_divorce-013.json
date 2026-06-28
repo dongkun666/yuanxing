@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "子女抚养",
-      "text": "双方育有 18 名子女, 抚养权归甲方, 乙方每月支付抚养费人民币 30 万元。"
+      "text": "双方育有 6 名子女, 抚养权归甲方, 乙方每月支付抚养费人民币 15 万元。"
     },
     {
       "index": 4,
       "title": "探望权",
-      "text": "乙方每月可探望子女 3 次, 甲方应予以配合。"
+      "text": "乙方每月可探望子女 2 次, 甲方应予以配合。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,13 +53,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "违法条款"
+        "违约金过高"
       ],
       "legal_basis": [
         "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -68,12 +68,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违法条款",
-        "违约金过高"
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -82,45 +82,44 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "争议管辖不利"
+        "解除权失衡",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "其他",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 2,
       "clause_title": "婚姻状况",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "探望权",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

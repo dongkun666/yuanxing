@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "立遗嘱人",
-      "text": "立遗嘱人: 甲方, 身份证号: LX-521826。"
+      "text": "立遗嘱人: 甲方, 身份证号: LX-993565。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "公证",
-      "text": "本遗嘱经 XX 公证处公证, 公证书编号 LX-615100。"
+      "text": "本遗嘱经 XX 公证处公证, 公证书编号 LX-556177。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "立遗嘱人",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
+        "违约金过高",
         "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -57,14 +57,14 @@
       "clause_title": "公证",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "违约金过高"
+        "隐含义务",
+        "违法条款"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -72,15 +72,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "争议管辖不利"
+        "管辖连接点异常",
+        "举证困难"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
@@ -92,7 +92,7 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -107,7 +107,7 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

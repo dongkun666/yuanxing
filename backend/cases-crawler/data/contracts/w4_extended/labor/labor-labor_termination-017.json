@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "原合同",
-      "text": "原劳动合同编号 LX-750876, 签订日期 2025-12-31。"
+      "text": "原劳动合同编号 LX-728751, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
       "title": "解除日期",
-      "text": "双方同意原劳动合同于 2030-01-01 解除。"
+      "text": "双方同意原劳动合同于 2028-11-26 解除。"
     },
     {
       "index": 3,
       "title": "经济补偿",
-      "text": "甲方支付乙方经济补偿金人民币 200 万元, 双方确认再无其他争议。"
+      "text": "甲方支付乙方经济补偿金人民币 80 万元, 双方确认再无其他争议。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由标的物所在地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "经济补偿",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "隐含义务"
+        "违法条款",
+        "重大遗漏"
       ],
       "legal_basis": [
         "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,14 +62,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "解除权失衡"
+        "争议管辖不利",
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
@@ -78,34 +77,35 @@
       "clause_title": "解除日期",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "争议管辖不利"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "原合同",
+      "clause_index": 6,
+      "clause_title": "社保转移",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 4,
-      "clause_title": "工作交接",
+      "clause_index": 5,
+      "clause_title": "保密与竞业",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",

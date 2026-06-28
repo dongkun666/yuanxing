@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "服务期限",
-      "text": "服务期限 5 年, 自 2026-10-02 起至 2027-07-05 止。"
+      "text": "服务期限 3 个月, 自 2026-11-19 起至 2028-06-26 止。"
     },
     {
       "index": 5,
       "title": "服务费",
-      "text": "服务费按实际服务量结算, 每月不超过人民币 150 万元。"
+      "text": "服务费按实际服务量结算, 每月不超过人民币 30 万元。"
     },
     {
       "index": 6,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由标的物所在地管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
+        "管辖连接点异常",
         "争议管辖不利"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
@@ -70,27 +69,12 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 6,
-      "clause_title": "SLA",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 4,
-      "clause_title": "服务期限",
+      "clause_index": 1,
+      "clause_title": "委托人",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -100,7 +84,7 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -108,13 +92,28 @@
       "clause_title": "服务内容",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "服务期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

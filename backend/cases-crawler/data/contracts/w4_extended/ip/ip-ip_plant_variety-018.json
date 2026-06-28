@@ -7,22 +7,22 @@
     {
       "index": 1,
       "title": "许可品种",
-      "text": "甲方为植物新品种装修的品种权人。"
+      "text": "甲方为植物新品种医疗的品种权人。"
     },
     {
       "index": 2,
       "title": "许可方式",
-      "text": "8 (独占/普通) 许可。"
+      "text": "5 (独占/普通) 许可。"
     },
     {
       "index": 3,
       "title": "许可期限",
-      "text": "许可期限 1 年, 自 2027-03-25 起至 2028-09-12 止。"
+      "text": "许可期限 3 年, 自 2026-10-27 起至 2027-08-15 止。"
     },
     {
       "index": 4,
       "title": "许可费",
-      "text": "许可费人民币 300 万元。"
+      "text": "许可费人民币 150 万元。"
     },
     {
       "index": 5,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,28 +42,59 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "争议管辖不利"
+        "管辖连接点异常",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "许可方式",
+      "clause_index": 5,
+      "clause_title": "质量要求",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "许可品种",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "许可期限",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -76,40 +107,10 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 3,
-      "clause_title": "许可期限",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "质量要求",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

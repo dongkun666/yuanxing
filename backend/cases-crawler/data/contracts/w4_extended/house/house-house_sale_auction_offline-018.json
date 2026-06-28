@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "拍卖标的",
-      "text": "甲方拍卖位于杭州市浦东新区某路 88 号的房屋, 乙方为竞买人。"
+      "text": "甲方拍卖位于重庆市浦东新区某路 88 号的房屋, 乙方为竞买人。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "拍卖底价",
-      "text": "拍卖底价人民币 80 万元。"
+      "text": "拍卖底价人民币 150 万元。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议管辖",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -54,13 +54,13 @@
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 6,
-      "clause_title": "过户与交付",
+      "clause_index": 1,
+      "clause_title": "拍卖标的",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -69,8 +69,8 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -78,8 +78,23 @@
       "clause_title": "成交与付款",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "拍卖方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
@@ -93,28 +108,13 @@
       "clause_title": "拍卖底价",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "保证金",
-      "risk_level": "advisory",
-      "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

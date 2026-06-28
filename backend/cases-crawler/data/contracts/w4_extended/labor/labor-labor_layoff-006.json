@@ -7,22 +7,22 @@
     {
       "index": 1,
       "title": "原合同",
-      "text": "原劳动合同编号 LX-339475。"
+      "text": "原劳动合同编号 LX-821218。"
     },
     {
       "index": 2,
       "title": "裁员依据",
-      "text": "甲方因技术升级进行经济性裁员, 履行了《劳动合同法》第四十一条规定的程序。"
+      "text": "甲方因项目执行进行经济性裁员, 履行了《劳动合同法》第四十一条规定的程序。"
     },
     {
       "index": 3,
       "title": "裁员日期",
-      "text": "裁员生效日期为 2026-11-30。"
+      "text": "裁员生效日期为 2031-09-08。"
     },
     {
       "index": 4,
       "title": "经济补偿",
-      "text": "甲方支付乙方经济补偿金人民币 100 万元, 另支付代通知金一个月工资。"
+      "text": "甲方支付乙方经济补偿金人民币 20 万元, 另支付代通知金一个月工资。"
     },
     {
       "index": 5,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -48,13 +48,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "金额异常"
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,23 +62,23 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "表述模糊"
+        "解除权失衡",
+        "争议管辖不利"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "优先录用",
+      "clause_index": 2,
+      "clause_title": "裁员依据",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
@@ -88,12 +88,12 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 6,
-      "clause_title": "社保转移",
+      "clause_index": 5,
+      "clause_title": "优先录用",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
@@ -103,8 +103,8 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "原合同",
+      "clause_index": 3,
+      "clause_title": "裁员日期",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",

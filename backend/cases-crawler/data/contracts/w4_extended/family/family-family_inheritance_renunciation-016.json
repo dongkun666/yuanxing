@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "声明人",
-      "text": "声明人甲方为被继承人 XX 有限公司 的法定继承人。"
+      "text": "声明人甲方为被继承人 XX 学校 的法定继承人。"
     },
     {
       "index": 2,
       "title": "放弃继承",
-      "text": "声明人自愿放弃对被继承人遗产 (位于杭州市海淀区某路 88 号的房产, 价值约人民币 5000 元) 的继承权。"
+      "text": "声明人自愿放弃对被继承人遗产 (位于济南市西湖区某路 88 号的房产, 价值约人民币 5 万元) 的继承权。"
     },
     {
       "index": 3,
       "title": "放弃原因",
-      "text": "放弃原因为项目执行。"
+      "text": "放弃原因为医疗。"
     },
     {
       "index": 4,
@@ -27,12 +27,12 @@
     {
       "index": 5,
       "title": "公证",
-      "text": "本声明经公证机关公证, 公证书编号 LX-877354。"
+      "text": "本声明经公证机关公证, 公证书编号 LX-106482。"
     },
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "放弃继承",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "隐含义务"
+        "违法条款",
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -58,29 +58,43 @@
       "risk_level": "major",
       "risk_categories": [
         "举证困难",
-        "争议管辖不利"
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "声明人",
+      "clause_index": 4,
+      "clause_title": "效力",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "公证",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -96,21 +110,6 @@
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "效力",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

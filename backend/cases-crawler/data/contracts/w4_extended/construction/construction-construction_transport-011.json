@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "货物",
-      "text": "货物: 购房, 数量: 60 件。"
+      "text": "货物: 经营周转, 数量: 60 件。"
     },
     {
       "index": 4,
       "title": "运输",
-      "text": "自 2027-06-12 起运, 至 2028-12-03 到达, 运输路线: 宁波市黄浦区某路 88 号 至 宁波市黄浦区某路 88 号。"
+      "text": "自 2026-08-29 起运, 至 2029-01-14 到达, 运输路线: 重庆市武侯区某路 88 号 至 重庆市武侯区某路 88 号。"
     },
     {
       "index": 5,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由标的物所在地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "运输责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "显失公平"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,19 +62,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "解除权失衡"
+        "表述模糊",
+        "举证困难"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 3,
-      "clause_title": "货物",
+      "clause_index": 1,
+      "clause_title": "托运人",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -83,22 +83,7 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "托运人",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -114,7 +99,22 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "运输",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

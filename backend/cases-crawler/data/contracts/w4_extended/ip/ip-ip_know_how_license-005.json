@@ -12,7 +12,7 @@
     {
       "index": 2,
       "title": "技术秘密",
-      "text": "技术秘密内容: 技术升级。"
+      "text": "技术秘密内容: 原材料采购。"
     },
     {
       "index": 3,
@@ -22,12 +22,12 @@
     {
       "index": 4,
       "title": "许可期限",
-      "text": "许可期限 10 年, 自 2026-11-18 起至 2027-02-13 止。"
+      "text": "许可期限 3 个月, 自 2027-03-02 起至 2027-05-09 止。"
     },
     {
       "index": 5,
       "title": "许可费",
-      "text": "许可费人民币 300 万元。"
+      "text": "许可费人民币 50 万元。"
     },
     {
       "index": 6,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,13 +53,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "重大遗漏",
-        "隐含义务"
+        "金额异常"
       ],
       "legal_basis": [
         "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,14 +67,14 @@
       "clause_title": "许可方",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "隐含义务"
+        "隐含义务",
+        "重大遗漏"
       ],
       "legal_basis": [
         "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,19 +82,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "争议管辖不利"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 3,
-      "clause_title": "被许可方",
+      "clause_index": 5,
+      "clause_title": "许可费",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -103,17 +103,17 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "技术秘密",
+      "clause_index": 4,
+      "clause_title": "许可期限",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"

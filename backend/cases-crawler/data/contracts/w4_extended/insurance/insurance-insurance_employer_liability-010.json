@@ -22,7 +22,7 @@
     {
       "index": 4,
       "title": "被保险雇员",
-      "text": "被保险雇员: 甲方聘用的全部员工, 共 12 人。"
+      "text": "被保险雇员: 甲方聘用的全部员工, 共 3 人。"
     },
     {
       "index": 5,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "赔偿限额",
-      "text": "每人赔偿限额人民币 10 万元。"
+      "text": "每人赔偿限额人民币 500 万元。"
     },
     {
       "index": 7,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,35 +52,20 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "争议管辖不利"
+        "管辖连接点异常",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "保险责任",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 6,
-      "clause_title": "赔偿限额",
+      "clause_index": 3,
+      "clause_title": "被保险人",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -94,8 +79,8 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "被保险人",
+      "clause_index": 6,
+      "clause_title": "赔偿限额",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -105,12 +90,12 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "投保人",
+      "clause_index": 4,
+      "clause_title": "被保险雇员",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -118,6 +103,21 @@
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "保险人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

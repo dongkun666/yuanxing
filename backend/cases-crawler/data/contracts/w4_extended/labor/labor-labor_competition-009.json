@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "协议双方",
-      "text": "甲方 (用人单位) 与乙方 (员工, 担任经营周转职务) 签订本协议。"
+      "text": "甲方 (用人单位) 与乙方 (员工, 担任教育职务) 签订本协议。"
     },
     {
       "index": 2,
       "title": "竞业禁止范围",
-      "text": "乙方在任职期间及离职后 1 个月 内, 不得在与甲方有竞争关系的企业任职或自己经营竞争业务。"
+      "text": "乙方在任职期间及离职后 10 年 内, 不得在与甲方有竞争关系的企业任职或自己经营竞争业务。"
     },
     {
       "index": 3,
       "title": "补偿",
-      "text": "甲方按月向乙方支付竞业禁止补偿金人民币 8 万元。"
+      "text": "甲方按月向乙方支付竞业禁止补偿金人民币 150 万元。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -37,14 +37,14 @@
       "clause_title": "违约责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "违法条款"
+        "金额异常",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -52,14 +52,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
+        "举证困难",
         "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
@@ -67,8 +67,8 @@
       "clause_title": "协议双方",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
@@ -78,23 +78,23 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "竞业禁止范围",
+      "clause_index": 3,
+      "clause_title": "补偿",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "补偿",
+      "clause_index": 2,
+      "clause_title": "竞业禁止范围",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",

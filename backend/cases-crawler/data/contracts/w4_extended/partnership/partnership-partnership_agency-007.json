@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "代理事项",
-      "text": "甲乙共同代理医疗事项。"
+      "text": "甲乙共同代理装修事项。"
     },
     {
       "index": 2,
       "title": "出资",
-      "text": "甲方负责客户资源, 乙方负责具体执行, 作价均按人民币 3 万元 计入。"
+      "text": "甲方负责客户资源, 乙方负责具体执行, 作价均按人民币 300 万元 计入。"
     },
     {
       "index": 3,
       "title": "合伙期限",
-      "text": "合伙期限 10 年。"
+      "text": "合伙期限 2 年。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,34 +42,49 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "管辖连接点异常"
+        "争议管辖不利",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "收入分配",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
     },
     {
       "clause_index": 3,
       "clause_title": "合伙期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "代理事项",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -83,33 +98,17 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "出资",
+      "clause_index": 6,
+      "clause_title": "争议解决",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "代理事项",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "工程概况",
-      "text": "工程名称: 项目执行, 工程地点: 长沙市武侯区某路 88 号。"
+      "text": "工程名称: 项目执行, 工程地点: 无锡市海淀区某路 88 号。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "合同工期",
-      "text": "合同工期 3 年, 自 2026-09-18 起至 2028-02-13 止。"
+      "text": "合同工期 1 个月, 自 2027-06-05 起至 2032-01-09 止。"
     },
     {
       "index": 4,
       "title": "合同价款",
-      "text": "合同价款人民币 30 万元, 包含全部工程内容。"
+      "text": "合同价款人民币 500 万元, 包含全部工程内容。"
     },
     {
       "index": 5,
@@ -42,12 +42,12 @@
     {
       "index": 8,
       "title": "保修",
-      "text": "工程保修期 3 年, 自竣工验收合格之日起计算。"
+      "text": "工程保修期 1 个月, 自竣工验收合格之日起计算。"
     },
     {
       "index": 9,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -57,14 +57,14 @@
       "clause_title": "质量标准",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
+        "隐含义务",
         "违法条款"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -73,12 +73,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "重大遗漏"
+        "隐含义务"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -87,29 +87,29 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "解除权失衡"
+        "举证困难",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "工程内容",
+      "clause_index": 6,
+      "clause_title": "付款",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
@@ -118,8 +118,8 @@
       "clause_title": "合同价款",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"

@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "买卖标的",
-      "text": "甲方 (开发商) 将位于南京市海淀区某路 88 号的预售商品房出售给乙方。"
+      "text": "甲方 (开发商) 将位于昆明市武侯区某路 88 号的预售商品房出售给乙方。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "房价款",
-      "text": "房屋总价款人民币 50 万元, 乙方应按分期支付 (3 期)支付。"
+      "text": "房屋总价款人民币 5000 元, 乙方应按分期支付 (12 期)支付。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "交付期限与条件",
-      "text": "甲方应于 2028-03-07 前将符合交付条件的房屋交付乙方。"
+      "text": "甲方应于 2032-05-30 前将符合交付条件的房屋交付乙方。"
     },
     {
       "index": 6,
@@ -47,7 +47,7 @@
     {
       "index": 9,
       "title": "争议管辖",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -57,14 +57,14 @@
       "clause_title": "违约责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "违约金过高"
+        "金额异常",
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -76,10 +76,10 @@
         "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -87,8 +87,8 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "争议管辖不利"
+        "解除权失衡",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
@@ -103,19 +103,19 @@
       "clause_title": "面积差异处理",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "房屋基本状况",
+      "clause_index": 4,
+      "clause_title": "付款方式与时间",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",

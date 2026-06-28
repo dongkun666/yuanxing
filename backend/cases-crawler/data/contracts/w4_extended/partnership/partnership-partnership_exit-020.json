@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "原合伙协议",
-      "text": "原合伙协议编号 LX-994766, 签订日期 2025-12-31。"
+      "text": "原合伙协议编号 LX-469770, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "退伙日期",
-      "text": "退伙日期为 2028-12-22。"
+      "text": "退伙日期为 2028-11-11。"
     },
     {
       "index": 4,
       "title": "财产份额结算",
-      "text": "甲方退伙应分得的财产份额为人民币 10 万元。"
+      "text": "甲方退伙应分得的财产份额为人民币 50 万元。"
     },
     {
       "index": 5,
@@ -32,12 +32,12 @@
     {
       "index": 6,
       "title": "竞业禁止",
-      "text": "甲方退伙后 3 年 内, 不得在与原合伙企业相竞争的企业任职。"
+      "text": "甲方退伙后 10 年 内, 不得在与原合伙企业相竞争的企业任职。"
     },
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "财产份额结算",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "违法条款"
+        "违约金过高",
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
       "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -63,13 +63,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "显失公平"
+        "违法条款"
       ],
       "legal_basis": [
         "《民法典》第六百八十条 (禁止高利放贷)"
       ],
       "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,44 +77,43 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "管辖连接点异常"
+        "举证困难",
+        "争议管辖不利"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "债务承担",
+      "clause_index": 6,
+      "clause_title": "竞业禁止",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "原合伙协议",
+      "clause_index": 2,
+      "clause_title": "退伙人",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

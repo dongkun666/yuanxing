@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "合伙施工项目",
-      "text": "甲乙共同承包教育建筑工程。"
+      "text": "甲乙共同承包购房建筑工程。"
     },
     {
       "index": 2,
       "title": "出资",
-      "text": "甲方负责施工设备及部分资金 (作价人民币 150 万元), 乙方负责主要资金人民币 500 万元。"
+      "text": "甲方负责施工设备及部分资金 (作价人民币 5 万元), 乙方负责主要资金人民币 10 万元。"
     },
     {
       "index": 3,
       "title": "合伙期限",
-      "text": "合伙期限 5 年, 自 2027-02-17 起至项目竣工止。"
+      "text": "合伙期限 3 年, 自 2026-08-11 起至项目竣工止。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -48,13 +48,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "违约金过高"
+        "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,14 +62,14 @@
       "clause_title": "利润分配",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "金额异常"
+        "隐含义务",
+        "违约金过高"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,43 +77,42 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "举证困难"
+        "管辖连接点异常",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "分工",
+      "clause_index": 6,
+      "clause_title": "质量责任",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "出资",
+      "clause_index": 6,
+      "clause_title": "质量责任",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

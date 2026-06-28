@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "赠与人",
-      "text": "甲方为赠与人, 拟将教育赠与乙方。"
+      "text": "甲方为赠与人, 拟将医疗赠与乙方。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "赠与财产",
-      "text": "赠与财产: 位于杭州市朝阳区某路 88 号的房产 (价值约人民币 30 万元)。"
+      "text": "赠与财产: 位于北京市南山区某路 88 号的房产 (价值约人民币 30 万元)。"
     },
     {
       "index": 4,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -42,14 +42,14 @@
       "clause_title": "赠与人",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
+        "违法条款",
         "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -58,13 +58,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "重大遗漏",
-        "隐含义务"
+        "金额异常"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -72,20 +72,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "解除权失衡"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 3,
-      "clause_title": "赠与财产",
+      "clause_index": 4,
+      "clause_title": "过户",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -94,23 +93,23 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 4,
-      "clause_title": "过户",
+      "clause_index": 2,
+      "clause_title": "受赠人",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

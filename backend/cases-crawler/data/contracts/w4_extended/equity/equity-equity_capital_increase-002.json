@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "目标公司",
-      "text": "目标公司: XX 学校, 本次增资前注册资本人民币 5000 元。"
+      "text": "目标公司: XX 有限公司, 本次增资前注册资本人民币 500 万元。"
     },
     {
       "index": 2,
       "title": "增资金额",
-      "text": "本次增资金额人民币 10 万元, 由乙方认缴。"
+      "text": "本次增资金额人民币 300 万元, 由乙方认缴。"
     },
     {
       "index": 3,
       "title": "增资后股权",
-      "text": "增资后, 乙方持有目标公司 3% 股权, 原股东按比例稀释。"
+      "text": "增资后, 乙方持有目标公司 5% 股权, 原股东按比例稀释。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "反稀释",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "违法条款"
+        "重大遗漏",
+        "隐含义务"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,19 +62,20 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "管辖连接点异常"
+        "管辖连接点异常",
+        "表述模糊"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "增资金额",
+      "clause_index": 4,
+      "clause_title": "增资款用途",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -85,21 +86,6 @@
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "工商变更",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -115,6 +101,21 @@
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "目标公司",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

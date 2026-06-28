@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "工程概况",
-      "text": "工程名称: 装修, 工程地点: 昆明市黄浦区某路 88 号。"
+      "text": "工程名称: 购房, 工程地点: 厦门市朝阳区某路 88 号。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "合同工期",
-      "text": "合同工期 5 年, 自 2026-12-06 起至 2029-02-23 止。"
+      "text": "合同工期 6 个月, 自 2027-04-30 起至 2027-07-14 止。"
     },
     {
       "index": 4,
       "title": "合同价款",
-      "text": "合同价款人民币 1 万元, 包含全部工程内容。"
+      "text": "合同价款人民币 20 万元, 包含全部工程内容。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "保修",
-      "text": "工程保修期 5 年, 自竣工验收合格之日起计算。"
+      "text": "工程保修期 6 个月, 自竣工验收合格之日起计算。"
     },
     {
       "index": 9,
@@ -58,13 +58,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "违法条款"
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -72,14 +72,14 @@
       "clause_title": "合同工期",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "金额异常"
+        "显失公平",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -88,14 +88,13 @@
       "risk_level": "major",
       "risk_categories": [
         "争议管辖不利",
-        "举证困难"
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
       "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
@@ -107,15 +106,15 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 6,
-      "clause_title": "付款",
+      "clause_index": 1,
+      "clause_title": "工程概况",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",

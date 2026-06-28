@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "租赁标的",
-      "text": "甲方将位于合肥市浦东新区某路 88 号的房屋中的某间出租给乙方使用, 为合租房屋。"
+      "text": "甲方将位于济南市西湖区某路 88 号的房屋中的某间出租给乙方使用, 为合租房屋。"
     },
     {
       "index": 2,
       "title": "租赁期限",
-      "text": "租赁期自 2026-09-09 起至 2029-04-12 止, 共 18 个月。"
+      "text": "租赁期自 2027-01-13 起至 2027-12-04 止, 共 2 年。"
     },
     {
       "index": 3,
       "title": "租金及分摊",
-      "text": "乙方月租金为人民币 80 万元, 公共区域水电费、网络费等按比例分摊。"
+      "text": "乙方月租金为人民币 200 万元, 公共区域水电费、网络费等按比例分摊。"
     },
     {
       "index": 4,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由丙方住所地管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,13 +52,13 @@
       "clause_title": "公共区域使用",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
-        "金额异常"
+        "违约金过高",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
       "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,14 +67,14 @@
       "clause_title": "提前解约",
       "risk_level": "fatal",
       "risk_categories": [
-        "显失公平",
+        "重大遗漏",
         "违约金过高"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,19 +82,34 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "争议管辖不利"
+        "举证困难",
+        "解除权失衡"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "租赁期限",
+      "clause_index": 4,
+      "clause_title": "押金",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "租赁标的",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -104,22 +119,7 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 6,
-      "clause_title": "噪音与作息",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

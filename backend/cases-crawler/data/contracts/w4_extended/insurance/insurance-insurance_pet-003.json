@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "被保险宠物",
-      "text": "被保险宠物: 医疗 (宠物种类及描述)。"
+      "text": "被保险宠物: 经营周转 (宠物种类及描述)。"
     },
     {
       "index": 4,
@@ -27,17 +27,17 @@
     {
       "index": 5,
       "title": "保险金额",
-      "text": "保险金额人民币 15 万元。"
+      "text": "保险金额人民币 50 万元。"
     },
     {
       "index": 6,
       "title": "保险费",
-      "text": "保险费人民币 5 万元。"
+      "text": "保险费人民币 8 万元。"
     },
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由乙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
+        "举证困难",
         "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
@@ -62,19 +62,19 @@
       "clause_title": "被保险宠物",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 6,
-      "clause_title": "保险费",
+      "clause_index": 1,
+      "clause_title": "投保人",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -83,7 +83,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -92,19 +92,19 @@
       "clause_title": "保险责任",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "保险人",
+      "clause_index": 6,
+      "clause_title": "保险费",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -114,7 +114,7 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

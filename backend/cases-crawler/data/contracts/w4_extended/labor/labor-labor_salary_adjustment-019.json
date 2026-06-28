@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "员工信息",
-      "text": "乙方 (员工) 系甲方员工, 担任购车职务。"
+      "text": "乙方 (员工) 系甲方员工, 担任购房职务。"
     },
     {
       "index": 2,
       "title": "调整内容",
-      "text": "自 2027-06-12 起, 乙方月工资由原人民币 50 万元 调整为人民币 1 万元。"
+      "text": "自 2026-09-24 起, 乙方月工资由原人民币 5 万元 调整为人民币 80 万元。"
     },
     {
       "index": 3,
       "title": "调整原因",
-      "text": "本次调整基于购车 (绩效/晋升/市场调整等)。"
+      "text": "本次调整基于购房 (绩效/晋升/市场调整等)。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -37,13 +37,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "表述模糊"
+        "表述模糊",
+        "争议管辖不利"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
       "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
@@ -52,13 +52,13 @@
       "clause_title": "调整内容",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
@@ -67,11 +67,11 @@
       "clause_title": "调整原因",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -82,11 +82,11 @@
       "clause_title": "员工信息",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

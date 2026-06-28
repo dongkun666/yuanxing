@@ -12,12 +12,12 @@
     {
       "index": 2,
       "title": "待命时间",
-      "text": "乙方在 2027-01-25 至 2029-11-07 期间, 每天 19:00-次日 8:00 待命。"
+      "text": "乙方在 2027-01-23 至 2027-07-23 期间, 每天 19:00-次日 8:00 待命。"
     },
     {
       "index": 3,
       "title": "待命补偿",
-      "text": "甲方按月支付待命补偿人民币 3 万元。"
+      "text": "甲方按月支付待命补偿人民币 300 万元。"
     },
     {
       "index": 4,
@@ -42,14 +42,14 @@
       "clause_title": "待命补偿",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "重大遗漏"
+        "金额异常",
+        "违法条款"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -58,28 +58,28 @@
       "risk_level": "major",
       "risk_categories": [
         "解除权失衡",
-        "举证困难"
+        "表述模糊"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "响应义务",
+      "clause_index": 2,
+      "clause_title": "待命时间",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
@@ -91,25 +91,25 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "待命时间",
+      "clause_index": 4,
+      "clause_title": "响应义务",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

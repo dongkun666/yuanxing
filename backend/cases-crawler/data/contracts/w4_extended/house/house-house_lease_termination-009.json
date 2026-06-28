@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "原合同",
-      "text": "原租赁合同编号 LX-275139, 签订日期 2025-12-31。"
+      "text": "原租赁合同编号 LX-797650, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
       "title": "解除日期",
-      "text": "双方同意原租赁合同于 2031-12-26 解除。"
+      "text": "双方同意原租赁合同于 2028-02-24 解除。"
     },
     {
       "index": 3,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议管辖",
-      "text": "争议由丙方住所地管辖。"
+      "text": "争议由上海国际仲裁中心管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "违约责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "显失公平"
+        "金额异常",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,15 +62,14 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "管辖连接点异常"
+        "争议管辖不利",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {
@@ -78,20 +77,19 @@
       "clause_title": "解除日期",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "管辖连接点异常"
+        "举证困难",
+        "争议管辖不利"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "房屋返还",
+      "clause_index": 6,
+      "clause_title": "其他约定",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -109,11 +107,11 @@
       "clause_title": "原合同",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

@@ -6,22 +6,22 @@
     {
       "name": "total",
       "ok": true,
-      "details": 5716
+      "details": 6076
     },
     {
       "name": "categories",
       "ok": true,
       "details": {
         "agency": 500,
-        "construction": 460,
-        "equity": 480,
-        "family": 420,
-        "house": 480,
-        "insurance": 440,
-        "ip": 440,
-        "labor": 460,
+        "construction": 500,
+        "equity": 500,
+        "family": 500,
+        "house": 500,
+        "insurance": 500,
+        "ip": 500,
+        "labor": 500,
         "loan": 520,
-        "partnership": 460,
+        "partnership": 500,
         "sales": 500,
         "service": 500,
         "_w3_baseline": 56
@@ -30,7 +30,7 @@
     {
       "name": "uniqueness",
       "ok": true,
-      "details": 0.9825088339222615
+      "details": 0.9808970099667774
     },
     {
       "name": "annotations",
@@ -41,27 +41,27 @@
       "name": "fts5",
       "ok": true,
       "details": {
-        "fts_rows": 5716,
-        "templates": 5716
+        "fts_rows": 6076,
+        "templates": 6076
       }
     },
     {
       "name": "fts_perf",
       "ok": true,
       "details": {
-        "借款": 0.023,
+        "借款": 0.022,
         "房屋": 0.021,
-        "劳动合同": 0.021,
-        "担保": 0.025,
-        "违约金": 0.022
+        "劳动合同": 0.019,
+        "担保": 0.023,
+        "违约金": 0.021
       }
     },
     {
       "name": "lancedb",
       "ok": true,
       "details": {
-        "records": 5716,
-        "size_mb": 18.35,
+        "records": 6076,
+        "size_mb": 19.49,
         "method": "hash_pseudo_embedding_384dim"
       }
     }

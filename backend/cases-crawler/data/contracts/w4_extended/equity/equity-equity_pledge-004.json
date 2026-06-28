@@ -7,12 +7,12 @@
     {
       "index": 1,
       "title": "出质股权",
-      "text": "甲方将其持有的目标公司 1% 股权质押给乙方, 作为主债务的担保。"
+      "text": "甲方将其持有的目标公司 3% 股权质押给乙方, 作为主债务的担保。"
     },
     {
       "index": 2,
       "title": "主债权",
-      "text": "主债权合同编号 LX-674066, 金额人民币 3 万元。"
+      "text": "主债权合同编号 LX-804679, 金额人民币 100 万元。"
     },
     {
       "index": 3,
@@ -32,7 +32,7 @@
     {
       "index": 6,
       "title": "争议解决",
-      "text": "争议由丙方住所地管辖。"
+      "text": "争议由合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -43,12 +43,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "金额异常"
+        "显失公平"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -57,13 +57,13 @@
       "clause_title": "质押登记",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "违法条款"
+        "违法条款",
+        "显失公平"
       ],
       "legal_basis": [
         "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -72,14 +72,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "解除权失衡"
+        "管辖连接点异常",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
@@ -87,19 +87,19 @@
       "clause_title": "出质股权",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 5,
-      "clause_title": "质权实现",
+      "clause_index": 2,
+      "clause_title": "主债权",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -108,7 +108,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "租赁标的",
-      "text": "甲方将位于南京市武侯区某路 88 号的学校宿舍床位出租给乙方使用。"
+      "text": "甲方将位于上海市黄浦区某路 88 号的学校宿舍床位出租给乙方使用。"
     },
     {
       "index": 2,
       "title": "租赁期限",
-      "text": "租赁期自 2027-02-16 起至 2027-08-02 止, 共 6 个月。"
+      "text": "租赁期自 2027-03-14 起至 2027-08-01 止, 共 10 年。"
     },
     {
       "index": 3,
       "title": "租金",
-      "text": "总租金人民币 1 万元, 乙方应于签订本合同之日一次性支付。"
+      "text": "总租金人民币 15 万元, 乙方应于签订本合同之日一次性支付。"
     },
     {
       "index": 4,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,13 +52,13 @@
       "clause_title": "安全责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "金额异常"
+        "违约金过高",
+        "显失公平"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -67,31 +67,15 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
+        "争议管辖不利",
         "举证困难"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "租赁期限",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
     },
     {
       "clause_index": 7,
@@ -109,8 +93,23 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "租金",
+      "clause_index": 1,
+      "clause_title": "租赁标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "使用规范",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -119,7 +118,7 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

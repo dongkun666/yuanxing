@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "保密信息",
-      "text": "保密信息包括教育 (技术信息 / 商业信息 / 客户名单等)。"
+      "text": "保密信息包括技术升级 (技术信息 / 商业信息 / 客户名单等)。"
     },
     {
       "index": 4,
       "title": "保密期限",
-      "text": "保密期限 3 年, 自 2027-06-07 起至 2028-05-05 止, 即便合同终止后仍有效。"
+      "text": "保密期限 6 个月, 自 2026-08-15 起至 2027-11-12 止, 即便合同终止后仍有效。"
     },
     {
       "index": 5,
@@ -37,12 +37,12 @@
     {
       "index": 7,
       "title": "违约责任",
-      "text": "乙方违反保密义务的, 应一次性支付违约金人民币 3 万元。"
+      "text": "乙方违反保密义务的, 应一次性支付违约金人民币 80 万元。"
     },
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "保密信息",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "隐含义务"
+        "重大遗漏",
+        "显失公平"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -68,13 +68,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "重大遗漏",
-        "显失公平"
+        "违约金过高"
       ],
       "legal_basis": [
         "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,14 +82,14 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "举证困难"
+        "表述模糊",
+        "争议管辖不利"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
@@ -97,28 +97,28 @@
       "clause_title": "违约责任",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "解除权失衡"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "保密期限",
+      "clause_index": 2,
+      "clause_title": "接收方",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

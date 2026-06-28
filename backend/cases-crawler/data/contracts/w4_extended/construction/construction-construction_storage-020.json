@@ -17,22 +17,22 @@
     {
       "index": 3,
       "title": "仓储物",
-      "text": "仓储物: 购房。"
+      "text": "仓储物: 技术升级。"
     },
     {
       "index": 4,
       "title": "仓储地点",
-      "text": "仓储地点: 无锡市武侯区某路 88 号。"
+      "text": "仓储地点: 宁波市朝阳区某路 88 号。"
     },
     {
       "index": 5,
       "title": "仓储费",
-      "text": "仓储费人民币 10 万元, 按月支付。"
+      "text": "仓储费人民币 1 万元, 按月支付。"
     },
     {
       "index": 6,
       "title": "仓储期限",
-      "text": "仓储期限 3 个月, 自 2026-08-31 起至 2027-07-30 止。"
+      "text": "仓储期限 10 年, 自 2027-03-26 起至 2027-06-04 止。"
     },
     {
       "index": 7,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "保管责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "隐含义务",
-        "重大遗漏"
+        "显失公平",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,15 +67,30 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
+        "解除权失衡",
         "表述模糊"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "仓储费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 6,
@@ -88,13 +103,13 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 1,
-      "clause_title": "存货方",
+      "clause_index": 4,
+      "clause_title": "仓储地点",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -102,21 +117,6 @@
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 2,
-      "clause_title": "保管方",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

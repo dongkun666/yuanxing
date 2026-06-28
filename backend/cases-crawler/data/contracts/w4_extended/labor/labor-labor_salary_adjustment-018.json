@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "员工信息",
-      "text": "乙方 (员工) 系甲方员工, 担任购房职务。"
+      "text": "乙方 (员工) 系甲方员工, 担任技术升级职务。"
     },
     {
       "index": 2,
       "title": "调整内容",
-      "text": "自 2027-05-24 起, 乙方月工资由原人民币 3 万元 调整为人民币 8 万元。"
+      "text": "自 2027-01-29 起, 乙方月工资由原人民币 30 万元 调整为人民币 100 万元。"
     },
     {
       "index": 3,
       "title": "调整原因",
-      "text": "本次调整基于购房 (绩效/晋升/市场调整等)。"
+      "text": "本次调整基于技术升级 (绩效/晋升/市场调整等)。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -37,24 +37,39 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "表述模糊"
+        "解除权失衡",
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "员工信息",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 4,
       "clause_title": "其他待遇",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
@@ -72,7 +87,7 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -83,28 +98,13 @@
       "clause_title": "调整原因",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "员工信息",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

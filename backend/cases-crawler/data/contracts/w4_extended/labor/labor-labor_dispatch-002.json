@@ -12,17 +12,17 @@
     {
       "index": 2,
       "title": "派遣期限",
-      "text": "派遣期自 2027-05-01 起至 2027-02-03 止, 共 6 个月。"
+      "text": "派遣期自 2026-08-31 起至 2028-04-18 止, 共 1 个月。"
     },
     {
       "index": 3,
       "title": "工作岗位",
-      "text": "乙方在丙方从事项目执行工作, 工作地点为丙方指定地点。"
+      "text": "乙方在丙方从事技术升级工作, 工作地点为丙方指定地点。"
     },
     {
       "index": 4,
       "title": "劳动报酬",
-      "text": "乙方月工资人民币 100 万元, 不低于当地最低工资标准。"
+      "text": "乙方月工资人民币 5000 元, 不低于当地最低工资标准。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "退回",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "隐含义务"
+        "违约金过高",
+        "显失公平"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,20 +67,20 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "管辖连接点异常"
+        "举证困难",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 6,
-      "clause_title": "用工单位义务",
+      "clause_index": 5,
+      "clause_title": "社会保险",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -89,28 +89,28 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 5,
-      "clause_title": "社会保险",
+      "clause_index": 2,
+      "clause_title": "派遣期限",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "工作岗位",
+      "clause_index": 4,
+      "clause_title": "劳动报酬",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",

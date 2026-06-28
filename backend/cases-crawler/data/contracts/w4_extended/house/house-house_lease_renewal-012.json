@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "原合同",
-      "text": "原租赁合同编号 LX-240903, 签订日期 2025-12-31。"
+      "text": "原租赁合同编号 LX-563166, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
       "title": "续签期限",
-      "text": "续签期自 2027-06-04 起至 2027-04-11 止。"
+      "text": "续签期自 2027-05-10 起至 2028-08-05 止。"
     },
     {
       "index": 3,
       "title": "续签租金",
-      "text": "续签期间月租金为人民币 5000 元 (较原合同调整幅度 5%)。"
+      "text": "续签期间月租金为人民币 150 万元 (较原合同调整幅度 8%)。"
     },
     {
       "index": 4,
@@ -37,13 +37,13 @@
       "clause_title": "续签租金",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
+        "金额异常",
         "隐含义务"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -52,16 +52,30 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
+        "举证困难",
         "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "其他条款",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 2,
@@ -72,30 +86,15 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
       "clause_index": 1,
       "clause_title": "原合同",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 4,
-      "clause_title": "其他条款",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",

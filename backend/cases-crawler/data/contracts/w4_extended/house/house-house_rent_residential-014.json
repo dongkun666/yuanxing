@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "租赁标的",
-      "text": "甲方将位于西安市浦东新区某路 88 号的房屋出租给乙方使用, 建筑面积 85 平方米。"
+      "text": "甲方将位于无锡市浦东新区某路 88 号的房屋出租给乙方使用, 建筑面积 85 平方米。"
     },
     {
       "index": 2,
       "title": "租赁期限",
-      "text": "租赁期自 2027-05-11 起至 2030-04-03 止, 共 3 年。"
+      "text": "租赁期自 2026-12-04 起至 2028-10-24 止, 共 5 年。"
     },
     {
       "index": 3,
       "title": "租金及支付",
-      "text": "月租金人民币 200 万元, 乙方应于每月 5 日前支付下月租金。"
+      "text": "月租金人民币 10 万元, 乙方应于每月 5 日前支付下月租金。"
     },
     {
       "index": 4,
@@ -47,14 +47,14 @@
       "clause_title": "租金及支付",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "金额异常"
+        "显失公平",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -63,33 +63,18 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "重大遗漏"
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
       "clause_index": 7,
       "clause_title": "争议管辖",
-      "risk_level": "major",
-      "risk_categories": [
-        "举证困难",
-        "表述模糊"
-      ],
-      "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
-      ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
-      "stance_impact": "不利"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "维修责任",
       "risk_level": "major",
       "risk_categories": [
         "举证困难",
@@ -99,7 +84,23 @@
         "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "维修责任",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
     {

@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "租赁标的",
-      "text": "甲方将位于厦门市黄浦区某路 88 号的别墅出租给乙方使用, 建筑面积 300 平方米, 含花园及游泳池。"
+      "text": "甲方将位于合肥市朝阳区某路 88 号的别墅出租给乙方使用, 建筑面积 300 平方米, 含花园及游泳池。"
     },
     {
       "index": 2,
       "title": "租赁期限",
-      "text": "租赁期自 2026-11-10 起至 2028-10-09 止。"
+      "text": "租赁期自 2027-04-12 起至 2027-01-17 止。"
     },
     {
       "index": 3,
       "title": "租金",
-      "text": "月租金人民币 5 万元, 乙方应于每季度首月 5 日前支付。"
+      "text": "月租金人民币 500 万元, 乙方应于每季度首月 5 日前支付。"
     },
     {
       "index": 4,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "装修与改造",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "隐含义务"
+        "隐含义务",
+        "违法条款"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《民法典》第六百八十条 (禁止高利放贷)"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,14 +67,14 @@
       "clause_title": "提前解约",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
-        "隐含义务"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -82,15 +82,30 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "举证困难"
+        "举证困难",
+        "解除权失衡"
       ],
       "legal_basis": [
         "《民法典》第五百六十三条 (法定解除)"
       ],
       "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "物业与维护",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
       "clause_index": 4,
@@ -102,21 +117,6 @@
       ],
       "legal_basis": [
         "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 3,
-      "clause_title": "租金",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "可优化",
-        "期限异常"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

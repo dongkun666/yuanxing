@@ -1,0 +1,126 @@
+{
+  "template_id": "equity-equity_pledge_release-009",
+  "contract_type": "股权合同",
+  "industry": "股权质押解除",
+  "title": "股权质押解除协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "原质押",
+      "text": "原质押合同编号 LX-715750, 甲方将目标公司 1% 股权质押给乙方。"
+    },
+    {
+      "index": 2,
+      "title": "主债权清偿",
+      "text": "主债务已清偿, 乙方同意解除股权质押。"
+    },
+    {
+      "index": 3,
+      "title": "解除登记",
+      "text": "双方应于本合同签订后 15 日内办理股权出质注销登记。"
+    },
+    {
+      "index": 4,
+      "title": "配合义务",
+      "text": "乙方应配合甲方办理出质注销登记手续。"
+    },
+    {
+      "index": 5,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "解除登记",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "配合义务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "主债权清偿",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "原质押",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权质押解除协议",
+    "股权质押解除常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权质押解除协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_pledge_release",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

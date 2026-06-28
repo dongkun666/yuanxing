@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "代持股权",
-      "text": "乙方 (名义股东) 代甲方 (实际出资人) 持有目标公司 8% 股权。"
+      "text": "乙方 (名义股东) 代甲方 (实际出资人) 持有目标公司 1% 股权。"
     },
     {
       "index": 2,
       "title": "代持原因",
-      "text": "代持原因为项目执行。"
+      "text": "代持原因为购车。"
     },
     {
       "index": 3,
       "title": "代持期限",
-      "text": "代持期限 1 年, 自 2026-10-19 起至 2031-11-19 止。"
+      "text": "代持期限 3 年, 自 2026-08-20 起至 2028-01-29 止。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由乙方住所地管辖。"
+      "text": "争议由北京仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,13 +47,13 @@
       "clause_title": "代持股权",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "金额异常"
+        "显失公平",
+        "隐含义务"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "risk_description": "该条款金额异常, 远超合理范围。",
       "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,14 +62,14 @@
       "clause_title": "显名",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "重大遗漏"
+        "隐含义务",
+        "违法条款"
       ],
       "legal_basis": [
-        "《消费者权益保护法》第二十四条"
+        "《劳动合同法》第二十六条 (劳动合同无效)"
       ],
       "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,13 +77,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "举证困难"
+        "表述模糊",
+        "争议管辖不利"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
       "stance_impact": "不利"
     },
@@ -92,28 +92,28 @@
       "clause_title": "税费",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "代持原因",
+      "clause_index": 3,
+      "clause_title": "代持期限",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

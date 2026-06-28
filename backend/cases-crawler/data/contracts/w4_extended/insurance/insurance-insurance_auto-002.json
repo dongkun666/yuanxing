@@ -22,7 +22,7 @@
     {
       "index": 4,
       "title": "保险车辆",
-      "text": "保险车辆: 特斯拉汉 EV, 车牌号 ZL72818860.X。"
+      "text": "保险车辆: 比亚迪C 级, 车牌号 ZL63325061.X。"
     },
     {
       "index": 5,
@@ -32,17 +32,17 @@
     {
       "index": 6,
       "title": "险种",
-      "text": "险种包括: 交强险、商业三者险 (保额人民币 200 万元)、车损险、不计免赔险等。"
+      "text": "险种包括: 交强险、商业三者险 (保额人民币 300 万元)、车损险、不计免赔险等。"
     },
     {
       "index": 7,
       "title": "保险费",
-      "text": "保险费人民币 500 万元。"
+      "text": "保险费人民币 15 万元。"
     },
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由甲方住所地管辖。"
+      "text": "争议由标的物所在地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,43 +53,43 @@
       "risk_level": "major",
       "risk_categories": [
         "争议管辖不利",
-        "管辖连接点异常"
+        "解除权失衡"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
-    },
-    {
-      "clause_index": 7,
-      "clause_title": "保险费",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
     },
     {
       "clause_index": 6,
       "clause_title": "险种",
       "risk_level": "advisory",
       "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "保险人",
+      "risk_level": "advisory",
+      "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -101,7 +101,7 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
@@ -116,9 +116,9 @@
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

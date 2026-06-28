@@ -12,17 +12,17 @@
     {
       "index": 2,
       "title": "工作岗位",
-      "text": "乙方在甲方技术升级岗位提供劳务。"
+      "text": "乙方在甲方医疗岗位提供劳务。"
     },
     {
       "index": 3,
       "title": "协议期限",
-      "text": "协议期自 2027-05-19 起至 2026-10-07 止, 共 6 个月。"
+      "text": "协议期自 2026-08-30 起至 2027-08-07 止, 共 5 年。"
     },
     {
       "index": 4,
       "title": "劳务报酬",
-      "text": "乙方月劳务报酬人民币 15 万元, 不含社会保险。"
+      "text": "乙方月劳务报酬人民币 150 万元, 不含社会保险。"
     },
     {
       "index": 5,
@@ -47,7 +47,7 @@
     {
       "index": 9,
       "title": "争议解决",
-      "text": "争议由合同签订地管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -58,12 +58,12 @@
       "risk_level": "fatal",
       "risk_categories": [
         "金额异常",
-        "违法条款"
+        "违约金过高"
       ],
       "legal_basis": [
-        "《劳动合同法》第二十六条 (劳动合同无效)"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
       "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
@@ -72,13 +72,13 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "管辖连接点异常"
+        "管辖连接点异常",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
@@ -88,33 +88,19 @@
       "risk_level": "major",
       "risk_categories": [
         "解除权失衡",
-        "举证困难"
+        "争议管辖不利"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "工作岗位",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "工作时间",
+      "clause_index": 4,
+      "clause_title": "劳务报酬",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -124,6 +110,21 @@
         "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "工作岗位",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

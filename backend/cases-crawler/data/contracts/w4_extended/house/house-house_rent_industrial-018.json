@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "租赁标的",
-      "text": "甲方将位于宁波市天河区某路 88 号的厂房出租给乙方使用, 建筑面积 500 平方米。"
+      "text": "甲方将位于杭州市西湖区某路 88 号的厂房出租给乙方使用, 建筑面积 500 平方米。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "租赁期限",
-      "text": "租赁期自 2026-09-16 起至 2031-12-20 止。"
+      "text": "租赁期自 2026-10-06 起至 2028-10-08 止。"
     },
     {
       "index": 4,
       "title": "租金及支付",
-      "text": "月租金人民币 300 万元, 乙方应于每季度首月 5 日前支付。"
+      "text": "月租金人民币 150 万元, 乙方应于每季度首月 5 日前支付。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由标的物所在地或合同签订地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,8 +52,23 @@
       "clause_title": "环保与安全",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "违法条款"
+        "隐含义务",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "提前解约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
       ],
       "legal_basis": [
         "《民法典》第五百八十五条 (违约金)"
@@ -63,27 +78,12 @@
       "stance_impact": "需结合上下文判断"
     },
     {
-      "clause_index": 7,
-      "clause_title": "提前解约",
-      "risk_level": "fatal",
-      "risk_categories": [
-        "违约金过高",
-        "显失公平"
-      ],
-      "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
-      ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
-      "stance_impact": "需结合上下文判断"
-    },
-    {
       "clause_index": 8,
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
         "表述模糊",
-        "举证困难"
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
@@ -93,15 +93,15 @@
       "stance_impact": "不利"
     },
     {
-      "clause_index": 1,
-      "clause_title": "租赁标的",
+      "clause_index": 4,
+      "clause_title": "租金及支付",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -112,8 +112,8 @@
       "clause_title": "租赁用途",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"

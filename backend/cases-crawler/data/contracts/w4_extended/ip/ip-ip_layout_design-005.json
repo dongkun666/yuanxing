@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "登记布图设计",
-      "text": "甲方拟对集成电路布图设计技术升级进行登记。"
+      "text": "甲方拟对集成电路布图设计经营周转进行登记。"
     },
     {
       "index": 2,
@@ -17,7 +17,7 @@
     {
       "index": 3,
       "title": "服务费用",
-      "text": "服务费人民币 300 万元。"
+      "text": "服务费人民币 30 万元。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "争议解决",
-      "text": "争议由北京仲裁委员会管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -37,35 +37,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "表述模糊"
+        "争议管辖不利",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》第五百六十三条 (法定解除)"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
       "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 4,
-      "clause_title": "官费",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "登记布图设计",
+      "clause_index": 3,
+      "clause_title": "服务费用",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -79,8 +63,8 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 2,
-      "clause_title": "委托事项",
+      "clause_index": 1,
+      "clause_title": "登记布图设计",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -94,17 +78,32 @@
       "stance_impact": "中性"
     },
     {
-      "clause_index": 3,
-      "clause_title": "服务费用",
+      "clause_index": 2,
+      "clause_title": "委托事项",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
         "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "官费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }

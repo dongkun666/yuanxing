@@ -12,12 +12,12 @@
     {
       "index": 2,
       "title": "强制随售权",
-      "text": "如持有 10% 以上股权的股东 (主导股东) 拟向第三方转让股权, 主导股东有权要求其他股东按相同条件一并转让。"
+      "text": "如持有 8% 以上股权的股东 (主导股东) 拟向第三方转让股权, 主导股东有权要求其他股东按相同条件一并转让。"
     },
     {
       "index": 3,
       "title": "触发条件",
-      "text": "强制随售的触发条件: 经营周转。"
+      "text": "强制随售的触发条件: 购房。"
     },
     {
       "index": 4,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由北京仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -48,7 +48,7 @@
       "risk_level": "fatal",
       "risk_categories": [
         "违约金过高",
-        "隐含义务"
+        "违法条款"
       ],
       "legal_basis": [
         "《民法典》第五百八十五条 (违约金)"
@@ -62,20 +62,19 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
+        "举证困难",
         "解除权失衡"
       ],
       "legal_basis": [
-        "《民事诉讼法》第二十四条",
-        "《民事诉讼法》第三十五条"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "配合义务",
+      "clause_index": 4,
+      "clause_title": "通知",
       "risk_level": "advisory",
       "risk_categories": [
         "可优化",
@@ -84,22 +83,22 @@
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 6,
-      "clause_title": "对价",
+      "clause_index": 1,
+      "clause_title": "协议主体",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -108,14 +107,14 @@
       "clause_title": "触发条件",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }
   ],

@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "项目",
-      "text": "项目名称: 经营周转, 项目地点: 上海市武侯区某路 88 号。"
+      "text": "项目名称: 教育, 项目地点: 杭州市西湖区某路 88 号。"
     },
     {
       "index": 2,
@@ -22,17 +22,17 @@
     {
       "index": 4,
       "title": "合作期限",
-      "text": "合作期限 5 年, 自 2027-06-16 起至 2031-08-02 止。"
+      "text": "合作期限 3 年, 自 2027-03-29 起至 2027-05-29 止。"
     },
     {
       "index": 5,
       "title": "投资额",
-      "text": "项目投资总额人民币 5000 元。"
+      "text": "项目投资总额人民币 200 万元。"
     },
     {
       "index": 6,
       "title": "回报机制",
-      "text": "乙方通过经营周转 (使用者付费/政府付费/可行性缺口补助) 收回投资并获得合理回报。"
+      "text": "乙方通过教育 (使用者付费/政府付费/可行性缺口补助) 收回投资并获得合理回报。"
     },
     {
       "index": 7,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议解决",
-      "text": "争议由标的物所在地或合同签订地管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -52,14 +52,14 @@
       "clause_title": "移交",
       "risk_level": "fatal",
       "risk_categories": [
-        "违约金过高",
-        "隐含义务"
+        "重大遗漏",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《消费者权益保护法》第二十四条"
       ],
       "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,15 +67,15 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "举证困难",
-        "管辖连接点异常"
+        "争议管辖不利",
+        "表述模糊"
       ],
       "legal_basis": [
         "《民事诉讼法》第二十四条",
         "《民事诉讼法》第三十五条"
       ],
       "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
-      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
@@ -83,11 +83,26 @@
       "clause_title": "社会资本方",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -98,28 +113,13 @@
       "clause_title": "政府方",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "项目",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     }

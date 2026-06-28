@@ -7,17 +7,17 @@
     {
       "index": 1,
       "title": "材料",
-      "text": "甲方向乙方购买购车。"
+      "text": "甲方向乙方购买原材料采购。"
     },
     {
       "index": 2,
       "title": "规格与数量",
-      "text": "规格 3, 数量 3 吨。"
+      "text": "规格 8, 数量 6 吨。"
     },
     {
       "index": 3,
       "title": "单价与总价",
-      "text": "单价人民币 5 万元/吨, 总价人民币 30 万元。"
+      "text": "单价人民币 50 万元/吨, 总价人民币 200 万元。"
     },
     {
       "index": 4,
@@ -27,7 +27,7 @@
     {
       "index": 5,
       "title": "交付",
-      "text": "乙方应于 2028-04-20 前交付, 交货地点为甲方工地。"
+      "text": "乙方应于 2031-10-31 前交付, 交货地点为甲方工地。"
     },
     {
       "index": 6,
@@ -47,13 +47,13 @@
       "clause_title": "质量",
       "risk_level": "fatal",
       "risk_categories": [
-        "重大遗漏",
-        "显失公平"
+        "违法条款",
+        "金额异常"
       ],
       "legal_basis": [
-        "《民法典》第五百八十五条 (违约金)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
       "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
       "stance_impact": "需结合上下文判断"
     },
@@ -62,28 +62,44 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "解除权失衡"
+        "举证困难",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "材料",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
-      "stance_impact": "不利"
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
     },
     {
-      "clause_index": 5,
-      "clause_title": "交付",
+      "clause_index": 6,
+      "clause_title": "验收",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
@@ -97,21 +113,6 @@
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 6,
-      "clause_title": "验收",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",

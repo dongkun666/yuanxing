@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "原抚养安排",
-      "text": "原抚养安排: 子女随甲方生活, 乙方每月支付抚养费人民币 1 万元。"
+      "text": "原抚养安排: 子女随甲方生活, 乙方每月支付抚养费人民币 30 万元。"
     },
     {
       "index": 2,
@@ -17,17 +17,17 @@
     {
       "index": 3,
       "title": "新抚养安排",
-      "text": "自 2026-11-14 起, 子女变更为随乙方生活, 甲方每月支付抚养费人民币 1 万元。"
+      "text": "自 2026-10-30 起, 子女变更为随乙方生活, 甲方每月支付抚养费人民币 5000 元。"
     },
     {
       "index": 4,
       "title": "探望权",
-      "text": "原甲方每月可探望子女 20 次。"
+      "text": "原甲方每月可探望子女 15 次。"
     },
     {
       "index": 5,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -38,13 +38,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "显失公平",
-        "隐含义务"
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释第六十五条"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
-      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -52,14 +52,14 @@
       "clause_title": "变更原因",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "重大遗漏"
+        "重大遗漏",
+        "违约金过高"
       ],
       "legal_basis": [
         "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -71,10 +71,11 @@
         "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
-      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
       "stance_impact": "不利"
     },
     {
@@ -86,10 +87,10 @@
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
-      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
       "stance_impact": "中性"
     },
     {
@@ -103,8 +104,8 @@
       "legal_basis": [
         "《民法典》相关条款"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     }
   ],

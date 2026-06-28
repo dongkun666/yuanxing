@@ -7,22 +7,22 @@
     {
       "index": 1,
       "title": "买卖标的",
-      "text": "甲方将位于深圳市浦东新区某路 88 号的房屋出售给乙方, 建筑面积 100 平方米。"
+      "text": "甲方将位于重庆市西湖区某路 88 号的房屋出售给乙方, 建筑面积 100 平方米。"
     },
     {
       "index": 2,
       "title": "成交价格",
-      "text": "房屋成交价人民币 50 万元。"
+      "text": "房屋成交价人民币 5 万元。"
     },
     {
       "index": 3,
       "title": "付款方式",
-      "text": "乙方按按月支付支付房款, 全部房款进入资金监管账户。"
+      "text": "乙方按分期支付 (3 期)支付房款, 全部房款进入资金监管账户。"
     },
     {
       "index": 4,
       "title": "过户与交付",
-      "text": "双方应于 2027-04-20 前办理房屋过户登记, 过户完成后监管资金划转给甲方。"
+      "text": "双方应于 2028-10-10 前办理房屋过户登记, 过户完成后监管资金划转给甲方。"
     },
     {
       "index": 5,
@@ -42,7 +42,7 @@
     {
       "index": 8,
       "title": "争议管辖",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由甲方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -53,13 +53,13 @@
       "risk_level": "fatal",
       "risk_categories": [
         "金额异常",
-        "隐含义务"
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+        "《民法典》合同编通则解释第六十五条"
       ],
       "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -67,13 +67,13 @@
       "clause_title": "争议管辖",
       "risk_level": "major",
       "risk_categories": [
-        "争议管辖不利",
-        "解除权失衡"
+        "表述模糊",
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
       "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
       "stance_impact": "不利"
     },
@@ -82,19 +82,34 @@
       "clause_title": "违约责任",
       "risk_level": "major",
       "risk_categories": [
-        "管辖连接点异常",
-        "表述模糊"
+        "争议管辖不利",
+        "解除权失衡"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
-      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 2,
-      "clause_title": "成交价格",
+      "clause_index": 1,
+      "clause_title": "买卖标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "付款方式",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
@@ -102,21 +117,6 @@
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
-      ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
-      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
-      "stance_impact": "中性"
-    },
-    {
-      "clause_index": 5,
-      "clause_title": "税费承担",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
-      ],
-      "legal_basis": [
-        "《民法典》相关条款"
       ],
       "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

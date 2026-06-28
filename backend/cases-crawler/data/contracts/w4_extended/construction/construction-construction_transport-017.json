@@ -17,17 +17,17 @@
     {
       "index": 3,
       "title": "货物",
-      "text": "货物: 医疗, 数量: 120 件。"
+      "text": "货物: 原材料采购, 数量: 6 件。"
     },
     {
       "index": 4,
       "title": "运输",
-      "text": "自 2027-01-06 起运, 至 2032-05-13 到达, 运输路线: 无锡市西湖区某路 88 号 至 无锡市西湖区某路 88 号。"
+      "text": "自 2026-09-30 起运, 至 2027-04-28 到达, 运输路线: 昆明市海淀区某路 88 号 至 昆明市海淀区某路 88 号。"
     },
     {
       "index": 5,
       "title": "运费",
-      "text": "运费人民币 15 万元。"
+      "text": "运费人民币 5 万元。"
     },
     {
       "index": 6,
@@ -37,7 +37,7 @@
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由丙方住所地管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "运输责任",
       "risk_level": "fatal",
       "risk_categories": [
-        "金额异常",
+        "违法条款",
         "违约金过高"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《民法典》合同编通则解释第六十五条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,26 +62,27 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "解除权失衡",
-        "争议管辖不利"
+        "争议管辖不利",
+        "管辖连接点异常"
       ],
       "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
       ],
-      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
       "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
       "stance_impact": "不利"
     },
     {
-      "clause_index": 5,
-      "clause_title": "运费",
+      "clause_index": 1,
+      "clause_title": "托运人",
       "risk_level": "advisory",
       "risk_categories": [
-        "期限异常",
-        "可优化"
+        "可优化",
+        "期限异常"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -92,11 +93,11 @@
       "clause_title": "货物",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》相关条款"
+        "《民法典》合同编通则解释"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
@@ -107,11 +108,11 @@
       "clause_title": "承运人",
       "risk_level": "advisory",
       "risk_categories": [
-        "可优化",
-        "期限异常"
+        "期限异常",
+        "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",

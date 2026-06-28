@@ -7,7 +7,7 @@
     {
       "index": 1,
       "title": "原合伙协议",
-      "text": "原合伙协议编号 LX-629715, 签订日期 2025-12-31。"
+      "text": "原合伙协议编号 LX-519344, 签订日期 2025-12-31。"
     },
     {
       "index": 2,
@@ -17,12 +17,12 @@
     {
       "index": 3,
       "title": "退伙日期",
-      "text": "退伙日期为 2028-10-19。"
+      "text": "退伙日期为 2027-08-24。"
     },
     {
       "index": 4,
       "title": "财产份额结算",
-      "text": "甲方退伙应分得的财产份额为人民币 50 万元。"
+      "text": "甲方退伙应分得的财产份额为人民币 80 万元。"
     },
     {
       "index": 5,
@@ -32,12 +32,12 @@
     {
       "index": 6,
       "title": "竞业禁止",
-      "text": "甲方退伙后 18 个月 内, 不得在与原合伙企业相竞争的企业任职。"
+      "text": "甲方退伙后 2 年 内, 不得在与原合伙企业相竞争的企业任职。"
     },
     {
       "index": 7,
       "title": "争议解决",
-      "text": "争议由上海国际仲裁中心管辖。"
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
     }
   ],
   "annotations_count": 5,
@@ -47,14 +47,14 @@
       "clause_title": "财产份额结算",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "金额异常"
+        "隐含义务",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《消费者权益保护法》第二十四条"
       ],
-      "risk_description": "该条款金额异常, 远超合理范围。",
-      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -62,14 +62,14 @@
       "clause_title": "竞业禁止",
       "risk_level": "fatal",
       "risk_categories": [
-        "违法条款",
-        "金额异常"
+        "金额异常",
+        "重大遗漏"
       ],
       "legal_basis": [
-        "《民法典》第六百八十条 (禁止高利放贷)"
+        "《民法典》第五百八十五条 (违约金)"
       ],
-      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
-      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
       "stance_impact": "需结合上下文判断"
     },
     {
@@ -77,41 +77,40 @@
       "clause_title": "争议解决",
       "risk_level": "major",
       "risk_categories": [
-        "表述模糊",
-        "举证困难"
-      ],
-      "legal_basis": [
-        "《民法典》第五百六十三条 (法定解除)"
-      ],
-      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
-      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
-      "stance_impact": "不利"
-    },
-    {
-      "clause_index": 1,
-      "clause_title": "原合伙协议",
-      "risk_level": "advisory",
-      "risk_categories": [
-        "期限异常",
-        "可优化"
+        "解除权失衡",
+        "管辖连接点异常"
       ],
       "legal_basis": [
         "《民法典》合同编通则解释"
       ],
-      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
       "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
       "stance_impact": "中性"
     },
     {
-      "clause_index": 5,
-      "clause_title": "债务承担",
+      "clause_index": 3,
+      "clause_title": "退伙日期",
       "risk_level": "advisory",
       "risk_categories": [
         "期限异常",
         "可优化"
       ],
       "legal_basis": [
-        "《民法典》合同编通则解释"
+        "《民法典》相关条款"
       ],
       "risk_description": "该条款可结合具体业务场景进一步优化表述。",
       "modification_suggestion": "建议参考同类合同常用期限范围调整。",
