@@ -124,6 +124,16 @@ app.add_middleware(
 )
 
 
+# ========== Skill Hub 端点 (Track E) ==========
+# 类案检索 Skill (W7 实现)
+try:
+    from api.skill_endpoints import router as skill_router
+    app.include_router(skill_router)
+    logger.info("Skill Hub: 类案检索 router registered")
+except Exception as e:
+    logger.warning(f"Skill Hub router 加载失败 (非致命): {e}")
+
+
 # ========== 端点 ==========
 @app.get("/api/health")
 async def health():
