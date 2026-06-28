@@ -89,7 +89,7 @@
         var party = document.getElementById('progress-party').value.trim();
 
         if (!caseNum && !(court && party)) {
-            showToast('请输入案号, 或法院 + 当事人姓名');
+            if (typeof showToast === 'function') showToast('请输入案号, 或法院 + 当事人姓名');
             return;
         }
 
