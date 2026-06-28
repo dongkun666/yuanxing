@@ -54,9 +54,9 @@
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(0)">查看</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive(0)">还原</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive(0)">删除</button>
 </div>
 </td>
 </tr>
@@ -71,9 +71,9 @@
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(1)">查看</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive(1)">还原</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive(1)">删除</button>
 </div>
 </td>
 </tr>
@@ -88,9 +88,9 @@
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(2)">查看</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive()">还原</button>
+<button class="text-xs text-brand hover:underline" onclick="restoreArchive(2)">还原</button>
 <span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive()">删除</button>
+<button class="text-xs text-danger hover:underline" onclick="deleteArchive(2)">删除</button>
 </div>
 </td>
 </tr>
@@ -202,15 +202,28 @@ function toggleAllArchive(checkbox) {
 }
 
 function openArchiveDetail(id) {
-    showToast('查看归档案件 #' + id);
+    // 委托给 cases-list.js 实现的版本
+    if (typeof globalThis.openArchiveDetail === 'function') {
+        globalThis.openArchiveDetail(id);
+    } else {
+        showToast('查看归档案件 #' + id);
+    }
 }
 
-function restoreArchive() {
-    showToast('案件还原功能开发中');
+function restoreArchive(id) {
+    if (typeof globalThis.restoreArchive === 'function') {
+        globalThis.restoreArchive(id);
+    } else {
+        showToast('案件还原功能开发中');
+    }
 }
 
-function deleteArchive() {
-    showToast('删除归档功能开发中');
+function deleteArchive(id) {
+    if (typeof globalThis.deleteArchive === 'function') {
+        globalThis.deleteArchive(id);
+    } else {
+        showToast('删除归档功能开发中');
+    }
 }
 
 // 初始化

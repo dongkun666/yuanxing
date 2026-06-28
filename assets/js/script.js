@@ -19,7 +19,29 @@
 
         // ===== 案件详情页操作 =====
         function shareCase() {
-            showToast('分享案件功能开发中');
+            var idx = (typeof globalThis.currentCaseIndex !== 'undefined') ? globalThis.currentCaseIndex : -1;
+            if (idx < 0) {
+                showToast('请先打开一个案件', 'warning');
+                return;
+            }
+            var caseMeta = [
+                { caseName: '李明诉XX公司买卖合同纠纷', caseNumber: '(2026)京01民初128号' },
+                { caseName: '赵六劳动争议仲裁案', caseNumber: '(2026)京02民初256号' },
+                { caseName: '张三合同纠纷案', caseNumber: '(2026)京03民初789号' },
+                { caseName: '某科技公司股权纠纷案', caseNumber: '(2026)京04民初345号' },
+                { caseName: '王华借贷纠纷案', caseNumber: '(2026)京05民初567号' }
+            ];
+            var meta = caseMeta[idx] || { caseName: '案件', caseNumber: 'N/A' };
+            var shareText = '【LexPrime 案件分享】\n案号: ' + meta.caseNumber + '\n案名: ' + meta.caseName + '\n查看详情: ' + location.origin + '/case/' + idx;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareText).then(function() {
+                    showToast('案件信息已复制到剪贴板', 'success');
+                }).catch(function() {
+                    prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+                });
+            } else {
+                prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+            }
         }
 
         // ===== 归档管理操作 =====
@@ -680,6 +702,9 @@
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
+    // ===== globalThis 桥接 (IIFE 内导出, 让其他模块可见) =====
+    globalThis.showToast = showToast;
+    globalThis.shareCase = shareCase;
 
         // login view 加载后绑定事件
     })();

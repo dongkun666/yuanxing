@@ -18,6 +18,17 @@
 
     // 案件列表筛选 + 分页
     function filterCaseList() {
+        // 隐藏已归档的 row
+        try {
+            var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
+            if (archived.length > 0) {
+                var allRows = document.querySelectorAll('#caseTableBody tr[data-row-idx]');
+                allRows.forEach(function(row) {
+                    var idx = parseInt(row.getAttribute('data-row-idx'));
+                    if (archived.indexOf(idx) >= 0) row.style.display = 'none';
+                });
+            }
+        } catch (e) { /* ignore */ }
         var searchInput = document.getElementById('caseSearchInput');
         var statusFilter = document.getElementById('caseStatusFilter');
         var typeFilter = document.getElementById('caseTypeFilter');
@@ -104,8 +115,21 @@
         filterCaseList();
     }
 
-    function archiveCase() {
-        showToast('案件归档功能开发中');
+    function archiveCase(idx) {
+        if (idx === undefined || idx === null) {
+            // 兼容无参调用: 从 currentCaseIndex 读
+            idx = globalThis.currentCaseIndex;
+        }
+        if (idx === undefined || idx < 0) {
+            showToast('请先点击案件"详情"再归档', 'warning');
+            return;
+        }
+        if (!confirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。')) return;
+        var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
+        if (archived.indexOf(idx) === -1) archived.push(idx);
+        localStorage.setItem('lexprime_archived', JSON.stringify(archived));
+        showToast('案件已归档', 'success');
+        if (typeof filterCaseList === 'function') filterCaseList();
     }
 
     function editCaseTitle() {
@@ -246,19 +270,42 @@
     }
 
     function openArchiveDetail(id) {
-        showToast('打开归档详情 #' + id + ' (功能开发中)');
+        // 归档案件 ID 即 caseMeta 数组的 index (0-4)
+        if (typeof openCaseDetail === 'function') {
+            openCaseDetail(id);
+        } else {
+            switchView('case');
+        }
     }
 
     function restoreArchive() {
-        if (confirm('确定要恢复此归档案件？恢复后会重新出现在案件列表中。')) {
-            showToast('归档已恢复', 'success');
+        var id = (typeof globalThis.currentArchiveId !== 'undefined') ? globalThis.currentArchiveId : null;
+        if (id === null || id === undefined) {
+            showToast('请先选择要恢复的归档', 'warning');
+            return;
         }
+        if (!confirm('确定要恢复此归档案件？恢复后会重新出现在案件列表中。')) return;
+        var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
+        archived = archived.filter(function(x) { return x !== id; });
+        localStorage.setItem('lexprime_archived', JSON.stringify(archived));
+        showToast('归档已恢复', 'success');
+        if (typeof renderArchiveTable === 'function') renderArchiveTable();
+        else filterArchiveList();
     }
 
     function deleteArchive() {
-        if (confirm('确定要永久删除此归档？此操作不可恢复。')) {
-            showToast('归档已删除', 'success');
+        var id = (typeof globalThis.currentArchiveId !== 'undefined') ? globalThis.currentArchiveId : null;
+        if (id === null || id === undefined) {
+            showToast('请先选择要删除的归档', 'warning');
+            return;
         }
+        if (!confirm('确定要永久删除此归档？此操作不可恢复。')) return;
+        var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
+        archived = archived.filter(function(x) { return x !== id; });
+        localStorage.setItem('lexprime_archived', JSON.stringify(archived));
+        showToast('归档已删除', 'success');
+        if (typeof renderArchiveTable === 'function') renderArchiveTable();
+        else filterArchiveList();
     }
 
     function filterArchiveList() {

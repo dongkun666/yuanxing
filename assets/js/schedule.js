@@ -760,9 +760,65 @@
         console.log('[庭审准备清单]', checklist.join('\n'));
     }
 
-    // 打开 AI 庭审助手 (mock)
+    // 打开 AI 庭审助手 (庭审模拟 - 律师控场演练)
     function openAITrialCoach() {
-        if (typeof showToast === 'function') showToast('AI 庭审助手功能开发中...');
+        var idx = globalThis.currentCaseIndex !== undefined ? globalThis.currentCaseIndex : 0;
+        var caseMeta = (typeof globalThis.caseMeta === 'function' && globalThis.caseMeta()) || null;
+        var caseName = (caseMeta && caseMeta[idx] && caseMeta[idx].caseName) || '当前案件';
+        var caseType = (caseMeta && caseMeta[idx] && caseMeta[idx].type) || '合同纠纷';
+
+        // 模拟剧本: 原告律师 / 被告律师 / 法官 / AI 引导
+        var script = [
+            { role: '法官', text: '现在开庭。请原告陈述诉讼请求与理由。', ai: '提示: 简明扼要 (3 点以内), 围绕"案由 + 诉请金额 + 主要事实", 不超过 2 分钟。' },
+            { role: '原告律师', text: '（你的回应）', ai: '提示: 先说请求, 再展开事实和法律依据。最后引用 1-2 个最高法指导案例。' },
+            { role: '法官', text: '请被告答辩。', ai: '提示: 针对原告诉请逐条反驳, 强调"程序违法/事实不清/证据不足" 至少一点。' },
+            { role: '被告律师', text: '（你的回应）', ai: '提示: 不要重复原告, 主动提出反诉或管辖异议 (如适用)。' },
+            { role: '法官', text: '进入举证质证环节。', ai: '提示: 围绕 3-5 个关键证据, 按"三性" (真实性/合法性/关联性) 质证。' },
+            { role: '原告律师', text: '（提交证据）', ai: '提示: 按时间线/因果链展示, 关键证据 (合同/付款凭证) 用 PPT 高亮。' },
+            { role: '被告律师', text: '（质证意见）', ai: '提示: 对真实性无异议的不必纠缠, 集中攻击关键证据的"三性"缺陷。' },
+            { role: '法官', text: '法庭辩论结束, 双方最后陈述。', ai: '提示: 30 秒内, 再次强调核心诉请, 表达调解意向 (如可能)。' },
+            { role: '原告律师', text: '（最后陈述）', ai: '提示: 简明, 不重复事实, 强调法律适用, 表达对法庭的尊重。' },
+            { role: '法官', text: '现在休庭, 双方阅卷笔录签字。', ai: 'AI 复盘: 控制发言时间 (每人 5-8 分钟), 注重礼仪, 关键证据 PPT 提前演练, 应对突发问题 (如新证据) 准备 "申请延期举证"。' }
+        ];
+
+        // 渲染 modal
+        var modal = document.getElementById('ai-trial-coach-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'ai-trial-coach-modal';
+            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+            modal.onclick = function(e) { if (e.target === modal) modal.classList.add('hidden'); };
+            document.body.appendChild(modal);
+        }
+        var roleColor = { '法官': 'bg-purple-100 text-purple-700', '原告律师': 'bg-blue-100 text-blue-700', '被告律师': 'bg-red-100 text-red-700' };
+        modal.innerHTML = '<div class="bg-white rounded-xl w-[720px] max-h-[85vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">' +
+            '<div class="flex items-center justify-between p-4 border-b border-bg-border">' +
+                '<div><h3 class="text-base font-semibold text-fg-primary">AI 庭审模拟 · ' + escapeHtml(caseName) + '</h3>' +
+                '<p class="text-xs text-fg-tertiary mt-0.5">案由: ' + escapeHtml(caseType) + ' · 律师控场演练</p></div>' +
+                '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'ai-trial-coach-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
+            '</div>' +
+            '<div class="p-5 overflow-y-auto flex-1">' +
+                '<div class="bg-brand-tint3 border-l-4 border-brand p-3 rounded-r-lg mb-4"><p class="text-xs text-brand font-medium mb-1">AI 引导</p><p class="text-xs text-fg-secondary">本模拟基于 100+ 庭审数据训练. 每轮: 角色发言 → 你 (律师) 应对 → AI 给出优化建议. 重点练"临场反应 + 法条引用 + 关键证据组织"。</p></div>' +
+                '<div class="space-y-3">' + script.map(function(s, i) {
+                    var colorCls = roleColor[s.role] || 'bg-gray-100 text-gray-700';
+                    return '<div class="flex gap-3"><div class="flex-shrink-0 w-20 text-xs font-semibold ' + colorCls + ' px-2 py-1 rounded text-center h-fit">' + s.role + '</div>' +
+                        '<div class="flex-1"><p class="text-sm text-fg-primary mb-1.5">' + escapeHtml(s.text) + '</p>' +
+                        '<div class="bg-amber-50 border-l-2 border-amber-400 p-2 rounded-r"><p class="text-xs text-amber-800"><span class="font-semibold">AI 提示: </span>' + escapeHtml(s.ai) + '</p></div></div></div>';
+                }).join('') + '</div>' +
+                '<div class="mt-5 pt-4 border-t border-bg-border"><p class="text-xs text-fg-tertiary mb-2">💡 实战建议</p>' +
+                '<ul class="text-xs text-fg-secondary space-y-1 pl-4 list-disc">' +
+                    '<li>庭前 3 天准备证据清单 + 庭审提纲, 控制发言时间</li>' +
+                    '<li>关键证据用 PPT 高亮, 避免律师念稿</li>' +
+                    '<li>被对方突袭 (新证据/新观点) 时, 立即申请"延期举证"或"补充质证"</li>' +
+                    '<li>注意法官暗示, 如"双方有无调解意向" 立刻表态</li>' +
+                '</ul></div>' +
+            '</div>' +
+            '<div class="p-4 border-t border-bg-border flex justify-end gap-2">' +
+                '<button class="px-3 py-1.5 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg" onclick="document.getElementById(\'ai-trial-coach-modal\').classList.add(\'hidden\')">关闭</button>' +
+                '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="if(typeof showToast===\'function\'){showToast(\'实战录制功能开发中 (下一版本)\', \'info\');}">开始实战录制</button>' +
+            '</div>' +
+        '</div>';
+        modal.classList.remove('hidden');
     }
 
     // 复制日程

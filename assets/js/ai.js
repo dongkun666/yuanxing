@@ -204,11 +204,11 @@
                     showToast('当前版本: v' + current + ' · 已是最新版本');
                 }
             } else if (action === 'feedback') {
-                showToast('问题反馈功能开发中');
+                openFeedbackModal();
             } else if (action === 'guide') {
-                showToast('用户指南功能开发中');
+                openUserGuideModal();
             } else if (action === 'contact') {
-                showToast('联系我们功能开发中');
+                openContactModal();
             } else if (action === 'logout') {
                 if (confirm('确认退出登录？')) {
                     if (typeof Auth !== 'undefined' && Auth.logout) {
@@ -398,4 +398,104 @@
     function escapeHtml(str) {
         if (str == null) return '';
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // ============================================================
+    // "更多" 菜单 3 个 modal: 问题反馈 / 用户指南 / 联系我们
+    // ============================================================
+    function ensureMoreModal() {
+        var existing = document.getElementById('more-action-modal');
+        if (existing) return existing;
+        var wrapper = document.createElement('div');
+        wrapper.id = 'more-action-modal';
+        wrapper.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+        wrapper.onclick = function(e) { if (e.target === wrapper) wrapper.classList.add('hidden'); };
+        wrapper.innerHTML = '<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">' +
+            '<div class="flex items-center justify-between p-4 border-b border-bg-border">' +
+                '<h3 class="text-base font-semibold text-fg-primary" id="more-action-title">标题</h3>' +
+                '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
+            '</div>' +
+            '<div class="p-5 overflow-y-auto" id="more-action-body"></div>' +
+            '<div class="p-4 border-t border-bg-border flex justify-end gap-2" id="more-action-footer"></div>' +
+        '</div>';
+        document.body.appendChild(wrapper);
+        return wrapper;
+    }
+    function showMoreModal(title, bodyHtml, footerHtml) {
+        var m = ensureMoreModal();
+        document.getElementById('more-action-title').textContent = title;
+        document.getElementById('more-action-body').innerHTML = bodyHtml;
+        document.getElementById('more-action-footer').innerHTML = footerHtml || '';
+        m.classList.remove('hidden');
+    }
+
+    function openFeedbackModal() {
+        showMoreModal('问题反馈', '<p class="text-sm text-fg-secondary mb-3">感谢您的反馈, 我们会尽快查看并改进。</p>' +
+            '<label class="block text-xs text-fg-tertiary mb-1">问题类型</label>' +
+            '<select id="feedback-type" class="w-full mb-3 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white">' +
+                '<option>功能建议</option><option>界面问题</option><option>性能问题</option><option>数据错误</option><option>其他</option>' +
+            '</select>' +
+            '<label class="block text-xs text-fg-tertiary mb-1">详细描述</label>' +
+            '<textarea id="feedback-content" rows="5" placeholder="请描述问题或建议..." class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white resize-none"></textarea>' +
+            '<label class="block text-xs text-fg-tertiary mb-1 mt-3">联系邮箱 (可选)</label>' +
+            '<input id="feedback-email" type="email" placeholder="your@email.com" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white"/>',
+            '<button class="px-3 py-1.5 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">取消</button>' +
+            '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="submitFeedback()">提交反馈</button>'
+        );
+    }
+    function submitFeedback() {
+        var type = (document.getElementById('feedback-type') || {}).value || '';
+        var content = (document.getElementById('feedback-content') || {}).value || '';
+        var email = (document.getElementById('feedback-email') || {}).value || '';
+        if (!content.trim()) {
+            showToast('请填写详细描述', 'warning');
+            return;
+        }
+        var list = JSON.parse(localStorage.getItem('lexprime_feedback') || '[]');
+        list.push({ ts: Date.now(), type: type, content: content, email: email });
+        localStorage.setItem('lexprime_feedback', JSON.stringify(list));
+        document.getElementById('more-action-modal').classList.add('hidden');
+        showToast('反馈已提交, 感谢您的支持!', 'success');
+    }
+    globalThis.submitFeedback = submitFeedback;
+
+    function openUserGuideModal() {
+        showMoreModal('用户指南', '<div class="text-sm text-fg-secondary space-y-3">' +
+            '<div class="bg-brand-tint3 p-3 rounded-lg"><p class="font-semibold text-fg-primary mb-1">快速开始</p><p>登录后进入工作台, 点击左侧菜单选择功能 (案件管理 / 日程 / 客户 / 模板 / 智库等)。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">案件管理</p><p>在"案件管理"列表新建/编辑/归档案件, 详情页可编辑当事人、证据目录、时间线、案件分析。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">日程管理</p><p>工作台"今日日程"或左侧"日程管理"查看, 支持新增/编辑/冲突检测。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">AI 助手 (智库问答)</p><p>切换到 "AI 对话" 标签, 选择对话或新开会话, 提问法律问题 (基于判例库 / 法规库 / 客户档案 RAG 检索)。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">模板管理</p><p>左侧"模板管理": 官方模板 (内置 8 大类) / 个人模板 (自建分类)。点击"+"上传本地模板 (.docx / .md)。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">快捷键</p><p>Ctrl+K (智库搜索) / Ctrl+/ (AI 助手) / Esc (关闭弹窗)。</p></div>' +
+            '<div><p class="font-semibold text-fg-primary mb-1">常见问题</p><p>遇到问题: 点击"更多 → 问题反馈", 24h 内回复。</p></div>' +
+            '</div>',
+            '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">我知道了</button>'
+        );
+    }
+
+    function openContactModal() {
+        showMoreModal('联系我们', '<div class="text-sm text-fg-secondary space-y-3">' +
+            '<div class="flex items-start gap-3 p-3 bg-brand-tint3 rounded-lg">' +
+                '<iconify-icon class="text-xl text-brand flex-shrink-0" icon="mdi:email-outline"></iconify-icon>' +
+                '<div><p class="font-semibold text-fg-primary">商务合作</p><p class="mt-0.5">contact@lexprime.cn</p></div>' +
+            '</div>' +
+            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:shield-account-outline"></iconify-icon>' +
+                '<div><p class="font-semibold text-fg-primary">技术/账号支持</p><p class="mt-0.5">support@lexprime.cn</p></div>' +
+            '</div>' +
+            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:cellphone"></iconify-icon>' +
+                '<div><p class="font-semibold text-fg-primary">紧急热线 (工作日 9:00-18:00)</p><p class="mt-0.5">400-LEX-PRIME (400-539-774)</p></div>' +
+            '</div>' +
+            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:map-marker-outline"></iconify-icon>' +
+                '<div><p class="font-semibold text-fg-primary">公司地址</p><p class="mt-0.5">北京市朝阳区建国路 88 号 SOHO 现代城 B 座 18 层</p></div>' +
+            '</div>' +
+            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:wechat"></iconify-icon>' +
+                '<div><p class="font-semibold text-fg-primary">微信公众号</p><p class="mt-0.5">LexPrime元枢法智 (lawyer-assistant)</p></div>' +
+            '</div>' +
+            '</div>',
+            '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">关闭</button>'
+        );
     }

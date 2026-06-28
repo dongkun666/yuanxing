@@ -44,7 +44,7 @@ AI新建案件
 </tr>
 </thead>
 <tbody id="caseTableBody" class="divide-y divide-bg">
-<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="民间借贷纠纷">
+<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="民间借贷纠纷" data-row-idx="0">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="李明诉XX公司买卖合同纠纷">李明诉XX公司买卖合同纠纷</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京01民初128号">(2026)京01民初128号</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="民间借贷纠纷">民间借贷纠纷</td>
@@ -56,13 +56,13 @@ AI新建案件
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(0)">详情</button>
 <span class="text-bg-border flex-shrink-0">|</span>
-<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase(0)">归档</button>
 <span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(0)">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-status="待开庭" data-type="劳动争议">
+<tr class="hover:bg-bg-subtle transition-colors" data-status="待开庭" data-type="劳动争议" data-row-idx="1">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="赵六劳动争议仲裁案">赵六劳动争议仲裁案</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京02民初256号">(2026)京02民初256号</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="劳动争议仲裁">劳动争议仲裁</td>
@@ -74,13 +74,13 @@ AI新建案件
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(1)">详情</button>
 <span class="text-bg-border flex-shrink-0">|</span>
-<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase(1)">归档</button>
 <span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(1)">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-status="已结案" data-type="民事">
+<tr class="hover:bg-bg-subtle transition-colors" data-status="已结案" data-type="民事" data-row-idx="2">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="张三合同纠纷案">张三合同纠纷案</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京03民初789号">(2026)京03民初789号</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="合同纠纷">合同纠纷</td>
@@ -92,13 +92,13 @@ AI新建案件
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(2)">详情</button>
 <span class="text-bg-border flex-shrink-0">|</span>
-<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase(2)">归档</button>
 <span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(2)">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="知识产权">
+<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="知识产权" data-row-idx="3">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="某科技公司股权纠纷案">某科技公司股权纠纷案</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京04民初345号">(2026)京04民初345号</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="知识产权侵权">知识产权侵权</td>
@@ -110,13 +110,13 @@ AI新建案件
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(3)">详情</button>
 <span class="text-bg-border flex-shrink-0">|</span>
-<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase(3)">归档</button>
 <span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(3)">删除</button>
 </div>
 </td>
 </tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="民事">
+<tr class="hover:bg-bg-subtle transition-colors" data-status="进行中" data-type="民事" data-row-idx="4">
 <td class="py-3 px-4 text-xs font-medium text-fg-primary truncate" title="王华借贷纠纷案">王华借贷纠纷案</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="(2026)京05民初567号">(2026)京05民初567号</td>
 <td class="py-3 px-4 text-xs text-fg-secondary truncate" title="离婚纠纷">离婚纠纷</td>
@@ -128,7 +128,7 @@ AI新建案件
 <div class="flex items-center justify-center gap-2">
 <button class="text-xs text-brand hover:underline flex-shrink-0" onclick="openCaseDetail(4)">详情</button>
 <span class="text-bg-border flex-shrink-0">|</span>
-<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
+<button class="text-xs text-brand hover:underline flex-shrink-0" onclick="archiveCase(4)">归档</button>
 <span class="text-bg-border flex-shrink-0">|</span>
 <button class="text-xs text-danger hover:underline flex-shrink-0" onclick="deleteCase(4)">删除</button>
 </div>
