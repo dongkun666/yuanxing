@@ -140,16 +140,17 @@ async def health():
 
 
 # --- 判例 ---
-@app.get("/api/cases", response_model=List[CaseOut])
+@app.get("/api/cases")
 async def list_cases(
     cause: Optional[str] = None,
     cause_category: Optional[str] = None,
     year: Optional[int] = None,
     court: Optional[str] = None,
-    limit: int = Query(50, le=200),
+    limit: int = Query(50, le=500),
     offset: int = 0,
+    full: bool = Query(False, description="包含完整字段 (full_text, legal_basis, lex_tags, source 等)"),
 ):
-    """判例列表"""
+    """判例列表 (默认精简, ?full=true 返完整)"""
     async with Database.session() as session:
         from sqlalchemy import select
         stmt = select(Case).order_by(Case.lex_score.desc(), Case.judgment_date.desc())
@@ -164,14 +165,28 @@ async def list_cases(
         stmt = stmt.limit(limit).offset(offset)
         result = await session.execute(stmt)
         cases = result.scalars().all()
-        return [CaseOut(
-            id=c.id, doc_id=c.doc_id, case_id=c.case_id, case_name=c.case_name,
-            court=c.court, cause=c.cause, cause_category=c.cause_category,
-            cause_color=c.cause_color,
-            judgment_date=c.judgment_date.isoformat() if c.judgment_date else None,
-            year=c.year, lex_score=c.lex_score,
-            view_count=c.view_count, favorite_count=c.favorite_count,
-        ) for c in cases]
+        if full:
+            # 完整数据 (给前端 view)
+            return [CaseDetail(
+                id=c.id, doc_id=c.doc_id, case_id=c.case_id, case_name=c.case_name,
+                court=c.court, cause=c.cause, cause_category=c.cause_category,
+                cause_color=c.cause_color,
+                judgment_date=c.judgment_date.isoformat() if c.judgment_date else None,
+                year=c.year, lex_score=c.lex_score,
+                view_count=c.view_count, favorite_count=c.favorite_count,
+                parties=c.parties, legal_basis=c.legal_basis,
+                full_text=c.full_text_plain or c.full_text, source=c.source, source_url=c.source_url,
+                keywords=c.keywords or [],
+            ) for c in cases]
+        else:
+            return [CaseOut(
+                id=c.id, doc_id=c.doc_id, case_id=c.case_id, case_name=c.case_name,
+                court=c.court, cause=c.cause, cause_category=c.cause_category,
+                cause_color=c.cause_color,
+                judgment_date=c.judgment_date.isoformat() if c.judgment_date else None,
+                year=c.year, lex_score=c.lex_score,
+                view_count=c.view_count, favorite_count=c.favorite_count,
+            ) for c in cases]
 
 
 @app.get("/api/cases/{doc_id}", response_model=CaseDetail)

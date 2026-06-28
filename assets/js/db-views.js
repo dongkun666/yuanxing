@@ -1,13 +1,26 @@
 /*
- * LexPrime 判例/法规/企业 3 个自建库 - UI 逻辑
- * 2026-06-28
+ * LexPrime 判例/法规/企业 3 个自建库 - UI 逻辑 v2
+ * 2026-06-28 · A 任务: 接真实 API
  *
- * 数据源: data-db.js mock → 可选 backend API
- * 风格: 复用 judicial.js 模式
+ * 数据源优先级:
+ * 1. window.SERVER_API (运行 API 后端的 URL, 如 http://127.0.0.1:8000)
+ * 2. 自动探测 http://localhost:8000
+ * 3. Fallback: globalThis.MOCK_CASES / MOCK_LAWS / MOCK_COMPANIES
+ *
+ * API 字段与 mock 字段一致 (核心字段: id/cause/cause_category/cause_color/...)
  */
 
 (function() {
     'use strict';
+
+    // ===== 状态 =====
+    var apiBase = null;
+    var apiStatus = { cases: 'mock', laws: 'mock', companies: 'mock' };
+    var dataCache = {
+        cases: null,        // API 返回的 cases 列表
+        laws: null,
+        companies: null,
+    };
 
     // ===== 通用工具 =====
     function escapeHtml(s) {
@@ -17,31 +30,60 @@
         });
     }
 
-    function getApiBase() {
+    function resolveApiBase() {
         if (typeof window.SERVER_API !== 'undefined' && window.SERVER_API) return window.SERVER_API;
+        // 默认探测 localhost
         return 'http://localhost:8000';
     }
 
-    async function tryApi(path) {
+    async function fetchApi(path) {
+        if (!apiBase) apiBase = resolveApiBase();
         try {
-            var resp = await fetch(getApiBase() + path, { signal: AbortSignal.timeout(2000) });
+            var resp = await fetch(apiBase + path, {
+                signal: AbortSignal.timeout(3000),
+                headers: { 'Accept': 'application/json' },
+            });
             if (resp.ok) return await resp.json();
-        } catch (e) {}
+        } catch (e) {
+            // API 不可用, fallback
+        }
         return null;
     }
 
-    function setApiStatus(text, isLive) {
-        var el = document.getElementById('cases-db-api-status');
-        if (el) el.innerHTML = isLive
-            ? '<span class="text-success">● 实时 API</span>'
-            : '<span class="text-fg-tertiary">● Mock 数据 (后端未启动)</span>';
+    function setApiStatus(prefix, status) {
+        apiStatus[prefix] = status;
+        var el = document.getElementById(prefix + '-db-api-status');
+        if (el) {
+            el.innerHTML = status === 'live'
+                ? '<span class="text-success font-medium">● 实时 API</span> · ' + apiBase
+                : '<span class="text-fg-tertiary">● Mock 数据 (后端未启动)</span>';
+        }
     }
 
     // ============================================================
     // 1. 判例库 (cases-db)
     // ============================================================
+    function getActiveCases() {
+        // 优先 API 缓存, fallback mock
+        return (dataCache.cases && dataCache.cases.length > 0) ? dataCache.cases : (globalThis.MOCK_CASES || []);
+    }
+
+    async function loadCasesFromApi() {
+        var data = await fetchApi('/api/cases?limit=200&full=true');
+        if (data && Array.isArray(data) && data.length > 0) {
+            // 适配: API 返回字段 {id, doc_id, case_id, case_name, court, cause, cause_category, cause_color, year, lex_score, view_count, favorite_count}
+            // mock 字段 {id, doc_id, case_id, case_name, court, case_type, procedure, judgment_date, public_date, parties, cause, cause_category, cause_color, legal_basis, full_text, source, source_url, region, year, lex_score, lex_tags, view_count, favorite_count}
+            // API 是简化版, mock 是完整版. 字段映射兼容.
+            dataCache.cases = data;
+            setApiStatus('cases', 'live');
+            return true;
+        }
+        setApiStatus('cases', 'mock');
+        return false;
+    }
+
     function renderCasesDb() {
-        var allCases = globalThis.MOCK_CASES || [];
+        var allCases = getActiveCases();
         var search = (document.getElementById('cases-db-search') || {}).value || '';
         var causeFilter = (document.getElementById('cases-db-cause-filter') || {}).value || 'all';
         var sourceFilter = (document.getElementById('cases-db-source-filter') || {}).value || 'all';
@@ -49,11 +91,12 @@
 
         var filtered = allCases.filter(function(c) {
             if (causeFilter !== 'all' && c.cause_category !== causeFilter) return false;
-            if (sourceFilter !== 'all' && c.source !== sourceFilter) return false;
+            // source 在 API 返回中可能没有, fallback 时跳过
+            if (sourceFilter !== 'all' && c.source && c.source !== sourceFilter) return false;
             if (yearFilter !== 'all' && String(c.year) !== yearFilter) return false;
             if (search) {
                 var s = search.toLowerCase();
-                var hay = (c.case_name + ' ' + c.case_id + ' ' + c.cause + ' ' + (c.full_text || '') + ' ' + (c.legal_basis || '')).toLowerCase();
+                var hay = (c.case_name + ' ' + (c.case_id || '') + ' ' + (c.cause || '') + ' ' + (c.full_text || '') + ' ' + (c.legal_basis || '')).toLowerCase();
                 if (hay.indexOf(s) < 0) return false;
             }
             return true;
@@ -66,7 +109,7 @@
         var elTotal = document.getElementById('cases-db-stat-total');
         if (elTotal) elTotal.textContent = allCases.length;
         var elGuide = document.getElementById('cases-db-stat-guide');
-        if (elGuide) elGuide.textContent = allCases.filter(function(c) { return (c.lex_tags || []).indexOf('指导性案例') >= 0; }).length;
+        if (elGuide) elGuide.textContent = allCases.filter(function(c) { return (c.lex_tags || []).indexOf('指导性案例') >= 0 || (c.case_name || '').indexOf('指导') >= 0; }).length;
         var elFirm = document.getElementById('cases-db-stat-firm');
         if (elFirm) elFirm.textContent = allCases.filter(function(c) { return c.source === 'lawyer_added'; }).length;
         var elCount = document.getElementById('cases-db-count');
@@ -96,26 +139,31 @@
         };
 
         container.innerHTML = filtered.map(function(c) {
-            var sourceLabel = sourceLabels[c.source] || c.source;
-            var sourceColor = sourceColors[c.source] || 'bg-gray-100 text-gray-700';
+            var sourceLabel = c.source ? (sourceLabels[c.source] || c.source) : 'API';
+            var sourceColor = c.source ? (sourceColors[c.source] || 'bg-gray-100 text-gray-700') : 'bg-green-100 text-green-700';
+            var causeColorCls = c.cause_color === 'indigo' ? 'bg-indigo-100 text-indigo-700' :
+                                 c.cause_color === 'red' ? 'bg-red-100 text-red-700' :
+                                 c.cause_color === 'pink' ? 'bg-pink-100 text-pink-700' :
+                                 c.cause_color === 'orange' ? 'bg-orange-100 text-orange-700' :
+                                 c.cause_color === 'purple' ? 'bg-purple-100 text-purple-700' :
+                                 c.cause_color === 'gray' ? 'bg-gray-100 text-gray-700' :
+                                 c.cause_color === 'blue' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700';
             return '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-md hover:border-brand/30 transition-all cursor-pointer" onclick="openCaseDbDetail(' + c.id + ')">'
                 + '<div class="flex items-start justify-between gap-3 mb-2">'
                 +   '<div class="flex items-center gap-2 flex-wrap flex-1 min-w-0">'
-                +     '<h3 class="text-sm font-semibold text-fg-primary hover:text-brand transition-colors">' + escapeHtml(c.case_name) + '</h3>'
+                +     '<h3 class="text-sm font-semibold text-fg-primary hover:text-brand transition-colors">' + escapeHtml(c.case_name || '(无名)') + '</h3>'
                 +     '<span class="text-[10px] ' + sourceColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + sourceLabel + '</span>'
-                +     '<span class="text-[10px] ' + (c.cause_color === 'indigo' ? 'bg-indigo-100 text-indigo-700' : c.cause_color === 'red' ? 'bg-red-100 text-red-700' : c.cause_color === 'pink' ? 'bg-pink-100 text-pink-700' : c.cause_color === 'orange' ? 'bg-orange-100 text-orange-700' : c.cause_color === 'purple' ? 'bg-purple-100 text-purple-700' : c.cause_color === 'gray' ? 'bg-gray-100 text-gray-700' : 'bg-blue-100 text-blue-700') + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(c.cause) + '</span>'
+                +     (c.cause ? '<span class="text-[10px] ' + causeColorCls + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(c.cause) + '</span>' : '')
                 +   '</div>'
                 +   '<div class="flex items-center gap-1 text-[10px] text-fg-tertiary whitespace-nowrap">'
                 +     '<iconify-icon class="text-xs text-amber-500" icon="mdi:star"></iconify-icon>'
-                +     c.lex_score
+                +     (c.lex_score || 0)
                 +   '</div>'
                 + '</div>'
                 + '<div class="flex items-center gap-3 text-[10px] text-fg-tertiary flex-wrap">'
-                +   '<span class="font-mono">' + escapeHtml(c.case_id || '暂无案号') + '</span>'
-                +   '<span class="text-fg-disabled">·</span>'
-                +   '<span><iconify-icon class="text-xs" icon="mdi:scale-balance"></iconify-icon> ' + escapeHtml(c.court) + '</span>'
-                +   '<span class="text-fg-disabled">·</span>'
-                +   '<span><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> ' + (c.judgment_date || '--') + '</span>'
+                +   (c.case_id ? '<span class="font-mono">' + escapeHtml(c.case_id) + '</span><span class="text-fg-disabled">·</span>' : '')
+                +   (c.court ? '<span><iconify-icon class="text-xs" icon="mdi:scale-balance"></iconify-icon> ' + escapeHtml(c.court) + '</span><span class="text-fg-disabled">·</span>' : '')
+                +   (c.judgment_date ? '<span><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> ' + c.judgment_date + '</span>' : '<span><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> --</span>')
                 +   ((c.lex_tags || []).length > 0
                     ?   '<span class="text-fg-disabled">·</span>'
                       + '<span>' + c.lex_tags.slice(0, 3).map(function(t) {
@@ -127,21 +175,35 @@
         }).join('');
     }
 
-    // 判例详情 (简化, alert 形式)
     window.openCaseDbDetail = function(id) {
-        var c = (globalThis.MOCK_CASES || []).find(function(x) { return x.id === id; });
+        var all = getActiveCases();
+        var c = all.find(function(x) { return x.id === id; });
         if (!c) return;
         if (typeof showToast === 'function') {
-            showToast('查看判例: ' + c.case_name.substring(0, 30) + '...');
+            showToast('查看判例: ' + (c.case_name || '').substring(0, 30) + '... (开发中)');
         }
-        // TODO: 完整详情页 (Phase 2)
     };
 
     // ============================================================
     // 2. 法规库 (laws-db)
     // ============================================================
+    function getActiveLaws() {
+        return (dataCache.laws && dataCache.laws.length > 0) ? dataCache.laws : (globalThis.MOCK_LAWS || []);
+    }
+
+    async function loadLawsFromApi() {
+        var data = await fetchApi('/api/laws?limit=200');
+        if (data && Array.isArray(data) && data.length > 0) {
+            dataCache.laws = data;
+            setApiStatus('laws', 'live');
+            return true;
+        }
+        setApiStatus('laws', 'mock');
+        return false;
+    }
+
     function renderLawsDb() {
-        var allLaws = globalThis.MOCK_LAWS || [];
+        var allLaws = getActiveLaws();
         var search = (document.getElementById('laws-db-search') || {}).value || '';
         var typeFilter = (document.getElementById('laws-db-type-filter') || {}).value || 'all';
         var statusFilter = (document.getElementById('laws-db-status-filter') || {}).value || 'all';
@@ -151,7 +213,7 @@
             if (statusFilter !== 'all' && l.status !== statusFilter) return false;
             if (search) {
                 var s = search.toLowerCase();
-                var hay = (l.title + ' ' + l.law_number + ' ' + (l.summary || '') + ' ' + (l.full_text || '')).toLowerCase();
+                var hay = (l.title + ' ' + (l.law_number || '') + ' ' + (l.summary || '') + ' ' + (l.full_text || '')).toLowerCase();
                 if (hay.indexOf(s) < 0) return false;
             }
             return true;
@@ -195,19 +257,17 @@
             var sColor = statusColor[l.status] || 'bg-gray-100 text-gray-700';
             return '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-md hover:border-brand/30 transition-all cursor-pointer" onclick="openLawDbDetail(' + l.id + ')">'
                 + '<div class="flex items-start justify-between gap-3 mb-2">'
-                +   '<h3 class="text-sm font-semibold text-fg-primary flex-1 min-w-0 hover:text-brand transition-colors">' + escapeHtml(l.title) + '</h3>'
+                +   '<h3 class="text-sm font-semibold text-fg-primary flex-1 min-w-0 hover:text-brand transition-colors">' + escapeHtml(l.title || '(无名)') + '</h3>'
                 +   '<div class="flex items-center gap-1.5 flex-shrink-0">'
-                +     '<span class="text-[10px] ' + tColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(l.law_type) + '</span>'
-                +     '<span class="text-[10px] ' + sColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(l.status) + '</span>'
+                +     (l.law_type ? '<span class="text-[10px] ' + tColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(l.law_type) + '</span>' : '')
+                +     (l.status ? '<span class="text-[10px] ' + sColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(l.status) + '</span>' : '')
                 +   '</div>'
                 + '</div>'
-                + '<p class="text-xs text-fg-secondary leading-relaxed mb-2 line-clamp-2">' + escapeHtml(l.summary || '') + '</p>'
+                + (l.summary ? '<p class="text-xs text-fg-secondary leading-relaxed mb-2 line-clamp-2">' + escapeHtml(l.summary) + '</p>' : '')
                 + '<div class="flex items-center gap-3 text-[10px] text-fg-tertiary flex-wrap">'
-                +   '<span class="font-mono">' + escapeHtml(l.law_number || '') + '</span>'
-                +   '<span class="text-fg-disabled">·</span>'
-                +   '<span><iconify-icon class="text-xs" icon="mdi:office-building-outline"></iconify-icon> ' + escapeHtml(l.issuing_organ || '') + '</span>'
-                +   '<span class="text-fg-disabled">·</span>'
-                +   '<span><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> ' + (l.effective_date || '--') + ' 生效</span>'
+                +   (l.law_number ? '<span class="font-mono">' + escapeHtml(l.law_number) + '</span><span class="text-fg-disabled">·</span>' : '')
+                +   (l.issuing_organ ? '<span><iconify-icon class="text-xs" icon="mdi:office-building-outline"></iconify-icon> ' + escapeHtml(l.issuing_organ) + '</span><span class="text-fg-disabled">·</span>' : '')
+                +   (l.effective_date ? '<span><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> ' + l.effective_date + ' 生效</span>' : '')
                 +   ((l.related_cases_count || 0) > 0
                     ?   '<span class="text-fg-disabled">·</span>'
                       + '<span class="text-brand"><iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon> ' + l.related_cases_count + ' 关联判例</span>'
@@ -218,18 +278,34 @@
     }
 
     window.openLawDbDetail = function(id) {
-        var l = (globalThis.MOCK_LAWS || []).find(function(x) { return x.id === id; });
+        var all = getActiveLaws();
+        var l = all.find(function(x) { return x.id === id; });
         if (!l) return;
         if (typeof showToast === 'function') {
-            showToast('查看法规: ' + l.title);
+            showToast('查看法规: ' + (l.title || '').substring(0, 30) + '... (开发中)');
         }
     };
 
     // ============================================================
     // 3. 企业征信 (companies-db)
     // ============================================================
+    function getActiveCompanies() {
+        return (dataCache.companies && dataCache.companies.length > 0) ? dataCache.companies : (globalThis.MOCK_COMPANIES || []);
+    }
+
+    async function loadCompaniesFromApi() {
+        var data = await fetchApi('/api/companies?limit=200');
+        if (data && Array.isArray(data) && data.length > 0) {
+            dataCache.companies = data;
+            setApiStatus('companies', 'live');
+            return true;
+        }
+        setApiStatus('companies', 'mock');
+        return false;
+    }
+
     function renderCompaniesDb() {
-        var allComps = globalThis.MOCK_COMPANIES || [];
+        var allComps = getActiveCompanies();
         var search = (document.getElementById('companies-db-search') || {}).value || '';
         var regionFilter = (document.getElementById('companies-db-region-filter') || {}).value || 'all';
         var statusFilter = (document.getElementById('companies-db-status-filter') || {}).value || 'all';
@@ -241,7 +317,7 @@
             if (zxgkOnly && !c.is_zxgk) return false;
             if (search) {
                 var s = search.toLowerCase();
-                var hay = (c.company_name + ' ' + c.legal_rep + ' ' + c.unified_id).toLowerCase();
+                var hay = (c.company_name + ' ' + (c.legal_rep || '') + ' ' + (c.unified_id || '')).toLowerCase();
                 if (hay.indexOf(s) < 0) return false;
             }
             return true;
@@ -280,11 +356,11 @@
             return '<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-md hover:border-brand/30 transition-all cursor-pointer" onclick="openCompanyDbDetail(' + c.id + ')">'
                 + '<div class="flex items-start justify-between gap-3 mb-2">'
                 +   '<div class="flex-1 min-w-0">'
-                +     '<h3 class="text-sm font-semibold text-fg-primary mb-1 hover:text-brand transition-colors">' + escapeHtml(c.company_name) + '</h3>'
-                +     '<p class="text-[10px] text-fg-tertiary font-mono">' + escapeHtml(c.unified_id) + '</p>'
+                +     '<h3 class="text-sm font-semibold text-fg-primary mb-1 hover:text-brand transition-colors">' + escapeHtml(c.company_name || '(无名)') + '</h3>'
+                +     (c.unified_id ? '<p class="text-[10px] text-fg-tertiary font-mono">' + escapeHtml(c.unified_id) + '</p>' : '')
                 +   '</div>'
                 +   '<div class="flex flex-col items-end gap-1 flex-shrink-0">'
-                +     '<span class="text-[10px] ' + sColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(c.business_status) + '</span>'
+                +     (c.business_status ? '<span class="text-[10px] ' + sColor + ' px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">' + escapeHtml(c.business_status) + '</span>' : '')
                 +     (c.is_zxgk ? '<span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap flex items-center gap-0.5"><iconify-icon class="text-xs" icon="mdi:alert-decagram"></iconify-icon> 失信</span>' : '')
                 +   '</div>'
                 + '</div>'
@@ -305,15 +381,16 @@
     }
 
     window.openCompanyDbDetail = function(id) {
-        var c = (globalThis.MOCK_COMPANIES || []).find(function(x) { return x.id === id; });
+        var all = getActiveCompanies();
+        var c = all.find(function(x) { return x.id === id; });
         if (!c) return;
         if (typeof showToast === 'function') {
-            showToast('查看企业: ' + c.company_name);
+            showToast('查看企业: ' + (c.company_name || '').substring(0, 30) + '... (开发中)');
         }
     };
 
     // ============================================================
-    // 初始化 (view 切换时自动渲染)
+    // 初始化
     // ============================================================
     function bindInputs(prefix, renderFn) {
         var inputs = [
@@ -341,10 +418,10 @@
         if (casesView && !casesView.classList.contains('hidden') && !casesView.dataset.dbInit) {
             casesView.dataset.dbInit = '1';
             bindInputs('cases-db', renderCasesDb);
+            // 先渲染 mock, 然后 fetch API
             renderCasesDb();
-            // 检查 API
-            tryApi('/api/cases?limit=1').then(function(data) {
-                setApiStatus(data ? 'live' : 'mock', !!data);
+            loadCasesFromApi().then(function(ok) {
+                if (ok) renderCasesDb();
             });
         }
         // 法规
@@ -353,6 +430,9 @@
             lawsView.dataset.dbInit = '1';
             bindInputs('laws-db', renderLawsDb);
             renderLawsDb();
+            loadLawsFromApi().then(function(ok) {
+                if (ok) renderLawsDb();
+            });
         }
         // 企业
         var compsView = document.getElementById('view-companies-db');
@@ -360,14 +440,20 @@
             compsView.dataset.dbInit = '1';
             bindInputs('companies-db', renderCompaniesDb);
             renderCompaniesDb();
+            loadCompaniesFromApi().then(function(ok) {
+                if (ok) renderCompaniesDb();
+            });
         }
     });
     if (document.body) {
         initObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     }
 
-    // 双绑定
+    // 全局暴露
     globalThis.renderCasesDb = renderCasesDb;
     globalThis.renderLawsDb = renderLawsDb;
     globalThis.renderCompaniesDb = renderCompaniesDb;
+    globalThis.reloadCasesDb = function() { return loadCasesFromApi().then(function(ok) { renderCasesDb(); return ok; }); };
+    globalThis.reloadLawsDb = function() { return loadLawsFromApi().then(function(ok) { renderLawsDb(); return ok; }); };
+    globalThis.reloadCompaniesDb = function() { return loadCompaniesFromApi().then(function(ok) { renderCompaniesDb(); return ok; }); };
 })();
