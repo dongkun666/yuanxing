@@ -95,13 +95,58 @@ def check_narrative(text: str) -> LanguageCheckResult:
 
 
 def _suggest_correction(text: str) -> str:
-    """简单降级: 把 '本案胜诉率' 替换为 '样本中支持原告诉请的比例', 把 '预计' 替换为 '样本显示'"""
+    """强力降级: 把所有 HIGH 违规词替换为合规表述。"""
     out = text
+    # 1. 胜诉率类
     out = re.sub(r"(?i)本案\s*胜诉率", "样本中支持原告诉请的比例", out)
-    out = re.sub(r"(?i)预计", "样本显示", out)
-    out = re.sub(r"(?i)本案\s*将会", "在已公开样本中, 类似案件倾向于", out)
-    out = re.sub(r"(?i)该\s*法官\s*", "该法官在同类案件样本中 ", out)
+    out = re.sub(r"(?i)胜诉率\s*(约|大概|为|是)?\s*(\d+)\s*%?", "样本中支持原告诉请的比例约 \\2%", out)
+    # 2. 预计 / 将会 / 可能 类
+    out = re.sub(r"(?i)预计\s*本案", "样本中类似案件", out)
+    out = re.sub(r"(?i)预计\s*判赔", "样本中类似案件判赔", out)
+    out = re.sub(r"(?i)预计\s*", "样本中类似案件 ", out)
+    out = re.sub(r"(?i)本案\s*将会", "样本中类似案件倾向于", out)
+    out = re.sub(r"(?i)本案\s*可能", "样本中类似案件可能", out)
+    out = re.sub(r"(?i)大概\s*胜诉", "样本中支持原告诉请", out)
+    # 3. 主观评价类
+    out = re.sub(r"(?i)该\s*法官\s*(好|坏|偏袒|不公|优秀|较差|靠谱|不靠谱)", "该法官在同类案件样本中表现", out)
+    out = re.sub(r"(?i)该\s*法院\s*(偏袒|不公|支持原告|支持被告)", "该法院在同类案件样本中", out)
     return out
+
+
+def sanitize_input(value: str) -> str:
+    """输入消毒: 把输入字段中的禁用词替换为合规表述。
+
+    防止 user input (cause / facts) 携带禁用词绕过 narrative 检查。
+    """
+    if not value:
+        return value
+    return _suggest_correction(value)
+
+
+def assert_no_bypass(narrative: str, source_fields: dict = None) -> bool:
+    """强校验: 任何 narrative 输出必须 0 HIGH 违规, 否则抛 ValueError。
+
+    这是 "三重防护" 的最后一层 — 前端 client guard + 后端 compute_statistics
+    重生成, 仍可能在极端 case 下输出违规 (LLM 幻觉 / 模板 fallback 边界)。
+    一旦发现, 拒绝输出 (抛 ValueError), 由调用方 fallback 到纯数字模板。
+
+    Args:
+        narrative: 待校验的 narrative 字符串
+        source_fields: 触发该 narrative 的输入字段 (用于审计)
+
+    Raises:
+        ValueError: 仍有 HIGH 违规
+    """
+    r = check_narrative(narrative)
+    if not r.passed:
+        import logging
+        logging.error(f"language_guard bypass detected: violations={r.high_violations}, "
+                       f"source={source_fields}")
+        raise ValueError(
+            f"language_guard bypass: narrative 仍含 HIGH 违规: {r.high_violations}. "
+            f"不应在生产环境出现, 请检查 compute_statistics 流程。"
+        )
+    return True
 
 
 # ===== 强制降级模板 (LLM 拒答 3 次后使用) =====

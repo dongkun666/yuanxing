@@ -57,6 +57,8 @@ from skills.caselaw.language_guard import (
     template_amount_stats,
     template_judge_style,
     template_overall,
+    sanitize_input,  # W7: 输入消毒, 防止 user input 携带禁用词
+    assert_no_bypass,  # W7: 强校验, 任何 narrative 0 HIGH 违规
 )
 
 
@@ -413,6 +415,17 @@ def compute_statistics(hits: List[CaseHit], ri: RetrievalInput) -> Dict[str, Any
         # 降级到模板
         narrative = template_overall(sample, ri.cause, ri.region or "", ri.year_from or 0, ri.year_to or 0)
 
+    # W7: 强校验 — 即使经过重生成 + 模板降级, narrative 必须 0 HIGH 违规
+    # 如果仍违规 (极端 case), fallback 到纯数字叙述 (无 subject 句, 不可能违规)
+    try:
+        assert_no_bypass(narrative, source_fields={
+            "cause": ri.cause, "facts": ri.facts[:100],
+            "court": ri.court, "judge_name": ri.judge_name,
+        })
+    except ValueError:
+        # 兜底: 纯数字叙述 (0 文本 → 0 违规)
+        narrative = f"样本 {sample} 件, 支持原告诉请 {support_total} 件 (含部分支持)。"
+
     return {
         "sample_size": sample,
         "outcome_distribution": outcome_dist,
@@ -473,6 +486,13 @@ def run_skill(ri: RetrievalInput,
         config = RetrievalConfig()
     if ri.top_k > config.top_k_max:
         ri.top_k = config.top_k_max
+
+    # W7: 输入消毒 — 防止 user input 携带禁用词污染 narrative
+    ri.cause = sanitize_input(ri.cause)
+    ri.facts = sanitize_input(ri.facts)
+    ri.court = sanitize_input(ri.court) if ri.court else ri.court
+    ri.judge_name = sanitize_input(ri.judge_name) if ri.judge_name else ri.judge_name
+    ri.region = sanitize_input(ri.region) if ri.region else ri.region
 
     t0 = time.time()
     # Step 1: metadata filter

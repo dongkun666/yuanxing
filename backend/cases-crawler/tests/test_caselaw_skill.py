@@ -275,6 +275,85 @@ def test_percentile_python():
     print(f"✓ test_percentile_python PASSED (p50={p50}, p25={p25}, p75={p75})")
 
 
+# ===== Test 14-17: W7 hardening (bypass 防护) =====
+
+def test_sanitize_input_bypass_prevention():
+    """输入消毒: user input 携带禁用词时应被替换。"""
+    from caselaw.language_guard import sanitize_input
+    # 各种 bypass 尝试
+    cases = [
+        ("民间借贷 (本案胜诉率 80%)", "民间借贷 (样本中支持原告诉请的比例 80%)"),
+        ("民间借贷 (预计判赔 50 万)", "民间借贷 (样本中类似案件判赔 50 万)"),
+        ("某法院 (该法官偏袒原告)", "某法院 (该法官在同类案件样本中表现原告)"),
+        ("", ""),  # 空字符串
+    ]
+    for raw, expected in cases:
+        out = sanitize_input(raw)
+        # 验证输出已无禁用词
+        r = check_narrative(out)
+        assert r.passed, f"sanitize 失败: '{raw}' -> '{out}' 仍含 {r.high_violations}"
+    print(f"✓ test_sanitize_input_bypass_prevention PASSED (4 案例)")
+
+
+def test_assert_no_bypass_passes():
+    """assert_no_bypass: 合规 narrative 应通过。"""
+    from caselaw.language_guard import assert_no_bypass
+    safe = "在 87 件样本中, 支持原告诉请 (含部分支持) 72 件, 占比约 82.76%。"
+    assert assert_no_bypass(safe) is True
+    print("✓ test_assert_no_bypass_passes PASSED")
+
+
+def test_assert_no_bypass_raises():
+    """assert_no_bypass: 违规 narrative 必须抛 ValueError。"""
+    from caselaw.language_guard import assert_no_bypass
+    bad = "本案胜诉率约 83%。"
+    raised = False
+    try:
+        assert_no_bypass(bad)
+    except ValueError as e:
+        raised = True
+        assert "bypass" in str(e)
+    assert raised, "应抛 ValueError 但未抛"
+    print("✓ test_assert_no_bypass_raises PASSED")
+
+
+def test_run_skill_bypass_resilience():
+    """run_skill: 即使 cause 携带禁用词, 最终 narrative 仍合规。"""
+    from caselaw.retrieval import RetrievalInput
+    # user input 包含禁用词 (恶意构造)
+    ri = RetrievalInput(
+        cause="民间借贷纠纷 (本案胜诉率 80%)",  # bypass attempt
+        facts="被告借款 50 万",
+        top_k=10,
+    )
+
+    # 30 件 mock hits
+    mock_hits = [
+        CaseHit(case_id=f"({2020+i%5}) 沪01民终 {1000+i} 号",
+                case_name=f"案件{i}", court="上海一中院",
+                cause="民间借贷纠纷", judgment_date="2024-01-01",
+                year=2020 + i%5, outcome="原告胜诉" if i%2==0 else "部分支持",
+                amount_awarded_cny=100000 + i*5000,
+                summary=f"案件{i}摘要", dispute_focus=["利率合规性"],
+                relevance_score=0.8)
+        for i in range(30)
+    ]
+
+    class MockStore(VectorStore):
+        def metadata_filter(self, ri, candidate_limit=500):
+            return mock_hits
+        def vector_search(self, ri, candidates):
+            return sorted(candidates, key=lambda h: -h.relevance_score)[:ri.top_k]
+
+    out = run_skill(ri, MockStore())
+    narrative = out.to_dict()["statistics"]["narrative"]
+    r = check_narrative(narrative)
+    assert r.passed, f"run_skill 输出含 bypass: '{narrative}' → {r.high_violations}"
+    # 同时验证 cause 也被消毒了
+    assert "胜诉率" not in out.to_dict()["query_meta"]["cause"]
+    print(f"✓ test_run_skill_bypass_resilience PASSED (narrative: '{narrative[:60]}...')")
+
+
 # ===== Main =====
 
 if __name__ == "__main__":
@@ -292,6 +371,10 @@ if __name__ == "__main__":
         test_run_skill_e2e,
         test_count_tokens,
         test_percentile_python,
+        test_sanitize_input_bypass_prevention,
+        test_assert_no_bypass_passes,
+        test_assert_no_bypass_raises,
+        test_run_skill_bypass_resilience,
     ]
     passed = 0
     failed = 0
