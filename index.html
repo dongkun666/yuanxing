@@ -124,7 +124,7 @@ window.Iconify.disableRemoteAPI = true;
 </header>
 <div class="flex-1 flex overflow-hidden">
 <!-- 左侧导航栏 -->
-<aside class="w-60 bg-white border-r border-bg-border flex flex-col relative flex-none" id="sidebar">
+<aside class="w-60 bg-white border-r border-bg-border flex flex-col relative flex-none min-h-0 overflow-y-auto" id="sidebar">
 <!-- 标签页切换栏 -->
 <div class="flex items-center gap-1 px-3 pt-3 pb-2">
 <button class="sidebar-tab-btn active" data-tab="work" onclick="switchSidebarTab('work')">工作</button>
@@ -132,8 +132,8 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 <div class="h-px bg-bg-border mx-3"></div>
 <!-- 工作标签页内容 -->
-<div class="flex-1 flex flex-col overflow-hidden" id="sidebarTabWork">
-<div class="flex-1 p-3 pt-2">
+<div class="flex-1 flex flex-col overflow-hidden min-h-0" id="sidebarTabWork">
+<div class="flex-1 p-3 pt-2 overflow-y-auto min-h-0">
 <div class="sidebar-item active" onclick="switchView('workstation', this)">
 <iconify-icon class="text-xl mr-3" icon="mdi:view-dashboard-outline"></iconify-icon>
 <span class="sidebar-text">工作台</span>
