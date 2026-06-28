@@ -11,6 +11,10 @@ pydantic-settings==2.5.2
 bcrypt==5.0.0           # 密码哈希 (cost=12)
 PyJWT==2.13.0           # JWT 签发/验证 (HS256)
 
+# Auth W3: TOTP + Email verify + License OCR
+pyotp==2.9.0            # TOTP 二步验证 (RFC 6238)
+qrcode[pil]==7.4.2      # TOTP QR code 生成 (绑定时显示)
+
 # Database
 sqlalchemy[asyncio]==2.0.35
 aiosqlite==0.20.0  # SQLite async (dev/demo, 零依赖)

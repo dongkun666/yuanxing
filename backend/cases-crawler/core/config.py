@@ -84,6 +84,14 @@ class Settings(BaseSettings):
     auth_max_failed_logins: int = 5       # 5 次/小时锁定
     auth_lock_minutes: int = 15           # 锁定 15 min
 
+    # Auth W3: TOTP + Email verify + License OCR
+    auth_totp_issuer: str = "LexPrime"           # TOTP QR code issuer name
+    auth_totp_window: int = 1                    # TOTP 时间窗 ±1 (允许客户端时钟漂移)
+    auth_totp_backup_codes_count: int = 10       # 一次性恢复码 10 个
+    auth_email_verify_ttl_hours: int = 24        # 邮箱验证 token 24h 过期
+    auth_license_ai_min_score: float = 0.7       # AI 初审通过阈值 (0-1)
+    auth_license_ocr_engine: str = "mock"        # OCR 引擎: mock / paddle / aliyun (W4+ 真接)
+
     class Config:
         env_file = ".env"
         case_sensitive = False
