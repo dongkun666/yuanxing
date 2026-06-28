@@ -1,0 +1,117 @@
+{
+  "comments": "LexPrime Elasticsearch 索引配置 - 2026-06-28 - 全文检索分词用 ik_smart, 没有 ik 时回退到 standard",
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "analysis": {
+        "analyzer": {
+          "default": {
+            "type": "ik_smart"
+          },
+          "fallback": {
+            "type": "standard"
+          }
+        }
+      }
+    }
+  },
+  "indices": {
+    "cases": {
+      "settings": {
+        "number_of_shards": 2,
+        "number_of_replicas": 0,
+        "analysis": {
+          "analyzer": {
+            "default": {
+              "type": "ik_max_word"
+            },
+            "search_analyzer": {
+              "type": "ik_smart"
+            }
+          }
+        }
+      },
+      "mappings": {
+        "properties": {
+          "doc_id":         { "type": "keyword" },
+          "case_id":        { "type": "keyword", "fields": { "text": { "type": "text", "analyzer": "ik_smart" } } },
+          "case_name":      { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "court":          { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "case_type":      { "type": "keyword" },
+          "procedure":      { "type": "keyword" },
+          "judgment_date":  { "type": "date" },
+          "public_date":    { "type": "date" },
+          "year":           { "type": "short" },
+          "parties":        { "type": "text", "analyzer": "ik_smart" },
+          "cause":          { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "cause_category": { "type": "keyword" },
+          "legal_basis":    { "type": "text", "analyzer": "ik_smart" },
+          "full_text":      { "type": "text", "analyzer": "ik_smart" },
+          "full_text_plain":{ "type": "text", "analyzer": "ik_smart" },
+          "region":         { "type": "keyword" },
+          "source":         { "type": "keyword" },
+          "source_url":     { "type": "keyword", "index": false },
+          "keywords":       { "type": "keyword" },
+          "lex_tags":       { "type": "keyword" },
+          "lex_score":      { "type": "short" },
+          "view_count":     { "type": "integer" },
+          "favorite_count": { "type": "integer" },
+          "created_at":     { "type": "date" }
+        }
+      }
+    },
+    "laws": {
+      "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "analysis": {
+          "analyzer": {
+            "default": { "type": "ik_max_word" },
+            "search_analyzer": { "type": "ik_smart" }
+          }
+        }
+      },
+      "mappings": {
+        "properties": {
+          "law_id":         { "type": "keyword" },
+          "title":          { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "law_number":     { "type": "keyword" },
+          "law_type":       { "type": "keyword" },
+          "issuing_organ":  { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "issue_date":     { "type": "date" },
+          "effective_date": { "type": "date" },
+          "status":         { "type": "keyword" },
+          "summary":        { "type": "text", "analyzer": "ik_smart" },
+          "full_text":      { "type": "text", "analyzer": "ik_smart" },
+          "level":          { "type": "byte" },
+          "source":         { "type": "keyword" },
+          "related_laws":   { "type": "keyword" }
+        }
+      }
+    },
+    "companies": {
+      "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+      },
+      "mappings": {
+        "properties": {
+          "unified_id":        { "type": "keyword" },
+          "company_name":      { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "company_type":      { "type": "keyword" },
+          "legal_rep":         { "type": "text", "analyzer": "ik_smart", "fields": { "keyword": { "type": "keyword" } } },
+          "registered_capital":{ "type": "keyword" },
+          "establish_date":    { "type": "date" },
+          "business_status":   { "type": "keyword" },
+          "registered_address":{ "type": "text", "analyzer": "ik_smart" },
+          "industry":          { "type": "keyword" },
+          "region":            { "type": "keyword" },
+          "is_zxgk":           { "type": "boolean" },
+          "is_dishonest":      { "type": "boolean" },
+          "source":            { "type": "keyword" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+"""
+LexPrime 配置加载
+2026-06-28
+"""
+from pydantic_settings import BaseSettings
+from typing import Optional
+from functools import lru_cache
+
+
+class Settings(BaseSettings):
+    """应用配置 - 全部从 .env 加载"""
+
+    # PostgreSQL
+    postgres_host: str = "localhost"
+    postgres_port: int = 5432
+    postgres_db: str = "lexprime"
+    postgres_user: str = "lexprime"
+    postgres_password: str = "lexprime_dev_pwd"
+    database_url: str = "postgresql+asyncpg://lexprime:lexprime_dev_pwd@localhost:5432/lexprime"
+
+    # Elasticsearch
+    es_host: str = "localhost"
+    es_port: int = 9200
+    es_scheme: str = "http"
+    es_user: str = "elastic"
+    es_password: str = "elastic_dev_pwd"
+    es_index_cases: str = "cases"
+    es_index_laws: str = "laws"
+    es_index_companies: str = "companies"
+
+    # Neo4j
+    neo4j_uri: str = "bolt://localhost:7687"
+    neo4j_user: str = "neo4j"
+    neo4j_password: str = "neo4j_dev_pwd"
+
+    # 4 个免费数据源
+    npc_laws_base_url: str = "https://flk.npc.gov.cn"
+    npc_laws_api_url: str = "https://flk.npc.gov.cn/api/"
+    court_cases_base_url: str = "https://rmfyalk.court.gov.cn"
+    court_cases_api_url: str = "https://rmfyalk.court.gov.cn/api/"
+    zhixing_base_url: str = "https://zxgk.court.gov.cn"
+    gsxt_base_url: str = "https://www.gsxt.gov.cn"
+    gsxt_api_url: str = "https://www.gsxt.gov.cn/api/"
+
+    # cncases
+    cncases_raw_path: str = "./data/raw/cncases"
+    cncases_batch_size: int = 5000
+
+    # 爬虫
+    crawler_concurrent: int = 10
+    crawler_delay_ms: int = 1000
+    crawler_timeout: int = 30
+    crawler_max_retries: int = 3
+    crawler_user_agent: str = "Mozilla/5.0 (LexPrime Bot; +https://lexprime.com/bot)"
+
+    # 代理
+    proxy_enabled: bool = False
+    proxy_pool: str = ""
+
+    # API
+    api_host: str = "0.0.0.0"
+    api_port: int = 8000
+    api_debug: bool = True
+    api_cors_origins: str = "http://localhost:8080,http://127.0.0.1:8080"
+
+    # 日志
+    log_level: str = "INFO"
+    log_file: str = "./logs/crawler.log"
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings = get_settings()

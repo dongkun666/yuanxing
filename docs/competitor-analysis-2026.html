@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexPrime 竞品全景分析 · 2026.06 · 自建战略版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F7FA;
+  --surface: #FFFFFF;
+  --line: #E4E8EE;
+  --line-soft: #EFF2F6;
+  --ink: #14171E;
+  --ink-2: #3A4256;
+  --ink-3: #7C7A72;
+  --ink-4: #A8AEB8;
+  --brand: #165DFF;
+  --brand-tint: #E8F3FF;
+  --brand-tint2: #F0F7FF;
+  --green: #2F6F5E;
+  --green-tint: #E8F1ED;
+  --amber: #C97B3F;
+  --amber-tint: #F7EFE7;
+  --red: #B06367;
+  --red-tint: #F5E8E9;
+  --purple: #6B4F8C;
+  --purple-tint: #EFEAF5;
+  --gray-tint: #EEF0F3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--ink); font-family: 'Outfit', system-ui, sans-serif; font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body { padding: 0; }
+.container { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* === Decision Banner === */
+.decision-banner { background: linear-gradient(135deg, #165DFF 0%, #4A7FFF 100%); color: white; border-radius: 20px; padding: 28px 36px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; box-shadow: 0 8px 24px -8px rgba(22, 93, 255, 0.3); }
+.decision-banner h2 { font-family: 'DM Serif Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 6px; color: white; }
+.decision-banner p { color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; margin: 0; }
+.decision-banner .num-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 18px; }
+.decision-banner .num-item { text-align: center; }
+.decision-banner .num-val { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1; }
+.decision-banner .num-label { font-size: 10px; opacity: 0.85; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 4px; }
+.decision-banner .num-grid::before { content: ""; }
+
+/* === Hero === */
+.hero { background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%); border: 1px solid var(--line); border-radius: 24px; padding: 56px 48px; margin-bottom: 32px; position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, var(--brand-tint) 0%, transparent 70%); opacity: 0.6; pointer-events: none; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--brand-tint); color: var(--brand); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 16px; position: relative; }
+.hero-tag::before { content: ""; width: 6px; height: 6px; background: var(--brand); border-radius: 50%; }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: 42px; line-height: 1.15; color: var(--ink); font-weight: 400; letter-spacing: -0.01em; margin-bottom: 16px; position: relative; }
+.hero h1 em { font-style: normal; color: var(--brand); }
+.hero p.lede { font-size: 16px; color: var(--ink-2); max-width: 760px; line-height: 1.65; position: relative; }
+.hero-meta { display: flex; gap: 32px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line-soft); position: relative; flex-wrap: wrap; }
+.hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.hero-meta-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); }
+.hero-meta-label { font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 500; }
+
+/* === Section === */
+section { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 40px; margin-bottom: 24px; }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.section-num { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--brand); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--brand-tint); border-radius: 10px; flex-shrink: 0; }
+.section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--ink); font-weight: 400; flex: 1; }
+.section-subtitle { font-size: 12px; color: var(--ink-3); padding: 3px 10px; background: var(--gray-tint); border-radius: 6px; font-weight: 500; }
+h2 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); font-weight: 400; margin: 36px 0 16px; }
+h3 { font-size: 15px; color: var(--ink); font-weight: 600; margin: 24px 0 10px; display: flex; align-items: center; gap: 8px; }
+h3 .icon { color: var(--brand); }
+p { margin-bottom: 12px; color: var(--ink-2); }
+p strong { color: var(--ink); font-weight: 600; }
+em { font-style: normal; color: var(--brand); font-weight: 500; }
+
+/* === Position Card === */
+.position-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.position-card { padding: 20px 22px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.position-card.us { background: var(--green-tint); border-color: rgba(47, 111, 94, 0.2); }
+.position-card.them { background: var(--red-tint); border-color: rgba(176, 99, 103, 0.2); }
+.position-card.api { background: var(--amber-tint); border-color: rgba(201, 123, 63, 0.2); }
+.position-card.build { background: var(--brand-tint); border-color: rgba(22, 93, 255, 0.2); }
+.position-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--ink); }
+.position-card h4 .dot { width: 8px; height: 8px; border-radius: 50%; }
+.position-card.us h4 .dot { background: var(--green); }
+.position-card.them h4 .dot { background: var(--red); }
+.position-card.api h4 .dot { background: var(--amber); }
+.position-card.build h4 .dot { background: var(--brand); }
+.position-card ul { list-style: none; margin: 0; padding: 0; }
+.position-card li { font-size: 13px; color: var(--ink-2); padding: 4px 0 4px 18px; position: relative; line-height: 1.5; }
+.position-card li::before { content: ""; position: absolute; left: 0; top: 11px; width: 8px; height: 1px; background: currentColor; opacity: 0.5; }
+
+/* === Product Card === */
+.product-grid { display: grid; gap: 14px; margin-top: 8px; }
+.product { display: grid; grid-template-columns: 220px 1fr 280px; gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); transition: all 0.2s; }
+.product:hover { transform: translateY(-1px); box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.06); border-color: var(--brand); }
+.product-head { padding: 18px 18px 14px; background: var(--bg); border-right: 1px solid var(--line-soft); }
+.product-name { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.product-name .badge { font-size: 9px; padding: 2px 6px; background: var(--ink); color: white; border-radius: 4px; font-weight: 500; letter-spacing: 0.04em; }
+.product-name .badge.api { background: var(--brand); }
+.product-name .badge.free { background: var(--green); }
+.product-name .badge.beta { background: var(--amber); }
+.product-name .badge.build { background: var(--purple); }
+.product-vendor { font-size: 11px; color: var(--ink-3); margin-bottom: 8px; }
+.product-url { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); word-break: break-all; }
+.product-body { padding: 16px 18px; }
+.product-tagline { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; font-weight: 500; }
+.product-cap { font-size: 13px; color: var(--ink-2); line-height: 1.55; margin-bottom: 8px; }
+.product-data { font-size: 11px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; }
+.product-aside { padding: 14px 18px; background: var(--brand-tint2); border-left: 1px solid var(--line-soft); display: flex; flex-direction: column; justify-content: center; }
+.product-aside.build { background: var(--purple-tint); }
+.product-aside.skip { background: var(--red-tint); }
+.product-aside.free { background: var(--green-tint); }
+.product-takeaway-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.product-aside:not(.build):not(.skip):not(.free) .product-takeaway-label { color: var(--brand); }
+.product-aside.build .product-takeaway-label { color: var(--purple); }
+.product-aside.skip .product-takeaway-label { color: var(--red); }
+.product-aside.free .product-takeaway-label { color: var(--green); }
+.product-takeaway { font-size: 12px; color: var(--ink); line-height: 1.5; font-weight: 500; }
+
+/* === Compact table === */
+.ai-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.ai-table th { text-align: left; padding: 10px 12px; background: var(--bg); font-weight: 600; color: var(--ink); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+.ai-table td { padding: 12px; border-bottom: 1px solid var(--line-soft); color: var(--ink-2); vertical-align: top; line-height: 1.5; }
+.ai-table td.name { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.ai-table td.name .vendor { font-size: 10px; color: var(--ink-3); font-weight: 400; display: block; margin-top: 2px; }
+.ai-table tr:hover td { background: var(--brand-tint2); }
+.ai-table .tag { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; margin-right: 4px; }
+.ai-table .tag.api { background: var(--amber-tint); color: var(--amber); }
+.ai-table .tag.build { background: var(--purple-tint); color: var(--purple); }
+.ai-table .tag.skip { background: var(--red-tint); color: var(--red); }
+.ai-table .tag.partial { background: var(--green-tint); color: var(--green); }
+
+/* === Roadmap Timeline === */
+.roadmap { position: relative; padding: 12px 0 0; }
+.roadmap::before { content: ""; position: absolute; left: 28px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(to bottom, var(--brand) 0%, var(--amber) 50%, var(--green) 100%); opacity: 0.4; }
+.roadmap-phase { display: grid; grid-template-columns: 56px 1fr; gap: 24px; margin-bottom: 28px; position: relative; }
+.phase-dot { width: 56px; height: 56px; border-radius: 50%; background: var(--surface); border: 2px solid var(--brand); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--brand); font-weight: 600; flex-shrink: 0; position: relative; z-index: 1; text-align: center; line-height: 1.1; }
+.roadmap-phase.q2 .phase-dot { border-color: var(--amber); color: var(--amber); }
+.roadmap-phase.q3 .phase-dot { border-color: var(--green); color: var(--green); }
+.roadmap-phase.q4 .phase-dot { border-color: var(--purple); color: var(--purple); }
+.phase-body { padding-top: 4px; }
+.phase-label { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.phase-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 12px; font-weight: 400; }
+.phase-items { display: grid; gap: 8px; }
+.phase-item { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; background: var(--bg); border-radius: 10px; border: 1px solid var(--line-soft); }
+.phase-item-icon { width: 28px; height: 28px; background: var(--brand-tint); color: var(--brand); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+.phase-item-name { font-size: 13px; color: var(--ink); font-weight: 500; }
+.phase-item-meta { font-size: 10px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.phase-item.effort-h .phase-item-icon { background: var(--red-tint); color: var(--red); }
+.phase-item.effort-m .phase-item-icon { background: var(--amber-tint); color: var(--amber); }
+.phase-item.effort-l .phase-item-icon { background: var(--green-tint); color: var(--green); }
+
+/* === Stack Diagram === */
+.stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 16px 0 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.stack-layer { padding: 16px 18px; border-right: 1px solid var(--line-soft); position: relative; }
+.stack-layer:last-child { border-right: none; }
+.stack-layer.build { background: var(--green-tint); }
+.stack-layer.free { background: var(--green-tint); }
+.stack-layer.api { background: var(--amber-tint); }
+.stack-layer.skip { background: var(--red-tint); }
+.stack-layer-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+.stack-layer-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.stack-layer ul { list-style: none; padding: 0; margin: 0; }
+.stack-layer li { font-size: 12px; padding: 3px 0; color: var(--ink-2); }
+.stack-layer li::before { content: "·"; margin-right: 6px; opacity: 0.5; }
+
+/* === Risk === */
+.risk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+.risk-card { padding: 18px 20px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.risk-card.high { background: var(--red-tint); border-color: rgba(176, 99, 103, 0.3); }
+.risk-card.med { background: var(--amber-tint); border-color: rgba(201, 123, 63, 0.3); }
+.risk-card.low { background: var(--green-tint); border-color: rgba(47, 111, 94, 0.3); }
+.risk-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.risk-card h4 .level { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 600; letter-spacing: 0.04em; }
+.risk-card.high .level { background: var(--red); color: white; }
+.risk-card.med .level { background: var(--amber); color: white; }
+.risk-card.low .level { background: var(--green); color: white; }
+.risk-card p { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 6px; }
+.risk-card .mit { font-size: 11px; color: var(--ink-3); font-style: italic; }
+
+/* === Footer === */
+.footer { text-align: center; padding: 32px 0 16px; color: var(--ink-4); font-size: 12px; }
+.footer-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px; opacity: 0.6; }
+
+/* === Mobile === */
+@media (max-width: 768px) {
+  .container { padding: 16px 14px 40px; }
+  .hero { padding: 32px 24px; }
+  .hero h1 { font-size: 30px; }
+  section { padding: 24px 20px; }
+  .section-title { font-size: 20px; }
+  .position-grid { grid-template-columns: 1fr; }
+  .product { grid-template-columns: 1fr; }
+  .product-head { border-right: none; border-bottom: 1px solid var(--line-soft); }
+  .stack { grid-template-columns: 1fr 1fr; }
+  .ai-table { font-size: 12px; }
+  .ai-table th, .ai-table td { padding: 8px; }
+  .risk-grid { grid-template-columns: 1fr; }
+  .decision-banner { grid-template-columns: 1fr; padding: 24px; }
+  .decision-banner .num-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* === Utility === */
+.summary-box { background: var(--brand-tint2); border: 1px solid var(--brand); border-radius: 12px; padding: 18px 22px; margin: 20px 0; font-size: 14px; color: var(--ink-2); line-height: 1.6; }
+.summary-box strong { color: var(--brand); }
+.divider { height: 1px; background: var(--line-soft); margin: 32px 0; }
+.callout { padding: 12px 16px; border-left: 3px solid var(--brand); background: var(--bg); border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13px; color: var(--ink-2); }
+.callout strong { color: var(--ink); }
+.callout.danger { border-color: var(--red); background: var(--red-tint); }
+.callout.warning { border-color: var(--amber); background: var(--amber-tint); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: var(--ink-3); margin-top: 8px; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-item .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* === Build Path Cards (NEW) === */
+.build-paths { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.build-path { padding: 22px 24px; border-radius: 14px; border: 1px solid rgba(107, 79, 140, 0.3); background: var(--purple-tint); }
+.build-path h4 { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 8px; color: var(--ink); font-weight: 400; }
+.build-path .price-tag { display: inline-block; font-size: 10px; padding: 2px 8px; background: var(--purple); color: white; border-radius: 4px; font-weight: 600; margin-bottom: 12px; }
+.build-path .path-body { font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+.build-path .path-body strong { color: var(--ink); }
+.build-path .path-stack { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: white; padding: 8px 10px; border-radius: 6px; margin-top: 8px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ===== 决策变更横幅 ===== -->
+<div class="decision-banner">
+  <div>
+    <h2>战略转向：收费 API 全部自建</h2>
+    <p>原「80% API + 20% 自建」改为「<strong style="color:white">0 收费 API + 免费公开数据 + 全部自建壁垒</strong>」。短期工程量翻 3-5 倍，长期资产护城河 10 倍增强。商业化卖点从「功能齐全」升级为「<strong style="color:white">数据是你自己的</strong>」。</p>
+  </div>
+  <div class="num-grid">
+    <div class="num-item">
+      <div class="num-val">11</div>
+      <div class="num-label">自建项</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">4</div>
+      <div class="num-label">免费接入</div>
+    </div>
+    <div class="num-item">
+      <div class="num-val">0</div>
+      <div class="num-label">收费 API</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-tag">战略分析 · 自建版 · 2026 年 6 月</div>
+  <h1>50+ 款法律产品全景对标<br><em>LexPrime 应该自建什么 / 不做什么</em></h1>
+  <p class="lede">用一句话定位：LexPrime = <em>律所版 AI 工作台 + 全部自建核心库（判例/法规/征信/OCR/转写/电子签/LLM）+ 自部署大模型</em>。本次对标覆盖 10 大业务域 50+ 款产品，结论是 <strong>11 项核心能力全部自建，4 项免费公开数据接入，不依赖任何收费 API</strong>。下面是完整分析、4 象限差异化、3/6/12/24 月自建 Roadmap + 风险评估。</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">10</div>
+      <div class="hero-meta-label">业务域</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">52</div>
+      <div class="hero-meta-label">对标产品</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">15</div>
+      <div class="hero-meta-label">LexPrime 能力</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">11</div>
+      <div class="hero-meta-label">自建项</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">4</div>
+      <div class="hero-meta-label">免费接入</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">0</div>
+      <div class="hero-meta-label">收费 API</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 战略卡位 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">战略卡位：自建 vs 免费接入 vs 不做</div>
+    <div class="section-subtitle">4 象限定位</div>
+  </div>
+  <p>决策变更后，<strong>4 象限比例倒置</strong>：从「20% 自建 + 60% API + 20% 不做」变为「<em>80% 自建 + 15% 免费接入 + 5% 不做</em>」。工程量翻 3-5 倍，但长期资产价值 10 倍提升。</p>
+  <div class="position-grid">
+    <div class="position-card us">
+      <h4><span class="dot"></span>我们已经做对的事（15 项）</h4>
+      <ul>
+        <li>工作台 + 日程 + 案件 9 tab + 客户 + 模板 — <strong>律所核心工作流覆盖完整</strong></li>
+        <li>知识库 LLM Wiki — <strong>法律行业没人做</strong>（北大法宝是数据库, 我们是知识图谱）</li>
+        <li>司法观点库 (12 条) — 借鉴《最高法司法观点集成》10828 条, 律师可直接引用</li>
+        <li>AI 文书生成（流式 6 类） + 法律期限 + 失信查询 + 案件进度 — <strong>独家差异化</strong></li>
+        <li>"AI 辅助、不替代律师" — <strong>产品原则</strong>, 区别于智律云 Auto Pilot "替代人工"</li>
+        <li><strong>IIFE 拆分</strong> (script.js 53KB→18KB 首屏) — 性能基线为自建重平台铺路</li>
+      </ul>
+    </div>
+    <div class="position-card them">
+      <h4><span class="dot"></span>绝对不做的（6 类）</h4>
+      <ul>
+        <li>不做 C 端法律咨询（法行宝/法信小程序/法律百宝箱/叮咚律助）</li>
+        <li>不做 to 律所管理（Clio 是全球第一, 我们 to 律师 + 律所版）</li>
+        <li>不接收费 API（启信宝/天眼查/北大法宝/聚法/小包公/e签宝/飞书妙计）— <strong>决策变更</strong></li>
+        <li>不自建 OCR 大模型（用 PaddleOCR/Whisper 开源）+ 法律微调</li>
+        <li>不做案源抓取（合规风险）</li>
+        <li>不自训基础大模型（自部署 Qwen/DeepSeek + 法律微调, 训练 = 烧钱）</li>
+      </ul>
+    </div>
+    <div class="position-card api">
+      <h4><span class="dot"></span>免费接入（4 项 · 公开数据）</h4>
+      <ul>
+        <li><strong>国家法律法规数据库</strong>（国务院免费 API, 法规主源）</li>
+        <li><strong>人民法院案例库</strong>（最高法 2024 重启, 指导性案例 + 典型案例）</li>
+        <li><strong>中国执行信息公开网</strong>（公开查询, 跳转为主 + 律师证登录）</li>
+        <li><strong>国家企业信用信息公示系统</strong>（工商原始数据, 补充启信宝自建）</li>
+      </ul>
+    </div>
+    <div class="position-card build">
+      <h4><span class="dot"></span>必须自建的（11 项）</h4>
+      <ul>
+        <li><strong>判例库</strong>：人民法院案例库 + 裁判文书网爬取 + 律师自加</li>
+        <li><strong>法规库</strong>：国家库为主 + 自建司法解释/指导案例/复函</li>
+        <li><strong>企业征信库</strong>：国家企业信用 + 启信宝/天眼查公开数据爬取</li>
+        <li><strong>失信被执行</strong>：跳转官网 + 自建缓存</li>
+        <li><strong>OCR</strong>：PaddleOCR + 法律垂类微调</li>
+        <li><strong>语音转写</strong>：Whisper-large-v3 + 中文法律微调</li>
+        <li><strong>电子签</strong>：CFCA + 区块链存证 + 司法链对接</li>
+        <li><strong>大模型</strong>：自部署 Qwen2.5-72B / DeepSeek-V3 + 法律微调</li>
+        <li><strong>模板库</strong>：律所自维护 + 公开模板聚合</li>
+        <li><strong>司法观点库</strong>（已做）：律师自加 + 内部批注</li>
+        <li><strong>LLM Wiki</strong>（已做）：知识图谱, 持续自维护</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <strong>关键判断：</strong>LexPrime 的护城河不是"接了什么 API", 而是<em>"自建的判例 + 模板 + 征信 + OCR + 转写 + 电子签 + LLM"</em>这 7 大资产库。<strong>律师离开 LexPrime 损失所有历史数据和微调过的模型</strong> — 这是 Clio/Alpha/智律云都没有的、<em>用钱买不到</em>的壁垒。
+  </div>
+</section>
+
+<!-- ===== 域 1: 案例判例 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">案例判例检索（5 款）</div>
+    <div class="section-subtitle">域 1 / 10 · 自建重点</div>
+  </div>
+  <p>判例库是<strong>自建重点 #1</strong>。原计划接聚法/北大法宝 API, 现改为自建：<em>免费公开数据（人民法院案例库 + 裁判文书网）爬取 + 律师自加</em>。数据合规边界：<strong>只爬公开数据、标注来源、不存储敏感个人信息</strong>。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">聚法案例 <span class="badge">付费</span></div>
+        <div class="product-vendor">杭州法狗狗 · 2014</div>
+        <div class="product-url">jufaanli.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">中国裁判文书网 + 地方法院网爬取聚合</div>
+        <div class="product-cap">案由维度导航强（130+ 案由二级分类）、可视化图表（地域/法院/年份分布）、智能检索、批量下载、<strong>案由雷达图</strong>是行业标杆。</div>
+        <div class="product-data">数据: 1.2 亿+ 文书 · 价格: ¥3,800/年</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">LexPrime 自建</div>
+        <div class="product-takeaway">数据爬裁判文书网 + 人民法院案例库免费版。"案由雷达图" UX 抄, 是自建数据库的差异化功能</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">iCourt 阿尔法 <span class="badge">付费</span></div>
+        <div class="product-vendor">icourt · 2015</div>
+        <div class="product-url">alphalawyer.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">律师圈口碑第一, 一体化办案平台</div>
+        <div class="product-cap"><strong>AlphaGPT 法律垂直大模型</strong> + 9,076 篇法官评析 + 8,800+ 裁判规则 + 智能检索 + 团队协作。律师工具"事实标准"。</div>
+        <div class="product-data">数据: 1.4 亿文书 · 价格: ¥6,000-30,000/年</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">LexPrime 自建</div>
+        <div class="product-takeaway">UX 抄"团队协作"+"智能检索"。"AlphaGPT" 用自部署 LLM + 法律微调替代</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">中国裁判文书网 <span class="badge free">免费</span></div>
+        <div class="product-vendor">最高人民法院 · 2013</div>
+        <div class="product-url">wenshu.court.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">官方 1.4 亿+ 文书, 公开权威</div>
+        <div class="product-cap">唯一权威来源, 但 2021 起公开文书数骤降, <strong>反爬极严</strong>。律师日常吐槽"打不开/慢/搜不到"。</div>
+        <div class="product-data">免费但 API 不开放</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">LexPrime 数据源</div>
+        <div class="product-takeaway">爬取公开数据 + 跳转原文。反爬严: 用分布式代理池 + 慢速爬 + 随机 UA</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">人民法院案例库 <span class="badge free">官方</span></div>
+        <div class="product-vendor">最高法 · 2018 (2024 重启)</div>
+        <div class="product-url">rmfyalk.court.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">官方指导性案例 + 典型案例 + 参考案例</div>
+        <div class="product-cap">质量最高 (最高法审核), 含"裁判规则提炼"。<strong>2024 重启</strong>开放律师查询, 是 LexPrime 司法观点库的标杆数据源。</div>
+        <div class="product-data">免费 + 部分 API</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">必接数据源</div>
+        <div class="product-takeaway">自建判例库的第一数据源, 每天增量爬取 + LLM 提取裁判规则</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">法信平台 <span class="badge free">免费</span></div>
+        <div class="product-vendor">人民法院出版社 · 2016</div>
+        <div class="product-url">faxin.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">最高法官方知识库, 三库合一</div>
+        <div class="product-cap">案例库 + 法律观点库 + 学术文献库, 内容质量最高, 但<strong>C 端付费墙</strong>+ 操作界面偏学术, 律师日常用得少。</div>
+        <div class="product-data">个人版 ¥1,200/年</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不学</div>
+        <div class="product-takeaway">学术界面, 不适合律师日常。LexPrime 自维护司法观点库 + 接人民法院案例库 API 即可覆盖</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout warning">
+    <strong>合规边界（重要）：</strong>自建判例库只爬<em>公开数据</em>，删除敏感个人信息（身份证号/手机号/详细住址），标注来源（裁判文书网 / 案例库），不存储未公开的判决理由。规模上 6 个月内爬 100 万+ 即可律师日常用。<strong>12 个月爬全 1.4 亿是过度</strong>，增量更新更现实。
+  </div>
+</section>
+
+<!-- ===== 域 2: 法规检索 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">法律法规检索（3 款）</div>
+    <div class="section-subtitle">域 2 / 10</div>
+  </div>
+  <p>法规库<strong>自建</strong>：国家库免费 API 为主源 + 增量爬司法解释/指导案例/复函。<em>不接北大法宝 / 威科先行收费 API</em>。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">北大法宝 <span class="badge">付费</span></div>
+        <div class="product-vendor">北大英华 · 1999</div>
+        <div class="product-url">pkulaw.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">法律行业数据库元老, 30 年积累</div>
+        <div class="product-cap">法规 + 案例 + 期刊 + 法学期刊 + 英文资源 (法宝来签合同审查)。<strong>高校 / 律所标配</strong>。法宝来签 2026 横评得 6.9/10 (合同审查专业但场景局限)。</div>
+        <div class="product-data">个人 ¥4,800/年 · 律所 ¥30,000+/年</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不接</div>
+        <div class="product-takeaway">收费, 不接。法规主源用国家库免费 + 自建司法解释。期刊库做律所版时再考虑自建</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">威科先行 <span class="badge">付费</span></div>
+        <div class="product-vendor">Wolters Kluwer · 1985</div>
+        <div class="product-url">law.wkinfo.com.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">外资律所首选 + 全球法律数据库</div>
+        <div class="product-cap">英文资源 (UK/US/EU 判例 + IFRS) 行业第一, 中英对照 + 法律实务文章 + 监管动态。<strong>涉外律所必备</strong>。</div>
+        <div class="product-data">个人 ¥6,000/年 · 律所 ¥80,000+/年</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不接</div>
+        <div class="product-takeaway">价格贵, 涉外律所场景小众。LexPrime 律所版 v2 再考虑自建英文资源</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">国家法律法规数据库 <span class="badge free">免费</span></div>
+        <div class="product-vendor">国务院办公厅 · 2020</div>
+        <div class="product-url">flk.npc.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">国务院官方, 唯一权威法规来源</div>
+        <div class="product-cap">覆盖宪法/法律/行政法规/地方性法规/司法解释, <strong>免费开放</strong>, 含 API。LexPrime 法规模块的核心数据源。</div>
+        <div class="product-data">免费 + API 开放</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">必接</div>
+        <div class="product-takeaway">免费 + 权威 + API 开放。LexPrime 法规库第一数据源, 律师查询全免费</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 3: AI 法律助手 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title">AI 法律助手（10 款）</div>
+    <div class="section-subtitle">域 3 / 10 · 同质化最严重</div>
+  </div>
+  <p>2026 年法律 AI 大爆发, 测评 8 款主流产品（智律云/AlphaGPT/通义法睿/MetaLaw/法行宝/得理法搜/法宝来签/MeCheck）。结论：<strong>智律云 AutoPilot 综合第一, 小包公垂直最深, 律所一体化是趋势</strong>。LexPrime 路径是 "自部署 LLM + 法律微调"，不和大厂卷通用 AI。</p>
+
+  <table class="ai-table">
+    <thead>
+      <tr>
+        <th>产品</th>
+        <th>厂商</th>
+        <th>核心能力</th>
+        <th>LexPrime 启发</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name">智律云 AutoPilot <span class="tag build">2026 #1</span></td>
+        <td>智律云</td>
+        <td>律所一体化工作台: 案件立项 / 文书起草 / 知识沉淀 / 团队协作。IP 维权场景 10,000+ 案件, 胜诉率 95%</td>
+        <td><span class="tag build">借鉴 UX</span> 律所一体化 + 团队协作流, 不做"自动替律师办案"</td>
+      </tr>
+      <tr>
+        <td class="name">法索 AI <span class="tag build">2026 #2</span></td>
+        <td>法索</td>
+        <td>诉讼专精: 一个案件一个工作台, 7 模块跑完 (概要/焦点/请求权/抗辩/证据/判决趋势/预选案由)</td>
+        <td><span class="tag build">复刻</span> "一个案件一个工作台" 模式到 LexPrime 案件详情 9 tab</td>
+      </tr>
+      <tr>
+        <td class="name">小包公法律 AI <span class="tag build">2026 #3</span></td>
+        <td>小包公</td>
+        <td>刑事 + 合规垂直: 量刑预测 (数据底座扎实) + 合规审查 + 类案分析 + 法律实证研究</td>
+        <td><span class="tag build">复刻</span> 类案分析 view 自建 + 量刑预测 (用自部署 LLM + 法律垂类数据)</td>
+      </tr>
+      <tr>
+        <td class="name">通义法睿 <span class="tag build">2026 #4</span></td>
+        <td>阿里云</td>
+        <td>大厂大模型法律垂类: 法律问答 + 文书生成 + 法规检索。免费 (基础), 专业版 ¥2,400/年</td>
+        <td><span class="tag build">自建</span> LexPrime 自部署 Qwen2.5-72B + 法律微调, 干他大模型底座</td>
+      </tr>
+      <tr>
+        <td class="name">得理法搜 <span class="tag build">2026 #5</span></td>
+        <td>得理科技</td>
+        <td>老牌法律检索: 法规 + 文书 + 期刊 + 司法观点。AI 升级后自然语言提问</td>
+        <td><span class="tag partial">参考</span> 数据底子稳, LexPrime 司法观点库借鉴其分类维度</td>
+      </tr>
+      <tr>
+        <td class="name">MetaLaw (秘塔)</td>
+        <td>秘塔科技</td>
+        <td>争议焦点类案检索: 精准匹配相似判例, 思维导图可视化, 导出 Word/PDF 报告</td>
+        <td><span class="tag partial">部分</span> 类案检索 view 借鉴焦点匹配 + 思维导图导出</td>
+      </tr>
+      <tr>
+        <td class="name">元典问达</td>
+        <td>元典智库</td>
+        <td>元典旗下 AI 法律助手, 类案检索 + 法规查询 + 文书生成, 偏实务</td>
+        <td><span class="tag skip">不接</span> 收费, 不接 API。数据自建爬裁判文书网 + 案例库</td>
+      </tr>
+      <tr>
+        <td class="name">法行宝</td>
+        <td>百度</td>
+        <td>免费 AI 法律平台, 文心大模型 + 法律知识图谱, 适合法律初学者 / 中小企业</td>
+        <td><span class="tag skip">不学</span> C 端定位, 不适合 LexPrime 律师专业市场</td>
+      </tr>
+      <tr>
+        <td class="name">小包公法律文书</td>
+        <td>小包公</td>
+        <td>垂直法律文书生成: 30+ 文书类型, 智能字段填充, 多端同步</td>
+        <td><span class="tag partial">参考</span> LexPrime AI 文书已做 6 类, 借鉴其字段填充 UI</td>
+      </tr>
+      <tr>
+        <td class="name">法义经纬</td>
+        <td>法义经纬</td>
+        <td>新型 AI 法律助手, 自然语言对话, 偏咨询 + 文书</td>
+        <td><span class="tag partial">观察</span> 同质化, 暂不借鉴</td>
+      </tr>
+      <tr>
+        <td class="name">叮咚律助 / 律师好帮手 / 律案管家 / 律助力 / 法本纲目 / 法律百宝箱 / 法律期限助手</td>
+        <td>多家小厂</td>
+        <td>多为单一功能工具: 法律期限 / 律师名片 / 案件速记 / 文书模板 / 律所工具 / 法规速查 / 期限计算</td>
+        <td><span class="tag build">单点功能</span> 法律期限 (LexPrime 已做) + 案件速记可作单点工具</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:var(--purple)"></span>自建</div>
+    <div class="legend-item"><span class="dot" style="background:var(--green)"></span>部分参考</div>
+    <div class="legend-item"><span class="dot" style="background:var(--red)"></span>不接 / 不学</div>
+  </div>
+</section>
+
+<!-- ===== 域 4: 合同/模板 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title">合同模板与审查（3 款）</div>
+    <div class="section-subtitle">域 4 / 10</div>
+  </div>
+  <p>合同模板是 LexPrime <strong>自建模板库</strong>的核心场景。法天使/小包公收费 API 不接, 改为<em>律所内部模板 + 公开模板聚合 + AI 字段填充自部署 LLM</em>。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">法天使 <span class="badge">付费</span></div>
+        <div class="product-vendor">法天使 · 2014</div>
+        <div class="product-url">fatianshi.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">中国最大合同库, 20,000+ 模板</div>
+        <div class="product-cap">合同分类 1,200+ 类, 区块链存证 + 在线编辑 + 合同审查 AI。<strong>律师合同模板事实标准</strong>。法宝来签 2026 横评 6.9/10, 合同场景专业。</div>
+        <div class="product-data">个人 ¥998/年 · 律所 ¥9,800/年</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建 + 公开</div>
+        <div class="product-takeaway">LexPrime 模板管理 view 自建律所内部模板库 + 公开模板聚合, 律师可自加</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">小包公法律 AI <span class="badge">付费</span></div>
+        <div class="product-vendor">小包公</div>
+        <div class="product-url">xiaobaogong.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">合同审查 + 量刑预测, 垂直深</div>
+        <div class="product-cap">合同审查专业度高, 风险条款识别 + 合规性检查。<strong>评审 9.6/10</strong> (实测最智能)。</div>
+        <div class="product-data">合同审查 ¥2,800/年起</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不接</div>
+        <div class="product-takeaway">收费, 不接。LexPrime 用自部署 LLM 做合同审查（v2 再做）</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">小包公法律文书 <span class="badge">付费</span></div>
+        <div class="product-vendor">小包公</div>
+        <div class="product-url">xiaobaogong.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">30+ 法律文书类型, 字段智能填充</div>
+        <div class="product-cap">起诉状/答辩状/合同/律师函/调解书/催告函等模板 + AI 字段填充, 多端同步。</div>
+        <div class="product-data">文书生成 ¥1,500/年起</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">部分借鉴</div>
+        <div class="product-takeaway">LexPrime AI 文书已做 6 类, 借鉴其"字段智能填充"UX, 后续扩到 15+ 类型</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 5: 律所管理 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div class="section-title">律所管理（1 款）</div>
+    <div class="section-subtitle">域 5 / 10 · 全球标杆</div>
+  </div>
+  <p>Clio 是全球 to 律所 SaaS 第一, 2024 估值 $3B+。LexPrime 律所版 = <em>Clio 业务流 + 自部署 LLM + LexPrime 自建数据</em>。不与 Clio 比功能完整度, 比<strong>"中国律所 + AI 一体化 + 数据自有"</strong>差异化。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">Clio Manage <span class="badge">标杆</span></div>
+        <div class="product-vendor">Clio (加拿大) · 2008</div>
+        <div class="product-url">clio.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">全球 to 律所 SaaS 第一, $3B+ 估值</div>
+        <div class="product-cap">案件管理 + 时钟计费 + 客户关系 + 文档 + 支付 + 集成 250+ 应用。<strong>2024 IPO</strong>。律所版全球事实标准。</div>
+        <div class="product-data">个人 $49/月 · 律所定制</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">学习 + 不硬刚</div>
+        <div class="product-takeaway">LexPrime 律所版做: 时钟计费 / 团队任务 / 律所 dashboard, 不做支付/集成市场</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 6: 企业征信 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div class="section-title">企业征信（4 款）</div>
+    <div class="section-subtitle">域 6 / 10 · 自建重点</div>
+  </div>
+  <p>企业征信<strong>自建</strong>：国家企业信用信息公示系统（免费 API）+ 启信宝/天眼查公开数据爬取（合规边界：<em>只爬已公开企业信息</em>）+ 裁判文书涉诉信息关联。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">启信宝 <span class="badge">付费</span></div>
+        <div class="product-vendor">合合信息 · 2014</div>
+        <div class="product-url">qixin.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">企业征信事实标准, 2.3 亿+ 企业</div>
+        <div class="product-cap">企业基本信息 / 股东 / 法人 / 对外投资 / 失信 / 涉诉 / 裁判文书 / 招投标。<strong>含失信被执行查询</strong>。</div>
+        <div class="product-data">API ¥1.0/次 · 包年 ¥20,000+</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建</div>
+        <div class="product-takeaway">爬取启信宝/天眼查公开数据 + 国家企业库 API + 裁判文书涉诉关联</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">天眼查 <span class="badge">付费</span></div>
+        <div class="product-vendor">天眼查 · 2014</div>
+        <div class="product-url">tianyancha.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">C 端知名度最高, 3 亿+ 企业</div>
+        <div class="product-cap">企业图谱 + 风险监控 + 招投标 + 司法判决, UI 体验好。<strong>C 端律师辅助查询用</strong>。</div>
+        <div class="product-data">API ¥0.8/次</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建</div>
+        <div class="product-takeaway">与启信宝同源数据, 自建数据库时一并爬</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">企查查 <span class="badge">付费</span></div>
+        <div class="product-vendor">企查查 · 2014</div>
+        <div class="product-url">qcc.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">企业征信三巨头之一</div>
+        <div class="product-cap">数据与启信宝/天眼查重叠 80%, 无显著差异化优势。API 价格略贵。</div>
+        <div class="product-data">API ¥1.2/次</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不爬</div>
+        <div class="product-takeaway">数据重叠, 启信宝+天眼查覆盖</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">国家企业信用信息公示系统 <span class="badge free">官方</span></div>
+        <div class="product-vendor">国家市场监督管理总局</div>
+        <div class="product-url">gsxt.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">唯一权威, 工商登记原始数据</div>
+        <div class="product-cap">企业基本信息 / 股东 / 高管 / 变更记录 / 经营异常 / 严重违法。<strong>免费 + 权威</strong>, 但功能简陋。</div>
+        <div class="product-data">免费 + 部分 API</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">必接</div>
+        <div class="product-takeaway">LexPrime 客户管理 view 接国家库免费 API, 工商基本信息主源</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout warning">
+    <strong>合规边界（重要）：</strong>爬取启信宝/天眼查<em>仅限已公开页面</em>（不绕过登录/付费墙/反爬），存储数据加密 + 律所隔离, 标注来源 + 抓取时间。<strong>绝不存储个人手机号 / 身份证号 / 详细住址</strong>。3-6 个月内覆盖 500 万+ 主要企业即可律师日常用。
+  </div>
+</section>
+
+<!-- ===== 域 7: 司法公开 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div class="section-title">司法公开（4 款）</div>
+    <div class="section-subtitle">域 7 / 10</div>
+  </div>
+  <p>四大司法公开平台都是<strong>官方 + 免费</strong>, <em>不接收费 API, 全部免费接入或跳转</em>。LexPrime 失信/案件进度 view 已做 (mock + 跳转), 后续接公开接口。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">中国执行信息公开网 <span class="badge free">官方</span></div>
+        <div class="product-vendor">最高法</div>
+        <div class="product-url">zxgk.court.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">失信被执行人 / 限制高消费 / 终本案件</div>
+        <div class="product-cap">律师代理前必查, LexPrime 失信查询 view 已做 (mock + 跳转)。<strong>2025 起 API 部分开放</strong>。</div>
+        <div class="product-data">免费 + 部分 API</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">已 mock</div>
+        <div class="product-takeaway">LexPrime 已做 (mock + 跳转), 后续接公开 API, 自建缓存</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">不动产登记公示平台 <span class="badge free">官方</span></div>
+        <div class="product-vendor">自然资源部</div>
+        <div class="product-url">不动产地市分散</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">不动产登记查询</div>
+        <div class="product-cap">抵押 / 查封 / 异议登记信息, <strong>需要律师证 + 地市分散</strong>。无统一 API。</div>
+        <div class="product-data">免费但无 API</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不接入</div>
+        <div class="product-takeaway">提供"跳转各省查询"链接即可, 律师自行查</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">中国审判流程信息公开网 <span class="badge free">官方</span></div>
+        <div class="product-vendor">最高法</div>
+        <div class="product-url">splcgk.court.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">案件审判流程节点信息</div>
+        <div class="product-cap">立案 / 送达 / 排期 / 开庭 / 判决 / 执行。<strong>律师和当事人可查本人案件</strong>。</div>
+        <div class="product-data">免费 + 律师登录</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">已 mock</div>
+        <div class="product-takeaway">LexPrime 案件进度跟踪 view 已做 (mock + 跳转), 后续律师证登录</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">人民法院案例库 <span class="badge free">官方</span></div>
+        <div class="product-vendor">最高法 · 2018</div>
+        <div class="product-url">rmfyalk.court.gov.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">指导性 + 典型 + 参考案例</div>
+        <div class="product-cap">权威案例库 (2024 重启), 律师必查。LexPrime 司法观点库数据源之一。</div>
+        <div class="product-data">免费</div>
+      </div>
+      <div class="product-aside free">
+        <div class="product-takeaway-label">必接</div>
+        <div class="product-takeaway">LexPrime 司法观点库定期抓取指导性案例 + 典型案例 (人工 + AI 提取)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 8: 办公工具 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div class="section-title">办公与文档工具（5 款）</div>
+    <div class="section-subtitle">域 8 / 10 · 工具层</div>
+  </div>
+  <p>这些不是法律行业产品, 但<strong>律师日常用得最频繁</strong>。LexPrime 应该<em>不与办公工具竞争</em>, 而是在合适场景提供集成或快捷方式。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">WPS 会员 <span class="badge">通用</span></div>
+        <div class="product-vendor">金山办公</div>
+        <div class="product-url">wps.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">中国 Office 事实标准, 含法律模板</div>
+        <div class="product-cap">WPS 含法律模板库 (合同/诉状/律师函), 个人版 ¥169/年。律师桌面端基本装 WPS。</div>
+        <div class="product-data">个人 ¥169/年</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">不竞争</div>
+        <div class="product-takeaway">LexPrime 自建律所模板库 (按律所分类) 优于 WPS 通用模板</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">XMind</div>
+        <div class="product-vendor">XMind</div>
+        <div class="product-url">xmind.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">思维导图工具</div>
+        <div class="product-cap">案件分析 / 证据梳理 / 庭审思路必备。律师用 XMind 整理案件全貌。</div>
+        <div class="product-data">个人 ¥399/年</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">集成</div>
+        <div class="product-takeaway">案件详情 "证据梳理" tab 可导出 XMind 格式 (P1)</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">Listary</div>
+        <div class="product-vendor">Listary</div>
+        <div class="product-url">listary.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">Windows 文件搜索增强</div>
+        <div class="product-cap">律师案卷文件夹动辄 10GB+, Listary 找文件秒级。</div>
+        <div class="product-data">一次性 $25</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不集成</div>
+        <div class="product-takeaway">LexPrime 案件材料管理已替代部分需求</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">PDF Expert</div>
+        <div class="product-vendor">Readdle</div>
+        <div class="product-url">pdfexpert.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">Mac PDF 编辑 + OCR</div>
+        <div class="product-cap">律师日常 PDF 编辑 (合并/批注/签章) 高频用。</div>
+        <div class="product-data">一次性 $80</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">内置</div>
+        <div class="product-takeaway">LexPrime 案件材料管理 view 内置 PDF 阅读 + 批注 (P2)</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">GoodReader</div>
+        <div class="product-vendor">Good.iWare</div>
+        <div class="product-url">goodreader.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">iOS PDF + 文件管理</div>
+        <div class="product-cap">iPad 律师出庭阅卷标配。</div>
+        <div class="product-data">一次性 $6</div>
+      </div>
+      <div class="product-aside partial">
+        <div class="product-takeaway-label">PWA</div>
+        <div class="product-takeaway">LexPrime 后续做 PWA + 离线缓存, iPad 出庭可直查案件</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 9: OCR/转写 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div class="section-title">文档识别与转写（4 款）</div>
+    <div class="section-subtitle">域 9 / 10 · 自建重点</div>
+  </div>
+  <p>OCR + 语音转写 = <strong>自建</strong>。用 PaddleOCR + Whisper 开源, 法律垂类微调。<em>不接飞书妙计 / 通义听悟收费企业版</em>。</p>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">ABBYY FineReader <span class="badge">国际</span></div>
+        <div class="product-vendor">ABBYY · 1989</div>
+        <div class="product-url">abbyy.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">OCR 全球事实标准</div>
+        <div class="product-cap">扫描件 / 图片 / PDF 转 Word/Excel/可编辑, 表格识别 + 多语言。<strong>贵但准</strong>。</div>
+        <div class="product-data">一次性 $129-500</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">不接</div>
+        <div class="product-takeaway">收费, 不接。LexPrime 用 PaddleOCR (开源) + 中文法律垂类微调</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">飞书妙计 <span class="badge">付费</span></div>
+        <div class="product-vendor">字节跳动</div>
+        <div class="product-url">feishu.cn/minutes</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">会议录音转写 + 智能纪要</div>
+        <div class="product-cap">中文语音转写准确率 95%+, 智能识别发言人 + 自动生成纪要 + 待办。<strong>律师庭审录音 + 客户会议场景完美</strong>。</div>
+        <div class="product-data">企业版 ¥60/人/月</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建</div>
+        <div class="product-takeaway">LexPrime 用 Whisper-large-v3 (开源) + 中文法律微调, 庭审录音 + 客户会谈自建</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">通义听悟 <span class="badge">付费</span></div>
+        <div class="product-vendor">阿里云</div>
+        <div class="product-url">tingwu.aliyun.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">阿里版会议转写 + 智能分析</div>
+        <div class="product-cap">中文 + 英文实时转写, 关键词提取 + 章节速览 + 智能总结。<strong>免费额度 10 小时/月</strong>。</div>
+        <div class="product-data">免费额度 + 企业版 ¥0.01/分钟</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建</div>
+        <div class="product-takeaway">LexPrime 自建 Whisper, 干他企业版</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">法大大 <span class="badge">双身份</span></div>
+        <div class="product-vendor">法大大 · 2014</div>
+        <div class="product-url">fadao.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">电子签 + 合同存证 + 法律服务</div>
+        <div class="product-cap">电子签 + 合同存证 (区块链) + 在线签约 + 法律咨询。<strong>电子签 + 法律交叉领域</strong>。</div>
+        <div class="product-data">按次 ¥1-5/份</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">自建</div>
+        <div class="product-takeaway">LexPrime 自建电子签（CFCA + 区块链 + 司法链）, 见下方域 10</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 域 10: 电子签 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <div class="section-title">电子签（2 款）</div>
+    <div class="section-subtitle">域 10 / 10 · 自建</div>
+  </div>
+  <p>电子签市场已成熟, <strong>e签宝 + 法大大双寡头</strong>。LexPrime <em>不自建全部</em>, 而是<strong>接入 CA 认证 + 区块链存证 + 司法链对接</strong>（关键技术：CA 证书 + 时间戳 + 哈希存证, 实际签署仍走 e签宝/法大大通道）。</p>
+  <div class="callout warning">
+    <strong>注意：</strong>完整的电子签需要<em>CA 数字证书</em>（CFCA / 国密 SM2 证书）, 这是<strong>合规 + 牌照问题</strong>。短期 LexPrime 走"集成 e签宝/法大大 API" + 区块链存证 + 司法链对接是更现实的方案。完全自建电子签需要申请电子认证服务许可证 (工信部审批), <strong>6-12 月内不现实</strong>。v2 阶段再考虑混合方案。
+  </div>
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">e签宝 <span class="badge">付费</span></div>
+        <div class="product-vendor">e签宝 · 2002</div>
+        <div class="product-url">esign.cn</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">中国电子签市场份额第一</div>
+        <div class="product-cap">电子签 + 合同管理 + 实名认证 + 司法存证。<strong>市场份额 36%</strong>。API 完善, 接入快。</div>
+        <div class="product-data">API 按次 ¥1-3/份 · 企业版定制</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">暂不接 API</div>
+        <div class="product-takeaway">收费, 不接。v1 阶段电子签功能聚焦"模板 + 签署链接" + 用户自签; v2 再接 CA + 区块链存证</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">法大大 <span class="badge">付费</span></div>
+        <div class="product-vendor">法大大 · 2014</div>
+        <div class="product-url">fadao.com</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">电子签 + 法律服务, 法律行业深耕</div>
+        <div class="product-cap">市场份额第二, 法律行业客户占比高 (<strong>律师用户友好</strong>)。区块链存证 + 司法链对接。</div>
+        <div class="product-data">API 按次 ¥1-5/份</div>
+      </div>
+      <div class="product-aside skip">
+        <div class="product-takeaway-label">暂不接 API</div>
+        <div class="product-takeaway">同 e签宝, v2 再说。短期 LexPrime 用"律师自签 + 邮件确认 + PDF 存档"占位</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 重复/子项 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">+</div>
+    <div class="section-title">其他提及的产品（重复 / 小工具）</div>
+    <div class="section-subtitle">9 款 · 简评</div>
+  </div>
+  <table class="ai-table">
+    <thead>
+      <tr>
+        <th>产品</th>
+        <th>域</th>
+        <th>LexPrime 启发</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="name">法信小程序 <span class="tag skip">C 端</span></td><td>法规</td><td>微信生态法规查询, 不做 (C 端)</td></tr>
+      <tr><td class="name">聚法案例小程序 <span class="tag skip">C 端</span></td><td>案例</td><td>小程序版聚法, 不做 (C 端)</td></tr>
+      <tr><td class="name">法本纲目 <span class="tag partial">观察</span></td><td>AI 助手</td><td>新型 AI 法律工具, 同质化, 暂不学</td></tr>
+      <tr><td class="name">律师好帮手 <span class="tag partial">单点</span></td><td>AI 助手</td><td>单点功能工具, 不做</td></tr>
+      <tr><td class="name">律助力 <span class="tag partial">单点</span></td><td>AI 助手</td><td>单点功能工具, 不做</td></tr>
+      <tr><td class="name">律案管家 <span class="tag partial">单点</span></td><td>AI 助手</td><td>案件管理工具, 已被 LexPrime 案件管理覆盖</td></tr>
+      <tr><td class="name">叮咚律助 <span class="tag skip">C 端</span></td><td>AI 助手</td><td>C 端, 不做</td></tr>
+      <tr><td class="name">秘塔法律 AI <span class="tag partial">部分</span></td><td>AI 助手</td><td>秘塔 AI 的法律版, 已被 MetaLaw 覆盖, 不再学</td></tr>
+      <tr><td class="name">WPS 会员法律模板库 <span class="tag partial">通用</span></td><td>办公</td><td>通用模板, LexPrime 做律所分类模板更专业</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 自建路径详细方案 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <div class="section-title">自建路径详细方案（7 大资产库）</div>
+    <div class="section-subtitle">技术栈 + 数据源 + 时间表</div>
+  </div>
+  <p>11 项自建, 实际是 <strong>7 大资产库</strong>。每个库的技术栈 / 数据源 / 工期 / 风险如下。</p>
+
+  <div class="build-paths">
+    <div class="build-path">
+      <div class="price-tag">1. 判例库</div>
+      <h4>1.2 亿+ 公开裁判文书</h4>
+      <div class="path-body">
+        <strong>数据源：</strong>人民法院案例库（每日增量） + 中国裁判文书网（公开爬）<br>
+        <strong>存储：</strong>PostgreSQL + 全文检索（Elasticsearch / Meilisearch）<br>
+        <strong>爬虫：</strong>分布式（10 节点）+ 代理池 + 慢速 1 req/s + 随机 UA<br>
+        <strong>合规：</strong>脱敏（删身份证/手机/详细住址）+ 来源标注 + 不存储未公开判决理由
+      </div>
+      <div class="path-stack">工期: 6-8 周 · 节点: 20 个爬虫节点 · 风险: 中</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">2. 法规库</div>
+      <h4>国家库 + 司法解释 + 复函</h4>
+      <div class="path-body">
+        <strong>数据源：</strong>国家法律法规数据库 API（主源, 免费）+ 司法解释 + 复函（爬最高检/最高法）<br>
+        <strong>存储：</strong>PostgreSQL + 版本控制（修订历史）<br>
+        <strong>AI 增强：</strong>LLM 提取关联法条 + 自动识别修订关系<br>
+        <strong>差异化：</strong>比国家库多 "案例关联" + "司法解释" + "复函"
+      </div>
+      <div class="path-stack">工期: 3-4 周 · 节点: 2 个爬虫 · 风险: 低</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">3. 企业征信库</div>
+      <h4>500 万+ 主要企业</h4>
+      <div class="path-body">
+        <strong>数据源：</strong>国家企业信用信息公示系统 API（主源）+ 启信宝/天眼查公开页面<br>
+        <strong>存储：</strong>PostgreSQL + 图数据库（Neo4j）股权穿透<br>
+        <strong>爬虫：</strong>只爬公开页面（不绕过登录/付费墙）+ 5 节点分布式<br>
+        <strong>合规：</strong>加密存储 + 律所隔离 + 标注来源 + 不存个人手机号/身份证
+      </div>
+      <div class="path-stack">工期: 4-6 周 · 节点: 5 个爬虫 · 风险: 中</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">4. OCR 引擎</div>
+      <h4>PaddleOCR + 法律微调</h4>
+      <div class="path-body">
+        <strong>技术栈：</strong>PaddleOCR（百度开源, 准确率 95%+） + 法律垂类微调<br>
+        <strong>微调数据：</strong>10 万+ 扫描件样本（律师上传 + 公开判决书扫描件）<br>
+        <strong>场景：</strong>判决书 / 合同 / 律师函 / 证据材料 OCR 转可编辑文本<br>
+        <strong>部署：</strong>GPU 服务器自部署（也可 PaddleOCR 推理 API 模式）
+      </div>
+      <div class="path-stack">工期: 4-6 周（含微调） · GPU: 1xA100 · 风险: 中</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">5. 语音转写</div>
+      <h4>Whisper + 中文法律微调</h4>
+      <div class="path-body">
+        <strong>技术栈：</strong>Whisper-large-v3（OpenAI 开源, 中文 95% 准确率）+ 中文法律微调<br>
+        <strong>微调数据：</strong>1 万+ 庭审录音片段（律师上传）<br>
+        <strong>场景：</strong>庭审录音 + 客户会谈 + 律师笔记录音转文字<br>
+        <strong>部署：</strong>GPU 服务器自部署
+      </div>
+      <div class="path-stack">工期: 4-6 周 · GPU: 1xA100 · 风险: 中</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">6. 电子签</div>
+      <h4>v1 自建 + v2 CA 认证</h4>
+      <div class="path-body">
+        <strong>v1 阶段：</strong>律师自签（律师证 + 邮箱确认）+ PDF 存档 + 哈希存证<br>
+        <strong>v2 阶段：</strong>接 CFCA / 国密 SM2 证书 + 区块链存证 + 司法链对接<br>
+        <strong>牌照：</strong>电子认证服务许可证（工信部审批, 6-12 月不现实）<br>
+        <strong>差异化：</strong>区块链 + 司法链对接（v2）, 让签的合同"打官司能直接当证据"
+      </div>
+      <div class="path-stack">工期: v1 3 周 · v2 12 周 · 风险: v1 低 / v2 高</div>
+    </div>
+
+    <div class="build-path">
+      <div class="price-tag">7. LLM 大模型</div>
+      <h4>Qwen2.5-72B + 法律微调</h4>
+      <div class="path-body">
+        <strong>基座：</strong>Qwen2.5-72B-Instruct（阿里开源, 推理能力强）或 DeepSeek-V3<br>
+        <strong>微调：</strong>LoRA + 法律垂类数据（10 万+ 法律问答 + 判决书 + 合同 + 法规）<br>
+        <strong>部署：</strong>GPU 集群（4-8 x A100/H100）+ vLLM 推理框架<br>
+        <strong>能力：</strong>法律问答 / 文书生成 / 合同审查 / 案情分析 / 法规检索
+      </div>
+      <div class="path-stack">工期: 8-12 周 · GPU: 4-8xA100 · 投资: ¥1-3M · 风险: 高</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 风险评估 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <div class="section-title">风险评估（8 大风险）</div>
+    <div class="section-subtitle">高 / 中 / 低 三档</div>
+  </div>
+  <p>自建战略最大风险不是技术, 是<strong>合规 + 维护成本 + 时间</strong>。下面 8 大风险按等级分类, 每条都给出 mitigation。</p>
+
+  <div class="risk-grid">
+    <div class="risk-card high">
+      <h4>反爬与封禁 <span class="level">高</span></h4>
+      <p>裁判文书网 / 启信宝 / 天眼查都有反爬（IP 封禁 / 验证码 / 行为分析）。单 IP 爬取 1 万次/天就触发, 严重时账号封禁。</p>
+      <p class="mit">→ 分布式 10-20 节点 + 代理池 + 慢速 1 req/s + 模拟真实用户行为 (随机滚动/停留) + 备用域名/IP 池</p>
+    </div>
+
+    <div class="risk-card high">
+      <h4>数据合规边界 <span class="level">高</span></h4>
+      <p>爬取公开数据需谨慎: 个人信息（手机/身份证/详细住址）合规风险, 未公开判决理由爬取违法。爬到不存是底线, 存了 = 风险。</p>
+      <p class="mit">→ 只爬公开页面 + 自动脱敏 (正则替换) + 标注来源 + 律所数据隔离 + 不存储敏感字段</p>
+    </div>
+
+    <div class="risk-card high">
+      <h4>GPU 集群投资 <span class="level">高</span></h4>
+      <p>自部署 Qwen2.5-72B 需要 4-8 张 A100, 硬件投入 ¥1-3M, 加上运维 (电费/冷却) 每月 ¥3-5 万。LLM 微调需要法律垂类数据 (10 万+ 样本), 数据获取难。</p>
+      <p class="mit">→ 先用 1-2 张 A100 跑 Qwen2.5-7B (开源小模型) 验证 PMF, 商业化后再扩到 72B</p>
+    </div>
+
+    <div class="risk-card high">
+      <h4>数据维护与时效 <span class="level">高</span></h4>
+      <p>裁判文书每日新增 5,000+, 法规每月修订 50+ 条, 企业变更随时发生。自建数据库需要 7x24 增量更新, 工程量大。</p>
+      <p class="mit">→ 增量爬虫 (每日凌晨 1 次) + 失败重试 + 数据校验 + 律师自加 (用户也是数据源)</p>
+    </div>
+
+    <div class="risk-card med">
+      <h4>OCR/转写准确率 <span class="level">中</span></h4>
+      <p>法律文书用词专业, 通用 OCR (PaddleOCR/Whisper) 在专业术语 / 表格 / 公式场景准确率可能掉到 80% 以下, 律师不敢直接用。</p>
+      <p class="mit">→ 法律垂类微调 (10 万+ 样本) + 人工校对界面 + 不追求 100% 准确, 80% 转写 + 人工校对 5 分钟可接受</p>
+    </div>
+
+    <div class="risk-card med">
+      <h4>技术债务 <span class="level">中</span></h4>
+      <p>自建 7 大库 + 自部署 LLM = 复杂技术栈 (Python + Go + Rust + JS + DB + ES + GPU), 团队需要 3-5 个全栈 + 1-2 个 ML 工程师, 当前团队规模可能不够。</p>
+      <p class="mit">→ 优先做 1-2 个核心库 (判例库 + LLM), 其他库用 mock/跳转占位, PMF 验证后再扩</p>
+    </div>
+
+    <div class="risk-card med">
+      <h4>电子签牌照 <span class="level">中</span></h4>
+      <p>完整电子签需要电子认证服务许可证 (工信部审批), 自建 6-12 月不现实。短期 LexPrime 只能做"律师自签 + 邮件确认 + 哈希存证"占位。</p>
+      <p class="mit">→ v1 阶段用 PDF + 哈希 + 邮件确认占位, v2 阶段接 CFCA 证书 + 区块链 + 司法链</p>
+    </div>
+
+    <div class="risk-card low">
+      <h4>免费数据源稳定性 <span class="level">低</span></h4>
+      <p>国家库 API / 人民法院案例库 / 国家企业信用系统可能改版或限流。</p>
+      <p class="mit">→ 多个数据源交叉验证 + 缓存层 + 优雅降级（API 挂了, 跳转到官方）</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Roadmap ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">14</div>
+    <div class="section-title">Roadmap：3 / 6 / 12 / 24 月自建路径</div>
+    <div class="section-subtitle">短期搭基建 + 中期核心库 + 长期壁垒</div>
+  </div>
+  <p>基于"自建 7 大资产库"战略, 下面是分阶段执行计划。颜色 = 难度 (绿=低, 琥珀=中, 红=高)。</p>
+
+  <div class="roadmap">
+    <div class="roadmap-phase">
+      <div class="phase-dot">3月</div>
+      <div class="phase-body">
+        <div class="phase-label">Q3 2026 · 短期</div>
+        <div class="phase-title">基础设施 + 免费接入 + 律所版 0.1</div>
+        <div class="phase-items">
+          <div class="phase-item effort-l">
+            <div class="phase-item-icon">A</div>
+            <div class="phase-item-name"><strong>国家法律法规数据库 API</strong> 接入, 法规 view 全部免费</div>
+            <div class="phase-item-meta">免费</div>
+          </div>
+          <div class="phase-item effort-l">
+            <div class="phase-item-icon">B</div>
+            <div class="phase-item-name"><strong>国家企业信用信息公示系统 API</strong> 接入, 客户管理工商主源</div>
+            <div class="phase-item-meta">免费</div>
+          </div>
+          <div class="phase-item effort-l">
+            <div class="phase-item-icon">C</div>
+            <div class="phase-item-name"><strong>人民法院案例库</strong> 爬虫 + LLM 提取裁判规则, 司法观点库</div>
+            <div class="phase-item-meta">免费</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">D</div>
+            <div class="phase-item-name"><strong>爬虫框架</strong> 搭建 (Python + Scrapy + 代理池 + 分布式), 后续所有爬虫复用</div>
+            <div class="phase-item-meta">2 周</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">E</div>
+            <div class="phase-item-name"><strong>存储层</strong> PostgreSQL + Elasticsearch + Neo4j 选型 + 部署</div>
+            <div class="phase-item-meta">1 周</div>
+          </div>
+          <div class="phase-item effort-l">
+            <div class="phase-item-icon">F</div>
+            <div class="phase-item-name"><strong>律所版 0.1</strong>: 律师档案 + 律所级 dashboard + 团队成员</div>
+            <div class="phase-item-meta">2 周</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase q2">
+      <div class="phase-dot">6月</div>
+      <div class="phase-body">
+        <div class="phase-label">Q4 2026 · 中期</div>
+        <div class="phase-title">自建 4 大库 + 律所版 1.0 + OCR/转写</div>
+        <div class="phase-items">
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">G</div>
+            <div class="phase-item-name"><strong>自建判例库</strong>: 裁判文书网爬虫 (100 万+ 文书, 6 节点分布式) + 律师自加</div>
+            <div class="phase-item-meta">6-8 周</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">H</div>
+            <div class="phase-item-name"><strong>自建企业征信库</strong>: 启信宝/天眼查公开数据爬 (500 万+ 企业) + 股权穿透</div>
+            <div class="phase-item-meta">4-6 周</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">I</div>
+            <div class="phase-item-name"><strong>自建模板库</strong>: 律所内部模板 (按律所分类) + 公开模板聚合</div>
+            <div class="phase-item-meta">4 周</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">J</div>
+            <div class="phase-item-name"><strong>自部署 Qwen2.5-7B</strong> (1-2 张 A100 验证 PMF) + 法律微调</div>
+            <div class="phase-item-meta">4-6 周 · ¥100-200K</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">K</div>
+            <div class="phase-item-name"><strong>PaddleOCR 集成</strong> + 中文法律微调, 知识库摄入模块 OCR 闭环</div>
+            <div class="phase-item-meta">4 周 · 1xA100</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">L</div>
+            <div class="phase-item-name"><strong>律所版 1.0</strong>: 时钟计费 + 案源管理 + 团队任务分配</div>
+            <div class="phase-item-meta">8 周</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase q3">
+      <div class="phase-dot">12月</div>
+      <div class="phase-body">
+        <div class="phase-label">2027 H1 · 长期</div>
+        <div class="phase-title">自建 7 大库 + 自部署 LLM + 商业化</div>
+        <div class="phase-items">
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">M</div>
+            <div class="phase-item-name"><strong>自部署 Qwen2.5-72B</strong> (4-8 张 A100) + 完整法律微调, 替换 7B 验证版</div>
+            <div class="phase-item-meta">8-12 周 · ¥1-3M</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">N</div>
+            <div class="phase-item-name"><strong>Whisper-large-v3</strong> 部署 + 中文法律微调, 庭审录音 + 客户会谈</div>
+            <div class="phase-item-meta">4-6 周 · 1xA100</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">O</div>
+            <div class="phase-item-name"><strong>电子签 v1</strong>: 律师自签 + 邮箱确认 + PDF 哈希存证 (不上 CA 牌照)</div>
+            <div class="phase-item-meta">3 周</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">P</div>
+            <div class="phase-item-name"><strong>判例库扩到 1,000 万+</strong> + 司法观点库扩到 200+ 条 (人民法院案例库 + 律师自加)</div>
+            <div class="phase-item-meta">持续</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">Q</div>
+            <div class="phase-item-name"><strong>律所版完整</strong>: 工时统计 + 客户共享池 + 律所知识共享 Wiki</div>
+            <div class="phase-item-meta">12 周</div>
+          </div>
+          <div class="phase-item effort-m">
+            <div class="phase-item-icon">R</div>
+            <div class="phase-item-name"><strong>商业化 1.0</strong>: 14 天试用 + Stripe 订阅（涨价, 见下）</div>
+            <div class="phase-item-meta">4 周</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-phase q4">
+      <div class="phase-dot">24月</div>
+      <div class="phase-body">
+        <div class="phase-label">2027 H2+ · 愿景</div>
+        <div class="phase-title">中国第一梯队法律 SaaS + 7 大资产壁垒</div>
+        <div class="phase-items">
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">S</div>
+            <div class="phase-item-name"><strong>电子签 v2</strong>: 接 CFCA / 国密 SM2 + 区块链 + 司法链对接</div>
+            <div class="phase-item-meta">12 周 · 牌照</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">T</div>
+            <div class="phase-item-name"><strong>律所版市占率前三</strong>: 目标 1,000+ 律所, 10,000+ 律师</div>
+            <div class="phase-item-meta">持续</div>
+          </div>
+          <div class="phase-item effort-h">
+            <div class="phase-item-icon">U</div>
+            <div class="phase-item-name"><strong>企业法务版</strong>: 大型企业法务部门 (in-house counsel) 拓展</div>
+            <div class="phase-item-meta">探索</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 商业化模型调整 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">15</div>
+    <div class="section-title">商业化模型调整：涨价 + 卖点升级</div>
+    <div class="section-subtitle">从「功能齐全」到「数据是你自己的」</div>
+  </div>
+  <p>自建 = 重资产 = 成本增加 + 价值提升。<strong>定价必须涨, 卖点必须变</strong>。</p>
+
+  <div class="product-grid">
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">原定价 <span class="badge">v0.7</span></div>
+        <div class="product-vendor">基于 API 订阅模式</div>
+        <div class="product-url">商业计划 v0.1</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">功能齐全 + 性价比</div>
+        <div class="product-cap">个人版 ¥299/月 · 律所版 ¥2,999/月 · 卖点：AI 辅助、不替代律师 + 工作台集成 + LLM Wiki 差异化</div>
+        <div class="product-data">ROI 测算基于 "接 API = 边际成本低"</div>
+      </div>
+      <div class="product-aside">
+        <div class="product-takeaway-label">问题</div>
+        <div class="product-takeaway">自建后 GPU + 存储 + 爬虫维护, 边际成本上升, 定价偏低难持续</div>
+      </div>
+    </div>
+    <div class="product">
+      <div class="product-head">
+        <div class="product-name">新定价 <span class="badge build">自建版</span></div>
+        <div class="product-vendor">基于自建资产 + 数据壁垒</div>
+        <div class="product-url">待商业计划 v0.2</div>
+      </div>
+      <div class="product-body">
+        <div class="product-tagline">数据是你自己的 + 7 大资产库</div>
+        <div class="product-cap">个人版 ¥499/月 · 律所版 ¥3,999/月 · 企业版 ¥9,999/月 · 卖点：<strong>数据自有 + 不依赖第三方 + AI 一体化</strong></div>
+        <div class="product-data">涨价 30-50%, 但价值翻倍</div>
+      </div>
+      <div class="product-aside build">
+        <div class="product-takeaway-label">升级点</div>
+        <div class="product-takeaway">个人 ¥499 · 律所 ¥3,999 · 企业 ¥9,999。卖点从"功能齐全"升级为"数据是你自己的"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <strong>新卖点（5 句话话术）：</strong><br>
+    1. <em>"你的判例库、模板库、企业征信, 都在 LexPrime 自建服务器上, 离开我们 = 失去所有数据"</em><br>
+    2. <em>"AI 用自部署 Qwen/DeepSeek, 不上传通义法睿/ChatGPT, 客户隐私有保障"</em><br>
+    3. <em>"判例 + 法规 + 司法观点实时增量更新, 比单独买聚法/北大法宝便宜且更准"</em><br>
+    4. <em>"律所版时钟计费 + 团队协作, Clio 70% 功能 + 中国法律 AI 100% 集成"</em><br>
+    5. <em>"数据永远归律所, LexPrime 只是帮你管"</em> — 对比"启信宝/聚法数据在他手里, 你用完就走"
+  </div>
+</section>
+
+<!-- ===== 4 象限总图 ===== -->
+<section>
+  <div class="section-header">
+    <div class="section-num">16</div>
+    <div class="section-title">LexPrime 战略堆栈：自建 vs 免费 vs 不做</div>
+    <div class="section-subtitle">全景一张图</div>
+  </div>
+  <div class="stack">
+    <div class="stack-layer build">
+      <div class="stack-layer-label">自建壁垒 (80%)</div>
+      <div class="stack-layer-title">LexPrime 独家</div>
+      <ul>
+        <li>判例库 (1,000 万+ 文书)</li>
+        <li>法规库 (国家库 + 司法解释)</li>
+        <li>企业征信库 (500 万+ 企业)</li>
+        <li>OCR (PaddleOCR + 微调)</li>
+        <li>语音转写 (Whisper + 微调)</li>
+        <li>电子签 v1 (PDF + 哈希)</li>
+        <li>LLM (Qwen2.5-72B + 微调)</li>
+        <li>模板库 (律所分类)</li>
+        <li>司法观点库 (200+ 条)</li>
+        <li>LLM Wiki 知识图谱</li>
+        <li>律所工作台 + 团队协作</li>
+      </ul>
+    </div>
+    <div class="stack-layer free">
+      <div class="stack-layer-label">免费接入 (15%)</div>
+      <div class="stack-layer-title">官方公开数据</div>
+      <ul>
+        <li>国家法律法规数据库</li>
+        <li>人民法院案例库</li>
+        <li>中国执行信息公开网</li>
+        <li>国家企业信用信息公示系统</li>
+        <li>中国审判流程信息公开网</li>
+        <li>人民法院案例库</li>
+      </ul>
+    </div>
+    <div class="stack-layer api">
+      <div class="stack-layer-label">集成/导出 (5%)</div>
+      <div class="stack-layer-title">与外部工具协同</div>
+      <ul>
+        <li>XMind 思维导图导出</li>
+        <li>PDF 阅读 + 批注</li>
+        <li>飞书 / 钉钉消息</li>
+        <li>CalDAV 日程同步</li>
+        <li>PWA 离线缓存</li>
+      </ul>
+    </div>
+    <div class="stack-layer skip">
+      <div class="stack-layer-label">不做 (0%)</div>
+      <div class="stack-layer-title">差异化护城河</div>
+      <ul>
+        <li>不做 C 端</li>
+        <li>不做 to 律所 (Clio 硬刚)</li>
+        <li>不接收费 API (启信宝/聚法/北大法宝/小包公/e签宝)</li>
+        <li>不自训基础大模型</li>
+        <li>不做案源抓取 (合规)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <strong>最终判断：</strong>LexPrime 自建版 = <em>7 大资产库 (判例/法规/征信/OCR/转写/电子签/LLM) + 免费公开数据接入 + 律所工作台骨架</em>。工程量翻 3-5 倍, 投资翻 5-10 倍, 但<strong>长期资产护城河是 Clio/Alpha/智律云 都没有的</strong>。6 个月内自建 4 大库 (判例/征信/OCR/LLM-7B), 12 个月内自建 7 大库 + LLM-72B, 24 个月内电子签 v2 + 市占率前三。
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<div class="footer">
+  <div>LexPrime 竞品全景分析 · 自建战略版 · v2.0 · 2026-06-28</div>
+  <div class="footer-meta">52 products · 10 domains · 11 self-built moats · 4 free APIs · 0 paid APIs</div>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!-- 律所版 v0.1 view - 2026-06-28 -->
+<!-- 依赖: firm-data.js (mock) + firm.js (UI) + API 后端 (可选, 自动 fallback mock) -->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-firm">
+  <div class="max-w-7xl mx-auto w-full space-y-5">
+
+    <!-- 顶部 4 概念卡 (律所 dashboard 视角) -->
+    <div class="grid grid-cols-4 gap-4">
+      <!-- 律师数 -->
+      <div class="bg-white rounded-xl border border-bg-border p-4">
+        <div class="flex items-center justify-between mb-1">
+          <p class="text-xs text-fg-tertiary">律师团队</p>
+          <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+            <iconify-icon class="text-base text-brand" icon="mdi:account-tie-outline"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary leading-tight" id="firm-stat-lawyers">--</p>
+        <p class="text-[10px] text-fg-tertiary mt-1.5">
+          <span id="firm-stat-lawyers-active">--</span> 人在职 · <span id="firm-stat-partners">--</span> 合伙人
+        </p>
+      </div>
+
+      <!-- 本月工时 -->
+      <div class="bg-white rounded-xl border border-bg-border p-4">
+        <div class="flex items-center justify-between mb-1">
+          <p class="text-xs text-fg-tertiary">本月工时</p>
+          <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+            <iconify-icon class="text-base text-wiki" icon="mdi:clock-time-five-outline"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary leading-tight"><span id="firm-stat-month-hours">--</span> <span class="text-sm font-normal text-fg-tertiary">小时</span></p>
+        <p class="text-[10px] text-success mt-1.5">↑ 较上月 <span id="firm-stat-hours-growth">--</span>%</p>
+      </div>
+
+      <!-- 案件数 -->
+      <div class="bg-white rounded-xl border border-bg-border p-4">
+        <div class="flex items-center justify-between mb-1">
+          <p class="text-xs text-fg-tertiary">进行中案件</p>
+          <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+            <iconify-icon class="text-base text-success" icon="mdi:briefcase-outline"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary leading-tight" id="firm-stat-cases">--</p>
+        <p class="text-[10px] text-fg-tertiary mt-1.5">
+          本周新增 <span id="firm-stat-new-cases" class="text-success font-medium">--</span> 件
+        </p>
+      </div>
+
+      <!-- 工时利用率 -->
+      <div class="bg-white rounded-xl border border-bg-border p-4">
+        <div class="flex items-center justify-between mb-1">
+          <p class="text-xs text-fg-tertiary">计费利用率</p>
+          <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+            <iconify-icon class="text-base text-urgent" icon="mdi:cash-multiple"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary leading-tight"><span id="firm-stat-billable-rate">--</span><span class="text-sm font-normal text-fg-tertiary">%</span></p>
+        <p class="text-[10px] text-fg-tertiary mt-1.5">本月可计费 / 总工时</p>
+      </div>
+    </div>
+
+    <!-- 主区: 律师列表 + 工时录入 -->
+    <div class="grid grid-cols-3 gap-4">
+      <!-- 律师列表 (左 2 列) -->
+      <div class="col-span-2 bg-white rounded-xl border border-bg-border">
+        <div class="p-4 border-b border-bg-border flex items-center justify-between">
+          <div>
+            <h4 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+              <iconify-icon class="text-base text-brand" icon="mdi:account-tie"></iconify-icon>
+              律师团队
+            </h4>
+            <p class="text-[10px] text-fg-tertiary mt-0.5">点击律师查看详情和工时</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle flex items-center gap-1 transition-colors" onclick="filterFirmLawyers('all')">
+              <iconify-icon class="text-sm" icon="mdi:filter-variant"></iconify-icon> 全部
+            </button>
+            <button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="filterFirmLawyers('partner')">合伙人</button>
+            <button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="filterFirmLawyers('senior')">高级</button>
+            <button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover flex items-center gap-1 transition-colors" onclick="openAddLawyerModal()">
+              <iconify-icon class="text-sm" icon="mdi:plus"></iconify-icon> 添加
+            </button>
+          </div>
+        </div>
+
+        <div id="firm-lawyers-list" class="divide-y divide-bg">
+          <!-- 由 firm.js 动态渲染 -->
+          <div class="p-8 text-center text-fg-tertiary text-xs">
+            <iconify-icon class="text-3xl text-fg-disabled mb-2" icon="mdi:loading"></iconify-icon>
+            <p>加载中...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工时录入 (右 1 列) -->
+      <div class="bg-white rounded-xl border border-bg-border">
+        <div class="p-4 border-b border-bg-border">
+          <h4 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+            <iconify-icon class="text-base text-wiki" icon="mdi:clock-edit-outline"></iconify-icon>
+            快速记工时
+          </h4>
+          <p class="text-[10px] text-fg-tertiary mt-0.5">单条记录, 时钟计费</p>
+        </div>
+        <div class="p-4 space-y-3">
+          <div>
+            <label class="text-[10px] font-medium text-fg-tertiary uppercase tracking-wider">律师</label>
+            <select id="time-entry-lawyer" class="w-full mt-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+              <option value="">-- 选择律师 --</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-medium text-fg-tertiary uppercase tracking-wider">日期</label>
+            <input type="date" id="time-entry-date" class="w-full mt-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+          </div>
+          <div>
+            <label class="text-[10px] font-medium text-fg-tertiary uppercase tracking-wider">工时 (小时)</label>
+            <input type="number" id="time-entry-hours" min="0.5" step="0.5" placeholder="如 2.5" class="w-full mt-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+          </div>
+          <div>
+            <label class="text-[10px] font-medium text-fg-tertiary uppercase tracking-wider">说明</label>
+            <textarea id="time-entry-desc" rows="3" placeholder="如 起草答辩状 / 准备庭审材料" class="w-full mt-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors resize-none"></textarea>
+          </div>
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="time-entry-billable" checked class="w-4 h-4 text-brand border-bg-border rounded focus:ring-brand"/>
+              <span class="text-xs text-fg-secondary">可计费</span>
+            </label>
+            <input type="number" id="time-entry-rate" placeholder="费率 ¥/h" class="flex-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+          </div>
+          <button onclick="submitTimeEntry()" class="w-full px-4 py-2.5 text-sm font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center justify-center gap-2">
+            <iconify-icon class="text-base" icon="mdi:content-save-outline"></iconify-icon>
+            保存工时
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最近工时记录 -->
+    <div class="bg-white rounded-xl border border-bg-border">
+      <div class="p-4 border-b border-bg-border flex items-center justify-between">
+        <h4 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+          <iconify-icon class="text-base text-urgent" icon="mdi:history"></iconify-icon>
+          最近工时记录
+        </h4>
+        <span class="text-[10px] text-fg-tertiary">本月 <span id="firm-entries-month-count">--</span> 条</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-bg-subtle border-b border-bg-border">
+              <th class="text-left py-2.5 px-4 text-xs font-semibold text-fg-secondary">日期</th>
+              <th class="text-left py-2.5 px-4 text-xs font-semibold text-fg-secondary">律师</th>
+              <th class="text-left py-2.5 px-4 text-xs font-semibold text-fg-secondary">说明</th>
+              <th class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-20">工时</th>
+              <th class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-20">计费</th>
+              <th class="text-right py-2.5 px-4 text-xs font-semibold text-fg-secondary w-24">金额</th>
+              <th class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-24">状态</th>
+            </tr>
+          </thead>
+          <tbody id="firm-time-entries-tbody" class="divide-y divide-bg">
+            <!-- 动态渲染 -->
+            <tr>
+              <td colspan="7" class="p-6 text-center text-fg-tertiary text-xs">加载中...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 律所信息 -->
+    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <iconify-icon class="text-base text-brand" icon="mdi:lightbulb-on-outline"></iconify-icon>
+        <h4 class="text-sm font-semibold text-fg-primary">律所版 0.1 (MVP)</h4>
+      </div>
+      <p class="text-[10px] text-fg-secondary leading-relaxed">
+        当前为律所版 0.1 MVP, 已支持<strong>律师档案 + 团队 dashboard + 工时记录</strong>。
+        后续将上线: 案源管理、案件分配、客户共享池、知识库 Wiki 律所版、计费发票、Stripe 订阅。
+        数据存储在 LexPrime <strong>自建 PostgreSQL + Elasticsearch + Neo4j</strong>, 数据归律所所有, 离开 LexPrime 不丢失。
+      </p>
+    </div>
+  </div>
+</div>

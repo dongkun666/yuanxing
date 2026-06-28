@@ -150,9 +150,14 @@ window.Iconify.disableRemoteAPI = true;
 <iconify-icon class="text-xl mr-3" icon="mdi:account-group-outline"></iconify-icon>
 <span class="sidebar-text">客户管理</span>
 </div>
-<div class="sidebar-item" onclick="switchView('archive', this)">
+            <div class="sidebar-item" onclick="switchView('archive', this)">
                 <iconify-icon class="text-xl mr-3" icon="mdi:archive-outline"></iconify-icon>
                 <span class="sidebar-text">归档管理</span>
+            </div>
+            <div class="sidebar-item" onclick="switchView('firm', this)">
+                <iconify-icon class="text-xl mr-3" icon="mdi:office-building-cog-outline"></iconify-icon>
+                <span class="sidebar-text">律所管理</span>
+                <span class="ml-auto text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">新</span>
             </div>
             <div class="sidebar-item" onclick="switchView('template', this)">
 <iconify-icon class="text-xl mr-3" icon="mdi:file-document-outline"></iconify-icon>
@@ -340,6 +345,9 @@ window.Iconify.disableRemoteAPI = true;
 <!-- 司法观点库 (与知识库集成) -->
 <script src="./assets/js/judicial-data.js?v=22"></script>
 <script src="./assets/js/judicial.js?v=22"></script>
+<!-- 律所版 0.1 (2026-06-28) - 律师档案 + 工时记录 + 律所 dashboard -->
+<script src="./assets/js/firm-data.js?v=23"></script>
+<script src="./assets/js/firm.js?v=23"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {
