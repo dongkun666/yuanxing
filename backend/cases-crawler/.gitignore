@@ -17,6 +17,8 @@ env/
 # 数据 (cncases 102GB)
 data/raw/*
 data/processed/*
+data/*.db
+data/*.db-journal
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 

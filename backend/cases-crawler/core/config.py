@@ -2,9 +2,17 @@
 LexPrime 配置加载
 2026-06-28
 """
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from typing import Optional
 from functools import lru_cache
+
+
+# 项目根目录: 这个文件 (core/config.py) 的父目录的父目录
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_DEFAULT_DB_PATH = _PROJECT_ROOT / "data" / "lexprime.db"
+_DEFAULT_DB_URL = f"sqlite+aiosqlite:///{_DEFAULT_DB_PATH.as_posix().lstrip('/')}"
 
 
 class Settings(BaseSettings):
@@ -16,7 +24,8 @@ class Settings(BaseSettings):
     postgres_db: str = "lexprime"
     postgres_user: str = "lexprime"
     postgres_password: str = "lexprime_dev_pwd"
-    database_url: str = "postgresql+asyncpg://lexprime:lexprime_dev_pwd@localhost:5432/lexprime"
+    # 默认 SQLite dev (零依赖); 生产用 PG: postgresql+asyncpg://...
+    database_url: str = _DEFAULT_DB_URL
 
     # Elasticsearch
     es_host: str = "localhost"

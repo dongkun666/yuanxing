@@ -14,12 +14,16 @@ import csv
 import io
 import os
 import re
+import sys
 import zipfile
 from pathlib import Path
 from typing import Iterator, Optional
 from datetime import date
 from loguru import logger
 from tqdm import tqdm
+
+# 把父目录加入 sys.path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.db import Database, ESClient
 from core.models import Case

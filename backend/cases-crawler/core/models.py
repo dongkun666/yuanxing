@@ -7,7 +7,7 @@ from typing import Optional, List
 from decimal import Decimal
 from sqlalchemy import (
     BigInteger, String, Text, Date, DateTime, Boolean, Integer, SmallInteger, Numeric,
-    ForeignKey, ARRAY, JSON, UniqueConstraint, Index,
+    ForeignKey, JSON, UniqueConstraint, Index,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
@@ -41,9 +41,9 @@ class Case(Base):
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     region: Mapped[Optional[str]] = mapped_column(String(32), index=True)
     year: Mapped[Optional[int]] = mapped_column(SmallInteger, index=True)
-    keywords: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    keywords: Mapped[Optional[List[str]]] = mapped_column(JSON)
     lex_score: Mapped[Optional[int]] = mapped_column(SmallInteger, default=0, index=True)
-    lex_tags: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    lex_tags: Mapped[Optional[List[str]]] = mapped_column(JSON)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
     favorite_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -70,7 +70,7 @@ class Law(Base):
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     revised_from: Mapped[Optional[str]] = mapped_column(String(64))
     revised_to: Mapped[Optional[str]] = mapped_column(String(64))
-    related_laws: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    related_laws: Mapped[Optional[List[str]]] = mapped_column(JSON)
     related_cases_count: Mapped[int] = mapped_column(Integer, default=0)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -116,7 +116,7 @@ class LawyerAddedCase(Base):
     full_text: Mapped[Optional[str]] = mapped_column(Text)
     cause: Mapped[Optional[str]] = mapped_column(String(128))
     cause_category: Mapped[Optional[str]] = mapped_column(String(64))
-    tags: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    tags: Mapped[Optional[List[str]]] = mapped_column(JSON)
     notes: Mapped[Optional[str]] = mapped_column(Text)
     visibility: Mapped[str] = mapped_column(String(16), default="private")
     related_official_case_id: Mapped[Optional[int]] = mapped_column(BigInteger, ForeignKey("cases.id"), index=True)
@@ -160,7 +160,7 @@ class Lawyer(Base):
     email: Mapped[str] = mapped_column(String(128), unique=True, index=True)
     phone: Mapped[Optional[str]] = mapped_column(String(32))
     role: Mapped[str] = mapped_column(String(16), default="lawyer", index=True)
-    specialties: Mapped[Optional[List[str]]] = mapped_column(ARRAY(String))
+    specialties: Mapped[Optional[List[str]]] = mapped_column(JSON)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text)
     bio: Mapped[Optional[str]] = mapped_column(Text)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

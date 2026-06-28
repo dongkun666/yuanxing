@@ -1,0 +1,87 @@
+<!-- 法规库 view - 2026-06-28 -->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-laws-db">
+  <div class="max-w-7xl mx-auto w-full space-y-4">
+
+    <!-- 顶部统计 -->
+    <div class="grid grid-cols-4 gap-3">
+      <div class="bg-white rounded-xl border border-bg-border p-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+          <iconify-icon class="text-xl text-brand" icon="mdi:book-open-page-variant"></iconify-icon>
+        </div>
+        <div>
+          <p class="text-xs text-fg-tertiary">法规总数</p>
+          <p class="text-xl font-bold text-fg-primary" id="laws-db-stat-total">--</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border border-bg-border p-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+          <iconify-icon class="text-xl text-wiki" icon="mdi:gavel"></iconify-icon>
+        </div>
+        <div>
+          <p class="text-xs text-fg-tertiary">法律</p>
+          <p class="text-xl font-bold text-fg-primary" id="laws-db-stat-law">--</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border border-bg-border p-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+          <iconify-icon class="text-xl text-urgent" icon="mdi:scale-balance"></iconify-icon>
+        </div>
+        <div>
+          <p class="text-xs text-fg-tertiary">司法解释</p>
+          <p class="text-xl font-bold text-fg-primary" id="laws-db-stat-interp">--</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border border-bg-border p-3 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+          <iconify-icon class="text-xl text-success" icon="mdi:database"></iconify-icon>
+        </div>
+        <div>
+          <p class="text-xs text-fg-tertiary">数据源</p>
+          <p class="text-sm font-semibold text-fg-primary">国家库 (免费)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 搜索 + 筛选 -->
+    <div class="bg-white rounded-xl border border-bg-border p-4 space-y-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex-1 relative min-w-[240px]">
+          <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base" icon="mdi:magnify"></iconify-icon>
+          <input type="text" id="laws-db-search" placeholder="搜索法规标题 / 编号 / 全文..." class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+        </div>
+        <select id="laws-db-type-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+          <option value="all">全部类型</option>
+          <option value="法律">法律</option>
+          <option value="行政法规">行政法规</option>
+          <option value="司法解释">司法解释</option>
+          <option value="地方性法规">地方性法规</option>
+          <option value="部门规章">部门规章</option>
+        </select>
+        <select id="laws-db-status-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+          <option value="all">全部状态</option>
+          <option value="有效">有效</option>
+          <option value="已修订">已修订</option>
+          <option value="已废止">已废止</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-between text-[10px] text-fg-tertiary">
+        <span>
+          <iconify-icon class="text-xs" icon="mdi:format-list-bulleted"></iconify-icon>
+          共 <span id="laws-db-count">--</span> 部法规
+        </span>
+        <span>
+          <iconify-icon class="text-xs" icon="mdi:link-variant"></iconify-icon>
+          主源: 国家法律法规数据库 (国务院)
+        </span>
+      </div>
+    </div>
+
+    <!-- 列表 -->
+    <div id="laws-db-list" class="space-y-2.5">
+      <div class="bg-white rounded-xl border border-bg-border p-12 text-center">
+        <iconify-icon class="text-4xl text-fg-disabled mb-2" icon="mdi:loading"></iconify-icon>
+        <p class="text-sm text-fg-tertiary">加载中...</p>
+      </div>
+    </div>
+  </div>
+</div>

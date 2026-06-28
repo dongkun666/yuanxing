@@ -44,7 +44,10 @@
         'zhixing': 'zhixing.html',
         'case-progress': 'case-progress.html',
         'ai-doc': 'ai-doc.html',
-        'firm': 'firm.html'
+        'firm': 'firm.html',
+        'cases-db': 'cases-db.html',
+        'laws-db': 'laws-db.html',
+        'companies-db': 'companies-db.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
