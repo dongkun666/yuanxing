@@ -1,0 +1,232 @@
+[
+  {"name":"insurance_property","title":"财产保险合同","contract_type":"保险合同","industry":"财产保险","fatal_keywords":["免责","保险责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为丙方。"],
+     ["保险标的","保险标的: 位于{property_location}的房屋及室内财产, 保险金额人民币 {amount}。"],
+     ["保险责任","乙方对火灾、爆炸、自然灾害等造成的损失承担保险责任。"],
+     ["免责","乙方对投保人故意行为、战争、核辐射等不承担保险责任, 详见保险条款。"],
+     ["保险费","保险费人民币 {transfer_price}, 甲方应于本合同签订之日一次性支付。"],
+     ["保险期间","保险期间 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_life","title":"人身保险合同","contract_type":"保险合同","industry":"人身保险","fatal_keywords":["免责","告知"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为{usage}。"],
+     ["保险金额","保险金额人民币 {amount}。"],
+     ["保险责任","乙方对被保险人身故、伤残、重大疾病等承担保险责任, 详见保险条款。"],
+     ["免责","乙方对投保人故意杀害被保险人、被保险人故意犯罪等不承担保险责任。"],
+     ["保险费","保险费人民币 {transfer_price}, 甲方应按年支付。"],
+     ["保险期间","保险期间 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_liability","title":"责任保险合同","contract_type":"保险合同","industry":"责任保险","fatal_keywords":["免责","追溯期"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["保险责任","乙方对甲方在{usage}经营活动中因过错造成第三方人身损害或财产损失, 依法应承担的赔偿责任, 按本合同约定承担保险责任。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}, 累计赔偿限额人民币 {transfer_price}。"],
+     ["追溯期","保险责任追溯期 {duration}, 自 {original_date} 起。"],
+     ["保险费","保险费人民币 {amount}, 甲方应于本合同签订之日一次性支付。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_guarantee","title":"保证保险合同","contract_type":"保险合同","industry":"保证保险","fatal_keywords":["免责"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为债权方 (银行/小额贷款公司等)。"],
+     ["保险标的","保险标的为投保人对被保险人负有的债务, 本金人民币 {amount}。"],
+     ["保险责任","投保人未按期履行债务的, 乙方按本合同约定向被保险人承担保证保险责任。"],
+     ["保险费","保险费按保险金额的 {commission_rate}% 计算, 人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_cargo","title":"货物运输保险合同","contract_type":"保险合同","industry":"货物运输","fatal_keywords":["免责"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["保险标的","保险标的: {usage} (运输货物名称及数量)。"],
+     ["运输","运输路线: {property_location} 至 {property_location}, 运输工具: {repayment_method}。"],
+     ["保险金额","保险金额人民币 {amount}, 按发票金额的 110% 确定。"],
+     ["保险责任","乙方对运输过程中因自然灾害、意外事故造成的货物损失承担保险责任。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_employer_liability","title":"雇主责任保险合同","contract_type":"保险合同","industry":"雇主责任","fatal_keywords":["工伤"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (雇主)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["被保险雇员","被保险雇员: 甲方聘用的全部员工, 共 {installment_count} 人。"],
+     ["保险责任","乙方对甲方雇员在受雇过程中因工受伤、患职业病、死亡等, 依法应由甲方承担的工伤赔偿责任, 按本合同约定承担。"],
+     ["赔偿限额","每人赔偿限额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_product_liability","title":"产品责任保险合同","contract_type":"保险合同","industry":"产品责任","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (产品生产者或销售者)。"],
+     ["保险人","乙方为保险公司。"],
+     ["保险产品","保险产品: 甲方生产/销售的{usage}产品。"],
+     ["保险责任","乙方对甲方产品因缺陷造成第三方人身损害或财产损失, 依法应由甲方承担的产品质量赔偿责任, 按本合同约定承担。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}, 累计赔偿限额人民币 {transfer_price}。"],
+     ["保险费","保险费人民币 {amount}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_health","title":"健康保险合同","contract_type":"保险合同","industry":"健康","fatal_keywords":["免责","等待期"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方本人/指定人员。"],
+     ["保险责任","乙方对被保险人因疾病或意外伤害产生的合理医疗费用 (住院、手术、特殊门诊等), 按本合同约定承担保险责任。"],
+     ["等待期","保险责任等待期 {duration}, 自本合同生效之日起计算。"],
+     ["保险金额","保险金额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}, 甲方应按年支付。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_auto","title":"机动车辆保险合同","contract_type":"保险合同","industry":"汽车保险","fatal_keywords":["免责","无证"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["保险车辆","保险车辆: {vehicle_brand}{vehicle_type}, 车牌号 {ip_number}。"],
+     ["保险责任","乙方对保险车辆因交通事故造成的车辆损失、第三方责任等, 按本合同约定承担保险责任。"],
+     ["险种","险种包括: 交强险、商业三者险 (保额人民币 {amount})、车损险、不计免赔险等。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_engineering","title":"工程保险合同","contract_type":"保险合同","industry":"工程保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (工程业主/承包商)。"],
+     ["保险人","乙方为保险公司。"],
+     ["保险标的","保险标的: 位于{property_location}的{usage}工程, 造价人民币 {amount}。"],
+     ["保险责任","乙方对工程在建设期间因自然灾害、意外事故造成的工程本身损失、第三方责任等承担保险责任。"],
+     ["保险期间","保险期间 {duration}, 自 {start_date} 起至 {end_date} 止, 与工期一致。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_credit","title":"信用保险合同","contract_type":"保险合同","industry":"信用保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (债权人)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["保险标的","保险标的: 甲方对{debtor_name}享有的债权, 金额人民币 {amount}。"],
+     ["保险责任","债务人未按期履行债务的, 乙方按本合同约定向甲方承担保险责任。"],
+     ["保险费","保险费按保险金额的 {commission_rate}% 计算。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_group","title":"团体保险合同","contract_type":"保险合同","industry":"团体保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (单位)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方员工, 共 {installment_count} 人, 详见《被保险人名单》。"],
+     ["保险责任","乙方对被保险人因意外伤害、疾病等产生的医疗费用、伤残、身故等, 按本合同约定承担保险责任。"],
+     ["保险金额","每人保险金额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_critical_illness","title":"重大疾病保险合同","contract_type":"保险合同","industry":"重疾险","fatal_keywords":["等待期","免责"],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方本人/指定人员。"],
+     ["保险责任","乙方对被保险人确诊患本合同约定的重大疾病 (恶性肿瘤、急性心肌梗死等) 时, 按本合同约定一次性给付保险金。"],
+     ["保险金额","保险金额人民币 {amount}。"],
+     ["等待期","本合同等待期 {duration}。"],
+     ["保险费","保险费人民币 {transfer_price}, 甲方应按年支付。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_travel","title":"旅行保险合同","contract_type":"保险合同","industry":"旅行保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["保险责任","乙方对甲方在{trip_destination}{trip_duration}旅行期间因意外伤害、疾病、行李丢失、航班延误等产生的损失, 按本合同约定承担保险责任。"],
+     ["保险金额","保险金额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_pet","title":"宠物保险合同","contract_type":"保险合同","industry":"宠物保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (宠物主人)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险宠物","被保险宠物: {usage} (宠物种类及描述)。"],
+     ["保险责任","乙方对被保险宠物因疾病、意外伤害产生的医疗费用, 按本合同约定承担保险责任。"],
+     ["保险金额","保险金额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_cyber","title":"网络安全保险合同","contract_type":"保险合同","industry":"网络安全","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人。"],
+     ["保险人","乙方为保险公司。"],
+     ["保险责任","乙方对甲方因网络攻击、数据泄露、隐私侵权等事件产生的损失 (包括第三方索赔、应急响应、法律费用等), 按本合同约定承担保险责任。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}, 累计赔偿限额人民币 {transfer_price}。"],
+     ["保险费","保险费人民币 {amount}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_environmental","title":"环境责任保险合同","contract_type":"保险合同","industry":"环境责任","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (污染企业)。"],
+     ["保险人","乙方为保险公司。"],
+     ["保险责任","乙方对甲方因生产经营活动造成环境污染, 依法应承担的人身损害、财产损失、生态损害赔偿等责任, 按本合同约定承担保险责任。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_directors","title":"董监高责任保险合同","contract_type":"保险合同","industry":"董监高","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (公司)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方董事、监事、高级管理人员。"],
+     ["保险责任","乙方对被保险人在履职过程中因过错造成第三方损害, 依法应承担的赔偿责任, 按本合同约定承担保险责任。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}, 累计赔偿限额人民币 {transfer_price}。"],
+     ["保险费","保险费人民币 {amount}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_professional","title":"职业责任保险合同","contract_type":"保险合同","industry":"职业责任","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["投保人","甲方为投保人 (专业人士/专业机构)。"],
+     ["保险人","乙方为保险公司。"],
+     ["被保险人","被保险人为甲方。"],
+     ["保险责任","乙方对甲方在提供{usage}专业服务过程中因执业过错造成第三方损害, 依法应承担的赔偿责任, 按本合同约定承担保险责任。"],
+     ["赔偿限额","每次事故赔偿限额人民币 {amount}。"],
+     ["保险费","保险费人民币 {transfer_price}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_prospectus","title":"保单质押贷款合同","contract_type":"保险合同","industry":"保单贷款","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["贷款人","甲方 (保险公司) 向乙方提供保单质押贷款。"],
+     ["借款人","乙方为投保人。"],
+     ["质押保单","乙方以其持有的保单 (保单号 {original_contract_id}) 质押给甲方。"],
+     ["贷款金额","贷款金额人民币 {amount}, 不超过保单现金价值的 80%。"],
+     ["贷款期限","贷款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["利息","贷款年利率 {interest_rate}。"],
+     ["还款","乙方应于到期日{repayment_method}本金及利息。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_reinsure","title":"再保险合同","contract_type":"保险合同","industry":"再保险","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["分出方","甲方为分出公司。"],
+     ["分入方","乙方为分入公司。"],
+     ["分出标的","分出标的: {usage}。"],
+     ["分出比例","分出比例 {commission_rate}%。"],
+     ["分保费","分保费人民币 {amount}。"],
+     ["再保险费","再保险费按分保费的 {handling_fee_rate}% 收取。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"insurance_claim_settlement","title":"保险理赔协议","contract_type":"保险合同","industry":"理赔","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["理赔申请人","甲方为理赔申请人。"],
+     ["保险公司","乙方为保险公司。"],
+     ["保险事故","保险事故: {usage}。"],
+     ["核定损失","经乙方核定, 保险事故造成的损失金额为人民币 {amount}。"],
+     ["理赔金额","乙方应向甲方支付理赔款人民币 {transfer_price}。"],
+     ["支付时间","乙方应于本合同签订后 15 日内一次性支付。"],
+     ["结案","理赔款支付后, 本案结案。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]}
+]

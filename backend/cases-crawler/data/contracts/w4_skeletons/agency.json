@@ -1,0 +1,223 @@
+[
+  {"name":"agency_litigation","title":"诉讼代理委托合同","contract_type":"委托代理","industry":"诉讼代理","fatal_keywords":["律师费","委托"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}诉讼案件。"],
+     ["委托权限","乙方代理权限为{repayment_method} (一般/特别授权)。"],
+     ["代理阶段","代理阶段包括一审 / 二审 / 再审 / 执行, 单独约定。"],
+     ["律师费","律师费总额人民币 {amount}, 风险代理的按胜诉金额的 {commission_rate}% 收取。"],
+     ["费用承担","诉讼费、鉴定费等由甲方承担, 乙方实报实销。"],
+     ["保密义务","乙方对委托事项负有保密义务。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_arbitration","title":"仲裁代理委托合同","contract_type":"委托代理","industry":"仲裁","fatal_keywords":["律师费","保密"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}仲裁案件。"],
+     ["委托权限","乙方代理权限为{repayment_method}。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","仲裁费、鉴定费等由甲方承担。"],
+     ["保密义务","乙方对委托事项负有保密义务, 仲裁案件应特别关注保密性。"],
+     ["争议解决","仲裁案件本身的争议按仲裁规则解决, 本合同争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_real_estate","title":"房产中介居间合同","contract_type":"委托代理","industry":"房产中介","fatal_keywords":["独家"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方提供{usage}房产中介服务。"],
+     ["服务内容","乙方提供房源信息、带看、协助谈判、协助办理过户等服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止。"],
+     ["中介费","中介费按成交价的 {commission_rate}% 收取, 最低人民币 {amount}。"],
+     ["独家委托","{repayment_method}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_patent","title":"专利代理委托合同","contract_type":"委托代理","industry":"专利","fatal_keywords":["保密"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}专利申请事务。"],
+     ["服务内容","乙方提供专利申请文件撰写、提交、审查意见答复等服务。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["官费","专利申请官费由甲方承担, 乙方实报实销。"],
+     ["保密义务","乙方对委托事项的技术信息负有保密义务。"],
+     ["授权","专利授权后, 双方权利义务按本合同约定。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_tax","title":"税务代理委托合同","contract_type":"委托代理","industry":"税务","fatal_keywords":["专业责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}税务事项。"],
+     ["服务内容","乙方提供纳税申报、税务咨询、税务筹划等服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["专业责任","因乙方执业过错导致甲方税务处罚的, 乙方应承担相应赔偿责任。"],
+     ["保密义务","乙方对委托事项的财务信息负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_marriage","title":"婚姻家事代理委托合同","contract_type":"委托代理","industry":"婚姻","fatal_keywords":["情感考量"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}婚姻家事案件。"],
+     ["代理阶段","代理阶段按实际案件需要单独约定。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["情感考量","婚姻家事案件涉及情感因素, 乙方应在法律框架内最大化维护甲方合法权益。"],
+     ["保密义务","乙方对委托事项负有严格保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_customs","title":"报关代理委托合同","contract_type":"委托代理","industry":"报关","fatal_keywords":["单证"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}报关事务。"],
+     ["服务内容","乙方提供进出口报关、报检、缴纳税费等服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止。"],
+     ["服务费用","服务费按次计收, 每次人民币 {amount}。"],
+     ["单证提供","甲方应及时提供报关所需的单证, 因单证问题导致的延误由甲方负责。"],
+     ["海关查验","货物被海关查验的, 乙方应协助甲方处理。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_medical","title":"医疗纠纷代理委托合同","contract_type":"委托代理","industry":"医疗纠纷","fatal_keywords":["医疗责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}医疗纠纷案件。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","诉讼费、鉴定费、医疗损害鉴定费等由甲方承担。"],
+     ["医疗责任","因医疗行为引起的损害责任, 涉及医学专业判断, 乙方应协助甲方进行医学鉴定。"],
+     ["保密义务","乙方对委托事项负有严格保密义务, 涉及甲方健康隐私。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_copyright","title":"版权登记代理委托合同","contract_type":"委托代理","industry":"版权","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}版权登记事务。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["官费","版权登记官费由甲方承担。"],
+     ["材料提供","甲方应及时提供登记所需的材料。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_trademark","title":"商标代理委托合同","contract_type":"委托代理","industry":"商标","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}商标事务。"],
+     ["服务内容","乙方提供商标查询、申请、续展、转让、许可备案等服务。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["官费","商标事务官费由甲方承担。"],
+     ["保密义务","乙方对商标图样及商业信息负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_insurance_claim","title":"保险理赔代理委托合同","contract_type":"委托代理","industry":"保险理赔","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}保险理赔事务。"],
+     ["服务内容","乙方提供保险理赔材料准备、与保险公司沟通、协助办理理赔等服务。"],
+     ["服务费用","服务费按理赔金额的 {commission_rate}% 收取, 最低人民币 {amount}。"],
+     ["授权","甲方授权乙方代为签署理赔相关文件。"],
+     ["争议解决","如保险公司拒赔, 乙方可代为提起诉讼, 另行约定律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_debt_collection","title":"债务催收代理委托合同","contract_type":"委托代理","industry":"催收","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}债务催收事务。"],
+     ["债权金额","债权本金人民币 {amount}, 含利息、违约金等。"],
+     ["服务费用","服务费按实际收回金额的 {commission_rate}% 收取。"],
+     ["催收方式","乙方应通过合法方式进行催收, 不得使用暴力、威胁、侮辱等手段。"],
+     ["回款","催收回款直接支付给甲方, 乙方在扣除服务费后将余款支付给甲方。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_execution","title":"执行代理委托合同","contract_type":"委托代理","industry":"执行","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}执行案件。"],
+     ["律师费","律师费总额人民币 {amount}, 按执行到位金额的 {commission_rate}% 浮动。"],
+     ["费用承担","执行费、评估费、拍卖费等由甲方承担。"],
+     ["保密义务","乙方对执行案件信息负有保密义务。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_bankruptcy","title":"破产代理委托合同","contract_type":"委托代理","industry":"破产","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}破产案件。"],
+     ["律师费","律师费总额人民币 {amount}, 视案件复杂程度调整。"],
+     ["费用承担","破产案件受理费、管理人费用等由甲方承担。"],
+     ["保密义务","乙方对破产案件信息负有保密义务。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_administrative","title":"行政复议/诉讼代理委托合同","contract_type":"委托代理","industry":"行政","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}行政复议/诉讼案件。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","行政复议/诉讼费用由甲方承担。"],
+     ["保密义务","乙方对委托事项负有保密义务。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_criminal","title":"刑事辩护委托合同","contract_type":"委托代理","industry":"刑事","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师为{usage}被告人提供刑事辩护。"],
+     ["律师费","律师费总额人民币 {amount}, 涉及多阶段的按阶段支付。"],
+     ["会见与阅卷","乙方律师应按《刑事诉讼法》规定会见被告人、查阅案卷材料。"],
+     ["保密义务","乙方对委托事项负有严格保密义务, 涉及被告人隐私及辩护策略。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_notary","title":"公证代理委托合同","contract_type":"委托代理","industry":"公证","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}公证事务。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["公证费","公证费由甲方承担, 按公证处收费标准支付。"],
+     ["材料提供","甲方应及时提供公证所需的材料。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_immigration","title":"出入境代理委托合同","contract_type":"委托代理","industry":"出入境","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}出入境事务。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["官费","出入境申请官费由甲方承担。"],
+     ["材料提供","甲方应及时提供申请所需的材料。"],
+     ["保密义务","乙方对甲方的个人信息及出入境记录负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_company_reg","title":"公司注册代理委托合同","contract_type":"委托代理","industry":"公司注册","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}公司注册事务。"],
+     ["服务费用","服务费人民币 {amount}, 含代办费及工本费。"],
+     ["官费","工商登记官费由甲方承担。"],
+     ["材料提供","甲方应及时提供注册所需的材料。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_trademark_transfer","title":"商标转让代理委托合同","contract_type":"委托代理","industry":"商标转让","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方代理{usage}商标转让事务。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["官费","商标转让官费由甲方承担。"],
+     ["材料提供","甲方应及时提供商标转让所需的材料。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_patent_infringement","title":"专利侵权代理委托合同","contract_type":"委托代理","industry":"专利侵权","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}专利侵权案件。"],
+     ["律师费","律师费总额人民币 {amount}, 风险代理的按获赔金额的 {commission_rate}% 收取。"],
+     ["费用承担","诉讼费、鉴定费、公证费等由甲方承担。"],
+     ["保密义务","乙方对委托事项的技术信息负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_labor_dispute","title":"劳动争议代理委托合同","contract_type":"委托代理","industry":"劳动争议","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}劳动争议案件。"],
+     ["律师费","律师费总额人民币 {amount}, 风险代理的按获赔金额的 {commission_rate}% 收取。"],
+     ["费用承担","仲裁费、诉讼费等由甲方承担。"],
+     ["保密义务","乙方对委托事项负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_real_estate_dispute","title":"房产纠纷代理委托合同","contract_type":"委托代理","industry":"房产纠纷","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}房产纠纷案件。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","诉讼费、评估费、拍卖费等由甲方承担。"],
+     ["保密义务","乙方对委托事项负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_divorce","title":"离婚诉讼代理委托合同","contract_type":"委托代理","industry":"离婚","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}离婚诉讼案件。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","诉讼费、评估费等由甲方承担。"],
+     ["保密义务","乙方对委托事项负有严格保密义务, 涉及甲方婚姻隐私。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"agency_inheritance","title":"继承纠纷代理委托合同","contract_type":"委托代理","industry":"继承","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}继承纠纷案件。"],
+     ["律师费","律师费总额人民币 {amount}。"],
+     ["费用承担","诉讼费、评估费、公证费等由甲方承担。"],
+     ["保密义务","乙方对委托事项负有严格保密义务, 涉及家族隐私。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]}
+]

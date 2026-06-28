@@ -1,0 +1,233 @@
+[
+  {"name":"partnership_startup","title":"创业合伙协议","contract_type":"合伙协议","industry":"创业合伙","fatal_keywords":["出资","利润分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙企业","甲乙丙三方共同投资设立{usage} (以下简称合伙企业)。"],
+     ["出资","甲方出资人民币 {amount}, 占 {commission_rate}%; 乙方出资人民币 {transfer_price}, 占剩余份额; 丙方以{repayment_method}出资, 占剩余份额。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["事务执行","合伙企业事务由全体合伙人共同决定, 重大事项需经全体一致同意。"],
+     ["利润分配","合伙企业利润按出资比例分配, 亏损亦按出资比例承担。"],
+     ["入伙与退伙","新合伙人入伙需经全体一致同意; 合伙人退伙应提前 30 日通知。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_law","title":"律师事务所合伙协议","contract_type":"合伙协议","industry":"律师事务所","fatal_keywords":["执业责任","利润分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙律师事务所","甲方、乙方、丙方共同设立{usage}律师事务所。"],
+     ["出资","各方出资人民币 {amount}, 份额均等。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["合伙人会议","合伙人会议为最高权力机构, 重大事项需经全体一致同意。"],
+     ["利润分配","合伙利润按合伙人会议决议分配, 一般采取基本报酬 + 效益分成方式。"],
+     ["执业责任","因执业活动产生的法律责任, 由合伙律师事务所承担, 重大过失合伙人按约定承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_limited","title":"有限合伙协议 (基金)","contract_type":"合伙协议","industry":"有限合伙","fatal_keywords":["收益分配","亏损承担"],"major_keywords":["争议"],
+   "clauses":[
+     ["有限合伙企业","甲方 (普通合伙人 / GP) 与乙方、丙方 (有限合伙人 / LP) 共同设立{usage}有限合伙企业。"],
+     ["出资","GP 出资人民币 {amount}, LP 合计出资人民币 {transfer_price}, 出资比例按约定执行。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["管理权","由 GP 负责合伙企业的投资管理, LP 不参与日常管理。"],
+     ["收益分配","LP 优先获得 {commission_rate}% 的门槛收益, 超额收益 GP 与 LP 按 20:80 分配。"],
+     ["亏损承担","LP 以认缴出资为限承担责任, GP 承担无限连带责任。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_jv","title":"中外合资经营企业合同","contract_type":"合伙协议","industry":"中外合资","fatal_keywords":["出资","利润分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["合资企业","甲方 (中方) 与乙方 (外方) 共同投资设立{usage}合资企业。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资 USD {transfer_price} (占剩余份额)。"],
+     ["合资期限","合资期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["董事会","董事会为最高权力机构, 重大事项需经董事会一致通过。"],
+     ["利润分配","合资企业利润按出资比例分配, 亏损亦按出资比例承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_professional","title":"专业服务合伙协议 (会计/咨询)","contract_type":"合伙协议","industry":"专业服务","fatal_keywords":["执业责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙事务所","甲乙丙共同设立{usage}专业服务事务所。"],
+     ["出资","各方出资人民币 {amount}, 份额均等。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["事务执行","事务所事务由合伙人会议决定, 日常运营由执行合伙人负责。"],
+     ["利润分配","事务所利润按出资比例分配, 重大贡献合伙人可获得额外奖励。"],
+     ["执业责任","因专业服务产生的法律责任, 由事务所承担, 重大过失合伙人按约定承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_restaurant","title":"餐饮合伙协议","contract_type":"合伙协议","industry":"餐饮合伙","fatal_keywords":["利润分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙餐饮店","甲乙共同投资经营{usage}餐饮店。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资人民币 {transfer_price} (占剩余份额)。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["分工","甲方负责经营, 乙方负责财务, 重大事项共同决定。"],
+     ["利润分配","餐饮店利润按出资比例分配, 每月结算一次。"],
+     ["退伙","合伙人退伙应提前 30 日通知, 进行财产清算。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_family","title":"家族合伙协议","contract_type":"合伙协议","industry":"家族合伙","fatal_keywords":["家族治理"],"major_keywords":["争议"],
+   "clauses":[
+     ["家族企业","甲方、乙方、丙方 (家族成员) 共同投资设立{usage}家族企业。"],
+     ["出资","各方出资人民币 {amount}, 份额按约定比例。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["事务执行","家族企业事务由家族委员会决定, 日常运营由指定成员负责。"],
+     ["利润分配","家族企业利润按出资比例分配。"],
+     ["家族治理","涉及家族成员入伙、退伙、继承等事项, 须经家族委员会一致同意。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_real_estate","title":"房地产合伙投资协议","contract_type":"合伙协议","industry":"房地产合伙","fatal_keywords":["风险承担"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙投资标的","甲乙共同投资{usage}房地产项目。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资人民币 {transfer_price} (占剩余份额)。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至项目清算止。"],
+     ["事务执行","由甲方负责项目管理, 乙方负责财务监督。"],
+     ["利润分配","项目销售或运营收入按出资比例分配。"],
+     ["风险承担","项目亏损按出资比例承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_tech","title":"技术合伙协议 (软件)","contract_type":"合伙协议","industry":"技术合伙","fatal_keywords":["知识产权"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙企业","甲方、乙方共同投资设立{usage}科技合伙企业。"],
+     ["出资","甲方以技术出资 (作价人民币 {amount}), 乙方以货币出资人民币 {transfer_price}。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["事务执行","由甲方负责技术研发, 乙方负责市场及运营。"],
+     ["利润分配","合伙企业利润按出资比例分配。"],
+     ["知识产权","合伙期间产生的知识产权归合伙企业所有。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_exit","title":"合伙人退伙协议","contract_type":"合伙协议","industry":"退伙","fatal_keywords":["财产份额","竞业"],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙协议","原合伙协议编号 {original_contract_id}, 签订日期 {original_date}。"],
+     ["退伙人","甲方为原合伙企业合伙人, 现申请退伙。"],
+     ["退伙日期","退伙日期为 {end_date}。"],
+     ["财产份额结算","甲方退伙应分得的财产份额为人民币 {amount}。"],
+     ["债务承担","甲方对退伙前合伙企业债务按原协议约定承担, 退伙后不再承担新债务。"],
+     ["竞业禁止","甲方退伙后 {duration} 内, 不得在与原合伙企业相竞争的企业任职。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_new_member","title":"合伙人入伙协议","contract_type":"合伙协议","industry":"入伙","fatal_keywords":["债务承担"],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙企业","原合伙企业 (甲方、乙方) 同意丙方入伙。"],
+     ["入伙人出资","丙方出资人民币 {amount}, 占合伙企业 {commission_rate}% 份额。"],
+     ["入伙日期","入伙日期为 {end_date}。"],
+     ["权利义务","丙方入伙后, 与其他合伙人享有同等权利, 承担同等义务。"],
+     ["债务承担","丙方对入伙前合伙企业债务按约定比例承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_dissolution","title":"合伙企业解散协议","contract_type":"合伙协议","industry":"解散","fatal_keywords":["财产分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙协议","原合伙协议编号 {original_contract_id}, 签订日期 {original_date}。"],
+     ["解散事由","因{usage}, 全体合伙人决定解散合伙企业。"],
+     ["解散日期","解散日期为 {end_date}。"],
+     ["清算组","全体合伙人组成清算组, 负责合伙企业清算。"],
+     ["财产分配","清算后剩余财产按出资比例分配给全体合伙人。"],
+     ["债务清偿","合伙企业债务按法律规定及合伙协议约定清偿。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_modification","title":"合伙协议变更协议","contract_type":"合伙协议","industry":"变更","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙协议","原合伙协议编号 {original_contract_id}。"],
+     ["变更内容","经全体合伙人一致同意, 对原协议作如下变更: {usage}。"],
+     ["生效","本变更协议自 {end_date} 起生效。"],
+     ["其他条款","原协议其他条款继续有效。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_gp_lp","title":"GP-LP 补充协议","contract_type":"合伙协议","industry":"GP-LP","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙协议","原有限合伙协议编号 {original_contract_id}。"],
+     ["补充事项","经 GP 与 LP 协商, 对原协议作如下补充: {usage}。"],
+     ["费用调整","管理费由原 {commission_rate}% 调整为 {handling_fee_rate}%。"],
+     ["收益分配调整","超额收益分配比例由 20:80 调整为 {monthly_rate}:{monthly_rate}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_project","title":"项目合伙协议","contract_type":"合伙协议","industry":"项目合伙","fatal_keywords":["风险承担"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙项目","甲乙共同投资{usage}项目。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资人民币 {transfer_price} (占剩余份额)。"],
+     ["项目期限","项目期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["事务执行","由甲方负责项目执行, 乙方负责财务监督。"],
+     ["利润分配","项目利润按出资比例分配, 项目结束后一次性结算。"],
+     ["风险承担","项目亏损按出资比例承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_buyout","title":"合伙人份额转让协议","contract_type":"合伙协议","industry":"份额转让","fatal_keywords":["其他合伙人意见"],"major_keywords":["争议"],
+   "clauses":[
+     ["原合伙协议","原合伙协议编号 {original_contract_id}。"],
+     ["转让方","甲方将其持有的合伙企业 {commission_rate}% 份额转让给乙方。"],
+     ["转让价款","转让价款人民币 {amount}。"],
+     ["其他合伙人意见","其他合伙人 (丙方) 同意本次份额转让, 放弃优先购买权。"],
+     ["工商变更","双方应于本合同签订后 15 日内办理工商变更登记。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_film","title":"影视项目合伙投资协议","contract_type":"合伙协议","industry":"影视","fatal_keywords":["收益分配","署名权"],"major_keywords":["争议"],
+   "clauses":[
+     ["项目","甲乙共同投资{usage}影视项目。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资人民币 {transfer_price} (占剩余份额)。"],
+     ["项目周期","项目周期 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["收益分配","项目收益 (票房 / 版权 / 网络发行等) 按出资比例分配, 优先收回成本后再按比例分配利润。"],
+     ["署名权","出资比例达到 20% 以上的合伙人可享有相应署名权。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_construction","title":"建筑工程合伙施工协议","contract_type":"合伙协议","industry":"建筑合伙","fatal_keywords":["质量责任","利润分配"],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙施工项目","甲乙共同承包{usage}建筑工程。"],
+     ["出资","甲方负责施工设备及部分资金 (作价人民币 {amount}), 乙方负责主要资金人民币 {transfer_price}。"],
+     ["合伙期限","合伙期限 {duration}, 自 {start_date} 起至项目竣工止。"],
+     ["分工","甲方负责施工组织, 乙方负责财务及对外协调。"],
+     ["利润分配","工程款按出资比例分配, 优先收回成本后再分配利润。"],
+     ["质量责任","因施工质量问题导致的违约责任, 由施工方 (甲方) 承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_workshop","title":"工作室合伙协议","contract_type":"合伙协议","industry":"工作室","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["工作室","甲乙共同设立{usage}工作室。"],
+     ["出资","甲方出资人民币 {amount} (占 {commission_rate}%), 乙方出资人民币 {transfer_price} (占剩余份额)。"],
+     ["工作室期限","工作室期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["分工","甲方负责业务, 乙方负责运营。"],
+     ["利润分配","工作室利润按月结算, 按出资比例分配。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_short_term","title":"短期合伙协议","contract_type":"合伙协议","industry":"短期合伙","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙事项","甲乙共同完成{usage}事项, 短期合伙。"],
+     ["出资","甲方出资人民币 {amount}, 乙方出资人民币 {transfer_price}。"],
+     ["合伙期限","合伙期限 {duration}。"],
+     ["利润分配","合伙利润按出资比例分配, 事项完成时结算。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_agency","title":"代理合伙协议","contract_type":"合伙协议","industry":"代理合伙","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["代理事项","甲乙共同代理{usage}事项。"],
+     ["出资","甲方负责客户资源, 乙方负责具体执行, 作价均按人民币 {amount} 计入。"],
+     ["合伙期限","合伙期限 {duration}。"],
+     ["收入分配","代理收入按 50:50 分配。"],
+     ["成本承担","代理过程中产生的成本按比例分摊。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_fund_subscript","title":"基金认购协议","contract_type":"合伙协议","industry":"基金","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["基金","甲方拟设立{usage}基金 (有限合伙), 乙方拟认购基金份额。"],
+     ["认购金额","乙方认购金额人民币 {amount}。"],
+     ["认购费率","乙方按认购金额的 {commission_rate}% 缴纳认购费。"],
+     ["基金期限","基金期限 {duration}。"],
+     ["收益分配","基金收益按基金合同约定分配。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_joint_rnd","title":"联合研发合伙协议","contract_type":"合伙协议","industry":"联合研发","fatal_keywords":["知识产权"],"major_keywords":["争议"],
+   "clauses":[
+     ["联合研发","甲乙共同投入研发{usage}项目。"],
+     ["投入","甲方投入研发人员及设备 (作价人民币 {amount}), 乙方投入研发资金人民币 {transfer_price}。"],
+     ["研发期限","研发期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+     ["知识产权","联合研发产生的知识产权由双方共有, 商业化收益按比例分配。"],
+     ["后续开发","后续改进技术的知识产权归属按双方约定。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_simple","title":"简易合伙协议","contract_type":"合伙协议","industry":"简易合伙","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["合伙事项","甲乙共同完成{usage}。"],
+     ["出资","甲方出资人民币 {amount}, 乙方出资人民币 {transfer_price}。"],
+     ["利润分配","合伙利润按出资比例分配。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"partnership_consulting","title":"咨询合伙协议","contract_type":"合伙协议","industry":"咨询合伙","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["咨询业务","甲乙共同开展{usage}咨询业务。"],
+     ["出资","甲方以客户资源出资 (作价人民币 {amount}), 乙方以专业能力出资 (作价人民币 {transfer_price})。"],
+     ["合伙期限","合伙期限 {duration}。"],
+     ["收入分配","咨询业务收入按约定比例分配。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]}
+]

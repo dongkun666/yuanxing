@@ -1,0 +1,454 @@
+[
+  {
+    "name": "personal_loan_simple",
+    "title": "个人借款合同(简约版)",
+    "contract_type": "借款合同",
+    "industry": "个人借款",
+    "fatal_keywords": ["利息", "违约"],
+    "major_keywords": ["争议", "管辖"],
+    "clauses": [
+      ["借款金额", "甲方借给乙方人民币 {amount}。"],
+      ["借款期限", "借款期限自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+      ["利息", "借款年利率 {interest_rate}, 超过部分无效。"],
+      ["还款方式", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}加收违约金。"],
+      ["争议管辖", "向{jurisdiction}法院起诉。"]
+    ]
+  },
+  {
+    "name": "personal_loan_detailed",
+    "title": "个人借款合同(详细版)",
+    "contract_type": "借款合同",
+    "industry": "个人借款",
+    "fatal_keywords": ["利息", "违约"],
+    "major_keywords": ["争议", "担保"],
+    "clauses": [
+      ["借款金额与币种", "借款金额为人民币 {amount}整 (¥{amount_yuan}), 大写: {amount_cn}。"],
+      ["借款用途", "乙方应将借款用于{usage}, 不得挪作他用。"],
+      ["借款期限与起止日", "借款期限自 {start_date} 起至 {end_date} 止。"],
+      ["利息约定", "借款年利率 {interest_rate}, 自实际放款之日起按日计息。"],
+      ["还款方式与还款计划", "乙方应于每月 {repay_day} 日{repayment_method}当期本息。"],
+      ["担保方式", "本合同项下借款由{guarantee_type}。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}加收违约金, 甲方有权宣布借款提前到期。"],
+      ["争议解决", "因本合同发生的争议, 任何一方均可向{jurisdiction}法院起诉。"]
+    ]
+  },
+  {
+    "name": "bank_loan_corporate",
+    "title": "银行企业流动资金借款合同",
+    "contract_type": "借款合同",
+    "industry": "银行借款",
+    "fatal_keywords": ["用途", "违约"],
+    "major_keywords": ["争议", "担保"],
+    "clauses": [
+      ["借款金额与种类", "借款币种: 人民币; 借款金额: {amount}; 借款种类: 流动资金贷款。"],
+      ["借款用途", "借款仅用于{usage}, 不得用于固定资产、股权或证券投资。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利率与计结息", "借款年利率 {interest_rate}, 按月结息, 结息日为每月 20 日。"],
+      ["提款条件", "借款人满足首笔用款前提条件后, 方可提款。"],
+      ["还款", "借款人应于 {end_date} 前一次性偿还全部借款本金及利息。"],
+      ["担保", "本合同项下债务由{guarantee_type}。"],
+      ["违约与提前到期", "借款人未按约定用途使用借款或未按期支付利息的, 贷款人有权宣布借款提前到期。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "consumer_loan_installment",
+    "title": "消费分期贷款合同",
+    "contract_type": "借款合同",
+    "industry": "消费金融",
+    "fatal_keywords": ["提前还款", "逾期"],
+    "major_keywords": ["争议", "贷款"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}。"],
+      ["贷款用途", "用于购买{usage}, 不得用于其他用途。"],
+      ["贷款期限与期数", "贷款期限 {duration}, 共 {installment_count} 期, 每月为一期。"],
+      ["贷款利率与 IRR", "贷款年利率 {interest_rate}, IRR 不超过 {irr_cap}。"],
+      ["还款方式", "等额本息{repayment_method}, 每月 {repay_day} 日为还款日。"],
+      ["提前还款", "借款人可提前还款, 但应支付{prepayment_penalty}作为补偿。"],
+      ["逾期违约", "逾期按{penalty_rate}计收罚息, 并按{overdue_fee}收取一次性违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "mortgage_loan",
+    "title": "商业银行住房按揭贷款合同",
+    "contract_type": "借款合同",
+    "industry": "房贷",
+    "fatal_keywords": ["违约", "利率"],
+    "major_keywords": ["争议", "抵押"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}。"],
+      ["贷款用途", "用于购买位于{property_location}的房产。"],
+      ["贷款期限", "贷款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["贷款利率", "贷款利率按{LPR_basis}为基准{interest_basis}, 浮动利率。"],
+      ["还款方式", "等额本息{repayment_method}, 每月 {repay_day} 日为还款日。"],
+      ["抵押登记", "借款人应以标的房产为本合同项下债务提供抵押担保, 并办理抵押登记。"],
+      ["保险义务", "借款人在贷款存续期间应为标的房产投保财产险。"],
+      ["违约责任", "借款人连续 3 期或累计 6 期未按期还款的, 贷款人有权宣布贷款提前到期。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "pawn_loan",
+    "title": "典当借款合同",
+    "contract_type": "借款合同",
+    "industry": "典当",
+    "fatal_keywords": ["绝当", "费率"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["当物", "乙方以其所有的{pawn_subject}作为当物质押给甲方。"],
+      ["当金", "当金人民币 {amount}。"],
+      ["当期", "当期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+      ["当金费率", "月费率 {monthly_rate}, 综合费率不超过 {fee_cap}。"],
+      ["赎当与续当", "乙方可在当期届满前赎当; 续当应于届满前 5 日内向甲方提出书面申请。"],
+      ["绝当", "当期届满后 5 日内, 乙方既不赎当也不续当的, 视为绝当。"],
+      ["绝当处理", "绝当后, 甲方可按《典当管理办法》相关规定处置当物。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "private_lending_p2p",
+    "title": "民间借贷合同 (P2P 模式)",
+    "contract_type": "借款合同",
+    "industry": "民间借贷",
+    "fatal_keywords": ["利息", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "借款金额人民币 {amount}。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利息", "借款年利率 {interest_rate}, 不超过合同成立时一年期 LPR 的 4 倍。"],
+      ["还款方式", "乙方应于到期日{repayment_method}本金。"],
+      ["担保", "本合同项下借款由{guarantee_type}。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}加收违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "shareholder_loan",
+    "title": "股东借款合同",
+    "contract_type": "借款合同",
+    "industry": "股东借款",
+    "fatal_keywords": ["税务", "利息"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "股东 (甲方) 向公司 (乙方) 提供借款人民币 {amount}。"],
+      ["借款用途", "用于公司{usage}, 不得用于分红或偿还其他股东借款。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利息", "借款年利率 {interest_rate}, 利息按{interest_pay}支付。"],
+      ["还款", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["税务条款", "双方应按税法规定代扣代缴相关税费。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "factoring_contract",
+    "title": "保理合同 (应收账款转让)",
+    "contract_type": "借款合同",
+    "industry": "保理融资",
+    "fatal_keywords": ["回购", "保理"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["应收账款", "乙方将其对{debtor_name}享有的、金额为人民币 {amount}的应收账款转让给甲方。"],
+      ["保理类型", "本合同为{recycling_type}保理。"],
+      ["保理融资款", "甲方应向乙方支付保理融资款人民币 {financing_amount}。"],
+      ["保理费率", "保理费率 {factoring_rate}, 按{interest_pay}计收。"],
+      ["应收账款回款", "应收账款到期日 {due_date}, 债务人应向甲方履行付款义务。"],
+      ["回购义务", "若债务人未按期付款, 乙方应按{recycling_type}对应方式履行回购义务。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "guarantee_loan",
+    "title": "保证担保借款合同",
+    "contract_type": "借款合同",
+    "industry": "担保借款",
+    "fatal_keywords": ["保证", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "借款金额人民币 {amount}。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利息", "借款年利率 {interest_rate}。"],
+      ["还款", "借款人应于到期日{repayment_method}本金及利息。"],
+      ["保证担保", "保证人 (丙方) 为本合同项下债务提供连带责任保证。"],
+      ["违约责任", "借款人逾期还款的, 按{penalty_rate}加收违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "education_loan",
+    "title": "教育培训分期贷款合同",
+    "contract_type": "借款合同",
+    "industry": "教育贷款",
+    "fatal_keywords": ["退课", "提前"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}。"],
+      ["贷款用途", "用于支付{course_name}培训费用。"],
+      ["贷款期限", "贷款期限 {duration}, 共 {installment_count} 期。"],
+      ["贷款利率", "贷款年利率 {interest_rate}。"],
+      ["还款方式", "等额本息{repayment_method}, 每月 {repay_day} 日为还款日。"],
+      ["退课与提前还款", "学员退课的, 培训机构应协助办理提前还款手续。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "medical_loan",
+    "title": "医疗分期付款合同",
+    "contract_type": "借款合同",
+    "industry": "医疗贷款",
+    "fatal_keywords": ["逾期", "医疗"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["医疗费用", "乙方在甲方医疗机构接受{treatment_type}治疗, 费用总计人民币 {amount}。"],
+      ["付款方式", "乙方选择分期付款, 分 {installment_count} 期支付。"],
+      ["首付款", "乙方应于本合同签订之日支付首付款人民币 {down_payment}。"],
+      ["分期付款", "余款按{repayment_method}, 每月 {repay_day} 日支付。"],
+      ["逾期违约", "乙方逾期付款的, 按{penalty_rate}加收违约金, 并停止后续治疗。"],
+      ["医疗质量异议", "乙方对治疗效果有异议的, 应通过医疗纠纷处理程序解决, 不得以此为由拒付医疗费。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "auto_loan",
+    "title": "汽车消费贷款合同",
+    "contract_type": "借款合同",
+    "industry": "汽车金融",
+    "fatal_keywords": ["违约", "抵押"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}。"],
+      ["贷款用途", "用于购买{vehicle_brand}{vehicle_type}。"],
+      ["贷款期限", "贷款期限 {duration}, 共 {installment_count} 期。"],
+      ["贷款利率", "贷款年利率 {interest_rate}。"],
+      ["还款方式", "等额本息{repayment_method}, 每月 {repay_day} 日为还款日。"],
+      ["抵押登记", "乙方应以标的车辆为本合同项下债务提供抵押担保, 并办理抵押登记。"],
+      ["保险义务", "乙方应在贷款存续期间为标的车辆投保交强险及商业险。"],
+      ["违约责任", "乙方连续 3 期或累计 6 期未按期还款的, 贷款人有权宣布贷款提前到期。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "credit_card_installment",
+    "title": "信用卡分期合同",
+    "contract_type": "借款合同",
+    "industry": "信用卡分期",
+    "fatal_keywords": ["提前", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["分期金额", "分期本金人民币 {amount}。"],
+      ["分期期数", "分 {installment_count} 期偿还。"],
+      ["分期手续费", "分期手续费率 {handling_fee_rate}, 按月分摊收取。"],
+      ["还款方式", "每月 {repay_day} 日为还款日, 乙方应按时偿还当期本金及手续费。"],
+      ["提前还款", "乙方可申请提前结清, 但应支付{prepayment_penalty}作为补偿。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}计收利息, 并按信用卡章程计收违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "rural_credit_loan",
+    "title": "农户小额信用贷款合同",
+    "contract_type": "借款合同",
+    "industry": "农户贷款",
+    "fatal_keywords": ["违约", "贷款"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}, 信用方式发放, 无需担保。"],
+      ["贷款用途", "用于{usage}。"],
+      ["贷款期限", "贷款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["贷款利率", "贷款年利率 {interest_rate}。"],
+      ["还款", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}加收违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "small_micro_loan",
+    "title": "小微企业小额贷款合同",
+    "contract_type": "借款合同",
+    "industry": "小微贷款",
+    "fatal_keywords": ["违约", "用途"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["贷款金额", "贷款金额人民币 {amount}。"],
+      ["贷款用途", "用于小微企业{usage}。"],
+      ["贷款期限", "贷款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["贷款利率", "贷款年利率 {interest_rate}。"],
+      ["还款", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["担保", "本合同项下借款由{guarantee_type}。"],
+      ["违约责任", "乙方逾期还款的, 按{penalty_rate}加收违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "bridge_loan",
+    "title": "过桥资金借款合同",
+    "contract_type": "借款合同",
+    "industry": "过桥资金",
+    "fatal_keywords": ["违约", "利率"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "过桥资金人民币 {amount}。"],
+      ["借款用途", "用于{purpose_detail}。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止, 短期周转。"],
+      ["利息与费用", "综合成本按{interest_rate}计算, 含利息 + 服务费 + 咨询费。"],
+      ["还款来源", "乙方应以{repayment_source}作为还款来源。"],
+      ["担保", "本合同项下借款由{guarantee_type}。"],
+      ["违约责任", "乙方未按期还款的, 按{penalty_rate}加收违约金, 并追究担保人责任。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "inter_company_loan",
+    "title": "关联企业间借款合同",
+    "contract_type": "借款合同",
+    "industry": "企业拆借",
+    "fatal_keywords": ["税务", "利息"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款双方", "甲方 (出借方) 与乙方 (借款方) 同属一关联方体系。"],
+      ["借款金额", "借款金额人民币 {amount}。"],
+      ["借款用途", "用于乙方{usage}。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利息", "借款年利率 {interest_rate}, 不超过金融企业同期同类贷款利率水平。"],
+      ["税务条款", "双方应按税法规定代扣代缴相关税费。"],
+      ["还款", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_extension",
+    "title": "借款展期合同",
+    "contract_type": "借款合同",
+    "industry": "展期",
+    "fatal_keywords": ["利率", "展期"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["原合同", "原合同编号 {original_contract_id}, 签订日期 {original_date}。"],
+      ["展期金额", "展期金额人民币 {amount}。"],
+      ["展期期限", "展期期限 {duration}, 自 {original_end_date} 起至 {new_end_date} 止。"],
+      ["展期利率", "展期期间利率 {interest_rate}。"],
+      ["担保延续", "原担保 (如保证 / 抵押 / 质押) 继续有效, 担保期间相应顺延。"],
+      ["其他条款", "原合同其他条款继续有效。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_transfer",
+    "title": "债权转让合同",
+    "contract_type": "借款合同",
+    "industry": "债权转让",
+    "fatal_keywords": ["违约", "转让"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["转让债权", "甲方将其享有的、对债务人{debtor_name}的债权 (本金 {amount} 及利息、违约金等从权利) 转让给乙方。"],
+      ["转让价款", "转让价款人民币 {transfer_price}。"],
+      ["通知义务", "甲方应于本合同签订后 {notify_days} 日内通知债务人。"],
+      ["担保", "本合同项下甲方对债权的真实性、合法性提供{guarantee_type}。"],
+      ["违约责任", "若转让的债权存在瑕疵, 甲方应承担{penalty_rate}违约金。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_settlement",
+    "title": "债权债务清偿协议",
+    "contract_type": "借款合同",
+    "industry": "债务清偿",
+    "fatal_keywords": ["减免", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["债权确认", "双方确认, 截至 {settlement_date}, 乙方欠甲方债务本金 {amount} 及利息 {interest_owed}。"],
+      ["清偿方式", "乙方应于 {deadline} 前{repayment_method}清偿全部债务。"],
+      ["减免条款", "如乙方按期清偿, 甲方同意减免 {waiver_amount} 作为一次性了结。"],
+      ["违约后果", "乙方未按期清偿的, 减免条款不生效, 乙方仍应按原债务全额清偿。"],
+      ["担保", "本合同项下乙方义务由{guarantee_type}。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_refinancing",
+    "title": "借新还旧合同",
+    "contract_type": "借款合同",
+    "industry": "借新还旧",
+    "fatal_keywords": ["利息", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["原债务", "原债务合同编号 {original_contract_id}, 截至 {old_balance_date} 本金余额 {old_balance}。"],
+      ["新借款", "新借款金额人民币 {amount}, 专项用于偿还原债务。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止。"],
+      ["利息", "借款年利率 {interest_rate}。"],
+      ["担保", "本合同项下新借款由{guarantee_type}; 保证人已知晓借新还旧情形。"],
+      ["还款", "乙方应于到期日{repayment_method}本金及利息。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_with_guarantor",
+    "title": "个人借款保证合同",
+    "contract_type": "借款合同",
+    "industry": "保证担保",
+    "fatal_keywords": ["保证", "期间"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["主债权", "主债权合同编号 {main_contract_id}, 主债权本金 {amount}。"],
+      ["保证范围", "保证范围包括主债权本金、利息、违约金、损害赔偿金及实现债权的费用。"],
+      ["保证方式", "{guarantee_type}。"],
+      ["保证期间", "保证期间为主债务履行期届满之日起 {guarantee_period}。"],
+      ["主合同变更", "主合同内容变更应经保证人书面同意, 否则保证人不再承担保证责任。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_decoration",
+    "title": "装修分期借款合同",
+    "contract_type": "借款合同",
+    "industry": "装修贷款",
+    "fatal_keywords": ["利息", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "借款金额人民币 {amount}。"],
+      ["借款用途", "用于支付位于{property_location}房产的装修费用。"],
+      ["借款期限", "借款期限 {duration}, 共 {installment_count} 期。"],
+      ["利息", "借款年利率 {interest_rate}。"],
+      ["还款方式", "等额本息{repayment_method}, 每月 {repay_day} 日为还款日。"],
+      ["资金支付", "借款资金直接支付至装修公司账户, 不得挪作他用。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_travel",
+    "title": "旅游分期付款合同",
+    "contract_type": "借款合同",
+    "industry": "旅游分期",
+    "fatal_keywords": ["退团", "违约"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["旅游费用", "旅游费用总计人民币 {amount}。"],
+      ["付款方式", "乙方选择分期付款, 分 {installment_count} 期支付。"],
+      ["首付款", "乙方应于签订本合同之日支付首付款人民币 {down_payment}。"],
+      ["分期付款", "余款按{repayment_method}, 每月 {repay_day} 日前支付。"],
+      ["旅游服务", "甲方应按{trip_destination}{trip_duration}旅游服务, 不得擅自变更行程。"],
+      ["退团", "乙方退团的, 已支付费用按旅游合同退费规定处理, 不影响未结清分期款的支付义务。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  },
+  {
+    "name": "loan_working_capital_long",
+    "title": "企业流动资金借款合同 (中长期)",
+    "contract_type": "借款合同",
+    "industry": "中长期借款",
+    "fatal_keywords": ["违约", "利息"],
+    "major_keywords": ["争议"],
+    "clauses": [
+      ["借款金额", "借款金额人民币 {amount}。"],
+      ["借款用途", "用于{usage}。"],
+      ["借款期限", "借款期限 {duration}, 自 {start_date} 起至 {end_date} 止, 属中长期借款。"],
+      ["利息", "借款年利率 {interest_rate}, 按{interest_pay}结息。"],
+      ["还款计划", "乙方按以下计划还款: {repayment_method}。"],
+      ["担保", "本合同项下借款由{guarantee_type}。"],
+      ["财务承诺", "乙方承诺在借款存续期间保持约定的资产负债率与流动比率。"],
+      ["违约与提前到期", "乙方违反财务承诺或未按期支付利息的, 贷款人有权宣布借款提前到期。"],
+      ["争议解决", "争议由{jurisdiction}管辖。"]
+    ]
+  }
+]
