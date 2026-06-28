@@ -1,0 +1,103 @@
+{
+  "query_meta": {
+    "cause": "民间借贷纠纷",
+    "cause_category": "合同纠纷",
+    "searched_at": "2026-06-29T00:30:00+08:00",
+    "latency_ms": 412,
+    "total_candidates": 87,
+    "returned_count": 20,
+    "filters_applied": {
+      "court": "上海一中院",
+      "year_from": 2022,
+      "year_to": 2025,
+      "region": "上海",
+      "procedure": "二审",
+      "amount_dispute": 500000
+    },
+    "vector_store": "lancedb",
+    "embedding_model": "BAAI/bge-small-zh-v1.5"
+  },
+  "results": [
+    {
+      "case_id": "(2024) 沪01民终 1234 号",
+      "case_name": "张某诉李某民间借贷纠纷",
+      "court": "上海市第一中级人民法院",
+      "case_type": "民事",
+      "procedure": "二审",
+      "cause": "民间借贷纠纷",
+      "judgment_date": "2024-08-15",
+      "year": 2024,
+      "judge_name": "王某",
+      "parties": "原告: 张某; 被告: 李某",
+      "legal_basis": "《民法典》第六百七十五条, 《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条",
+      "outcome": "部分支持",
+      "amount_awarded_cny": 480000,
+      "relevance_score": 0.92,
+      "summary": "本院认为, 原被告之间借贷关系成立, 借款本金 50 万元予以支持; 关于利息, 双方约定月息 2% 超过 LPR 四倍, 对超出部分不予支持。",
+      "dispute_focus": ["利率合规性", "本金认定"],
+      "source": "court_cases",
+      "source_url": "https://wenshu.court.gov.cn/website/wenshu/.../docId=xxx"
+    }
+  ],
+  "statistics": {
+    "sample_size": 87,
+    "outcome_distribution": {
+      "原告胜诉": 42,
+      "被告胜诉": 18,
+      "部分支持": 30,
+      "调解": 5,
+      "撤诉": 3,
+      "其他": 1
+    },
+    "support_rate_aggregate": {
+      "support_total": 72,
+      "support_pct": 82.76,
+      "yearly_breakdown": [
+        {"year": 2022, "total": 22, "support_total": 18, "support_pct": 81.82},
+        {"year": 2023, "total": 28, "support_total": 23, "support_pct": 82.14},
+        {"year": 2024, "total": 25, "support_total": 21, "support_pct": 84.0},
+        {"year": 2025, "total": 12, "support_total": 10, "support_pct": 83.33}
+      ]
+    },
+    "amount_stats": {
+      "sample_with_amount": 72,
+      "median_cny": 380000,
+      "q1_cny": 210000,
+      "q3_cny": 520000,
+      "min_cny": 50000,
+      "max_cny": 1200000,
+      "currency": "CNY"
+    },
+    "top_dispute_focus": [
+      {"focus": "利率合规性", "count": 65},
+      {"focus": "本金认定", "count": 48},
+      {"focus": "保证责任", "count": 22}
+    ],
+    "top_cited_laws": [
+      {"law_title": "民法典 第六百七十五条", "law_id": "民法典-667", "count": 87},
+      {"law_title": "最高人民法院关于审理民间借贷案件适用法律若干问题的规定 第二十五条", "law_id": "民间借贷司法解释-25", "count": 65}
+    ],
+    "judge_style": {
+      "judge_name": "王某",
+      "sample_size": 12,
+      "support_pct": 83.33,
+      "avg_hearing_days": 87,
+      "evidence_admission_tendency": "中等",
+      "narrative": "该法官在 12 件民间借贷二审样本中, 支持原告诉请的比例约 83%; 平均审理周期 87 天; 证据采信倾向中等。"
+    },
+    "narrative": "本院在近 4 年 87 件类似案件中检索到, 支持原告诉请 (含部分支持) 的共 72 件, 占比约 82.76%。判赔金额中位数约 38 万元, 主要争议焦点集中在利率合规性 (65/87) 与本金认定 (48/87)。该数据仅基于已公开裁判文书的统计结果, 仅供研究参考。"
+  },
+  "trajectory": {
+    "raw_token_count": 12450,
+    "compressed_token_count": 6420,
+    "compression_strategy": "summary_extract",
+    "compression_ratio": 0.52
+  },
+  "disclaimer": "以上数据仅为已公开裁判文书的统计结果, 不代表对本案结果的任何预测或判断。",
+  "ui_hints": {
+    "traffic_light": "green",
+    "show_bar_chart": true,
+    "show_box_plot": true,
+    "show_judge_card": true
+  }
+}

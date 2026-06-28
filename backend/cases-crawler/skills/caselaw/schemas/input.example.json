@@ -1,0 +1,15 @@
+{
+  "cause": "民间借贷纠纷",
+  "facts": "原告借给被告 50 万元, 约定月息 2%, 被告未按期还款, 原告诉请偿还本息",
+  "court": "上海一中院",
+  "year_from": 2022,
+  "year_to": 2025,
+  "region": "上海",
+  "case_type": "民事",
+  "procedure": "二审",
+  "amount_dispute": 500000,
+  "top_k": 20,
+  "include_judge_style": true,
+  "include_amount_stats": true,
+  "case_id": "demo-2026-001"
+}

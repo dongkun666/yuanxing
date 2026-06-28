@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lexprime.skill.caselaw.output.v1",
+  "title": "类案检索 Skill 输出 Schema",
+  "description": "检索结果 + 统计数据。所有 narrative 字段必须通过 language_guard 检查 (禁用确定性预测语句)。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["query_meta", "results", "statistics", "disclaimer"],
+  "properties": {
+    "query_meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cause", "searched_at", "latency_ms", "total_candidates", "returned_count"],
+      "properties": {
+        "cause": {"type": "string"},
+        "cause_category": {"type": "string"},
+        "searched_at": {"type": "string", "format": "date-time"},
+        "latency_ms": {"type": "integer", "description": "端到端检索耗时, P95 目标 ≤ 1000ms"},
+        "total_candidates": {"type": "integer", "description": "命中的候选判例总数 (去重后)"},
+        "returned_count": {"type": "integer"},
+        "filters_applied": {
+          "type": "object",
+          "description": "回显律师填写的过滤条件",
+          "additionalProperties": true
+        },
+        "vector_store": {"type": "string", "enum": ["lancedb", "milvus"]},
+        "embedding_model": {"type": "string"}
+      }
+    },
+    "results": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "case_name", "court", "judgment_date", "cause", "relevance_score"],
+        "properties": {
+          "case_id": {"type": "string"},
+          "case_name": {"type": "string"},
+          "court": {"type": "string"},
+          "case_type": {"type": "string"},
+          "procedure": {"type": "string"},
+          "cause": {"type": "string"},
+          "judgment_date": {"type": "string", "format": "date"},
+          "year": {"type": "integer"},
+          "judge_name": {"type": "string"},
+          "parties": {"type": "string"},
+          "legal_basis": {"type": "string"},
+          "outcome": {
+            "type": "string",
+            "enum": ["原告胜诉", "被告胜诉", "部分支持", "调解", "撤诉", "其他"],
+            "description": "裁判结果分类 (供统计使用, 不在 UI 标榜'胜诉率')"
+          },
+          "amount_awarded_cny": {"type": "number", "description": "判赔金额 (元, 仅在民事 / 行政类赔偿案件时有值)"},
+          "relevance_score": {"type": "number", "minimum": 0, "maximum": 1, "description": "语义相似度 (LanceDB/Milvus 返回)"},
+          "summary": {"type": "string", "maxLength": 500, "description": "裁判摘要 (LLM 生成 ≤ 500 字, 仅描述事实不评价)"},
+          "dispute_focus": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {"type": "string"},
+            "description": "争议焦点标签 (例: '利率合规性', '保证责任')"
+          },
+          "source": {"type": "string", "enum": ["cncases", "court_cases", "lawyer_added_cases"]},
+          "source_url": {"type": "string", "format": "uri"},
+          "lawyer_note": {"type": "string", "description": "律师自加判例的备注 (仅 lawyer_added_cases 来源有)"}
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sample_size", "outcome_distribution", "narrative"],
+      "properties": {
+        "sample_size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "统计样本数 (= results.length, 或更窄的过滤后样本)"
+        },
+        "outcome_distribution": {
+          "type": "object",
+          "description": "裁判结果分布",
+          "additionalProperties": false,
+          "properties": {
+            "原告胜诉": {"type": "integer"},
+            "被告胜诉": {"type": "integer"},
+            "部分支持": {"type": "integer"},
+            "调解": {"type": "integer"},
+            "撤诉": {"type": "integer"},
+            "其他": {"type": "integer"}
+          }
+        },
+        "support_rate_aggregate": {
+          "type": "object",
+          "description": "聚合统计, **UI 描述必须严格用'在样本中支持原告诉请的比例'等中性表述**",
+          "additionalProperties": false,
+          "properties": {
+            "support_total": {"type": "integer", "description": "原告胜诉 + 部分支持 (视为部分支持原告) 之和"},
+            "support_pct": {"type": "number", "minimum": 0, "maximum": 100, "description": "百分比"},
+            "yearly_breakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "year": {"type": "integer"},
+                  "total": {"type": "integer"},
+                  "support_total": {"type": "integer"},
+                  "support_pct": {"type": "number"}
+                }
+              }
+            }
+          }
+        },
+        "amount_stats": {
+          "type": "object",
+          "description": "判赔金额分布 (仅民事 / 行政赔偿且有数据时填充)",
+          "additionalProperties": false,
+          "properties": {
+            "sample_with_amount": {"type": "integer"},
+            "median_cny": {"type": "number"},
+            "q1_cny": {"type": "number"},
+            "q3_cny": {"type": "number"},
+            "min_cny": {"type": "number"},
+            "max_cny": {"type": "number"},
+            "currency": {"type": "string", "default": "CNY"}
+          }
+        },
+        "top_dispute_focus": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "focus": {"type": "string"},
+              "count": {"type": "integer"}
+            }
+          }
+        },
+        "top_cited_laws": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "law_title": {"type": "string"},
+              "law_id": {"type": "string"},
+              "count": {"type": "integer"}
+            }
+          }
+        },
+        "judge_style": {
+          "type": "object",
+          "description": "法官审理风格 (仅在 judge_name 提供且样本 ≥ 5 件时返回)",
+          "additionalProperties": false,
+          "properties": {
+            "judge_name": {"type": "string"},
+            "sample_size": {"type": "integer"},
+            "support_pct": {"type": "number"},
+            "avg_hearing_days": {"type": "number"},
+            "evidence_admission_tendency": {"type": "string", "enum": ["宽松", "中等", "严格", "样本不足"]},
+            "narrative": {
+              "type": "string",
+              "description": "法官风格描述, 必须以'该法官在 N 件样本中...'开头",
+              "maxLength": 300
+            }
+          }
+        },
+        "narrative": {
+          "type": "string",
+          "description": "整体统计叙述 (LLM 生成), **强制通过 language_guard 检查**",
+          "maxLength": 800
+        }
+      }
+    },
+    "trajectory": {
+      "type": "object",
+      "description": "上下文压缩 trace (T-REF-25)",
+      "additionalProperties": false,
+      "properties": {
+        "raw_token_count": {"type": "integer"},
+        "compressed_token_count": {"type": "integer"},
+        "compression_strategy": {"type": "string", "enum": ["none", "top_k_truncate", "summary_extract", "hierarchical"]},
+        "compression_ratio": {"type": "number"}
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "default": "以上数据仅为已公开裁判文书的统计结果, 不代表对本案结果的任何预测或判断。",
+      "description": "底部强制免责声明 (PRD § 5.7 硬约束)"
+    },
+    "ui_hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "traffic_light": {
+          "type": "string",
+          "enum": ["green", "yellow", "red", "gray"],
+          "description": "红黄绿灯: 绿色=样本足(>=20)支持率>60%; 黄色=样本10-19或支持率30-60%; 红色=样本<10或支持率<30%; 灰色=样本=0"
+        },
+        "show_bar_chart": {"type": "boolean", "description": "是否显示年份柱状图"},
+        "show_box_plot": {"type": "boolean", "description": "是否显示金额箱线图"},
+        "show_judge_card": {"type": "boolean", "description": "是否显示法官风格卡片"}
+      }
+    }
+  }
+}

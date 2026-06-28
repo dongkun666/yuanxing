@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lexprime.skill.caselaw.input.v1",
+  "title": "类案检索 Skill 输入 Schema",
+  "description": "律师在 Skill UI 填写的检索条件。所有字段都是 optional 但至少要有 cause 或 facts 之一。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cause"],
+  "properties": {
+    "cause": {
+      "type": "string",
+      "description": "案由 (必填), 例如 '民间借贷纠纷', '买卖合同纠纷', '离婚纠纷'。",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "cause_category": {
+      "type": "string",
+      "enum": ["合同纠纷", "婚姻家事", "侵权责任", "刑事", "行政", "知识产权", "执行", "其他"],
+      "description": "案由所属大类 (LexPrime 自动归类 8 大类, 律师可手动覆盖)"
+    },
+    "facts": {
+      "type": "string",
+      "description": "关键事实, 自由文本, 律师粘贴案情摘要 / 起诉状要点。",
+      "maxLength": 4000
+    },
+    "court": {
+      "type": "string",
+      "description": "审理法院, 法院全称或简称 (例: '上海市第一中级人民法院', '上海一中院')",
+      "maxLength": 128
+    },
+    "judge_name": {
+      "type": "string",
+      "description": "审理法官姓名, 用于分析法官审理风格 (仅在法官审理 ≥ 5 件同案由时返回风格数据)",
+      "maxLength": 32
+    },
+    "year_from": {
+      "type": "integer",
+      "minimum": 2000,
+      "maximum": 2030,
+      "description": "裁判年份下界 (含)"
+    },
+    "year_to": {
+      "type": "integer",
+      "minimum": 2000,
+      "maximum": 2030,
+      "description": "裁判年份上界 (含)"
+    },
+    "region": {
+      "type": "string",
+      "description": "地域 (脱敏到省/直辖市), 例: '上海', '广东', '北京'",
+      "maxLength": 32
+    },
+    "case_type": {
+      "type": "string",
+      "enum": ["民事", "刑事", "行政", "执行"],
+      "description": "案件类型 (LexPrime 4 大类型)"
+    },
+    "procedure": {
+      "type": "string",
+      "enum": ["一审", "二审", "再审", "执行"],
+      "description": "审理程序"
+    },
+    "amount_dispute": {
+      "type": "number",
+      "minimum": 0,
+      "description": "涉案金额 (元), 用于金额区间匹配"
+    },
+    "top_k": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 20,
+      "description": "返回判例数, 默认 20, 上限 50"
+    },
+    "include_judge_style": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否返回法官审理风格 (开启后 P95 可能 +200ms)"
+    },
+    "include_amount_stats": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否返回判赔金额统计"
+    },
+    "case_id": {
+      "type": "string",
+      "description": "当前案件 ID (LexPrime 主系统案件), 用于关联律师自加判例 / 知识库"
+    }
+  },
+  "examples": [
+    {
+      "cause": "民间借贷纠纷",
+      "facts": "原告借给被告 50 万元, 约定月息 2%, 被告未按期还款, 原告诉请偿还本息",
+      "court": "上海一中院",
+      "year_from": 2022,
+      "year_to": 2025,
+      "region": "上海",
+      "case_type": "民事",
+      "procedure": "二审",
+      "amount_dispute": 500000,
+      "top_k": 20
+    }
+  ]
+}
