@@ -21,7 +21,7 @@ class Base(DeclarativeBase):
 class Case(Base):
     __tablename__ = "cases"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     doc_id: Mapped[Optional[str]] = mapped_column(String(64), unique=True, index=True)
     case_id: Mapped[Optional[str]] = mapped_column(String(128), index=True)
     case_name: Mapped[Optional[str]] = mapped_column(Text)
@@ -54,7 +54,7 @@ class Case(Base):
 class Law(Base):
     __tablename__ = "laws"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     law_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     title: Mapped[str] = mapped_column(String(512))
     law_number: Mapped[Optional[str]] = mapped_column(String(128))
@@ -81,7 +81,7 @@ class Law(Base):
 class Company(Base):
     __tablename__ = "companies"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     unified_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
     company_name: Mapped[str] = mapped_column(String(512), index=True)
     company_type: Mapped[Optional[str]] = mapped_column(String(64))
@@ -107,7 +107,7 @@ class Company(Base):
 class LawyerAddedCase(Base):
     __tablename__ = "lawyer_added_cases"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), index=True)
     firm_id: Mapped[Optional[str]] = mapped_column(String(64), index=True)
     case_id: Mapped[str] = mapped_column(String(64))
@@ -175,7 +175,7 @@ class Lawyer(Base):
 class FirmCaseAssignment(Base):
     __tablename__ = "firm_case_assignments"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     firm_id: Mapped[str] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
     case_id: Mapped[Optional[int]] = mapped_column(BigInteger, index=True)
     case_title: Mapped[str] = mapped_column(String(512))
@@ -190,7 +190,7 @@ class FirmCaseAssignment(Base):
 class FirmTimeEntry(Base):
     __tablename__ = "firm_time_entries"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     firm_id: Mapped[str] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), ForeignKey("lawyers.id"), index=True)
     case_id: Mapped[Optional[int]] = mapped_column(BigInteger)
@@ -208,7 +208,7 @@ class FirmTimeEntry(Base):
 class Favorite(Base):
     __tablename__ = "favorites"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), index=True)
     target_type: Mapped[str] = mapped_column(String(16))
     target_id: Mapped[str] = mapped_column(String(64), index=True)
@@ -222,7 +222,7 @@ class Favorite(Base):
 class CrawlerRun(Base):
     __tablename__ = "crawler_runs"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     source: Mapped[str] = mapped_column(String(32), index=True)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     finished_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))

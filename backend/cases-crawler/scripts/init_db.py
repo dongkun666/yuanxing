@@ -20,7 +20,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.config import settings
 from core.db import Database, ESClient, Neo4jClient, detect_db_backend
-from core.models import Base, Firm, Lawyer
+
+# 关键: 显式 import 所有 model 类, 触发 SQLAlchemy 注册
+from core.models import (
+    Base, Case, Law, Company, LawyerAddedCase, Favorite,
+    Firm, Lawyer, FirmCaseAssignment, FirmTimeEntry, CrawlerRun,
+)
 
 
 async def init_database(reset: bool = False):
