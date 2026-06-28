@@ -299,7 +299,8 @@ class TestSchemas:
         h = HealthOut(tables_ready=True)
         assert h.status == "ok"
         assert h.module == "auth"
-        assert h.version == "0.1.0"
+        # W2: version bumped to 0.2.0 (业务端点上线)
+        assert h.version == "0.2.0"
 
 
 # ========== 4. FastAPI 端点 ==========
@@ -311,6 +312,7 @@ class TestHealthEndpoint:
         assert resp.status_code == 200
         data = resp.json()
         assert data["module"] == "auth"
-        assert data["version"] == "0.1.0"
+        # W2: version 同步 (见 auth/schemas.py HealthOut)
+        assert data["version"] == "0.2.0"
         assert data["tables_ready"] is True
         assert data["status"] == "ok"

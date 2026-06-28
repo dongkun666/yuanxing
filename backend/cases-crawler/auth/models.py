@@ -19,26 +19,23 @@ from sqlalchemy import (
     BigInteger,
     String,
     Text,
-    Date,
     DateTime,
     Boolean,
     Integer,
-    SmallInteger,
     ForeignKey,
     JSON,
-    UniqueConstraint,
     Index,
 )
 from sqlalchemy.dialects.sqlite import INTEGER as SQLITE_INTEGER  # noqa: F401
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
+
+from core.models import Base
 
 # SQLite 不支持 BIGINT 自增 (只 INTEGER PRIMARY KEY 走 rowid 自增)
 # PG 端保持 BigInteger, dev SQLite 退化到 Integer
 BigIntPK = BigInteger().with_variant(Integer(), "sqlite")
 BigIntFK = BigInteger().with_variant(Integer(), "sqlite")
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
-
-from core.models import Base
 
 
 # ========== User (认证实体) ==========

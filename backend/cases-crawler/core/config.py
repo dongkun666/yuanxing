@@ -2,10 +2,8 @@
 LexPrime 配置加载
 2026-06-28
 """
-import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
-from typing import Optional
 from functools import lru_cache
 
 
@@ -75,6 +73,16 @@ class Settings(BaseSettings):
     # 日志
     log_level: str = "INFO"
     log_file: str = "./logs/crawler.log"
+
+    # Auth (Track A W2: JWT + bcrypt)
+    # JWT secret 默认 dev 用, 生产必须从 env 覆盖 (auth_secret_key)
+    auth_secret_key: str = "lexprime-dev-secret-please-change-in-production-32chars"
+    auth_jwt_algorithm: str = "HS256"
+    auth_access_token_ttl_min: int = 15   # access 15 min
+    auth_refresh_token_ttl_days: int = 7  # refresh 7 days
+    auth_bcrypt_rounds: int = 12          # bcrypt cost factor
+    auth_max_failed_logins: int = 5       # 5 次/小时锁定
+    auth_lock_minutes: int = 15           # 锁定 15 min
 
     class Config:
         env_file = ".env"

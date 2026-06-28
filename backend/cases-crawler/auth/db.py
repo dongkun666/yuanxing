@@ -8,7 +8,6 @@ LexPrime Auth Database 接入
 - auth_users/auth_lawyer_profiles/auth_tokens/auth_otp_logs 4 表会跟 cases/laws/lawyers 共存
 - W2 业务表分库时, 可独立切到独立 engine (现在 0 必要)
 """
-from typing import Optional
 
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
