@@ -1,7 +1,7 @@
 """
-LexPrime 合同风险索引 - 一次性灌库脚本 (W4)
+LexPrime 合同风险索引 - 一次性灌库脚本 (W4 + W5 fix)
 
-从 backend/cases-crawler/data/contracts/{template_id}.json 加载所有 56+ 模板,
+从 backend/cases-crawler/data/contracts/{template_id}.json 加载所有 56+ 模板 (W4 扩量后 6076),
 转成 ContractClause + RiskAnnotation 灌入 LanceDB (data/lancedb/).
 
 运行:
@@ -10,12 +10,15 @@ LexPrime 合同风险索引 - 一次性灌库脚本 (W4)
 
 输出:
     backend/cases-crawler/data/lancedb/
-    ├── contract_clauses.lance/   (56 模板 × 7-8 条 ≈ 400+ 条款)
-    └── contract_risks.lance/     (56 模板 × 5 标注 = 280+ 风险样本)
+    ├── contract_clauses.lance/   (6076 模板 × 6 条款 ≈ 36K 条款)
+    └── contract_risks.lance/     (6076 模板 × 5 标注 ≈ 30K 风险样本)
 
 性能:
-    - 56 模板灌库 ≈ 5-15s (BGE 推理 5-10ms/条 + 写盘)
+    - 6076 模板灌库 ≈ 10-15min (BGE 推理 6-10ms/条 + 写盘)
     - 灌完检索 P95 < 100ms
+
+W5 fix (2026-06-29): glob 由 "*.json" 改为 "**/*.json", 覆盖 w4_extended/ 子目录,
+排除 w4_skeletons/ (生成模板, 无 annotations).
 """
 from __future__ import annotations
 
@@ -44,10 +47,29 @@ INDEX_DIR = BACKEND_DIR / "data" / "lancedb"
 
 
 def load_contracts(contracts_dir: Path) -> List[dict]:
-    """加载所有合同模板 JSON。"""
-    files = sorted(contracts_dir.glob("*.json"))
-    files = [f for f in files if not f.name.startswith("_")]
-    print(f"[load] 发现 {len(files)} 个合同模板")
+    """加载所有合同模板 JSON (递归, 兼容 W4 扩量 w4_extended/*/*.json)。
+
+    W5 fix (2026-06-29): W4 集成遗留 gap 闭环。
+    - 旧 glob ("*.json") 只覆盖顶层 56 模板, W4 扩量 6020 模板 (在 w4_extended/)
+      被静默忽略, 导致 LanceDB 索引不完整 (Skill 2 reviewer 召回不到 W4 历史样本)。
+    - 新 glob ("**/*.json") 递归所有子目录, 兼容:
+      - 顶层 56 模板 (W3 baseline)
+      - w4_extended/{category}/*.json 共 6020 模板 (W4 扩量, 10x 增长)
+      - 总计 6076 contracts
+    - 排除:
+      - 以 "_" 开头的元数据文件 (_dup_stats_w4.json, _index*.json)
+      - w4_skeletons/*.json 12 文件 (生成模板, 含 {placeholder}, 无 annotations,
+        不符合合同索引的数据模型, 误读会崩溃)
+    """
+    # 递归所有 .json
+    files = sorted(contracts_dir.glob("**/*.json"))
+    # 过滤: 排除 metadata 文件 + w4_skeletons 子目录 (生成模板)
+    files = [
+        f for f in files
+        if not f.name.startswith("_")
+        and "w4_skeletons" not in f.parts
+    ]
+    print(f"[load] 发现 {len(files)} 个合同模板 (递归 glob **/*.json)")
     out: List[dict] = []
     for f in files:
         with f.open("r", encoding="utf-8") as fp:
