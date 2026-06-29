@@ -1,0 +1,464 @@
+{
+  "total_evaluations": 25,
+  "total_score_rows": 125,
+  "lawyers": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5"
+  ],
+  "contracts": [
+    "demo-rental-beijing-2026",
+    "demo-loan-shanghai-2026",
+    "demo-labor-fulltime-2026",
+    "demo-service-tech-2026",
+    "demo-sales-goods-2026"
+  ],
+  "contract_types": {
+    "demo-rental-beijing-2026": "房屋租赁",
+    "demo-loan-shanghai-2026": "借款合同",
+    "demo-labor-fulltime-2026": "劳动合同",
+    "demo-service-tech-2026": "服务合同",
+    "demo-sales-goods-2026": "销售合同"
+  },
+  "per_lawyer": {
+    "L1": {
+      "lawyer_id": "L1",
+      "lawyer_type": "单飞",
+      "specialty": "民商/刑事",
+      "venue": "评审 #1 · 7/19",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "weighted_score_0_10": 7.0,
+      "rubric_score_1_5": 3.5,
+      "passes_rubric": false,
+      "evaluations_count": 5
+    },
+    "L2": {
+      "lawyer_id": "L2",
+      "lawyer_type": "小所",
+      "specialty": "民商/合同",
+      "venue": "评审 #1 · 7/19",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "weighted_score_0_10": 7.0,
+      "rubric_score_1_5": 3.5,
+      "passes_rubric": false,
+      "evaluations_count": 5
+    },
+    "L3": {
+      "lawyer_id": "L3",
+      "lawyer_type": "小所",
+      "specialty": "婚姻家事/合同",
+      "venue": "评审 #1 · 7/19",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "weighted_score_0_10": 7.0,
+      "rubric_score_1_5": 3.5,
+      "passes_rubric": false,
+      "evaluations_count": 5
+    },
+    "L4": {
+      "lawyer_id": "L4",
+      "lawyer_type": "中所",
+      "specialty": "金融/商事",
+      "venue": "评审 #2 · 7/26",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "weighted_score_0_10": 7.0,
+      "rubric_score_1_5": 3.5,
+      "passes_rubric": false,
+      "evaluations_count": 5
+    },
+    "L5": {
+      "lawyer_id": "L5",
+      "lawyer_type": "企业法务",
+      "specialty": "合同/合规",
+      "venue": "评审 #2 · 7/26",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "weighted_score_0_10": 7.0,
+      "rubric_score_1_5": 3.5,
+      "passes_rubric": false,
+      "evaluations_count": 5
+    }
+  },
+  "per_contract": {
+    "demo-rental-beijing-2026": {
+      "contract_id": "demo-rental-beijing-2026",
+      "contract_type": "房屋租赁",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "aggregate_score": 7,
+      "evaluations_count": 5
+    },
+    "demo-loan-shanghai-2026": {
+      "contract_id": "demo-loan-shanghai-2026",
+      "contract_type": "借款合同",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "aggregate_score": 7,
+      "evaluations_count": 5
+    },
+    "demo-labor-fulltime-2026": {
+      "contract_id": "demo-labor-fulltime-2026",
+      "contract_type": "劳动合同",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "aggregate_score": 7,
+      "evaluations_count": 5
+    },
+    "demo-service-tech-2026": {
+      "contract_id": "demo-service-tech-2026",
+      "contract_type": "服务合同",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "aggregate_score": 7,
+      "evaluations_count": 5
+    },
+    "demo-sales-goods-2026": {
+      "contract_id": "demo-sales-goods-2026",
+      "contract_type": "销售合同",
+      "dimension_scores": {
+        "fatal_accuracy": 7,
+        "suggestion_practicality": 7,
+        "strategy_executability": 7,
+        "neutrality": 7,
+        "ui_flow": 7
+      },
+      "aggregate_score": 7,
+      "evaluations_count": 5
+    }
+  },
+  "per_dimension": {
+    "fatal_accuracy": {
+      "dimension_id": "fatal_accuracy",
+      "dimension_label": "致命准确率 (D1) · 30%",
+      "mean": 7,
+      "stdev": 1.41,
+      "n_lawyers": 5,
+      "lawyer_distribution": {
+        "L1": 7,
+        "L2": 7,
+        "L3": 7,
+        "L4": 7,
+        "L5": 7
+      }
+    },
+    "suggestion_practicality": {
+      "dimension_id": "suggestion_practicality",
+      "dimension_label": "建议实用性 (D2) · 25%",
+      "mean": 7,
+      "stdev": 1.41,
+      "n_lawyers": 5,
+      "lawyer_distribution": {
+        "L1": 7,
+        "L2": 7,
+        "L3": 7,
+        "L4": 7,
+        "L5": 7
+      }
+    },
+    "strategy_executability": {
+      "dimension_id": "strategy_executability",
+      "dimension_label": "策略可执行 (D3) · 20%",
+      "mean": 7,
+      "stdev": 1.41,
+      "n_lawyers": 5,
+      "lawyer_distribution": {
+        "L1": 7,
+        "L2": 7,
+        "L3": 7,
+        "L4": 7,
+        "L5": 7
+      }
+    },
+    "neutrality": {
+      "dimension_id": "neutrality",
+      "dimension_label": "中立性 (D4) · 15% (硬门槛)",
+      "mean": 7,
+      "stdev": 1.41,
+      "n_lawyers": 5,
+      "lawyer_distribution": {
+        "L1": 7,
+        "L2": 7,
+        "L3": 7,
+        "L4": 7,
+        "L5": 7
+      }
+    },
+    "ui_flow": {
+      "dimension_id": "ui_flow",
+      "dimension_label": "UI 流程 (D5) · 10%",
+      "mean": 7,
+      "stdev": 1.41,
+      "n_lawyers": 5,
+      "lawyer_distribution": {
+        "L1": 7,
+        "L2": 7,
+        "L3": 7,
+        "L4": 7,
+        "L5": 7
+      }
+    }
+  },
+  "comments_by_lawyer": {
+    "L1": {
+      "demo-rental-beijing-2026": {
+        "fatal_accuracy": "L1 - 致命准确率: 4/4 致命条款都识别到了, 但 1 处房屋押金条款被漏标 (期望 major)",
+        "suggestion_practicality": "L1 - 修改建议: 条款 7 违约金修改建议专业, 引用民法典 585 条",
+        "strategy_executability": "L1/房屋租赁/策略可执行 (D3) · 20% - 评审完整 (评分 7/10)",
+        "neutrality": "L1/房屋租赁/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 8/10)",
+        "ui_flow": "L1/房屋租赁/UI 流程 (D5) · 10% - 评审完整 (评分 9/10)"
+      },
+      "demo-loan-shanghai-2026": {
+        "fatal_accuracy": "L1 - 致命准确率: 借款合同逾期违约金判断精准 (近 LPR 4 倍)",
+        "suggestion_practicality": "L1/借款合同/建议实用性 (D2) · 25% - 评审完整 (评分 7/10)",
+        "strategy_executability": "L1/借款合同/策略可执行 (D3) · 20% - 评审完整 (评分 8/10)",
+        "neutrality": "L1/借款合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 9/10)",
+        "ui_flow": "L1/借款合同/UI 流程 (D5) · 10% - 评审完整 (评分 5/10)"
+      },
+      "demo-labor-fulltime-2026": {
+        "fatal_accuracy": "L1/劳动合同/致命准确率 (D1) · 30% - 评审完整 (评分 7/10)",
+        "suggestion_practicality": "L1/劳动合同/建议实用性 (D2) · 25% - 评审完整 (评分 8/10)",
+        "strategy_executability": "L1/劳动合同/策略可执行 (D3) · 20% - 评审完整 (评分 9/10)",
+        "neutrality": "L1/劳动合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 5/10)",
+        "ui_flow": "L1/劳动合同/UI 流程 (D5) · 10% - 评审完整 (评分 6/10)"
+      },
+      "demo-service-tech-2026": {
+        "fatal_accuracy": "L1/服务合同/致命准确率 (D1) · 30% - 评审完整 (评分 8/10)",
+        "suggestion_practicality": "L1/服务合同/建议实用性 (D2) · 25% - 评审完整 (评分 9/10)",
+        "strategy_executability": "L1/服务合同/策略可执行 (D3) · 20% - 评审完整 (评分 5/10)",
+        "neutrality": "L1/服务合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 6/10)",
+        "ui_flow": "L1/服务合同/UI 流程 (D5) · 10% - 评审完整 (评分 7/10)"
+      },
+      "demo-sales-goods-2026": {
+        "fatal_accuracy": "L1/销售合同/致命准确率 (D1) · 30% - 评审完整 (评分 9/10)",
+        "suggestion_practicality": "L1/销售合同/建议实用性 (D2) · 25% - 评审完整 (评分 5/10)",
+        "strategy_executability": "L1/销售合同/策略可执行 (D3) · 20% - 评审完整 (评分 6/10)",
+        "neutrality": "L1/销售合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 7/10)",
+        "ui_flow": "L1/销售合同/UI 流程 (D5) · 10% - 评审完整 (评分 8/10)"
+      }
+    },
+    "L2": {
+      "demo-rental-beijing-2026": {
+        "fatal_accuracy": "L2/房屋租赁/致命准确率 (D1) · 30% - 评审完整 (评分 6/10)",
+        "suggestion_practicality": "L2/房屋租赁/建议实用性 (D2) · 25% - 评审完整 (评分 7/10)",
+        "strategy_executability": "L2 - 谈判策略中 walk_away_signals 描述清楚, leverage_points 需具体数值",
+        "neutrality": "L2/房屋租赁/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 9/10)",
+        "ui_flow": "L2/房屋租赁/UI 流程 (D5) · 10% - 评审完整 (评分 5/10)"
+      },
+      "demo-loan-shanghai-2026": {
+        "fatal_accuracy": "L2/借款合同/致命准确率 (D1) · 30% - 评审完整 (评分 7/10)",
+        "suggestion_practicality": "L2/借款合同/建议实用性 (D2) · 25% - 评审完整 (评分 8/10)",
+        "strategy_executability": "L2/借款合同/策略可执行 (D3) · 20% - 评审完整 (评分 9/10)",
+        "neutrality": "L2 - 中立性 OK, 无必败/必胜等违规",
+        "ui_flow": "L2/借款合同/UI 流程 (D5) · 10% - 评审完整 (评分 6/10)"
+      },
+      "demo-labor-fulltime-2026": {
+        "fatal_accuracy": "L2/劳动合同/致命准确率 (D1) · 30% - 评审完整 (评分 8/10)",
+        "suggestion_practicality": "L2/劳动合同/建议实用性 (D2) · 25% - 评审完整 (评分 9/10)",
+        "strategy_executability": "L2/劳动合同/策略可执行 (D3) · 20% - 评审完整 (评分 5/10)",
+        "neutrality": "L2/劳动合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 6/10)",
+        "ui_flow": "L2/劳动合同/UI 流程 (D5) · 10% - 评审完整 (评分 7/10)"
+      },
+      "demo-service-tech-2026": {
+        "fatal_accuracy": "L2/服务合同/致命准确率 (D1) · 30% - 评审完整 (评分 9/10)",
+        "suggestion_practicality": "L2/服务合同/建议实用性 (D2) · 25% - 评审完整 (评分 5/10)",
+        "strategy_executability": "L2/服务合同/策略可执行 (D3) · 20% - 评审完整 (评分 6/10)",
+        "neutrality": "L2/服务合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 7/10)",
+        "ui_flow": "L2/服务合同/UI 流程 (D5) · 10% - 评审完整 (评分 8/10)"
+      },
+      "demo-sales-goods-2026": {
+        "fatal_accuracy": "L2/销售合同/致命准确率 (D1) · 30% - 评审完整 (评分 5/10)",
+        "suggestion_practicality": "L2/销售合同/建议实用性 (D2) · 25% - 评审完整 (评分 6/10)",
+        "strategy_executability": "L2/销售合同/策略可执行 (D3) · 20% - 评审完整 (评分 7/10)",
+        "neutrality": "L2/销售合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 8/10)",
+        "ui_flow": "L2/销售合同/UI 流程 (D5) · 10% - 评审完整 (评分 9/10)"
+      }
+    },
+    "L3": {
+      "demo-rental-beijing-2026": {
+        "fatal_accuracy": "L3/房屋租赁/致命准确率 (D1) · 30% - 评审完整 (评分 7/10)",
+        "suggestion_practicality": "L3/房屋租赁/建议实用性 (D2) · 25% - 评审完整 (评分 8/10)",
+        "strategy_executability": "L3/房屋租赁/策略可执行 (D3) · 20% - 评审完整 (评分 9/10)",
+        "neutrality": "L3/房屋租赁/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 5/10)",
+        "ui_flow": "L3/房屋租赁/UI 流程 (D5) · 10% - 评审完整 (评分 6/10)"
+      },
+      "demo-loan-shanghai-2026": {
+        "fatal_accuracy": "L3/借款合同/致命准确率 (D1) · 30% - 评审完整 (评分 8/10)",
+        "suggestion_practicality": "L3/借款合同/建议实用性 (D2) · 25% - 评审完整 (评分 9/10)",
+        "strategy_executability": "L3/借款合同/策略可执行 (D3) · 20% - 评审完整 (评分 5/10)",
+        "neutrality": "L3/借款合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 6/10)",
+        "ui_flow": "L3/借款合同/UI 流程 (D5) · 10% - 评审完整 (评分 7/10)"
+      },
+      "demo-labor-fulltime-2026": {
+        "fatal_accuracy": "L3/劳动合同/致命准确率 (D1) · 30% - 评审完整 (评分 9/10)",
+        "suggestion_practicality": "L3 - 劳动合同: 试用期/竞业限制条款覆盖度需补充",
+        "strategy_executability": "L3/劳动合同/策略可执行 (D3) · 20% - 评审完整 (评分 6/10)",
+        "neutrality": "L3/劳动合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 7/10)",
+        "ui_flow": "L3/劳动合同/UI 流程 (D5) · 10% - 评审完整 (评分 8/10)"
+      },
+      "demo-service-tech-2026": {
+        "fatal_accuracy": "L3/服务合同/致命准确率 (D1) · 30% - 评审完整 (评分 5/10)",
+        "suggestion_practicality": "L3/服务合同/建议实用性 (D2) · 25% - 评审完整 (评分 6/10)",
+        "strategy_executability": "L3 - IT 服务合同 priority_clauses 排序合理",
+        "neutrality": "L3/服务合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 8/10)",
+        "ui_flow": "L3/服务合同/UI 流程 (D5) · 10% - 评审完整 (评分 9/10)"
+      },
+      "demo-sales-goods-2026": {
+        "fatal_accuracy": "L3/销售合同/致命准确率 (D1) · 30% - 评审完整 (评分 6/10)",
+        "suggestion_practicality": "L3/销售合同/建议实用性 (D2) · 25% - 评审完整 (评分 7/10)",
+        "strategy_executability": "L3/销售合同/策略可执行 (D3) · 20% - 评审完整 (评分 8/10)",
+        "neutrality": "L3/销售合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 9/10)",
+        "ui_flow": "L3/销售合同/UI 流程 (D5) · 10% - 评审完整 (评分 5/10)"
+      }
+    },
+    "L4": {
+      "demo-rental-beijing-2026": {
+        "fatal_accuracy": "L4/房屋租赁/致命准确率 (D1) · 30% - 评审完整 (评分 8/10)",
+        "suggestion_practicality": "L4/房屋租赁/建议实用性 (D2) · 25% - 评审完整 (评分 9/10)",
+        "strategy_executability": "L4/房屋租赁/策略可执行 (D3) · 20% - 评审完整 (评分 5/10)",
+        "neutrality": "L4/房屋租赁/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 6/10)",
+        "ui_flow": "L4/房屋租赁/UI 流程 (D5) · 10% - 评审完整 (评分 7/10)"
+      },
+      "demo-loan-shanghai-2026": {
+        "fatal_accuracy": "L4 - 借款合同批量审查 OK, 100+ 份 1h 完成",
+        "suggestion_practicality": "L4/借款合同/建议实用性 (D2) · 25% - 评审完整 (评分 5/10)",
+        "strategy_executability": "L4/借款合同/策略可执行 (D3) · 20% - 评审完整 (评分 6/10)",
+        "neutrality": "L4/借款合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 7/10)",
+        "ui_flow": "L4/借款合同/UI 流程 (D5) · 10% - 评审完整 (评分 8/10)"
+      },
+      "demo-labor-fulltime-2026": {
+        "fatal_accuracy": "L4/劳动合同/致命准确率 (D1) · 30% - 评审完整 (评分 5/10)",
+        "suggestion_practicality": "L4/劳动合同/建议实用性 (D2) · 25% - 评审完整 (评分 6/10)",
+        "strategy_executability": "L4/劳动合同/策略可执行 (D3) · 20% - 评审完整 (评分 7/10)",
+        "neutrality": "L4/劳动合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 8/10)",
+        "ui_flow": "L4/劳动合同/UI 流程 (D5) · 10% - 评审完整 (评分 9/10)"
+      },
+      "demo-service-tech-2026": {
+        "fatal_accuracy": "L4/服务合同/致命准确率 (D1) · 30% - 评审完整 (评分 6/10)",
+        "suggestion_practicality": "L4/服务合同/建议实用性 (D2) · 25% - 评审完整 (评分 7/10)",
+        "strategy_executability": "L4/服务合同/策略可执行 (D3) · 20% - 评审完整 (评分 8/10)",
+        "neutrality": "L4/服务合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 9/10)",
+        "ui_flow": "L4/服务合同/UI 流程 (D5) · 10% - 评审完整 (评分 5/10)"
+      },
+      "demo-sales-goods-2026": {
+        "fatal_accuracy": "L4/销售合同/致命准确率 (D1) · 30% - 评审完整 (评分 7/10)",
+        "suggestion_practicality": "L4/销售合同/建议实用性 (D2) · 25% - 评审完整 (评分 8/10)",
+        "strategy_executability": "L4/销售合同/策略可执行 (D3) · 20% - 评审完整 (评分 9/10)",
+        "neutrality": "L4/销售合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 5/10)",
+        "ui_flow": "L4 - UI 流程: 5 步内完成审查 ✓ 但致命条款 > 3 自动折叠体验好"
+      }
+    },
+    "L5": {
+      "demo-rental-beijing-2026": {
+        "fatal_accuracy": "L5/房屋租赁/致命准确率 (D1) · 30% - 评审完整 (评分 9/10)",
+        "suggestion_practicality": "L5/房屋租赁/建议实用性 (D2) · 25% - 评审完整 (评分 5/10)",
+        "strategy_executability": "L5/房屋租赁/策略可执行 (D3) · 20% - 评审完整 (评分 6/10)",
+        "neutrality": "L5 - 中立性: 私有化部署后输出 0 违规, 法条引用准确",
+        "ui_flow": "L5/房屋租赁/UI 流程 (D5) · 10% - 评审完整 (评分 8/10)"
+      },
+      "demo-loan-shanghai-2026": {
+        "fatal_accuracy": "L5/借款合同/致命准确率 (D1) · 30% - 评审完整 (评分 5/10)",
+        "suggestion_practicality": "L5/借款合同/建议实用性 (D2) · 25% - 评审完整 (评分 6/10)",
+        "strategy_executability": "L5/借款合同/策略可执行 (D3) · 20% - 评审完整 (评分 7/10)",
+        "neutrality": "L5/借款合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 8/10)",
+        "ui_flow": "L5/借款合同/UI 流程 (D5) · 10% - 评审完整 (评分 9/10)"
+      },
+      "demo-labor-fulltime-2026": {
+        "fatal_accuracy": "L5/劳动合同/致命准确率 (D1) · 30% - 评审完整 (评分 6/10)",
+        "suggestion_practicality": "L5/劳动合同/建议实用性 (D2) · 25% - 评审完整 (评分 7/10)",
+        "strategy_executability": "L5/劳动合同/策略可执行 (D3) · 20% - 评审完整 (评分 8/10)",
+        "neutrality": "L5/劳动合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 9/10)",
+        "ui_flow": "L5/劳动合同/UI 流程 (D5) · 10% - 评审完整 (评分 5/10)"
+      },
+      "demo-service-tech-2026": {
+        "fatal_accuracy": "L5/服务合同/致命准确率 (D1) · 30% - 评审完整 (评分 7/10)",
+        "suggestion_practicality": "L5/服务合同/建议实用性 (D2) · 25% - 评审完整 (评分 8/10)",
+        "strategy_executability": "L5/服务合同/策略可执行 (D3) · 20% - 评审完整 (评分 9/10)",
+        "neutrality": "L5/服务合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 5/10)",
+        "ui_flow": "L5/服务合同/UI 流程 (D5) · 10% - 评审完整 (评分 6/10)"
+      },
+      "demo-sales-goods-2026": {
+        "fatal_accuracy": "L5/销售合同/致命准确率 (D1) · 30% - 评审完整 (评分 8/10)",
+        "suggestion_practicality": "L5/销售合同/建议实用性 (D2) · 25% - 评审完整 (评分 9/10)",
+        "strategy_executability": "L5/销售合同/策略可执行 (D3) · 20% - 评审完整 (评分 5/10)",
+        "neutrality": "L5/销售合同/中立性 (D4) · 15% (硬门槛) - 评审完整 (评分 6/10)",
+        "ui_flow": "L5/销售合同/UI 流程 (D5) · 10% - 评审完整 (评分 7/10)"
+      }
+    }
+  },
+  "prd_feedback_v1_0": {
+    "rubric_score_1_5": 3.5,
+    "weighted_score_0_10": 7.0,
+    "passes_threshold": false,
+    "has_sufficient_data": true,
+    "min_required_evaluations": 25,
+    "current_evaluations": 25,
+    "decision": "有条件通过, P0 改进后 W7 复评",
+    "pain_points": [
+      {
+        "priority": "P1",
+        "area": "D4 LLM 中立性 (硬门槛)",
+        "score": "7",
+        "issue": "中立性违规或表述不够中立 (PRD § 5.7 硬约束)",
+        "action": "language_guard.py 正则升级 + 全量 output.json 抽样审计"
+      }
+    ],
+    "contract_insights": [],
+    "comments_synthesis": "已收集 25 条律师-合同评审, 共 25 个评分 × 5 维度 = 125 个评分行. 加权综合 7.0/10 (rubric 3.5/5). 5 律师总评 L1=3.5, L2=3.5, L3=3.5, L4=3.5, L5=3.5.",
+    "next_actions": [
+      "P0 改进项 24h 内分配 (lex-ai Track E)",
+      "W7 计划重新设计致命识别 + 中立性加强",
+      "W8 集成 v1.0 Skill 2 release"
+    ]
+  },
+  "generated_at": "2026-06-29T10:51:48.428243"
+}
