@@ -65,7 +65,18 @@
 
 **静态验证已通过**: 1052 行代码 + 3 端点 + ORM + 路由注册一致性.
 
-### Task 3: w7-w5-followup-tech (lex-ai) ⚠️ DEFER - override_accept with W8
+### Task 3: w7-w5-followup-tech (lex-ai) ⚠️ DEFER + 部分交付 - override_accept
+
+**实际交付** (1 commit push, owner 手工 commit, ocr.py +198 行):
+- `0815a2e` feat(ocr): W7 PaddleEngine 接入 (兼容 2.7 + 3.7 API) - venv312 装上即可跑, 推 W8
+
+**关键文件**:
+- `backend/cases-crawler/core/ocr.py` +198 行:
+  - PaddleOcrEngine 兼容 PaddleOCR 2.7 (legacy) + 3.7 (current) API
+  - 适配 PP-OCRv6 中文专精模型
+  - Tesseract fallback + PaddleEngine 优先级切换
+
+### Task 3 (修订后): w7-w5-followup-tech (lex-ai) ⚠️ DEFER - override_accept with W8
 
 **承诺** (W5 遗留 4 项 follow-up 集中):
 1. PaddleOCR 升级 (Python 3.12 venv + paddlepaddle 3.3.1)
@@ -107,8 +118,10 @@
 - `ef7ec55` W7 评审 #1 现场笔记 + 3 份律师评分表 v1.0 + 评审 #2 预演 + 物料
 - `e99dfdc` W7 评审 #2 现场笔记 + L4/L5 评分表 + 24h 评分汇总 + PRD 反馈 v1.0
 - `651e3d6` (owner) 评审问题收集 + 数据看板 (3 endpoints + 评分汇总扩) + 评审 #1 实际上线
+- `1f726a5` (owner) Plan 7 W7 集成验证报告
+- `0815a2e` (owner) PaddleEngine 接入 (兼容 2.7 + 3.7 API) - venv312 装上即可跑, 推 W8
 
-**W7 累计 5 commits push**, 律师评审部分 100% 交付, W5 4 项 follow-up 推 W8.
+**W7 累计 7 commits push** (4 producer + 3 owner), 律师评审部分 100% 交付, PaddleEngine 代码 100% 交付, venv312 装包 + FTS5 jieba + UI 3 修复 + W5 E2E 推 W8.
 
 ### 评审 #1 实际上线证据
 - BETA2025-0001 邀请码已由 L1 律师 redeem (redeemed_at 2026-06-29T02:50:28, trial_expires 2026-07-29)
