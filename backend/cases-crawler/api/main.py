@@ -171,6 +171,16 @@ try:
 except Exception as e:
     logger.warning(f"W8 PRD backlog ticket router 加载失败 (非致命): {e}")
 
+# W9 (lex-coder · 2026-06-29) Skill 3 文书生成
+# C1: 评审 #1 #2 律师最常问 Top 3 = 自动生成法律文书, 4 端点 + 4 模板
+# 端点: /api/doc-gen/complaint, /api/doc-gen/defense, /api/doc-gen/contract, /api/doc-gen/letter
+try:
+    from api.doc_gen_router import router as doc_gen_router
+    app.include_router(doc_gen_router)
+    logger.info("W9 Skill 3 文书生成 router registered (C1)")
+except Exception as e:
+    logger.warning(f"W9 Skill 3 文书生成 router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")
