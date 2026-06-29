@@ -47,7 +47,13 @@
         'firm': 'firm.html',
         'cases-db': 'cases-db.html',
         'laws-db': 'laws-db.html',
-        'companies-db': 'companies-db.html'
+        'companies-db': 'companies-db.html',
+        // Skill 2 合同风险审查 (W5 lex-coder)
+        'contract-review-upload': 'contract-review/contract-review-upload.html',
+        'contract-review-result': 'contract-review/contract-review-result.html',
+        'contract-review-suggestion': 'contract-review/contract-review-suggestion.html',
+        'contract-review-negotiation': 'contract-review/contract-review-negotiation.html',
+        'contract-review-export': 'contract-review/contract-review-export.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====

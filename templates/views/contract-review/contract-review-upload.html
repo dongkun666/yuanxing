@@ -1,0 +1,511 @@
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden" id="view-contract-review-upload" data-view-source="01-upload.html">
+  <style>
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  .upload-zone { transition: all 200ms ease-out; }
+  .upload-zone:hover, .upload-zone.dragover { border-color:#165DFF; background:#F2F7FF; }
+  .check-pulse { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  </style>
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ============== 左侧栏 ============== -->
+  
+
+  <!-- ============== 主区 ============== -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- 顶部 -->
+    <header class="h-14 bg-white border-b border-bg-border px-6 flex items-center gap-4 flex-shrink-0">
+      <button class="w-8 h-8 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
+        <iconify-icon icon="mdi:arrow-left"></iconify-icon>
+      </button>
+      <nav class="flex items-center gap-2 text-sm">
+        <span class="text-fg-tertiary">Skill Hub</span>
+        <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
+        <span class="text-fg-tertiary">合同风险审查</span>
+        <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
+        <span class="text-fg-primary font-medium">上传合同</span>
+      </nav>
+      <div class="flex-1"></div>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:history"></iconify-icon> 审查历史
+      </button>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:help-circle-outline"></iconify-icon> 帮助
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- ============ 页面标题 + 步骤指示器 ============ -->
+      <div class="bg-white rounded-md shadow-card p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h1 class="text-xl font-semibold flex items-center gap-2">
+                <iconify-icon icon="mdi:shield-search" class="text-ai"></iconify-icon>
+                合同风险审查
+              </h1>
+              <span class="inline-flex items-center gap-1 text-xs text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 辅助
+              </span>
+            </div>
+            <p class="text-xs text-fg-tertiary leading-relaxed">
+              对律师上传的合同文本进行逐条审查, 输出<strong class="text-fg-secondary">三级风险标注</strong> (致命/重大/建议) + 修改建议 + 谈判策略。<br>
+              <strong class="text-danger">本工具仅呈现客观风险描述, 不做任何确定性判断或预测。</strong>
+            </p>
+          </div>
+          <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+            <iconify-icon icon="mdi:book-open-page-variant-outline"></iconify-icon> 使用指南
+          </button>
+        </div>
+
+        <!-- 3 步进度条 -->
+        <div class="mt-5 grid grid-cols-3 gap-1">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold shadow-sm flex-shrink-0">
+              1
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-semibold text-brand">上传合同</div>
+              <div class="text-[10px] text-brand">当前步骤</div>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="flex-1 h-0.5 bg-bg-border"></div>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-bg text-fg-tertiary flex items-center justify-center text-xs font-bold flex-shrink-0">
+              2
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-medium text-fg-tertiary">审查结果</div>
+              <div class="text-[10px] text-fg-tertiary">风险高亮 + 条款定位</div>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="flex-1 h-0.5 bg-bg-border"></div>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-bg text-fg-tertiary flex items-center justify-center text-xs font-bold flex-shrink-0">
+              3
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-medium text-fg-tertiary">修改建议 + 谈判策略</div>
+              <div class="text-[10px] text-fg-tertiary">导出 / 发送律师</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 7+5 主内容区 ============ -->
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- ============ 左 7 栏: 上传区 + 输入表单 ============ -->
+        <div class="col-span-7 space-y-4">
+
+          <!-- 卡片 1: 上传区 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:upload-multiple-outline"></iconify-icon>
+                上传合同
+                <span class="text-danger">*</span>
+              </h4>
+              <span class="text-[10px] text-fg-tertiary">支持 PDF / Word / 图片 / 纯文本 · ≤ 10MB</span>
+            </div>
+
+            <div class="p-4 space-y-3">
+              <!-- 拖拽上传区 -->
+              <div class="upload-zone border-2 border-dashed border-bg-border rounded-md p-8 text-center cursor-pointer" onclick="document.getElementById('file-input').click()">
+                <input type="file" id="file-input" class="hidden" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.png">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-tint flex items-center justify-center text-brand">
+                  <iconify-icon class="text-2xl" icon="mdi:cloud-upload-outline"></iconify-icon>
+                </div>
+                <p class="text-sm font-medium text-fg-primary">拖拽合同文件到此处, 或 <span class="text-brand">点击选择文件</span></p>
+                <p class="text-xs text-fg-tertiary mt-1">支持 PDF / Word (.docx) / 图片 (OCR 识别) / 纯文本</p>
+                <p class="text-[10px] text-fg-tertiary mt-2">文件大小不超过 10 MB · 单次最多 5 份</p>
+              </div>
+
+              <!-- 已上传文件 -->
+              <div class="space-y-2">
+                <div class="flex items-center gap-3 px-3 py-2 bg-bg-subtle rounded-md border border-bg-border">
+                  <div class="w-9 h-9 rounded bg-danger-tint text-danger flex items-center justify-center flex-shrink-0">
+                    <iconify-icon class="text-lg" icon="mdi:file-pdf-box"></iconify-icon>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium truncate">北京某科技公司 - 数据服务采购合同 v3.pdf</div>
+                    <div class="text-[10px] text-fg-tertiary flex items-center gap-2 mt-0.5">
+                      <span>2.4 MB</span><span>·</span>
+                      <span class="text-success flex items-center gap-0.5">
+                        <iconify-icon icon="mdi:check-circle"></iconify-icon> 已解析 18 页
+                      </span>
+                      <span>·</span>
+                      <span>1,247 字</span>
+                    </div>
+                  </div>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">主合同</span>
+                  <button class="text-fg-tertiary hover:text-danger p-1">
+                    <iconify-icon icon="mdi:close"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 三种输入方式切换 -->
+              <div class="flex items-center gap-2 pt-2 border-t border-bg-border">
+                <span class="text-xs text-fg-tertiary">其他方式:</span>
+                <button class="h-7 px-2.5 bg-white border border-bg-border rounded text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+                  <iconify-icon icon="mdi:content-paste"></iconify-icon> 粘贴文本
+                </button>
+                <button class="h-7 px-2.5 bg-white border border-bg-border rounded text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+                  <iconify-icon icon="mdi:camera-outline"></iconify-icon> 拍照 OCR
+                </button>
+                <button class="h-7 px-2.5 bg-white border border-bg-border rounded text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+                  <iconify-icon icon="mdi:link-variant"></iconify-icon> URL 抓取
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片 2: 合同类型 + 立场 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:file-document-outline"></iconify-icon>
+                合同信息
+              </h4>
+            </div>
+            <div class="p-4 space-y-4">
+              <!-- 合同类型 -->
+              <div>
+                <label class="text-xs font-medium text-fg-secondary flex items-center gap-1 mb-2">
+                  合同类型 <span class="text-danger">*</span>
+                  <iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon>
+                </label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button class="px-3 py-2 bg-brand text-white rounded-md text-xs font-medium flex items-center justify-center gap-1 shadow-sm">
+                    <iconify-icon icon="mdi:home-city-outline"></iconify-icon> 房屋租赁
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:cash-multiple"></iconify-icon> 借款合同
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:briefcase-outline"></iconify-icon> 服务合同
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:cart-outline"></iconify-icon> 销售合同
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:account-tie-outline"></iconify-icon> 劳动合同
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:handshake-outline"></iconify-icon> 合伙协议
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:gavel"></iconify-icon> 委托代理
+                  </button>
+                  <button class="px-3 py-2 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1">
+                    <iconify-icon icon="mdi:dots-horizontal-circle-outline"></iconify-icon> 其他
+                  </button>
+                </div>
+              </div>
+
+              <!-- 立场 -->
+              <div>
+                <label class="text-xs font-medium text-fg-secondary mb-2 flex items-center gap-1">
+                  律师立场
+                  <iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon>
+                </label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                    <iconify-icon icon="mdi:account-tie" class="text-base"></iconify-icon>
+                    <span>甲方</span>
+                  </button>
+                  <button class="px-3 py-2.5 bg-brand text-white border border-brand rounded-md text-xs font-medium flex flex-col items-center gap-0.5 shadow-sm">
+                    <iconify-icon icon="mdi:account-outline" class="text-base"></iconify-icon>
+                    <span>乙方</span>
+                  </button>
+                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                    <iconify-icon icon="mdi:account-multiple-outline" class="text-base"></iconify-icon>
+                    <span>丙方</span>
+                  </button>
+                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                    <iconify-icon icon="mdi:scale-balance" class="text-base"></iconify-icon>
+                    <span>审查方</span>
+                  </button>
+                </div>
+                <p class="text-[10px] text-fg-tertiary mt-1.5 flex items-center gap-1">
+                  <iconify-icon icon="mdi:lightbulb-on-outline" class="text-warning"></iconify-icon>
+                  立场影响风险等级评估和策略方向: 乙方更关注权利失衡 / 显失公平 / 解除权不对等
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片 3: 可选字段 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:tune-variant"></iconify-icon>
+                可选字段
+                <span class="text-[10px] text-fg-tertiary font-normal">(可提升审查精度)</span>
+              </h4>
+              <button class="text-xs text-brand hover:underline">展开/收起</button>
+            </div>
+            <div class="p-4 grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-fg-secondary mb-1.5 block">行业领域</label>
+                <div class="h-9 px-3 bg-white border border-bg-border rounded-md flex items-center text-sm text-fg-tertiary">
+                  <iconify-icon icon="mdi:magnify" class="mr-1.5"></iconify-icon>
+                  搜索行业 (如: 互联网 / 金融 / 制造)
+                </div>
+              </div>
+              <div>
+                <label class="text-xs text-fg-secondary mb-1.5 block">标的金额 (元)</label>
+                <div class="h-9 px-3 bg-white border border-bg-border rounded-md flex items-center gap-1.5 text-sm">
+                  <span class="text-fg-tertiary">¥</span>
+                  <input type="text" class="flex-1 outline-none" placeholder="如 850000" value="1,200,000">
+                </div>
+              </div>
+              <div>
+                <label class="text-xs text-fg-secondary mb-1.5 block">管辖地</label>
+                <div class="h-9 px-3 bg-white border border-bg-border rounded-md flex items-center text-sm text-fg-tertiary">
+                  <iconify-icon icon="mdi:map-marker-outline" class="mr-1.5"></iconify-icon>
+                  北京市朝阳区
+                </div>
+              </div>
+              <div>
+                <label class="text-xs text-fg-secondary mb-1.5 block">关注领域 (多选)</label>
+                <div class="h-9 px-3 bg-white border border-bg-border rounded-md flex items-center gap-1 text-xs flex-wrap">
+                  <span class="px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">违约责任</span>
+                  <span class="px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">知识产权</span>
+                  <span class="text-fg-tertiary">+ 添加</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片 4: 高级选项 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:cog-outline"></iconify-icon>
+                高级选项
+              </h4>
+            </div>
+            <div class="p-4 space-y-2.5">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" checked class="mt-0.5 w-4 h-4 accent-brand">
+                <div class="flex-1">
+                  <div class="text-sm font-medium">生成修改建议</div>
+                  <div class="text-[10px] text-fg-tertiary">致命/重大风险必填, 含修改后条款模板</div>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm">推荐</span>
+              </label>
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" checked class="mt-0.5 w-4 h-4 accent-brand">
+                <div class="flex-1">
+                  <div class="text-sm font-medium">生成谈判策略</div>
+                  <div class="text-[10px] text-fg-tertiary">优先条款 + 杠杆 + 红线 + 立场建议</div>
+                </div>
+                <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm">推荐</span>
+              </label>
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 accent-brand">
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-fg-secondary">版本比对 (vs 历史版本)</div>
+                  <div class="text-[10px] text-fg-tertiary">需先上传历史版本, 标注 added/removed/modified</div>
+                </div>
+                <span class="text-[10px] text-fg-tertiary">可选</span>
+              </label>
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 accent-brand">
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-fg-secondary">关联类案检索</div>
+                  <div class="text-[10px] text-fg-tertiary">致命/重大风险自动召回同类合同纠纷案例</div>
+                </div>
+                <span class="text-[10px] text-fg-tertiary">可选</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 右 5 栏: 提示 + 历史 ============ -->
+        <div class="col-span-5 space-y-4">
+
+          <!-- AI 提示卡 -->
+          <div class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-md bg-ai flex items-center justify-center text-white">
+                <iconify-icon icon="mdi:shield-search"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-semibold flex items-center gap-1.5">
+                  Skill 2 · 合同风险审查
+                  <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-normal">
+                    <iconify-icon icon="mdi:sparkles"></iconify-icon> AI
+                  </span>
+                </div>
+                <div class="text-[10px] text-fg-tertiary">逐条审查 · 三级风险 · 修改建议 · 谈判策略</div>
+              </div>
+            </div>
+            <div class="bg-white/80 rounded-md p-3 mb-2 text-xs space-y-1.5">
+              <p class="text-fg-secondary font-medium">本 Skill 能为你做:</p>
+              <div class="flex items-start gap-1.5">
+                <iconify-icon icon="mdi:check-circle-outline" class="text-success flex-shrink-0 mt-0.5"></iconify-icon>
+                <span>逐条识别 <strong class="text-danger">致命 / 重大 / 建议</strong> 三级风险</span>
+              </div>
+              <div class="flex items-start gap-1.5">
+                <iconify-icon icon="mdi:check-circle-outline" class="text-success flex-shrink-0 mt-0.5"></iconify-icon>
+                <span>关联 30+ 法条 (民法典 / 民诉法 / 司法解释)</span>
+              </div>
+              <div class="flex items-start gap-1.5">
+                <iconify-icon icon="mdi:check-circle-outline" class="text-success flex-shrink-0 mt-0.5"></iconify-icon>
+                <span>提供<strong>修改后条款模板</strong> + 立场感知<strong>谈判策略</strong></span>
+              </div>
+              <div class="flex items-start gap-1.5">
+                <iconify-icon icon="mdi:close-circle-outline" class="text-fg-disabled flex-shrink-0 mt-0.5"></iconify-icon>
+                <span class="text-fg-tertiary">不替代律师判断 · 不做确定性预测</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 性能预算 -->
+          <div class="bg-white rounded-md shadow-card p-4">
+            <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+              <iconify-icon class="text-brand" icon="mdi:speedometer"></iconify-icon>
+              性能预算
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-fg-secondary">页面打开到可输入</span>
+                <span class="text-success font-medium">&lt; 500ms</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-fg-secondary">PDF 解析</span>
+                <span class="text-success font-medium">&lt; 1s</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-fg-secondary">图片 OCR</span>
+                <span class="text-warning font-medium">&lt; 3s</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-fg-secondary">审查 (含 LLM)</span>
+                <span class="text-success font-medium">&lt; 2.5s (P95)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 最近审查 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:history"></iconify-icon>
+                最近审查
+                <span class="bg-bg text-fg-secondary text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1.5">5</span>
+              </h4>
+              <a href="#" class="text-xs text-brand hover:underline">查看全部</a>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <!-- 历史项 1 -->
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate flex-1 min-w-0">数据服务采购合同 v2</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm flex-shrink-0">1 致命</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>房屋租赁</span><span>·</span>
+                  <span>2 小时前</span><span>·</span>
+                  <span class="text-success flex items-center gap-0.5">
+                    <iconify-icon icon="mdi:check"></iconify-icon> 已完成
+                  </span>
+                </div>
+              </div>
+              <!-- 历史项 2 -->
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate flex-1 min-w-0">借贷合同 - 张某</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded-sm flex-shrink-0">2 重大</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>借款合同</span><span>·</span>
+                  <span>昨天</span><span>·</span>
+                  <span class="text-success flex items-center gap-0.5">
+                    <iconify-icon icon="mdi:check"></iconify-icon> 已完成
+                  </span>
+                </div>
+              </div>
+              <!-- 历史项 3 -->
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate flex-1 min-w-0">劳动合同 - 北京分公司</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm flex-shrink-0">3 建议</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>劳动合同</span><span>·</span>
+                  <span>3 天前</span><span>·</span>
+                  <span class="text-success flex items-center gap-0.5">
+                    <iconify-icon icon="mdi:check"></iconify-icon> 已完成
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 数据规模 -->
+          <div class="bg-white rounded-md shadow-card p-4">
+            <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+              <iconify-icon class="text-brand" icon="mdi:database-outline"></iconify-icon>
+              数据规模
+            </h4>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div class="text-lg font-bold text-brand">5,000+</div>
+                <div class="text-[10px] text-fg-tertiary">合同模板</div>
+              </div>
+              <div>
+                <div class="text-lg font-bold text-brand">280+</div>
+                <div class="text-[10px] text-fg-tertiary">风险标注</div>
+              </div>
+              <div>
+                <div class="text-lg font-bold text-brand">30+</div>
+                <div class="text-[10px] text-fg-tertiary">法条关联</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 底部提交栏 (固定) ============ -->
+      <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between sticky bottom-0 z-10 border-t-4 border-brand">
+        <div class="flex items-center gap-3 text-xs text-fg-tertiary">
+          <iconify-icon icon="mdi:information-outline" class="text-brand"></iconify-icon>
+          <span>已选择 1 份合同 · 房屋租赁 · 乙方立场 · 包含修改建议和谈判策略</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="h-9 px-4 text-fg-secondary hover:text-brand text-sm">清空</button>
+          <button class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+            <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存草稿
+          </button>
+          <button class="h-9 px-5 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+            <iconify-icon icon="mdi:shield-search"></iconify-icon>
+            审查合同
+            <kbd class="text-[10px] text-white/80 bg-white/20 px-1 rounded ml-1">⏎</kbd>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============ 强制免责声明 ============ -->
+      <div class="text-[10px] text-fg-tertiary text-center py-2 border-t border-bg-border">
+        本审查仅为基于合同文本的客观风险标注与法律依据提示, 不构成法律意见, 更不替代律师的专业判断。
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 设计水印 -->
+
+</div>
