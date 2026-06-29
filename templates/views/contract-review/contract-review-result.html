@@ -351,13 +351,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
             </div>
           </div>
 
-          <!-- 条款 2: 重大 -->
-          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden cr-fatal-clause" data-fatal-index="1">
-            <div class="px-4 py-3 border-b border-warning/20 flex items-center justify-between">
+          <!-- 条款 2: 致命 (D3 W8 demo: major → fatal, 凑 5 致命) -->
+          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause" data-fatal-index="1">
+            <div class="px-4 py-3 border-b border-danger/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
-                <span class="text-xs font-mono font-bold text-warning bg-warning-tint px-2 py-0.5 rounded">第 8 条</span>
+                <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 8 条</span>
                 <h5 class="font-semibold text-sm truncate">争议管辖</h5>
-                <span class="text-[10px] px-1.5 py-0.5 bg-warning text-white rounded-sm font-bold">重大</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
               </div>
               <div class="flex items-center gap-1 flex-shrink-0">
                 <span class="text-[10px] text-warning font-medium">置信度 88%</span>
@@ -420,13 +420,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
             </div>
           </div>
 
-          <!-- 条款 3: 重大 -->
-          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden cr-fatal-clause" data-fatal-index="2">
-            <div class="px-4 py-3 border-b border-warning/20 flex items-center justify-between">
+          <!-- 条款 3: 致命 (D3 W8 demo: major → fatal, 凑 5 致命) -->
+          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause" data-fatal-index="2">
+            <div class="px-4 py-3 border-b border-danger/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
-                <span class="text-xs font-mono font-bold text-warning bg-warning-tint px-2 py-0.5 rounded">第 9 条</span>
+                <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 9 条</span>
                 <h5 class="font-semibold text-sm truncate">知识产权</h5>
-                <span class="text-[10px] px-1.5 py-0.5 bg-warning text-white rounded-sm font-bold">重大</span>
+                <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
               </div>
               <div class="flex items-center gap-1 flex-shrink-0">
                 <span class="text-[10px] text-warning font-medium">置信度 82%</span>
@@ -451,7 +451,82 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
             </div>
           </div>
 
-          <!-- 条款 4: 建议 (折叠) -->
+          <!-- 条款 4: 致命 (D3 W8 demo: 加到 5 个 fatal, 触发折叠) -->
+          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause" data-fatal-index="3">
+            <div class="px-4 py-3 border-b border-danger/20 flex items-center justify-between">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 6 条</span>
+                <h5 class="font-semibold text-sm truncate">转租与转让限制</h5>
+                <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <span class="text-[10px] text-danger font-medium">置信度 87%</span>
+                <a href="03-suggestion-detail.html" class="text-[10px] text-brand hover:underline">查看详情 →</a>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <div>
+                <div class="text-[10px] text-fg-tertiary mb-1.5">条款原文</div>
+                <p class="text-sm leading-relaxed bg-white rounded p-3 border border-bg-border">
+                  未经甲方书面同意, 乙方不得将承租房屋
+                  <span class="hl-fatal" title="致命风险: 转租限制过严, 乙方丧失经营灵活性">部分或全部转租给第三方</span>,
+                  违反者甲方有权单方解除合同且不退还押金。
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <div class="text-[10px] text-fg-tertiary mb-1">风险分类</div>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">转租限制过严</span>
+                    <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">单方解除过激</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-fg-tertiary mb-1">立场影响</div>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm font-medium">⚠️ 对乙方极为不利</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 条款 5: 致命 (D3 W8 demo: 加到 5 个 fatal, 触发折叠) -->
+          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause" data-fatal-index="4">
+            <div class="px-4 py-3 border-b border-danger/20 flex items-center justify-between">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 10 条</span>
+                <h5 class="font-semibold text-sm truncate">合同解除与押金罚没</h5>
+                <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <span class="text-[10px] text-danger font-medium">置信度 91%</span>
+                <a href="03-suggestion-detail.html" class="text-[10px] text-brand hover:underline">查看详情 →</a>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <div>
+                <div class="text-[10px] text-fg-tertiary mb-1.5">条款原文</div>
+                <p class="text-sm leading-relaxed bg-white rounded p-3 border border-bg-border">
+                  乙方逾期支付租金超过 15 日的, 甲方有权
+                  <span class="hl-fatal" title="致命风险: 押金罚没 + 逾期门槛过低 (15 日)">单方解除合同, 收回房屋, 且不退还押金</span>。
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <div class="text-[10px] text-fg-tertiary mb-1">风险分类</div>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">押金罚没</span>
+                    <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">逾期门槛过低</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-fg-tertiary mb-1">立场影响</div>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm font-medium">⚠️ 对乙方极为不利</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 条款 6: 建议 (折叠) -->
           <div class="bg-white rounded-md shadow-card clause-advisory overflow-hidden">
             <div class="px-4 py-3 border-b border-brand/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
@@ -488,6 +563,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
               </p>
             </div>
           </div>
+
+          <!-- W7: 致命条款 > 3 自动折叠 (W4 P2 修复) -->
+          <button id="cr-fatal-toggle" class="cr-fatal-toggle hidden w-full mt-2 px-4 py-2.5 bg-white border border-dashed border-danger/40 rounded-md text-xs font-medium text-danger hover:bg-danger-tint flex items-center justify-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-danger/30" aria-expanded="false" aria-controls="cr-fatal-overflow">
+            <iconify-icon icon="mdi:chevron-down" class="text-base cr-fatal-toggle-icon"></iconify-icon>
+            <span id="cr-fatal-toggle-text">查看其余致命条款</span>
+            <span id="cr-fatal-toggle-count" class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm font-bold"></span>
+          </button>
           </div><!-- /fatal-clauses-container -->
 
           <!-- P1: 版本比对面板 (W6+ 占位) -->
@@ -723,3 +805,63 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 <!-- 设计水印 -->
 
 </div>
+
+<!-- W7: 致命条款自动折叠逻辑 (W4 P2 修复) -->
+<!-- D3 W8 修复: 优先用 window.CR.__applyFatalCollapse (single source of truth), -->
+<!--   fallback inline 脚本 (用 .clause-fatal 只数致命, 不含 major) -->
+<script>
+(function() {
+  function applyCollapse() {
+    // D3 W8: 优先调用 contract-review.js 的 single source of truth
+    if (window.CR && typeof window.CR.__applyFatalCollapse === 'function') {
+      window.CR.__applyFatalCollapse(3);
+      return;
+    }
+    // Fallback: 致命条款 > 3 自动折叠, 只数 .clause-fatal (D3 W8 修复: 之前用 .cr-fatal-clause 包含 major, 不准)
+    var VISIBLE_LIMIT = 3;
+    var container = document.getElementById('fatal-clauses-container');
+    if (!container) return;
+    var fatals = container.querySelectorAll('.clause-fatal');
+    if (fatals.length === 0) return;
+    var overflowCount = 0;
+    fatals.forEach(function(c, idx) {
+      if (idx >= VISIBLE_LIMIT) {
+        c.classList.add('cr-fatal-overflow');
+        c.style.display = 'none';
+        overflowCount += 1;
+      } else {
+        c.classList.remove('cr-fatal-overflow');
+        c.style.display = '';
+      }
+    });
+    var btn = document.getElementById('cr-fatal-toggle');
+    if (!btn) return;
+    if (overflowCount > 0) {
+      btn.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      var textEl = document.getElementById('cr-fatal-toggle-text');
+      var countEl = document.getElementById('cr-fatal-toggle-count');
+      if (textEl) textEl.textContent = '查看其余致命条款';
+      if (countEl) countEl.textContent = '+' + overflowCount;
+      btn.onclick = function() {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        container.querySelectorAll('.cr-fatal-overflow').forEach(function(c) {
+          c.style.display = expanded ? 'none' : '';
+        });
+        var icon = btn.querySelector('.cr-fatal-toggle-icon');
+        if (icon) icon.style.transform = expanded ? '' : 'rotate(180deg)';
+        if (textEl) textEl.textContent = expanded ? '查看其余致命条款' : '收起致命条款';
+      };
+    } else {
+      btn.classList.add('hidden');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyCollapse);
+  } else {
+    applyCollapse();
+  }
+})();
+</script>

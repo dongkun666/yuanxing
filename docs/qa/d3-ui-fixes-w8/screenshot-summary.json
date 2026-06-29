@@ -1,0 +1,83 @@
+{
+  "pages": [
+    {
+      "page": "01-upload",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\01-upload-desktop.png"
+    },
+    {
+      "page": "02-result",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\02-result-desktop.png"
+    },
+    {
+      "page": "03-suggestion",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\03-suggestion-desktop.png"
+    },
+    {
+      "page": "04-negotiation",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\04-negotiation-desktop.png"
+    },
+    {
+      "page": "05-export",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\05-export-desktop.png"
+    },
+    {
+      "page": "01-upload",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\01-upload-mobile.png"
+    },
+    {
+      "page": "02-result",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\02-result-mobile.png"
+    },
+    {
+      "page": "03-suggestion",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\03-suggestion-mobile.png"
+    },
+    {
+      "page": "04-negotiation",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\04-negotiation-mobile.png"
+    },
+    {
+      "page": "05-export",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\05-export-mobile.png"
+    }
+  ],
+  "fatal_cases": [
+    {
+      "case": "0-fatal",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\fatal-0-fatal-mobile.png",
+      "result": {
+        "visible": 0,
+        "hidden": 0,
+        "buttonVisible": false
+      }
+    },
+    {
+      "case": "3-fatal",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\fatal-3-fatal-mobile.png",
+      "result": {
+        "visible": 3,
+        "hidden": 0,
+        "buttonVisible": false
+      }
+    },
+    {
+      "case": "5-fatal",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\d3-ui-fixes-w8\\screenshots\\fatal-5-fatal-mobile.png",
+      "result": {
+        "visible": 3,
+        "hidden": 2,
+        "buttonVisible": true
+      }
+    }
+  ]
+}
