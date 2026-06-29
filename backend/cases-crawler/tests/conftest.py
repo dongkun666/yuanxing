@@ -43,8 +43,9 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     )
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
-    # 建表 (含 auth.* 4 张 + core.models 全部)
+    # 建表 (含 auth.* 4 张 + core.models 全部 + W12 A2 doc_workflow DocReviewState + Signature)
     from core.models import Base  # noqa: F401
+    from core import doc_workflow as _doc_workflow  # noqa: F401  (注册 DocReviewState + Signature)
     from auth import models  # noqa: F401
 
     async with engine.begin() as conn:

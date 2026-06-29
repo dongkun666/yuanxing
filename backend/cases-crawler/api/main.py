@@ -191,6 +191,28 @@ try:
 except Exception as e:
     logger.warning(f"W10 Skill 一体化 router 加载失败 (非致命): {e}")
 
+# W12 A2 (lex-coder · 2026-06-30) 双审工作流 (5 状态机 + 4 文书风险标注)
+# 承接 W9 C1 4 文书 + W10 A1 一体化 + W3 Skill 2 reviewer
+# 端点: GET/PATCH /api/doc-gen/{doc_id}/state, POST /api/doc-gen/{doc_id}/risk-annotation,
+#       GET /api/doc-gen/workflow/board, GET /api/doc-gen/workflow/health
+try:
+    # 显式 import core.doc_workflow 注册 ORM 模型到 Base.metadata
+    from core import doc_workflow as _dw  # noqa: F401
+    from api.doc_workflow_router import router as doc_workflow_router
+    app.include_router(doc_workflow_router)
+    logger.info("W12 A2 双审工作流状态机 router registered")
+except Exception as e:
+    logger.warning(f"W12 A2 双审工作流 router 加载失败 (非致命): {e}")
+
+# W12 A2 (lex-coder · 2026-06-30) 客户签字确认 (signature_router)
+# 端点: POST /api/signature/{doc_id}, GET /api/signature/{doc_id}
+try:
+    from api.signature_router import router as signature_router
+    app.include_router(signature_router)
+    logger.info("W12 A2 客户签字 router registered")
+except Exception as e:
+    logger.warning(f"W12 A2 客户签字 router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")

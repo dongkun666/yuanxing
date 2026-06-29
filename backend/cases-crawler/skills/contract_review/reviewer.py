@@ -999,6 +999,298 @@ def _serialize_review(r: ClauseReview) -> Dict[str, Any]:
     return d
 
 
+# ===== W12 A2: 4 文书类型风险维度标注 =====
+
+# logger (W12 A2 新增, 原文件未用 loguru)
+from loguru import logger as _reviewer_logger  # noqa: E402
+
+# 重命名, 不污染原 reviewer.py 命名空间
+logger = _reviewer_logger
+
+# 4 文书类型各自的风险维度 (PRD V5.0 § 11 + W12 A2 prompt)
+# 起诉: 案由 / 诉讼请求 / 事实理由 / 法条引用
+# 答辩: 反驳 / 抗辩 / 反诉 / 证据
+# 合同: 标的 / 价款 / 履行 / 违约 / 管辖 (复用 Skill 2 5 大维度)
+# 律师函: 事实 / 法律意见 / 要求 / 时限 / 后果
+
+DOC_TYPE_RISK_DIMENSIONS = {
+    "complaint": ["案由", "诉讼请求", "事实理由", "法条引用"],
+    "defense":   ["反驳", "抗辩", "反诉", "证据"],
+    "contract":  ["标的", "价款", "履行", "违约", "管辖"],
+    "letter":    ["事实", "法律意见", "要求", "时限", "后果"],
+}
+
+
+# 4 文书类型各自维度对应的正则关键词 (用于风险标注)
+# 命中关键词 → 标记为对应维度的风险点
+DOC_TYPE_DIMENSION_PATTERNS = {
+    "complaint": {
+        "案由": [
+            (r"(?:请求|判令|依法|依据).{0,30}(?:解除|确认|赔偿|支付|返还)", "advisory", "诉讼请求表述笼统"),
+        ],
+        "诉讼请求": [
+            (r"(?:本金|利息|违约金|赔偿金|费用).{0,30}人民币", "advisory", "金额表述建议精确"),
+            (r"(?:判令|请求).{0,30}(?:承担|负担).{0,10}(?:全部|本案)", "advisory", "诉讼请求未限定具体金额"),
+        ],
+        "事实理由": [
+            (r"事实.{0,5}(?:清楚|清楚)", "ok", ""),
+            (r"(?:暂不清楚|不明|待查)", "major", "事实不清, 需补充"),
+        ],
+        "法条引用": [
+            (r"(?:民法典|民事诉讼法).{0,5}第[零一二三四五六七八九十百千\d]+条", "ok", "法条引用具体"),
+            (r"(?:相关法律|有关法律规定|依法)", "advisory", "法条引用笼统, 建议精确"),
+        ],
+    },
+    "defense": {
+        "反驳": [
+            (r"(?:不存在|并非|从未|并未|不属实)", "ok", "反驳论点明确"),
+            (r"(?:部分|基本)", "advisory", "反驳不彻底, 建议明确"),
+        ],
+        "抗辩": [
+            (r"(?:时效|期间|除斥期间).{0,20}(?:届满|经过|已过)", "ok", "抗辩理由充分"),
+            (r"(?:管辖|约定管辖)", "advisory", "管辖抗辩可考虑"),
+        ],
+        "反诉": [
+            (r"(?:反诉|提起反诉|提出反诉)", "ok", "反诉请求明确"),
+            (r"(?:另案|另行|起诉)", "advisory", "反诉 vs 另案起诉待定"),
+        ],
+        "证据": [
+            (r"(?:证据|书证|物证|证人|鉴定意见).{0,20}(?:充分|确实|足以)", "ok", "证据充分"),
+            (r"(?:待证|举证|无法证明|举证不能)", "major", "证据不足, 需补充"),
+        ],
+    },
+    "contract": {
+        "标的": [
+            (r"(?:标的物|标的额|标的).{0,30}(?:详见|见附件|参见)", "advisory", "标的具体性可加强"),
+        ],
+        "价款": [
+            (r"(?:价款|金额|总额).{0,20}人民币.{0,20}元", "ok", "价款明确"),
+            (r"(?:待定|协商|双方约定|另行约定).{0,10}(?:价款|金额)", "major", "价款不确定, 易引发争议"),
+        ],
+        "履行": [
+            (r"(?:履行|交付|支付).{0,30}(?:期限|时间|日期)", "ok", "履行期限明确"),
+            (r"(?:合理期限|尽快|及时)", "major", "履行期限模糊, 易引发争议"),
+        ],
+        "违约": [
+            (r"(?:违约金).{0,20}(?:月|年|日|百分之|万分之)", "major", "违约金比例可能过高"),
+            (r"(?:违约).{0,10}(?:责任)", "ok", "违约责任条款存在"),
+        ],
+        "管辖": [
+            (r"(?:房屋|合同签订|合同履行).{0,10}(?:所在地|人民法院)", "ok", "管辖连接点合理"),
+            (r"(?:甲方|乙方|丙方).{0,5}(?:住所地|所在地).{0,10}(?:法院|人民法院)", "major", "管辖对乙方不利"),
+        ],
+    },
+    "letter": {
+        "事实": [
+            (r"(?:贵公司|贵方|贵司).{0,50}(?:行为|违约|违反)", "ok", "事实陈述明确"),
+            (r"(?:据悉|据了解|据查)", "advisory", "事实来源可补充"),
+        ],
+        "法律意见": [
+            (r"(?:律师|本律师).{0,20}(?:认为|意见|建议)", "ok", "法律意见明确"),
+            (r"(?:可能|或许|也许)", "advisory", "法律意见确定性可加强"),
+        ],
+        "要求": [
+            (r"(?:要求|请|务必).{0,30}(?:停止|支付|履行|返还)", "ok", "要求明确"),
+            (r"(?:请.{0,5}贵方.{0,10}考虑)", "advisory", "要求可更具体"),
+        ],
+        "时限": [
+            (r"\d+\s*(?:日|天|工作日).{0,10}(?:内|之前)", "ok", "时限明确"),
+            (r"(?:尽快|及时|合理期限)", "major", "时限模糊, 建议精确"),
+        ],
+        "后果": [
+            (r"(?:否则|不然).{0,30}(?:诉讼|起诉|仲裁|追究)", "ok", "后果表述清楚"),
+            (r"(?:可能|将).{0,20}(?:追究|诉讼|起诉)", "ok", "后果预警充分"),
+        ],
+    },
+}
+
+
+@dataclass
+class DimensionAnnotation:
+    """单维度的风险标注结果"""
+    dimension: str
+    risk_level: str  # fatal / major / advisory / ok
+    matched_keywords: List[str]
+    description: str
+    matched_count: int = 0
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class DocRiskAnnotationResult:
+    """4 文书类型风险标注的完整结果 (W12 A2)"""
+    doc_id: str
+    doc_type: str
+    doc_type_label: str
+    dimensions: List[DimensionAnnotation]
+    fatal_count: int
+    major_count: int
+    advisory_count: int
+    ok_count: int
+    overall_risk_level: str  # high / medium / low
+    disclaimer: str
+    latency_ms: int
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+DOC_TYPE_LABELS = {
+    "complaint": "民事起诉状",
+    "defense": "民事答辩状",
+    "contract": "合同",
+    "letter": "律师函",
+}
+
+DOC_RISK_DISCLAIMER = (
+    "本风险标注基于 LexPrime Skill 2 (W12 A2 扩展) 规则层关键词扫描, "
+    "仅作为辅助律师审核的参考, 不构成正式法律意见, "
+    "律师应根据案件实际情况进行最终判断。"
+)
+
+
+def annotate_doc_risk_dimensions(doc_id: str, doc_type: str,
+                                   doc_markdown: str,
+                                   case_id: Optional[str] = None) -> DocRiskAnnotationResult:
+    """对 4 文书类型之一进行风险维度标注 (W12 A2)
+    
+    Args:
+        doc_id:       文书 ID (Skill 3 gen_id)
+        doc_type:     4 文书类型 (complaint/defense/contract/letter)
+        doc_markdown: 文书 markdown 全文
+        case_id:      案号 (可选, 用于审计)
+    
+    Returns:
+        DocRiskAnnotationResult 含 dimensions[] + 风险汇总
+    
+    原理:
+        复用 Skill 2 FATAL_KEYWORDS + MAJOR_KEYWORDS + ADVISORY_KEYWORDS,
+        但按 4 文书类型各自的"风险维度"分类输出。
+    
+    例: 起诉状 + 维度"法条引用"
+        - 命中"《民法典》XXX条" → ok (法条具体)
+        - 命中"相关法律" → advisory (法条笼统)
+    """
+    t0 = time.time()
+
+    if doc_type not in DOC_TYPE_RISK_DIMENSIONS:
+        raise ValueError(f"未知文书类型: {doc_type}, 仅支持 {list(DOC_TYPE_RISK_DIMENSIONS.keys())}")
+
+    dimensions = DOC_TYPE_RISK_DIMENSIONS[doc_type]
+    patterns = DOC_TYPE_DIMENSION_PATTERNS.get(doc_type, {})
+
+    # 输入消毒 (防禁用词污染)
+    doc_markdown = sanitize_input(doc_markdown)
+
+    annotations: List[DimensionAnnotation] = []
+    fatal_count = 0
+    major_count = 0
+    advisory_count = 0
+    ok_count = 0
+
+    for dim in dimensions:
+        dim_patterns = patterns.get(dim, [])
+        matched_kws: List[str] = []
+        highest_level = "ok"
+        description = ""
+        matched_count = 0
+
+        for pattern, level, desc in dim_patterns:
+            try:
+                if re.search(pattern, doc_markdown):
+                    matched_kws.append(desc or pattern)
+                    description = desc
+                    matched_count += 1
+                    # 升级风险等级 (fatal > major > advisory > ok)
+                    if level == "fatal":
+                        highest_level = "fatal"
+                    elif level == "major" and highest_level != "fatal":
+                        highest_level = "major"
+                    elif level == "advisory" and highest_level not in ("fatal", "major"):
+                        highest_level = "advisory"
+            except re.error:
+                continue
+
+        # 通用风险扫描: 复用 Skill 2 FATAL/MAJOR/ADVISORY 关键词 (跨文书通用)
+        if highest_level == "ok":
+            for cat, kws in FATAL_KEYWORDS.items():
+                for p in kws:
+                    if re.search(p, doc_markdown):
+                        highest_level = "fatal"
+                        matched_kws.append(f"通用致命风险: {cat}")
+                        description = f"命中通用致命风险: {cat}"
+                        matched_count += 1
+                        break
+                if highest_level == "fatal":
+                    break
+        if highest_level in ("ok", "advisory"):
+            for cat, kws in MAJOR_KEYWORDS.items():
+                for p in kws:
+                    if re.search(p, doc_markdown):
+                        if highest_level == "ok":
+                            highest_level = "major"
+                        matched_kws.append(f"通用重大风险: {cat}")
+                        description = description or f"命中通用重大风险: {cat}"
+                        matched_count += 1
+                        break
+                if highest_level == "major":
+                    break
+
+        ann = DimensionAnnotation(
+            dimension=dim,
+            risk_level=highest_level,
+            matched_keywords=matched_kws[:5],  # top 5
+            description=description or f"{dim}维度扫描完成, 无明显风险",
+            matched_count=matched_count,
+        )
+        annotations.append(ann)
+
+        if highest_level == "fatal":
+            fatal_count += 1
+        elif highest_level == "major":
+            major_count += 1
+        elif highest_level == "advisory":
+            advisory_count += 1
+        else:
+            ok_count += 1
+
+    # 整体风险等级
+    if fatal_count > 0:
+        overall = "high"
+    elif major_count > 0:
+        overall = "medium"
+    elif advisory_count > 0:
+        overall = "low"
+    else:
+        overall = "low"
+
+    # 强制 language_guard (narrative 由 caller 拼, 这里只输出 dimensions)
+    # 简单风险描述走 narrative 字段留空, 上层 doc_workflow_router 自行组装
+
+    latency_ms = int((time.time() - t0) * 1000)
+    logger.info(
+        f"[skill2.annotate_dimensions] doc_id={doc_id} doc_type={doc_type} "
+        f"fatal={fatal_count} major={major_count} advisory={advisory_count} ok={ok_count} "
+        f"latency={latency_ms}ms"
+    )
+
+    return DocRiskAnnotationResult(
+        doc_id=doc_id,
+        doc_type=doc_type,
+        doc_type_label=DOC_TYPE_LABELS.get(doc_type, doc_type),
+        dimensions=annotations,
+        fatal_count=fatal_count,
+        major_count=major_count,
+        advisory_count=advisory_count,
+        ok_count=ok_count,
+        overall_risk_level=overall,
+        disclaimer=DOC_RISK_DISCLAIMER,
+        latency_ms=latency_ms,
+    )
+
+
 # ===== CLI =====
 
 if __name__ == "__main__":
