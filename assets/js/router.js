@@ -55,7 +55,9 @@
         'contract-review-negotiation': 'contract-review/contract-review-negotiation.html',
         'contract-review-export': 'contract-review/contract-review-export.html',
         // W6 (2026-06-29 lex-coder) 律师评审 Score App
-        'review-score-app': 'review/score-app.html'
+        'review-score-app': 'review/score-app.html',
+        // W7 (2026-06-29 lex-coder) 评审数据看板
+        'review-board': 'review/board.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
@@ -114,6 +116,11 @@
                     if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
                 }, 50);
             }
+            if (viewId === 'review-board') {
+                setTimeout(function() {
+                    if (typeof window.__loadReviewBoard === 'function') window.__loadReviewBoard();
+                }, 50);
+            }
         } else {
             loadView(viewId, function(html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
@@ -140,6 +147,11 @@
                     if (viewId === 'notifications') {
                         setTimeout(function() {
                             if (typeof window.setNotificationsFilter === 'function') window.setNotificationsFilter(AppState.notificationsFilter || 'all');
+                        }, 50);
+                    }
+                    if (viewId === 'review-board') {
+                        setTimeout(function() {
+                            if (typeof window.__loadReviewBoard === 'function') window.__loadReviewBoard();
                         }, 50);
                     }
                 }

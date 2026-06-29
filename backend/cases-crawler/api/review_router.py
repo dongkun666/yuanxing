@@ -1,26 +1,27 @@
 """
 LexPrime W6 律师评审 Score App API Router (lex-coder · 2026-06-29)
+W7 扩展 (2026-06-29): 评审问题收集 + 数据看板
 
-端点 (4 个):
+端点 (W6 = 5 个 / W7 +3 = 8 个):
 - GET  /api/review/contracts       列出 5 测试合同 (复用 W5 contract_review fixtures)
 - POST /api/review/submit-score    提交律师 5 维度评分 + 5 评论
                                   (一次提交展开成 5 行 review_scores: lawyer × contract × dimension)
 - GET  /api/review/my-scores       律师历史评分 (按 lawyer_id 查询)
 - GET  /api/review/summary         团队汇总 (聚合 5 律师 × 5 合同 = 25 条评分)
                                   (含 平均分 / 方差 / 律师具体评论 / 自动生成 prd-feedback v1.0)
+- GET  /api/review/health          健康检查
 
-数据模型: review_scores
-- id (PK) / lawyer_id / contract_id / dimension / score / comment / created_at
-- 一次律师对一份合同的评分 = 5 行 (5 维度各一行)
-- 5 律师 × 5 合同 × 5 维度 = 125 行 (W6 评审后总数)
+[W7 新增 3 端点 - 评审现场问题收集 + 看板]
+- POST /api/review/question        律师现场提交问题 (答不到/想深挖/PRD 建议)
+- GET  /api/review/questions       问题列表 (按 lawyer_id / category 过滤)
+- GET  /api/review/board           数据看板 (5 律师 × 5 合同 × 5 维度 + 评论 + 问题)
 
-兼容性:
-- 复用 W5 fixtures (data/fixtures/contract_review/*.json)
-- 复用 SQLAlchemy 2.0 异步 (跟 auth/*.py 一致)
-- 复用 Pydantic v2 + loguru (跟 contract_review_router.py 一致)
+数据模型:
+- review_scores  (W6)  id / lawyer_id / contract_id / dimension / score / comment / created_at
+- review_questions (W7) id / lawyer_id / question_text / category / context / status / created_at
 
-W4 → W5: 律师评审准备 (test-contracts-results.md + scoring-rubric.md + schedule.md)
-W6: 评审现场执行 (Score App + 汇总) — 本文件
+W6: 评审现场执行 (Score App + 汇总)
+W7: 现场问题收集 + 数据回流 → 自动生成 prd-feedback v1.0
 """
 from __future__ import annotations
 
@@ -95,6 +96,44 @@ class ReviewScore(Base):
     )
 
 
+# ====== ORM Model: review_questions (W7) ======
+class ReviewQuestion(Base):
+    """W7 律师评审现场问题收集 (律师提到但 Skill 2 答不到/想深挖/PRD 建议)
+
+    Schema:
+        id            INTEGER PK
+        lawyer_id     TEXT (L1-L5)
+        question_text TEXT (≤ 500 字, 必填)
+        category      TEXT (产品 / 技术 / 法务 / 其他)
+        context       TEXT (≤ 1000 字, 律师描述使用场景, 可选)
+        status        TEXT (open / answered / triaged / deferred)
+        created_at    DATETIME (服务端时间)
+
+    用途:
+        - 评审现场 PM 助理收到后, triage 给对应 agent (lex-coder/lex-ai/lex-design)
+        - W7 末 review-summary-w6.md §6 自动汇总
+        - W8+ 转 PRD backlog (Top 5 改进 + Top 3 新需求)
+    """
+    __tablename__ = "review_questions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    lawyer_id = Column(String(16), nullable=False, index=True)
+    question_text = Column(Text, nullable=False)
+    category = Column(String(16), nullable=False, index=True)  # 产品/技术/法务/其他
+    context = Column(Text, nullable=True)
+    status = Column(String(16), nullable=False, default="open", index=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        server_default=None,
+    )
+
+    __table_args__ = (
+        Index("ix_review_q_lawyer_status", "lawyer_id", "status"),
+    )
+
+
 # ====== 常量: 5 律师 + 5 测试合同 ======
 DIMENSION_IDS = [
     "fatal_accuracy",
@@ -138,6 +177,11 @@ CONTRACT_ICON_BY_TYPE = {
     "服务合同": "mdi:laptop",
     "销售合同": "mdi:cart-outline",
 }
+
+
+# ====== W7 常量: 问题分类 + 状态 ======
+QUESTION_CATEGORIES = ["产品", "技术", "法务", "其他"]
+QUESTION_STATUSES = ["open", "answered", "triaged", "deferred"]
 
 
 # ====== Pydantic Models ======
@@ -761,16 +805,20 @@ async def review_health():
             func.concat(ReviewScore.lawyer_id, "-", ReviewScore.contract_id)
         )))
         eval_count = (await session.execute(eval_stmt)).scalar() or 0
+        # W7 增: review_questions 计数
+        q_count_stmt = select(func.count(ReviewQuestion.id))
+        question_count = (await session.execute(q_count_stmt)).scalar() or 0
 
     return {
         "status": "ok",
         "service_id": "lexprime.review.score-app",
-        "version": "0.1.0-w6",
+        "version": "0.2.0-w7",
         "lawyers_count": len(LAWYER_IDS),
         "contracts_count": len(CONTRACT_IDS),
         "dimensions_count": len(DIMENSION_IDS),
         "submitted_evaluations": eval_count,
         "submitted_score_rows": score_count,
+        "submitted_questions": question_count,
         "expected_evaluations": 25,  # 5 × 5
         "endpoints": [
             "GET /api/review/contracts",
@@ -778,5 +826,381 @@ async def review_health():
             "GET /api/review/my-scores",
             "GET /api/review/summary",
             "GET /api/review/health",
+            # W7 增
+            "POST /api/review/question",
+            "GET /api/review/questions",
+            "GET /api/review/board",
         ],
     }
+
+
+# ====== W7 Pydantic: 问题提交 ======
+class SubmitQuestionRequest(BaseModel):
+    """律师现场提交问题
+
+    字段:
+        lawyer_id     律师编号 (L1-L5)
+        question_text 问题正文 (10-500 字)
+        category      分类 (产品/技术/法务/其他)
+        context       律师描述使用场景 (≤ 1000 字, 可选)
+        status        初始状态 (默认 open)
+    """
+    lawyer_id: str = Field(..., min_length=1, max_length=16, description="评审律师编号 (L1-L5)")
+    question_text: str = Field(..., min_length=10, max_length=500, description="问题正文 10-500 字")
+    category: str = Field(..., description="分类: 产品/技术/法务/其他")
+    context: Optional[str] = Field(None, max_length=1000, description="律师使用场景描述")
+    status: str = Field("open", description="初始状态")
+
+    @field_validator("lawyer_id")
+    @classmethod
+    def validate_lawyer_id(cls, v: str) -> str:
+        v = v.strip()
+        if v not in LAWYER_IDS:
+            if v.startswith("L") and len(v) <= 4:
+                return v
+            raise ValueError(f"lawyer_id 必须是 {LAWYER_IDS} 之一, 或 L 开头 ≤ 4 字符")
+        return v
+
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, v: str) -> str:
+        v = v.strip()
+        if v not in QUESTION_CATEGORIES:
+            raise ValueError(f"category 必须是 {QUESTION_CATEGORIES} 之一")
+        return v
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        v = v.strip()
+        if v not in QUESTION_STATUSES:
+            raise ValueError(f"status 必须是 {QUESTION_STATUSES} 之一")
+        return v
+
+
+class SubmitQuestionResponse(BaseModel):
+    """提交问题响应"""
+    question_id: int
+    lawyer_id: str
+    question_text: str
+    category: str
+    context: Optional[str]
+    status: str
+    created_at: str
+    next: str  # "GET /api/review/questions?lawyer_id=L1"
+
+
+class QuestionEntry(BaseModel):
+    """问题条目 (用于 list / board 响应)"""
+    id: int
+    lawyer_id: str
+    question_text: str
+    category: str
+    context: Optional[str]
+    status: str
+    created_at: str
+
+
+class QuestionsListResponse(BaseModel):
+    """问题列表响应"""
+    total: int
+    by_category: Dict[str, int] = Field(..., description="按 category 计数 {产品: 3, 技术: 5, ...}")
+    by_status: Dict[str, int] = Field(..., description="按 status 计数 {open: 8, answered: 2, ...}")
+    questions: List[QuestionEntry]
+
+
+# ====== W7 端点 1: POST /api/review/question ======
+@router.post("/question", response_model=SubmitQuestionResponse, status_code=201)
+async def submit_question(req: SubmitQuestionRequest):
+    """律师现场提交问题 (评审时口头提到但 Skill 2 答不到 / 想深挖 / PRD 建议)
+
+    流程:
+        1. 律师在评审现场口头提到 → PM 助理用手机 / 平板提交
+        2. 入库 review_questions 表 (status=open 初始)
+        3. PM 24h 内 triage → 分给 lex-coder / lex-ai / lex-design
+        4. 评审 #2 结束后, aggregate-review-scores.py 自动汇总到
+           docs/skills/contract-review/prd-feedback.md v1.0
+    """
+    async with Database.session() as session:
+        entry = ReviewQuestion(
+            lawyer_id=req.lawyer_id,
+            question_text=req.question_text,
+            category=req.category,
+            context=req.context,
+            status=req.status,
+            created_at=datetime.now(timezone.utc),
+        )
+        session.add(entry)
+        try:
+            await session.flush()
+        except Exception as e:
+            await session.rollback()
+            logger.exception(f"[review.submit-question] DB error: {e}")
+            raise HTTPException(500, f"提交问题失败: {e}")
+
+    logger.info(
+        f"[review.submit-question] lawyer={req.lawyer_id} category={req.category} "
+        f"len={len(req.question_text)} status={req.status}"
+    )
+
+    return SubmitQuestionResponse(
+        question_id=entry.id,
+        lawyer_id=req.lawyer_id,
+        question_text=req.question_text,
+        category=req.category,
+        context=req.context,
+        status=req.status,
+        created_at=entry.created_at.isoformat() if entry.created_at else "",
+        next=f"GET /api/review/questions?lawyer_id={req.lawyer_id}",
+    )
+
+
+# ====== W7 端点 2: GET /api/review/questions ======
+@router.get("/questions", response_model=QuestionsListResponse)
+async def list_questions(
+    lawyer_id: Optional[str] = Query(None, max_length=16, description="按律师过滤 (L1-L5)"),
+    category: Optional[str] = Query(None, description="按分类过滤 (产品/技术/法务/其他)"),
+    status: Optional[str] = Query(None, description="按状态过滤 (open/answered/triaged/deferred)"),
+):
+    """问题列表 (评审现场 + 评审后查询)
+
+    支持 3 维过滤:
+        - lawyer_id  律师维度
+        - category   分类维度
+        - status     状态维度
+
+    返回聚合 (按 category / status 计数) + 详情列表
+    """
+    async with Database.session() as session:
+        stmt = select(ReviewQuestion).order_by(ReviewQuestion.created_at.desc())
+        if lawyer_id:
+            stmt = stmt.where(ReviewQuestion.lawyer_id == lawyer_id.strip())
+        if category:
+            cat = category.strip()
+            if cat not in QUESTION_CATEGORIES:
+                raise HTTPException(400, f"category 必须是 {QUESTION_CATEGORIES} 之一")
+            stmt = stmt.where(ReviewQuestion.category == cat)
+        if status:
+            st = status.strip()
+            if st not in QUESTION_STATUSES:
+                raise HTTPException(400, f"status 必须是 {QUESTION_STATUSES} 之一")
+            stmt = stmt.where(ReviewQuestion.status == st)
+        result = await session.execute(stmt)
+        rows = result.scalars().all()
+
+    by_category: Dict[str, int] = {c: 0 for c in QUESTION_CATEGORIES}
+    by_status: Dict[str, int] = {s: 0 for s in QUESTION_STATUSES}
+    entries: List[QuestionEntry] = []
+    for r in rows:
+        by_category[r.category] = by_category.get(r.category, 0) + 1
+        by_status[r.status] = by_status.get(r.status, 0) + 1
+        entries.append(QuestionEntry(
+            id=r.id,
+            lawyer_id=r.lawyer_id,
+            question_text=r.question_text,
+            category=r.category,
+            context=r.context,
+            status=r.status,
+            created_at=r.created_at.isoformat() if r.created_at else "",
+        ))
+
+    return QuestionsListResponse(
+        total=len(entries),
+        by_category=by_category,
+        by_status=by_status,
+        questions=entries,
+    )
+
+
+# ====== W7 端点 3: GET /api/review/board ======
+class BoardDimensionStat(BaseModel):
+    """单维度看板统计"""
+    dimension: str
+    dimension_label: str
+    mean: float
+    stdev: float
+    n_scores: int
+    per_lawyer: Dict[str, Optional[float]]  # L1..L5 → 评分 (可能 None)
+
+
+class BoardLawyerStat(BaseModel):
+    """单律师看板统计"""
+    lawyer_id: str
+    lawyer_type: str
+    venue: str
+    weighted_score: float
+    rubric_score: float
+    passes_rubric: bool
+    evaluations_count: int
+    questions_count: int
+    questions: List[QuestionEntry]
+
+
+class BoardContractStat(BaseModel):
+    """单合同看板统计"""
+    contract_id: str
+    contract_type: str
+    aggregate_score: float
+    n_evaluations: int
+
+
+class BoardResponse(BaseModel):
+    """评审看板 - 5 律师 × 5 合同 × 5 维度 + 评论 + 问题 全景
+
+    用途:
+        - PM 评审 #2 后 24h 看 dashboard.html 一屏掌握全局
+        - 自动 + 人工混合输出 (聚合算法跟 summary 一致)
+    """
+    summary: Dict[str, Any] = Field(..., description="总览: 总评分行 / 总问题数 / 通过率")
+    per_dimension: Dict[str, BoardDimensionStat]
+    per_lawyer: Dict[str, BoardLawyerStat]
+    per_contract: Dict[str, BoardContractStat]
+    comments_by_lawyer: Dict[str, Dict[str, Dict[str, str]]]
+    prd_feedback_v1_0: Dict[str, Any]
+    questions_summary: Dict[str, Any]
+    generated_at: str
+
+
+@router.get("/board", response_model=BoardResponse)
+async def review_board():
+    """评审数据看板 — 5 律师 × 5 合同 × 5 维度 + 评论 + 问题 全景
+
+    输出结构:
+        - summary             总览 (总评分行 / 通过率 / 问题总数)
+        - per_dimension       5 维度均值 + 方差 + 5 律师分布
+        - per_lawyer          5 律师加权综合 + 问题列表
+        - per_contract        5 合同平均分
+        - comments_by_lawyer  5 律师 × 5 合同 × 5 维度 评论矩阵
+        - prd_feedback_v1_0   自动生成 PRD 调整建议 (W7 核心交付物)
+        - questions_summary   问题按 category/status 分布
+    """
+    async with Database.session() as session:
+        score_stmt = select(ReviewScore)
+        score_rows = (await session.execute(score_stmt)).scalars().all()
+
+        q_stmt = select(ReviewQuestion).order_by(ReviewQuestion.created_at.desc())
+        q_rows = (await session.execute(q_stmt)).scalars().all()
+
+    # === 评分聚合 ===
+    per_lawyer_data: Dict[str, Dict[str, List[int]]] = {
+        lid: {d: [] for d in DIMENSION_IDS} for lid in LAWYER_IDS
+    }
+    per_contract_data: Dict[str, Dict[str, List[int]]] = {
+        cid: {d: [] for d in DIMENSION_IDS} for cid in CONTRACT_IDS
+    }
+    comments_data: Dict[str, Dict[str, Dict[str, str]]] = {
+        lid: {cid: {} for cid in CONTRACT_IDS} for lid in LAWYER_IDS
+    }
+    unique_pairs = set()
+    for r in score_rows:
+        per_lawyer_data.setdefault(r.lawyer_id, {d: [] for d in DIMENSION_IDS})
+        per_contract_data.setdefault(r.contract_id, {d: [] for d in DIMENSION_IDS})
+        per_lawyer_data[r.lawyer_id].setdefault(r.dimension, []).append(r.score)
+        per_contract_data[r.contract_id].setdefault(r.dimension, []).append(r.score)
+        unique_pairs.add((r.lawyer_id, r.contract_id))
+        if r.comment:
+            comments_data.setdefault(r.lawyer_id, {}).setdefault(r.contract_id, {})[r.dimension] = r.comment
+
+    # === per_dimension ===
+    per_dimension: Dict[str, BoardDimensionStat] = {}
+    for dim in DIMENSION_IDS:
+        all_scores_for_dim: List[int] = []
+        for lid in LAWYER_IDS:
+            all_scores_for_dim.extend(per_lawyer_data.get(lid, {}).get(dim, []))
+        per_lawyer_dist: Dict[str, Optional[float]] = {}
+        for lid in LAWYER_IDS:
+            ls = per_lawyer_data.get(lid, {}).get(dim, [])
+            per_lawyer_dist[lid] = round(mean(ls), 2) if ls else None
+        if all_scores_for_dim:
+            per_dimension[dim] = BoardDimensionStat(
+                dimension=dim,
+                dimension_label=DIMENSION_LABELS[dim],
+                mean=round(mean(all_scores_for_dim), 2),
+                stdev=round(pstdev(all_scores_for_dim), 2) if len(all_scores_for_dim) > 1 else 0.0,
+                n_scores=len(all_scores_for_dim),
+                per_lawyer=per_lawyer_dist,
+            )
+        else:
+            per_dimension[dim] = BoardDimensionStat(
+                dimension=dim,
+                dimension_label=DIMENSION_LABELS[dim],
+                mean=0.0,
+                stdev=0.0,
+                n_scores=0,
+                per_lawyer=per_lawyer_dist,
+            )
+
+    # === per_lawyer + 问题挂载 ===
+    questions_by_lawyer: Dict[str, List[QuestionEntry]] = {lid: [] for lid in LAWYER_IDS}
+    for q in q_rows:
+        entries_q = QuestionEntry(
+            id=q.id, lawyer_id=q.lawyer_id, question_text=q.question_text,
+            category=q.category, context=q.context, status=q.status,
+            created_at=q.created_at.isoformat() if q.created_at else "",
+        )
+        questions_by_lawyer.setdefault(q.lawyer_id, []).append(entries_q)
+
+    per_lawyer: Dict[str, BoardLawyerStat] = {}
+    for lid in LAWYER_IDS:
+        data = per_lawyer_data.get(lid, {})
+        agg = _build_lawyer_aggregate(lid, data)
+        per_lawyer[lid] = BoardLawyerStat(
+            lawyer_id=lid,
+            lawyer_type=_lawyer_type(lid),
+            venue=_lawyer_venue(lid),
+            weighted_score=agg["weighted_score_0_10"],
+            rubric_score=agg["rubric_score_1_5"],
+            passes_rubric=agg["passes_rubric"],
+            evaluations_count=agg["evaluations_count"],
+            questions_count=len(questions_by_lawyer.get(lid, [])),
+            questions=questions_by_lawyer.get(lid, []),
+        )
+
+    # === per_contract ===
+    per_contract: Dict[str, BoardContractStat] = {}
+    for cid in CONTRACT_IDS:
+        data = per_contract_data.get(cid, {})
+        agg = _build_contract_aggregate(cid, data)
+        per_contract[cid] = BoardContractStat(
+            contract_id=cid,
+            contract_type=agg["contract_type"],
+            aggregate_score=agg["aggregate_score"],
+            n_evaluations=agg["evaluations_count"],
+        )
+
+    # === summary + prd_feedback ===
+    feedback = _build_prd_feedback(
+        {lid: per_lawyer[lid].model_dump() for lid in LAWYER_IDS},
+        {d: per_dimension[d].model_dump() for d in DIMENSION_IDS},
+        {cid: per_contract[cid].model_dump() for cid in CONTRACT_IDS},
+    )
+
+    questions_by_category: Dict[str, int] = {c: 0 for c in QUESTION_CATEGORIES}
+    questions_by_status: Dict[str, int] = {s: 0 for s in QUESTION_STATUSES}
+    for q in q_rows:
+        questions_by_category[q.category] = questions_by_category.get(q.category, 0) + 1
+        questions_by_status[q.status] = questions_by_status.get(q.status, 0) + 1
+
+    summary = {
+        "total_score_rows": len(score_rows),
+        "total_evaluations": len(unique_pairs),
+        "total_questions": len(q_rows),
+        "lawyers_with_scores": len([lid for lid in LAWYER_IDS if per_lawyer_data.get(lid) and any(per_lawyer_data[lid].values())]),
+        "lawyers_with_questions": len(questions_by_lawyer),
+        "rubric_score_1_5": feedback.get("rubric_score_1_5", 0.0),
+        "passes_threshold": feedback.get("passes_threshold", False),
+    }
+
+    return BoardResponse(
+        summary=summary,
+        per_dimension=per_dimension,
+        per_lawyer=per_lawyer,
+        per_contract=per_contract,
+        comments_by_lawyer=comments_data,
+        prd_feedback_v1_0=feedback,
+        questions_summary={
+            "by_category": questions_by_category,
+            "by_status": questions_by_status,
+        },
+        generated_at=datetime.now(timezone.utc).isoformat(),
+    )

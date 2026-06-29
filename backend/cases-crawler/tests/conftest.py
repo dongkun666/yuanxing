@@ -50,6 +50,7 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     async with engine.begin() as conn:
         # W6 (lex-coder): 确保 review_scores 表在 metadata 中 (Side-effect import)
         from api import review_router  # noqa: F401
+        # W7 (lex-coder): 注册 ReviewQuestion 表 (Side-effect import 已含在 review_router)
         await conn.run_sync(Base.metadata.create_all)
 
     async with session_factory() as session:
