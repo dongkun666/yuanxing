@@ -1,6 +1,16 @@
 # 依赖
 node_modules/
 
+# Python 虚拟环境
+# - backend/venv312/ : Python 3.12.7 embeddable (W7 PaddleEngine 隔离环境, paddlepaddle 3.3.1 wheel 不支持 3.14)
+# - python-3.12.7-embed-amd64.zip : 同上的嵌入式分发包
+backend/venv312/
+backend/python-3.12.7-embed-amd64.zip
+backend/venv*/
+**/__pycache__/
+*.pyc
+*.pyo
+
 # 备份文件
 *.bak*
 *.tmp

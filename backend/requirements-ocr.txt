@@ -1,0 +1,29 @@
+# LexPrime venv312 OCR dependencies (W7 W8 D1)
+# ------------------------------------------------------------
+# 适用: backend/venv312/ (Python 3.12.7 embeddable)
+# 安装指南: docs/setup/venv312-setup.md
+#
+# 为什么单独列出 (不和 backend/cases-crawler/requirements.txt 混):
+# - PaddleEngine (PP-OCRv6 中文专精) 依赖 paddlepaddle 官方 wheel 仅支持 Python 3.8-3.12
+# - 主项目 backend 默认跑在 Python 3.14 (paddlepaddle 装不上)
+# - 必须独立 venv 隔离, 通过 PYTHONPATH 或双进程策略接驳
+# - 评审现场 (W7 #1 #2) 已用 Tesseract + Mock 双轨兜底, W8 D4 E2E 切真实 PaddleEngine
+#
+# W7 PaddleEngine 代码: backend/cases-crawler/core/ocr.py (commit 0815a2e)
+# W5 OCR 兜底 commit: 3b48ce8 (Tesseract + Mock)
+# PRD: docs/prd/05-knowledge-base.md + docs/ocr-deployment.md
+
+# ===== OCR 引擎 (PP-OCRv6 中文专精) =====
+paddlepaddle==3.3.1          # 推理后端 (Paddle 3.x + numpy 2.x 兼容)
+paddleocr==3.7.0             # OCR 引擎 (新 API: predict() 返回 dict; 兼容旧版 ocr() API)
+paddlex==3.7.2               # 模型自动下载管理 (PP-OCRv6 ~12MB)
+
+# ===== OCR 辅助 (图片 / PDF 渲染) =====
+Pillow>=10.0.0               # 图像处理 (PaddleOcrEngine 输入)
+PyMuPDF>=1.24.0              # PDF 渲染 (扫描件逐页转图)
+
+# ===== 抑制 Paddle 3.x onednn dtype bug (PP-OCRv6 不兼容) =====
+# 在 import paddleocr 之前设置:
+#   os.environ.setdefault("FLAGS_use_mkldnn", "0")
+#   os.environ.setdefault("FLAGS_use_onednn", "0")
+# PaddleOcrEngine 已在模块顶部自动设置 (见 ocr.py Line 53-55)
