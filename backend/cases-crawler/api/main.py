@@ -141,6 +141,25 @@ try:
 except Exception as e:
     logger.warning(f"Skill Hub 合同审查 router 加载失败 (非致命): {e}")
 
+# 公测邀请码 Router (W6 实施 · lex-design)
+# 端点: POST /api/invite/generate (admin) / POST /api/invite/redeem (用户)
+try:
+    from api.invite_router import router as invite_router
+    app.include_router(invite_router)
+    logger.info("Marketing: 公测邀请码 router registered (W6)")
+except Exception as e:
+    logger.warning(f"Marketing 邀请码 router 加载失败 (非致命): {e}")
+
+# W6 律师评审 Score App (lex-coder · 2026-06-29)
+# 5 律师 × 5 测试合同 = 25 条评分
+# 端点: /api/review/contracts, /api/review/submit-score, /api/review/my-scores, /api/review/summary
+try:
+    from api.review_router import router as review_router
+    app.include_router(review_router)
+    logger.info("W6 律师评审 Score App router registered")
+except Exception as e:
+    logger.warning(f"W6 律师评审 Score App router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")

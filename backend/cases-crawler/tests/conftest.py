@@ -6,6 +6,7 @@ pytest 全局 fixtures
 - 每个测试用独立 SQLite in-memory DB (隔离 + 0 副作用)
 - 用 aiosqlite + StaticPool 保证单 connection 跨 session 复用
   (in-memory DB 多 connection 会看不到对方的表)
+- W6 (lex-coder): pytest-asyncio auto mode 启用, async tests 直接写 async def 即可
 """
 import asyncio
 import pytest
@@ -22,6 +23,10 @@ def event_loop():
     loop = asyncio.new_event_loop()
     yield loop
     loop.close()
+
+
+# W6 (lex-coder) - 启用 auto mode, 这样 async test/fixture 不需要 @pytest.mark.asyncio
+pytestmark = pytest.mark.asyncio
 
 
 @pytest_asyncio.fixture
@@ -43,6 +48,8 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     from auth import models  # noqa: F401
 
     async with engine.begin() as conn:
+        # W6 (lex-coder): 确保 review_scores 表在 metadata 中 (Side-effect import)
+        from api import review_router  # noqa: F401
         await conn.run_sync(Base.metadata.create_all)
 
     async with session_factory() as session:
