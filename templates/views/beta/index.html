@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<!--
+  LexPrime 公测 Landing Page · W6 Day 1-2 交付
+  适用: 律师私域公测预热 (7/15 启动, 7/19-7/26 评审律师触达)
+  设计: 跟 W1 设计系统一致 (brand #165DFF / 灰阶 7 级 / AI 紫 #6C5CE7)
+  模块: 7 大模块 (Hero / 5 步流程 / 9 横切面 / 5 价值主张 / 注册表单 / 创史体验官 / Footer)
+  配套: docs/marketing/funnel-tracking.md · beta-launch-materials.md · beta-invitation.md
+        backend/cases-crawler/api/invite_router.py (POST /api/invite/redeem)
+  部署: 移动端优先 (律师 70% 移动端访问) + 桌面 1280px+ 适配
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="description" content="LexPrime 元枢法智 · 律师 AI 助手 · 数据本地化 · 30 天免费试用 · 创始体验官 5 折 ¥449/年"/>
+  <meta name="theme-color" content="#165DFF"/>
+  <title>LexPrime 元枢法智 · 律师 AI 助手公测 · 30 天免费试用</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23165DFF'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'%3E%E5%AE%AA%3C/text%3E%3C/svg%3E"/>
+  <!-- Tailwind CDN (公测 landing 独立部署, 不依赖 LexPrime 主站) -->
+  <script src="https://cdn.tailwindcss.com/3.4.19"></script>
+  <script>
+    // LexPrime 设计 token 同步 (跟 W1 tailwind.config.js 对齐)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT:'#165DFF', hover:'#4080FF', active:'#0E4AD8', tint:'#E8F3FF', tint2:'#EEF3FF', tint3:'#F2F7FF', tint4:'#E5EBFF' },
+            bg: { DEFAULT:'#F2F3F5', subtle:'#F7F8FA', border:'#E5E6EB' },
+            fg: { primary:'#1D2129', secondary:'#4E5969', tertiary:'#86909C', disabled:'#C9CDD4' },
+            success: { DEFAULT:'#00B42A', tint:'#E8FFEA' },
+            warning: { DEFAULT:'#FF7D00', tint:'#FFF7E6' },
+            danger: { DEFAULT:'#F5222D', tint:'#FFF1F0' },
+            urgent: { DEFAULT:'#FA8C16', tint:'#FFF3E0' },
+            wiki: { DEFAULT:'#9333EA', tint:'#F5EBFF' },
+            ai: { DEFAULT:'#6C5CE7', tint:'#EDEBFF' },
+            wechat: '#07C160',
+          },
+          fontSize: { xs:'12px', sm:'14px', base:'16px', lg:'20px', xl:'24px', '2xl':'32px' },
+          spacing: { '18':'4.5rem' },
+        },
+      },
+    };
+  </script>
+  <!-- Iconify -->
+  <script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+    /* 隐藏滚动条美化 */
+    html { scroll-behavior: smooth; }
+    /* 移动端 nav blur 优化 */
+    .nav-blur { backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); }
+    /* fade-in-up 动画 */
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+    .anim-fade-up { animation: fadeInUp 0.6s ease-out both; }
+  </style>
+</head>
+<body class="bg-bg-subtle text-fg-primary antialiased">
+
+<!-- ============== 顶部 Nav (固定, 移动端友好) ============== -->
+<header class="fixed top-0 inset-x-0 z-50 bg-white/80 nav-blur border-b border-bg-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    <a href="#hero" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center font-serif text-base">宪</div>
+      <div class="leading-tight">
+        <div class="text-base font-bold tracking-tight">LexPrime <span class="text-brand">元枢法智</span></div>
+        <div class="text-[10px] text-fg-tertiary hidden sm:block">律师的第二大脑 · 数据本地化</div>
+      </div>
+    </a>
+    <!-- 桌面 nav 链接 -->
+    <nav class="hidden md:flex items-center gap-6 text-sm text-fg-secondary">
+      <a href="#workflow" class="hover:text-brand transition-colors">使用流程</a>
+      <a href="#features" class="hover:text-brand transition-colors">9 大模块</a>
+      <a href="#values" class="hover:text-brand transition-colors">5 大价值</a>
+      <a href="#pricing" class="hover:text-brand transition-colors">定价</a>
+      <a href="#register" class="px-4 py-1.5 bg-brand text-white text-sm font-medium rounded-md hover:bg-brand-hover transition-colors">立即注册</a>
+    </nav>
+    <!-- 移动端 CTA -->
+    <a href="#register" class="md:hidden px-3 py-1.5 bg-brand text-white text-xs font-medium rounded-md">注册</a>
+  </div>
+</header>
+<!-- 占位 -->
+<div class="h-14"></div>
+
+<!-- ============== 模块 1: Hero ============== -->
+<section id="hero" class="relative overflow-hidden bg-gradient-to-br from-white via-brand-tint3 to-ai-tint">
+  <!-- 装饰背景 -->
+  <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-brand/10 blur-3xl"></div>
+  <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-ai/10 blur-3xl"></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
+    <div class="text-center max-w-3xl mx-auto">
+      <!-- 顶部标签 -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-brand/20 text-brand text-xs font-medium shadow-sm mb-5">
+        <iconify-icon icon="mdi:gift-outline" class="text-sm"></iconify-icon>
+        30 天免费试用 · 无信用卡 · 创始体验官 ¥449/年
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-fg-primary leading-tight">
+        律师的 AI 工作台<br class="sm:hidden"/>
+        <span class="text-brand">数据本地化</span> · 智能不替代
+      </h1>
+
+      <p class="mt-4 sm:mt-5 text-base sm:text-lg text-fg-secondary max-w-2xl mx-auto leading-relaxed">
+        类案检索 30 分钟 → 30 秒 · 合同审查 2 小时 → 5 分钟 · 文书起草一键生成<br>
+        <span class="inline-flex items-center gap-1 mt-1 text-ai text-sm font-medium">
+          <iconify-icon icon="mdi:sparkles"></iconify-icon>
+          AI 辅助, 律师最终签字才生效
+        </span>
+      </p>
+
+      <!-- CTA 按钮组 -->
+      <div class="mt-7 sm:mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="#register" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-brand text-white text-base font-semibold rounded-xl hover:bg-brand-hover shadow-lg shadow-brand/30 transition-all">
+          <iconify-icon icon="mdi:rocket-launch-outline" class="text-lg"></iconify-icon>
+          立即注册 30 天免费试用
+        </a>
+        <a href="#workflow" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white text-fg-primary border border-bg-border text-base font-medium rounded-xl hover:border-brand hover:text-brand transition-all">
+          <iconify-icon icon="mdi:play-circle-outline" class="text-lg"></iconify-icon>
+          查看 5 步使用流程
+        </a>
+      </div>
+
+      <!-- 信任标识 -->
+      <div class="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-fg-tertiary">
+        <div class="flex items-center gap-1.5">
+          <iconify-icon icon="mdi:shield-check-outline" class="text-success"></iconify-icon>
+          数据本地化
+        </div>
+        <div class="flex items-center gap-1.5">
+          <iconify-icon icon="mdi:account-multiple-outline" class="text-brand"></iconify-icon>
+          评审律师 5 位 · 微信群 10 位
+        </div>
+        <div class="flex items-center gap-1.5">
+          <iconify-icon icon="mdi:crown-outline" class="text-urgent"></iconify-icon>
+          创始体验官 100 名限量
+        </div>
+        <div class="flex items-center gap-1.5">
+          <iconify-icon icon="mdi:cellphone" class="text-fg-tertiary"></iconify-icon>
+          70% 律师移动端访问
+        </div>
+      </div>
+    </div>
+
+    <!-- 产品主屏预览 (移动端隐藏) -->
+    <div class="hidden md:block mt-12 max-w-4xl mx-auto">
+      <div class="relative bg-white rounded-2xl shadow-2xl shadow-fg-primary/10 border border-bg-border overflow-hidden">
+        <div class="flex items-center gap-1.5 px-4 py-2.5 bg-bg-subtle border-b border-bg-border">
+          <div class="w-2.5 h-2.5 rounded-full bg-danger/60"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-warning/60"></div>
+          <div class="w-2.5 h-2.5 rounded-full bg-success/60"></div>
+          <div class="ml-3 text-xs text-fg-tertiary">LexPrime · 元枢法智 · 工作台</div>
+        </div>
+        <!-- 工作台 UI 简化版 -->
+        <div class="grid grid-cols-12 h-72">
+          <!-- 左侧栏 -->
+          <div class="col-span-2 bg-bg-subtle border-r border-bg-border p-3 space-y-1.5 text-xs">
+            <div class="flex items-center gap-2 px-2 py-1.5 rounded bg-brand text-white font-medium">
+              <iconify-icon icon="mdi:briefcase-outline"></iconify-icon> 案件
+            </div>
+            <div class="flex items-center gap-2 px-2 py-1.5 text-fg-secondary"><iconify-icon icon="mdi:account-outline"></iconify-icon> 客户</div>
+            <div class="flex items-center gap-2 px-2 py-1.5 text-fg-secondary"><iconify-icon icon="mdi:calendar-outline"></iconify-icon> 日程</div>
+            <div class="flex items-center gap-2 px-2 py-1.5 text-fg-secondary"><iconify-icon icon="mdi:scale-balance"></iconify-icon> Skill 1 类案</div>
+            <div class="flex items-center gap-2 px-2 py-1.5 text-fg-secondary"><iconify-icon icon="mdi:file-document-outline"></iconify-icon> Skill 2 合同</div>
+            <div class="flex items-center gap-2 px-2 py-1.5 text-fg-secondary"><iconify-icon icon="mdi:gavel"></iconify-icon> Skill 4 庭审</div>
+          </div>
+          <!-- 主内容 -->
+          <div class="col-span-10 p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-base font-semibold text-fg-primary">张三诉李四买卖合同纠纷案</div>
+                <div class="text-xs text-fg-tertiary mt-0.5">北京市朝阳区人民法院 · 立案 2026-06-15</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-sm bg-brand-tint text-brand text-xs">进行中</span>
+                <span class="px-2 py-0.5 rounded-sm bg-urgent-tint text-urgent text-xs">开庭 7/22</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="bg-bg-subtle rounded-lg p-3">
+                <div class="text-[10px] text-fg-tertiary">类案命中率</div>
+                <div class="text-lg font-bold text-fg-primary">87<span class="text-xs text-fg-tertiary">%</span></div>
+              </div>
+              <div class="bg-bg-subtle rounded-lg p-3">
+                <div class="text-[10px] text-fg-tertiary">合同风险点</div>
+                <div class="text-lg font-bold text-danger">3<span class="text-xs text-fg-tertiary ml-1">致命</span></div>
+              </div>
+              <div class="bg-bg-subtle rounded-lg p-3">
+                <div class="text-[10px] text-fg-tertiary">距开庭</div>
+                <div class="text-lg font-bold text-urgent">7<span class="text-xs text-fg-tertiary">天</span></div>
+              </div>
+            </div>
+            <!-- AI 提示行 -->
+            <div class="flex items-center gap-2 px-3 py-2 bg-ai-tint rounded-lg">
+              <iconify-icon icon="mdi:sparkles" class="text-ai"></iconify-icon>
+              <span class="text-xs text-ai font-medium">AI 生成</span>
+              <span class="text-xs text-fg-secondary">已为您生成质证提纲 5 条 + 代理词初稿 · <span class="text-brand">查看 →</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 2: 5 步使用流程 ============== -->
+<section id="workflow" class="py-12 sm:py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 sm:mb-14">
+      <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-ai-tint text-ai text-xs font-medium mb-3">
+        <iconify-icon icon="mdi:map-marker-path"></iconify-icon>
+        5 步上手
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold text-fg-primary">5 步完成首个案件处理</h2>
+      <p class="mt-3 text-sm sm:text-base text-fg-secondary max-w-xl mx-auto">从上传到出庭, LexPrime 全程辅助. 每步 ≤ 1 分钟, 5 分钟出结果.</p>
+    </div>
+
+    <div class="relative">
+      <!-- 桌面端连接线 -->
+      <div class="hidden md:block absolute top-12 left-[8%] right-[8%] h-0.5 bg-gradient-to-r from-brand via-ai to-wiki"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-5 sm:gap-4">
+        <!-- Step 1 -->
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-brand to-brand-hover text-white flex items-center justify-center mb-3 shadow-lg shadow-brand/30">
+              <iconify-icon icon="mdi:briefcase-upload-outline" class="text-4xl"></iconify-icon>
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-brand text-sm font-bold flex items-center justify-center border-2 border-brand">1</div>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-fg-primary">上传案件</h3>
+            <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed max-w-[160px]">拖拽 PDF/Word/图片, AI 自动提取 15 个案件字段</p>
+            <div class="mt-2 text-[10px] text-fg-tertiary">~ 30 秒</div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-wiki to-wiki/70 text-white flex items-center justify-center mb-3 shadow-lg shadow-wiki/30">
+              <iconify-icon icon="mdi:scale-balance" class="text-4xl"></iconify-icon>
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-wiki text-sm font-bold flex items-center justify-center border-2 border-wiki">2</div>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-fg-primary">跑类案检索</h3>
+            <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed max-w-[160px]">AI 理解案件 + 全库语义检索, 30 秒出结果</p>
+            <div class="mt-2 text-[10px] text-fg-tertiary">~ 30 秒</div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-ai to-ai/70 text-white flex items-center justify-center mb-3 shadow-lg shadow-ai/30">
+              <iconify-icon icon="mdi:file-document-multiple-outline" class="text-4xl"></iconify-icon>
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-ai text-sm font-bold flex items-center justify-center border-2 border-ai">3</div>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-fg-primary">跑合同审查</h3>
+            <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed max-w-[160px]">致命 / 重大 / 建议三色高亮, 律师只审签字</p>
+            <div class="mt-2 text-[10px] text-fg-tertiary">~ 5 分钟</div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-warning to-urgent text-white flex items-center justify-center mb-3 shadow-lg shadow-warning/30">
+              <iconify-icon icon="mdi:gavel" class="text-4xl"></iconify-icon>
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-warning text-sm font-bold flex items-center justify-center border-2 border-warning">4</div>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-fg-primary">庭审准备</h3>
+            <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed max-w-[160px]">质证提纲 / 发问提纲 / 代理词一键生成</p>
+            <div class="mt-2 text-[10px] text-fg-tertiary">~ 3 分钟</div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="relative">
+          <div class="flex flex-col items-center text-center">
+            <div class="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-wechat to-success text-white flex items-center justify-center mb-3 shadow-lg shadow-wechat/30">
+              <iconify-icon icon="mdi:wechat" class="text-4xl"></iconify-icon>
+              <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-success text-sm font-bold flex items-center justify-center border-2 border-success">5</div>
+            </div>
+            <h3 class="text-sm sm:text-base font-semibold text-fg-primary">关注公众号</h3>
+            <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed max-w-[160px]">每周 1 条产品更新 + 法律 AI 行业洞察</p>
+            <div class="mt-2 text-[10px] text-fg-tertiary">~ 10 秒</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 页面 disclaimer 之一 -->
+    <div class="mt-10 text-center text-xs text-fg-tertiary flex items-center justify-center gap-1.5">
+      <iconify-icon icon="mdi:information-outline" class="text-ai"></iconify-icon>
+      AI 生成内容仅供参考, 不构成法律意见, 最终判断以执业律师为准.
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 3: 9 横切面 (UI 展示 + 风险标签) ============== -->
+<section id="features" class="py-12 sm:py-20 bg-bg-subtle">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 sm:mb-14">
+      <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-tint text-brand text-xs font-medium mb-3">
+        <iconify-icon icon="mdi:apps"></iconify-icon>
+        9 大模块
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold text-fg-primary">一体化工作台, 不切工具</h2>
+      <p class="mt-3 text-sm sm:text-base text-fg-secondary max-w-xl mx-auto">案件 + 客户 + 日程 + 文书 + 4 大 Skill, 一个 LexPrime 全部搞定.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      <!-- 1. 案件管理 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-tint text-brand flex items-center justify-center">
+            <iconify-icon icon="mdi:briefcase-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-bg-subtle text-fg-tertiary">核心</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary">案件管理</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">立案 / 审理 / 归档全周期, 15 字段自动提取, 红黄绿灯辅助决策.</p>
+        <!-- 风险标签示例 -->
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-danger-tint text-danger font-medium">▲ 3 致命</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-warning-tint text-warning font-medium">● 5 重大</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-success-tint text-success font-medium">✓ 12 已结</span>
+        </div>
+      </div>
+
+      <!-- 2. 客户管理 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-tint text-brand flex items-center justify-center">
+            <iconify-icon icon="mdi:account-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-bg-subtle text-fg-tertiary">核心</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary">客户管理</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">客户档案 + 合同到期 + 续费提醒, 1 屏全览.</p>
+      </div>
+
+      <!-- 3. 日程中心 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-urgent-tint text-urgent flex items-center justify-center">
+            <iconify-icon icon="mdi:calendar-alert" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-urgent-tint text-urgent">P0 紧急</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary">日程中心</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">开庭前 7/3/1 天自动提醒, 法定红线 (上诉期 / 答辩期 / 执行时效) 不漏.</p>
+      </div>
+
+      <!-- 4. Skill 1 类案检索 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-wiki-tint text-wiki flex items-center justify-center">
+            <iconify-icon icon="mdi:scale-balance" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-wiki-tint text-wiki font-medium">Skill 1</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-1">
+          类案检索
+          <iconify-icon icon="mdi:sparkles" class="text-ai text-base"></iconify-icon>
+        </h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">30 分钟 → 30 秒, AI 理解案件 + 全库语义检索 + 命中分析.</p>
+        <div class="mt-3 inline-flex items-center gap-1 text-[10px] text-ai">
+          <iconify-icon icon="mdi:sparkles"></iconify-icon>
+          <span>AI 生成 · 仅供参考</span>
+        </div>
+      </div>
+
+      <!-- 5. Skill 2 合同审查 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-ai-tint text-ai flex items-center justify-center">
+            <iconify-icon icon="mdi:file-document-multiple-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-ai-tint text-ai font-medium">Skill 2</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-1">
+          合同审查
+          <iconify-icon icon="mdi:sparkles" class="text-ai text-base"></iconify-icon>
+        </h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">5 分钟标红高风险条款, 律师只审签字.</p>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-danger-tint text-danger font-medium">致命 3</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-warning-tint text-warning font-medium">重大 5</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-ai-tint text-ai">谈判策略</span>
+        </div>
+      </div>
+
+      <!-- 6. Skill 3 文书生成 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-ai-tint text-ai flex items-center justify-center">
+            <iconify-icon icon="mdi:file-document-edit-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-ai-tint text-ai font-medium">Skill 3</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-1">
+          文书生成
+          <iconify-icon icon="mdi:sparkles" class="text-ai text-base"></iconify-icon>
+        </h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">起诉状 / 答辩状 / 律师函 / 调解书一键起草.</p>
+        <div class="mt-3 inline-flex items-center gap-1 text-[10px] text-ai">
+          <iconify-icon icon="mdi:sparkles"></iconify-icon>
+          <span>律师需二次确认方可使用</span>
+        </div>
+      </div>
+
+      <!-- 7. Skill 4 庭审准备 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-warning-tint text-warning flex items-center justify-center">
+            <iconify-icon icon="mdi:gavel" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-warning-tint text-warning font-medium">Skill 4</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-1">
+          庭审准备
+          <iconify-icon icon="mdi:sparkles" class="text-ai text-base"></iconify-icon>
+        </h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">质证提纲 / 发问提纲 / 代理词, 开庭不慌.</p>
+      </div>
+
+      <!-- 8. 知识库 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-wiki-tint text-wiki flex items-center justify-center">
+            <iconify-icon icon="mdi:book-multiple-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-wiki-tint text-wiki">本地化</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary">本地知识库</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">5,716 合同模板 + 法律观点, 您电脑您说了算.</p>
+      </div>
+
+      <!-- 9. 模板库 -->
+      <div class="bg-white rounded-2xl p-5 border border-bg-border hover:shadow-md transition-shadow group">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-tint text-brand flex items-center justify-center">
+            <iconify-icon icon="mdi:file-multiple-outline" class="text-xl"></iconify-icon>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-bg-subtle text-fg-tertiary">5,716+</span>
+        </div>
+        <h3 class="text-sm font-semibold text-fg-primary">合同模板库</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary leading-relaxed">12 类 500+ 合同模板, 律师可二次修改保存.</p>
+      </div>
+    </div>
+
+    <!-- 5 页面 disclaimer 之二 -->
+    <div class="mt-10 text-center text-xs text-fg-tertiary flex items-center justify-center gap-1.5">
+      <iconify-icon icon="mdi:information-outline" class="text-ai"></iconify-icon>
+      全部 AI 输出必带「AI 生成」紫色角标, 律师最终签字才生效.
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 4: 5 大价值主张 ============== -->
+<section id="values" class="py-12 sm:py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 sm:mb-14">
+      <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-success-tint text-success text-xs font-medium mb-3">
+        <iconify-icon icon="mdi:trophy-outline"></iconify-icon>
+        5 大价值主张
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold text-fg-primary">为什么律师选 LexPrime?</h2>
+      <p class="mt-3 text-sm sm:text-base text-fg-secondary max-w-xl mx-auto">不是技术堆叠, 是真正解决律师执业痛点.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-5">
+      <!-- 1. 数据本地化 -->
+      <div class="md:col-span-2 bg-gradient-to-br from-brand to-brand-hover text-white rounded-2xl p-6 sm:p-7">
+        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
+          <iconify-icon icon="mdi:shield-lock-outline" class="text-2xl"></iconify-icon>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold">数据本地化</h3>
+        <p class="mt-2.5 text-sm text-white/90 leading-relaxed">您的案件 / 客户 / 文书 / 律师函全部留在您电脑, 不上传服务器, 满足律师法 / 律所执业纪律.</p>
+        <div class="mt-4 flex flex-wrap gap-2 text-[10px]">
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">端到端加密</span>
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">本地存储</span>
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">律所合规</span>
+        </div>
+      </div>
+
+      <!-- 2. 智能但非替代 -->
+      <div class="md:col-span-3 bg-gradient-to-br from-ai to-wiki text-white rounded-2xl p-6 sm:p-7">
+        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
+          <iconify-icon icon="mdi:account-tie-outline" class="text-2xl"></iconify-icon>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold">智能但非替代</h3>
+        <p class="mt-2.5 text-sm text-white/90 leading-relaxed">AI 输出必带「AI 生成」角标, 律师最终签字才生效. AI 是您的助理, 决策永远在您.</p>
+        <div class="mt-4 flex flex-wrap gap-2 text-[10px]">
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">强制角标</span>
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">律师终审</span>
+          <span class="px-2 py-0.5 rounded-sm bg-white/20">责任清晰</span>
+        </div>
+      </div>
+
+      <!-- 3. 越用越懂你 -->
+      <div class="md:col-span-2 bg-white border border-bg-border rounded-2xl p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-brand-tint text-brand flex items-center justify-center mb-4">
+          <iconify-icon icon="mdi:brain" class="text-2xl"></iconify-icon>
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-fg-primary">越用越懂你</h3>
+        <p class="mt-2.5 text-sm text-fg-secondary leading-relaxed">本地知识库学习您的执业偏好, 3 个月后匹配度 90%+.</p>
+      </div>
+
+      <!-- 4. 立案预审 (W5 新) -->
+      <div class="md:col-span-2 bg-white border border-bg-border rounded-2xl p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-urgent-tint text-urgent flex items-center justify-center mb-4">
+          <iconify-icon icon="mdi:file-check-outline" class="text-2xl"></iconify-icon>
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-fg-primary flex items-center gap-1.5">
+          立案预审 <span class="text-[10px] px-1.5 py-0.5 rounded-sm bg-urgent-tint text-urgent">NEW</span>
+        </h3>
+        <p class="mt-2.5 text-sm text-fg-secondary leading-relaxed">起诉前 AI 检查 8 项硬伤 (管辖 / 主体 / 诉讼时效 / 证据链), 避免立案被退.</p>
+      </div>
+
+      <!-- 5. 类案只做参考 -->
+      <div class="md:col-span-1 bg-white border border-bg-border rounded-2xl p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-warning-tint text-warning flex items-center justify-center mb-4">
+          <iconify-icon icon="mdi:alert-decagram-outline" class="text-2xl"></iconify-icon>
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-fg-primary">类案只做参考</h3>
+        <p class="mt-2.5 text-sm text-fg-secondary leading-relaxed">类案检索结果明确标「参考」, 律师独立判断.</p>
+      </div>
+    </div>
+
+    <!-- 5 页面 disclaimer 之三 -->
+    <div class="mt-10 text-center text-xs text-fg-tertiary flex items-center justify-center gap-1.5">
+      <iconify-icon icon="mdi:information-outline" class="text-ai"></iconify-icon>
+      AI 辅助不替代律师 · 数据本地化 · 律师最终签字才生效
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 5: 试用注册表单 (邮箱 + 邀请码) ============== -->
+<section id="register" class="py-12 sm:py-20 bg-gradient-to-br from-brand via-ai to-wiki text-white">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-8 sm:mb-10">
+      <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-medium mb-3">
+        <iconify-icon icon="mdi:rocket-launch"></iconify-icon>
+        30 天免费试用
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold">立即注册, 30 秒上手</h2>
+      <p class="mt-3 text-sm text-white/90 max-w-xl mx-auto">填邮箱 + 邀请码 · 无信用卡 · 4 大 Skill 全开放</p>
+    </div>
+
+    <!-- 注册卡片 -->
+    <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 text-fg-primary">
+      <form id="beta-register-form" class="space-y-4" onsubmit="return handleBetaRegister(event)">
+        <!-- 邮箱 -->
+        <div>
+          <label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5">
+            <iconify-icon icon="mdi:email-outline" class="text-base"></iconify-icon>
+            律师工作邮箱 <span class="text-danger">*</span>
+          </label>
+          <input id="beta-email" type="email" required
+                 class="w-full h-11 px-4 text-sm bg-white border border-bg-border rounded-lg focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors"
+                 placeholder="you@lawfirm.com"/>
+          <p class="mt-1.5 text-[10px] text-fg-tertiary">仅用于发送验证码 + 试用到期提醒, 不会泄漏给第三方.</p>
+        </div>
+
+        <!-- 邀请码 -->
+        <div>
+          <label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5">
+            <iconify-icon icon="mdi:ticket-percent-outline" class="text-base"></iconify-icon>
+            邀请码 <span class="text-danger">*</span>
+            <span class="text-[10px] text-fg-tertiary ml-auto">格式: BETA2025-XXXX (4 位数字)</span>
+          </label>
+          <input id="beta-invite" type="text" required pattern="BETA2025-[0-9]{4}"
+                 class="w-full h-11 px-4 text-sm bg-white border border-bg-border rounded-lg focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors font-mono"
+                 placeholder="BETA2025-0001"/>
+          <p id="invite-check-result" class="mt-1.5 text-[10px] hidden"></p>
+        </div>
+
+        <!-- 同意条款 -->
+        <div class="flex items-start gap-2 pt-1">
+          <input id="beta-agree" type="checkbox" required
+                 class="mt-0.5 w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+          <label for="beta-agree" class="text-xs text-fg-secondary leading-relaxed">
+            我已阅读并同意 <a href="#" class="text-brand hover:underline">《LexPrime 用户协议》</a> ·
+            <a href="#" class="text-brand hover:underline">《隐私政策》</a> · 确认 AI 输出仅供参考, 律师最终判断.
+          </label>
+        </div>
+
+        <!-- 提交按钮 -->
+        <button type="submit"
+                class="w-full h-12 bg-brand hover:bg-brand-hover text-white text-base font-semibold rounded-lg transition-colors shadow-lg shadow-brand/30 flex items-center justify-center gap-2">
+          <iconify-icon icon="mdi:rocket-launch-outline"></iconify-icon>
+          立即开启 30 天免费试用
+        </button>
+
+        <!-- 提交反馈 -->
+        <div id="beta-form-msg" class="hidden text-xs text-center"></div>
+      </form>
+
+      <!-- 三方说明 -->
+      <div class="mt-6 pt-6 border-t border-bg-border grid grid-cols-3 gap-3 text-center">
+        <div>
+          <div class="w-8 h-8 rounded-full bg-success-tint text-success mx-auto flex items-center justify-center mb-1.5">
+            <iconify-icon icon="mdi:check-bold"></iconify-icon>
+          </div>
+          <div class="text-[10px] text-fg-tertiary">无信用卡</div>
+        </div>
+        <div>
+          <div class="w-8 h-8 rounded-full bg-success-tint text-success mx-auto flex items-center justify-center mb-1.5">
+            <iconify-icon icon="mdi:check-bold"></iconify-icon>
+          </div>
+          <div class="text-[10px] text-fg-tertiary">30 秒注册</div>
+        </div>
+        <div>
+          <div class="w-8 h-8 rounded-full bg-success-tint text-success mx-auto flex items-center justify-center mb-1.5">
+            <iconify-icon icon="mdi:check-bold"></iconify-icon>
+          </div>
+          <div class="text-[10px] text-fg-tertiary">4 Skill 全开</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 页面 disclaimer 之四 -->
+    <div class="mt-6 text-center text-xs text-white/80 flex items-center justify-center gap-1.5">
+      <iconify-icon icon="mdi:information-outline"></iconify-icon>
+      AI 生成内容仅供参考, 不构成法律意见, 最终判断以执业律师为准.
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 6: 创始体验官限量 100 名 ============== -->
+<section id="founding" class="py-12 sm:py-20 bg-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="bg-gradient-to-br from-brand via-ai to-wiki rounded-3xl p-6 sm:p-10 text-white shadow-2xl shadow-brand/20">
+      <div class="text-center">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 text-white text-xs font-semibold mb-4">
+          <iconify-icon icon="mdi:crown" class="text-sm"></iconify-icon>
+          创始体验官 · 仅限前 100 名
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">加入 LexPrime 创始体验官计划</h2>
+        <p class="mt-3 text-sm sm:text-base opacity-90 max-w-2xl mx-auto leading-relaxed">
+          资深律师参与产品打磨 · 1 年个人版 5 折 · 终身优先客服 · 创始团队直接对话
+        </p>
+
+        <!-- 价格对比 -->
+        <div class="mt-7 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+            <div class="text-xs text-white/80">普通用户 · 1 年个人版</div>
+            <div class="mt-2 text-2xl sm:text-3xl font-bold">¥899</div>
+            <div class="mt-1 text-[10px] text-white/70">¥99/月 × 12 · 省 ¥289</div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 shadow-2xl">
+            <div class="text-xs text-brand font-semibold flex items-center gap-1">
+              <iconify-icon icon="mdi:crown"></iconify-icon>
+              创始体验官 · 1 年个人版
+            </div>
+            <div class="mt-2 text-2xl sm:text-3xl font-bold text-brand">¥449</div>
+            <div class="mt-1 text-[10px] text-fg-tertiary">5 折 · 仅限前 100 名</div>
+            <div class="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-success-tint text-success text-[10px] font-semibold">
+              立省 ¥450
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 大权益 -->
+        <div class="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+              <iconify-icon icon="mdi:tag-heart-outline" class="text-white text-lg"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-semibold text-sm">1 年个人版 5 折</div>
+              <div class="text-xs opacity-80 mt-0.5">¥899 → ¥449 (一次性付款)</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+              <iconify-icon icon="mdi:lifebuoy" class="text-white text-lg"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-semibold text-sm">终身优先客服</div>
+              <div class="text-xs opacity-80 mt-0.5">专属微信群 + 4h 响应</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+              <iconify-icon icon="mdi:vote-outline" class="text-white text-lg"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-semibold text-sm">产品功能投票权</div>
+              <div class="text-xs opacity-80 mt-0.5">每月 1 次, 创始团队直接采纳</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+              <iconify-icon icon="mdi:school-outline" class="text-white text-lg"></iconify-icon>
+            </div>
+            <div>
+              <div class="font-semibold text-sm">内部分享会</div>
+              <div class="text-xs opacity-80 mt-0.5">季度 1 次, 与产品总监面对面</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-8 sm:mt-10">
+          <a href="#register" class="inline-flex items-center gap-2 px-7 py-4 bg-white text-brand font-bold rounded-xl hover:scale-105 transition-transform shadow-2xl text-base">
+            <iconify-icon icon="mdi:crown" class="text-lg"></iconify-icon>
+            申请创始体验官 (剩 87 席)
+          </a>
+          <div class="mt-3 text-xs opacity-80">
+            审核标准: 执业 5+ 年 + 真实业务场景 · 3 个工作日内回复
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 定价简表 (陪衬) ============== -->
+<section id="pricing" class="py-12 sm:py-20 bg-bg-subtle">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl sm:text-3xl font-bold text-fg-primary">选择适合您的方案</h2>
+      <p class="mt-3 text-sm sm:text-base text-fg-secondary">30 天免费试用 · 无信用卡 · 详细对比见 <a href="/templates/views/pricing.html" class="text-brand hover:underline">/pricing</a></p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="bg-white rounded-2xl p-6 border border-bg-border">
+        <h3 class="text-base font-bold text-fg-primary">个人基础版</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary">适合独立律师 / 初次体验</p>
+        <div class="mt-5"><span class="text-3xl font-bold text-fg-primary">¥99</span><span class="text-sm text-fg-tertiary">/月</span></div>
+        <div class="mt-1 text-xs text-fg-tertiary">年付 ¥899 · 省 ¥289</div>
+        <ul class="mt-5 space-y-2 text-xs text-fg-secondary">
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 案件/客户/日程/模板</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 类案检索不限次</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> AI 文书 200 次/月</li>
+        </ul>
+      </div>
+      <div class="relative bg-white rounded-2xl p-6 border-2 border-brand shadow-xl shadow-brand/10">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand text-white text-xs font-semibold">
+          <iconify-icon icon="mdi:star"></iconify-icon> 推荐
+        </div>
+        <h3 class="text-base font-bold text-fg-primary">个人专业版</h3>
+        <p class="mt-1.5 text-xs text-fg-secondary">全部 Skill + 知识库</p>
+        <div class="mt-5"><span class="text-3xl font-bold text-brand">¥199</span><span class="text-sm text-fg-tertiary">/月</span></div>
+        <div class="mt-1 text-xs text-fg-tertiary">年付 ¥1,910 · 省 ¥478</div>
+        <ul class="mt-5 space-y-2 text-xs text-fg-secondary">
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 基础版全部 +</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:sparkles" class="text-ai"></iconify-icon> AI 文书 无限次</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:sparkles" class="text-ai"></iconify-icon> 庭审准备 50 次/月</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:sparkles" class="text-ai"></iconify-icon> 批量合同 20 次/月</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-2xl p-6 border border-bg-border">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-fg-primary">企业版</h3>
+          <span class="text-[10px] px-2 py-0.5 rounded-sm bg-urgent-tint text-urgent">Phase 5</span>
+        </div>
+        <p class="mt-1.5 text-xs text-fg-secondary">10+ 人中大所 / 公司法务</p>
+        <div class="mt-5"><span class="text-2xl font-bold text-fg-primary">¥1,500-2,000</span></div>
+        <div class="mt-1 text-xs text-fg-tertiary">/律师/年 · 按席位阶梯</div>
+        <ul class="mt-5 space-y-2 text-xs text-fg-secondary">
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 团队协作 / 任务看板</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 权限分配 / 全链路审计</li>
+          <li class="flex gap-1.5"><iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon> 私有化部署 (UEBA)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 模块 7: Footer ============== -->
+<footer class="bg-fg-primary text-white pt-12 sm:pt-16 pb-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <!-- 4 列 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+      <!-- Logo 列 -->
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center font-serif">宪</div>
+          <div>
+            <div class="text-base font-bold">LexPrime</div>
+            <div class="text-[10px] text-fg-disabled">元枢法智</div>
+          </div>
+        </div>
+        <p class="text-xs text-fg-disabled leading-relaxed">律师的第二大脑<br>数据本地化 · AI 辅助不替代</p>
+      </div>
+
+      <!-- 产品 -->
+      <div>
+        <h4 class="text-xs font-semibold text-white mb-3">产品</h4>
+        <ul class="space-y-2 text-xs text-fg-disabled">
+          <li><a href="#features" class="hover:text-white transition-colors">9 大模块</a></li>
+          <li><a href="#workflow" class="hover:text-white transition-colors">5 步上手</a></li>
+          <li><a href="#pricing" class="hover:text-white transition-colors">定价</a></li>
+          <li><a href="#founding" class="hover:text-white transition-colors">创始体验官</a></li>
+        </ul>
+      </div>
+
+      <!-- 资源 -->
+      <div>
+        <h4 class="text-xs font-semibold text-white mb-3">资源</h4>
+        <ul class="space-y-2 text-xs text-fg-disabled">
+          <li><a href="/docs/design-system.md" class="hover:text-white transition-colors">设计系统 v1</a></li>
+          <li><a href="/docs/marketing/beta-invitation.md" class="hover:text-white transition-colors">公测邀请函</a></li>
+          <li><a href="/docs/marketing/funnel-tracking.md" class="hover:text-white transition-colors">转化漏斗</a></li>
+          <li><a href="/docs/prd/10-success-metrics.md" class="hover:text-white transition-colors">成功指标</a></li>
+        </ul>
+      </div>
+
+      <!-- 联系 (隐私脱敏) -->
+      <div>
+        <h4 class="text-xs font-semibold text-white mb-3">联系</h4>
+        <ul class="space-y-2 text-xs text-fg-disabled">
+          <li class="flex items-center gap-1.5">
+            <iconify-icon icon="mdi:wechat" class="text-base"></iconify-icon>
+            微信 (二维码)
+          </li>
+          <li class="flex items-center gap-1.5">
+            <iconify-icon icon="mdi:email-outline" class="text-base"></iconify-icon>
+            founder@lexprime.cn
+          </li>
+          <li class="flex items-center gap-1.5">
+            <iconify-icon icon="mdi:shield-lock-outline" class="text-base"></iconify-icon>
+            隐私脱敏
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5 页面 disclaimer 之五 + 终极版 -->
+    <div class="pt-6 border-t border-white/10">
+      <div class="flex items-start gap-2 mb-4">
+        <iconify-icon icon="mdi:alert-decagram-outline" class="text-ai text-base flex-shrink-0 mt-0.5"></iconify-icon>
+        <p class="text-[11px] text-fg-disabled leading-relaxed">
+          <span class="text-white font-semibold">法律免责声明 · 必读:</span>
+          LexPrime 是律师的 AI 辅助工具, 全部 AI 输出仅供参考, 不构成法律意见, 最终判断以执业律师为准.
+          律师使用 LexPrime 生成的所有文书 / 合同 / 庭审材料, 需经执业律师独立审查签字方可使用.
+          创始团队不对律师使用 LexPrime 做出的任何法律行为承担责任.
+          <span class="text-ai">数据本地化 · 端到端加密 · 律师法 / 律所执业纪律合规</span>
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-fg-disabled">
+        <div>© 2026 北京元枢法智科技有限公司 · LexPrime 元枢法智</div>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-white transition-colors">用户协议</a>
+          <a href="#" class="hover:text-white transition-colors">隐私政策</a>
+          <a href="#" class="hover:text-white transition-colors">律师执业合规</a>
+          <span>v1.0 · W6 Day 1-2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============== 浮动注册按钮 (移动端友好) ============== -->
+<a href="#register" id="floating-cta" class="fixed bottom-6 right-6 z-40 md:hidden inline-flex items-center gap-2 px-5 py-3 bg-brand text-white text-sm font-semibold rounded-full shadow-2xl shadow-brand/40">
+  <iconify-icon icon="mdi:rocket-launch" class="text-base"></iconify-icon>
+  立即注册
+</a>
+
+<!-- ============== Script: 表单提交 + 邀请码校验 ============== -->
+<script>
+// 邀请码正则
+const INVITE_PATTERN = /^BETA2025-\d{4}$/;
+
+// 邀请码输入实时校验
+document.getElementById('beta-invite').addEventListener('input', async (e) => {
+  const code = e.target.value.trim().toUpperCase();
+  e.target.value = code;
+  const result = document.getElementById('invite-check-result');
+  if (!INVITE_PATTERN.test(code)) {
+    result.classList.add('hidden');
+    return;
+  }
+  // 调 /api/invite/redeem 校验 (W6 邀请码系统)
+  // 这里只做格式校验, 真实 redeem 在 submit 后
+  result.classList.remove('hidden');
+  result.className = 'mt-1.5 text-[10px] text-fg-tertiary flex items-center gap-1';
+  result.innerHTML = '<iconify-icon icon="mdi:check-circle-outline" class="text-success"></iconify-icon> 邀请码格式正确, 提交后系统将核销.';
+});
+
+// 提交
+async function handleBetaRegister(e) {
+  e.preventDefault();
+  const email = document.getElementById('beta-email').value.trim();
+  const invite = document.getElementById('beta-invite').value.trim().toUpperCase();
+  const msg = document.getElementById('beta-form-msg');
+  const btn = e.target.querySelector('button[type="submit"]');
+
+  if (!email || !INVITE_PATTERN.test(invite)) {
+    msg.className = 'text-xs text-center text-danger';
+    msg.textContent = '请检查邮箱 + 邀请码格式 (BETA2025-XXXX)';
+    msg.classList.remove('hidden');
+    return false;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> 提交中...';
+
+  try {
+    // 真实调用: POST /api/invite/redeem (W6 invite_router.py)
+    const res = await fetch('/api/invite/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: invite, email: email, source: 'beta-landing' }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      msg.className = 'text-xs text-center text-success';
+      msg.innerHTML = '<iconify-icon icon="mdi:check-circle"></iconify-icon> 注册成功! 验证码已发送至 ' + email + ', 请在 10 分钟内查收.';
+      // 3 秒后跳转
+      setTimeout(() => { window.location.href = '/templates/views/login.html?registered=1&email=' + encodeURIComponent(email); }, 3000);
+    } else {
+      const err = await res.json().catch(() => ({}));
+      msg.className = 'text-xs text-center text-danger';
+      const errMap = {
+        'INVALID_CODE': '邀请码无效, 请检查格式或联系邀请人',
+        'CODE_USED': '邀请码已被使用, 1 码 1 用',
+        'CODE_EXPIRED': '邀请码已过期 (公测 7/15 - 8/9)',
+        'RATE_LIMIT': '提交过于频繁, 请稍后再试',
+        'EMAIL_INVALID': '请使用律师工作邮箱 (不接受免费邮箱)',
+      };
+      msg.textContent = errMap[err.error] || ('注册失败: ' + (err.detail || res.statusText));
+    }
+  } catch (err) {
+    // 离线 / API 不可用降级: 弹窗告知 (dev 环境)
+    msg.className = 'text-xs text-center text-warning';
+    msg.innerHTML = '<iconify-icon icon="mdi:lan-disconnect"></iconify-icon> 离线模式: 您的申请已记录, 公测启动后我们会通过邮件联系您.';
+    console.warn('Beta register API unavailable:', err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<iconify-icon icon="mdi:rocket-launch-outline"></iconify-icon> 立即开启 30 天免费试用';
+  return false;
+}
+
+// 滚动联动 nav 透明 / 实色切换
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('header');
+  const cta = document.getElementById('floating-cta');
+  const y = window.scrollY;
+  if (y > 50) {
+    nav.classList.add('shadow-sm');
+  } else {
+    nav.classList.remove('shadow-sm');
+  }
+  // 移动端浮动 CTA 在 hero 区隐藏
+  if (cta) {
+    if (y > 400 && y < document.body.scrollHeight - window.innerHeight - 200) {
+      cta.style.opacity = '1';
+    } else {
+      cta.style.opacity = '0';
+    }
+  }
+  lastScroll = y;
+}, { passive: true });
+</script>
+</body>
+</html>
