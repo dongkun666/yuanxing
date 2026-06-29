@@ -1,0 +1,166 @@
+{
+  "task": "W13 C1-followup-screenshots",
+  "agent": "lex-bd",
+  "timestamp": "20260630-033622",
+  "url": "http://127.0.0.1:8080/templates/views/founding/index.html?dev=1",
+  "viewports": [
+    {
+      "name": "pc",
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "name": "mobile",
+      "w": 375,
+      "h": 812
+    }
+  ],
+  "modules": [
+    {
+      "id": "founding-value-prop",
+      "label": "创史价值主张"
+    },
+    {
+      "id": "countdown",
+      "label": "名额倒计时"
+    },
+    {
+      "id": "advocates",
+      "label": "已加入律师头像"
+    },
+    {
+      "id": "launch-teaser",
+      "label": "7/26 启动预告"
+    },
+    {
+      "id": "join-btn",
+      "label": "立即加入按钮 (申请表单)"
+    },
+    {
+      "id": "qrcode",
+      "label": "创始群二维码 (placeholder)"
+    }
+  ],
+  "captured": [
+    {
+      "viewport": "pc",
+      "width": 1440,
+      "height": 900,
+      "file": "tests\\screenshots\\founding-pc-20260630-033622.png",
+      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-pc-20260630-033622.png",
+      "modules": [
+        {
+          "id": "founding-value-prop",
+          "label": "创史价值主张",
+          "pass": true,
+          "expectText": "5 折",
+          "extra": "1 年个人版 5 折 · 终身优先客服 · 投票权",
+          "extraDetail": ""
+        },
+        {
+          "id": "countdown",
+          "label": "名额倒计时",
+          "pass": true,
+          "expectText": "名额倒计时",
+          "extra": "#days-left 已被倒计时填充",
+          "extraDetail": "#days-left = \"54\""
+        },
+        {
+          "id": "advocates",
+          "label": "已加入律师头像",
+          "pass": true,
+          "expectText": "创史律师首批名单",
+          "extra": "L1-L6 + WX + BA 共 8 个律师卡",
+          "extraDetail": "律师卡数 = 8 (期望 ≥ 8)"
+        },
+        {
+          "id": "launch-teaser",
+          "label": "7/26 启动预告",
+          "pass": true,
+          "expectText": "60 分钟启动仪式",
+          "extra": "7/26 周日 14:00-15:00 公测启动仪式",
+          "extraDetail": ""
+        },
+        {
+          "id": "join-btn",
+          "label": "立即加入按钮 (申请表单)",
+          "pass": true,
+          "expectText": "立即申请创始体验官",
+          "extra": "button#founding-apply-btn + founding_joined track",
+          "extraDetail": "#founding-apply-btn visible = true"
+        },
+        {
+          "id": "qrcode",
+          "label": "创始群二维码 (placeholder)",
+          "pass": true,
+          "expectText": "创史律师专属微信群",
+          "extra": "3 个 mdi:qrcode iconify-icon 占位",
+          "extraDetail": "mdi:qrcode 图标数 = 3 (期望 ≥ 3)"
+        }
+      ],
+      "track_viewed": true,
+      "track_event_count": 1,
+      "console_errors": []
+    },
+    {
+      "viewport": "mobile",
+      "width": 375,
+      "height": 812,
+      "file": "tests\\screenshots\\founding-mobile-20260630-033622.png",
+      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-mobile-20260630-033622.png",
+      "modules": [
+        {
+          "id": "founding-value-prop",
+          "label": "创史价值主张",
+          "pass": true,
+          "expectText": "5 折",
+          "extra": "1 年个人版 5 折 · 终身优先客服 · 投票权",
+          "extraDetail": ""
+        },
+        {
+          "id": "countdown",
+          "label": "名额倒计时",
+          "pass": true,
+          "expectText": "名额倒计时",
+          "extra": "#days-left 已被倒计时填充",
+          "extraDetail": "#days-left = \"54\""
+        },
+        {
+          "id": "advocates",
+          "label": "已加入律师头像",
+          "pass": true,
+          "expectText": "创史律师首批名单",
+          "extra": "L1-L6 + WX + BA 共 8 个律师卡",
+          "extraDetail": "律师卡数 = 8 (期望 ≥ 8)"
+        },
+        {
+          "id": "launch-teaser",
+          "label": "7/26 启动预告",
+          "pass": true,
+          "expectText": "60 分钟启动仪式",
+          "extra": "7/26 周日 14:00-15:00 公测启动仪式",
+          "extraDetail": ""
+        },
+        {
+          "id": "join-btn",
+          "label": "立即加入按钮 (申请表单)",
+          "pass": true,
+          "expectText": "立即申请创始体验官",
+          "extra": "button#founding-apply-btn + founding_joined track",
+          "extraDetail": "#founding-apply-btn visible = true"
+        },
+        {
+          "id": "qrcode",
+          "label": "创始群二维码 (placeholder)",
+          "pass": true,
+          "expectText": "创史律师专属微信群",
+          "extra": "3 个 mdi:qrcode iconify-icon 占位",
+          "extraDetail": "mdi:qrcode 图标数 = 3 (期望 ≥ 3)"
+        }
+      ],
+      "track_viewed": true,
+      "track_event_count": 1,
+      "console_errors": []
+    }
+  ]
+}
