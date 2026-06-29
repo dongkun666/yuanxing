@@ -1,0 +1,179 @@
+version: 1
+plan:
+  name: "LexPrime Phase 4 Week 12: W11 A2 重派 + C1 收尾 + 公测期转化 (自动模式)"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 2
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: a2-doc-review-workflow
+    title: "A2 双审工作流 (重派 lex-coder) — doc_workflow + signature_router + 双审 HTML + pytest"
+    prompt: |
+      W11 A2 误分 lex-pm 越权 STOP, W12 A2 重派 lex-coder (强制, 不再分 PM/BD/Design agent).
+
+      必读文档 (owner 已写明, 不再讨论):
+      - W10 A1 commit 8a299cf + 746d76d + 30e607a (一体化全流程 + OCR 缓存 + cwd 修复)
+      - W9 C1 commit 37eda95 + 5d8ecdc (4 端点 + 4 模板)
+      - W3 Skill 2 SKILL.md § 4 端到端流程
+      - PRD V5.0 § 11 法务自检
+      - W11 final report: docs/plans/plan-11-w11-final-report.md (lesson learned)
+      - W11 Plan 11 YAML: docs/plans/plan-11-w11-yaml.yaml (A2 prompt 复制, 改 assigned_to)
+
+      W12 A2 工作范围 (跟 W11 A2 prompt 一致, 实施给 lex-coder):
+
+      1. **双审状态机** (backend/cases-crawler/core/doc_workflow.py):
+         - 状态: draft → ai_reviewed → lawyer_reviewed → client_signed → archived
+         - PATCH /api/doc-gen/{doc_id}/state (state + reason + actor)
+         - 5 状态转换函数 (transition_to_ai_reviewed / transition_to_lawyer_reviewed / transition_to_client_signed / transition_to_archived / transition_back)
+
+      2. **AI 风险标注** (集成 Skill 2 reviewer):
+         - 4 文书类型各自风险维度:
+           - 起诉: 案由 / 诉讼请求 / 事实理由 / 法条引用
+           - 答辩: 反驳 / 抗辩 / 反诉 / 证据
+           - 合同: 标的 / 价款 / 履行 / 违约 / 管辖
+           - 律师函: 事实 / 法律意见 / 要求 / 时限 / 后果
+
+      3. **客户签字确认** (backend/cases-crawler/api/signature_router.py):
+         - POST /api/signature/{doc_id} (上传签字图片 + 律师执业证号 + 时间戳)
+         - GET /api/signature/{doc_id} (查询签字状态)
+         - SQLite signatures 表 (doc_id + signature_image + license_no + signed_at)
+
+      4. **前端双审界面** (templates/views/doc-review/index.html):
+         - 左侧: 文书 draft + AI 风险标注 (高亮)
+         - 右侧: 状态机 + 律师修改记录 + 客户签字上传
+         - 集成 router.js (W5 + W7 + W8 router)
+
+      5. **回归测试**:
+         - pytest 100% (test_doc_workflow.py + test_signature_router.py + test_risk_annotation.py)
+         - ruff 0
+         - playwright 截图双审界面 (4 文书类型各 1 张)
+
+      6. **git commit + push** (3 commits: 1 状态机 / 1 签字 / 1 前端)
+
+      Stop when (A2 完成):
+      - doc_workflow.py 5 状态转换跑通
+      - signature_router POST/GET 2 端点跑通
+      - 4 文书风险标注接入 Skill 2 reviewer
+      - templates/views/doc-review/index.html 双审界面
+      - pytest 100% + ruff 0
+      - git log 显示 3+ A2 commit
+
+      严禁:
+      - 不要 fabrication 报告 (workspace 存在, task 真实, 立即开始)
+      - 不要越权 (lex-coder scope = 工程代码, 不写 PM/BD/Design)
+      - 不要 silent fail (每个 commit 跑 ruff + pytest 才 push)
+    verify_prompt: |
+      独立验证 A2 双审工作流 (W12 重派, assigned_to lex-coder):
+      1. doc_workflow.py 5 状态转换跑通 (pytest 100%)
+      2. signature_router POST/GET 2 端点跑通 (curl 实际请求 + 201/200)
+      3. 4 文书风险标注接入 Skill 2 reviewer (调用合同/起诉/答辩/律师函各 1 次)
+      4. templates/views/doc-review/index.html 双审界面 playwright 截图 (4 文书类型)
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ A2 commit (跟 W11 A2 prompt 3 commits 一致)
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 2700000
+    hang_alert_after_ms: 2400000
+
+  - id: c1-recruit-page-launch
+    title: "C1 招募页上线 + dashboard 自动接通 + PRD 同步 (W11 partial 收尾)"
+    prompt: |
+      W11 C1 producer cancel 打断前 50% 完成 (launch-runbook v2 535 行 + first-paid-triggers 94 行
+      已 commit 4975d7e), W12 C1 接力剩余 50%:
+      1. 招募页 templates/views/founding/index.html 上线 (7/26 09:00)
+      2. dashboard-w11 自动 dashboard 接通 (实时拉取 prd_backlog 数据)
+      3. PRD V5.0 § 10 成功指标加 8 月底转化目标
+
+      必读文档:
+      - W11 B2 commit a99e941 (招募页 6 模块 + router switchView + track event)
+      - W11 B2 commit a10aecc (dashboard 4 业务 + 3 创史专属指标 + 7 SQL)
+      - W11 B2 commit 8208143 (邀请码 1115)
+      - W10 B1 commit 0df6a74 + ce98f64 (启动仪式流程 + 物料 + 漏斗)
+      - W11 C1 partial commit 4975d7e (launch-runbook v2 + first-paid-triggers)
+      - PRD V5.0 § 10 成功指标 (docs/prd/10-success-metrics.md)
+
+      W12 C1 工作范围:
+
+      1. **招募页上线检查** (templates/views/founding/index.html):
+         - 路径 /founding 已注册 router.js
+         - 6 模块完整 (创史价值主张 / 名额倒计时 / 已加入律师头像 / 7/26 启动预告 / 立即加入按钮 / 创始群二维码)
+         - track event 触发 (founding_viewed / founding_joined)
+         - 集成 sidebar (W6 landing 风格)
+         - playwright 截图招募页 (PC + 移动端各 1 张)
+
+      2. **dashboard 自动接通** (docs/marketing/dashboard-w11.md):
+         - 7 SQL 实时拉取 prd_backlog 数据 (W11 B2 commit a10aecc 已定义)
+         - 创史专属 3 指标: 招募进度 / 群活跃 / 付费转化
+         - 4 业务指标: 律师注册 / 评审完成 / 合同生成 / OCR 用量
+         - 自动 dashboard (cron 每日 09:00 拉取)
+         - 部署路径 /dashboard 路由 (router.js)
+
+      3. **PRD V5.0 § 10 同步** (docs/prd/10-success-metrics.md):
+         - 8 月底转化目标: 30 名律师付费 (首批 5 + 7/26-8/9 期间 25)
+         - 8 月底目标: 50 名律师付费 / 月 ¥5 万+ ARR
+         - 转化路径: trial_expired → 微信跟进 → ¥449/年 创史体验官 或 ¥99/月 个人版
+
+      4. **git commit + push** (1 commit: 招募页上线 + dashboard 自动 + PRD § 10 同步)
+
+      Stop when (C1 收尾完成):
+      - 招募页上线 + playwright 截图 (2 张)
+      - dashboard-w11 自动接通 + 部署 /dashboard 路由
+      - PRD V5.0 § 10 同步 8 月底转化目标
+      - git log 显示 1+ C1 收尾 commit
+
+      严禁:
+      - 不要重复写 launch-runbook / first-paid-triggers (W11 partial 已 commit 4975d7e)
+      - 不要 fabricate 报告
+      - 不要 silent fail
+    verify_prompt: |
+      独立验证 C1 招募页上线 + dashboard 自动 + PRD 同步:
+      1. templates/views/founding/index.html 招募页 6 模块完整 + playwright 截图 (PC + 移动端)
+      2. dashboard-w11 自动 dashboard 接通 + /dashboard 路由
+      3. PRD V5.0 § 10 同步 8 月底转化目标 (30 律师 + 50 律师 + ¥5 万+ ARR)
+      4. git log 显示 1+ C1 收尾 commit (跟 W11 partial 4975d7e 区分)
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w12-integration
+    title: "W12 集成验证 (A2 双审 + C1 收尾 + 公测期转化就绪)"
+    prompt: |
+      验证 W12 2 task 集成:
+      1. A2 双审工作流 (lex-coder) + 风险标注 + 客户签字
+      2. C1 招募页上线 + dashboard 自动 + PRD § 10 同步 (lex-bd 收尾)
+      3. 2 agent deliverable 无冲突 (lex-coder + lex-bd)
+      4. 2 agent 全部 git commit + push
+      5. 7/26 公测启动就绪 (招募页 + dashboard + 5 律师付费触发)
+      6. 8/9 前 30 名律师转化付费目标 → 8 月底 50 律师付费 / 月 ¥5 万+ ARR
+      7. W13 建议 (一句话: 7/26 启动仪式执行 + 首批 30 律师转化付费 + Skill 3 文书迭代)
+
+      输出 W12 总结 + W13 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - a2-doc-review-workflow
+      - c1-recruit-page-launch
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
