@@ -1,0 +1,578 @@
+<!--
+  W9 Skill 3 文书生成 - 前端视图 (lex-coder · 2026-06-29)
+  适用: 律师用 LexPrime 自动生成 4 类常见法律文书
+       起诉状 / 答辩状 / 合同 / 律师函 (评审 #1 #2 Top 3 新需求)
+
+  设计原则 (W1 设计系统):
+  - 4 标签页 (起诉/答辩/合同/律师函), 每个含事实输入 + 证据列表 + 生成按钮
+  - AI 紫色角标 + 强制 disclaimer
+  - 输出: Markdown 预览 + Word .docx 下载
+  - 数据源: POST /api/doc-gen/{type} (doc_gen_router.py W9 新增)
+
+  加载流程:
+  1. fetch /api/doc-gen/health → 4 模板字段清单 (动态生成输入框)
+  2. 用户填字段 → POST /api/doc-gen/{type} → JSON 含 markdown + docx_base64
+  3. Markdown 渲染在预览区 + 触发 docx 下载链接
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-doc-gen" data-view-source="doc-gen/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  /* tab 切换 */
+  .doc-tab {
+    cursor: pointer; padding: 8px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; transition: all 150ms ease-out;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; border: 1px solid #E5E6EB;
+  }
+  .doc-tab:hover { background: rgba(22, 93, 255, 0.06); color: #165DFF; }
+  .doc-tab.active { background: #165DFF; color: white; border-color: #165DFF; }
+  .doc-tab .count {
+    padding: 1px 6px; border-radius: 10px; font-size: 10px;
+    background: rgba(255,255,255,0.25);
+  }
+  .doc-tab:not(.active) .count { background: #F0F2F5; color: #4E5969; }
+  /* 字段输入区 */
+  .field-input {
+    width: 100%; padding: 8px 12px; border: 1px solid #E5E6EB;
+    border-radius: 6px; font-size: 13px; line-height: 1.5;
+    transition: all 150ms ease-out;
+  }
+  .field-input:focus {
+    outline: none; border-color: #165DFF;
+    box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+  }
+  .field-textarea {
+    width: 100%; min-height: 100px; padding: 8px 12px;
+    border: 1px solid #E5E6EB; border-radius: 6px;
+    font-size: 13px; line-height: 1.6; resize: vertical;
+    transition: all 150ms ease-out;
+  }
+  .field-textarea:focus {
+    outline: none; border-color: #165DFF;
+    box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+  }
+  .field-label {
+    font-size: 12px; font-weight: 500; color: #1D2129;
+    display: block; margin-bottom: 4px;
+  }
+  .field-required::after {
+    content: "*"; color: #F53F3F; margin-left: 2px;
+  }
+  .field-hint {
+    font-size: 11px; color: #86909C; margin-top: 2px;
+  }
+  /* 生成按钮 */
+  .gen-btn {
+    padding: 10px 24px; background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+    color: white; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 200ms ease-out;
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.2);
+  }
+  .gen-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(22, 93, 255, 0.3);
+  }
+  .gen-btn:disabled {
+    background: #C9CDD4; cursor: not-allowed; transform: none;
+    box-shadow: none;
+  }
+  /* 预览区 */
+  .preview-pane {
+    background: white; border: 1px solid #E5E6EB;
+    border-radius: 8px; padding: 24px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 12px; line-height: 1.7;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 600px; overflow-y: auto;
+  }
+  /* 状态徽章 */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;
+  }
+  .status-success { background: #E8F5E9; color: #2E7D32; }
+  .status-pending { background: #FFF7E8; color: #D25400; }
+  .status-error { background: #FCE4E4; color: #C62828; }
+</style>
+
+<div class="flex flex-col min-h-full bg-bg-subtle">
+
+  <!-- ============ 顶部 header ============ -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:file-document-multiple-outline" class="text-brand text-lg md:text-xl"></iconify-icon>
+            <span class="truncate">Skill 3 文书生成</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">W9 AI 起草</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate" id="doc-gen-subtitle">加载 4 类文书模板中…</p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="doc-gen-clear-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:broom" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">清空字段</span>
+        </button>
+        <button id="doc-gen-help-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:help-circle-outline" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">使用说明</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主体内容 ============ -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+
+    <!-- ============ 4 文书 tab ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-3 mb-5 fade-in flex items-center gap-2 overflow-x-auto">
+      <button class="doc-tab active" data-type="complaint">
+        <iconify-icon icon="mdi:gavel" class="text-base"></iconify-icon>
+        <span>起诉状</span>
+        <span class="count" id="dg-tab-complaint">—</span>
+      </button>
+      <button class="doc-tab" data-type="defense">
+        <iconify-icon icon="mdi:shield-check-outline" class="text-base"></iconify-icon>
+        <span>答辩状</span>
+        <span class="count" id="dg-tab-defense">—</span>
+      </button>
+      <button class="doc-tab" data-type="contract">
+        <iconify-icon icon="mdi:file-document-edit-outline" class="text-base"></iconify-icon>
+        <span>合同</span>
+        <span class="count" id="dg-tab-contract">—</span>
+      </button>
+      <button class="doc-tab" data-type="letter">
+        <iconify-icon icon="mdi:email-fast-outline" class="text-base"></iconify-icon>
+        <span>律师函</span>
+        <span class="count" id="dg-tab-letter">—</span>
+      </button>
+    </div>
+
+    <!-- ============ 4 个文书 panel (默认显示起诉状) ============ -->
+    <div id="dg-panel-complaint" class="dg-panel">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:gavel" class="text-brand"></iconify-icon>
+          民事起诉状
+          <span class="text-[10px] text-fg-tertiary ml-2">基于 {{template}} 模板</span>
+        </h3>
+        <div id="dg-fields-complaint" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- 字段由 JS 动态渲染 -->
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button class="gen-btn" id="dg-gen-complaint">
+            <iconify-icon icon="mdi:file-document-arrow-right-outline" class="text-base"></iconify-icon>
+            <span>生成起诉状</span>
+          </button>
+          <span class="text-[11px] text-fg-tertiary" id="dg-status-complaint">点击按钮生成 Markdown + Word 文档</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="dg-panel-defense" class="dg-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:shield-check-outline" class="text-brand"></iconify-icon>
+          民事答辩状
+          <span class="text-[10px] text-fg-tertiary ml-2">基于 {{template}} 模板</span>
+        </h3>
+        <div id="dg-fields-defense" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button class="gen-btn" id="dg-gen-defense">
+            <iconify-icon icon="mdi:file-document-arrow-right-outline" class="text-base"></iconify-icon>
+            <span>生成答辩状</span>
+          </button>
+          <span class="text-[11px] text-fg-tertiary" id="dg-status-defense">点击按钮生成 Markdown + Word 文档</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="dg-panel-contract" class="dg-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:file-document-edit-outline" class="text-brand"></iconify-icon>
+          合同起草
+          <span class="text-[10px] text-fg-tertiary ml-2">基于 {{template}} 模板 (8 大合同类型通用)</span>
+        </h3>
+        <div id="dg-fields-contract" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button class="gen-btn" id="dg-gen-contract">
+            <iconify-icon icon="mdi:file-document-arrow-right-outline" class="text-base"></iconify-icon>
+            <span>生成合同</span>
+          </button>
+          <span class="text-[11px] text-fg-tertiary" id="dg-status-contract">点击按钮生成 Markdown + Word 文档</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="dg-panel-letter" class="dg-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:email-fast-outline" class="text-brand"></iconify-icon>
+          律师函
+          <span class="text-[10px] text-fg-tertiary ml-2">基于 {{template}} 模板</span>
+        </h3>
+        <div id="dg-fields-letter" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button class="gen-btn" id="dg-gen-letter">
+            <iconify-icon icon="mdi:file-document-arrow-right-outline" class="text-base"></iconify-icon>
+            <span>生成律师函</span>
+          </button>
+          <span class="text-[11px] text-fg-tertiary" id="dg-status-letter">点击按钮生成 Markdown + Word 文档</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 输出预览区 (默认隐藏) ============ -->
+    <div id="dg-output-section" class="mt-5 hidden fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold flex items-center gap-1.5">
+            <iconify-icon icon="mdi:file-document-check-outline" class="text-success"></iconify-icon>
+            <span id="dg-output-title">生成结果</span>
+            <span class="status-badge status-success" id="dg-output-badge">已完成</span>
+          </h3>
+          <div class="flex items-center gap-2">
+            <button id="dg-download-md-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+              <iconify-icon icon="mdi:language-markdown-outline" class="text-sm"></iconify-icon>
+              <span>下载 Markdown</span>
+            </button>
+            <button id="dg-download-docx-btn" class="h-9 px-3 bg-brand text-white rounded-md text-xs hover:bg-brand-hover flex items-center gap-1">
+              <iconify-icon icon="mdi:file-word-outline" class="text-sm"></iconify-icon>
+              <span>下载 Word .docx</span>
+            </button>
+          </div>
+        </div>
+        <div id="dg-output-stats" class="flex items-center gap-3 text-[11px] text-fg-tertiary mb-3 pb-3 border-b border-bg-border">
+          <span><iconify-icon icon="mdi:check-circle" class="text-success"></iconify-icon> <span id="dg-stat-filled">0</span> 个字段已填</span>
+          <span><iconify-icon icon="mdi:alert-circle-outline" class="text-warning"></iconify-icon> <span id="dg-stat-missing">0</span> 个字段未填</span>
+          <span><iconify-icon icon="mdi:timer-outline"></iconify-icon> <span id="dg-stat-latency">—</span> ms</span>
+        </div>
+        <div id="dg-output-preview" class="preview-pane">
+          生成结果将显示在这里…
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ AI 角标 + 强制免责声明 ============ -->
+    <div class="bg-ai/5 border border-ai/20 rounded-lg p-3 mb-6 mt-5">
+      <div class="flex items-start gap-2">
+        <iconify-icon icon="mdi:sparkles" class="text-ai text-base flex-shrink-0 mt-0.5"></iconify-icon>
+        <div class="text-[11px] text-fg-secondary leading-relaxed">
+          <strong class="text-ai">AI 辅助工具声明</strong> · 本页面基于律师提交的事实与证据, 自动生成 4 类常见法律文书 (起诉状 / 答辩状 / 合同 / 律师函), 输出 Markdown 预览 + Word .docx 下载. AI 仅做模板替换与结构化整理, 不替代律师的专业判断. 律师应逐字审核、修改并对最终文书负责.
+          数据源: <code class="text-[10px] bg-white px-1 rounded">POST /api/doc-gen/{type}</code> 端点 (W9 backend/cases-crawler/api/doc_gen_router.py).
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== 视图切换 =====
+  var tabBtns = document.querySelectorAll('#view-doc-gen .doc-tab');
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var t = btn.getAttribute('data-type');
+      tabBtns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.dg-panel').forEach(function(p) { p.classList.add('hidden'); });
+      var targetPanel = document.getElementById('dg-panel-' + t);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+    });
+  });
+
+  // ===== 数据缓存 =====
+  var currentTemplates = {};  // {complaint: {fields: [...]}, ...}
+  var currentGen = null;        // 最近一次生成结果
+
+  // ===== 字段渲染 (按字段类型选 input 或 textarea) =====
+  function renderFields(docType, fields) {
+    var container = document.getElementById('dg-fields-' + docType);
+    if (!container) return;
+    var html = '';
+    fields.forEach(function(fieldName) {
+      var isTextArea = ['facts', 'evidence', 'claims', 'claims_response', 'breach_terms', 'misc_terms', 'demands', 'consequence'].indexOf(fieldName) !== -1;
+      var labelText = fieldLabel(fieldName);
+      var placeholder = fieldPlaceholder(fieldName);
+      html += '<div class="' + (isTextArea ? 'col-span-full' : 'col-span-1') + '">';
+      html += '<label class="field-label field-required">' + escapeHtml(labelText) + '</label>';
+      if (isTextArea) {
+        html += '<textarea class="field-textarea" data-field="' + fieldName + '" placeholder="' + escapeHtml(placeholder) + '" data-doc-type="' + docType + '"></textarea>';
+      } else {
+        html += '<input type="text" class="field-input" data-field="' + fieldName + '" placeholder="' + escapeHtml(placeholder) + '" data-doc-type="' + docType + '" />';
+      }
+      html += '<p class="field-hint">字段名: <code>' + fieldName + '</code></p>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function fieldLabel(name) {
+    var map = {
+      case_id: '案号',
+      contract_id: '合同编号',
+      letter_id: '函件编号',
+      lawyer_id: '律师/律所',
+      lawyer_name: '律师姓名',
+      lawyer_phone: '律师电话',
+      lawyer_email: '律师邮箱',
+      law_firm: '律所名称',
+      law_firm_addr: '律所地址',
+      plaintiff_name: '原告姓名/名称',
+      plaintiff_id: '原告身份证号/统一社会信用代码',
+      plaintiff_addr: '原告住所地',
+      plaintiff_phone: '原告联系电话',
+      defendant_name: '被告姓名/名称',
+      defendant_id: '被告身份证号/统一社会信用代码',
+      defendant_addr: '被告住所地',
+      defendant_phone: '被告联系电话',
+      party_a: '甲方 (名称)',
+      party_a_id: '甲方 信用代码',
+      party_a_addr: '甲方 住所',
+      party_a_phone: '甲方 电话',
+      party_a_rep: '甲方 法定代表人',
+      party_b: '乙方 (名称)',
+      party_b_id: '乙方 信用代码',
+      party_b_addr: '乙方 住所',
+      party_b_phone: '乙方 电话',
+      party_b_rep: '乙方 法定代表人',
+      recipient: '收函人',
+      recipient_addr: '收函人地址',
+      sender: '委托人',
+      contract_type: '合同类型',
+      subject: '主题 / 标的',
+      cause: '案由',
+      facts: '事实与理由',
+      evidence: '证据清单',
+      claims: '诉讼请求',
+      claims_response: '对原告诉讼请求的答辩',
+      demands: '律师要求',
+      deadline: '履行期限',
+      consequence: '法律后果',
+      amount: '金额 (CNY)',
+      amount_cn: '金额 (大写)',
+      payment_method: '支付方式',
+      payment_schedule: '付款时间',
+      start_date: '生效日期',
+      end_date: '终止日期',
+      perform_location: '履行地点',
+      perform_method: '履行方式',
+      breach_terms: '违约责任条款',
+      jurisdiction: '管辖地',
+      misc_terms: '其他约定',
+      court: '受诉法院',
+      date: '日期 (留空自动填今天)',
+    };
+    return map[name] || name;
+  }
+
+  function fieldPlaceholder(name) {
+    var map = {
+      facts: '例: 原告于 2023-01-01 借给被告 50 万元, 约定月息 2%...',
+      evidence: '例: \n1. 借款合同\n2. 转账记录\n3. 微信聊天记录',
+      claims: '例: \n1. 请求判令被告偿还本金 50 万元\n2. 请求判令支付利息',
+      demands: '例: \n1. 请于 7 日内支付 80 万元\n2. 请书面回复付款计划',
+    };
+    return map[name] || '';
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // ===== 加载健康检查 (4 模板字段) =====
+  async function loadDocGenHealth() {
+    try {
+      var resp = await fetch('/api/doc-gen/health');
+      if (!resp.ok) {
+        document.getElementById('doc-gen-subtitle').textContent = '加载失败: ' + resp.status;
+        return;
+      }
+      var data = await resp.json();
+      currentTemplates = data.templates;
+
+      // 更新 tab count
+      ['complaint', 'defense', 'contract', 'letter'].forEach(function(t) {
+        var el = document.getElementById('dg-tab-' + t);
+        if (el && data.templates[t]) {
+          el.textContent = data.templates[t].field_count;
+        }
+      });
+
+      // 渲染 4 个 panel 的字段
+      ['complaint', 'defense', 'contract', 'letter'].forEach(function(t) {
+        if (data.templates[t] && data.templates[t].fields) {
+          renderFields(t, data.templates[t].fields);
+        }
+      });
+
+      document.getElementById('doc-gen-subtitle').textContent =
+        'W9 文书生成 · 4 模板就绪 (' + data.templates_loaded + '/' + data.template_count + ') · ' +
+        (data.docx_available ? 'docx 可用' : 'docx 降级');
+    } catch (err) {
+      console.error('[doc-gen] load failed', err);
+      document.getElementById('doc-gen-subtitle').textContent = '加载错误: ' + err.message;
+    }
+  }
+
+  // ===== 收集字段 =====
+  function collectFields(docType) {
+    var fields = {};
+    var inputs = document.querySelectorAll('#dg-fields-' + docType + ' [data-field]');
+    inputs.forEach(function(input) {
+      var name = input.getAttribute('data-field');
+      var val = input.value.trim();
+      if (val) fields[name] = val;
+    });
+    return fields;
+  }
+
+  // ===== 调用后端生成 =====
+  async function generateDoc(docType) {
+    var statusEl = document.getElementById('dg-status-' + docType);
+    var btnEl = document.getElementById('dg-gen-' + docType);
+    statusEl.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin text-brand"></iconify-icon> 生成中…';
+    btnEl.disabled = true;
+
+    var fields = collectFields(docType);
+    var lawyerId = (typeof AppState !== 'undefined' && AppState.currentUser && AppState.currentUser.name) || '当前律师';
+    var payload = {
+      lawyer_id: lawyerId,
+      fields: fields,
+      output_format: 'all',
+    };
+
+    try {
+      var resp = await fetch('/api/doc-gen/' + docType, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) {
+        var err = await resp.text();
+        throw new Error('HTTP ' + resp.status + ': ' + err);
+      }
+      var data = await resp.json();
+      currentGen = data;
+
+      // 显示输出区
+      var outputSection = document.getElementById('dg-output-section');
+      outputSection.classList.remove('hidden');
+      document.getElementById('dg-output-title').textContent =
+        (currentTemplates[docType] ? currentTemplates[docType].label : docType) + ' - ' + data.gen_id;
+      document.getElementById('dg-stat-filled').textContent = data.filled_fields.length;
+      document.getElementById('dg-stat-missing').textContent = data.missing_fields.length;
+      document.getElementById('dg-stat-latency').textContent = data.latency_ms;
+      document.getElementById('dg-output-preview').textContent = data.markdown;
+
+      statusEl.innerHTML = '<iconify-icon icon="mdi:check-circle" class="text-success"></iconify-icon> 已生成 · 预览下方 + 下载 Word';
+      // 滚动到输出区
+      outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      console.error('[doc-gen] generate failed', err);
+      statusEl.innerHTML = '<iconify-icon icon="mdi:alert-circle" class="text-error"></iconify-icon> 生成失败: ' + err.message;
+    } finally {
+      btnEl.disabled = false;
+    }
+  }
+
+  // ===== 下载 Markdown =====
+  function downloadMarkdown() {
+    if (!currentGen) {
+      alert('请先生成文书');
+      return;
+    }
+    var blob = new Blob([currentGen.markdown], { type: 'text/markdown;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = (currentGen.doc_type || 'doc') + '-' + currentGen.gen_id + '.md';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===== 下载 Word docx =====
+  function downloadDocx() {
+    if (!currentGen || !currentGen.docx_base64) {
+      alert('请先生成文书');
+      return;
+    }
+    // Base64 → binary → Blob → download
+    var binary = atob(currentGen.docx_base64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = currentGen.docx_filename || (currentGen.doc_type + '-' + currentGen.gen_id + '.docx');
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===== 清空字段 =====
+  function clearFields() {
+    var active = document.querySelector('.dg-panel:not(.hidden)');
+    if (!active) return;
+    var docType = active.id.replace('dg-panel-', '');
+    var inputs = document.querySelectorAll('#dg-fields-' + docType + ' [data-field]');
+    inputs.forEach(function(input) { input.value = ''; });
+    var outputSection = document.getElementById('dg-output-section');
+    outputSection.classList.add('hidden');
+    currentGen = null;
+    var statusEl = document.getElementById('dg-status-' + docType);
+    if (statusEl) statusEl.innerHTML = '字段已清空, 可重新填写';
+  }
+
+  // ===== 使用说明 =====
+  function showHelp() {
+    alert(
+      'Skill 3 文书生成 使用说明\n\n' +
+      '1. 选择 4 类文书之一 (起诉状 / 答辩状 / 合同 / 律师函)\n' +
+      '2. 填写必填字段 (带 * 标记)\n' +
+      '3. 点击"生成"按钮, 自动产出 Markdown + Word .docx\n' +
+      '4. 可下载 Markdown 进一步编辑, 或直接下载 Word 提交\n\n' +
+      '提示: 缺失字段会保留占位符在文书中, 生成后请人工补齐。\n\n' +
+      'AI 辅助声明: 本工具仅做模板替换与结构化整理, 不替代律师专业判断, 最终文书由律师负责。'
+    );
+  }
+
+  // ===== 绑定事件 =====
+  ['complaint', 'defense', 'contract', 'letter'].forEach(function(t) {
+    var btn = document.getElementById('dg-gen-' + t);
+    if (btn) btn.addEventListener('click', function() { generateDoc(t); });
+  });
+  document.getElementById('dg-download-md-btn').addEventListener('click', downloadMarkdown);
+  document.getElementById('dg-download-docx-btn').addEventListener('click', downloadDocx);
+  document.getElementById('doc-gen-clear-btn').addEventListener('click', clearFields);
+  document.getElementById('doc-gen-help-btn').addEventListener('click', showHelp);
+
+  // ===== 暴露给 router.js =====
+  globalThis.__loadDocGenHealth = loadDocGenHealth;
+})();
+</script>
+</div>
