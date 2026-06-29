@@ -44,6 +44,8 @@ yuanxing/
 
 | Skill | 用途 |
 |---|---|
+| `using-git-worktrees` | Plan track / 跨服务改动 / 多文件功能开发前先建 worktree 隔离（避免并行 subagent 冲突） |
+| `dispatching-parallel-agents` | Plan 多 track 并行 / 多 service 体检（frontend ↔ backend:3847 ↔ ai-service:8088 ↔ OCR:8089）/ 多视角代码考古 时,**单 message 发多个 task tool 调用**,每个 subagent 独立上下文（配合 `using-git-worktrees` 做物理隔离） |
 | `receiving-code-review` | 接 review 反馈时的思考纪律（验证 → 复述 → push back） |
 | `finishing-a-development-branch` | 任务完成后 merge / PR / cleanup 的选项编排 |
 | `requesting-code-review` | 提交前 dispatch reviewer 做单 task 级别的快速审查 |
@@ -61,6 +63,25 @@ yuanxing/
 4. `docs/plans/plan-NN-decision.json` — plan 级 verdict
 
 **Final report 不重复 review**——它是 plan 级集成验证报告，不替代单 task 级别的 code review。
+
+### Track 隔离 — Worktree 强制
+
+**每个 Plan track / sub-task 必须先建 worktree**——多 subagent 并行时,在 `main` 上直接改会互相覆盖、产生 phantom diff 让你误以为进度在涨。
+
+参考 `.harness/skills/using-git-worktrees/SKILL.md` 的 LexPrime 适配版。核心 3 步:
+
+```bash
+BRANCH="w<N>-<track>-<short-desc>"   # 例: w10-a1-frontend-auth-reconnect
+git worktree add ".worktrees/$BRANCH" -b "$BRANCH"
+cd ".worktrees/$BRANCH"
+```
+
+**例外**(可跳过 worktree,在 main 直接改):
+- 单文件 typo / 注释 / 文档微调
+- `.harness/` / `docs/plans/` / `AGENTS.md` 这类元数据
+- 紧急 hotfix(事后补建分支记录)
+
+**红线**:不要在并行 subagent 共享同一 working tree——`.worktrees/` 目录是隔离的物理保证。
 
 ## Code Review 纪律（强制）
 

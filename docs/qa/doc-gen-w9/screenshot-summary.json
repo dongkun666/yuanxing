@@ -52,11 +52,9 @@
   "console_errors": [
     "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
     "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
-    "[mobile] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
-    "[mobile] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
-    "[mobile] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
-    "[mobile] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
-    "[mobile] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT"
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT"
   ],
   "backend_responses": [
     {
