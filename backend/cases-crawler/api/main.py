@@ -181,6 +181,16 @@ try:
 except Exception as e:
     logger.warning(f"W9 Skill 3 文书生成 router 加载失败 (非致命): {e}")
 
+# W10 A1 (lex-ai · 2026-06-29) Skill 1+2+3 一体化全流程
+# W9 C1 4 端点 + W4 类案 + W3 Skill 2 合同审查, 律师一个案件跑完三步
+# 端点: POST /api/case/full-workflow, GET /api/case/full-workflow/{case_id}, GET /api/case/full-workflow/health
+try:
+    from api.full_workflow_router import router as full_workflow_router
+    app.include_router(full_workflow_router)
+    logger.info("W10 Skill 1+2+3 一体化 router registered (A1)")
+except Exception as e:
+    logger.warning(f"W10 Skill 一体化 router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")
