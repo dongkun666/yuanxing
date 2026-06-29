@@ -1,8 +1,8 @@
 """
-LexPrime OCR 引擎 — 统一抽象 (W5 Track B)
+LexPrime OCR 引擎 — 统一抽象 (W5 Track B + W7 升级)
 
 设计:
-- PaddleOcrEngine: 真实 PaddleOCR (ch_PP-OCRv3, 中文专精)
+- PaddleOcrEngine: 真实 PaddleOCR (PP-OCRv6 中文专精, 兼容 v2.7+)
 - MockOcrEngine:   开发/测试用 mock, 不依赖 paddlepaddle
 - 自动按环境变量 LEX_OCR_ENGINE 切换 (auto | paddle | mock, 默认 auto)
 
@@ -11,18 +11,31 @@ W5 范围 (W3 license.py 的 OCR mock 迁移):
 - W5: 本模块支持图片 (PNG/JPG/JPEG) + PDF (含扫描件)
 - W5: 返回 OcrResult 含 raw_text + 平均 confidence + 段位 lines (供 reviewer 用)
 
-生产部署 (PaddleOCR 2.7+):
-    # 1. 用 Python 3.11/3.12 独立 venv (paddlepaddle 暂不支持 3.14)
-    python3.11 -m venv venv-ocr
-    source venv-ocr/bin/activate  # Windows: venv-ocr\\Scripts\\activate
-    pip install paddlepaddle==2.6.1 paddleocr==2.7.3
-    # 2. 模型自动下载到 ~/.paddlex/official_models/ (第一次推理时)
-    # 3. 启动 backend 时: export LEX_OCR_ENGINE=paddle
-    #    或: 在 .env 写 LEX_OCR_ENGINE=paddle
+W7 升级 (plan-07-w7-yaml § 1):
+- 创建 backend/venv312/ (Python 3.12.7 embeddable) — paddlepaddle wheel 不支持 3.14
+- 装 paddlepaddle==3.3.1 + paddleocr==3.7.0 + numpy 2.x (3.x API 兼容)
+- PaddleOcrEngine 兼容 PaddleOCR 2.7 (legacy) + 3.7 (current) 双 API:
+    * 2.7: PaddleOCR(use_angle_cls=True, lang='ch').ocr(arr) → [[(bbox, (text, conf)), ...]]
+    * 3.7: PaddleOCR(use_doc_orientation_classify=False, ..., lang='ch').predict(arr) → [dict{rec_texts, rec_scores, rec_polys, ...}]
+- 自动 detect API 版本, 兼容两种 output 格式
+- onednn 在 Paddle 3.x 默认开, 但 PP-OCRv6 有 dtype bug, 自动 FLAGS_use_mkldnn=0
+
+生产部署 (W7 venv312):
+    # 1. 创建 Python 3.12 隔离 venv (embeddable 已就位)
+    #    backend/venv312/python.exe 已存在 (Python 3.12.7)
+    # 2. pip 引导:
+    #    backend/venv312/python.exe backend/venv312/get-pip.py
+    # 3. 装 paddle 套件:
+    #    backend/venv312/python.exe -m pip install paddlepaddle==3.3.1 paddleocr==3.7.0
+    # 4. 模型自动下载到 ~/.paddlex/official_models/ (第一次推理时)
+    # 5. 启动 backend 时:
+    #    set LEX_OCR_ENGINE=paddle
+    #    set PYTHONPATH=backend/venv312/Lib/site-packages  # 让 3.14 主进程找到 paddle 套件
+    #    或: 在 .env 写 LEX_OCR_ENGINE=paddle + 用 venv312 直接启 uvicorn
 
 参考:
 - PRD §5.4 Skill Hub + Track B (B-ocr.md) PaddleOCR
-- PaddleOCR 2.7 文档: https://github.com/PaddlePaddle/PaddleOCR
+- PaddleOCR 3.0+ 文档: https://github.com/PaddlePaddle/PaddleOCR
 - T-REF-15/16 借鉴: 用统一 Tool 抽象层 (本模块即 OCR Tool)
 """
 from __future__ import annotations
@@ -33,7 +46,13 @@ import re
 import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Protocol, runtime_checkable
+from typing import List, Optional, Protocol, runtime_checkable, Tuple, Dict, Any
+
+
+# 抑制 Paddle 3.x onednn 在 PP-OCRv6 上的 dtype bug (ValueError ... DoubleAttribute)
+# 必须在 import paddle 之前设置
+os.environ.setdefault("FLAGS_use_mkldnn", "0")
+os.environ.setdefault("FLAGS_use_onednn", "0")
 
 
 # ===== 数据结构 =====
@@ -162,12 +181,44 @@ def is_image(data: bytes) -> bool:
 
 # ===== PaddleOCR 引擎 (生产) =====
 
+def _detect_paddle_api_version() -> Tuple[int, str]:
+    """探测 PaddleOCR 主版本 + API 风格
+
+    Returns:
+        (major, api_style) — api_style ∈ {"v2", "v3"}
+        - v2: PaddleOCR 2.x, 使用 .ocr(arr, cls=...) 返回 [[(bbox, (text, conf)), ...]]
+        - v3: PaddleOCR 3.x, 使用 .predict(arr) 返回 [dict{rec_texts, rec_scores, rec_polys}]
+    """
+    try:
+        import paddleocr  # noqa: F401
+    except ImportError:
+        return (0, "none")
+    try:
+        ver = getattr(paddleocr, "__version__", "0.0.0")
+        major = int(ver.split(".")[0]) if ver and ver[0].isdigit() else 0
+    except Exception:
+        major = 0
+    if major >= 3:
+        return (major, "v3")
+    if major == 2:
+        return (major, "v2")
+    return (major, "unknown")
+
+
 class PaddleOcrEngine:
     """真实 PaddleOCR 引擎 (懒加载)
 
-    依赖:
-        paddleocr==2.7.3 (轻量 PP-OCRv3 中文模型 ~12MB)
-        paddlepaddle==2.6.x  (Python 3.11/3.12 独立 venv)
+    依赖 (W7 venv312):
+        paddlepaddle==3.3.1
+        paddleocr==3.7.0  (PP-OCRv6 中文模型, 自动下载到 ~/.paddlex/)
+        numpy 2.x (Paddle 3.x 兼容)
+        PyMuPDF (fitz) for PDF
+        Pillow for image
+
+    兼容:
+        PaddleOCR 2.7 (legacy, paddlepaddle 2.6.x) — 仍可工作
+        PaddleOCR 3.x (current, paddlepaddle 3.x) — 主推
+        自动 detect API 版本, 内部二选一
 
     第一次调用时下载模型到 ~/.paddlex/official_models/
     """
@@ -179,17 +230,20 @@ class PaddleOcrEngine:
         self._use_angle_cls = use_angle_cls
         self._engine = None
         self._init_error: Optional[str] = None
+        self._api_version: int = 0
+        self._api_style: str = "unknown"
 
     def is_available(self) -> bool:
         try:
             import paddleocr  # noqa: F401
+            self._api_version, self._api_style = _detect_paddle_api_version()
             return True
         except ImportError as e:
             self._init_error = f"paddleocr not installed: {e}"
             return False
 
     def _get_engine(self):
-        """懒加载 PaddleOCR 实例"""
+        """懒加载 PaddleOCR 实例 (兼容 v2 / v3 API)"""
         if self._engine is not None:
             return self._engine
         if self._init_error:
@@ -200,11 +254,25 @@ class PaddleOcrEngine:
             self._init_error = f"paddleocr not installed: {e}"
             raise OcrEngineUnavailableError(self._init_error) from e
         try:
-            self._engine = PaddleOCR(
-                use_angle_cls=self._use_angle_cls,
-                lang=self._lang,
-                show_log=False,
-            )
+            self._api_version, self._api_style = _detect_paddle_api_version()
+            if self._api_style == "v3":
+                # PaddleOCR 3.x API
+                self._engine = PaddleOCR(
+                    use_doc_orientation_classify=False,
+                    use_doc_unwarping=False,
+                    use_textline_orientation=self._use_angle_cls,
+                    lang=self._lang,
+                    device="cpu",
+                    enable_mkldnn=False,  # W7: 避免 PP-OCRv6 dtype bug
+                    show_log=False,
+                )
+            else:
+                # PaddleOCR 2.x API (legacy)
+                self._engine = PaddleOCR(
+                    use_angle_cls=self._use_angle_cls,
+                    lang=self._lang,
+                    show_log=False,
+                )
         except Exception as e:
             self._init_error = f"PaddleOCR init failed: {e}"
             raise OcrEngineUnavailableError(self._init_error) from e
@@ -232,7 +300,6 @@ class PaddleOcrEngine:
         )
 
     def _run_image(self, engine, file_bytes: bytes, mime: str) -> OcrResult:
-        # PaddleOCR.ocr 接受 numpy array 或 file path
         try:
             import numpy as np
             from PIL import Image
@@ -243,7 +310,10 @@ class PaddleOcrEngine:
 
         img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
         arr = np.array(img)
-        raw = engine.ocr(arr, cls=self._use_angle_cls)
+        if self._api_style == "v3":
+            raw = engine.predict(arr)
+        else:
+            raw = engine.ocr(arr, cls=self._use_angle_cls)
         return self._parse_paddle_result(raw, mime=mime, page_count=1)
 
     def _run_pdf(self, engine, file_bytes: bytes, mime: str) -> OcrResult:
@@ -260,13 +330,17 @@ class PaddleOcrEngine:
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         all_lines: List[OcrLine] = []
         all_text_parts: List[str] = []
-        for page_idx in range(len(doc)):
+        page_count = len(doc)
+        for page_idx in range(page_count):
             page = doc[page_idx]
             mat = fitz.Matrix(2.0, 2.0)  # 2x 缩放提高识别率
             pix = page.get_pixmap(matrix=mat)
             img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
             arr = np.array(img)
-            raw = engine.ocr(arr, cls=self._use_angle_cls)
+            if self._api_style == "v3":
+                raw = engine.predict(arr)
+            else:
+                raw = engine.ocr(arr, cls=self._use_angle_cls)
             page_result = self._parse_paddle_result(
                 raw, mime=mime, page_count=1
             )
@@ -279,7 +353,7 @@ class PaddleOcrEngine:
                 raw_text="",
                 confidence=0.0,
                 lines=[],
-                page_count=len(doc) if hasattr(doc, "__len__") else 0,
+                page_count=page_count,
                 source_engine=self.name,
                 detected_mime=mime,
             )
@@ -288,13 +362,24 @@ class PaddleOcrEngine:
             raw_text="\n\n".join(all_text_parts),
             confidence=avg_conf,
             lines=all_lines,
-            page_count=len(all_text_parts),
+            page_count=page_count,
             source_engine=self.name,
             detected_mime=mime,
         )
 
-    @staticmethod
     def _parse_paddle_result(
+        self, raw, mime: str, page_count: int
+    ) -> OcrResult:
+        """PaddleOCR 输出格式兼容:
+        - v2: [[(bbox, (text, conf)), ...]] (嵌套 list, 每页一段)
+        - v3: [dict{rec_texts: [str], rec_scores: [float], rec_polys: [arr], ...}]
+        """
+        if self._api_style == "v3":
+            return self._parse_paddle_v3(raw, mime, page_count)
+        return self._parse_paddle_v2(raw, mime, page_count)
+
+    @staticmethod
+    def _parse_paddle_v2(
         raw, mime: str, page_count: int
     ) -> OcrResult:
         """PaddleOCR 2.7 输出格式: [[(bbox, (text, conf)), ...]]"""
@@ -314,6 +399,55 @@ class PaddleOcrEngine:
                     confidence=float(conf) if conf else 0.0,
                     bbox=[[float(p[0]), float(p[1])] for p in bbox]
                     if bbox else None,
+                ))
+                text_parts.append(str(text))
+        if not lines:
+            return OcrResult(
+                raw_text="",
+                confidence=0.0,
+                lines=[],
+                page_count=page_count,
+                source_engine="paddle",
+                detected_mime=mime,
+            )
+        avg_conf = sum(line.confidence for line in lines) / len(lines)
+        return OcrResult(
+            raw_text="\n".join(text_parts),
+            confidence=avg_conf,
+            lines=lines,
+            page_count=page_count,
+            source_engine="paddle",
+            detected_mime=mime,
+        )
+
+    @staticmethod
+    def _parse_paddle_v3(
+        raw, mime: str, page_count: int
+    ) -> OcrResult:
+        """PaddleOCR 3.x 输出格式: [dict{rec_texts, rec_scores, rec_polys}]"""
+        lines: List[OcrLine] = []
+        text_parts: List[str] = []
+        for page_result in raw or []:
+            if not isinstance(page_result, dict):
+                continue
+            rec_texts = page_result.get("rec_texts") or []
+            rec_scores = page_result.get("rec_scores") or []
+            rec_polys = page_result.get("rec_polys") or []
+            for idx, text in enumerate(rec_texts):
+                if not text:
+                    continue
+                conf = float(rec_scores[idx]) if idx < len(rec_scores) else 0.0
+                bbox = None
+                if idx < len(rec_polys):
+                    try:
+                        poly = rec_polys[idx]
+                        bbox = [[float(p[0]), float(p[1])] for p in poly]
+                    except Exception:
+                        bbox = None
+                lines.append(OcrLine(
+                    text=str(text),
+                    confidence=conf,
+                    bbox=bbox,
                 ))
                 text_parts.append(str(text))
         if not lines:
@@ -537,3 +671,11 @@ if __name__ == "__main__":
         print(f"\n[ocr] test_ocr_{i}: {result.confidence:.2f} conf, "
               f"{len(result.lines)} lines")
         print(f"  first line: {result.lines[0].text if result.lines else '(empty)'}")
+
+
+# ===== W7 升级: Paddle 3.x onednn 抑制 =====
+# (在 _detect_paddle_api_version() 已 import paddleocr 之前 os.environ.setdefault 设置)
+# 这里再次显式设置 (防止 import 顺序问题)
+os.environ.setdefault("FLAGS_use_mkldnn", "0")
+os.environ.setdefault("FLAGS_use_onednn", "0")
+
