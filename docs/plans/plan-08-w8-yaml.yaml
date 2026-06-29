@@ -1,0 +1,398 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 8: W5 4 项 follow-up 集中修复 + 评审反馈改进 (D + A 并行)'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+
+tasks:
+  # ============================================================
+  # Track D: W5 4 项 follow-up 集中修复 (D1-D4)
+  # ============================================================
+
+  # Task D1: Python 3.12 venv312 + PaddleOCR 装包验证
+  - id: 'd1-venv312-paddle'
+    title: 'D1 Python 3.12 venv312 创建 + paddlepaddle 3.3.1 + paddleocr 3.7 装包 + import 验证'
+    prompt: |
+      W7 PaddleEngine 代码已 push (commit 0815a2e, 198 行 ocr.py 兼容 PaddleOCR 2.7 + 3.7 API),
+      但 venv312 未创建 + paddlepaddle 装不上. 已知技术约束: Python 3.14 + paddlepaddle 3.3.1 wheel
+      不兼容, 需 Python 3.12 venv.
+
+      必读文档:
+      - W7 PaddleEngine commit 0815a2e (backend/cases-crawler/core/ocr.py)
+      - W5 OCR 兜底 commit 3b48ce8 (Tesseract + Mock 双轨, 评审现场已用)
+      - plan-07-w7-final-report.md § 4 推 W8 清单
+      - W5 final report § 3 残留 4 项 follow-up
+
+      W8 D1 工作范围:
+      1. **检查 Python 3.12 是否可用**:
+         - py -3.12 --version / python3.12 --version (找系统 Python 3.12.x)
+         - 如果没装, 下载 python-3.12.7-amd64.exe 安装 (Windows)
+         - 或用 py launcher 安装: py install 3.12
+      2. **创建 venv312 隔离环境**:
+         - cd backend && py -3.12 -m venv venv312
+         - 验证: backend\venv312\Scripts\python.exe --version → Python 3.12.x
+      3. **装 paddlepaddle + paddleocr**:
+         - backend\venv312\Scripts\python.exe -m pip install --upgrade pip
+         - pip install paddlepaddle==3.3.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
+         - pip install paddleocr==3.7 -i https://pypi.tuna.tsinghua.edu.cn/simple
+      4. **import 验证**:
+         - python -c "import paddle; import paddleocr; print('paddle:', paddle.__version__); print('paddleocr:', paddleocr.__version__)"
+         - 期望: paddle 3.3.1, paddleocr 3.7
+      5. **requirements 文档**:
+         - backend/requirements-ocr.txt (W5 已有 requirements.txt, 扩展加 paddlepaddle==3.3.1 + paddleocr==3.7)
+         - docs/setup/venv312-setup.md (装包步骤文档, 给后续 agent 复用)
+      6. **git commit + push** (1 commit: venv312 setup + docs)
+
+      Stop when (D1 完成):
+      - backend\venv312\Scripts\python.exe --version 验证 Python 3.12.x
+      - import paddle + paddleocr 成功, 版本 3.3.1 + 3.7
+      - backend/requirements-ocr.txt 落档
+      - docs/setup/venv312-setup.md 落档
+      - git log 显示 1+ D1 commit
+
+      不要做:
+      - 不要切 get_ocr_engine() 优先级 (D4 E2E 才切, 现在 Tesseract + Mock 兜底够用)
+      - 不要动 ocr.py 代码 (W7 已 commit 完整, 别动)
+      - 不要跑 PaddleEngine (没模型, 跑也没意义, D4 跑)
+    verify_prompt: |
+      独立验证 D1 venv312 装包:
+      1. backend\venv312\Scripts\python.exe --version → Python 3.12.x
+      2. import paddle + paddleocr 成功, paddle 3.3.1 + paddleocr 3.7
+      3. backend/requirements-ocr.txt 落档 (含 paddlepaddle==3.3.1 + paddleocr==3.7)
+      4. docs/setup/venv312-setup.md 装包步骤文档完整 (Python 3.12 安装 + venv + 装包 + 验证)
+      5. git log 显示 1+ D1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task D2: FTS5 jieba 中文分词升级
+  - id: 'd2-fts5-jieba'
+    title: 'D2 FTS5 jieba tokenizer 升级 (unicode61 → jieba) + 索引重建 + 中文检索命中'
+    prompt: |
+      W4 遗留 FTS5 unicode61 中文分词缺陷, W5 + W6 + W7 都未修, 推 W8 D2.
+
+      必读文档:
+      - W4 LanceDB+BGE commit 3edd96f (FTS5 索引初始建)
+      - W4 合同扩量 commit 32fc4c1 (6076 合同, FTS5 索引缺陷暴露)
+      - plan-04-w4-final-report.md § 4 follow-up 清单
+      - plan-05-w5-final-report.md § 3 follow-up 清单
+      - W7 final report § 4 推 W8 清单
+
+      W8 D2 工作范围:
+      1. **jieba tokenizer 设计**:
+         - backend/cases-crawler/core/fts5_tokenizer.py (新文件)
+         - 实现 jieba_tokenize(text: str) → str (空格分隔的中文分词)
+         - 兼容 SQLite FTS5 tokenizer 协议 (xTokenize callback)
+      2. **FTS5 索引重建**:
+         - backend/cases-crawler/scripts/rebuild_fts5_index.py (新脚本)
+         - DROP TABLE IF EXISTS contracts_fts; CREATE VIRTUAL TABLE contracts_fts USING fts5(content, tokenize='jieba');
+         - 从 6076 contracts 表 INSERT INTO contracts_fts SELECT content
+         - 落地: docs/setup/fts5-rebuild.md
+      3. **中文检索验证**:
+         - "房屋租赁合同" / "劳动合同" / "股权转让" 三个关键词, 期望 > 0 hits
+         - 验证脚本: backend/cases-crawler/scripts/verify_fts5_zh.py
+         - 落地: docs/qa/fts5-zh-hit-w8.md (检索日志)
+      4. **回归测试**:
+         - backend/cases-crawler/tests/test_fts5_jieba.py (新测试文件, 5+ test)
+         - pytest 100% (含 D1 venv312 jieba 装包)
+         - ruff 0
+      5. **git commit + push** (2 commits: 1 tokenizer+rebuild / 1 测试+QA)
+
+      Stop when (D2 完成):
+      - jieba_tokenize 函数跑通, 中文分词 > 0
+      - contracts_fts 索引重建完成, 6076 合同 100% 入库
+      - "房屋租赁合同" 中文检索 > 0 hits (unicode61 之前 0 hits)
+      - 5+ pytest test + ruff 0
+      - git log 显示 2+ D2 commit
+
+      不要做:
+      - 不要动 LanceDB 索引 (BGE 向量检索独立, 跟 FTS5 是双轨)
+      - 不要升级 SQLite 版本 (jieba tokenizer 是 Python 层, 跟 SQLite 版本无关)
+    verify_prompt: |
+      独立验证 D2 FTS5 jieba:
+      1. backend/cases-crawler/core/fts5_tokenizer.py 落档, jieba_tokenize 函数跑通
+      2. backend/cases-crawler/scripts/rebuild_fts5_index.py 落档, 跑成功
+      3. SQLite contracts_fts 索引重建, 6076 合同 100% 入库
+      4. "房屋租赁合同" / "劳动合同" / "股权转让" 三个关键词, 每个 > 0 hits (unicode61 之前 0)
+      5. backend/cases-crawler/tests/test_fts5_jieba.py 5+ test, pytest 100% + ruff 0
+      6. docs/qa/fts5-zh-hit-w8.md 检索日志完整
+      7. git log 显示 2+ D2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['d1-venv312-paddle']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task D3: 6 项 P1-P3 UI 修复 (W4 遗留 3 项 + W5 残留 3 项)
+  - id: 'd3-ui-fixes'
+    title: 'D3 6 项 P1-P3 UI 修复 (移动端 < 768px + 立场影响预览 + 致命条款 > 3 自动折叠)'
+    prompt: |
+      W4 评审 6 项 P1-P3 UI 修复, W5 完成 3 项, 推 3 项到 W7, W7 死锁, 推 W8 D3.
+
+      必读文档:
+      - W4 UI 评审 4.5/5 + docs/designs/contract-review/review-by-lawyer.md (6 项 P1-P3 修复记录)
+      - W5 UI 实施 commit e02ccb7 (5 页面) + 6ea1e68 (4 API)
+      - plan-04-w4-final-report.md § 4 follow-up 清单
+      - plan-05-w5-final-report.md § 3 follow-up 清单
+      - W7 final report § 4 推 W8 清单
+
+      W8 D3 工作范围 (3 项 UI 修复):
+      1. **移动端 < 768px 适配** (P1):
+         - templates/views/contract-review/*.html 全部 5 页面 (upload/result/suggestion/negotiation/export)
+         - 加 viewport meta + media query (< 768px 重排 grid 1 列 + 字号缩放)
+         - 验证: playwright 截图 5 页面 桌面 + 移动
+      2. **立场影响预览** (P2):
+         - templates/views/contract-review/01-upload.html
+         - 加"立场影响预览"区块: 用户选择立场 (原告/被告/中立) 后实时显示该立场下风险等级加权/降权
+         - 落地: assets/js/contract-review.js 加 __updateStancePreview() 函数
+         - 验证: 3 立场 × 5 合同, 风险等级变化正确
+      3. **致命条款 > 3 自动折叠** (P3):
+         - templates/views/contract-review/02-review-result.html
+         - fatal container 折叠逻辑: >= 4 时显示"查看其余 X 项致命" 折叠按钮
+         - 验证: 0/3/5 致命条款 3 种情况 UI 一致
+      4. **回归测试**:
+         - pytest 100% (含 UI 元素 grep 验证)
+         - playwright 截图 5 页面 (桌面 + 移动)
+         - ruff 0
+      5. **git commit + push** (2 commits: 1 移动端+立场 / 1 致命折叠+回归)
+
+      Stop when (D3 完成):
+      - 移动端 < 768px 5 页面适配完成 (viewport meta + media query grep 验证)
+      - 立场影响预览 3 立场 × 5 合同风险等级变化正确
+      - 致命条款 > 3 自动折叠 0/3/5 三种情况 UI 一致
+      - pytest 100% + ruff 0
+      - playwright 截图 5 页面 (桌面 + 移动)
+      - git log 显示 2+ D3 commit
+
+      不要做:
+      - 不要动 W5 已 commit 的 5 页面基础布局 (e02ccb7 完整, 别动)
+      - 不要动 sidebar (P1-P3 之外, 跟 W4 评审无关)
+    verify_prompt: |
+      独立验证 D3 6 项 P1-P3 UI 修复 (W7 推 3 项):
+      1. 移动端 < 768px 5 页面适配 (templates/views/contract-review/*.html 全部 grep viewport meta + media query)
+      2. 立场影响预览 3 立场 × 5 合同, 风险等级加权/降权变化正确
+      3. 致命条款 > 3 自动折叠 0/3/5 三种情况 UI 一致
+      4. pytest 100% + ruff 0
+      5. playwright 截图 5 页面 (桌面 + 移动) 落档
+      6. git log 显示 2+ D3 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-coder'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task D4: W5 集成验证 E2E 报告
+  - id: 'd4-w5-e2e'
+    title: 'D4 W5 集成验证 E2E 报告 (上传→OCR→检索→分类 端到端, 含 PaddleEngine 切换)'
+    prompt: |
+      W5 集成验证 E2E 死锁没跑, W6 接力未补, W7 收口未做, 推 W8 D4 闭环.
+
+      必读文档:
+      - W5 final report commit 742ee2a § 3 (4 项 follow-up)
+      - W7 PaddleEngine commit 0815a2e (ocr.py 198 行 PaddleEngine 适配)
+      - W7 final report § 4 推 W8 清单
+      - Skill 2 SKILL.md § 4 端到端流程
+
+      W8 D4 工作范围:
+      1. **PaddleEngine 切换**:
+         - backend/cases-crawler/core/ocr.py get_ocr_engine() 优先级: Tesseract fallback → PaddleEngine 生产
+         - 验证: D1 venv312 paddlepaddle 装上, PaddleEngine 跑成功
+         - 落地: docs/qa/paddle-engine-verify-w8.md (切换日志 + 模型下载)
+      2. **E2E 端到端测试**:
+         - 上传合同 (5 fixture: W4 contracts/6076 中抽 5 份) → OCR (PaddleEngine) → 检索 (FTS5 jieba + LanceDB BGE) → 致命/重大/建议分类 → retrieval_evidence
+         - 期望: 5 合同 × 5 维度分类 100% 命中, retrieval_evidence 字段完整
+         - 落地: docs/qa/w5-integration-e2e.md (W5 集成遗留 gap 闭环报告)
+      3. **回归测试**:
+         - pytest 100% (含 PaddleEngine + FTS5 jieba + UI D3 修复)
+         - ruff 0
+         - playwright 截图 5 页面 (桌面 + 移动)
+      4. **git commit + push** (2 commits: 1 PaddleEngine 切换 / 1 E2E 报告)
+
+      Stop when (D4 完成):
+      - PaddleEngine 切换完成, get_ocr_engine() 优先级 Tesseract → PaddleEngine
+      - 5 合同 E2E 端到端测试 100% 命中, retrieval_evidence 完整
+      - docs/qa/w5-integration-e2e.md 闭环报告落档
+      - pytest 100% + ruff 0 + playwright 5 页面截图
+      - git log 显示 2+ D4 commit
+    verify_prompt: |
+      独立验证 D4 W5 E2E:
+      1. get_ocr_engine() PaddleEngine 切换正确, Tesseract fallback 保留
+      2. 5 合同 × 5 维度 E2E 端到端 100% 命中, retrieval_evidence 完整
+      3. docs/qa/w5-integration-e2e.md W5 集成遗留 gap 闭环报告
+      4. pytest 100% + ruff 0
+      5. playwright 截图 5 页面 (桌面 + 移动)
+      6. git log 显示 2+ D4 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['d1-venv312-paddle', 'd2-fts5-jieba', 'd3-ui-fixes']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # Track A: 评审反馈改进 (A1-A2)
+  # ============================================================
+
+  # Task A1: prd-feedback v1.0 行动项拆解
+  - id: 'a1-prd-feedback-action'
+    title: 'A1 prd-feedback v1.0 行动项拆解 (Top 5 改进 + Top 3 新需求 → W8 plan tasks)'
+    prompt: |
+      W7 已自动生成 prd-feedback.md v1.0 (Top 5 改进 + Top 3 新需求, 来自 5 律师评分汇总).
+      A1 拆解成 W8 plan tasks, 给 W8-W10 接力排期.
+
+      必读文档:
+      - W7 prd-feedback.md v1.0 (commit e99dfdc 同步生成)
+      - W7 评审 #1 #2 现场笔记 commit ef7ec55 + e99dfdc
+      - W7 评审问题收集表 (review_questions SQLite 表)
+      - PRD V5.0 § 10 成功指标 + § 11 法务自检
+
+      W8 A1 工作范围:
+      1. **Top 5 改进行动项拆解**:
+         - 每个改进拆成: 标题 / 现状 / 目标 / 优先级 (P0-P3) / 评估周期 (W8-W10) / owner (lex-pm/coder/ai/design/bd)
+         - 落地: docs/interviews/w8-action-items.md
+      2. **Top 3 新需求 PRD 草案**:
+         - 每个新需求写: 需求 / 律师原始语言 / 律师优先级 (高/中/低) / 商业价值 / 技术可行性 / 排期
+         - 落地: docs/prd/backlog-w8.md (W8-W10 backlog)
+      3. **评审问题收集表归并**:
+         - 从 review_questions SQLite 表拉所有问题
+         - 按 category (产品/技术/法务/其他) 归并, 重复问题合并
+         - 落地: docs/interviews/w8-review-questions-summary.md
+      4. **git commit + push** (1 commit: 行动项 + backlog + 问题归并)
+
+      Stop when (A1 完成):
+      - docs/interviews/w8-action-items.md 落档, Top 5 改进每个有评估周期 + owner
+      - docs/prd/backlog-w8.md 落档, Top 3 新需求有优先级 + 排期
+      - docs/interviews/w8-review-questions-summary.md 落档, review_questions 表问题归并
+      - git log 显示 1+ A1 commit
+    verify_prompt: |
+      独立验证 A1 prd-feedback v1.0 行动项拆解:
+      1. docs/interviews/w8-action-items.md Top 5 改进完整 (标题/现状/目标/优先级/周期/owner)
+      2. docs/prd/backlog-w8.md Top 3 新需求完整 (需求/律师原始语言/优先级/商业价值/技术可行性/排期)
+      3. docs/interviews/w8-review-questions-summary.md review_questions 表问题归并完整 (按 category)
+      4. git log 显示 1+ A1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task A2: 评审问题收集表 → PRD backlog ticket 系统
+  - id: 'a2-review-ticket-system'
+    title: 'A2 评审问题收集 → PRD backlog ticket 系统 (review_questions → W8 plan tasks 接入)'
+    prompt: |
+      W7 review_questions 表现场问题收集已落档 (commit 651e3d6 端点), A2 把它升级成 PRD backlog ticket
+      系统, 律师每个问题自动转成 backlog ticket, 给 W8+ plan engine 自动调度.
+
+      必读文档:
+      - W7 review_questions 表 + 3 端点 (POST /question + GET /questions + GET /board)
+      - W7 review_router.py commit 651e3d6
+      - A1 prd-feedback v1.0 (Top 5 改进 + Top 3 新需求)
+      - mavis team plan engine CLI (mavis team plan run / status / decision)
+
+      W8 A2 工作范围:
+      1. **PRD backlog ticket 模型**:
+         - backend/cases-crawler/api/backlog_router.py (新文件)
+         - SQLite prd_backlog (id / source_question_id / title / description / priority / owner / status / created_at)
+         - 端点: POST /api/backlog/from-question (review_question_id → backlog ticket)
+         - 端点: GET /api/backlog/list (按 status / priority 过滤)
+         - 端点: POST /api/backlog/{id}/assign (owner 分配)
+         - 端点: GET /api/backlog/board (W8 backlog 总览)
+      2. **自动 ticket 创建脚本**:
+         - backend/cases-crawler/scripts/migrate_review_to_backlog.py
+         - 把 A1 归并的问题批量转 backlog ticket
+         - 优先级: review_question 律师 priority → backlog P0-P3
+      3. **前端 backlog 视图**:
+         - templates/views/backlog/index.html (W6 landing 风格, W1 设计系统)
+         - 5 视图: 总览 / 按状态 / 按优先级 / 按 owner / 按来源问题
+         - 集成到 router.js (W7 路由注册模式)
+      4. **回归测试**:
+         - pytest 100% (含 backlog_router 4 端点 + 迁移脚本)
+         - ruff 0
+         - playwright 截图 backlog 视图
+      5. **git commit + push** (2 commits: 1 backlog_router + 1 迁移脚本 + 前端视图)
+
+      Stop when (A2 完成):
+      - POST /api/backlog/from-question 端点 + prd_backlog 表落档
+      - GET /api/backlog/list + POST /api/backlog/{id}/assign + GET /api/backlog/board 端点完整
+      - scripts/migrate_review_to_backlog.py 跑通, review_questions 批量转 backlog
+      - templates/views/backlog/index.html 5 视图 (总览/状态/优先级/owner/来源) 渲染
+      - pytest 100% + ruff 0 + playwright 截图
+      - git log 显示 2+ A2 commit
+    verify_prompt: |
+      独立验证 A2 PRD backlog ticket 系统:
+      1. POST /api/backlog/from-question 端点 + prd_backlog 表落档
+      2. GET /api/backlog/list + POST /api/backlog/{id}/assign + GET /api/backlog/board 4 端点跑通
+      3. scripts/migrate_review_to_backlog.py 跑通, review_questions 批量转 backlog
+      4. templates/views/backlog/index.html 5 视图 (总览/状态/优先级/owner/来源) 渲染 (playwright 截图)
+      5. pytest 100% + ruff 0
+      6. git log 显示 2+ A2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-coder'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['a1-prd-feedback-action']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # 集成验证 (W8 全 plan 收口)
+  # ============================================================
+  - id: 'w8-integration'
+    title: 'W8 集成验证 (D1-D4 W5 4 项 follow-up + A1-A2 评审反馈闭环)'
+    prompt: |
+      验证 W8 6 task 集成:
+      1. D1 venv312 + paddle 装包验证 (lex-ai)
+      2. D2 FTS5 jieba 中文分词升级 (lex-ai)
+      3. D3 6 项 P1-P3 UI 修复 (lex-coder)
+      4. D4 W5 E2E 闭环 (lex-ai)
+      5. A1 prd-feedback v1.0 行动项拆解 (lex-pm)
+      6. A2 评审问题 → PRD backlog ticket 系统 (lex-coder)
+      7. 6 agent deliverable 无冲突
+      8. 6 agent 全部 git commit + push
+      9. 7/26 公测启动准备就绪 (7/19 评审 #1 实际上线 提前 20 天, 7/26 评审 #2 + 公测准备就绪)
+      10. W9 建议 (一句话: PRD backlog ticket 自动调度 + 早期用户拉新 + Skill 3 文书).
+
+      输出 W8 总结 + W9 建议.
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['d4-w5-e2e', 'a2-review-ticket-system']
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
