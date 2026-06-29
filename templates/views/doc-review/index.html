@@ -1,0 +1,603 @@
+<!--
+  LexPrime W12 A2 双审工作流界面 (lex-coder · 2026-06-30)
+  
+  承接 W9 C1 doc-gen 4 端点 + W10 A1 一体化 + W12 A2 状态机 + Skill 2 风险标注
+  
+  左侧: 文书 draft + AI 风险标注 (高亮)
+  右侧: 状态机时间线 + 律师修改记录 + 客户签字上传
+  
+  集成 router.js (/doc-review 路由)
+-->
+<div id="view-doc-review" class="view-content hidden">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-fg-primary flex items-center gap-2">
+          <iconify-icon icon="mdi:gavel" class="text-2xl text-brand"></iconify-icon>
+          双审工作流 (AI + 律师双审)
+        </h1>
+        <p class="text-sm text-fg-secondary mt-1">
+          LexPrime 元枢法智 · W12 A2 · 5 状态机 + 4 文书风险标注 + 客户签字确认
+        </p>
+      </div>
+      <button onclick="switchView('doc-gen')"
+              class="px-4 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-2">
+        <iconify-icon icon="mdi:arrow-left"></iconify-icon>
+        返回文书生成
+      </button>
+    </div>
+
+    <!-- Doc ID 输入 (用户选择要审的文书) -->
+    <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4 mb-4">
+      <div class="flex items-end gap-3">
+        <div class="flex-1">
+          <label class="block text-xs font-medium text-fg-secondary mb-1">文书 ID (Skill 3 gen_id)</label>
+          <input type="text" id="doc-review-doc-id" placeholder="例如 dg-abc12345"
+                 class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-fg-secondary mb-1">文书类型</label>
+          <select id="doc-review-doc-type" class="px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary">
+            <option value="complaint">民事起诉状</option>
+            <option value="defense">民事答辩状</option>
+            <option value="contract">合同</option>
+            <option value="letter">律师函</option>
+          </select>
+        </div>
+        <button onclick="__loadDocReviewWorkflow()"
+                class="px-4 py-2 bg-brand text-white rounded-md hover:bg-brand-hover flex items-center gap-2">
+          <iconify-icon icon="mdi:magnify"></iconify-icon>
+          加载工作流
+        </button>
+      </div>
+    </div>
+
+    <!-- 状态机时间线 + 主内容区 -->
+    <div id="doc-review-content" class="hidden">
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- 左侧: 文书内容 + AI 风险标注 -->
+        <div class="col-span-7 space-y-4">
+
+          <!-- 当前状态卡片 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold text-fg-primary">当前状态</h2>
+              <span id="doc-review-state-badge" class="px-3 py-1 rounded-full text-sm font-medium bg-brand-tint text-brand">
+                加载中...
+              </span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-sm">
+              <div>
+                <div class="text-xs text-fg-secondary">文书 ID</div>
+                <div id="doc-review-meta-doc-id" class="font-mono text-fg-primary">-</div>
+              </div>
+              <div>
+                <div class="text-xs text-fg-secondary">案号</div>
+                <div id="doc-review-meta-case-id" class="font-mono text-fg-primary">-</div>
+              </div>
+              <div>
+                <div class="text-xs text-fg-secondary">文书类型</div>
+                <div id="doc-review-meta-doc-type" class="text-fg-primary">-</div>
+              </div>
+              <div>
+                <div class="text-xs text-fg-secondary">操作人</div>
+                <div id="doc-review-meta-actor" class="text-fg-primary">-</div>
+              </div>
+              <div>
+                <div class="text-xs text-fg-secondary">签字状态</div>
+                <div id="doc-review-meta-signature" class="text-fg-primary">未签</div>
+              </div>
+              <div>
+                <div class="text-xs text-fg-secondary">更新时间</div>
+                <div id="doc-review-meta-updated" class="text-fg-primary">-</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 风险标注区 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold text-fg-primary flex items-center gap-2">
+                <iconify-icon icon="mdi:shield-search" class="text-brand"></iconify-icon>
+                AI 风险标注 (Skill 2)
+              </h2>
+              <div class="flex gap-2">
+                <button onclick="__runRiskAnnotation()"
+                        class="px-3 py-1.5 bg-brand text-white rounded-md hover:bg-brand-hover text-sm flex items-center gap-1">
+                  <iconify-icon icon="mdi:refresh"></iconify-icon>
+                  重新扫描
+                </button>
+              </div>
+            </div>
+            <div id="doc-review-risk-summary" class="grid grid-cols-5 gap-2 mb-3">
+              <div class="text-center p-2 rounded bg-red-50 border border-red-200">
+                <div class="text-xs text-red-700">致命</div>
+                <div id="doc-review-risk-fatal" class="text-2xl font-bold text-red-700">0</div>
+              </div>
+              <div class="text-center p-2 rounded bg-orange-50 border border-orange-200">
+                <div class="text-xs text-orange-700">重大</div>
+                <div id="doc-review-risk-major" class="text-2xl font-bold text-orange-700">0</div>
+              </div>
+              <div class="text-center p-2 rounded bg-yellow-50 border border-yellow-200">
+                <div class="text-xs text-yellow-700">建议</div>
+                <div id="doc-review-risk-advisory" class="text-2xl font-bold text-yellow-700">0</div>
+              </div>
+              <div class="text-center p-2 rounded bg-green-50 border border-green-200">
+                <div class="text-xs text-green-700">合规</div>
+                <div id="doc-review-risk-ok" class="text-2xl font-bold text-green-700">0</div>
+              </div>
+              <div class="text-center p-2 rounded bg-blue-50 border border-blue-200">
+                <div class="text-xs text-blue-700">整体</div>
+                <div id="doc-review-risk-overall" class="text-2xl font-bold text-blue-700">-</div>
+              </div>
+            </div>
+            <div id="doc-review-dimensions" class="space-y-2">
+              <div class="text-sm text-fg-secondary italic text-center py-4">
+                请先加载工作流, 再点击"重新扫描"按钮
+              </div>
+            </div>
+          </div>
+
+          <!-- 文书 draft 预览 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <h2 class="text-lg font-semibold text-fg-primary mb-3 flex items-center gap-2">
+              <iconify-icon icon="mdi:file-document-outline" class="text-brand"></iconify-icon>
+              文书内容预览
+            </h2>
+            <textarea id="doc-review-doc-content" rows="12"
+                      placeholder="在此粘贴或编辑文书 Markdown 内容, 用于风险扫描 + AI 标注..."
+                      class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary font-mono text-sm"></textarea>
+          </div>
+        </div>
+
+        <!-- 右侧: 状态机 + 律师记录 + 客户签字 -->
+        <div class="col-span-5 space-y-4">
+
+          <!-- 状态机推进面板 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <h2 class="text-lg font-semibold text-fg-primary mb-3 flex items-center gap-2">
+              <iconify-icon icon="mdi:state-machine" class="text-brand"></iconify-icon>
+              状态机推进
+            </h2>
+            <div id="doc-review-transition-targets" class="space-y-2 mb-3">
+              <div class="text-sm text-fg-secondary italic">加载后显示合法转换目标</div>
+            </div>
+            <div class="space-y-2">
+              <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1">操作人</label>
+                <input type="text" id="doc-review-actor" placeholder="律师 ID"
+                       class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1">转换原因 (审计追溯)</label>
+                <input type="text" id="doc-review-reason" placeholder="例如: AI 风险标注完成"
+                       class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary text-sm" />
+              </div>
+              <div id="doc-review-lawyer-notes-wrap" class="hidden">
+                <label class="block text-xs font-medium text-fg-secondary mb-1">律师备注 (lawyer_reviewed 时)</label>
+                <textarea id="doc-review-lawyer-notes" rows="2"
+                          class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary text-sm"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 状态转换历史 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <h2 class="text-lg font-semibold text-fg-primary mb-3 flex items-center gap-2">
+              <iconify-icon icon="mdi:history" class="text-brand"></iconify-icon>
+              状态转换历史
+            </h2>
+            <div id="doc-review-history" class="space-y-2 max-h-64 overflow-y-auto">
+              <div class="text-sm text-fg-secondary italic text-center py-4">
+                加载后显示状态转换时间线
+              </div>
+            </div>
+          </div>
+
+          <!-- 客户签字上传 -->
+          <div class="bg-bg-elevated rounded-lg shadow-sm border border-border-base p-4">
+            <h2 class="text-lg font-semibold text-fg-primary mb-3 flex items-center gap-2">
+              <iconify-icon icon="mdi:draw-pen" class="text-brand"></iconify-icon>
+              客户签字确认
+            </h2>
+            <div id="doc-review-signature-status" class="text-sm text-fg-secondary mb-3">
+              尚未签字
+            </div>
+            <div class="space-y-2">
+              <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1">律师执业证号</label>
+                <input type="text" id="doc-review-license-no" placeholder="例如 LAW-2024-001234"
+                       class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1">客户姓名 (可选)</label>
+                <input type="text" id="doc-review-client-name" placeholder="客户姓名"
+                       class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1">签字图片 (PNG/JPEG base64)</label>
+                <textarea id="doc-review-signature-image" rows="3"
+                          placeholder="data:image/png;base64,iVBORw0KG..."
+                          class="w-full px-3 py-2 border border-border-base rounded-md bg-bg-base text-fg-primary font-mono text-xs"></textarea>
+              </div>
+              <button onclick="__uploadSignature()"
+                      class="w-full px-3 py-2 bg-brand text-white rounded-md hover:bg-brand-hover text-sm flex items-center justify-center gap-1">
+                <iconify-icon icon="mdi:upload"></iconify-icon>
+                上传客户签字
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 免责声明 -->
+      <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-xs text-yellow-800">
+        <iconify-icon icon="mdi:alert-circle-outline" class="inline"></iconify-icon>
+        <span class="ml-1" id="doc-review-disclaimer">
+          本双审工作流基于 LexPrime 元枢法智 (W12 A2) 自动驱动, AI 风险标注仅供参考与辅助律师审核使用, 不构成正式法律意见, 律师应根据案件实际情况进行审核、修改和完善, 最终以律师签字确认为准。
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * 双审工作流 IIFE 模块
+ * 暴露: __loadDocReviewWorkflow, __runRiskAnnotation, __uploadSignature
+ *        __transitionDocState (动态生成, 绑定到按钮 onclick)
+ */
+(function() {
+  'use strict';
+
+  var API_BASE = '';  // 同源
+  var currentDocId = null;
+  var currentDocType = null;
+  var currentState = null;
+
+  // ===== 加载工作流状态 =====
+  globalThis.__loadDocReviewWorkflow = async function() {
+    var docId = document.getElementById('doc-review-doc-id').value.trim();
+    var docType = document.getElementById('doc-review-doc-type').value;
+    if (!docId) {
+      alert('请输入文书 ID');
+      return;
+    }
+    currentDocId = docId;
+    currentDocType = docType;
+
+    try {
+      var resp = await fetch(API_BASE + '/api/doc-gen/' + encodeURIComponent(docId) + '/state');
+      if (resp.status === 404) {
+        // 不存在, 自动从 draft 创建 (先做一次 risk-annotation)
+        alert('该文书 ID 不存在, 请先在 doc-gen 生成文书。也可点击"重新扫描" + "推进到 ai_reviewed" 创建。');
+        document.getElementById('doc-review-content').classList.add('hidden');
+        return;
+      }
+      if (!resp.ok) {
+        alert('加载工作流失败: HTTP ' + resp.status);
+        return;
+      }
+      var body = await resp.json();
+      currentState = body.state;
+      currentDocType = body.doc_type || docType;
+
+      // 同步 doc_type 选中
+      if (body.doc_type) {
+        document.getElementById('doc-review-doc-type').value = body.doc_type;
+      }
+
+      // 显示内容区
+      document.getElementById('doc-review-content').classList.remove('hidden');
+
+      // 填充状态徽章
+      __renderStateBadge(body);
+
+      // 填充元信息
+      __renderMeta(body);
+
+      // 渲染转换目标
+      __renderTransitionTargets(body);
+
+      // 渲染历史
+      __renderHistory(body.history || []);
+
+      // 签字状态
+      __renderSignatureStatus(body);
+
+      console.log('[doc-review] 工作流加载完成', body);
+    } catch (err) {
+      console.error('[doc-review] load failed', err);
+      alert('加载失败: ' + err.message);
+    }
+  };
+
+  // ===== 渲染状态徽章 =====
+  function __renderStateBadge(body) {
+    var badge = document.getElementById('doc-review-state-badge');
+    var stateColors = {
+      'draft': 'bg-gray-100 text-gray-700',
+      'ai_reviewed': 'bg-blue-100 text-blue-700',
+      'lawyer_reviewed': 'bg-purple-100 text-purple-700',
+      'client_signed': 'bg-green-100 text-green-700',
+      'archived': 'bg-yellow-100 text-yellow-800'
+    };
+    var cls = stateColors[body.state] || 'bg-gray-100 text-gray-700';
+    badge.className = 'px-3 py-1 rounded-full text-sm font-medium ' + cls;
+    badge.textContent = body.state_label || body.state;
+  }
+
+  // ===== 渲染元信息 =====
+  function __renderMeta(body) {
+    document.getElementById('doc-review-meta-doc-id').textContent = body.doc_id || '-';
+    document.getElementById('doc-review-meta-case-id').textContent = body.case_id || '-';
+    document.getElementById('doc-review-meta-doc-type').textContent = body.doc_type_label || body.doc_type || '-';
+    document.getElementById('doc-review-meta-actor').textContent = body.actor || '-';
+    document.getElementById('doc-review-meta-updated').textContent = body.updated_at
+      ? new Date(body.updated_at).toLocaleString('zh-CN') : '-';
+  }
+
+  // ===== 渲染签字状态 =====
+  function __renderSignatureStatus(body) {
+    var el = document.getElementById('doc-review-meta-signature');
+    var statusEl = document.getElementById('doc-review-signature-status');
+    if (body.has_signature) {
+      el.textContent = '已签';
+      el.className = 'text-green-600 font-medium';
+      var at = body.signature_signed_at
+        ? new Date(body.signature_signed_at).toLocaleString('zh-CN')
+        : '';
+      statusEl.innerHTML = '<div class="p-2 bg-green-50 border border-green-200 rounded text-green-800">' +
+        '<iconify-icon icon="mdi:check-circle" class="inline"></iconify-icon> 已签字 @ ' + at + '</div>';
+    } else {
+      el.textContent = '未签';
+      el.className = 'text-fg-secondary';
+      statusEl.innerHTML = '<div class="text-sm text-fg-secondary">尚未签字</div>';
+    }
+  }
+
+  // ===== 渲染转换目标按钮 =====
+  function __renderTransitionTargets(body) {
+    var container = document.getElementById('doc-review-transition-targets');
+    var targets = body.transitionable_targets || [];
+    var stateLabels = {
+      'draft': '起草中', 'ai_reviewed': 'AI 已审', 'lawyer_reviewed': '律师已审',
+      'client_signed': '客户已签', 'archived': '已归档'
+    };
+    if (targets.length === 0) {
+      container.innerHTML = '<div class="p-3 bg-gray-50 border border-gray-200 rounded text-sm text-fg-secondary">已是终态 (archived), 无可推进目标</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < targets.length; i++) {
+      var t = targets[i];
+      var label = stateLabels[t] || t;
+      var isBack = (t === body.previous_state);
+      var btnCls = isBack
+        ? 'bg-orange-500 hover:bg-orange-600'
+        : 'bg-brand hover:bg-brand-hover';
+      var icon = isBack ? 'mdi:arrow-left' : 'mdi:arrow-right';
+      html += '<button onclick="__transitionDocState(\'' + t + '\', ' + isBack + ')" ' +
+              'class="w-full px-3 py-2 ' + btnCls + ' text-white rounded-md text-sm flex items-center justify-center gap-2">' +
+              '<iconify-icon icon="' + icon + '"></iconify-icon> → ' + label +
+              (isBack ? ' (回退)' : '') +
+              '</button>';
+    }
+    container.innerHTML = html;
+
+    // 显示 lawyer_notes 输入框 (当 target 含 lawyer_reviewed)
+    var notesWrap = document.getElementById('doc-review-lawyer-notes-wrap');
+    if (targets.indexOf('lawyer_reviewed') !== -1) {
+      notesWrap.classList.remove('hidden');
+    } else {
+      notesWrap.classList.add('hidden');
+    }
+  }
+
+  // ===== 渲染历史时间线 =====
+  function __renderHistory(history) {
+    var container = document.getElementById('doc-review-history');
+    if (!history || history.length === 0) {
+      container.innerHTML = '<div class="text-sm text-fg-secondary italic text-center py-4">暂无历史记录</div>';
+      return;
+    }
+    var stateLabels = {
+      'draft': '起草中', 'ai_reviewed': 'AI 已审', 'lawyer_reviewed': '律师已审',
+      'client_signed': '客户已签', 'archived': '已归档'
+    };
+    var html = '';
+    // 倒序显示 (最新在前)
+    for (var i = history.length - 1; i >= 0; i--) {
+      var h = history[i];
+      var fromL = stateLabels[h.from_state] || h.from_state;
+      var toL = stateLabels[h.to_state] || h.to_state;
+      var ts = h.ts ? new Date(h.ts).toLocaleString('zh-CN') : '';
+      html += '<div class="border-l-2 border-brand pl-3 py-1">' +
+        '<div class="text-sm font-medium text-fg-primary">' + fromL + ' → ' + toL + '</div>' +
+        '<div class="text-xs text-fg-secondary mt-0.5">' +
+        '<iconify-icon icon="mdi:account" class="inline"></iconify-icon> ' + (h.actor || '-') +
+        ' · ' + (h.reason || '-') +
+        '</div>' +
+        '<div class="text-xs text-fg-secondary mt-0.5">' +
+        '<iconify-icon icon="mdi:clock-outline" class="inline"></iconify-icon> ' + ts +
+        '</div>' +
+        '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  // ===== 状态转换 =====
+  globalThis.__transitionDocState = async function(target, isBack) {
+    var actor = document.getElementById('doc-review-actor').value.trim();
+    var reason = document.getElementById('doc-review-reason').value.trim();
+    if (!actor) { alert('请输入操作人'); return; }
+    if (!reason) { alert('请输入转换原因'); return; }
+
+    var payload = {
+      actor: actor,
+      reason: reason,
+      case_id: document.getElementById('doc-review-meta-case-id').textContent !== '-'
+        ? document.getElementById('doc-review-meta-case-id').textContent
+        : 'doc-review-' + currentDocId,
+      doc_type: currentDocType,
+    };
+    if (isBack) {
+      payload.transition_back = true;
+    } else {
+      payload.target_state = target;
+      if (target === 'lawyer_reviewed') {
+        var notes = document.getElementById('doc-review-lawyer-notes').value.trim();
+        if (notes) payload.lawyer_notes = notes;
+      }
+    }
+
+    try {
+      var resp = await fetch(API_BASE + '/api/doc-gen/' + encodeURIComponent(currentDocId) + '/state', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) {
+        var errBody = await resp.text();
+        alert('状态转换失败: ' + resp.status + ' - ' + errBody);
+        return;
+      }
+      var body = await resp.json();
+      currentState = body.state;
+      __renderStateBadge(body);
+      __renderTransitionTargets(body);
+      __renderHistory(body.history || []);
+      console.log('[doc-review] 状态转换完成', body);
+    } catch (err) {
+      console.error('[doc-review] transition failed', err);
+      alert('转换失败: ' + err.message);
+    }
+  };
+
+  // ===== AI 风险标注 =====
+  globalThis.__runRiskAnnotation = async function() {
+    if (!currentDocId) {
+      alert('请先加载工作流');
+      return;
+    }
+    var markdown = document.getElementById('doc-review-doc-content').value.trim();
+    if (!markdown || markdown.length < 10) {
+      alert('请在文书内容预览框粘贴 markdown 文本 (≥ 10 字)');
+      return;
+    }
+    try {
+      var resp = await fetch(API_BASE + '/api/doc-gen/' + encodeURIComponent(currentDocId) + '/risk-annotation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          doc_id: currentDocId,
+          doc_type: currentDocType,
+          doc_markdown: markdown,
+        }),
+      });
+      if (!resp.ok) {
+        var errBody = await resp.text();
+        alert('风险标注失败: ' + resp.status + ' - ' + errBody);
+        return;
+      }
+      var body = await resp.json();
+      __renderRiskDimensions(body);
+      console.log('[doc-review] 风险标注完成', body);
+    } catch (err) {
+      console.error('[doc-review] risk annotation failed', err);
+      alert('风险标注失败: ' + err.message);
+    }
+  };
+
+  // ===== 渲染风险维度 =====
+  function __renderRiskDimensions(body) {
+    document.getElementById('doc-review-risk-fatal').textContent = body.fatal_count;
+    document.getElementById('doc-review-risk-major').textContent = body.major_count;
+    document.getElementById('doc-review-risk-advisory').textContent = body.advisory_count;
+    document.getElementById('doc-review-risk-ok').textContent = body.ok_count;
+    var overallColors = { 'high': 'text-red-700', 'medium': 'text-orange-700', 'low': 'text-green-700' };
+    var overallEl = document.getElementById('doc-review-risk-overall');
+    overallEl.textContent = body.overall_risk_level;
+    overallEl.className = 'text-2xl font-bold ' + (overallColors[body.overall_risk_level] || 'text-blue-700');
+
+    var dims = body.dimensions || [];
+    var html = '';
+    var levelColors = {
+      'fatal': 'border-red-300 bg-red-50',
+      'major': 'border-orange-300 bg-orange-50',
+      'advisory': 'border-yellow-300 bg-yellow-50',
+      'ok': 'border-green-300 bg-green-50'
+    };
+    var levelLabels = { 'fatal': '致命', 'major': '重大', 'advisory': '建议', 'ok': '合规' };
+    var levelIcons = {
+      'fatal': 'mdi:alert-octagon', 'major': 'mdi:alert',
+      'advisory': 'mdi:information', 'ok': 'mdi:check-circle'
+    };
+    for (var i = 0; i < dims.length; i++) {
+      var d = dims[i];
+      var cls = levelColors[d.risk_level] || 'border-gray-300 bg-gray-50';
+      var icon = levelIcons[d.risk_level] || 'mdi:help';
+      var matched = (d.matched_keywords && d.matched_keywords.length > 0)
+        ? '<div class="text-xs text-fg-secondary mt-1">命中: ' + d.matched_keywords.join('; ') + '</div>'
+        : '';
+      html += '<div class="border-l-4 ' + cls + ' border rounded-r p-2">' +
+        '<div class="flex items-center justify-between">' +
+        '<div class="font-medium text-sm flex items-center gap-1">' +
+        '<iconify-icon icon="' + icon + '" class="text-brand"></iconify-icon> ' +
+        d.dimension +
+        '</div>' +
+        '<span class="text-xs px-2 py-0.5 rounded-full ' + cls + '">' +
+        (levelLabels[d.risk_level] || d.risk_level) +
+        '</span>' +
+        '</div>' +
+        '<div class="text-xs text-fg-secondary mt-1">' + d.description + '</div>' +
+        matched +
+        '</div>';
+    }
+    document.getElementById('doc-review-dimensions').innerHTML = html;
+  }
+
+  // ===== 客户签字上传 =====
+  globalThis.__uploadSignature = async function() {
+    if (!currentDocId) {
+      alert('请先加载工作流');
+      return;
+    }
+    var image = document.getElementById('doc-review-signature-image').value.trim();
+    var licenseNo = document.getElementById('doc-review-license-no').value.trim();
+    var clientName = document.getElementById('doc-review-client-name').value.trim();
+
+    if (!image) { alert('请输入签字图片 (base64)'); return; }
+    if (!licenseNo) { alert('请输入律师执业证号'); return; }
+
+    try {
+      var resp = await fetch(API_BASE + '/api/signature/' + encodeURIComponent(currentDocId), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          signature_image: image,
+          license_no: licenseNo,
+          client_name: clientName || null,
+        }),
+      });
+      if (!resp.ok) {
+        var errBody = await resp.text();
+        alert('签字上传失败: ' + resp.status + ' - ' + errBody);
+        return;
+      }
+      var body = await resp.json();
+      alert('签字上传成功 @ ' + body.signed_at);
+      // 刷新工作流状态 (更新 has_signature)
+      globalThis.__loadDocReviewWorkflow();
+    } catch (err) {
+      console.error('[doc-review] signature upload failed', err);
+      alert('签字上传失败: ' + err.message);
+    }
+  };
+
+  console.log('[doc-review] module loaded');
+})();
+</script>

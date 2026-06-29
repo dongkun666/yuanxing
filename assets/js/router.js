@@ -62,6 +62,8 @@
         'backlog': 'backlog/index.html',
         // W9 (2026-06-29 lex-coder) Skill 3 文书生成 (C1: 起诉状/答辩状/合同/律师函)
         'doc-gen': 'doc-gen/index.html',
+        // W12 A2 (2026-06-30 lex-coder) 双审工作流 (5 状态机 + 4 文书风险标注 + 客户签字)
+        'doc-review': 'doc-review/index.html',
         // W10 (2026-06-30 lex-bd) 创始体验官招募页 (B2: 80 席剩余 + 6 模块 + 2 track event)
         'founding': 'founding/index.html'
     };
