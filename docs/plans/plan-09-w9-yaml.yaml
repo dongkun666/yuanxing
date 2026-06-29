@@ -1,0 +1,363 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 9: W9 PRD backlog ticket 自动调度 + Skill 3 文书生成 (A + C 并行)'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 2
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+
+tasks:
+  # ============================================================
+  # Track A: PRD backlog ticket 自动调度 (A1-A2)
+  # A2 系统已就绪 (commit 5cdaabe backlog_router 4 端点 + 迁移脚本)
+  # W9 跑迁移 + W9 plan tasks 自动从 backlog 派生
+  # ============================================================
+
+  # Task A1: 跑迁移脚本 + 验证 42 ticket 入库
+  - id: 'a1-migrate-backlog-tickets'
+    title: 'A1 跑 migrate_review_to_backlog.py 迁移 + 验证 42 ticket 入库 + 端到端联调'
+    prompt: |
+      A2 backlog ticket 系统已就绪 (commit 5cdaabe: backend/cases-crawler/api/backlog_router.py 844 行 + 4 端点 + migrate_review_to_backlog.py 336 行).
+      A1 跑迁移 + 端到端验证: 把 A1 归并的 42 项 review_questions 转 prd_backlog ticket, 跑 4 端点确认.
+
+      必读文档:
+      - W8 A1 commit b875db4 (Top 5 改进 + Top 3 新需求 + 42 条 review_questions 归并)
+      - W8 A2 commit 5cdaabe (backlog_router 4 端点 + 迁移脚本 + 5 视图)
+      - W8 final report commit bbbf3fd
+      - docs/interviews/w8-action-items.md (5 改进)
+      - docs/prd/backlog-w8.md (3 新需求)
+      - docs/interviews/w8-review-questions-summary.md (42 问题 4 category × 3 priority)
+
+      W9 A1 工作范围:
+      1. **跑迁移脚本**:
+         - cd backend/cases-crawler && python scripts/migrate_review_to_backlog.py
+         - 期望: 42 ticket 入 prd_backlog 表 (id / source_question_id / source_lawyer_id / title / description / category / priority / owner / status / created_at)
+         - 优先级映射: A1 priority → P0/P1/P2/P3
+         - owner 映射: 产品 → lex-pm / 技术 → lex-ai / 法务 → lex-coder (默认推断)
+      2. **端到端联调 4 端点**:
+         - POST /api/backlog/from-question (单条转换, source_question_id → ticket)
+         - GET /api/backlog/list (按 status / priority / owner / category 过滤)
+         - POST /api/backlog/{id}/assign (owner 分配)
+         - GET /api/backlog/board (W9 backlog 总览看板)
+         - curl 验证 5+ ticket 真实数据
+      3. **board.html 渲染验证**:
+         - 启动 backend python -m cases-crawler.main, playwright 截图 backlog/index.html 5 视图
+         - 总览 / 按状态 / 按优先级 / 按 owner / 按来源
+         - 落地: docs/qa/backlog-board-w9.md (截图 + 数据)
+      4. **回归测试**:
+         - pytest 100% (含 backlog_router 4 端点 + migrate_review_to_backlog.py + test_backlog_endpoints.py 882 行)
+         - ruff 0
+      5. **git commit + push** (1 commit: 迁移日志 + 截图 + 报告)
+
+      Stop when (A1 完成):
+      - 42 ticket 全部入 prd_backlog 表, 优先级 + owner 映射正确
+      - 4 端点跑通, curl 验证 5+ ticket
+      - backlog/index.html 5 视图 playwright 截图落档
+      - pytest 100% + ruff 0
+      - git log 显示 1+ A1 commit
+    verify_prompt: |
+      独立验证 A1 迁移 + 端到端:
+      1. SQLite prd_backlog 表有 42 行, 字段映射正确 (priority P0-P3, owner lex-pm/coder/ai)
+      2. POST /api/backlog/from-question 端点跑通, 单条转换成功
+      3. GET /api/backlog/list 按 status / priority / owner 过滤返回正确
+      4. POST /api/backlog/{id}/assign 改写 owner 字段成功
+      5. GET /api/backlog/board 返回 5 视图数据 (总览/状态/优先级/owner/来源)
+      6. backlog/index.html playwright 截图 5 视图落档
+      7. pytest 100% + ruff 0
+      8. git log 显示 1+ A1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-coder'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task A2: backlog ticket → W9 plan tasks 自动调度
+  - id: 'a2-backlog-to-plan-tasks'
+    title: 'A2 backlog ticket → W9+ plan tasks 自动调度脚本 + 接入 plan engine (mavis team plan)'
+    prompt: |
+      A1 跑完 42 ticket 入库, A2 把 backlog ticket 状态 = open + priority P0/P1 自动转 W9+ plan task, 接入 mavis team plan engine.
+
+      必读文档:
+      - A1 commit (W9): 42 ticket 落 prd_backlog
+      - W8 A2 commit 5cdaabe (backlog_router 4 端点)
+      - mavis team plan engine CLI (mavis team plan run / status / decision)
+      - mavis plan YAML schema (version/plan/tasks)
+      - docs/plans/plan-08-w8-yaml.yaml (W8 范本)
+
+      W9 A2 工作范围:
+      1. **backlog → plan task 转换脚本**:
+         - backend/cases-crawler/scripts/backlog_to_plan_tasks.py (新文件)
+         - 读 prd_backlog status=open + priority IN (P0, P1)
+         - 按 category 分组 (产品/技术/法务/其他) → plan task
+         - 落地: docs/plans/plan-auto-w{N+1}-from-backlog.yaml (自动生成)
+      2. **auto-scheduler 脚本**:
+         - backend/cases-crawler/scripts/auto_schedule_backlog.py
+         - 读 ticket → 生成 plan YAML → mavis team plan run <yaml>
+         - 跳过 status=in_progress / done / deferred / wontfix
+         - 落地: docs/plans/backlog-auto-schedule-w9.md (调度日志)
+      3. **CLI 包装 + cron 集成**:
+         - 写个 mavis cron 触发脚本 (auto_schedule.sh)
+         - 每日 09:00 跑一次, 把前一天新增的 open P0/P1 ticket 自动转 plan task
+         - 落地: scripts/cron/auto-schedule-backlog.sh
+      4. **回归测试**:
+         - pytest 100% (含 backlog_to_plan_tasks + auto_schedule_backlog)
+         - ruff 0
+         - 干跑验证 (不真启 plan engine, 只生成 YAML)
+      5. **git commit + push** (2 commits: 1 转换 + 1 调度)
+
+      Stop when (A2 完成):
+      - backlog_to_plan_tasks.py 跑通, 5+ ticket 转 plan task 样例 YAML
+      - auto_schedule_backlog.py 干跑成功, 输出 plan YAML + 调度日志
+      - scripts/cron/auto-schedule-backlog.sh 落档
+      - pytest 100% + ruff 0
+      - git log 显示 2+ A2 commit
+
+      不要做:
+      - 不要真启 plan engine (干跑验证, 不污染 owner plan 队列)
+      - 不要做 in_progress / done ticket 处理 (本期只处理 open P0/P1)
+    verify_prompt: |
+      独立验证 A2 backlog → plan task 调度:
+      1. backend/cases-crawler/scripts/backlog_to_plan_tasks.py 跑通, 输出 plan YAML
+      2. backend/cases-crawler/scripts/auto_schedule_backlog.py 干跑成功, 调度日志完整
+      3. scripts/cron/auto-schedule-backlog.sh 落档, 集成 mavis cron 调用
+      4. 生成的 plan YAML 符合 mavis team plan schema (version/plan/tasks)
+      5. pytest 100% + ruff 0
+      6. git log 显示 2+ A2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-coder'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['a1-migrate-backlog-tickets']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # Track C: Skill 3 文书生成 (C1-C3)
+  # 律师最常问 (评审 #1 #2 期间发现): 起诉状/答辩状/合同/律师函
+  # ============================================================
+
+  # Task C1: Skill 3 文书生成 4 端点 + 4 模板
+  - id: 'c1-skill3-doc-templates'
+    title: 'C1 Skill 3 文书生成 4 端点 (起诉状/答辩状/合同/律师函) + 4 模板'
+    prompt: |
+      律师最常问的功能 (评审 #1 #2 期间 A1 prd-feedback 归并): 自动生成法律文书.
+      W9 C1 落地 Skill 3 4 端点 + 4 模板 (起诉状/答辩状/合同/律师函).
+
+      必读文档:
+      - W8 A1 commit b875db4 (Top 3 新需求, Skill 3 文书生成律师最常问)
+      - W7 commit 651e3d6 (review_router 3 端点 + 模板模式, 复用)
+      - W3 commit 67215d0 (Skill 2 SKILL.md 11KB agentskills.io 模板)
+      - PRD V5.0 § 5.4 Skill Hub + § 6 个人知识库
+
+      W9 C1 工作范围:
+      1. **Skill 3 文书生成端点**:
+         - backend/cases-crawler/api/doc_gen_router.py (新文件)
+         - POST /api/doc-gen/complaint (起诉状)
+         - POST /api/doc-gen/defense (答辩状)
+         - POST /api/doc-gen/contract (合同)
+         - POST /api/doc-gen/letter (律师函)
+         - 端点模式: 接 lawyer_id / case_id / template / facts / evidence, 输出 Markdown + Word docx
+      2. **4 文书模板**:
+         - backend/cases-crawler/templates/docs/complaint_v1.md (起诉状模板)
+         - backend/cases-crawler/templates/docs/defense_v1.md (答辩状模板)
+         - backend/cases-crawler/templates/docs/contract_v1.md (合同模板)
+         - backend/cases-crawler/templates/docs/letter_v1.md (律师函模板)
+         - 模板含占位符 {{case_id}} {{lawyer_id}} {{facts}} {{evidence}} {{court}} {{date}}
+      3. **前端文书生成页面**:
+         - templates/views/doc-gen/index.html (W6 landing 风格, W1 设计系统)
+         - 4 标签页 (起诉/答辩/合同/律师函), 每个含 facts 输入框 + evidence 列表 + 生成按钮
+         - 集成到 router.js (W7 路由注册模式)
+      4. **回归测试**:
+         - pytest 100% (含 doc_gen_router 4 端点 + 4 模板渲染 + Word docx 生成)
+         - ruff 0
+         - playwright 截图 doc-gen 4 标签页
+      5. **git commit + push** (2 commits: 1 端点+模板 / 1 前端页面)
+
+      Stop when (C1 完成):
+      - POST /api/doc-gen/{complaint|defense|contract|letter} 4 端点跑通
+      - 4 模板落档, 占位符替换正确
+      - templates/views/doc-gen/index.html 4 标签页渲染 (playwright 截图)
+      - pytest 100% + ruff 0
+      - git log 显示 2+ C1 commit
+    verify_prompt: |
+      独立验证 C1 Skill 3 文书生成:
+      1. POST /api/doc-gen/complaint / defense / contract / letter 4 端点跑通
+      2. 4 模板 (起诉状/答辩状/合同/律师函) 落档, 占位符替换正确
+      3. templates/views/doc-gen/index.html 4 标签页 playwright 截图落档
+      4. Word docx 文件生成 (curl POST 端点验证输出 docx)
+      5. pytest 100% + ruff 0
+      6. git log 显示 2+ C1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-coder'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task C2: Skill 3 接入 (类案 + 合同 + 文书 一体化) + OCR 缓存 + review.py cwd fix
+  - id: 'c2-skill3-integration'
+    title: 'C2 Skill 3 接入 (类案+合同+文书 一体化) + OCR 缓存两步拆分 + review.py cwd 依赖修复'
+    prompt: |
+      C1 落地 4 端点 + 4 模板, C2 把它跟现有 Skill 1 类案 + Skill 2 合同审查 一体化, 律师一个案件跑完三步:
+      1. 类案检索 → 2. 合同审查 → 3. 文书生成.
+      同时修 D4 producer 报的 2 blockers (W9 backlog 已记录).
+
+      必读文档:
+      - C1 commit (W9): 4 端点 + 4 模板
+      - W3 Skill 2 合同审查 (commit 67215d0 SKILL.md)
+      - W4 类案检索 (LanceDB BGE commit 3edd96f)
+      - W8 D4 producer memory: 2 blockers (OCR 缓存两步 + review.py cwd)
+      - W8 5cdaabe scripts/w8/ocr_via_venv312.py (OCR 缓存两步已有原型)
+
+      W9 C2 工作范围:
+      1. **一体化 API**:
+         - POST /api/case/full-workflow (案件 ID → 三步流水线)
+         - 流程: 类案检索 (W4) → 合同审查 (W3 Skill 2) → 文书生成 (W9 C1)
+         - 输出: case_summary.json (含类案 + 风险 + 文书 draft)
+         - 端点模式参考 W7 review_router
+      2. **OCR 缓存两步拆分** (D4 blocker #1):
+         - backend/cases-crawler/core/ocr_cache.py (新文件)
+         - 两步: 1) OCR 识别 (缓存结果) 2) 文本后处理 (PII 脱敏 + 解析)
+         - 复用 scripts/w8/ocr_via_venv312.py 原型
+      3. **review.py _get_risk_index cwd 依赖修复** (D4 blocker #2):
+         - backend/cases-crawler/core/review.py _get_risk_index 改用绝对路径
+         - 不依赖 os.chdir, 用 Path(__file__).parent 或 config 路径
+         - 加 unit test 验证任意 cwd 都能跑
+      4. **回归测试**:
+         - pytest 100% (含一体化 + OCR 缓存 + cwd 修复)
+         - ruff 0
+         - E2E 测试 1 个 case 跑完整流水线
+      5. **git commit + push** (3 commits: 1 一体化 / 1 OCR 缓存 / 1 cwd 修复)
+
+      Stop when (C2 完成):
+      - POST /api/case/full-workflow 端点跑通, 三步流水线集成
+      - ocr_cache.py 两步拆分, OCR 结果缓存可复用
+      - review.py _get_risk_index 不依赖 cwd, 任意目录可跑
+      - pytest 100% + ruff 0
+      - git log 显示 3+ C2 commit
+    verify_prompt: |
+      独立验证 C2 Skill 3 一体化 + 2 blocker fix:
+      1. POST /api/case/full-workflow 端点跑通, 输出 case_summary.json
+      2. core/ocr_cache.py 两步拆分, OCR 结果缓存可复用
+      3. core/review.py _get_risk_index 不依赖 cwd, 任意目录跑得通
+      4. E2E 1 case 跑完整三步流水线 (类案 + 合同 + 文书)
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ C2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['c1-skill3-doc-templates']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task C3: 文书审核工作流 (律师 + AI 双审)
+  - id: 'c3-doc-review-workflow'
+    title: 'C3 文书审核工作流 (律师 + AI 双审) + 风险标注 + 客户签字确认'
+    prompt: |
+      C1 落地 4 模板 + C2 一体化, C3 加律师 + AI 双审工作流: 律师输入事实 → AI 生成草稿 → AI 风险标注 → 律师审核修改 → 客户签字确认 → 归档.
+
+      必读文档:
+      - C1 commit (W9): 4 端点 + 4 模板
+      - C2 commit (W9): 一体化 + ocr_cache + cwd fix
+      - W3 Skill 2 SKILL.md § 4 端到端流程 (复用双审模式)
+      - PRD V5.0 § 11 法务自检 (合规性)
+
+      W9 C3 工作范围:
+      1. **双审状态机**:
+         - backend/cases-crawler/core/doc_workflow.py (新文件)
+         - 状态: draft (AI 生成) → ai_reviewed (AI 风险标注) → lawyer_reviewed (律师审核) → client_signed (客户签字) → archived (归档)
+         - 转换: PATCH /api/doc-gen/{id}/state (state + reason + actor)
+      2. **AI 风险标注**:
+         - 集成 Skill 2 reviewer (W3 commit 67215d0) 到 doc_workflow
+         - 4 文书类型 (起诉/答辩/合同/律师函) 各自风险维度:
+           - 起诉状: 案由 / 诉讼请求 / 事实理由 / 法条引用
+           - 答辩状: 反驳 / 抗辩 / 反诉 / 证据
+           - 合同: 标的 / 价款 / 履行 / 违约 / 管辖
+           - 律师函: 事实 / 法律意见 / 要求 / 时限 / 后果
+      3. **客户签字确认**:
+         - backend/cases-crawler/api/signature_router.py (新文件)
+         - POST /api/signature/{doc_id} (上传签字图片 + 律师执业证号 + 时间戳)
+         - GET /api/signature/{doc_id} (查询签字状态)
+         - 落地: SQLite signatures 表 (doc_id / lawyer_id / signature_image / license_no / signed_at)
+      4. **前端双审界面**:
+         - templates/views/doc-review/index.html
+         - 左侧: 文书 draft + AI 风险标注 (高亮)
+         - 右侧: 状态机 + 律师修改记录 + 客户签字上传
+         - 集成到 router.js
+      5. **回归测试**:
+         - pytest 100% (含 doc_workflow + signature_router 2 端点)
+         - ruff 0
+         - playwright 截图双审界面
+      6. **git commit + push** (3 commits: 1 状态机 / 1 签字 / 1 前端)
+
+      Stop when (C3 完成):
+      - doc_workflow.py 状态机 5 状态转换跑通
+      - signature_router 2 端点 (POST / GET) 落档
+      - 4 文书风险标注接入 Skill 2 reviewer
+      - templates/views/doc-review/index.html 双审界面 (playwright 截图)
+      - pytest 100% + ruff 0
+      - git log 显示 3+ C3 commit
+    verify_prompt: |
+      独立验证 C3 双审工作流:
+      1. doc_workflow.py 5 状态 (draft/ai_reviewed/lawyer_reviewed/client_signed/archived) 转换跑通
+      2. signature_router POST /api/signature/{doc_id} + GET 2 端点跑通
+      3. 4 文书风险标注接入 Skill 2 reviewer, 风险维度完整
+      4. templates/views/doc-review/index.html 双审界面 playwright 截图
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ C3 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['c2-skill3-integration']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # 集成验证 (W9 全 plan 收口)
+  # ============================================================
+  - id: 'w9-integration'
+    title: 'W9 集成验证 (A1-A2 backlog ticket 自动调度 + C1-C3 Skill 3 文书生成 联动)'
+    prompt: |
+      验证 W9 5 task 集成:
+      1. A1 迁移 42 ticket 入库 + 4 端点跑通
+      2. A2 backlog → plan task 自动调度 (mavis team plan 集成)
+      3. C1 Skill 3 4 端点 + 4 模板 (起诉/答辩/合同/律师函)
+      4. C2 一体化 (类案+合同+文书) + OCR 缓存 + cwd 修复
+      5. C3 双审工作流 (律师+AI+客户签字)
+      6. 5 agent deliverable 无冲突
+      7. 5 agent 全部 git commit + push
+      8. 7/26 公测 + 评审 #2 + 创史体验官招募准备就绪
+      9. W10 建议 (一句话: 公测首批 30 律师转化付费 + 早期用户拉新 + Skill 3 文书迭代).
+
+      输出 W9 总结 + W10 建议.
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['a2-backlog-to-plan-tasks', 'c3-doc-review-workflow']
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
