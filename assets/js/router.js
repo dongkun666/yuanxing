@@ -65,7 +65,9 @@
         // W12 A2 (2026-06-30 lex-coder) 双审工作流 (5 状态机 + 4 文书风险标注 + 客户签字)
         'doc-review': 'doc-review/index.html',
         // W10 (2026-06-30 lex-bd) 创始体验官招募页 (B2: 80 席剩余 + 6 模块 + 2 track event)
-        'founding': 'founding/index.html'
+        'founding': 'founding/index.html',
+        // W13 (2026-06-30 lex-coder) 运营 dashboard (4 业务 + 3 创史专属 + 7 SQL + 3 图表 + 5min 刷新)
+        'dashboard': 'dashboard/index.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
@@ -75,6 +77,9 @@
     /**
      * 动态加载视图 HTML, 已缓存直接复用
      * (从 schedule.js 搬过来, schedule.js 不该有视图加载基础设施)
+     *
+     * 注意: insertAdjacentHTML('beforeend', html) 不执行 <script>, 必须手动提取 + 重建执行
+     * (W9 A2 已知 bug fix, W13 C1 dashboard 需要 IIFE 跑才能初始化 chart + 倒计时 + track event)
      */
     function loadView(viewId, callback) {
         if (!isDevMode && viewCache[viewId]) {
@@ -88,11 +93,37 @@
         }
         var url = 'templates/views/' + fileName + '?_t=' + Date.now();
         fetch(url)
-            .then(function(response) { return response.text(); })
-            .then(function(html) {
+            .then(function(response) { response.text().then(function(html) {
                 viewCache[viewId] = html;
+                // W13 C1 fix: 提取 <script> 重建执行 (insertAdjacentHTML 不跑 innerHTML <script>)
+                var scripts = [];
+                var stripped = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, function(_match, attrs, body) {
+                    scripts.push({ attrs: attrs, body: body });
+                    return '';
+                });
+                var mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.insertAdjacentHTML('beforeend', stripped);
+                    scripts.forEach(function(s) {
+                        try {
+                            var scriptEl = document.createElement('script');
+                            // 提取 src / type 等 attrs
+                            var attrRegex = /([a-zA-Z\-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
+                            var match;
+                            while ((match = attrRegex.exec(s.attrs)) !== null) {
+                                var name = match[1];
+                                var val = match[2] || match[3] || match[4] || '';
+                                if (name && val) scriptEl.setAttribute(name, val);
+                            }
+                            scriptEl.textContent = s.body;
+                            document.body.appendChild(scriptEl);
+                        } catch (e) {
+                            console.error('[loadView] 执行 view script 失败:', viewId, e);
+                        }
+                    });
+                }
                 if (callback) callback(html);
-            })
+            }); })
             .catch(function(err) { console.error('加载视图失败:', viewId, err); });
     }
 
@@ -162,6 +193,12 @@
                     }
                 }, 50);
             }
+            if (viewId === 'dashboard') {
+                // W13 C1 dashboard: chart 已在 view 内部初始化 (DOMContentLoaded), 重新可见时重建 chart
+                setTimeout(function() {
+                    if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
+                }, 50);
+            }
         } else {
             loadView(viewId, function(html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
@@ -223,6 +260,13 @@
                                 window.__initFoundingCountdown();
                             }
                         }, 50);
+                    }
+                    if (viewId === 'dashboard') {
+                        // W13 C1 dashboard 首次加载: view 内部 DOMContentLoaded 会触发 chart 初始化
+                        // 这里额外调一次确保 chart 在视图可见时重建
+                        setTimeout(function() {
+                            if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
+                        }, 100);
                     }
                 }
             });
