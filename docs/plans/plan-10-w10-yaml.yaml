@@ -1,0 +1,318 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 10: W9 C2/C3 接力 + 公测首批 30 律师转化付费 (A + B 并行)'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+
+tasks:
+  # ============================================================
+  # Track A: W9 C2/C3 接力 (Skill 3 一体化 + 双审)
+  # ============================================================
+
+  # Task A1: Skill 3 接入 (类案+合同+文书 一体化) + OCR 缓存两步 + cwd 修复
+  - id: 'a1-skill3-full-integration'
+    title: 'A1 Skill 3 接入 (类案+合同+文书 一体化全流程) + OCR 缓存两步 + review.py cwd 修复'
+    prompt: |
+      W9 C2 因 plan engine paused 没跑, W10 A1 接力落地.
+      C1 已 commit 4 端点 + 4 模板 (commit 37eda95 + 5d8ecdc), W10 A1 把它跟 Skill 1 类案 + Skill 2 合同审查 一体化, 律师一个案件跑完三步.
+      同时修 D4 producer 报的 2 blockers.
+
+      必读文档:
+      - W9 C1 commit 37eda95 + 5d8ecdc (4 端点 + 4 模板)
+      - W8 W9 残 commit 7a1c220 + f2a1725 (D4 PaddleEngine 切换 + 5cdaabe)
+      - W8 D4 producer memory: 2 blockers (OCR 缓存两步 + review.py cwd)
+      - W5cdaabe scripts/w8/ocr_via_venv312.py (OCR 缓存两步原型)
+      - W3 Skill 2 commit 67215d0 (SKILL.md)
+      - W4 类案 commit 3edd96f (LanceDB BGE)
+
+      W10 A1 工作范围:
+      1. **一体化 API** (主):
+         - backend/cases-crawler/api/full_workflow_router.py (新文件)
+         - POST /api/case/full-workflow (case_id → 三步流水线)
+         - 流程: 类案检索 (W4) → 合同审查 (W3 Skill 2) → 文书生成 (W9 C1)
+         - 输出 case_summary.json: {class_cases: [...], risks: [...], docs: {complaint, defense, contract, letter}}
+         - 端点模式参考 W7 review_router
+      2. **OCR 缓存两步拆分** (D4 blocker #1):
+         - backend/cases-crawler/core/ocr_cache.py (新文件)
+         - step1: OCR 识别 (缓存到 SQLite ocr_cache 表, 5 分钟 TTL)
+         - step2: 文本后处理 (PII 脱敏 + 解析 + skill 2 入库)
+         - 复用 scripts/w8/ocr_via_venv312.py 原型
+      3. **review.py _get_risk_index cwd 依赖修复** (D4 blocker #2):
+         - backend/cases-crawler/core/review.py _get_risk_index 改用绝对路径
+         - 不依赖 os.chdir, 用 Path(__file__).parent.parent 或 config 路径
+         - 加 unit test 验证任意 cwd 都能跑
+      4. **回归测试**:
+         - pytest 100% (含一体化 + OCR 缓存 + cwd 修复)
+         - ruff 0
+         - E2E 1 case 跑完整流水线
+      5. **git commit + push** (3 commits: 1 一体化 / 1 OCR 缓存 / 1 cwd 修复)
+
+      Stop when (A1 完成):
+      - POST /api/case/full-workflow 端点跑通, 三步流水线集成
+      - ocr_cache.py 两步拆分, OCR 结果缓存可复用
+      - review.py _get_risk_index 不依赖 cwd, 任意目录可跑
+      - pytest 100% + ruff 0
+      - git log 显示 3+ A1 commit
+
+      不要做:
+      - 不要动 W9 C1 已 commit 的 4 端点 + 4 模板 (w9-c1 完整, 别动)
+      - 不要真启 plan engine (后续 A2 auto-scheduler 自动派)
+    verify_prompt: |
+      独立验证 A1 Skill 3 一体化 + 2 blocker fix:
+      1. POST /api/case/full-workflow 端点跑通, 输出 case_summary.json
+      2. core/ocr_cache.py 两步拆分, OCR 结果缓存可复用
+      3. core/review.py _get_risk_index 不依赖 cwd, 任意目录跑得通 (unit test 验证)
+      4. E2E 1 case 跑完整三步流水线 (类案 + 合同 + 文书)
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ A1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task A2: 双审工作流 (律师+AI 双审) + 客户签字
+  - id: 'a2-doc-review-workflow'
+    title: 'A2 双审工作流 (律师+AI 双审) + 风险标注 + 客户签字确认'
+    prompt: |
+      W9 C3 因 plan engine paused 没跑, W10 A2 接力落地 (depends_on W10 A1 一体化).
+      律师输入事实 → AI 生成草稿 → AI 风险标注 → 律师审核修改 → 客户签字 → 归档.
+
+      必读文档:
+      - W10 A1 commit: full_workflow_router + ocr_cache
+      - W9 C1 commit 37eda95 + 5d8ecdc (4 端点 + 4 模板)
+      - W3 Skill 2 SKILL.md § 4 端到端流程
+      - PRD V5.0 § 11 法务自检
+
+      W10 A2 工作范围:
+      1. **双审状态机**:
+         - backend/cases-crawler/core/doc_workflow.py
+         - 状态: draft → ai_reviewed → lawyer_reviewed → client_signed → archived
+         - PATCH /api/doc-gen/{doc_id}/state (state + reason + actor)
+      2. **AI 风险标注** (集成 Skill 2 reviewer):
+         - 4 文书类型各自风险维度:
+           - 起诉: 案由 / 诉讼请求 / 事实理由 / 法条引用
+           - 答辩: 反驳 / 抗辩 / 反诉 / 证据
+           - 合同: 标的 / 价款 / 履行 / 违约 / 管辖
+           - 律师函: 事实 / 法律意见 / 要求 / 时限 / 后果
+      3. **客户签字确认**:
+         - backend/cases-crawler/api/signature_router.py
+         - POST /api/signature/{doc_id} (上传签字图片 + 律师执业证号 + 时间戳)
+         - GET /api/signature/{doc_id} (查询签字状态)
+         - SQLite signatures 表 (doc_id / lawyer_id / signature_image / license_no / signed_at)
+      4. **前端双审界面**:
+         - templates/views/doc-review/index.html
+         - 左侧: 文书 draft + AI 风险标注 (高亮)
+         - 右侧: 状态机 + 律师修改记录 + 客户签字上传
+         - 集成到 router.js
+      5. **回归测试**:
+         - pytest 100% (含 doc_workflow + signature_router 2 端点)
+         - ruff 0
+         - playwright 截图双审界面
+      6. **git commit + push** (3 commits: 1 状态机 / 1 签字 / 1 前端)
+
+      Stop when (A2 完成):
+      - doc_workflow.py 状态机 5 状态转换跑通
+      - signature_router 2 端点 (POST / GET) 落档
+      - 4 文书风险标注接入 Skill 2 reviewer
+      - templates/views/doc-review/index.html 双审界面 (playwright 截图)
+      - pytest 100% + ruff 0
+      - git log 显示 3+ A2 commit
+    verify_prompt: |
+      独立验证 A2 双审工作流:
+      1. doc_workflow.py 5 状态 (draft/ai_reviewed/lawyer_reviewed/client_signed/archived) 转换跑通
+      2. signature_router POST /api/signature/{doc_id} + GET 2 端点跑通
+      3. 4 文书风险标注接入 Skill 2 reviewer, 风险维度完整
+      4. templates/views/doc-review/index.html 双审界面 playwright 截图
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ A2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: ['a1-skill3-full-integration']
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # Track B: 公测首批 30 律师转化付费 + 创史体验官招募
+  # ============================================================
+
+  # Task B1: 7/26 公测启动仪式准备 (60 min 流程 + 邀请函 + 物料)
+  - id: 'b1-beta-launch-event-prep'
+    title: 'B1 7/26 公测启动仪式准备 (60 min 流程 + 邀请函 + 物料 + 5 律所视频)'
+    prompt: |
+      7/26 公测启动仪式 (W6 已建档, 现在 W10 落地)
+      60 min 流程: 总指挥开场 (5 min) + Skill 2 演示 (15 min) + 5 律师体验分享 (10 min) + 创史体验官颁奖 (10 min) + 公测邀请 (10 min) + 茶歇 (10 min)
+
+      必读文档:
+      - W6 commit 081031a (创史招募准备)
+      - W6 commit f47db65 (首月漏斗 + 5 事件埋点)
+      - W6 docs/marketing/dashboard-w6.md (4 指标)
+      - docs/prd/09-business-model.md (个人版 ¥99/月 + 创史 ¥449/年)
+      - W7 评审 #1 #2 已实际上线 (L1 律师 BETA2025-0001 redeem)
+
+      W10 B1 工作范围:
+      1. **60 min 启动仪式流程**:
+         - docs/marketing/beta-launch-event-2026-07-26.md (跟 W6 beta-launch-event.md 升级)
+         - 5 时段 × 总指挥 + 律师 + 创史 + 公测 + 茶歇
+         - 落地表格: 时间 / 环节 / 主讲 / 物料 / 转场
+      2. **邀请函模板 + 5 律所视频邀请话术**:
+         - docs/marketing/launch-invitation.md (邮件 + 微信双通道)
+         - 5 律所 (L1 单飞 / L2 小所合伙 / L4 中所合伙 / L5 企业法务 + 1 新增) 视频拍摄话术
+         - 邀请金句 + 倒计时 + 创史体验官名额 (100 → 80 剩余)
+      3. **物料清单**:
+         - docs/marketing/launch-materials.md
+         - 易拉宝 × 3 + 海报 × 10 + 名牌 × 30 + 邀请函 × 30
+         - 视频: Skill 2 演示视频 + 评审 #1 律师体验合集
+      4. **转化漏斗 + 5 事件埋点**:
+         - docs/marketing/launch-funnel.md (W6 dashboard-w6 升级)
+         - 5 事件: landing_viewed / invite_redeemed / trial_started / paid_converted / advocate_promoted
+         - 4 指标: 注册转化率 / 试用转化率 / 付费转化率 / 创史转化率
+      5. **PRD 同步**:
+         - PRD V5.0 § 9 商业模式 + § 10 成功指标 更新 (7/26 公测启动)
+         - 引用 commit 081031a + f47db65
+      6. **git commit + push** (2 commits: 1 流程 + 邀请函 / 1 物料 + 漏斗)
+
+      Stop when (B1 完成):
+      - 60 min 启动流程完整 (5 时段表格)
+      - 邀请函模板 + 5 律所视频话术落档
+      - 物料清单完整 (易拉宝/海报/名牌/邀请函)
+      - 漏斗 5 事件 + 4 指标定义
+      - PRD V5.0 § 9 + § 10 同步更新
+      - git log 显示 2+ B1 commit
+
+      不要做:
+      - 不要真发邮件 / 微信邀请 (7/26 前才发)
+      - 不要真开直播 (7/26 才开)
+      - 不要做 7/26 后的事 (那是 W11+)
+    verify_prompt: |
+      独立验证 B1 7/26 公测启动仪式准备:
+      1. 60 min 启动流程完整 (5 时段表格: 时间 / 环节 / 主讲 / 物料 / 转场)
+      2. 邀请函模板 + 5 律所视频话术落档
+      3. 物料清单完整 (易拉宝 × 3 + 海报 × 10 + 名牌 × 30 + 邀请函 × 30)
+      4. 漏斗 5 事件 (landing_viewed / invite_redeemed / trial_started / paid_converted / advocate_promoted) + 4 指标
+      5. PRD V5.0 § 9 + § 10 同步更新 (引用 7/26 + W6 commit)
+      6. git log 显示 2+ B1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-bd'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task B2: 100 创史体验官招募 + 1000 公测律师邀请函
+  - id: 'b2-founding-member-recruit'
+    title: 'B2 100 创史体验官招募 (¥449/年 + 终身优先客服) + 1000 公测律师邀请函 + 招募页'
+    prompt: |
+      B1 启动仪式物料落地, B2 招募 100 创史体验官 + 1000 公测律师, 7/26 当天触发.
+
+      必读文档:
+      - B1 commit (W10): 启动流程 + 邀请函模板
+      - W6 commit 22d4e11 (115 个邀请码生成 + CSV 验证)
+      - W6 commit 081031a (创史招募准备)
+      - W8 commit 5766845 (W6 邀请码 API)
+      - W9 commit 5437535 (backlog 评审真数据 L1 已 redeem)
+      - docs/prd/09-business-model.md
+
+      W10 B2 工作范围:
+      1. **100 创史体验官招募**:
+         - docs/marketing/founding-member-recruit.md (跟 W6 founding-member-pitch.md 升级)
+         - 100 名额 (115 - 15 已发 = 80 实际剩余)
+         - 价值主张: 1 年个人版 5 折 ¥449/年 + 终身优先客服 + 创始律师群
+         - 招募渠道: 5 律所直推 (L1-L5) + 100 律师私域 + 10 微信群
+         - 落地路径: 个人版 → 邀请码 redeem → 创史体验官群邀请
+      2. **1000 公测律师邀请函**:
+         - docs/marketing/beta-launch-1000-invitation.md
+         - 目标: 7/26-8/9 邀请 1000 律师试用, 转化 80 创史体验官 + 50 付费律师
+         - 漏斗: 邀请函打开 → 点击 landing → 邀请码 redeem → 30 天试用 → 付费转化
+         - 渠道: 5 律所网络 + 100 律师朋友圈 + 10 微信群 + 5 公众号 + 1 律师事务所协会
+      3. **招募页 templates/views/founding/index.html**:
+         - 6 模块: 创史价值主张 / 名额倒计时 / 已加入律师头像 / 7/26 启动仪式预告 / 立即加入按钮 / 创始律师群二维码
+         - 集成到 router.js
+         - 集成 track event (founding_viewed / founding_joined)
+      4. **邀请码运营**:
+         - 复用 W6 邀请码 API (commit 5766845)
+         - 生成 1000 个新邀请码 (BETA2025-0116-BETA2025-1115)
+         - 落地 docs/marketing/invite-codes-list.csv (跟 W6 115 码合并到 1000+ 码)
+         - 1 码 1 用 + 限流 (W6 已有)
+      5. **跟踪指标**:
+         - docs/marketing/dashboard-w10.md (跟 W6 dashboard-w6 升级)
+         - 4 指标 + 创史专属: 创史招募率 / 创史群活跃 / 创史付费转化
+      6. **git commit + push** (3 commits: 1 创史招募 / 1 邀请函 / 1 招募页 + dashboard)
+
+      Stop when (B2 完成):
+      - 100 创史体验官招募计划完整 (80 名额 + 5 律所 + 100 律师私域 + 10 微信群)
+      - 1000 公测律师邀请函落档 (5 渠道漏斗)
+      - templates/views/founding/index.html 招募页 (6 模块)
+      - 邀请码 CSV 更新到 1000+ 码
+      - dashboard-w10 加创史专属 3 指标
+      - git log 显示 3+ B2 commit
+
+      不要做:
+      - 不要真发邀请码 (等 7/26 启动仪式)
+      - 不要开创始律师群 (7/26 才开)
+      - 不要做付费转化 (付费是 30 天试用后)
+    verify_prompt: |
+      独立验证 B2 100 创史招募 + 1000 公测邀请:
+      1. 100 创史体验官招募计划完整 (80 名额 + 5 律所 + 100 律师 + 10 微信群)
+      2. 1000 公测律师邀请函落档 (5 渠道漏斗: 律所/朋友圈/微信群/公众号/律协)
+      3. templates/views/founding/index.html 招募页 (6 模块 + track event)
+      4. 邀请码 CSV 更新到 1000+ 码 (BETA2025-0116-BETA2025-1115)
+      5. dashboard-w10 加创史专属 3 指标 (招募率 / 群活跃 / 付费转化)
+      6. git log 显示 3+ B2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-bd'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # 集成验证 (W10 全 plan 收口)
+  # ============================================================
+  - id: 'w10-integration'
+    title: 'W10 集成验证 (A1-A2 Skill 3 闭环 + B1-B2 公测启动就绪)'
+    prompt: |
+      验证 W10 4 task 集成:
+      1. A1 Skill 3 一体化 (类案+合同+文书) + OCR 缓存 + cwd 修复
+      2. A2 双审工作流 + 风险标注 + 客户签字
+      3. B1 7/26 公测启动仪式 (60 min 流程 + 邀请函 + 物料 + 漏斗)
+      4. B2 100 创史招募 + 1000 公测邀请 + 招募页 + 邀请码 1000+ + dashboard
+      5. 4 agent deliverable 无冲突 (lex-ai / lex-pm / lex-bd ×2)
+      6. 4 agent 全部 git commit + push
+      7. 7/26 公测启动准备就绪 (D-1 = 7/25)
+      8. 8/9 前 30 名律师转化付费目标
+      9. 8 月底 50 律师付费 / 月 ¥5 万+ ARR 目标
+      10. W11 建议 (一句话: 7/26 公测仪式执行 + 5 律师首批付费转化 + W12 早期用户拉新 1000+)
+
+      输出 W10 总结 + W11 建议.
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['a2-doc-review-workflow', 'b2-founding-member-recruit']
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
