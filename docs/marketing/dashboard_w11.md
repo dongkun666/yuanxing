@@ -7,6 +7,68 @@
 > 状态: 4 业务指标 + 3 创史专属指标已就位, 等 7/26 启动仪式触发
 > 上一版: dashboard_w6.md v0.1 (W6 Day 3, commit f47db65, 已归档基线)
 > 配套: launch_funnel.md v2.0 (5 事件 + 4 指标) · founding_member_recruit.md v2.0 (80 席招募) · beta_launch_event_2026_07_26.md (60 min 启动仪式) · beta_launch_1000_invitation.md (1000 公测邀请函)
+
+## 0.5 自动 dashboard 说明 (W11 C1 新增)
+
+> 配套: `../marketing/first-paid-triggers.md` v1.0 (W11 C1, 5 律师 L1-L5 转化触发) · `../marketing/launch-runbook-2026-07-26.md` v1.0 (W11 C1, 启动仪式执行运行手册)
+> 引用 commit: W11 C1 (本节) · W11 B2 a10aecc (dashboard 4+3 指标 v1.0) · W10 B1 ce98f64 (4 指标业务漏斗 v2.0)
+
+### 0.5.1 数据源 (6 事件: 5 事件 + 1 trial_expired 事件)
+
+> 6 事件数据源 (W11 C1 v0.7.4 PRD § 11.6.2): landing_viewed / invite_redeemed / trial_started / trial_expired (新增) / paid_converted / advocate_promoted
+> 5 渠道: 评审律师 / 微信群律师 / 创始体验官 (公开) / 律协推荐 / 公开报名
+> 跟踪期: 7/26 - 8/31 (37 天, 公测期 + 8 月底冲刺)
+
+### 0.5.2 自动 dashboard 跑数据流程 (Mavis cron)
+
+```
+[每日 22:55] Mavis cron 启动 (mavis team plan dry-run 模式, 不污染 owner 队列)
+  |
+  | 23:00 - 23:15 (15 min) Mavis 跑 7 SQL (launch-funnel.md §6 + dashboard_w11.md §6)
+  | - 4 业务指标 SQL: 注册/试用/付费/创史 转化率
+  | - 3 创史专属 SQL: 招募率/群活跃/付费转化
+  | - 1 trial_expired SQL (W11 C1 新增): 5 律师首批 7/29 触达率 + 25 名新律师 8/9 触达率
+  | 写入 SQLite 本地表 `daily_metrics_2026_07_26_to_08_31`
+[每日 23:15 - 23:30] (15 min) Mavis 生成 dashboard JSON
+  | 输出: `data/dashboard_w11_auto_2026-07-26.json` (每日增量更新)
+  | 字段: date, 4 业务指标, 3 创史指标, trial_expired 5 律师触达率
+[每日 23:30 - 23:45] (15 min) BD 人工回填
+  | - 跑 SQL 校验 Mavis 数据 (防止自动跑偏差)
+  | - 写 docs/marketing/dashboard_w11_daily_review.md (15 min 写日报)
+  | - 异常预警响应 (red 异常 12h 内, yellow 异常 24h 内)
+[每日 23:59] 朋友圈 9 宫格 + 公众号日报 (BD)
+```
+
+### 0.5.3 自动 dashboard 数据流 (跟 prd_backlog 集成)
+
+> W11 C1 自动 dashboard 数据源 = `tracking_events` (5 事件) + `trial_expired` 表 (W11 C1 新增) + `invite_codes` 表 + `prd_backlog` 公开 P0/P1 ticket (供 dashboard 推荐律师关注点)
+> prd_backlog 集成: `docs/prd/backlog-w8.md` (W8 评审真数据, A1) + `docs/prd/tracks/` (W10 A2 自动调度器) - 拉取 P0/P1 律师关注问题作为 dashboard 底部推荐
+> 公开数据源: invite_codes_list.csv (W11 B2 1115 码) + tracking_events 表 (W10 B1 5 事件) + advocate 表 (W11 B2 创史状态机)
+
+### 0.5.4 自动 dashboard 触发 (3 场景)
+
+| 场景 | 触发 | 应对 |
+|------|------|------|
+| 正常 cron | 每日 23:00 Mavis 跑成功 | BD 23:30 校验 + 回填日报, 0 异常 |
+| Mavis 失败 | 23:00 cron 没产出 (15 min 内) | Coder 12:00 排查 + 手动跑 SQL + 15:00 补发日报 |
+| 数据异常 | 4 业务指标 < 红色阈值 (转化率 < 10%) | BD 24h 内 + 总指挥拍板 + 紧急修复 + 7d 周报复盘 |
+
+### 0.5.5 自动 dashboard vs 手动 dashboard
+
+| 维度 | 自动 dashboard (W11 C1) | 手动 dashboard (W11 B2 已有) |
+|------|--------------------------|------------------------------|
+| 数据源 | Mavis cron 跑 SQL (每日 23:00) | BD 手动 23:30 回填 |
+| 频率 | 每日 23:00 自动 + 异常预警 | 每日 23:30 手动 |
+| 延迟 | < 30 min | 1h+ (手动延迟) |
+| 准确度 | 高 (Mavis SQL 校验) | 中 (BD 经验估算) |
+| 可扩展 | 高 (加指标 = 加 SQL) | 低 (改指标 = 改文档) |
+| Mavis 依赖 | 是 (W11 C1 首次集成) | 否 |
+
+> W11 C1 自动 dashboard 升级: 跟 W11 B2 手动 dashboard 兼容, 7 SQL 共享 (dashboard_w11.md §6), Mavis 跑 SQL + 写入 SQLite + 生成 JSON + BD 23:30 校验.
+> 首跑日期: 2026-07-26 (公测启动仪式当天 23:00 首次自动跑, 含 0 基础数据, 用于 7/27 起 4 业务指标基线)
+
+---
+
 > 引用 commit: W6 f47db65 (首月漏斗 v0.1) · W10 B1 ce98f64 (4 指标业务漏斗 v2.0) · W10 B1 0df6a74 (启动仪式 60 min) · W11 B2 (本看板)
 
 ---
