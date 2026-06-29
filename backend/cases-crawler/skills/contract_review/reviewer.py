@@ -74,13 +74,26 @@ from skills.contract_review.language_guard import (  # noqa: E402
 
 
 # ===== W4: 索引懒加载 =====
+# W10 A1 (lex-ai) 修复 D4 producer blocker #2: 不依赖 cwd
+# 之前用 lancedb_path="data/lancedb" 相对路径, E2E 主进程必须 os.chdir 到 cases-crawler/
+# 现在用绝对路径 (基于 __file__): backend/cases-crawler/data/lancedb
 
 _RISK_INDEX_SINGLETON: Optional[Any] = None
 _RISK_INDEX_FAILED: bool = False
 
 
+def _get_risk_index_path() -> str:
+    """绝对路径: backend/cases-crawler/data/lancedb (不依赖 cwd)"""
+    from pathlib import Path
+    # skills/contract_review/reviewer.py -> backend/cases-crawler/skills/contract_review/reviewer.py
+    # -> .parent.parent.parent = backend/cases-crawler/
+    return str(Path(__file__).resolve().parent.parent.parent / "data" / "lancedb")
+
+
 def _get_risk_index():
     """懒加载合同风险索引 (W4 LanceDB)。
+
+    W10 A1 修复: 改用绝对路径, 不依赖 cwd (D4 producer blocker #2)
 
     Returns:
         ContractRiskIndex 实例, 或 None (索引未就位 / 加载失败)
@@ -91,13 +104,12 @@ def _get_risk_index():
     if _RISK_INDEX_FAILED:
         return None
     try:
-        # 相对路径 (从 cases-crawler/ 启)
         from core.lancedb_index import (  # noqa: PLC0415
             IndexConfig,
             get_contract_index,
         )
         cfg = IndexConfig(
-            lancedb_path="data/lancedb",
+            lancedb_path=_get_risk_index_path(),
             default_top_k=5,
             max_top_k=10,
         )
