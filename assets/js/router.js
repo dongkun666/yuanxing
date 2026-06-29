@@ -138,6 +138,18 @@
                 }, 50);
             }
             if (viewId === 'founding') {
+                // founding 招募页是公开 landing, 由 founding/index.html 自带 track stub + DOMContentLoaded; 这里无需额外调用, 但保留 setTimeout 以防未来加健康检查
+                setTimeout(function() {
+                    if (typeof window.__loadFoundingView === 'function') window.__loadFoundingView();
+                }, 50);
+            }
+            if (viewId === 'founding') {
+                // founding 招募页是公开 landing, 由 founding/index.html 自带 track stub + DOMContentLoaded; 这里无需额外调用, 但保留 setTimeout 以防未来加健康检查
+                setTimeout(function() {
+                    if (typeof window.__loadFoundingView === 'function') window.__loadFoundingView();
+                }, 50);
+            }
+            if (viewId === 'founding') {
                 // W10 B2 创始体验官招募页: 倒计时由 view 内部 setInterval 处理, 表单提交由 view 内部处理
                 // track event founding_viewed 在 view 加载时自动上报 (view 内 trackEvent 函数)
                 // 这里无需额外初始化, 但确保倒计时元素存在时再触发
@@ -189,6 +201,16 @@
                     if (viewId === 'doc-gen') {
                         setTimeout(function() {
                             if (typeof window.__loadDocGenHealth === 'function') window.__loadDocGenHealth();
+                        }, 50);
+                    }
+                    if (viewId === 'founding') {
+                        setTimeout(function() {
+                            if (typeof window.__loadFoundingView === 'function') window.__loadFoundingView();
+                        }, 50);
+                    }
+                    if (viewId === 'founding') {
+                        setTimeout(function() {
+                            if (typeof window.__loadFoundingView === 'function') window.__loadFoundingView();
                         }, 50);
                     }
                     if (viewId === 'founding') {
