@@ -5,6 +5,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
   .modal-shadow { box-shadow: 0 16px 48px rgba(29,33,41,0.16); }
   .fade-in { animation: fadeIn 250ms ease-out; }
   @keyframes fadeIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:none; } }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复: 模态框 → 全屏) */
+  @media (max-width: 767px) {
+    #view-contract-review-negotiation .fixed.inset-0.z-40.backdrop { padding: 0 !important; }
+    #view-contract-review-negotiation .bg-white.rounded-lg.modal-shadow {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+    }
+    #view-contract-review-negotiation .cr-modal-grid { grid-template-columns: 1fr !important; }
+    #view-contract-review-negotiation .cr-modal-side { max-height: 40vh !important; }
+    #view-contract-review-negotiation .cr-modal-bottom { flex-direction: column !important; }
+    #view-contract-review-negotiation .cr-modal-bottom button { width: 100% !important; }
+  }
   </style>
 <!-- ============== 底层背景 (审查结果页) ============== -->
 <div class="fixed inset-0 bg-bg-subtle -z-10"></div>

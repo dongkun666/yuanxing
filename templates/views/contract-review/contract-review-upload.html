@@ -563,12 +563,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 </div>
 
 <!-- W7: 立场影响预览实时切换 (W4 P2 修复) -->
+<!-- D3 W8 修复: 优先用 window.CR.__updateStancePreview (single source of truth) -->
+<!--   保留 inline 逻辑作为 fallback / 测试用 (matrix 4 stance × 3 风险等级) -->
 <script>
 (function() {
-  // 立场 → 致命/重大/合规 加权方向 + 重点提示
-  const STANCE_MATRIX = {
+  // 本地 matrix (与 contract-review.js __STANCE_MATRIX 同源, 供 fallback + 独立测试)
+  var STANCE_MATRIX = {
     '甲方': {
       label: '甲方', color: 'brand',
+      shortLabel: '原告',
       impacts: { fatal: { sym: '↓ 降权', cls: 'text-success' },
                  major: { sym: '→ 持平', cls: 'text-warning' },
                  ok: { sym: '↑ 加权', cls: 'text-success' } },
@@ -577,6 +580,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
     },
     '乙方': {
       label: '乙方', color: 'ai',
+      shortLabel: '被告',
       impacts: { fatal: { sym: '↑ 加权', cls: 'text-danger' },
                  major: { sym: '→ 持平', cls: 'text-warning' },
                  ok: { sym: '↓ 降权', cls: 'text-success' } },
@@ -585,6 +589,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
     },
     '丙方': {
       label: '丙方', color: 'warning',
+      shortLabel: '第三方',
       impacts: { fatal: { sym: '→ 持平', cls: 'text-warning' },
                  major: { sym: '↑ 加权', cls: 'text-warning' },
                  ok: { sym: '→ 持平', cls: 'text-fg-tertiary' } },
@@ -593,6 +598,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
     },
     '审查方': {
       label: '审查方', color: 'fg-secondary',
+      shortLabel: '中立',
       impacts: { fatal: { sym: '→ 持平', cls: 'text-warning' },
                  major: { sym: '→ 持平', cls: 'text-warning' },
                  ok: { sym: '→ 持平', cls: 'text-fg-tertiary' } },
@@ -601,53 +607,70 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
     }
   };
 
+  function applyPreview(stance) {
+    var matrix = STANCE_MATRIX[stance] || STANCE_MATRIX['审查方'];
+    // 更新 badge
+    var badge = document.querySelector('#cr-stance-preview .text-ai');
+    if (badge) badge.textContent = matrix.label;
+    // 更新 3 风险等级加权
+    var grid = document.getElementById('cr-stance-preview-grid');
+    if (grid) {
+      grid.querySelectorAll('[data-stance-impact]').forEach(function(el) {
+        var key = el.dataset.stanceImpact;
+        var imp = matrix.impacts[key];
+        if (imp) {
+          el.textContent = imp.sym;
+          el.className = el.className.replace(/text-(danger|warning|success|fg-tertiary)/, '');
+          el.classList.add(imp.cls);
+        }
+      });
+    }
+    // 更新 tip
+    var tip = document.getElementById('cr-stance-preview-tip');
+    if (tip) {
+      tip.innerHTML = '<iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon> ' +
+        '作为<span class="text-ai font-medium">' + matrix.label + '</span>, 风险评估侧重' +
+        matrix.tips.map(function(t) { return '<span class="text-danger font-medium">' + t + '</span>'; }).join('·') +
+        '·AI 仅作客观提示, 决策权在律师';
+    }
+    // 同步底部摘要
+    var summary = document.getElementById('cr-summary-text');
+    if (summary) {
+      summary.textContent = '已选择 1 份合同 · 房屋租赁 · ' + matrix.label + '立场 · 包含修改建议和谈判策略';
+    }
+  }
+
   function bind() {
-    const radio = document.getElementById('cr-stance-radios');
+    var radio = document.getElementById('cr-stance-radios');
     if (!radio) return;
     radio.addEventListener('click', function(e) {
-      const btn = e.target.closest('.cr-stance-btn');
+      var btn = e.target.closest('.cr-stance-btn');
       if (!btn) return;
-      const stance = btn.dataset.stance;
-      // 视觉切换
-      radio.querySelectorAll('.cr-stance-btn').forEach(function(b) {
-        const on = b === btn;
-        b.classList.toggle('bg-brand', on);
-        b.classList.toggle('text-white', on);
-        b.classList.toggle('border-brand', on);
-        b.classList.toggle('shadow-sm', on);
-        b.classList.toggle('font-medium', on);
-        b.classList.toggle('bg-white', !on);
-        b.classList.toggle('text-fg-secondary', !on);
-        b.classList.toggle('border-bg-border', !on);
-        b.setAttribute('aria-checked', on ? 'true' : 'false');
-      });
-      // 更新预览区
-      const matrix = STANCE_MATRIX[stance] || STANCE_MATRIX['审查方'];
-      const badge = document.querySelector('#cr-stance-preview .text-ai');
-      if (badge) badge.textContent = matrix.label;
-      const grid = document.getElementById('cr-stance-preview-grid');
-      if (grid) {
-        grid.querySelectorAll('[data-stance-impact]').forEach(function(el) {
-          const key = el.dataset.stanceImpact;
-          const imp = matrix.impacts[key];
-          if (imp) {
-            el.textContent = imp.sym;
-            el.className = el.className.replace(/text-(danger|warning|success|fg-tertiary)/, '');
-            el.classList.add(imp.cls);
-          }
+      var stance = btn.dataset.stance;
+      // D3 W8: 优先调 contract-review.js __updateStancePreview (single source of truth)
+      var matrix = null;
+      if (window.CR && typeof window.CR.__updateStancePreview === 'function') {
+        matrix = window.CR.__updateStancePreview(stance);
+      } else {
+        // Fallback: 本地 matrix + 直接 DOM 操作
+        radio.querySelectorAll('.cr-stance-btn').forEach(function(b) {
+          var on = b === btn;
+          b.classList.toggle('bg-brand', on);
+          b.classList.toggle('text-white', on);
+          b.classList.toggle('border-brand', on);
+          b.classList.toggle('shadow-sm', on);
+          b.classList.toggle('font-medium', on);
+          b.classList.toggle('bg-white', !on);
+          b.classList.toggle('text-fg-secondary', !on);
+          b.classList.toggle('border-bg-border', !on);
+          b.setAttribute('aria-checked', on ? 'true' : 'false');
         });
       }
-      const tip = document.getElementById('cr-stance-preview-tip');
-      if (tip) {
-        tip.innerHTML = '<iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon> ' +
-          '作为<span class="text-ai font-medium">' + matrix.label + '</span>, 风险评估侧重' +
-          matrix.tips.map(function(t) { return '<span class="text-danger font-medium">' + t + '</span>'; }).join('·') +
-          '·AI 仅作客观提示, 决策权在律师';
-      }
-      // 同步更新底部摘要
-      const summary = document.getElementById('cr-summary-text');
-      if (summary) {
-        summary.textContent = '已选择 1 份合同 · 房屋租赁 · ' + matrix.label + '立场 · 包含修改建议和谈判策略';
+      // 更新预览区
+      if (matrix) {
+        applyPreview(stance);
+      } else {
+        applyPreview(stance);  // fallback
       }
     });
   }

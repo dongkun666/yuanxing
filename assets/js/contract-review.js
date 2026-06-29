@@ -86,12 +86,90 @@
     }
 
     // ====== 2. 01-upload 立场影响预览 + 02 立场切换器 - P2 ======
+    // D3 W8: __updateStancePreview(stance) 是立场影响预览的 single source of truth
+    // 4 立场 × 3 风险等级 (fatal/major/ok) 加权方向 + 关注重点 + 立场标签
+    // 4 立场映射到 3 类常用立场 (原告/被告/中立 = 甲方/乙方/审查方)
+    var STANCE_MATRIX = {
+        '甲方': {
+            label: '甲方', color: 'brand',
+            shortLabel: '原告',   // 律师常见用语
+            impacts: {
+                fatal: { sym: '↓ 降权', cls: 'text-success' },
+                major: { sym: '→ 持平', cls: 'text-warning' },
+                ok:    { sym: '↑ 加权', cls: 'text-success' }
+            },
+            focus: '对方义务 / 自身免责 / 救济成本',
+            tips: ['单方解除权', '违约金上限', '管辖法院中立']
+        },
+        '乙方': {
+            label: '乙方', color: 'ai',
+            shortLabel: '被告',
+            impacts: {
+                fatal: { sym: '↑ 加权', cls: 'text-danger' },
+                major: { sym: '→ 持平', cls: 'text-warning' },
+                ok:    { sym: '↓ 降权', cls: 'text-success' }
+            },
+            focus: '权利失衡 / 显失公平 / 解除权不对等',
+            tips: ['违约金过高', '单方解除权不对等', '管辖不利']
+        },
+        '丙方': {
+            label: '丙方', color: 'warning',
+            shortLabel: '第三方',
+            impacts: {
+                fatal: { sym: '→ 持平', cls: 'text-warning' },
+                major: { sym: '↑ 加权', cls: 'text-warning' },
+                ok:    { sym: '→ 持平', cls: 'text-fg-tertiary' }
+            },
+            focus: '连带义务 / 担保范围 / 第三方责任',
+            tips: ['连带责任', '担保物范围', '第三方追偿权']
+        },
+        '审查方': {
+            label: '审查方', color: 'fg-secondary',
+            shortLabel: '中立',
+            impacts: {
+                fatal: { sym: '→ 持平', cls: 'text-warning' },
+                major: { sym: '→ 持平', cls: 'text-warning' },
+                ok:    { sym: '→ 持平', cls: 'text-fg-tertiary' }
+            },
+            focus: '全面客观 / 多方均衡 / 中立报告',
+            tips: ['完整披露所有风险', '各方权益平衡', '客观描述无偏向']
+        }
+    };
+
+    // 兼容旧 inline 脚本: STANCE_PREVIEW 文本降级
     var STANCE_PREVIEW = {
         '甲方': '甲方立场下, 风险等级可能加权, 建议优先关注收款/单方解除权条款',
         '乙方': '乙方立场下, 风险等级可能降权, 建议优先关注管辖/违约责任条款',
         '丙方': '丙方立场下, 风险等级不变, 建议优先关注担保责任范围条款',
         '审查方': '审查方立场下, 客观列出全部风险, 不偏向任何一方',
     };
+
+    /**
+     * D3 W8: __updateStancePreview(stance) - 立场影响预览的 single source of truth
+     * @param {string} stance - '甲方' | '乙方' | '丙方' | '审查方'
+     * @returns {Object} {label, shortLabel, color, impacts, focus, tips} 或默认审查方
+     */
+    function __updateStancePreview(stance) {
+        var matrix = STANCE_MATRIX[stance] || STANCE_MATRIX['审查方'];
+        CR.currentStance = stance;
+        // 尝试同步 DOM (如果有 .cr-stance-btn 按钮组, 更新 aria-pressed 状态)
+        try {
+            var btns = document.querySelectorAll('.cr-stance-btn');
+            btns.forEach(function(b) {
+                var on = b.getAttribute('data-stance') === stance;
+                b.setAttribute('aria-checked', on ? 'true' : 'false');
+                b.classList.toggle('bg-brand', on);
+                b.classList.toggle('text-white', on);
+                b.classList.toggle('border-brand', on);
+                b.classList.toggle('shadow-sm', on);
+                b.classList.toggle('font-medium', on);
+                b.classList.toggle('bg-white', !on);
+                b.classList.toggle('text-fg-secondary', !on);
+                b.classList.toggle('border-bg-border', !on);
+            });
+        } catch (e) { /* DOM 还没就绪时 swallow */ }
+        return matrix;
+    }
 
     function initStancePreview() {
         var stanceBtns = document.querySelectorAll('[data-stance-btn]');
@@ -107,13 +185,24 @@
                 btn.classList.add('bg-brand', 'text-white');
                 btn.classList.remove('bg-white', 'text-fg-secondary');
                 btn.setAttribute('aria-pressed', 'true');
-                CR.currentStance = stance;
-                // 立场影响预览
+                // 调用 single source of truth
+                __updateStancePreview(stance);
+                // 立场影响预览 (兼容旧版 preview 区域)
                 var preview = document.getElementById('stance-impact-preview');
                 if (preview) {
                     preview.textContent = STANCE_PREVIEW[stance] || '';
                     preview.classList.remove('hidden');
                 }
+            });
+        });
+        // 兼容 .cr-stance-btn (W7 upload 页面) 委托到 __updateStancePreview
+        var crBtns = document.querySelectorAll('.cr-stance-btn');
+        crBtns.forEach(function(btn) {
+            // 避免重复绑定 (data-stance-btn 优先)
+            if (btn.hasAttribute('data-stance-btn')) return;
+            btn.addEventListener('click', function(e) {
+                var stance = btn.getAttribute('data-stance');
+                if (stance) __updateStancePreview(stance);
             });
         });
     }
@@ -150,37 +239,69 @@
         });
     }
 
-    // ====== 3. 02 致命条款 > 3 自动折叠 - P2 ======
-    function initFatalCollapse() {
-        var fatalContainer = document.getElementById('fatal-clauses-container');
-        if (!fatalContainer) return;
-        var fatals = fatalContainer.querySelectorAll('.clause-fatal');
-        if (fatals.length <= 3) return;
-        // 折叠第 4+ 项, 显示"查看其余 X 项致命" 按钮
-        var hiddenCount = 0;
-        for (var i = 3; i < fatals.length; i++) {
-            fatals[i].classList.add('hidden');
-            hiddenCount++;
-        }
-        var btn = document.createElement('button');
-        btn.className = 'mt-3 w-full py-2 text-xs text-danger border border-danger/30 rounded-md hover:bg-danger-tint transition-colors focus:outline-none focus:ring-2 focus:ring-danger/30';
-        btn.setAttribute('aria-expanded', 'false');
-        btn.innerHTML = '<iconify-icon icon="mdi:chevron-down" class="text-sm align-middle"></iconify-icon> 查看其余 ' + hiddenCount + ' 项致命条款';
-        btn.addEventListener('click', function() {
-            var expanded = btn.getAttribute('aria-expanded') === 'true';
-            for (var j = 3; j < fatals.length; j++) {
-                if (expanded) {
-                    fatals[j].classList.add('hidden');
-                } else {
-                    fatals[j].classList.remove('hidden');
-                }
+    // ====== 3. 02 致命条款 > 3 自动折叠 - P2 (D3 W8 修复) ======
+    // D3 W8: __applyFatalCollapse(visibleLimit) 是 single source of truth
+    // 设计: fatalCount > 3 时, 折叠第 4+ 项, 显示"查看其余 X 项致命" 按钮
+    // 测试 0/3/5 三种情况: 0/3 隐藏按钮, 5 显示按钮 + 折叠 4-5
+    var FATAL_VISIBLE_LIMIT = 3;
+
+    function __applyFatalCollapse(visibleLimit) {
+        visibleLimit = visibleLimit || FATAL_VISIBLE_LIMIT;
+        var container = document.getElementById('fatal-clauses-container');
+        var btn = document.getElementById('cr-fatal-toggle');
+        if (!container) return { visible: 0, hidden: 0, buttonVisible: false };
+        // 只数 .clause-fatal 元素 (D3 W8 修复: 之前 .cr-fatal-clause 包含 major, 不准)
+        var fatals = container.querySelectorAll('.clause-fatal');
+        var fatalCount = fatals.length;
+        // 0 致命或 ≤ visibleLimit: 按钮隐藏
+        if (fatalCount <= visibleLimit) {
+            // 全部显示
+            fatals.forEach(function(c) {
+                c.classList.remove('cr-fatal-overflow');
+                c.style.display = '';
+            });
+            if (btn) {
+                btn.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
             }
-            btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-            btn.innerHTML = expanded
-                ? '<iconify-icon icon="mdi:chevron-down" class="text-sm align-middle"></iconify-icon> 查看其余 ' + hiddenCount + ' 项致命条款'
-                : '<iconify-icon icon="mdi:chevron-up" class="text-sm align-middle"></iconify-icon> 收起致命条款';
+            return { visible: fatalCount, hidden: 0, buttonVisible: false };
+        }
+        // > visibleLimit: 折叠第 4+ 项
+        var hiddenCount = 0;
+        fatals.forEach(function(c, idx) {
+            if (idx >= visibleLimit) {
+                c.classList.add('cr-fatal-overflow');
+                c.style.display = 'none';
+                hiddenCount += 1;
+            } else {
+                c.classList.remove('cr-fatal-overflow');
+                c.style.display = '';
+            }
         });
-        fatalContainer.appendChild(btn);
+        if (btn) {
+            btn.classList.remove('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+            var textEl = document.getElementById('cr-fatal-toggle-text');
+            var countEl = document.getElementById('cr-fatal-toggle-count');
+            if (textEl) textEl.textContent = '查看其余致命条款';
+            if (countEl) countEl.textContent = '+' + hiddenCount;
+            // 重新绑定 click (避免 inline onclick 与 .onclick 冲突)
+            btn.onclick = function() {
+                var expanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                container.querySelectorAll('.cr-fatal-overflow').forEach(function(c) {
+                    c.style.display = expanded ? 'none' : '';
+                });
+                var icon = btn.querySelector('.cr-fatal-toggle-icon');
+                if (icon) icon.style.transform = expanded ? '' : 'rotate(180deg)';
+                if (textEl) textEl.textContent = expanded ? '查看其余致命条款' : '收起致命条款';
+            };
+        }
+        return { visible: visibleLimit, hidden: hiddenCount, buttonVisible: true };
+    }
+
+    function initFatalCollapse() {
+        __applyFatalCollapse(FATAL_VISIBLE_LIMIT);
     }
 
     // ====== 4. 03 采用按钮 → Toast + 02 状态同步 + 审计 log - P1 ======
@@ -458,6 +579,18 @@
         initResultTabs();
         initStancePreview();
         initStanceSwitcher();
+        // D3 W8: URL param ?test_fatals=0|3|5 注入测试用致命条款 (0/3/5 验证)
+        var urlTestFatals = null;
+        try {
+            var sp = new URLSearchParams(window.location.search);
+            var t = sp.get('test_fatals');
+            if (t !== null && /^[0-9]+$/.test(t)) {
+                urlTestFatals = parseInt(t, 10);
+            }
+        } catch (e) { /* ignore */ }
+        if (urlTestFatals !== null && document.getElementById('fatal-clauses-container')) {
+            __testInjectFatalClauses(urlTestFatals);
+        }
         initFatalCollapse();
         initAdoptButtons();
         initNegotiationModal();
@@ -470,6 +603,28 @@
         });
     }
 
+    /**
+     * D3 W8 测试辅助: __testInjectFatalClauses(n) - 注入 n 个致命条款到容器
+     * 用于 0/3/5 三种情况验证. 不在生产路径调用.
+     */
+    function __testInjectFatalClauses(n) {
+        var container = document.getElementById('fatal-clauses-container');
+        if (!container) return;
+        // 清除已有 .clause-fatal
+        container.querySelectorAll('.clause-fatal').forEach(function(c) { c.remove(); });
+        for (var i = 0; i < n; i++) {
+            var div = document.createElement('div');
+            div.className = 'bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause';
+            div.setAttribute('data-fatal-index', String(i));
+            div.setAttribute('data-test-injected', 'true');
+            div.innerHTML = '<div class="px-4 py-3 border-b border-danger/20">'
+                + '<span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">测试致命 #' + (i + 1) + '</span>'
+                + '<span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold ml-2">致命</span>'
+                + '</div><div class="p-4 text-xs text-fg-secondary">这是 D3 W8 测试注入的第 ' + (i + 1) + ' 个致命条款, 用于验证 ' + n + ' 致命折叠行为。</div>';
+            container.appendChild(div);
+        }
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', boot);
     } else {
@@ -477,5 +632,11 @@
     }
 
     // 全局暴露 (调试用)
+    // D3 W8: 暴露 __updateStancePreview + __applyFatalCollapse + __testInjectFatalClauses 给 inline 脚本 + 测试用
     globalThis.CR = CR;
+    globalThis.CR.__updateStancePreview = __updateStancePreview;
+    globalThis.CR.__applyFatalCollapse = __applyFatalCollapse;
+    globalThis.CR.__testInjectFatalClauses = __testInjectFatalClauses;
+    globalThis.CR.__STANCE_MATRIX = STANCE_MATRIX;
+    globalThis.CR.__FATAL_VISIBLE_LIMIT = FATAL_VISIBLE_LIMIT;
 })();

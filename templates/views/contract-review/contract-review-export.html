@@ -13,6 +13,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
   .risk-bar > div { transition: width 400ms ease-out; }
   /* 选中 tab 动画 */
   .tab-active { box-shadow: 0 2px 8px rgba(22, 93, 255, 0.20); }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复) */
+  @media (max-width: 767px) {
+    #view-contract-review-export .cr-header-nav { display: none !important; }
+    #view-contract-review-export .cr-header-actions .cr-header-btn-text { display: none !important; }
+    #view-contract-review-export .cr-content { padding: 0.75rem !important; }
+    #view-contract-review-export .cr-export-grid { grid-template-columns: 1fr !important; }
+    #view-contract-review-export .paper { padding: 1rem !important; }
+    #view-contract-review-export .cr-tab-row { flex-wrap: wrap !important; }
+    #view-contract-review-export .cr-action-row { flex-direction: column !important; }
+    #view-contract-review-export .cr-action-row button { width: 100% !important; }
+  }
   </style>
 <div class="flex h-screen overflow-hidden">
 
