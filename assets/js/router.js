@@ -61,7 +61,9 @@
         // W8 (2026-06-29 lex-coder) PRD backlog 总览 (A2)
         'backlog': 'backlog/index.html',
         // W9 (2026-06-29 lex-coder) Skill 3 文书生成 (C1: 起诉状/答辩状/合同/律师函)
-        'doc-gen': 'doc-gen/index.html'
+        'doc-gen': 'doc-gen/index.html',
+        // W10 (2026-06-30 lex-bd) 创始体验官招募页 (B2: 80 席剩余 + 6 模块 + 2 track event)
+        'founding': 'founding/index.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
@@ -135,6 +137,17 @@
                     if (typeof window.__loadDocGenHealth === 'function') window.__loadDocGenHealth();
                 }, 50);
             }
+            if (viewId === 'founding') {
+                // W10 B2 创始体验官招募页: 倒计时由 view 内部 setInterval 处理, 表单提交由 view 内部处理
+                // track event founding_viewed 在 view 加载时自动上报 (view 内 trackEvent 函数)
+                // 这里无需额外初始化, 但确保倒计时元素存在时再触发
+                setTimeout(function() {
+                    var cdDays = document.getElementById('cd-days');
+                    if (cdDays && typeof window.__initFoundingCountdown === 'function') {
+                        window.__initFoundingCountdown();
+                    }
+                }, 50);
+            }
         } else {
             loadView(viewId, function(html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
@@ -176,6 +189,15 @@
                     if (viewId === 'doc-gen') {
                         setTimeout(function() {
                             if (typeof window.__loadDocGenHealth === 'function') window.__loadDocGenHealth();
+                        }, 50);
+                    }
+                    if (viewId === 'founding') {
+                        // W10 B2 创始体验官招募页: view 内部自包含倒计时 + 表单 + track event
+                        setTimeout(function() {
+                            var cdDays = document.getElementById('cd-days');
+                            if (cdDays && typeof window.__initFoundingCountdown === 'function') {
+                                window.__initFoundingCountdown();
+                            }
                         }, 50);
                     }
                 }
