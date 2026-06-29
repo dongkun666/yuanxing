@@ -1,7 +1,7 @@
 {
   "task": "W13 C1-followup-screenshots",
   "agent": "lex-bd",
-  "timestamp": "20260630-033622",
+  "timestamp": "20260630-055747",
   "url": "http://127.0.0.1:8080/templates/views/founding/index.html?dev=1",
   "viewports": [
     {
@@ -46,8 +46,8 @@
       "viewport": "pc",
       "width": 1440,
       "height": 900,
-      "file": "tests\\screenshots\\founding-pc-20260630-033622.png",
-      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-pc-20260630-033622.png",
+      "file": "tests\\screenshots\\founding-pc-20260630-055747.png",
+      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-pc-20260630-055747.png",
       "modules": [
         {
           "id": "founding-value-prop",
@@ -106,8 +106,8 @@
       "viewport": "mobile",
       "width": 375,
       "height": 812,
-      "file": "tests\\screenshots\\founding-mobile-20260630-033622.png",
-      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-mobile-20260630-033622.png",
+      "file": "tests\\screenshots\\founding-mobile-20260630-055747.png",
+      "qa_file": "docs\\qa\\c1-followup-screenshots\\screenshots\\founding-mobile-20260630-055747.png",
       "modules": [
         {
           "id": "founding-value-prop",
