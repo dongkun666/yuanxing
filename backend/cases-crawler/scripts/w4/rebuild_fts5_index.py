@@ -1,5 +1,5 @@
 """
-W7: FTS5 中文分词升级 (jieba)
+W7: FTS5 中文分词升级 (jieba) — 委托给 core.fts5_tokenizer 模块
 LexPrime 数据工程
 
 W4 遗留问题:
@@ -13,6 +13,11 @@ W7 方案 (plan-07-w7-yaml § 3):
 - DROP + recreate 索引 (不删 contract_templates/clauses/annotations)
 - 一键 rebuild: python scripts/w4/rebuild_fts5_index.py
 
+W8 D2 重构 (REFACTOR):
+- 预分词函数下沉到 core.fts5_tokenizer (复用 + 测试覆盖)
+- 本文件保留 5 列 contract_fts_zh 表 (legacy schema, 向后兼容)
+- W8 D2 新路径: scripts/rebuild_fts5_index.py → 1 列 contracts_fts 表
+
 性能对比:
 - unicode61 "房屋租赁合同" → 0 hits
 - jieba-segmented "房屋租赁合同" → 切为 "房屋 租赁 合同", 命中 N 条
@@ -21,19 +26,29 @@ W7 方案 (plan-07-w7-yaml § 3):
     pip install jieba
     # (其他依赖: sqlite3 stdlib)
 """
+
 from __future__ import annotations
 
 import json
 import logging
-import re
 import sqlite3
 import sys
 import time
 from pathlib import Path
 
-# 项目根 (cases-crawler/) - 把 jieba 路径加入
+# 项目根 (cases-crawler/)
 CASES_CRAWLER = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(CASES_CRAWLER))
+
+# W8 D2 重构: 从 core.fts5_tokenizer 复用 (不再本地实现)
+from core.fts5_tokenizer import (  # noqa: E402
+    pre_tokenize,
+    pre_tokenize_query,
+    to_or_match,
+    FTS5_TOKENIZER_NAME,
+    _ensure_jieba as _ensure_jieba_core,
+    SCHEMA_CONTRACT_FTS_ZH,
+)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -48,119 +63,29 @@ DB_PATH = CASES_CRAWLER / "db" / "contract_templates.db"
 
 
 # ============================================================
-# Jieba 预分词 (W7 升级核心)
+# W7 向后兼容别名 (tests/test_fts5_jieba.py 还在用旧名)
 # ============================================================
-
 def _ensure_jieba():
-    """懒加载 jieba, 不存在则抛"""
-    try:
-        import jieba  # noqa: F401
-        # 关掉 debug log
-        import jieba.posseg
-        jieba.setLogLevel(logging.WARNING)
-        return True
-    except ImportError:
-        return False
+    return _ensure_jieba_core()
 
 
-def _is_cjk_char(ch: str) -> bool:
-    """判断是否为中日韩字符 (CJK Unified Ideographs)"""
-    if not ch:
-        return False
-    code = ord(ch)
-    return (
-        0x4E00 <= code <= 0x9FFF        # CJK 统一
-        or 0x3400 <= code <= 0x4DBF     # CJK 扩展 A
-        or 0x20000 <= code <= 0x2A6DF   # CJK 扩展 B (rare)
-    )
-
-
-def _pre_tokenize(text: str) -> str:
-    """中文预分词 + 保留英文/数字 token
-
-    策略:
-    1. 提取连续英数字 token, 保持原样
-    2. 中文字符 run 用 jieba.cut 切词
-    3. 标点/空白转空格 (FTS5 token separator)
-
-    返回: 空格分隔的 tokens 字符串 (FTS5 直接 MATCH)
-    """
-    if not text:
-        return ""
-    try:
-        import jieba
-    except ImportError:
-        # 退化: 单字粒度 (劣于 jieba, 但优于 unicode61)
-        return " ".join(text)
-
-    parts: list[str] = []
-    # 用正则 split, 保留分隔符位置
-    # 模式: 英文/数字串 vs 其他
-    pattern = re.compile(r"([A-Za-z0-9_]+)|([\u4e00-\u9fff]+)")
-    for m in pattern.finditer(text):
-        if m.group(1):
-            # 英文/数字 token 整体保留
-            parts.append(m.group(1).lower())
-        elif m.group(2):
-            # 中文 run 用 jieba 切
-            for tok in jieba.cut(m.group(2)):
-                tok = tok.strip()
-                if tok and len(tok) <= 30:  # 过滤过长噪声
-                    parts.append(tok)
-    # 去重保持顺序 (FTS5 MATCH 默认 OR, 重复 token 浪费)
-    seen = set()
-    deduped: list[str] = []
-    for p in parts:
-        if p not in seen:
-            seen.add(p)
-            deduped.append(p)
-    return " ".join(deduped)
-
-
-def _pre_tokenize_query(query: str) -> str:
-    """查询侧预分词 (与 _pre_tokenize 对称)
-
-    用户输入 "房屋租赁合同" → "房屋 租赁 合同"
-    FTS5 MATCH 时, 多个 token 用 OR 关系 (MATCH 语法默认)
-    """
-    return _pre_tokenize(query)
-
-
-def _to_or_match(segmented: str) -> str:
-    """把空格分隔的多 token 转成 FTS5 OR 表达式
-
-    '管辖 不利' → '管辖 OR 不利' (任一命中即可)
-    '房屋 租赁 合同' → '房屋 OR 租赁 OR 合同'
-
-    用于: 当用户希望召回更多 (宽容匹配), 而非严格 AND
-    """
-    tokens = [t for t in segmented.split() if t]
-    return " OR ".join(tokens) if tokens else segmented
+_pre_tokenize = pre_tokenize
+_pre_tokenize_query = pre_tokenize_query
+_to_or_match = to_or_match
 
 
 # ============================================================
 # FTS5 schema (含预分词字段)
 # ============================================================
-
-SCHEMA_FTS = """
--- 预分词版 FTS5 (W7 升级): 内部用 unicode61, 配合 jieba 预分词
-CREATE VIRTUAL TABLE IF NOT EXISTS contract_fts_zh USING fts5(
-    template_id UNINDEXED,
-    title,
-    content,
-    applicable_scenarios,
-    lawyer_notes,
-    tokenize = 'unicode61 remove_diacritics 2'
-);
-"""
+SCHEMA_FTS = SCHEMA_CONTRACT_FTS_ZH
 
 
 def rebuild_fts_index(db_path: Path = DB_PATH) -> dict:
     """重建 FTS5 索引 (含 jieba 预分词)
 
     步骤:
-    1. DROP 旧 contract_fts
-    2. CREATE 新的 contract_fts_zh (预分词字段)
+    1. DROP 旧 contract_fts (W4 unicode61 版本)
+    2. CREATE 新的 contract_fts_zh (5 列预分词, W7 spec)
     3. 从 contract_templates 重读全部行, jieba 切词后写入
     4. ANALYZE + 性能对比 (unicode61 vs jieba)
     """
@@ -219,14 +144,19 @@ def rebuild_fts_index(db_path: Path = DB_PATH) -> dict:
             t_scenarios = _pre_tokenize(scenarios_text)
             t_lawyer = _pre_tokenize(lawyer_notes or "")
 
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO contract_fts_zh (
                     template_id, title, content, applicable_scenarios, lawyer_notes
                 ) VALUES (?, ?, ?, ?, ?)
-            """, (tid, t_title, t_content, t_scenarios, t_lawyer))
+            """,
+                (tid, t_title, t_content, t_scenarios, t_lawyer),
+            )
             inserted += 1
             if i % 500 == 0:
-                log.info(f"  进度: {i}/{len(rows)} (inserted={inserted}, failed={failed})")
+                log.info(
+                    f"  进度: {i}/{len(rows)} (inserted={inserted}, failed={failed})"
+                )
         except Exception as e:
             failed += 1
             log.warning(f"  插入失败 {tid}: {e}")
@@ -242,16 +172,16 @@ def rebuild_fts_index(db_path: Path = DB_PATH) -> dict:
     # 6. 性能对比 (关键: 验证 W4 unicode61 缺陷已修复)
     log.info("--- 性能对比 (W4 unicode61 vs W7 jieba) ---")
     compare_queries = [
-        "房屋租赁合同",   # W4: 0 hits (修复目标)
-        "违约金过高",     # W4: 0 hits
-        "管辖不利",       # W4: 0 hits
-        "排他义务",       # W4: 0 hits
-        "单方解除",       # W4: 0 hits
-        "借款合同",       # W4: 0 hits
-        "劳动合同",       # W4: 0 hits
-        "知识产权",       # W4: 0 hits
-        "管辖",           # W4: 1 hits
-        "合同",           # W4: 20 hits
+        "房屋租赁合同",  # W4: 0 hits (修复目标)
+        "违约金过高",  # W4: 0 hits
+        "管辖不利",  # W4: 0 hits
+        "排他义务",  # W4: 0 hits
+        "单方解除",  # W4: 0 hits
+        "借款合同",  # W4: 0 hits
+        "劳动合同",  # W4: 0 hits
+        "知识产权",  # W4: 0 hits
+        "管辖",  # W4: 1 hits
+        "合同",  # W4: 20 hits
     ]
     results = {"queries": {}}
     for q in compare_queries:
@@ -278,8 +208,8 @@ def rebuild_fts_index(db_path: Path = DB_PATH) -> dict:
     # 8. 落盘元信息
     stats = {
         "status": "ok",
-        "version": "w7-jieba-v1",
-        "tokenizer": "unicode61 + jieba pre-segmentation",
+        "version": "w8-d2-refactor (core.fts5_tokenizer)",
+        "tokenizer": FTS5_TOKENIZER_NAME,
         "templates_total": len(rows),
         "templates_inserted": inserted,
         "templates_failed": failed,

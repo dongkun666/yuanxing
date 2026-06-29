@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "version": "w8-d2-v1",
+  "tokenizer": "unicode61 + jieba-pre-segmentation",
+  "fts_table": "contracts_fts",
+  "templates_total": 6076,
+  "templates_inserted": 6076,
+  "templates_failed": 0,
+  "fts_rows": 6076,
+  "verify_queries": {
+    "房屋租赁合同": {
+      "segmented": "房屋 租赁 合同",
+      "match_expr": "房屋 OR 租赁 OR 合同",
+      "hits": 2213,
+      "elapsed_ms": 0.0,
+      "passed": true
+    },
+    "劳动合同": {
+      "segmented": "劳动合同",
+      "match_expr": "劳动合同",
+      "hits": 202,
+      "elapsed_ms": 0.0,
+      "passed": true
+    },
+    "股权转让": {
+      "segmented": "股权 转让",
+      "match_expr": "股权 OR 转让",
+      "hits": 707,
+      "elapsed_ms": 0.0,
+      "passed": true
+    }
+  },
+  "verify_all_passed": true,
+  "elapsed_sec": 3.06
+}
