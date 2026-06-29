@@ -1,0 +1,237 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 7: W7 律师评审 #1 #2 自动化 + W5 4 项 follow-up 集中修复 (A + C 并行)'
+  max_concurrency: 4
+  max_consecutive_failures: 2
+  max_cycles: 4
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  # Task 1: W7 律师评审 #1 #2 自动化 (A1: lex-pm)
+  - id: 'w7-review-1-2-prep'
+    title: 'W7 律师评审 #1 #2 端到端流程跑通 (录屏 / 时间控制 / 评审 #1 7/19 准备)'
+    prompt: |
+      W6 已完成律师评审准备 (5 律师画像 + 25 问题库 + 100 min 流程 + 4 通道咨询 + 24h 整理脚本).
+      W7 启动评审现场执行: 7/19 评审 #1 (3 律师在线) + 7/26 评审 #2 (2 律师在线) 端到端流程跑通.
+
+      必读文档:
+      - W6 律师评审准备 commit 512e0fa + b6f5a49 + 0628997
+      - W6 Score App commit 6b38d14 (前端) + 85fde1e (后端)
+      - W6 公测 landing commit 5766845 (邀请码 API) + 0d18384 (PRD v0.7.2)
+      - docs/interviews/lawyer-profiles-w6.md (5 律师画像)
+      - docs/interviews/review-questions-w6.md (25 问)
+      - docs/interviews/review-process-w6.md (100 min 流程)
+      - docs/interviews/contact-channel-w6.md (4 通道)
+      - scripts/aggregate-review-scores.py (24h 整理脚本)
+
+      W7 工作范围:
+      1. **评审 #1 端到端预演** (W7 Day 1-2, 7/15-7/18):
+         - 总指挥 + 1 律师志愿者 (L2 小所合伙人) 预演 100 min 流程
+         - Skill 2 UI 演示视频录屏 (15 min, lex-design 已录, 评审前 3 天发律师)
+         - 5 测试合同试审 30 min (用 W5 fixture, 律师在线试填 Score App)
+         - Q&A 20 min (用 25 问题库抽样)
+         - 评分填写 15 min (Score App 真实提交)
+         - 茶歇 15 min
+         - 输出: docs/interviews/rehearsal-1-report.md (7/19 准备就绪 checklist)
+      2. **评审 #1 现场物料** (W7 Day 2, 7/15-7/17):
+         - 联系卡 5 张 (W6 contact-channel-w6.md §6 模板, 印真实卡片)
+         - 律师评审材料包 (UI 演示视频 + 5 合同 + baseline + 评分表模板 + 流程手册 100 min)
+         - 律师评审前 3 天发 (微信 + 邮件双通道)
+         - 输出: docs/interviews/review-1-materials.md (律师材料清单 + 状态)
+      3. **评审 #1 现场执行** (W7 Day 3, 7/19 14:00-17:00):
+         - 总指挥开场 5 min + UI 演示 15 min (录屏 + 实时 Q&A) + 5 合同试审 30 min (律师在线 Score App) + Q&A 20 min + 评分填写 15 min + 茶歇 15 min
+         - PM 在线旁听 + 录屏 + 笔记
+         - 输出: docs/interviews/review-1-live-notes.md (现场笔记 5 律师 × 25 问)
+      4. **评审 #2 预演 + 物料** (W7 Day 4-5, 7/22-7/25):
+         - 同上, 2 律师 (L4 中所 + L5 企业法务) 在线
+         - 评审 #1 整理 (24h) + 评审 #2 调整
+         - 输出: docs/interviews/review-2-materials.md + review-2-rehearsal.md
+      5. **评审 #2 现场执行** (W7 Day 6, 7/26 14:00-17:00):
+         - 同 #1, 2 律师在线
+         - 输出: docs/interviews/review-2-live-notes.md
+      6. **W6 评分汇总 24h 自动化**:
+         - 评审 #1 7/19 结束 → lex-pm 24h 内出 review-summary-w6.md (评审 #1 段) + prd-feedback.md v1.0 (评审 #1 段)
+         - 评审 #2 7/26 结束 → 24h 内出 review-summary-w6.md (完整 5 律师) + prd-feedback.md v1.0 (完整版)
+         - scripts/aggregate-review-scores.py 跑 (W6 产出, 复用)
+         - 输出: docs/interviews/review-summary-w6.md + docs/skills/contract-review/prd-feedback.md
+      7. **git commit + push** (3 commits: 1 预演+物料 / 1 现场笔记 / 1 评分汇总+PRD 反馈)
+
+      Stop when (W7 末):
+      - 评审 #1 7/19 端到端跑通 (预演 + 现场 + 评分汇总)
+      - 评审 #2 7/26 端到端跑通 (同)
+      - 5 律师 × 5 合同 × 5 维度 = 125 条评分 落 review_scores 表
+      - review-summary-w6.md + prd-feedback.md v1.0 完成
+      - git log 显示 3+ W7 commits
+    assigned_to: 'lex-pm'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W7 律师评审 #1 #2 自动化:
+      1. docs/interviews/rehearsal-1-report.md 7/19 准备就绪 checklist 完整
+      2. docs/interviews/review-1-materials.md 5 律师材料清单 + 状态
+      3. docs/interviews/review-1-live-notes.md 现场笔记 5 律师 × 25 问
+      4. docs/interviews/review-2-materials.md + review-2-live-notes.md 同样完整
+      5. SQLite review_scores 表 125 条 (5 律师 × 5 合同 × 5 维度) 全部落库
+      6. scripts/aggregate-review-scores.py 跑通 (5 律师 × 5 合同 = 25 行 + 维度聚合)
+      7. docs/interviews/review-summary-w6.md (完整 5 律师) + docs/skills/contract-review/prd-feedback.md v1.0 落档
+      8. git log 显示 3+ W7 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 2: W7 评分汇总 + 评审问题收集 (A2: lex-coder)
+  - id: 'w7-review-aggregate'
+    title: 'W7 评审问题收集 + 评分汇总自动化 (评审 #1 #2 端到端数据回流)'
+    prompt: |
+      W6 Score App (5 endpoints + 281/282 pytest) 已就位. W7 启动评审 #1 #2 现场数据回流自动化: 律师提交评分 → 自动汇总 → PRD 反馈生成.
+
+      必读文档:
+      - W6 Score App commit 6b38d14 (前端) + 85fde1e (后端 5 endpoints)
+      - W6 评审准备 commit 0628997 (scripts/aggregate-review-scores.py)
+      - W6 公测 landing commit 5766845 (PRD v0.7.2 § 10 成功指标)
+      - PRD § 10 成功指标 + § 11 法务自检
+
+      W7 工作范围:
+      1. **评审问题收集系统** (W7 Day 1-2):
+         - 新增 POST /api/review/question (律师现场问到答不到的问题)
+         - 入参: lawyer_id / question_text / category (产品/技术/法务/其他) / context / created_at
+         - SQLite 表: review_questions (id, lawyer_id, question_text, category, context, status, created_at)
+         - 落地: backend/cases-crawler/api/review_router.py 扩展 + db migration
+      2. **评分汇总 + PRD 反馈自动生成** (W7 Day 2):
+         - 扩展 scripts/aggregate-review-scores.py: 增 review_questions 表 JOIN
+         - 输出: docs/interviews/review-summary-w6.md (含律师问题 + 改进建议)
+         - 自动生成 docs/skills/contract-review/prd-feedback.md v1.0 (Top 5 改进 + Top 3 新需求)
+      3. **评审数据看板** (W7 Day 3):
+         - 新增 /api/review/board 端点: 5 律师 × 5 合同 × 5 维度 + 评论 + 问题汇总
+         - 输出 JSON: dashboard.json (总览 + per_lawyer + per_contract + per_dimension)
+         - 落地: templates/views/review/board.html (W6 landing 风格, W1 设计系统)
+      4. **回归测试** (W7 Day 3):
+         - pytest 100% (含 W6 review_router + 新 question + board 端点)
+         - ruff 0
+         - playwright 截图 board.html
+      5. **git commit + push** (3 commits: 1 question 系统 / 1 汇总脚本扩展 / 1 board)
+
+      Stop when (W7 末):
+      - POST /api/review/question endpoint + review_questions 表
+      - /api/review/board endpoint + board.html 模板
+      - scripts/aggregate-review-scores.py 扩展 (含 review_questions JOIN)
+      - pytest 100% + ruff 0 + playwright 截图
+      - git log 显示 3+ W7 commits
+    assigned_to: 'lex-coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W7 评审问题收集 + 评分汇总:
+      1. POST /api/review/question endpoint + review_questions 表 (db migration 跑通)
+      2. /api/review/board endpoint 跑通 (curl 验证 5 律师 × 5 合同 × 5 维度 + 评论 + 问题汇总)
+      3. templates/views/review/board.html 渲染 (Playwright 截图)
+      4. scripts/aggregate-review-scores.py 扩展版跑通 (含 review_questions JOIN + prd-feedback 自动生成)
+      5. SQLite review_questions + review_scores 两表数据完整 (125 + 评审问题)
+      6. pytest 100% + ruff 0
+      7. git log 显示 3+ W7 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 3: W5 4 项 follow-up 集中修复 - PaddleOCR + FTS5 + UI 6 项 (C1+C2+C3: lex-ai)
+  - id: 'w7-w5-followup-tech'
+    title: 'W5 4 项 follow-up 集中修复: PaddleOCR 升级 + FTS5 中文分词 + 6 项 P1-P3 UI 修复'
+    prompt: |
+      W5 收尾遗留 4 项 follow-up (plan-04-w4-final-report.md § 4 + plan-05-w5-final-report.md § 3):
+      1. PaddleOCR 升级 (Python 3.14 wheel 装不上, 走 Tesseract + Mock 双轨, 需 Python 3.12 venv 升级)
+      2. FTS5 中文分词 (W4 遗留 unicode61 中文分词缺陷, 升级 jieba tokenizer)
+      3. 6 项 P1-P3 UI 修复 (W4 UI 6 项问题, W5 完成 3 项, 推 3 项: 移动端 < 768px / 立场影响预览 / 致命条款 > 3 自动折叠)
+      4. W5 集成验证补 E2E (W5 死锁没跑, W6 接力时也未补, W7 收口)
+
+      必读文档:
+      - W4 LanceDB+BGE commit 3edd96f
+      - W5 Track B OCR commit 3b48ce8 (PaddleOCR 部署) + d2772f0 (PII) + 2669840 (ocr-upload)
+      - W4 合同扩量 commit 32fc4c1 (W4 集成遗留 gap)
+      - W4 UI 评审 4.5/5 + review-by-lawyer.md (6 项 P1-P3 修复记录)
+      - W5 UI 实施 commit e02ccb7 (5 页面) + 6ea1e68 (4 API)
+      - PRD § 4 OCR + § 5.7 类案大数据 + § 6 个人知识库
+
+      W7 工作范围:
+      1. **Python 3.12 venv 隔离环境** (W7 Day 1):
+         - 创建 venv312: backend/venv312/ (Python 3.12.x)
+         - pip install paddlepaddle paddleocr (官方 wheel 3.12 兼容)
+         - 验证: import paddleocr 成功
+      2. **PaddleEngine 接入** (W7 Day 1-2):
+         - core/ocr.py 新增 PaddleOcrEngine 类 (chinese_ppocr_mobile_v2.0, 11MB)
+         - 切换 get_ocr_engine() 优先级: TesseractEngine (fallback) → PaddleOcrEngine (生产)
+         - /api/contract-review/ocr-upload 自动选择最优引擎
+         - 落地: backend/cases-crawler/core/ocr.py
+      3. **FTS5 中文分词升级** (W7 Day 2):
+         - pip install jieba
+         - 替换 unicode61 tokenizer → jieba (中文分词)
+         - SQLite FTS5 rebuild (DROP + recreate 索引)
+         - scripts/rebuild_fts5_index.py (一键重建)
+         - 验证: "房屋租赁合同" 中文检索命中 (unicode61 之前 0 hits)
+      4. **6 项 P1-P3 UI 修复 (W4 推 3 项)** (W7 Day 2-3):
+         - 移动端 < 768px 适配: templates/views/contract-review/*.html 全部加 responsive media query
+         - 立场影响预览: 01-upload.html 加"立场影响预览"区块 (选择立场后实时显示该立场下风险等级加权/降权)
+         - 致命条款 > 3 自动折叠: 02-review-result.html fatal container 折叠逻辑 (>= 4 时显示"查看其余 X 项致命")
+         - 落地: templates/views/contract-review/01-upload.html + 02-review-result.html
+      5. **W5 集成验证补 E2E** (W7 Day 3):
+         - 跑 Skill 2 reviewer E2E 完整流: 上传合同 → OCR (PaddleEngine) → 检索 (FTS5 jieba + LanceDB BGE) → 致命/重大/建议分类 → retrieval_evidence
+         - 输出: docs/qa/w5-integration-e2e.md (W5 集成遗留 gap 闭环报告)
+      6. **回归测试** (W7 Day 3):
+         - pytest 100% (含 PaddleEngine + FTS5 jieba + UI 修复)
+         - ruff 0
+         - playwright 截图 5 页面 (桌面 + 移动)
+      7. **git commit + push** (4 commits: 1 venv+Paddle / 1 FTS5 / 1 UI 修复 / 1 E2E)
+
+      Stop when (W7 末):
+      - Python 3.12 venv312 创建 + paddleocr 装上
+      - PaddleOcrEngine 接入 + /api/contract-review/ocr-upload 切换
+      - FTS5 jieba tokenizer 升级 + 索引重建 + 中文检索命中
+      - 移动端 < 768px 适配 (5 页面)
+      - 立场影响预览 + 致命条款 > 3 自动折叠
+      - W5 集成验证 E2E 报告 (5 页面 + 检索 + OCR 端到端)
+      - pytest 100% + ruff 0
+      - git log 显示 4+ W7 commits
+    assigned_to: 'lex-ai'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W5 4 项 follow-up 集中修复:
+      1. backend/venv312/ Python 3.12 venv + paddleocr 装上 (import 验证)
+      2. core/ocr.py PaddleOcrEngine 接入, Tesseract fallback 优先级正确
+      3. SQLite FTS5 jieba tokenizer 升级, 中文检索 "房屋租赁合同" 命中 (unicode61 之前 0 hits)
+      4. 移动端 < 768px 5 页面适配 (viewport meta + media query grep 验证)
+      5. 立场影响预览 + 致命条款 > 3 自动折叠 (UI 元素 grep 验证)
+      6. docs/qa/w5-integration-e2e.md E2E 报告 (上传 → OCR → 检索 → 分类 端到端)
+      7. pytest 100% + ruff 0
+      8. git log 显示 4+ W7 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 4: W7 集成验证 (3 task 联动)
+  - id: 'w7-integration'
+    title: 'W7 集成验证 (律师评审 #1 #2 + W5 4 项 follow-up 集中修复 联动)'
+    prompt: |
+      验证 W7 3 个 Track 集成:
+      1. 律师评审 #1 #2 自动化 (lex-pm) 是否引用 Score App (lex-coder) question + board 端点
+      2. W5 4 项 follow-up 集中修复 (lex-ai) PaddleOCR + FTS5 是否被 Score App (lex-coder) 引用
+      3. 3 agent deliverable 无冲突
+      4. 3 agent 全部 git commit + push
+      5. 7/19 评审 #1 准备就绪 checklist 完整
+      6. 7/26 评审 #2 + 公测启动 准备就绪
+
+      输出 W7 总结 + W8 建议 (一句话: 评审反馈改进 + 早期用户拉新 + Skill 3 文书)。
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on:
+      - 'w7-review-1-2-prep'
+      - 'w7-review-aggregate'
+      - 'w7-w5-followup-tech'
+    max_retries: 1
+    timeout_ms: 900000
+    hang_alert_after_ms: 900000
