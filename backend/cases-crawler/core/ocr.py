@@ -256,7 +256,7 @@ class PaddleOcrEngine:
         try:
             self._api_version, self._api_style = _detect_paddle_api_version()
             if self._api_style == "v3":
-                # PaddleOCR 3.x API
+                # PaddleOCR 3.x API (PP-OCRv6 中文模型)
                 self._engine = PaddleOCR(
                     use_doc_orientation_classify=False,
                     use_doc_unwarping=False,
@@ -264,7 +264,6 @@ class PaddleOcrEngine:
                     lang=self._lang,
                     device="cpu",
                     enable_mkldnn=False,  # W7: 避免 PP-OCRv6 dtype bug
-                    show_log=False,
                 )
             else:
                 # PaddleOCR 2.x API (legacy)

@@ -7,6 +7,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
   .upload-zone:hover, .upload-zone.dragover { border-color:#165DFF; background:#F2F7FF; }
   .check-pulse { animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复) */
+  @media (max-width: 767px) {
+    #view-contract-review-upload .cr-12-col { grid-template-columns: 1fr !important; }
+    #view-contract-review-upload .cr-7-col,
+    #view-contract-review-upload .cr-5-col { grid-column: span 1 / span 1 !important; }
+    #view-contract-review-upload .cr-header-nav { display: none !important; }
+    #view-contract-review-upload .cr-header-actions { gap: 0.25rem !important; }
+    #view-contract-review-upload .cr-header-actions .cr-header-btn-text { display: none !important; }
+    #view-contract-review-upload .cr-content { padding: 0.75rem !important; }
+    #view-contract-review-upload .cr-step-bar { grid-template-columns: 1fr !important; }
+    #view-contract-review-upload .cr-step-bar > .cr-step-divider { display: none !important; }
+    #view-contract-review-upload .cr-step-bar > .cr-step { padding: 0.25rem 0 !important; }
+    #view-contract-review-upload .cr-type-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    #view-contract-review-upload .cr-stance-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    #view-contract-review-upload .cr-optional-grid { grid-template-columns: 1fr !important; }
+    #view-contract-review-upload .cr-summary { flex-direction: column !important; align-items: stretch !important; }
+    #view-contract-review-upload .cr-summary-actions { width: 100% !important; }
+    #view-contract-review-upload .cr-summary-actions button { width: 100% !important; }
+    #view-contract-review-upload .cr-stance-preview { padding: 0.75rem !important; }
+  }
   </style>
 <div class="flex h-screen overflow-hidden">
 
@@ -21,7 +41,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
       <button class="w-8 h-8 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
         <iconify-icon icon="mdi:arrow-left"></iconify-icon>
       </button>
-      <nav class="flex items-center gap-2 text-sm">
+      <nav class="flex items-center gap-2 text-sm cr-header-nav">
         <span class="text-fg-tertiary">Skill Hub</span>
         <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
         <span class="text-fg-tertiary">合同风险审查</span>
@@ -29,15 +49,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <span class="text-fg-primary font-medium">上传合同</span>
       </nav>
       <div class="flex-1"></div>
-      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
-        <iconify-icon icon="mdi:history"></iconify-icon> 审查历史
-      </button>
-      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
-        <iconify-icon icon="mdi:help-circle-outline"></iconify-icon> 帮助
-      </button>
+      <div class="flex items-center gap-1.5 cr-header-actions">
+        <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+          <iconify-icon icon="mdi:history"></iconify-icon> <span class="cr-header-btn-text">审查历史</span>
+        </button>
+        <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+          <iconify-icon icon="mdi:help-circle-outline"></iconify-icon> <span class="cr-header-btn-text">帮助</span>
+        </button>
+      </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+    <div class="flex-1 overflow-y-auto p-6 space-y-4 cr-content">
 
       <!-- ============ 页面标题 + 步骤指示器 ============ -->
       <div class="bg-white rounded-md shadow-card p-5">
@@ -63,7 +85,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         </div>
 
         <!-- 3 步进度条 -->
-        <div class="mt-5 grid grid-cols-3 gap-1">
+        <div class="mt-5 grid grid-cols-3 gap-1 cr-step-bar">
           <div class="flex items-center gap-2">
             <div class="w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold shadow-sm flex-shrink-0">
               1
@@ -101,10 +123,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
       </div>
 
       <!-- ============ 7+5 主内容区 ============ -->
-      <div class="grid grid-cols-12 gap-4">
+      <div class="grid grid-cols-12 gap-4 cr-12-col">
 
         <!-- ============ 左 7 栏: 上传区 + 输入表单 ============ -->
-        <div class="col-span-7 space-y-4">
+        <div class="col-span-7 space-y-4 cr-7-col">
 
           <!-- 卡片 1: 上传区 -->
           <div class="bg-white rounded-md shadow-card">
@@ -184,7 +206,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                   合同类型 <span class="text-danger">*</span>
                   <iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon>
                 </label>
-                <div class="grid grid-cols-4 gap-2">
+                <div class="grid grid-cols-4 gap-2 cr-type-grid">
                   <button class="px-3 py-2 bg-brand text-white rounded-md text-xs font-medium flex items-center justify-center gap-1 shadow-sm">
                     <iconify-icon icon="mdi:home-city-outline"></iconify-icon> 房屋租赁
                   </button>
@@ -218,20 +240,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                   律师立场
                   <iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon>
                 </label>
-                <div class="grid grid-cols-4 gap-2">
-                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                <div class="grid grid-cols-4 gap-2 cr-stance-grid" role="radiogroup" aria-label="律师立场选择" id="cr-stance-radios">
+                  <button type="button" class="cr-stance-btn px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5" data-stance="甲方" aria-checked="false" role="radio">
                     <iconify-icon icon="mdi:account-tie" class="text-base"></iconify-icon>
                     <span>甲方</span>
                   </button>
-                  <button class="px-3 py-2.5 bg-brand text-white border border-brand rounded-md text-xs font-medium flex flex-col items-center gap-0.5 shadow-sm">
+                  <button type="button" class="cr-stance-btn px-3 py-2.5 bg-brand text-white border border-brand rounded-md text-xs font-medium flex flex-col items-center gap-0.5 shadow-sm" data-stance="乙方" aria-checked="true" role="radio">
                     <iconify-icon icon="mdi:account-outline" class="text-base"></iconify-icon>
                     <span>乙方</span>
                   </button>
-                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                  <button type="button" class="cr-stance-btn px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5" data-stance="丙方" aria-checked="false" role="radio">
                     <iconify-icon icon="mdi:account-multiple-outline" class="text-base"></iconify-icon>
                     <span>丙方</span>
                   </button>
-                  <button class="px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5">
+                  <button type="button" class="cr-stance-btn px-3 py-2.5 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex flex-col items-center gap-0.5" data-stance="审查方" aria-checked="false" role="radio">
                     <iconify-icon icon="mdi:scale-balance" class="text-base"></iconify-icon>
                     <span>审查方</span>
                   </button>
@@ -240,6 +262,36 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                   <iconify-icon icon="mdi:lightbulb-on-outline" class="text-warning"></iconify-icon>
                   立场影响风险等级评估和策略方向: 乙方更关注权利失衡 / 显失公平 / 解除权不对等
                 </p>
+
+                <!-- W7: 立场影响预览 (W4 P2 修复) — 选择立场后实时显示风险加权/降权 -->
+                <div id="cr-stance-preview" class="cr-stance-preview mt-3 px-3 py-2.5 bg-gradient-to-r from-ai-tint/40 to-warning-tint/30 border border-ai/30 rounded-md" aria-live="polite" aria-atomic="true">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <iconify-icon icon="mdi:scale-balance" class="text-ai"></iconify-icon>
+                    <span class="text-xs font-semibold text-fg-primary">立场影响预览</span>
+                    <span class="text-[10px] px-1.5 py-0.5 bg-ai text-white rounded-sm font-medium">乙方</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 text-[10px]" id="cr-stance-preview-grid">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-danger"></span>
+                      <span class="text-fg-tertiary">致命</span>
+                      <span class="ml-auto font-bold text-danger" data-stance-impact="fatal">↑ 加权</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-warning"></span>
+                      <span class="text-fg-tertiary">重大</span>
+                      <span class="ml-auto font-bold text-warning" data-stance-impact="major">→ 持平</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-success"></span>
+                      <span class="text-fg-tertiary">合规</span>
+                      <span class="ml-auto font-bold text-success" data-stance-impact="ok">↓ 降权</span>
+                    </div>
+                  </div>
+                  <p class="text-[10px] text-fg-tertiary mt-2 leading-relaxed" id="cr-stance-preview-tip">
+                    <iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon>
+                    作为<span class="text-ai font-medium">乙方</span>, 风险评估侧重<span class="text-danger font-medium">违约金过高</span>·<span class="text-danger font-medium">单方解除权不对等</span>·<span class="text-warning font-medium">管辖不利</span>·AI 仅作客观提示, 决策权在律师
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -254,7 +306,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
               </h4>
               <button class="text-xs text-brand hover:underline">展开/收起</button>
             </div>
-            <div class="p-4 grid grid-cols-2 gap-3">
+            <div class="p-4 grid grid-cols-2 gap-3 cr-optional-grid">
               <div>
                 <label class="text-xs text-fg-secondary mb-1.5 block">行业领域</label>
                 <div class="h-9 px-3 bg-white border border-bg-border rounded-md flex items-center text-sm text-fg-tertiary">
@@ -333,7 +385,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         </div>
 
         <!-- ============ 右 5 栏: 提示 + 历史 ============ -->
-        <div class="col-span-5 space-y-4">
+        <div class="col-span-5 space-y-4 cr-5-col">
 
           <!-- AI 提示卡 -->
           <div class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20">
@@ -479,12 +531,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
       </div>
 
       <!-- ============ 底部提交栏 (固定) ============ -->
-      <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between sticky bottom-0 z-10 border-t-4 border-brand">
+      <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between sticky bottom-0 z-10 border-t-4 border-brand cr-summary">
         <div class="flex items-center gap-3 text-xs text-fg-tertiary">
           <iconify-icon icon="mdi:information-outline" class="text-brand"></iconify-icon>
-          <span>已选择 1 份合同 · 房屋租赁 · 乙方立场 · 包含修改建议和谈判策略</span>
+          <span id="cr-summary-text">已选择 1 份合同 · 房屋租赁 · 乙方立场 · 包含修改建议和谈判策略</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 cr-summary-actions">
           <button class="h-9 px-4 text-fg-secondary hover:text-brand text-sm">清空</button>
           <button class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
             <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存草稿
@@ -509,3 +561,101 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 <!-- 设计水印 -->
 
 </div>
+
+<!-- W7: 立场影响预览实时切换 (W4 P2 修复) -->
+<script>
+(function() {
+  // 立场 → 致命/重大/合规 加权方向 + 重点提示
+  const STANCE_MATRIX = {
+    '甲方': {
+      label: '甲方', color: 'brand',
+      impacts: { fatal: { sym: '↓ 降权', cls: 'text-success' },
+                 major: { sym: '→ 持平', cls: 'text-warning' },
+                 ok: { sym: '↑ 加权', cls: 'text-success' } },
+      focus: '对方义务 / 自身免责 / 救济成本',
+      tips: ['单方解除权', '违约金上限', '管辖法院中立']
+    },
+    '乙方': {
+      label: '乙方', color: 'ai',
+      impacts: { fatal: { sym: '↑ 加权', cls: 'text-danger' },
+                 major: { sym: '→ 持平', cls: 'text-warning' },
+                 ok: { sym: '↓ 降权', cls: 'text-success' } },
+      focus: '权利失衡 / 显失公平 / 解除权不对等',
+      tips: ['违约金过高', '单方解除权不对等', '管辖不利']
+    },
+    '丙方': {
+      label: '丙方', color: 'warning',
+      impacts: { fatal: { sym: '→ 持平', cls: 'text-warning' },
+                 major: { sym: '↑ 加权', cls: 'text-warning' },
+                 ok: { sym: '→ 持平', cls: 'text-fg-tertiary' } },
+      focus: '连带义务 / 担保范围 / 第三方责任',
+      tips: ['连带责任', '担保物范围', '第三方追偿权']
+    },
+    '审查方': {
+      label: '审查方', color: 'fg-secondary',
+      impacts: { fatal: { sym: '→ 持平', cls: 'text-warning' },
+                 major: { sym: '→ 持平', cls: 'text-warning' },
+                 ok: { sym: '→ 持平', cls: 'text-fg-tertiary' } },
+      focus: '全面客观 / 多方均衡 / 中立报告',
+      tips: ['完整披露所有风险', '各方权益平衡', '客观描述无偏向']
+    }
+  };
+
+  function bind() {
+    const radio = document.getElementById('cr-stance-radios');
+    if (!radio) return;
+    radio.addEventListener('click', function(e) {
+      const btn = e.target.closest('.cr-stance-btn');
+      if (!btn) return;
+      const stance = btn.dataset.stance;
+      // 视觉切换
+      radio.querySelectorAll('.cr-stance-btn').forEach(function(b) {
+        const on = b === btn;
+        b.classList.toggle('bg-brand', on);
+        b.classList.toggle('text-white', on);
+        b.classList.toggle('border-brand', on);
+        b.classList.toggle('shadow-sm', on);
+        b.classList.toggle('font-medium', on);
+        b.classList.toggle('bg-white', !on);
+        b.classList.toggle('text-fg-secondary', !on);
+        b.classList.toggle('border-bg-border', !on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+      // 更新预览区
+      const matrix = STANCE_MATRIX[stance] || STANCE_MATRIX['审查方'];
+      const badge = document.querySelector('#cr-stance-preview .text-ai');
+      if (badge) badge.textContent = matrix.label;
+      const grid = document.getElementById('cr-stance-preview-grid');
+      if (grid) {
+        grid.querySelectorAll('[data-stance-impact]').forEach(function(el) {
+          const key = el.dataset.stanceImpact;
+          const imp = matrix.impacts[key];
+          if (imp) {
+            el.textContent = imp.sym;
+            el.className = el.className.replace(/text-(danger|warning|success|fg-tertiary)/, '');
+            el.classList.add(imp.cls);
+          }
+        });
+      }
+      const tip = document.getElementById('cr-stance-preview-tip');
+      if (tip) {
+        tip.innerHTML = '<iconify-icon icon="mdi:information-outline" class="text-fg-tertiary"></iconify-icon> ' +
+          '作为<span class="text-ai font-medium">' + matrix.label + '</span>, 风险评估侧重' +
+          matrix.tips.map(function(t) { return '<span class="text-danger font-medium">' + t + '</span>'; }).join('·') +
+          '·AI 仅作客观提示, 决策权在律师';
+      }
+      // 同步更新底部摘要
+      const summary = document.getElementById('cr-summary-text');
+      if (summary) {
+        summary.textContent = '已选择 1 份合同 · 房屋租赁 · ' + matrix.label + '立场 · 包含修改建议和谈判策略';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bind);
+  } else {
+    bind();
+  }
+})();
+</script>

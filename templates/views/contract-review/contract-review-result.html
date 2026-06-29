@@ -17,6 +17,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
   /* 风险条 */
   .risk-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; }
   .risk-bar > div { transition: width 400ms ease-out; }
+  /* W7: 致命条款折叠控制 (W4 P2 修复: 致命 > 3 自动折叠) */
+  .cr-fatal-collapsed .cr-fatal-overflow { display: none !important; }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复) */
+  @media (max-width: 767px) {
+    #view-contract-review-result .cr-header-nav { display: none !important; }
+    #view-contract-review-result .cr-header-actions .cr-header-btn-text { display: none !important; }
+    #view-contract-review-result .cr-content { padding: 0.75rem !important; }
+    #view-contract-review-result .cr-summary { flex-direction: column !important; align-items: stretch !important; gap: 0.75rem !important; }
+    #view-contract-review-result .cr-summary-head { flex-direction: column !important; align-items: stretch !important; gap: 0.5rem !important; }
+    #view-contract-review-result .cr-summary-side { width: 100% !important; }
+    #view-contract-review-result .cr-summary-side button { width: 100% !important; }
+    #view-contract-review-result .cr-step-bar { grid-template-columns: 1fr !important; }
+    #view-contract-review-result .cr-step-bar > .cr-step-divider { display: none !important; }
+    #view-contract-review-result .clause-grid { grid-template-columns: 1fr !important; }
+    #view-contract-review-result .cr-risk-counters { flex-wrap: wrap !important; gap: 0.5rem !important; }
+    #view-contract-review-result .cr-stance-row { flex-wrap: wrap !important; }
+    #view-contract-review-result .cr-tab-row { flex-wrap: wrap !important; }
+  }
   </style>
 <div class="flex h-screen overflow-hidden">
 
@@ -31,7 +49,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
       <button class="w-8 h-8 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
         <iconify-icon icon="mdi:arrow-left"></iconify-icon>
       </button>
-      <nav class="flex items-center gap-2 text-sm">
+      <nav class="flex items-center gap-2 text-sm cr-header-nav">
         <span class="text-fg-tertiary">Skill Hub</span>
         <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
         <span class="text-fg-tertiary">合同风险审查</span>
@@ -39,19 +57,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <span class="text-fg-primary font-medium truncate max-w-[300px]">数据服务采购合同 v3</span>
       </nav>
       <div class="flex-1"></div>
-      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
-        <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存
-      </button>
-      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
-        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> 分享
-      </button>
-      <a href="05-export.html" class="h-9 px-4 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
-        <iconify-icon icon="mdi:export-variant"></iconify-icon>
-        导出报告
-      </a>
+      <div class="flex items-center gap-1.5 cr-header-actions">
+        <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+          <iconify-icon icon="mdi:content-save-outline"></iconify-icon> <span class="cr-header-btn-text">保存</span>
+        </button>
+        <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> <span class="cr-header-btn-text">分享</span>
+        </button>
+        <a href="05-export.html" class="h-9 px-4 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+          <iconify-icon icon="mdi:export-variant"></iconify-icon>
+          <span class="cr-header-btn-text">导出报告</span>
+        </a>
+      </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+    <div class="flex-1 overflow-y-auto p-6 space-y-4 cr-content">
 
       <!-- ============ 风险摘要头 (红黄蓝绿灯) ============ -->
       <div class="bg-white rounded-md shadow-card p-5">
@@ -167,7 +187,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         </div>
 
         <!-- 步骤指示器 -->
-        <div class="mt-4 pt-4 border-t border-bg-border grid grid-cols-3 gap-1">
+        <div class="mt-4 pt-4 border-t border-bg-border grid grid-cols-3 gap-1 cr-step-bar">
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded-full bg-success-tint text-success flex items-center justify-center text-xs flex-shrink-0">
               <iconify-icon icon="mdi:check" class="text-base"></iconify-icon>
@@ -241,8 +261,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 条款 1: 致命 -->
-          <div id="fatal-clauses-container" data-cr-panel="single">
-          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden">
+          <div id="fatal-clauses-container" data-cr-panel="single" class="cr-fatal-container">
+          <div class="bg-white rounded-md shadow-card clause-fatal overflow-hidden cr-fatal-clause" data-fatal-index="0">
             <div class="px-4 py-3 border-b border-danger/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
                 <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 5 条</span>
@@ -332,7 +352,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 条款 2: 重大 -->
-          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden">
+          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden cr-fatal-clause" data-fatal-index="1">
             <div class="px-4 py-3 border-b border-warning/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
                 <span class="text-xs font-mono font-bold text-warning bg-warning-tint px-2 py-0.5 rounded">第 8 条</span>
@@ -401,7 +421,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 条款 3: 重大 -->
-          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden">
+          <div class="bg-white rounded-md shadow-card clause-major overflow-hidden cr-fatal-clause" data-fatal-index="2">
             <div class="px-4 py-3 border-b border-warning/20 flex items-center justify-between">
               <div class="flex items-center gap-2 min-w-0">
                 <span class="text-xs font-mono font-bold text-warning bg-warning-tint px-2 py-0.5 rounded">第 9 条</span>
