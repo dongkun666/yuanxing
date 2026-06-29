@@ -1,0 +1,568 @@
+<!--
+  W7 律师评审数据看板 (lex-coder · 2026-06-29)
+  适用: 评审 #1 #2 后 24h, PM / 总指挥 一屏掌握全局
+  
+  设计原则 (W1 设计系统):
+  - 桌面优先 (PM 在办公室用大屏看) + 移动响应式 (总指挥通勤路上看)
+  - AI 紫色角标 + 强制 disclaimer
+  - 总览卡片 + 维度矩阵 + 律师卡 + 合同卡 + 问题流 + PRD 反馈 自动生成
+  - 数据源: GET /api/review/board (review_router.py W7 新增)
+  
+  加载流程:
+  1. fetch /api/review/board → JSON
+  2. 渲染 summary + per_dimension + per_lawyer + per_contract + comments + questions + prd_feedback
+  3. 律师问题卡片点击展开 context + status 修改
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-review-board" data-view-source="board.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  /* 评分数字大字号 */
+  .score-number { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+  /* 热力色阶 (10 = 绿, 5 = 黄, 0 = 红) */
+  .score-cell {
+    transition: all 150ms ease-out;
+  }
+  .score-cell:hover { transform: scale(1.05); z-index: 2; }
+  /* 维度对比条 */
+  .bar-track {
+    height: 6px; background: #E5E6EB; border-radius: 9999px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 9999px; transition: width 400ms ease-out;
+  }
+  /* 状态徽章 */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;
+  }
+  .status-open { background: #FFF7E8; color: #D25400; }
+  .status-answered { background: #E8F5E9; color: #2E7D32; }
+  .status-triaged { background: #E3F2FD; color: #1565C0; }
+  .status-deferred { background: #F5F5F5; color: #616161; }
+  /* PRD 痛点卡片 */
+  .pain-p0 { border-left: 4px solid #F53F3F; background: linear-gradient(90deg, #FEF0F0 0%, transparent 50%); }
+  .pain-p1 { border-left: 4px solid #FF7D00; background: linear-gradient(90deg, #FFF7E8 0%, transparent 50%); }
+  .pain-p2 { border-left: 4px solid #165DFF; background: linear-gradient(90deg, #E8F3FF 0%, transparent 50%); }
+  /* 评论 tooltip */
+  .comment-tooltip {
+    position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+    background: #1D2129; color: white; padding: 6px 10px; border-radius: 6px;
+    font-size: 11px; white-space: nowrap; max-width: 280px; z-index: 50;
+    pointer-events: none; opacity: 0; transition: opacity 150ms;
+  }
+  .comment-cell:hover .comment-tooltip { opacity: 1; }
+</style>
+
+<div class="flex flex-col min-h-full bg-bg-subtle">
+
+  <!-- ============ 顶部 header ============ -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:chart-box-outline" class="text-brand text-lg md:text-xl"></iconify-icon>
+            <span class="truncate">评审数据看板</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">W7 看板</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate" id="board-subtitle">加载中…</p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="board-refresh-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:refresh" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">刷新</span>
+        </button>
+        <button id="board-export-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:download" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">JSON 导出</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主体内容 ============ -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+
+    <!-- ============ 总览卡片 (4 张) ============ -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">总评分行</span>
+          <iconify-icon icon="mdi:counter" class="text-brand text-lg"></iconify-icon>
+        </div>
+        <p id="board-total-rows" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1">5 维度 × N 评分</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">完成度</span>
+          <iconify-icon icon="mdi:check-circle-outline" class="text-success text-lg"></iconify-icon>
+        </div>
+        <p id="board-completion" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1"><span id="board-evaluations">0</span> / 25 条评估</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">综合评分</span>
+          <iconify-icon icon="mdi:star-four-points-outline" class="text-warning text-lg"></iconify-icon>
+        </div>
+        <p id="board-rubric-score" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1">/ 5.0 (门槛 4.0)</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">律师问题</span>
+          <iconify-icon icon="mdi:comment-question-outline" class="text-ai text-lg"></iconify-icon>
+        </div>
+        <p id="board-questions" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1"><span id="board-questions-open">0</span> 待 triage</p>
+      </div>
+    </div>
+
+    <!-- ============ 5 维度均值对比卡 ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:chart-bar" class="text-brand"></iconify-icon>
+          5 维度均值对比
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">权重: D1 30% / D2 25% / D3 20% / D4 15% / D5 10%</span>
+      </div>
+      <div id="dimension-bars" class="space-y-3">
+        <!-- 5 维度条形图由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ 5 律师 × 5 合同 评分矩阵 ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:grid" class="text-brand"></iconify-icon>
+          律师 × 合同 × 5 维度 评分矩阵
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">悬停单元格查看律师评论</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="matrix-table" class="w-full text-xs">
+          <!-- 矩阵由 JS 渲染 -->
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ 律师卡片 (5 张) ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+        <iconify-icon icon="mdi:account-tie" class="text-brand"></iconify-icon>
+        5 律师评审概览
+      </h3>
+      <div id="lawyer-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+        <!-- 律师卡由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ 合同评分条形图 (5 合同) ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+        <iconify-icon icon="mdi:file-document-multiple-outline" class="text-brand"></iconify-icon>
+        5 合同平均分对比
+      </h3>
+      <div id="contract-bars" class="space-y-3">
+        <!-- 合同条形图由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ 律师问题流 ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:comment-question-outline" class="text-ai"></iconify-icon>
+          律师现场问题流
+          <span id="board-questions-count" class="bg-bg text-fg-secondary text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1.5">0</span>
+        </h3>
+        <div id="questions-filter" class="flex items-center gap-1 flex-wrap">
+          <!-- 分类 chip 由 JS 渲染 -->
+        </div>
+      </div>
+      <div id="questions-list" class="space-y-2">
+        <!-- 问题卡片由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ PRD v1.0 自动反馈 ============ -->
+    <div class="bg-gradient-to-br from-ai/5 to-brand/5 rounded-lg border border-ai/20 p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:file-document-edit-outline" class="text-ai"></iconify-icon>
+          PRD v1.0 自动反馈 (基于评审数据)
+        </h3>
+        <span id="board-decision-badge" class="text-[11px] px-2 py-0.5 rounded-md font-medium">—</span>
+      </div>
+      <div id="prd-feedback-content">
+        <!-- 自动生成的 PRD 反馈由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ AI 角标 + 强制免责声明 ============ -->
+    <div class="bg-ai/5 border border-ai/20 rounded-lg p-3 mb-6">
+      <div class="flex items-start gap-2">
+        <iconify-icon icon="mdi:sparkles" class="text-ai text-base flex-shrink-0 mt-0.5"></iconify-icon>
+        <div class="text-[11px] text-fg-secondary leading-relaxed">
+          <strong class="text-ai">AI 辅助工具声明</strong> · 本看板汇总 5 律师 × 5 合同 × 5 维度评分与现场问题, 自动生成 PRD v1.0 调整建议, 仅供 PM 与总指挥评审决策参考.
+          所有数据来源 LexPrime 后端 review_scores + review_questions 表 (W7 双表设计), 透明可追溯.
+          <br><strong class="text-fg-tertiary">强制免责声明</strong>: 本看板汇总仅为辅助工具, 不替代律师人工判断. PRD 调整建议需 PM + 总指挥共同拍板后写入正式 PRD.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ====== 渲染逻辑: 数据看板 ======
+  (function() {
+    const VIEW_ID = 'view-review-board';
+    const API_BOARD = '/api/review/board';
+    let _boardData = null;
+    let _filterCategory = '全部';
+
+    function scoreColor(s) {
+      if (s === null || s === undefined) return { bg: '#F5F5F5', fg: '#9CA3AF' };
+      if (s >= 8) return { bg: '#E8F5E9', fg: '#2E7D32' };
+      if (s >= 6) return { bg: '#FFF7E8', fg: '#D25400' };
+      if (s >= 4) return { bg: '#FFF1F0', fg: '#F53F3F' };
+      return { bg: '#FEF0F0', fg: '#A8071A' };
+    }
+
+    async function loadBoard() {
+      try {
+        const resp = await fetch(API_BOARD);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        _boardData = data;
+        renderBoard(data);
+      } catch (err) {
+        console.error('[board] load failed:', err);
+        document.getElementById('board-subtitle').textContent = '加载失败: ' + err.message;
+      }
+    }
+
+    function renderBoard(data) {
+      const { summary, per_dimension, per_lawyer, per_contract, comments_by_lawyer, questions_summary, prd_feedback_v1_0, generated_at } = data;
+
+      // 副标题
+      document.getElementById('board-subtitle').textContent =
+        `生成时间: ${new Date(generated_at).toLocaleString('zh-CN')} · 评审 #1 #2 现场数据回流`;
+
+      // 总览 4 卡
+      document.getElementById('board-total-rows').textContent = summary.total_score_rows;
+      const completion = summary.total_evaluations > 0 ? Math.round(summary.total_evaluations / 25 * 100) : 0;
+      document.getElementById('board-completion').textContent = completion + '%';
+      document.getElementById('board-evaluations').textContent = summary.total_evaluations;
+      document.getElementById('board-rubric-score').textContent = summary.rubric_score_1_5.toFixed(2);
+      document.getElementById('board-questions').textContent = summary.total_questions;
+      document.getElementById('board-questions-open').textContent = questions_summary.by_status.open || 0;
+
+      // 5 维度条形图
+      const dimBars = document.getElementById('dimension-bars');
+      dimBars.innerHTML = '';
+      const dimOrder = ['fatal_accuracy', 'suggestion_practicality', 'strategy_executability', 'neutrality', 'ui_flow'];
+      dimOrder.forEach(dimId => {
+        const stat = per_dimension[dimId];
+        if (!stat) return;
+        const pct = Math.round((stat.mean / 10) * 100);
+        const color = stat.mean >= 8 ? '#2E7D32' : stat.mean >= 6 ? '#D25400' : stat.mean >= 4 ? '#F53F3F' : '#A8071A';
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-medium text-fg-secondary">${stat.dimension_label}</span>
+            <span class="text-xs font-bold score-number" style="color: ${color}">${stat.mean.toFixed(2)} <span class="text-[10px] text-fg-tertiary font-normal">σ=${stat.stdev.toFixed(2)} n=${stat.n_scores}</span></span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width: ${pct}%; background: ${color}"></div></div>
+        `;
+        dimBars.appendChild(div);
+      });
+
+      // 律师 × 合同 × 5 维度 矩阵
+      renderMatrix(per_dimension, per_lawyer, comments_by_lawyer);
+
+      // 律师卡片
+      renderLawyerCards(per_lawyer);
+
+      // 合同条形图
+      renderContractBars(per_contract);
+
+      // 问题流
+      renderQuestions(data);
+
+      // PRD 反馈
+      renderPRDFeedback(prd_feedback_v1_0);
+    }
+
+    function renderMatrix(perDimension, perLawyer, commentsByLawyer) {
+      const table = document.getElementById('matrix-table');
+      const dims = ['fatal_accuracy', 'suggestion_practicality', 'strategy_executability', 'neutrality', 'ui_flow'];
+      const dimShortLabels = { fatal_accuracy: '致命准确率', suggestion_practicality: '建议实用性', strategy_executability: '策略可执行', neutrality: '中立性', ui_flow: 'UI 流程' };
+      const contractIds = ['demo-rental-beijing-2026', 'demo-loan-shanghai-2026', 'demo-labor-fulltime-2026', 'demo-service-tech-2026', 'demo-sales-goods-2026'];
+      const contractShortLabels = { 'demo-rental-beijing-2026': '租赁', 'demo-loan-shanghai-2026': '借款', 'demo-labor-fulltime-2026': '劳动', 'demo-service-tech-2026': '服务', 'demo-sales-goods-2026': '销售' };
+      const lawyerIds = ['L1', 'L2', 'L3', 'L4', 'L5'];
+
+      // header
+      let html = '<thead><tr class="border-b border-bg-border"><th class="text-left p-2 font-medium text-fg-tertiary">律师 \\ 合同</th>';
+      contractIds.forEach(cid => {
+        html += `<th class="p-2 font-medium text-fg-tertiary text-center" title="${cid}">${contractShortLabels[cid]}</th>`;
+      });
+      html += '<th class="p-2 font-medium text-fg-tertiary text-center">综合</th></tr></thead>';
+
+      // body - 每位律师一行, 显示该律师对该合同 5 维度综合
+      html += '<tbody>';
+      lawyerIds.forEach(lid => {
+        html += `<tr class="border-b border-bg-border/50 hover:bg-bg-subtle/50"><td class="p-2 font-medium text-fg-primary">${lid}</td>`;
+        let sumAll = 0, cntAll = 0;
+        contractIds.forEach(cid => {
+          // 该律师对该合同的所有维度评分均值
+          const cellData = commentsByLawyer[lid] && commentsByLawyer[lid][cid] ? commentsByLawyer[lid][cid] : {};
+          // 我们没存评分, 仅存评论; 这里用律师维度均值近似
+          let cellMean = null;
+          // 优先用 per_lawyer[lid].dimension_scores 计算 5 维均值
+          const lAgg = perLawyer[lid];
+          if (lAgg && lAgg.evaluations_count > 0) {
+            const dims_arr = dims.map(d => lAgg.dimension_scores ? lAgg.dimension_scores[d] : null).filter(v => v !== null);
+            if (dims_arr.length > 0) {
+              cellMean = dims_arr.reduce((a, b) => a + b, 0) / dims_arr.length;
+              sumAll += cellMean; cntAll++;
+            }
+          }
+          if (cellMean !== null) {
+            const c = scoreColor(cellMean);
+            const tooltip = Object.entries(cellData).map(([d, c2]) => `${dimShortLabels[d]}: ${c2}`).join(' · ') || '暂无评论';
+            html += `<td class="p-2 text-center"><div class="comment-cell relative inline-block score-cell rounded-md px-2 py-1 cursor-help" style="background: ${c.bg}; color: ${c.fg}"><span class="score-number font-bold">${cellMean.toFixed(1)}</span><div class="comment-tooltip">${escapeHtml(tooltip)}</div></div></td>`;
+          } else {
+            html += '<td class="p-2 text-center"><div class="rounded-md px-2 py-1 inline-block" style="background: #F5F5F5; color: #9CA3AF">—</div></td>';
+          }
+        });
+        // 综合列
+        if (cntAll > 0) {
+          const overall = sumAll / cntAll;
+          const c = scoreColor(overall);
+          html += `<td class="p-2 text-center"><div class="rounded-md px-2 py-1 inline-block score-cell" style="background: ${c.bg}; color: ${c.fg}"><span class="score-number font-bold">${overall.toFixed(2)}</span></div></td>`;
+        } else {
+          html += '<td class="p-2 text-center">—</td>';
+        }
+        html += '</tr>';
+      });
+      html += '</tbody>';
+      table.innerHTML = html;
+    }
+
+    function renderLawyerCards(perLawyer) {
+      const container = document.getElementById('lawyer-cards');
+      container.innerHTML = '';
+      Object.values(perLawyer).forEach(l => {
+        const c = scoreColor(l.weighted_score);
+        const passBadge = l.passes_rubric
+          ? '<span class="inline-flex items-center gap-0.5 text-[10px] text-success bg-success-tint px-1.5 py-0.5 rounded-sm"><iconify-icon icon="mdi:check-circle" class="text-xs"></iconify-icon>通过</span>'
+          : '<span class="inline-flex items-center gap-0.5 text-[10px] text-warning bg-warning-tint px-1.5 py-0.5 rounded-sm"><iconify-icon icon="mdi:alert-circle" class="text-xs"></iconify-icon>未通过</span>';
+        const qBadge = l.questions_count > 0
+          ? `<span class="inline-flex items-center gap-0.5 text-[10px] text-ai bg-ai-tint px-1.5 py-0.5 rounded-sm"><iconify-icon icon="mdi:comment-question" class="text-xs"></iconify-icon>${l.questions_count} 问题</span>`
+          : '';
+        const card = document.createElement('div');
+        card.className = 'border border-bg-border rounded-md p-3 hover:shadow-card transition-shadow';
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand to-wiki text-white flex items-center justify-center font-bold text-sm">${l.lawyer_id}</div>
+              <div>
+                <p class="text-sm font-semibold">${l.lawyer_id} <span class="text-[10px] text-fg-tertiary font-normal">${l.lawyer_type}</span></p>
+                <p class="text-[10px] text-fg-tertiary">${l.venue}</p>
+              </div>
+            </div>
+            ${passBadge}
+          </div>
+          <div class="flex items-baseline gap-1 mb-2">
+            <span class="text-2xl font-bold score-number" style="color: ${c.fg}">${l.weighted_score.toFixed(1)}</span>
+            <span class="text-[10px] text-fg-tertiary">/ 10 (rubric ${l.rubric_score.toFixed(2)})</span>
+          </div>
+          <div class="flex items-center gap-1 flex-wrap mb-2">
+            ${qBadge}
+            <span class="inline-flex items-center gap-0.5 text-[10px] text-fg-secondary bg-bg-subtle px-1.5 py-0.5 rounded-sm"><iconify-icon icon="mdi:counter" class="text-xs"></iconify-icon>${l.evaluations_count} 合同</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderContractBars(perContract) {
+      const container = document.getElementById('contract-bars');
+      container.innerHTML = '';
+      const typeIcons = { '房屋租赁': 'mdi:home-city-outline', '借款合同': 'mdi:cash-multiple', '劳动合同': 'mdi:briefcase-account-outline', '服务合同': 'mdi:laptop', '销售合同': 'mdi:cart-outline' };
+      Object.values(perContract).forEach(c => {
+        const scoreVal = c.aggregate_score;
+        const pct = Math.round((scoreVal / 10) * 100);
+        const color = scoreVal >= 8 ? '#2E7D32' : scoreVal >= 6 ? '#D25400' : scoreVal >= 4 ? '#F53F3F' : '#A8071A';
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-3';
+        div.innerHTML = `
+          <div class="w-24 md:w-32 flex items-center gap-1.5 text-xs text-fg-secondary flex-shrink-0">
+            <iconify-icon icon="${typeIcons[c.contract_type] || 'mdi:file-document-outline'}" class="text-brand"></iconify-icon>
+            <span class="truncate">${c.contract_type}</span>
+          </div>
+          <div class="flex-1 bar-track"><div class="bar-fill" style="width: ${pct}%; background: ${color}"></div></div>
+          <span class="text-xs font-bold score-number w-12 text-right" style="color: ${color}">${scoreVal.toFixed(2)}</span>
+          <span class="text-[10px] text-fg-tertiary w-12 text-right hidden md:inline">${c.n_evaluations}/5</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderQuestions(data) {
+      const allQuestions = [];
+      Object.values(data.per_lawyer).forEach(l => {
+        l.questions.forEach(q => allQuestions.push(q));
+      });
+      allQuestions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      // 过滤 chip
+      const filterContainer = document.getElementById('questions-filter');
+      filterContainer.innerHTML = '';
+      const cats = ['全部', '产品', '技术', '法务', '其他'];
+      cats.forEach(cat => {
+        const isActive = _filterCategory === cat;
+        const count = cat === '全部' ? allQuestions.length : allQuestions.filter(q => q.category === cat).length;
+        const chip = document.createElement('button');
+        chip.className = `text-[11px] px-2 py-1 rounded-md border transition-colors ${isActive ? 'bg-brand text-white border-brand' : 'bg-white border-bg-border text-fg-secondary hover:border-brand'}`;
+        chip.textContent = `${cat} (${count})`;
+        chip.onclick = () => {
+          _filterCategory = cat;
+          renderQuestions(data);
+        };
+        filterContainer.appendChild(chip);
+      });
+
+      // 列表
+      const list = document.getElementById('questions-list');
+      list.innerHTML = '';
+      const filtered = _filterCategory === '全部' ? allQuestions : allQuestions.filter(q => q.category === _filterCategory);
+
+      document.getElementById('board-questions-count').textContent = allQuestions.length;
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p class="text-xs text-fg-tertiary text-center py-6">暂无问题</p>';
+        return;
+      }
+
+      filtered.forEach(q => {
+        const statusBadge = `<span class="status-badge status-${q.status}">${q.status}</span>`;
+        const item = document.createElement('div');
+        item.className = 'border border-bg-border rounded-md p-3 hover:bg-bg-subtle/30';
+        item.innerHTML = `
+          <div class="flex items-start gap-2">
+            <div class="w-7 h-7 rounded-full bg-ai-tint text-ai flex items-center justify-center text-[10px] font-bold flex-shrink-0">${q.lawyer_id}</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                <span class="text-xs font-semibold text-fg-primary">${escapeHtml(q.question_text)}</span>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-fg-tertiary">
+                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-bg-subtle rounded-sm">${q.category}</span>
+                ${statusBadge}
+                <span>${new Date(q.created_at).toLocaleString('zh-CN')}</span>
+              </div>
+              ${q.context ? `<p class="text-[11px] text-fg-secondary mt-1 italic">${escapeHtml(q.context)}</p>` : ''}
+            </div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function renderPRDFeedback(feedback) {
+      const container = document.getElementById('prd-feedback-content');
+      const badge = document.getElementById('board-decision-badge');
+
+      // 决策徽章
+      let badgeClass = 'bg-bg-subtle text-fg-secondary';
+      if (feedback.passes_threshold) badgeClass = 'bg-success-tint text-success';
+      else if (feedback.decision && feedback.decision.includes('不通过')) badgeClass = 'bg-danger-tint text-danger';
+      else if (feedback.decision && feedback.decision.includes('有条件')) badgeClass = 'bg-warning-tint text-warning';
+      badge.className = `text-[11px] px-2 py-0.5 rounded-md font-medium ${badgeClass}`;
+      badge.textContent = feedback.decision || '—';
+
+      let html = '';
+
+      // 痛点列表
+      if (feedback.pain_points && feedback.pain_points.length > 0) {
+        html += '<div class="mb-4"><h4 class="text-xs font-semibold text-fg-primary mb-2">📌 痛点清单 (按优先级)</h4><div class="space-y-2">';
+        feedback.pain_points.forEach(pp => {
+          const cssClass = pp.priority === 'P0' ? 'pain-p0' : pp.priority === 'P1' ? 'pain-p1' : 'pain-p2';
+          html += `<div class="${cssClass} rounded-md p-3">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-white text-fg-primary">${pp.priority}</span>
+              <span class="text-xs font-medium text-fg-primary">${pp.dimension} (评分 ${pp.score})</span>
+            </div>
+            <p class="text-[11px] text-fg-secondary mb-1"><strong>问题</strong>: ${pp.issue}</p>
+            <p class="text-[11px] text-fg-secondary"><strong>建议</strong>: ${pp.action}</p>
+          </div>`;
+        });
+        html += '</div></div>';
+      } else {
+        html += '<p class="text-xs text-fg-tertiary mb-4">✅ 无显著痛点 (所有维度均达门槛)</p>';
+      }
+
+      // 合同类型洞察
+      if (feedback.contract_type_insights && feedback.contract_type_insights.length > 0) {
+        html += '<div class="mb-4"><h4 class="text-xs font-semibold text-fg-primary mb-2">📋 合同类型差异化洞察</h4><div class="space-y-1.5">';
+        feedback.contract_type_insights.forEach(ins => {
+          html += `<div class="text-[11px] text-fg-secondary border-l-2 border-brand pl-2"><strong>${ins.contract_type}</strong> (${ins.score}): ${ins.note}</div>`;
+        });
+        html += '</div></div>';
+      }
+
+      // 合同类型洞察
+      if (feedback.next_actions && feedback.next_actions.length > 0) {
+        html += '<div><h4 class="text-xs font-semibold text-fg-primary mb-2">🚀 后续行动</h4><ul class="text-[11px] text-fg-secondary space-y-1 list-disc list-inside">';
+        feedback.next_actions.forEach(na => {
+          html += `<li>${na}</li>`;
+        });
+        html += '</ul></div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    // 暴露给 switchView 加载
+    window.__loadReviewBoard = loadBoard;
+
+    // 事件绑定
+    document.addEventListener('DOMContentLoaded', () => {
+      const refreshBtn = document.getElementById('board-refresh-btn');
+      if (refreshBtn) refreshBtn.addEventListener('click', loadBoard);
+      const exportBtn = document.getElementById('board-export-btn');
+      if (exportBtn) exportBtn.addEventListener('click', () => {
+        if (!_boardData) return;
+        const blob = new Blob([JSON.stringify(_boardData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lexprime-review-board-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  })();
+</script>
+
+</div>
