@@ -131,7 +131,15 @@ try:
     app.include_router(skill_router)
     logger.info("Skill Hub: 类案检索 router registered")
 except Exception as e:
-    logger.warning(f"Skill Hub router 加载失败 (非致命): {e}")
+    logger.warning(f"Skill Hub 类案检索 router 加载失败 (非致命): {e}")
+
+# 合同风险审查 Skill (W5 实施 · lex-coder)
+try:
+    from api.contract_review_router import router as contract_review_router
+    app.include_router(contract_review_router)
+    logger.info("Skill Hub: 合同风险审查 (Skill 2) router registered")
+except Exception as e:
+    logger.warning(f"Skill Hub 合同审查 router 加载失败 (非致命): {e}")
 
 
 # ========== 端点 ==========
