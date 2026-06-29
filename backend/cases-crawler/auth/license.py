@@ -39,6 +39,8 @@ from auth.models import LawyerProfile, LicenseReviewLog, User
 from auth.ratelimit import license_upload_key_by_user, rate_limit_check
 from auth.security import AuthError
 from core.config import settings
+# W5: 复用 core/ocr 统一 OCR 引擎 (PaddleOcrEngine 生产, MockOcrEngine 测试)
+from core.ocr import OcrResult as EngineOcrResult, get_ocr_engine
 
 
 # ========== 业务异常 ==========
@@ -90,37 +92,86 @@ class AiReviewResult:
     checks: dict[str, bool]  # 各项校验明细
 
 
-# ========== OCR Mock (W3 dev) ==========
-# 真 OCR 接入指南 (W4+):
-# - 调 PaddleOCR / 阿里云 OCR API
-# - 用同一份 OcrResult dataclass 返回
-# - service 层的 _run_ocr() 替换实现即可
-def _run_ocr_mock(image_data: bytes, filename: str) -> OcrResult:
-    """
-    OCR mock - W3 dev 用
+# ========== OCR (W5 升级: 复用 core/ocr 统一引擎) ==========
+# 历史: W3 dev 用 _run_ocr_mock (启发式从文件名猜字段)
+# W5: 走 core/ocr.get_ocr_engine() (auto: paddle 可用→paddle, 否则 mock)
+#      拿到通用 OcrResult (raw_text) → 从 raw_text 抽取律师执业证字段
+def _parse_license_from_text(engine_result: EngineOcrResult, filename: str) -> OcrResult:
+    """从 OCR 文本抽取律师执业证字段
 
-    规则:
-    - 文件名提取 license_no (匹配 [A-Z0-9-]{8,17})
-    - name 用 "律师-<hash前6位>"
-    - firm 固定占位
-    - confidence 跟文件大小相关 (大文件置信度高)
+    字段:
+    - license_no: 从 raw_text 匹配 [A-Z0-9-]{8,17} (兼容 110101-2018-A0001)
+    - name:       "姓名: XXX" / "律师-<hash>"
+    - firm:       "执业机构: XXX" / 默认 "待审核律所"
+    - confidence: 直接用 engine_result.confidence
     """
-    # license_no 提取 (常见格式: 110101-2018-A0001, 6位地区码 + 年份 + 序号)
+    raw_text = engine_result.raw_text
+    confidence = engine_result.confidence
+
+    # license_no: 优先 raw_text, 其次 filename 启发 (兼容 W3)
+    license_match = re.search(
+        r"((?:[A-Z0-9]{2,6}[-/]?\d{4}[-/]?[A-Z]?\d{3,8}))",
+        raw_text.upper() + " " + filename.upper(),
+    )
+    license_no = license_match.group(1) if license_match else None
+
+    # name: "姓名: XXX" 抽取
+    name_match = re.search(r"姓名[::]\s*([\u4e00-\u9fa5A-Za-z]{2,10})", raw_text)
+    if name_match:
+        name = name_match.group(1)
+    else:
+        # fallback: hash
+        digest = hashlib.md5(filename.encode("utf-8")).hexdigest()[:6].upper()
+        name = f"律师-{digest}"
+
+    # firm: "执业机构: XXX" 抽取
+    firm_match = re.search(r"执业机构[::]\s*([\u4e00-\u9fa5A-Za-z]{2,30})", raw_text)
+    firm = firm_match.group(1) if firm_match else "待审核律所"
+
+    return OcrResult(
+        raw_text=raw_text,
+        name=name,
+        license_no=license_no,
+        firm=firm,
+        practice_areas=["民商事", "合同纠纷"],
+        issue_date=None,
+        confidence=round(confidence, 4),
+    )
+
+
+def _run_ocr(image_data: bytes, filename: str) -> OcrResult:
+    """
+    OCR 调度 (W5 升级)
+
+    流程:
+    1. 调 core/ocr.get_ocr_engine() (默认 mock, 配 env LEX_OCR_ENGINE=paddle 走真 paddle)
+    2. 拿到通用 OcrResult (raw_text)
+    3. _parse_license_from_text() 抽律师执业证字段
+
+    生产部署 paddle: 见 docs/ocr-deployment.md
+    """
+    engine = get_ocr_engine()
+    try:
+        engine_result = engine.run(image_data, filename=filename)
+    except Exception as e:
+        # 兜底: engine 失败时, 走纯 mock 启发 (保持向后兼容)
+        logger.warning(f"[auth.license.ocr] engine={engine.name} failed: {e}, fallback to heuristic")
+        return _run_ocr_heuristic(image_data, filename)
+    return _parse_license_from_text(engine_result, filename)
+
+
+def _run_ocr_heuristic(image_data: bytes, filename: str) -> OcrResult:
+    """W3 兼容的纯启发式 fallback (不依赖 OCR engine)"""
     license_match = re.search(
         r"((?:[A-Z0-9]{2,6}[-/]?\d{4}[-/]?[A-Z]?\d{3,8}))",
         filename.upper(),
     )
     license_no = license_match.group(1) if license_match else None
-
-    # name 占位
     digest = hashlib.md5(filename.encode("utf-8")).hexdigest()[:6].upper()
     name = f"律师-{digest}"
-
-    # confidence: 文件大小 (bytes) / 1MB, 上限 0.95
     size_kb = len(image_data) / 1024
     confidence = min(0.95, 0.5 + size_kb / 2000)
     confidence = round(confidence, 2)
-
     raw_text = (
         f"律师执业证\n"
         f"姓名: {name}\n"
@@ -129,7 +180,6 @@ def _run_ocr_mock(image_data: bytes, filename: str) -> OcrResult:
         f"执业证类别: 专职律师\n"
         f"发证机关: 司法部\n"
     )
-
     return OcrResult(
         raw_text=raw_text,
         name=name,
@@ -139,20 +189,6 @@ def _run_ocr_mock(image_data: bytes, filename: str) -> OcrResult:
         issue_date=None,
         confidence=confidence,
     )
-
-
-def _run_ocr(image_data: bytes, filename: str) -> OcrResult:
-    """
-    OCR 调度 (W3 dev: mock)
-    - settings.auth_license_ocr_engine = "mock" -> _run_ocr_mock
-    - W4+ "paddle" / "aliyun" -> 接真 API
-    """
-    engine = settings.auth_license_ocr_engine
-    if engine == "mock":
-        return _run_ocr_mock(image_data, filename)
-    # W4+ 真接入
-    logger.warning(f"[auth.license.ocr] engine={engine} not implemented, fallback to mock")
-    return _run_ocr_mock(image_data, filename)
 
 
 # ========== AI 初审 Mock (W3 dev) ==========
@@ -466,8 +502,9 @@ async def admin_review_license(
 
 # ========== 自检 ==========
 def _self_check() -> None:
-    # OCR mock
-    ocr = _run_ocr_mock(b"fake-image-data-" * 100, "lawyer_110101-2018-A0001.jpg")
+    # W5: OCR 走统一 engine (默认 mock), filename 启发 license_no
+    # 用 "lawyer_110101-2018-A0001.jpg" 保证 license_no 提取路径走通
+    ocr = _run_ocr(b"fake-image-data-" * 100, "lawyer_110101-2018-A0001.jpg")
     assert ocr.name
     assert ocr.license_no == "110101-2018-A0001"
     assert 0 < ocr.confidence <= 0.95
