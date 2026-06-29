@@ -153,12 +153,23 @@ except Exception as e:
 # W6 律师评审 Score App (lex-coder · 2026-06-29)
 # 5 律师 × 5 测试合同 = 25 条评分
 # 端点: /api/review/contracts, /api/review/submit-score, /api/review/my-scores, /api/review/summary
+# W7: +3 端点 (POST /question, GET /questions, GET /board)
 try:
     from api.review_router import router as review_router
     app.include_router(review_router)
-    logger.info("W6 律师评审 Score App router registered")
+    logger.info("W6 律师评审 Score App router registered (W7 扩 3 端点)")
 except Exception as e:
     logger.warning(f"W6 律师评审 Score App router 加载失败 (非致命): {e}")
+
+# W8 (lex-coder · 2026-06-29) PRD backlog ticket 系统
+# A2: 把 W7 review_questions 表问题 → prd_backlog 表 ticket, 给 plan engine 自动调度
+# 端点: /api/backlog/from-question, /api/backlog/list, /api/backlog/{id}/assign, /api/backlog/board
+try:
+    from api.backlog_router import router as backlog_router
+    app.include_router(backlog_router)
+    logger.info("W8 PRD backlog ticket router registered (A2)")
+except Exception as e:
+    logger.warning(f"W8 PRD backlog ticket router 加载失败 (非致命): {e}")
 
 
 # ========== 端点 ==========

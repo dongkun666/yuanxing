@@ -4,9 +4,10 @@ W5 Track B: OCR 引擎测试 (lex-ai)
 覆盖:
 - 5 张测试样张 (test_ocr_1 ~ test_ocr_5) 文本匹配率
 - Mock 引擎 fallback
-- Engine factory (auto/paddle/mock 切换)
+- Engine factory (auto/paddle/tesseract/mock 切换, W8 D4 加 tesseract)
 - MIME 推断
 - PaddleOcrEngine import 缺失时不破坏
+- W8 D4: auto 优先级 paddle → tesseract → mock 三级 fallback
 
 PRD B-ocr Track · 验收: "OCR 识别准确率 (测试 5 张样张, 文本匹配率 >= 85%)"
 """
@@ -18,6 +19,7 @@ import pytest
 from core.ocr import (
     MockOcrEngine,
     PaddleOcrEngine,
+    TesseractOcrEngine,
     detect_mime,
     is_pdf,
     is_image,
@@ -132,10 +134,79 @@ class TestEngineFactory:
             with pytest.raises(OcrEngineUnavailableError):
                 get_ocr_engine()
 
+    def test_explicit_tesseract_unavailable_raises(self):
+        """Tesseract 不可用时, LEX_OCR_ENGINE=tesseract 应该 raise"""
+        os.environ["LEX_OCR_ENGINE"] = "tesseract"
+        reset_ocr_engine()
+        if not TesseractOcrEngine().is_available():
+            from core.ocr import OcrEngineUnavailableError
+            with pytest.raises(OcrEngineUnavailableError):
+                get_ocr_engine()
+
+    def test_auto_priority_order(self):
+        """auto 模式优先级: paddle > tesseract > mock (W8 D4 升级)"""
+        os.environ["LEX_OCR_ENGINE"] = "auto"
+        reset_ocr_engine()
+        name = current_engine_name()
+        # 三者之一, paddle 优先
+        assert name in ("paddle", "tesseract", "mock")
+        # paddle 可用的话, 应该是 paddle
+        if PaddleOcrEngine().is_available():
+            assert name == "paddle"
+        # paddle 不可用 + tesseract 可用 → tesseract
+        elif TesseractOcrEngine().is_available():
+            assert name == "tesseract"
+        else:
+            assert name == "mock"
+
     def test_is_paddle_available_returns_bool(self):
         """is_paddle_available() 永真 (Python 3.14 paddlepaddle 无 wheel)"""
         result = is_paddle_available()
         assert isinstance(result, bool)
+
+
+# ===== Tesseract 引擎 (W8 D4 新增) =====
+
+class TestTesseractOcrEngine:
+
+    def setup_method(self):
+        self.engine = TesseractOcrEngine()
+
+    def test_is_available_returns_bool(self):
+        """is_available() 返回 bool (依赖环境, 不强制)"""
+        result = self.engine.is_available()
+        assert isinstance(result, bool)
+
+    def test_engine_name(self):
+        assert self.engine.name == "tesseract"
+
+    def test_empty_bytes_raises(self):
+        """空 bytes 抛 OcrUnsupportedFormatError"""
+        from core.ocr import OcrUnsupportedFormatError
+        with pytest.raises(OcrUnsupportedFormatError):
+            self.engine.run(b"", filename="x.png")
+
+    @pytest.mark.skipif(
+        not TesseractOcrEngine().is_available(),
+        reason="pytesseract / Tesseract binary 未就位",
+    )
+    def test_run_real_image(self):
+        """真实图片 OCR (依赖 pytesseract + tesseract.exe)"""
+        from PIL import Image
+        import io
+        img = Image.new("RGB", (200, 80), color="white")
+        from PIL import ImageDraw, ImageFont
+        draw = ImageDraw.Draw(img)
+        try:
+            font = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", 20)
+        except Exception:
+            font = ImageFont.load_default()
+        draw.text((10, 10), "Hello", fill="black", font=font)
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        result = self.engine.run(buf.getvalue(), filename="hello.png")
+        assert result.source_engine == "tesseract"
+        assert result.detected_mime == "image/png"
 
 
 # ===== MIME 推断 =====

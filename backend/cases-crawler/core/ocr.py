@@ -46,7 +46,7 @@ import re
 import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Protocol, runtime_checkable, Tuple, Dict, Any
+from typing import List, Optional, Protocol, runtime_checkable, Tuple
 
 
 # 抑制 Paddle 3.x onednn 在 PP-OCRv6 上的 dtype bug (ValueError ... DoubleAttribute)
@@ -594,6 +594,144 @@ class MockOcrEngine:
         )
 
 
+# ===== Tesseract 引擎 (生产 fallback) =====
+
+class TesseractOcrEngine:
+    """Tesseract OCR 引擎 (W5 时代的 fallback, W8 D4 保留作为中间层)
+
+    适用场景:
+    - PaddleOCR 不可用 (Python 3.14 paddlepaddle wheel 不兼容, 见 W5 final report §3)
+    - venv312 没装 paddle 时, 用主 Python + pytesseract 兜底
+    - 离线 / 不想下 paddle 模型时
+
+    依赖:
+        pytesseract (pip install pytesseract)
+        Tesseract binary (winget install --id=tesseract-ocr.tesseract)
+
+    优点:
+        - 跨平台稳定 (Ubuntu/Mac/Windows 都有)
+        - 装包简单 (一个 pip install)
+    缺点:
+        - 中文识别精度不如 PaddleOCR (PP-OCRv6 专精)
+        - 依赖系统二进制 tesseract.exe
+    """
+
+    name = "tesseract"
+
+    def __init__(self, lang: str = "chi_sim+eng"):
+        self._lang = lang
+
+    def is_available(self) -> bool:
+        try:
+            import pytesseract  # noqa: F401
+            # 探一下二进制
+            pytesseract.get_tesseract_version()
+            return True
+        except Exception:
+            return False
+
+    def run(
+        self,
+        file_bytes: bytes,
+        filename: str = "",
+        mime_type: str = "",
+    ) -> OcrResult:
+        if not file_bytes:
+            raise OcrUnsupportedFormatError("empty file_bytes")
+
+        try:
+            import pytesseract
+            from PIL import Image
+        except ImportError as e:
+            raise OcrEngineUnavailableError(
+                f"pytesseract/Pillow required: {e}"
+            ) from e
+
+        mime = mime_type or detect_mime(file_bytes, filename)
+        if is_pdf(file_bytes):
+            return self._run_pdf(pytesseract, file_bytes, mime)
+        if is_image(file_bytes):
+            return self._run_image(pytesseract, Image, file_bytes, mime)
+        raise OcrUnsupportedFormatError(
+            f"unsupported mime for Tesseract: {mime}"
+        )
+
+    def _run_image(self, pytesseract, Image, file_bytes: bytes, mime: str) -> OcrResult:
+        img = Image.open(io.BytesIO(file_bytes))
+        text = pytesseract.image_to_string(img, lang=self._lang)
+        # pytesseract 也能给 data 形式含 confidence
+        try:
+            data = pytesseract.image_to_data(
+                img, lang=self._lang, output_type=pytesseract.Output.DICT
+            )
+            confs = [int(c) for c in data.get("conf", []) if c not in ("-1", -1, "-1.0")]
+            avg_conf = (sum(confs) / len(confs) / 100.0) if confs else 0.5
+            lines = []
+            for i, txt in enumerate(data.get("text", [])):
+                if txt and txt.strip():
+                    lines.append(OcrLine(
+                        text=txt,
+                        confidence=avg_conf,
+                        bbox=None,
+                    ))
+            return OcrResult(
+                raw_text=text.strip(),
+                confidence=avg_conf,
+                lines=lines,
+                page_count=1,
+                source_engine=self.name,
+                detected_mime=mime,
+            )
+        except Exception:
+            # data API 失败, 降级到纯文本
+            return OcrResult(
+                raw_text=text.strip(),
+                confidence=0.5,
+                lines=[
+                    OcrLine(text=ln, confidence=0.5)
+                    for ln in text.splitlines() if ln.strip()
+                ],
+                page_count=1,
+                source_engine=self.name,
+                detected_mime=mime,
+            )
+
+    def _run_pdf(self, pytesseract, file_bytes: bytes, mime: str) -> OcrResult:
+        try:
+            import fitz  # PyMuPDF
+        except ImportError as e:
+            raise OcrEngineUnavailableError(
+                f"PyMuPDF required for PDF: {e}"
+            ) from e
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
+        page_count = len(doc)
+        from PIL import Image
+        all_lines: List[OcrLine] = []
+        all_text: List[str] = []
+        for i in range(page_count):
+            page = doc[i]
+            mat = fitz.Matrix(2.0, 2.0)
+            pix = page.get_pixmap(matrix=mat)
+            img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+            page_result = self._run_image(pytesseract, Image, img.tobytes(), mime)
+            all_lines.extend(page_result.lines)
+            if page_result.raw_text:
+                all_text.append(page_result.raw_text)
+        doc.close()
+        avg = (
+            sum(ln.confidence for ln in all_lines) / len(all_lines)
+            if all_lines else 0.0
+        )
+        return OcrResult(
+            raw_text="\n\n".join(all_text),
+            confidence=avg,
+            lines=all_lines,
+            page_count=page_count,
+            source_engine=self.name,
+            detected_mime=mime,
+        )
+
+
 # ===== Engine factory =====
 
 _ENGINE_INSTANCE: Optional[OcrEngine] = None
@@ -604,9 +742,15 @@ def _select_engine() -> OcrEngine:
     """按 env 选引擎
 
     LEX_OCR_ENGINE:
-        auto (默认): paddle 可用 → paddle, 否则 mock
+        auto (默认): paddle → tesseract → mock 三级 fallback (W8 D4 升级)
         paddle:      强制 paddle, 不可用 raise
+        tesseract:   强制 tesseract, 不可用 raise
         mock:        强制 mock
+
+    auto 模式优先级 (W8 D4 升级, W7 时代是 paddle → mock):
+        1. PaddleOCR (生产, 精度最高)
+        2. Tesseract (fallback, paddle 装不上时, 例如主 Python 3.14)
+        3. Mock      (兜底, 单元测试 / CI)
     """
     requested = os.getenv("LEX_OCR_ENGINE", "auto").lower().strip()
     if requested == "mock":
@@ -619,10 +763,21 @@ def _select_engine() -> OcrEngine:
                 "请 pip install paddleocr paddlepaddle (Python 3.11/3.12 venv)"
             )
         return paddle
-    # auto
+    if requested == "tesseract":
+        tess = TesseractOcrEngine()
+        if not tess.is_available():
+            raise OcrEngineUnavailableError(
+                "LEX_OCR_ENGINE=tesseract 但 pytesseract/tesseract 未就位。"
+                "请 pip install pytesseract + winget install tesseract-ocr.tesseract"
+            )
+        return tess
+    # auto: paddle → tesseract → mock (W8 D4 升级, 解决 W5 PaddleEngine 装不上的 fallback gap)
     paddle = PaddleOcrEngine()
     if paddle.is_available():
         return paddle
+    tess = TesseractOcrEngine()
+    if tess.is_available():
+        return tess
     return MockOcrEngine()
 
 

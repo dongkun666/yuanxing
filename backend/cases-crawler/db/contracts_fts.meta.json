@@ -12,7 +12,7 @@
       "segmented": "房屋 租赁 合同",
       "match_expr": "房屋 OR 租赁 OR 合同",
       "hits": 2213,
-      "elapsed_ms": 0.0,
+      "elapsed_ms": 1.0,
       "passed": true
     },
     "劳动合同": {
@@ -31,5 +31,5 @@
     }
   },
   "verify_all_passed": true,
-  "elapsed_sec": 3.06
+  "elapsed_sec": 2.76
 }
