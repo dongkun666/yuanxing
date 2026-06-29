@@ -69,3 +69,15 @@ lancedb>=0.6.0          # 本地向量库 (类案 / 法规 embedding)
 sentence-transformers>=2.7.0  # BGE 中文 embedding
 tiktoken>=0.7.0         # Token 计数 (T-REF-25 上下文压缩)
 numpy>=1.26.0           # 百分位计算 (无则走纯 Python 降级)
+
+# ===== Track B OCR (W5) =====
+# PaddleOCR (生产环境, 中文专精 ~12MB, 部署指引 docs/ocr-deployment.md)
+# 注意: paddlepaddle 官方 wheel 仅支持 Python 3.8-3.12, 不支持 3.14
+#      本地开发默认走 mock (见 core/ocr.py), 无 paddlepaddle 也能跑通
+#      生产部署需要独立 venv (Python 3.11) 装 paddlepaddle + paddleocr
+paddleocr==2.7.3        # OCR 引擎 (PP-OCRv3 中文, 离线模型 ~12MB)
+# paddlepaddle==2.6.1   # 推理后端 (生产用, 装在 3.11 venv)
+
+# OCR 辅助
+Pillow>=10.0.0          # 图像处理 (PaddleOcrEngine 用)
+PyMuPDF>=1.24.0         # PDF 渲染 (PaddleOcrEngine 扫描件用)
