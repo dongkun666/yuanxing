@@ -1,0 +1,15 @@
+# Phase 5.3 Rust 核心 — 本地编译优化配置
+
+[build]
+# 多核并行编译 (默认就开,这里显式写出来)
+# jobs 默认 = CPU 核心数, 不显式覆盖
+
+[net]
+# 离线优先 (CI 环境若需要 git 依赖)
+git-fetch-with-cli = true
+
+[target.x86_64-pc-windows-msvc]
+# 默认 link.exe (MSVC), 不强行用 rust-lld (某些 Windows 环境无 rust-lld.exe)
+
+[target.x86_64-unknown-linux-gnu]
+# Linux 下用系统默认 ld / mold

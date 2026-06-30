@@ -1,0 +1,78 @@
+[package]
+name = "lexprime-rust-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.83"
+authors = ["LexPrime 团队 <team@lexprime.ai>"]
+description = "Phase 5.3 Rust 核心 — LexPrime 后端 Rust 重构脚手架 + 4 模块 (合同审查/OCR/一体化/Skill 2+3)"
+license = "MIT"
+
+[[bin]]
+name = "lexprime-rust-core"
+path = "src/main.rs"
+
+[lib]
+name = "lexprime_rust_core"
+path = "src/lib.rs"
+
+[dependencies]
+# Web framework — task 指定 actix-web 4
+actix-web = "4.9"
+actix-rt = "2.10"
+actix-multipart = "0.7"
+
+# Async runtime — task 指定 tokio 1.43
+tokio = { version = "1.43", features = ["full"] }
+
+# SQLite ORM — task 指定 rusqlite 0.32, bundled 避免外部 sqlite3 依赖
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Serialization — task 指定 serde 1
+# 锁定到 1.0.197 (serde 1.0.228 + serde_core 在 Windows 上有 build-script 命名 bug, 1.0.197 是已知稳定版)
+serde = { version = "=1.0.197", features = ["derive"] }
+serde_json = "=1.0.114"
+
+# Logging — task 指定 tracing 0.1
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# 时间戳
+chrono = { version = "0.4", features = ["serde"] }
+
+# 错误处理
+thiserror = "1"
+anyhow = "1"
+
+# UUID 生成
+uuid = { version = "1", features = ["v4", "serde"] }
+
+# 配置加载
+dotenvy = "0.15"
+
+# 并发工具
+parking_lot = "0.12"
+once_cell = "1"
+
+[dev-dependencies]
+# bench + integration test HTTP client
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1.43", features = ["full", "macros"] }
+criterion = { version = "0.5", features = ["html_reports"] }
+actix-web = { version = "4.9", features = ["macros"] }
+futures = "0.3"
+
+[[bench]]
+name = "bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+debug = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+incremental = true
