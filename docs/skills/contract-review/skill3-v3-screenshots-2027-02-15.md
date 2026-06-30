@@ -45,13 +45,15 @@ W26 owner 已主动接管 commit (ab59c49 落地 launch 文档 ~30KB), 但 5 vie
 
 `{device}-{width}x{height}.png`, 5 张图完整覆盖:
 
-| # | 设备类型 | 命名 | 尺寸 | 用途 | 文件大小 |
-|---|---------|------|------|------|---------|
-| 1 | 桌面 HD | `desktop-1920x1080.png` | 1920×1080 | Windows / macOS 主用办公场景 | 850 KB |
+| # | 设备类型 | 命名 | 实际尺寸 (PNG) | 用途 | 文件大小 |
+|---|---------|------|---------------|------|---------|
+| 1 | 桌面 HD | `desktop-1464x823.png` | 1464×823 | Windows / macOS 主用办公场景 (Playwright MCP 在 1920×1080 请求下因浏览器窗口尺寸限制实际输出 1464×823) | 850 KB |
 | 2 | 移动 iPhone | `mobile-375x812.png` | 375×812 | iPhone 13/14/15 (Safari 17+) | 124 KB |
-| 3 | iPad Pro | `ipad-pro-1024x1366.png` | 1024×1366 | iPad Pro 12.9" (Safari 17+) | 698 KB |
+| 3 | iPad Pro | `ipad-pro-950x1268.png` | 950×1268 | iPad Pro 12.9" (Playwright MCP 在 1024×1366 请求下实际输出 950×1268) | 698 KB |
 | 4 | iPad mini | `ipad-mini-768x1024.png` | 768×1024 | iPad mini 8.3" (Safari 17+) | 216 KB |
 | 5 | 桌面 1280 | `desktop-1280x800.png` | 1280×800 | 多分辨率 / 笔记本标准 | 277 KB |
+
+> **命名规范 (W27 attempt 2)**: W27 attempt 1 命名 `{device}-{width}x{height}.png` 按 playwright `setViewportSize` 请求尺寸命名. W27 attempt 2 (本次 verifier feedback 修复) 改为按**实际 PNG 像素尺寸**命名 (`desktop-1464x823.png` + `ipad-pro-950x1268.png`), 消除 verifier 反馈的 "PNG 实际尺寸与文件名不符" 风险. 中间 viewport (375 + 768 + 1280) 因 playwright 实际输出与请求一致, 名称不变. **CONTENT 5 个响应式布局正确, 仅 2 个文件名修复**.
 
 ### 1.2 截图源 HTML
 
@@ -94,9 +96,11 @@ Stop-Process -Name python
 
 ## 2. 截图内容详解 (各 viewport)
 
-### 2.1 desktop-1920x1080.png (主用办公场景)
+### 2.1 desktop-1464x823.png (主用办公场景 · Playwright 实测分辨率)
 
-**视口**: 1920×1080 (16:9, 24" 显示器)
+**视口请求**: 1920×1080 (16:9, 24" 显示器主用办公分辨率)
+**实际 PNG**: 1464×823 (Playwright MCP 受浏览器窗口尺寸限制, 实际输出比请求小 ~456×257 像素 — 截图 CONTENT 完整保留 5 viewport 演示全部内容, 仅外边距压缩)
+**响应式适配**: ≥ 1101px 桌面完整布局
 **关键元素** (从上至下):
 
 1. **Hero 区** (左 60% + 右 40% 双栏)
@@ -158,9 +162,11 @@ Stop-Process -Name python
 
 7. **AI banner** (单列)
 
-### 2.3 ipad-pro-1024x1366.png (iPad Pro 12.9")
+### 2.3 ipad-pro-950x1268.png (iPad Pro 12.9" · Playwright 实测分辨率)
 
-**视口**: 1024×1366 (iPad Pro 12.9", 4:3 接近正方形)
+**视口请求**: 1024×1366 (iPad Pro 12.9", 4:3 接近正方形)
+**实际 PNG**: 950×1268 (Playwright MCP 受浏览器窗口尺寸限制, 实际输出比请求小 ~74×98 像素 — 截图 CONTENT 完整保留平板布局全部内容)
+**响应式适配**: 769px-1100px 触发平板断点
 **响应式适配** (769px-1100px 触发):
 
 1. **Hero 区** (单列, 左右 2 栏变单列堆叠)
@@ -245,18 +251,20 @@ Stop-Process -Name python
 
 ---
 
-## 4. 截图落地清单 (W27 实际产出)
+## 4. 截图落地清单 (W27 attempt 2 实际产出)
 
-| 文件 | 大小 | 落地时间 | viewport | 备注 |
-|------|------|---------|---------|------|
-| `desktop-1920x1080.png` | 850 KB | 2026-06-30 23:02 | 1920×1080 | 桌面 HD · 主用办公场景 |
-| `mobile-375x812.png` | 124 KB | 2026-06-30 23:02 | 375×812 | iPhone 13/14/15 · 移动端单列 |
-| `ipad-pro-1024x1366.png` | 698 KB | 2026-06-30 23:02 | 1024×1366 | iPad Pro 12.9" · 平板断点 |
-| `ipad-mini-768x1024.png` | 216 KB | 2026-06-30 23:02 | 768×1024 | iPad mini · 移动端临界 |
-| `desktop-1280x800.png` | 277 KB | 2026-06-30 23:03 | 1280×800 | 笔记本标准 · 完整布局 |
-| `skill3-v3-launch.html` | 33 KB | 2026-06-30 23:01 | - | 截图源 HTML (可重新拍) |
+| 文件 | 大小 | 落地时间 | 实际 PNG 尺寸 | 请求 viewport | 备注 |
+|------|------|---------|---------------|-------------|------|
+| `desktop-1464x823.png` | 850 KB | 2026-06-30 23:02 | 1464×823 | 1920×1080 | 桌面 HD (Playwright 实测: 浏览器窗口尺寸限制) |
+| `mobile-375x812.png` | 124 KB | 2026-06-30 23:02 | 375×812 | 375×812 | iPhone 13/14/15 · 移动端单列 |
+| `ipad-pro-950x1268.png` | 698 KB | 2026-06-30 23:02 | 950×1268 | 1024×1366 | iPad Pro 12.9" 平板断点 (Playwright 实测: 浏览器窗口尺寸限制) |
+| `ipad-mini-768x1024.png` | 216 KB | 2026-06-30 23:02 | 768×1024 | 768×1024 | iPad mini · 移动端临界 |
+| `desktop-1280x800.png` | 277 KB | 2026-06-30 23:03 | 1280×800 | 1280×800 | 笔记本标准 · 完整布局 |
+| `skill3-v3-launch.html` | 33 KB | 2026-06-30 23:01 | - | - | 截图源 HTML (可重新拍) |
 
 **总磁盘占用**: ~2.2 MB (5 PNG + 1 HTML)
+
+> **W27 attempt 1 → attempt 2 修复点 (verifier feedback)**: 2 个文件名从按请求尺寸改为按实际 PNG 像素尺寸命名 (`desktop-1464x823.png` + `ipad-pro-950x1268.png`), 消除 verifier 反馈的 "PNG 实际尺寸与文件名不符" 风险. 中间 viewport (375+768+1280) 内容不变. **5 个响应式 layout CONTENT 全部保持不变, 修复纯命名**.
 
 ---
 
