@@ -1,0 +1,439 @@
+version: 1
+plan:
+  name: "LexPrime Phase 5 Week 18: 8/9 + 8/25 + 8/31 实测 + 9/1 Phase 5.1 React 18 + TS + 9/15 L4/L5 企业版"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: kpi-verify-809
+    title: "8/9 KPI 实测 (30 律师付费 + ¥4,020 营收 验证 + 2 v1.1 修正)"
+    prompt: |
+      8/9 当天 09:00 owner 跑 dashboard 6 SQL 实测填实 W16 kpi placeholder.
+
+      必读文档:
+      - W16 kpi commit 83613c4 (kpi-dashboard-726-809.md + kpi-snapshot-2026-08-09.md)
+      - W17 kpi-v1.1 commit e10cc69 (5 律师 ¥997 + §2.3 距月底增 20-26)
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (5 律师转化路径)
+      - W14 first-paid-triggers commit 6f785e5 (7/29 转化)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W13 dashboard commit c62877c (dashboard 7 指标)
+      - PRD V5.0 § 10 公测期 KPI
+
+      W18 kpi-verify-809 工作范围 (8/9 当天执行, Mavis owner):
+
+      1. **dashboard 6 SQL 实测** (Mavis owner 8/9 09:00 跑):
+         - 律师注册数 (本月) - paid_converted 事件数
+         - 评审完成数 (本月) - review_completed 事件数
+         - 合同生成数 (本月) - doc_generated 事件数
+         - OCR 用量 (本月) - ocr_used 事件数
+         - 创史招募进度 - advocate_promoted 事件数
+         - 付费转化 - paid_converted 事件数 (本月)
+
+      2. **30 律师付费验证** (kpi-snapshot-2026-08-09.md v2.0):
+         - 公式: 3 (L1/L2/L3 首批 60%) + 27 (25 新律师 25% 转化) = 30 律师
+         - 实际: paid_converted 事件数 (8/9 09:00 实测)
+         - 营收快照: 3×¥449 + 27×¥99 = ¥1,347 + ¥2,673 = ¥4,020 元
+         - 距 ¥5 万+ ARR: 需 8/9-8/31 期间再 + 20 律师付费 + 41000 元营收
+
+      3. **v1.1 修正确认** (e10cc69):
+         - 5 律师批次 ¥997 (L1+L2 创史 ¥898 + L3 月度 ¥99)
+         - snapshot §2.3 距月底 ARR 增量人数 20-26 (50-30=20, +L4/L5=26)
+         - 营收增量 6000-6594 元 (8/31 截止)
+
+      4. **应急备案** (公测 day 1-14 期间):
+         - 律师拒绝付费: ¥99/月 个人版备选
+         - 转化率 < 5%: 朋友圈 9 宫格加强 + 朋友推荐激励 ¥99/律师
+         - dashboard 异常: 手动 SQL 验证 + 应急联系
+
+      5. **git commit + push** (1 commit: 实测数据填实 + 营收快照)
+
+      Stop when (8/9 KPI 实测完成):
+      - 30 律师付费 + ¥4,020 营收 实测
+      - 6 dashboard SQL 实测填实
+      - v1.1 修正确认
+      - kpi-snapshot-2026-08-09.md v2.0 (实测填实)
+      - git log 显示 1+ 8/9 commit
+
+      严禁 (W16 + W17 严守 fabricate 原则, W18 复制):
+      - 不要 fabricate 8/9 数据 (实测为主, owner 8/9 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 8/9 KPI 实测:
+      1. kpi-snapshot-2026-08-09.md v2.0 实测填实 (8/9 owner 跑 dashboard 6 SQL)
+      2. 30 律师付费验证 (paid_converted 事件数 = 3 + 27)
+      3. 营收快照 ¥4,020 验证
+      4. v1.1 修正 (5 律师 ¥997 + §2.3 20-26)
+      5. 4 应急备案
+      6. git log 显示 1+ 8/9 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: l4l5-execute-825
+    title: "8/25 L4/L5 律师转化执行 (邮件 cron 已发 8/19 + 8/25 微信 + 电话 + 朋友圈 9 宫格)"
+    prompt: |
+      8/25 当天 14:00-19:00 律师交流 + 1/2 律师付费.
+
+      必读文档:
+      - W15 l4l5 commit 900948f (runbook + 8/19 cron + dashboard)
+      - W16 l4l5-preheat commit d8bab67 (8/19 cron preheat + Mavis cron 8/18-8/25 8 提醒)
+      - W14 launch-execute commit 5986709 (公测期 day 1-26 节奏)
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (L4/L5 转化路径 + 8/25 到期基准)
+      - W14 first-paid-triggers commit 6f785e5 (5 律师执行模板)
+      - W11 B2 commit a99e941 (招募页 6 模块 + 6 track event)
+
+      W18 l4l5-execute-825 工作范围 (8/25 当天执行, Mavis owner + lex-bd 协作):
+
+      1. **8/25 14:00-19:00 L4/L5 律师交流** (Mavis owner 主持):
+         - 14:00 开场 (L4 中所合伙人 + L5 企业法务总监 律师背景介绍)
+         - 14:15 L4 律师付费转化 (BETA2025-0119, ¥449 创史体验官)
+         - 14:30 L5 律师付费转化 (BETA2025-0120, ¥99/月 个人版 或 ¥1500-2000/年 企业版预登记)
+         - 15:00 L4/L5 律师对话 (每位 5min 试用体验分享)
+         - 15:30 9/15 L4/L5 企业版上线预告 (¥1500-2000/律师/年)
+         - 16:00 L4/L5 dashboard 实时演示
+         - 16:30 答疑 + 互动
+         - 17:00 收尾
+
+      2. **8/25 17:00-19:00 律师交流 + 试用续费**:
+         - 2 律师 → 创史群 (公测 day 23)
+         - 试用 trial_started event 触发
+         - 8/25 营收快照: ¥449 (L4 创史) 或 ¥99/月 (L5 个人版)
+
+      3. **8/25 19:00 收尾 + 公测 day 23 报告** (docs/marketing/l4l5-day23-report-2026-08-25.md):
+         - L4/L5 2 律师付费落地 (时间戳 + 邀请码)
+         - 公测 day 23 trial_started 事件数
+         - dashboard 实时截图
+         - 9/15 L4/L5 企业版预登记
+
+      4. **git commit + push** (1 commit: day 23 报告 + 2 律师付费 + 9/15 预登记)
+
+      Stop when (8/25 L4/L5 执行完成):
+      - L4/L5 2 律师付费落地
+      - 60min 律师交流 + 17:00-19:00 试用续费完成
+      - 公测 day 23 trial_started 事件触发
+      - l4l5-day23-report-2026-08-25.md 完整
+      - 9/15 L4/L5 企业版预登记
+      - git log 显示 1+ 8/25 commit
+
+      严禁 (W16 + W17 严守 fabricate 原则, W18 复制):
+      - 不要真发邮件 (8/19 cron 已发, 8/25 微信 + 电话 owner 线下执行)
+      - 不要 fabricate 律师付费 (实测为主, owner 8/25 19:00 实测填实)
+    verify_prompt: |
+      独立验证 8/25 L4/L5 律师转化执行:
+      1. L4/L5 2 律师付费落地 (BETA2025-0119/0120, 实测)
+      2. 60min 律师交流 + 17:00-19:00 试用续费 (W15 900948f runbook 14:00-19:00 节点)
+      3. 公测 day 23 trial_started 事件触发
+      4. l4l5-day23-report-2026-08-25.md 完整 (2 律师付费 + 试用事件 + dashboard 截图)
+      5. 9/15 L4/L5 企业版预登记
+      6. git log 显示 1+ 8/25 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase4-final-831
+    title: "8/31 Phase 4 完结实测 + 50 律师付费 / ¥5 万+ ARR 验证"
+    prompt: |
+      8/31 当天 09:00 owner 跑 dashboard 6 SQL 实测填实 W17 phase4 placeholder.
+
+      必读文档:
+      - W17 phase4 commit 14af1a3 (phase4-final-report.md 12 周回顾 + Phase 5 准备)
+      - W16 kpi commit 83613c4 (kpi-snapshot-2026-08-09.md v1.1)
+      - W17 kpi-v1.1 commit e10cc69 (5 律师 ¥997 + §2.3 20-26)
+      - W18 kpi-verify-809 实测数据 (8/9 KPI)
+      - W18 l4l5-execute-825 实测数据 (8/25 L4/L5)
+      - W11 PRD V5.0 § 10 公测期 KPI
+
+      W18 phase4-final-831 工作范围 (8/31 当天执行, Mavis owner + lex-bd 协作):
+
+      1. **50 律师付费验证** (phase4-final-report.md v1.0 实测填实):
+         - 公式: 3 (首批 60%) + 1 (L4/L5 50%) + 6 (25 新律师 day 1-14 25%) + 14 (day 15-30 拉新 60 名 25%) ≈ 24 律师 (低于预期 50)
+         - 实际: dashboard paid_converted 事件数 (8/31 当天 09:00 抓取)
+         - 如 < 50: 公测 day 16-30 拉新扩量 (5 律所 + 100 律师 + 10 微信群)
+         - 营收快照: 50 × ¥449 创史 (10) + ¥99/月 (40) = 4490 + 3960 = 8450 元
+         - 距 ¥5 万+ ARR: 8450 × 6 = 50700 元 ≈ ¥5 万 ARR ✅ 达标
+         - 或 8450 × 12 = 101400 元 ≈ ¥10 万 ARR ✅ 超额
+
+      2. **phase4-final-report.md v1.0 实测填实** (12 周回顾 W1-W18):
+         - 92+ commit 累计 (W1-W18)
+         - 律师画像: 5 律师 (L1-L5) + 80 创史 + 1000 公测
+         - 公测 KPI: 30 律师 (8/9) + 50 律师 (8/31) + ¥5 万+ ARR
+         - PRD V5.0 落地: 个人版 ¥99/月 + 企业版 ¥1500-2000/律师/年
+         - 5 大价值主张 + 6 大模块
+         - Phase 5 启动: 9/1 React 18 + TS + 9/15 L4/L5 企业版
+
+      3. **phase5-prep.md v1.0** (W17 14af1a3 升级):
+         - Phase 5.1 React 18 + TS 重构 (9/1 启动, W18 task phase5-react-start)
+         - Phase 5.2 Electron 打包 (Q4)
+         - Phase 5.3 Rust 核心 (Q1)
+         - Phase 5.4 L4/L5 企业版上线 (9/15 预登记, W18 task l4l5-enterprise-915)
+         - 3 agent 招聘 (lex-security + lex-electron + lex-mobile)
+
+      4. **git commit + push** (1 commit: Phase 4 完结实测填实 + Phase 5 启动)
+
+      Stop when (8/31 Phase 4 完结实测完成):
+      - 50 律师付费 / ¥5 万+ ARR 实测
+      - phase4-final-report.md v1.0 实测填实
+      - phase5-prep.md v1.0 升级
+      - git log 显示 1+ 8/31 commit
+
+      严禁 (W16 + W17 严守 fabricate 原则, W18 复制):
+      - 不要 fabricate 8/31 数据 (实测为主, owner 8/31 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 8/31 Phase 4 完结实测:
+      1. 50 律师付费 / ¥5 万+ ARR 实测 (paid_converted 事件数 8/31 09:00)
+      2. phase4-final-report.md v1.0 完整 (12 周回顾 W1-W18 + 92+ commit + 5 大价值 + 6 大模块)
+      3. phase5-prep.md v1.0 Phase 5 准备 (React + Electron + Rust + L4/L5 + 3 agent)
+      4. git log 显示 1+ 8/31 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: l4l5-enterprise-915
+    title: "9/15 L4/L5 企业版上线预登记 + 早期用户 1000+ 留存 (W18 follow-up 1)"
+    prompt: |
+      9/15 L4/L5 企业版 ¥1500-2000/律师/年 上线 + 早期用户 1000+ 留存.
+
+      必读文档:
+      - W17 phase4 commit 14af1a3 (Phase 5 准备 L4/L5 企业版 9/15 预登记)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化 runbook)
+      - W16 l4l5-preheat commit d8bab67 (8/19 cron preheat)
+      - W11 PRD V5.0 § 9 商业模式 (企业版 ¥1500-2000/律师/年)
+      - W3-W10 PRD + tracks (Phase 4 全部 12 周回顾)
+      - W18 l4l5-execute-825 8/25 实测数据 (8/9 后)
+
+      W18 l4l5-enterprise-915 工作范围 (9/15 当天执行, Mavis owner + lex-bd 协作):
+
+      1. **9/15 L4/L5 企业版上线** (docs/phase4/l4l5-enterprise-launch-2026-09-15.md):
+         - 9/15 当天 09:00 企业版上线公告 (微信公众号 + 律师群)
+         - 企业版定价: ¥1500-2000/律师/年 (30 人中大所金融/商事)
+         - 9/15-9/30 期间 L4/L5 律师预登记
+         - 5 律所 L1-L5 + 100 律师私域 + 10 微信群
+         - 公测 day 1-30 拉新 1000 律师留存 (按 W15 d66fc33 5 渠道)
+
+      2. **早期用户 1000+ 留存跟踪** (docs/marketing/retention-dashboard-2026-09-15.md):
+         - 5 指标: 日活 (DAU) + 周活 (WAU) + 月活 (MAU) + 留存率 + 续费率
+         - 公测 day 1-30 1000 律师试用 → 50 律师付费 → 100 律师付费 (9/15 目标)
+         - 3 渠道扩量: 5 律所 + 100 律师 + 10 微信群
+         - 朋友推荐 + 朋友圈 9 宫格 + 律协推荐
+
+      3. **9/15 仪式 runbook** (docs/phase4/l4l5-enterprise-ceremony-2026-09-15.md):
+         - 09:00 企业版上线公告
+         - 14:00-17:00 L4/L5 律师企业版咨询
+         - 17:00-19:00 律师交流 + 9/15-9/30 预登记
+         - 19:00 收尾
+
+      4. **L4/L5 律师画像**:
+         - L4 中所合伙人 12 年 30 人中大所金融/商事
+         - L5 企业法务总监 10 年 互联网大厂 100+ 法务部
+
+      5. **git commit + push** (1 commit: 9/15 企业版上线 + 1000 留存 + 仪式 runbook)
+
+      Stop when (9/15 L4/L5 企业版上线完成):
+      - l4l5-enterprise-launch-2026-09-15.md 完整 (上线公告 + 5 律所 + 100 律师 + 10 微信群)
+      - retention-dashboard-2026-09-15.md 5 指标 (DAU + WAU + MAU + 留存率 + 续费率)
+      - l4l5-enterprise-ceremony-2026-09-15.md 仪式 runbook
+      - 9/15-9/30 预登记
+      - git log 显示 1+ 9/15 commit
+
+      严禁 (W16 + W17 严守 fabricate 原则, W18 复制):
+      - 不要 fabricate 9/15 数据 (实测为主, owner 9/15 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 9/15 L4/L5 企业版上线 + 早期用户 1000+ 留存:
+      1. l4l5-enterprise-launch-2026-09-15.md 完整 (上线公告 + 5 律所 + 100 律师 + 10 微信群)
+      2. retention-dashboard-2026-09-15.md 5 指标 (DAU + WAU + MAU + 留存率 + 续费率)
+      3. l4l5-enterprise-ceremony-2026-09-15.md 仪式 runbook (09:00 上线 + 14:00-17:00 咨询 + 17:00-19:00 律师交流)
+      4. L4/L5 律师画像 (L4 中所合伙人 + L5 企业法务总监)
+      5. 9/15-9/30 预登记
+      6. git log 显示 1+ 9/15 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill3-gradual
+    title: "Skill 3 律师函 v2.0 灰度 (基于 8/9 律师反馈) (W18 follow-up 3)"
+    prompt: |
+      8/9 律师反馈收集 + 8/15 v2.0 10% 灰度 + 9/1 全量 50% 灰度.
+
+      必读文档:
+      - W15 skill3-iterate commit 3d429cd + e3f0940 (律师函 v2.0 模板 + skill3_letter_v2.yaml)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 律师试用反馈)
+      - W11 PRD V5.0 § 11 法务自检 (4 文书类型 + 5 维度风险标注)
+      - W12 A2 commit 829d25c (doc_workflow 状态机 + 4 文书风险标注)
+      - W15 final report (Skill 3 lex-ai 派发成功)
+
+      W18 skill3-gradual 工作范围 (8/15 + 9/1 灰度执行, lex-ai):
+
+      1. **8/9 律师反馈收集** (Mavis owner 跑):
+         - 5 律师 (L1-L5) 试用反馈
+         - 5 维度 (事实/法律意见/要求/时限/后果) 评分
+         - prompt v2.0 优化建议
+
+      2. **8/15 v2.0 10% 灰度** (lex-ai):
+         - 10% 律师试用 v2.0 (律师函 v2.0 + skill3_letter_v2.yaml)
+         - A/B test: v1.0 vs v2.0 (50/50 split 律师)
+         - 跟踪 3 指标: 5 维度评分 + 转化率 + 律师满意度
+         - 灰度报告 docs/marketing/skill3-v2-ab-test-2026-08-15.md
+
+      3. **9/1 v2.0 全量 50% 灰度** (lex-ai):
+         - 50% 律师试用 v2.0
+         - 跟踪同样 3 指标
+         - 灰度报告 docs/marketing/skill3-v2-50pct-rollout-2026-09-01.md
+
+      4. **git commit + push** (1 commit: v2.0 模板 + skill3_letter_v2.yaml + 8/15 + 9/1 灰度报告)
+
+      Stop when (Skill 3 v2.0 灰度完成):
+      - 8/15 v2.0 10% 灰度落地 (10% 律师试用)
+      - 9/1 v2.0 50% 灰度落地 (50% 律师试用)
+      - A/B test 数据 (3 指标: 5 维度评分 + 转化率 + 律师满意度)
+      - 2 灰度报告 (8/15 + 9/1)
+      - git log 显示 1+ Skill 3 灰度 commit
+
+      严禁 (W16 + W17 严守 fabricate 原则, W18 复制):
+      - 不要 fabricate 律师反馈 (实测为主, owner 8/9 跑律师试用)
+      - 不要 fabricate A/B test 数据 (实测为主, owner 8/15 + 9/1 跑灰度)
+    verify_prompt: |
+      独立验证 Skill 3 律师函 v2.0 灰度:
+      1. 8/9 律师反馈收集 (5 律师 5 维度评分)
+      2. 8/15 v2.0 10% 灰度 (10% 律师试用, A/B test 50/50 split)
+      3. 9/1 v2.0 50% 灰度 (50% 律师试用)
+      4. 3 跟踪指标 (5 维度评分 + 转化率 + 律师满意度)
+      5. 2 灰度报告 (skill3-v2-ab-test-2026-08-15.md + skill3-v2-50pct-rollout-2026-09-01.md)
+      6. git log 显示 1+ Skill 3 灰度 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-ai
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase5-react-start
+    title: "Phase 5.1 React 18 + TypeScript 重构启动 (W18 follow-up 2)"
+    prompt: |
+      9/1 启动 React 18 + TypeScript 脚手架. 不重写, 重构 W11/W12 现有 HTML/JS 模板.
+
+      必读文档:
+      - W17 phase4 commit 14af1a3 (Phase 5 准备 React 18 + TS 重构)
+      - W17 phase5-prep.md (Phase 5.1 启动计划)
+      - W3-W10 PRD V5.0 (5 大价值主张 + 6 大模块)
+      - W11 B2 commit a99e941 (招募页 6 模块 + router.js)
+      - W12 A2 commit 0001f15 (双审前端)
+      - W13 dashboard commit c62877c (dashboard 7 指标 + chart.js)
+      - W5 contract-review.js + router.js (W5 现有 JS 模式)
+
+      W18 phase5-react-start 工作范围 (9/1 启动, Mavis owner + lex-coder):
+
+      1. **9/1 脚手架启动** (Mavis owner + lex-coder 协作):
+         - Vite + React 18 + TypeScript 项目初始化
+         - 复用 W11/W12 现有 HTML/JS 模板作为 React 组件起点
+         - Tailwind CSS 3.x (与现有 tailwind.css 兼容)
+         - React Router 6.x
+         - TypeScript 5.x strict mode
+
+      2. **9/1 第一周 3 模块 React 版** (lex-coder):
+         - 登录 (W3 login.html)
+         - 工作站 (W5 workstation.html)
+         - 合同审查 (W5 contract-review)
+         - 不重写逻辑, 重构为 React 组件 + TypeScript 类型
+         - 保留所有现有功能 (5 大价值主张 + 6 大模块)
+
+      3. **git commit + push** (1 commit: 9/1 脚手架 + 3 模块 React 版)
+
+      Stop when (Phase 5.1 9/1 启动完成):
+      - Vite + React 18 + TS 脚手架 ✅
+      - 3 模块 React 版 (登录 + 工作站 + 合同审查)
+      - Tailwind 3.x + React Router 6.x + TS 5.x strict
+      - 保留所有现有功能
+      - git log 显示 1+ Phase 5.1 commit
+
+      严禁:
+      - 不要重写功能逻辑 (5 大价值主张 + 6 大模块保持一致)
+      - 不要修改 PRD (V5.0 维持, Phase 5 是实现层重构)
+    verify_prompt: |
+      独立验证 Phase 5.1 React 18 + TS 重构启动:
+      1. Vite + React 18 + TS 项目脚手架 (package.json + tsconfig.json)
+      2. 3 模块 React 版 (登录 + 工作站 + 合同审查)
+      3. Tailwind 3.x + React Router 6.x + TS 5.x strict
+      4. 保留所有现有功能 (5 大价值主张 + 6 大模块)
+      5. git log 显示 1+ Phase 5.1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w18-integration
+    title: "W18 集成验证 (Phase 4 完结实测 + 9/15 企业版 + Phase 5.1 启动 + 3 W18 follow-up 收尾)"
+    prompt: |
+      验证 W18 6 task 集成:
+      1. kpi-verify-809 (lex-bd 营销) — 8/9 KPI 实测
+      2. l4l5-execute-825 (lex-bd 营销) — 8/25 L4/L5 转化执行
+      3. phase4-final-831 (lex-bd 营销) — 8/31 Phase 4 完结实测
+      4. l4l5-enterprise-915 (lex-bd 营销 + Mavis owner) — 9/15 L4/L5 企业版上线 + 1000 留存
+      5. skill3-gradual (lex-ai AI 模型) — 8/15 + 9/1 Skill 3 v2.0 灰度
+      6. phase5-react-start (Mavis owner + lex-coder 工程) — 9/1 Phase 5.1 React 18 + TS 启动
+      7. 3-4 agent deliverable 无冲突 (lex-bd + lex-ai + lex-coder + Mavis owner)
+      8. 3-4 agent 全部 git commit + push
+      9. **严禁 fabricate** (8/9 距今 11 天, 8/25 距今 27 天, 8/31 距今 33 天, 9/1 距今 34 天, 9/15 距今 48 天; 实际数字全部 placeholder 由 owner 实测填实)
+      10. 8/9 前 30 律师付费 + 8/31 50 律师付费 / 月 ¥5 万+ ARR + 9/15 L4/L5 企业版 + 9/1 Phase 5.1 启动
+      11. Phase 4 完结 + Phase 5 启动 (React 18 + TS + Electron + Rust + L4/L5)
+      12. W19 建议 (一句话: 10/1 Phase 5.2 Electron 打包 + 早期用户 1000+ 100 律师付费 + Skill 3 v2.0 全量 + 招 3 agent 启动)
+
+      输出 W18 总结 + W19 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - kpi-verify-809
+      - l4l5-execute-825
+      - phase4-final-831
+      - l4l5-enterprise-915
+      - skill3-gradual
+      - phase5-react-start
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
