@@ -33,3 +33,18 @@ Thumbs.db
 # OS
 *.bak*
 *.tmp
+
+# Electron build outputs
+dist-electron/
+dist-installer/
+out/
+
+# electron-builder cache
+.builder-cache/
+
+# Auto-generated icons (placeholders)
+build/icon.png
+build/icon.ico
+build/icon.icns
+build/installer-header.bmp
+build/installer-sidebar.bmp

@@ -1,19 +1,41 @@
 {
   "name": "lexprime-phase5-react",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "LexPrime Phase 5.1 React 18 + TypeScript 重构脚手架 (W19 9/1 启动, lex-coder)",
+  "description": "LexPrime Phase 5.1 React 18 + TypeScript 重构脚手架 + 5.2 Electron 跨平台桌面端 (W20 10/1)",
+  "main": "dist-electron/main.js",
+  "author": {
+    "name": "LexPrime (元枢法智)",
+    "email": "dev@lexprime.cn"
+  },
+  "homepage": "https://lexprime.cn",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:all": "npm run build && npm run build:electron",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+
+    "electron:dev": "npm run build:all && electron .",
+    "electron:start": "electron .",
+
+    "dist": "npm run build:all && electron-builder",
+    "dist:win": "npm run build:all && electron-builder --win --x64",
+    "dist:mac": "npm run build:all && electron-builder --mac",
+    "dist:linux": "npm run build:all && electron-builder --linux --x64",
+    "dist:all": "npm run build:all && electron-builder -mwl",
+
+    "pack:win": "npm run build:all && electron-builder --win --dir",
+    "pack:mac": "npm run build:all && electron-builder --mac --dir",
+    "pack:linux": "npm run build:all && electron-builder --linux --dir"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
@@ -21,6 +43,8 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "electron": "^17.4.11",
+    "electron-builder": "^23.6.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",
