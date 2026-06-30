@@ -31,7 +31,7 @@ VERDICT: PASS (W22+23 强制规范应用)
 3. **3 风险状态**: self / other / neutral (谁违约)
 4. **跨境框架**: 中英双语 + CISG/UNCITRAL/PICC
 5. **法律规范**: 禁用"必胜/必败/一定" 等违规词 (复用 W11 PRD V5.0 § 11)
-6. **5 维度评分**: 事实 / 法律 / 主张 / 时效 / 后果 (复用 W21 Skill 3 v2.0)
+6. **5 维度评分**: 事实 / 法律 / 主张 / 时效 / 后果 (复用 W12 doc_workflow 4 文书风险标注 + W15 Skill 3 v2.0 prompt 5 维度深度推理)
 """
 from __future__ import annotations
 
@@ -108,7 +108,7 @@ RISK_TYPES: List[RiskType] = list(RiskType)
 
 
 class DimensionType(str, Enum):
-    """5 维度评分 (PRD § 4.3, 复用 W21 Skill 3 v2.0)"""
+    """5 维度评分 (PRD § 4.3, 复用 W12 doc_workflow + W15 Skill 3 v2.0 prompt)"""
     FACTS = "facts"             # 事实
     LEGAL = "legal"             # 法律
     DEMAND = "demand"           # 主张
@@ -243,7 +243,7 @@ class RiskAlert:
 
 @dataclass
 class FiveDimensionScore:
-    """5 维度评分 (PRD § 4.3, 复用 W21 Skill 3 v2.0)"""
+    """5 维度评分 (PRD § 4.3, 复用 W12 doc_workflow + W15 Skill 3 v2.0 prompt)"""
     facts: float        # 事实: 谈判内容与事实证据吻合度 (0-1)
     legal: float        # 法律: 谈判策略与法律框架吻合度 (0-1)
     demand: float       # 主张: 谈判诉求合理性 (0-1)

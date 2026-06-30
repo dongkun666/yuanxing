@@ -92,7 +92,7 @@ Skill 4 v1 (AI 辅助谈判)
 **输入**: 谈判轨迹 (5 维度评分 + 关键节点 + 风险点)
 **输出**: 复盘报告 ~5KB
 
-**5 维度评分** (复用 W21 Skill 3 v2.0):
+**5 维度评分** (复用 W12 doc_workflow 4 文书风险标注 + W15 Skill 3 v2.0 prompt 5 维度深度推理):
 - 事实 (facts): 0-1
 - 法律 (legal): 0-1
 - 主张 (demand): 0-1
@@ -208,7 +208,7 @@ draft → ai_reviewed → lawyer_reviewed → settled → archived
 **additive 渐进保证** (跟 Skill 3 v2.0 → v3.0 路线一致):
 - Skill 4 v1 启动时 v2.0 律师函 + 文书工作流保留 30 天
 - v2.0 历史文书兼容 v1 谈判场景
-- 5 维度评分机制兼容 W21 baseline
+- 5 维度评分机制兼容 W12 doc_workflow + W15 Skill 3 v2.0 baseline
 - doc_workflow 状态机兼容 W12 829d25c
 - 不破坏现有 api/main.py + auth/main.py + 现有 Skill 2/3 endpoints
 

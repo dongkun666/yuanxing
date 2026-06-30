@@ -37,6 +37,7 @@ from skills.negotiation.negotiation_models import (
     CROSS_BORDER_FRAMEWORKS,
     DimensionType,
     Language,
+    NEGOTIATION_STATE_TRANSITIONS,
     NegotiationCase,
     NegotiationCaseType,
     NegotiationState,
@@ -472,11 +473,8 @@ async def state_transition_endpoint(req: StateTransitionRequest):
         except ValueError as e:
             raise HTTPException(400, f"未知状态: {req.from_state} / {req.to_state}") from e
 
-        # 校验合法性
-        allowed = [
-            s.value for s in
-            __import__("negotiation_models").NEGOTIATION_STATE_TRANSITIONS.get(from_state, [])
-        ]
+        # 校验合法性 (复用 NEGOTIATION_STATE_TRANSITIONS, 不依赖 __import__ hack)
+        allowed = [s.value for s in NEGOTIATION_STATE_TRANSITIONS.get(from_state, [])]
         if to_state.value not in allowed:
             raise HTTPException(
                 400,

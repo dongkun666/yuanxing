@@ -7,7 +7,7 @@ VERDICT: PASS (W22+23 强制规范应用)
 必读:
 - W28 owner commit 8670417 (Skill 4 v1 PRD § 2.4 + § 4.3)
 - W23 phase5-5-celebration commit 432a073 (复盘报告格式样板)
-- W21 skill3-full-rollout commit 6929cc1 (5 维度评分机制)
+- W15 commit 3d429cd (L7 吴律师 AI 5 维度风险标注 facts/legal/demand/deadline/consequence) + W12 commit 829d25c (4 文书风险标注)
 - W11 PRD V5.0 § 11 法务自检 (禁用违规词)
 
 2 大功能 (PRD § 2.4):
