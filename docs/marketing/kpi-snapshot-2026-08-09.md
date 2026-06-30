@@ -484,9 +484,55 @@ WHERE event = 'referral_redeemed'
 
 ---
 
+## 9. v2.0 W18 实测路径 (W18 kpi-verify-809 forward-execute placeholder, 2026-06-30)
+
+> **v2.0 触发**: W18 kpi-verify-809 task 在 W17 v1.1 修正基础上, 等 8/9 当天 09:00 owner 实测填实 placeholder 落地 v2.0.
+> **修正日期**: 2026-06-30 (W18 kpi-verify-809 forward-execute runbook 落档)
+> **修正人**: lex-bd (BD/运营)
+> **修正日期 (实测填实)**: 2026-08-09 09:00 (owner 跑 6 SQL 后)
+> **禁止**: 当前 6/30 距 8/9 还有 40 天, 严禁提前 fabricate 实测数据.
+
+### 9.1 v1.1 → v2.0 实测填实维度 (5 维度)
+
+| # | 维度 | v1.1 placeholder | v2.0 owner 8/9 09:00 实测填实 |
+|---|------|-----------------|----------------------------|
+| **A** | 付费律师总数 (paid_converted 事件数) | [30] | `<paid_count_actual>` placeholder |
+| **B** | 总营收快照 (sum(paid_amount)) | [¥4,020] | `<paid_amount_actual_yuan>` placeholder |
+| **C** | 首批 5 律师营收 (L1-L5 invite_code) | [¥997] | `<paid_amount_5_lawyers_actual>` placeholder |
+| **D** | 25 新律师复制扩散营收 (NOT IN L1-L5) | [¥3,023] | `<paid_amount_25_lawyers_actual>` placeholder |
+| **E** | 距月底增量人数 + ARR 缺口 | [20-26 / ¥10,436-14,000] | `<gap_arr_amount_actual>` placeholder |
+
+> **5 维度全部填实** = v2.0 落地. 任一维度缺失 / 不一致 / 偏离 v1.1 占位 → 触发 W18 应急备案对应场景 (§ 6 应急 4 场景从 v1.1 3 场景扩到 v2.0 4 场景).
+
+### 9.2 v2.0 替换 placeholder 的 16 处引用 (跟 v1.1 一致, 但实测值回灌)
+
+W18 实测填实后, v2.0 重新跑一次 v1.1 § 8.2 16 处引用一致性确认, 确认公式跟实测数字完全一致. v1.0 错算数字 (¥1,096 / ¥2,924 / 35 律师 / ¥41,580) 仅在 § 8.1 修正明细表保留 (intentional 历史引用).
+
+### 9.3 v2.0 → v2.1 修正触发条件 (W18 新增, 类似 v1.0 → v1.1 修正模式)
+
+> **如果 owner 8/9 实测 A ≠ 30 + B ≠ ¥4,020**: 触发 v2.1 修正 (实测口径修正, 类似 v1.1 修正模式).
+> **如果 owner 8/9 实测 C+D ≠ B (差 > 5%)**: 触发 v2.1 修正 (5 律师 vs 25 新律师口径重新对齐).
+> **如果 owner 8/9 实测 E 不在 20-26 / ¥10,436-14,000 范围**: 触发 v2.1 修正 (距月底 § 2.3 重新对齐).
+
+### 9.4 v2.0 跟 W18 kpi-verify-runbook-2026-08-09.md 衔接
+
+- v2.0 = kpi-snapshot-2026-08-09.md (本文件) 实测填实版 (5 维度实测 + 16 处引用回灌 + v1.1 数学验证)
+- W18 kpi-verify-runbook-2026-08-09.md = 实测执行手册 (8/9 当天 09:00 owner 9 步操作 + 6 SQL 实测 + 4 场景应急)
+- 两者配套: runbook 是 v1.0 forward-execute 落档, snapshot 是 v1.1 (修订) → v2.0 (实测填实) 接力
+- v1.1 (现有) → v2.0 (8/9 实测后) 是 placeholder 实测回灌, 不是新增修正, 但用 v2.0 版本号对齐 W18 task Stop when "kpi-snapshot-2026-08-09.md v2.0"
+
+### 9.5 v2.0 严守 fabricate 原则 (W18 复制 W17 + W16 模式)
+
+- ✅ v2.0 是实测回灌, 不是新增修正: 5 维度实测数字 (A/B/C/D/E) 全部 placeholder, 等 8/9 09:00 实测
+- ✅ 严禁在 8/9 实测前手动替换 v1.1 占位数字: 保持 v1.1 placeholder 占位完整性
+- ✅ 严禁基于"预期" / "估计" / "任务公式" 替换实测数字: v1.1 公式 ¥4,020 = 3 × ¥449 + 27 × ¥99, 不是实测, 不能填实 v2.0
+- ✅ 8/9 实测当天 09:00 owner 跑 6 SQL 后, 立即 commit v2.0 push origin/main, 严禁 8/9 之前 commit v2.0
+
+---
+
 > **撰写**: lex-bd (BD/运营)
 > **协作**: 总指挥 (5 律师 1v1 深度沟通 + 朋友圈 9 宫格 + 律协背书) · lex-coder (dashboard 监控 + 6 SQL + Stripe webhook + 5 事件埋点) · lex-pm (试用律师使用提醒 + 创史 5 折延期 + 企业版 PRD) · lex-design (海报 + 招募页 + 公众号长文)
-> **文档版本**: v1.1 (2026-06-30, W17 kpi-v1.1-fixes 数学修正)
-> **复用**: 30 律师付费公式来自 W16 kpi-track-809 任务定义, 5 律师转化明细来自 W14 first-paid-triggers-runbook.md § 3-4 + dashboard-paid-triggers § 7, 5 渠道转化来自 W15 recruit-1000-runbook § 1-3 + dashboard-recruit-1000 § 5, 朋友圈扩散来自 W15 friends-circle-9-grid + recruit-1000-runbook § 8, 朋友推荐来自 W15 recruit-1000-runbook § 9, L4/L5 接力来自 W15 l4l5-triggers-runbook § 1, dashboard 6 指标来自 W16 kpi-dashboard-726-809 § 1
-> **更新频率**: 8/9 当天 23:00 Mavis cron 自动跑 6 SQL → 23:30 BD 校验 → 23:45 最终归档.
-> **严禁 fabricate**: 当前 2026-06-30 距 8/9 还有 40 天, 所有 30 律师付费数字 + 营收快照 + dashboard 节点验证数据均为 placeholder, 由 owner 8/9 当天 23:00 实测填实
+> **文档版本**: v1.1 (2026-06-30, W17 kpi-v1.1-fixes 数学修正) → **v2.0 (2026-08-09 09:00 实测填实 placeholder 接力, W18 kpi-verify-809)**
+> **复用**: 30 律师付费公式来自 W16 kpi-track-809 任务定义, 5 律师转化明细来自 W14 first-paid-triggers-runbook.md § 3-4 + dashboard-paid-triggers § 7, 5 渠道转化来自 W15 recruit-1000-runbook § 1-3 + dashboard-recruit-1000 § 5, 朋友圈扩散来自 W15 friends-circle-9-grid + recruit-1000-runbook § 8, 朋友推荐来自 W15 recruit-1000-runbook § 9, L4/L5 接力来自 W15 l4l5-triggers-runbook § 1, dashboard 6 指标来自 W16 kpi-dashboard-726-809 § 1, **v2.0 实测路径来自 W18 kpi-verify-runbook-2026-08-09.md (W18 task, 9 节 + 6 SQL + 9 步操作 + 4 应急)**
+> **更新频率**: 8/9 当天 09:00 owner 跑 6 SQL 实测填实 → 10:00 v2.0 commit 落档 → 23:00 Mavis cron 终极归档 (W18 kpi-verify-809 forward-execute).
+> **严禁 fabricate**: 当前 2026-06-30 距 8/9 还有 40 天, 所有 30 律师付费数字 + 营收快照 + dashboard 节点验证数据均为 placeholder, 由 owner 8/9 当天 09:00 实测填实 (严禁在 8/9 之前手动替换 v1.1 placeholder 占位为估算值)
