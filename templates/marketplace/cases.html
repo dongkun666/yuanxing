@@ -1,0 +1,128 @@
+<!--
+  W30 Phase 6.1 Marketplace - 协同办案主页
+  复用: W29 1b07d88 backend (POST /cases + GET /cases/{id}) + W12 5 状态机
+  功能: 律师 ↔ 律师 ↔ 律所 协同办案, 5 状态机 (open → lawyer_invited → accepted → in_progress → settled → archived)
+  抽成: 律师 A 收 (¥X × split_ratio) - 律师 A: ¥X × split_ratio - 10%; 律师 B: ¥X × (1-split_ratio); Marketplace: ¥X × 10%
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto mp-page mp-fade-in" id="view-marketplace-cases" data-view-source="marketplace/cases.html">
+
+<!-- ============ 顶部 header ============ -->
+<header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm flex-shrink-0">
+  <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+    <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('marketplace-lawyers')" title="返回 Marketplace 律师">
+      <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+    </button>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-1.5">
+        <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+          <iconify-icon icon="mdi:account-multiple-plus-outline" class="text-success text-lg md:text-xl"></iconify-icon>
+          <span class="truncate">协同办案</span>
+        </h1>
+        <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+          <iconify-icon icon="mdi:storefront-outline" class="text-xs"></iconify-icon>
+          <span class="hidden sm:inline">Phase 6.1</span>
+        </span>
+        <span class="text-[10px] text-fg-tertiary flex-shrink-0 hidden md:inline">W12 5 状态机 + 10% 抽成</span>
+      </div>
+      <p class="text-[11px] text-fg-tertiary truncate">律师 A 发起 → 邀请律师 B → 协同办案 → 结算分账</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <select id="mp-cases-state" class="mp-input mp-btn-sm" style="padding: 4px 8px;">
+        <option value="">全部状态</option>
+        <option value="open">公开</option>
+        <option value="lawyer_invited">已邀请</option>
+        <option value="accepted">已接案</option>
+        <option value="in_progress">进行中</option>
+        <option value="settled">已结算</option>
+        <option value="archived">已归档</option>
+      </select>
+      <button id="mp-cases-create-btn" class="mp-btn mp-btn-primary mp-btn-sm">
+        <iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+        <span class="hidden sm:inline">发布协同办案</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 强制声明 ============ -->
+<section class="px-4 md:px-6 py-3 bg-bg-subtle flex-shrink-0">
+  <div class="mp-disclaimer max-w-7xl mx-auto">
+    <div class="flex items-start gap-2">
+      <iconify-icon icon="mdi:account-multiple-check-outline" class="text-success flex-shrink-0 mt-0.5"></iconify-icon>
+      <div>
+        <strong class="text-fg-primary">5 状态机 (复用 W12 doc_workflow):</strong>
+        <code class="ml-2 px-1.5 py-0.5 bg-white rounded text-urgent">open → lawyer_invited → accepted → in_progress → settled → archived</code>
+        <span class="ml-3 text-fg-secondary">状态转换需要 actor + reason 审计追溯, history JSON 数组每条 {from, to, actor, reason, ts}。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 协同办案列表 ============ -->
+<main class="flex-1 px-4 md:px-6 py-4 overflow-y-auto">
+  <div class="max-w-7xl mx-auto">
+    <!-- 5 状态概览 -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-4">
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">公开</div>
+        <div class="text-xl font-bold text-brand">0</div>
+      </div>
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">已邀请</div>
+        <div class="text-xl font-bold text-success">1</div>
+      </div>
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">已接案</div>
+        <div class="text-xl font-bold text-warning">0</div>
+      </div>
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">进行中</div>
+        <div class="text-xl font-bold text-ai">1</div>
+      </div>
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">已结算</div>
+        <div class="text-xl font-bold text-fg-secondary">0</div>
+      </div>
+      <div class="bg-white rounded-md p-3 border border-bg-border text-center">
+        <div class="text-[11px] text-fg-tertiary">已归档</div>
+        <div class="text-xl font-bold text-fg-tertiary">0</div>
+      </div>
+    </div>
+
+    <h2 class="text-sm font-semibold flex items-center gap-2 mb-3">
+      <iconify-icon icon="mdi:briefcase-outline" class="text-success"></iconify-icon>
+      协同办案案件列表
+    </h2>
+
+    <div id="mp-cases-list" class="mp-fade-in">
+      <div class="mp-loading">
+        <span class="mp-loading-spinner"></span>
+        加载案件中…
+      </div>
+    </div>
+
+    <!-- 抽成计算说明 -->
+    <div class="bg-white rounded-lg p-4 mt-4 border border-bg-border">
+      <h3 class="text-sm font-semibold mb-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:calculator-variant-outline" class="text-brand"></iconify-icon>
+        协同办案抽成计算 (W28 PRD § 3.3)
+      </h3>
+      <div class="text-[12px] text-fg-secondary space-y-1 leading-relaxed">
+        <p>律师 A 收 ¥X 律师费, Marketplace 自动按 <code class="px-1.5 py-0.5 bg-bg-subtle rounded">split_ratio</code> 分账:</p>
+        <p>• 律师 A: <code class="px-1.5 py-0.5 bg-bg-subtle rounded">¥X × split_ratio - ¥X × 10%</code> (净得)</p>
+        <p>• 律师 B: <code class="px-1.5 py-0.5 bg-bg-subtle rounded">¥X × (1 - split_ratio)</code></p>
+        <p>• Marketplace: <code class="px-1.5 py-0.5 bg-bg-subtle rounded">¥X × 10%</code> (固定 10% 抽成)</p>
+        <p class="text-fg-tertiary text-[11px]">例: ¥50,000 律师费, split_ratio=0.6 → 律师 A 净得 ¥27,000, 律师 B 得 ¥20,000, Marketplace 得 ¥5,000</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function() {
+    if (typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn.initCasesView === 'function') {
+        window.MarketplaceFn.initCasesView();
+    }
+})();
+</script>
+</div>

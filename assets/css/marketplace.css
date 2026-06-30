@@ -1,0 +1,223 @@
+/* =============================================================================
+ * LexPrime Phase 6.1 Marketplace UI 样式 (W30 phase6-1-ui · 2026-07-01)
+ * =============================================================================
+ * 5 页面共用样式: lawyers / cases / referrals / cross-border / metrics
+ * 复用 tailwind 主品牌色 (#165DFF) + 状态色 (success/warning/danger)
+ * W29 1b07d88 backend 7 API + W28 f713970 PRD 商业模型
+ *
+ * 五大块:
+ *  1. Marketplace 通用容器 + 头部
+ *  2. 5 维度评分 (specialty / experience / geography / availability / rating)
+ *  3. 转介绍 timeline (5 状态: pending → accepted → completed → settled → cancelled)
+ *  4. 协同办案 5 状态机 (open → lawyer_invited → accepted → in_progress → settled → archived)
+ *  5. 跨境文件定价表 + 语言切换 + 抽成展示
+ * ============================================================================= */
+
+/* ===== 1. Marketplace 通用 ===== */
+
+.mp-fade-in { animation: mpFadeIn 220ms ease-out; }
+@keyframes mpFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+.mp-page { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+
+/* 顶部 hero 渐变 (Marketplace 品牌色, 紫蓝调和 Phase 6 跨月气质) */
+.mp-hero-gradient { background: linear-gradient(135deg, #165DFF 0%, #6C5CE7 55%, #9333EA 100%); }
+
+/* 5 大入口卡片 hover */
+.mp-entry-card { transition: all 200ms ease-out; }
+.mp-entry-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22, 93, 255, 0.12); }
+
+/* 律师卡片 */
+.mp-lawyer-card { transition: all 200ms ease-out; border: 1px solid #E5E6EB; }
+.mp-lawyer-card:hover { border-color: #165DFF; box-shadow: 0 4px 16px rgba(22, 93, 255, 0.10); }
+
+/* 案件 / 转介绍 行 hover */
+.mp-row { transition: background-color 150ms ease-out; }
+.mp-row:hover { background-color: #F7F8FA; }
+
+/* ===== 2. 5 维度评分 (PRD § 8.1 + W15 recruit 5 维) ===== */
+
+.mp-dim-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.mp-dim-name { width: 64px; font-size: 11px; color: #4E5969; flex-shrink: 0; font-weight: 500; }
+.mp-dim-track {
+  flex: 1; height: 6px; background: #F0F2F5; border-radius: 9999px; overflow: hidden;
+}
+.mp-dim-fill { height: 100%; border-radius: 9999px; transition: width 600ms ease-out; }
+.mp-dim-val { width: 36px; font-size: 11px; font-weight: 600; color: #1D2129; text-align: right; flex-shrink: 0; font-feature-settings: "tnum"; }
+
+/* 5 维度配色 (跟品牌色 + 5 评级一致) */
+.mp-dim-specialty .mp-dim-fill { background: linear-gradient(90deg, #165DFF 0%, #4080FF 100%); }
+.mp-dim-experience .mp-dim-fill { background: linear-gradient(90deg, #00B42A 0%, #4ECB73 100%); }
+.mp-dim-geography .mp-dim-fill { background: linear-gradient(90deg, #FF7D00 0%, #FFB84D 100%); }
+.mp-dim-availability .mp-dim-fill { background: linear-gradient(90deg, #6C5CE7 0%, #A29BFE 100%); }
+.mp-dim-rating .mp-dim-fill { background: linear-gradient(90deg, #FA8C16 0%, #FFC069 100%); }
+
+/* 综合得分大字号 */
+.mp-score-big { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+
+/* 推荐候选 / 强推荐徽标 */
+.mp-badge-recommend { background: #E8F3FF; color: #165DFF; }
+.mp-badge-strong { background: #FFF7E6; color: #FA8C16; }
+.mp-badge-cross-border { background: #F3E5F5; color: #6C5CE7; }
+
+/* ===== 3. 转介绍 timeline (5 状态) ===== */
+
+.mp-timeline { position: relative; padding-left: 28px; }
+.mp-timeline::before {
+  content: ''; position: absolute; left: 11px; top: 6px; bottom: 6px;
+  width: 2px; background: #E5E6EB;
+}
+.mp-timeline-item { position: relative; padding-bottom: 18px; }
+.mp-timeline-item:last-child { padding-bottom: 0; }
+.mp-timeline-dot {
+  position: absolute; left: -22px; top: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid #C9CDD4; z-index: 1;
+}
+.mp-timeline-dot.completed { background: #00B42A; border-color: #00B42A; }
+.mp-timeline-dot.active { background: #165DFF; border-color: #165DFF; box-shadow: 0 0 0 4px rgba(22, 93, 255, 0.15); }
+.mp-timeline-dot.cancelled { background: #F5222D; border-color: #F5222D; }
+
+.mp-timeline-title { font-size: 13px; font-weight: 600; color: #1D2129; margin-bottom: 2px; }
+.mp-timeline-meta { font-size: 11px; color: #86909C; }
+
+/* ===== 4. 协同办案 5 状态机 (PRD § 3.3) ===== */
+
+.mp-state-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 9999px;
+  font-size: 11px; font-weight: 600;
+}
+.mp-state-open            { background: #E8F3FF; color: #165DFF; }
+.mp-state-lawyer_invited  { background: #E5F8EE; color: #00B42A; }
+.mp-state-accepted        { background: #FFF7E6; color: #FA8C16; }
+.mp-state-in_progress     { background: #EDEBFF; color: #6C5CE7; }
+.mp-state-settled         { background: #E5E6EB; color: #4E5969; }
+.mp-state-archived        { background: #F2F3F5; color: #86909C; }
+
+/* 5 状态步骤条 */
+.mp-state-step { display: flex; align-items: center; }
+.mp-state-step-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; border: 2px solid #E5E6EB;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #86909C;
+  flex-shrink: 0;
+}
+.mp-state-step-dot.active { background: #165DFF; border-color: #165DFF; color: #fff; }
+.mp-state-step-dot.done { background: #00B42A; border-color: #00B42A; color: #fff; }
+.mp-state-step-line {
+  flex: 1; height: 2px; background: #E5E6EB; margin: 0 6px;
+}
+.mp-state-step-line.done { background: #00B42A; }
+.mp-state-step-label { font-size: 11px; color: #4E5969; margin-top: 4px; text-align: center; }
+
+/* ===== 5. 跨境文件定价表 + 语言 + 抽成 ===== */
+
+.mp-doc-price {
+  display: flex; align-items: baseline; gap: 4px;
+  font-feature-settings: "tnum";
+}
+.mp-doc-price-num { font-size: 18px; font-weight: 700; color: #1D2129; }
+.mp-doc-price-cur { font-size: 11px; color: #86909C; }
+.mp-doc-commission { font-size: 11px; color: #FA8C16; font-weight: 500; }
+
+/* 语言标签 (4 语言) */
+.mp-lang-zh-CN       { background: #E8F3FF; color: #165DFF; }
+.mp-lang-en-US       { background: #E5F8EE; color: #00B42A; }
+.mp-lang-bilingual   { background: #FFF7E6; color: #FA8C16; }
+.mp-lang-dual_column { background: #F3E5F5; color: #6C5CE7; }
+
+/* 司法管辖区 (8) */
+.mp-jur-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: #F2F3F5; color: #4E5969; margin-right: 4px; }
+
+/* ===== 6. 指标 dashboard (5 维度 + 趋势) ===== */
+
+.mp-metric-card { transition: all 200ms ease-out; }
+.mp-metric-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); }
+.mp-metric-num { font-size: 32px; font-weight: 700; color: #1D2129; line-height: 1.2; font-feature-settings: "tnum"; }
+.mp-metric-label { font-size: 12px; color: #4E5969; }
+.mp-metric-delta { font-size: 11px; font-weight: 600; }
+.mp-metric-delta.up { color: #00B42A; }
+.mp-metric-delta.down { color: #F5222D; }
+.mp-metric-delta.flat { color: #86909C; }
+
+/* 5 指标配色 (紫蓝橙绿红) */
+.mp-metric-participants { background: linear-gradient(135deg, #E8F3FF 0%, #FFFFFF 100%); border-color: rgba(22, 93, 255, 0.15); }
+.mp-metric-cases        { background: linear-gradient(135deg, #E5F8EE 0%, #FFFFFF 100%); border-color: rgba(0, 180, 42, 0.15); }
+.mp-metric-revenue      { background: linear-gradient(135deg, #FFF7E6 0%, #FFFFFF 100%); border-color: rgba(250, 140, 22, 0.15); }
+.mp-metric-crossborder  { background: linear-gradient(135deg, #F3E5F5 0%, #FFFFFF 100%); border-color: rgba(108, 92, 231, 0.15); }
+.mp-metric-rating       { background: linear-gradient(135deg, #FFF1F0 0%, #FFFFFF 100%); border-color: rgba(245, 34, 45, 0.15); }
+
+/* ===== 7. 复用 W11 法务自检 + Marketplace 强声明横幅 ===== */
+
+.mp-disclaimer {
+  background: linear-gradient(135deg, #FFF7E6 0%, #FFFBE6 100%);
+  border: 1px solid #FFD591; border-radius: 8px;
+  padding: 12px 16px; font-size: 12px; color: #874D00; line-height: 1.6;
+}
+.mp-disclaimer-short {
+  background: #F2F3F5; border: 1px solid #E5E6EB; border-radius: 6px;
+  padding: 8px 12px; font-size: 11px; color: #4E5969;
+}
+
+/* ===== 8. 表单 + 输入 ===== */
+
+.mp-input {
+  width: 100%; padding: 8px 12px; border: 1px solid #E5E6EB; border-radius: 6px;
+  font-size: 13px; color: #1D2129; background: #fff; outline: none;
+  transition: border-color 150ms ease-out;
+}
+.mp-input:focus { border-color: #165DFF; box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.15); }
+
+.mp-label { font-size: 12px; font-weight: 500; color: #4E5969; margin-bottom: 4px; display: block; }
+
+.mp-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  transition: all 150ms ease-out; cursor: pointer; border: 1px solid transparent;
+}
+.mp-btn-primary { background: #165DFF; color: #fff; }
+.mp-btn-primary:hover { background: #4080FF; }
+.mp-btn-primary:disabled { background: #C9CDD4; cursor: not-allowed; }
+.mp-btn-secondary { background: #fff; color: #1D2129; border-color: #E5E6EB; }
+.mp-btn-secondary:hover { border-color: #165DFF; color: #165DFF; }
+.mp-btn-ghost { background: transparent; color: #4E5969; }
+.mp-btn-ghost:hover { background: #F2F3F5; color: #1D2129; }
+.mp-btn-sm { padding: 4px 10px; font-size: 12px; }
+
+/* ===== 9. 空状态 + 加载 + 错误 ===== */
+
+.mp-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 16px; color: #86909C; font-size: 13px; text-align: center;
+}
+.mp-empty-icon { font-size: 36px; margin-bottom: 8px; color: #C9CDD4; }
+
+.mp-loading { display: flex; align-items: center; justify-content: center; padding: 24px; color: #86909C; font-size: 13px; }
+.mp-loading-spinner {
+  width: 16px; height: 16px; border: 2px solid #E5E6EB; border-top-color: #165DFF;
+  border-radius: 50%; animation: mpSpin 700ms linear infinite; margin-right: 8px;
+}
+@keyframes mpSpin { to { transform: rotate(360deg); } }
+
+.mp-error {
+  background: #FFF1F0; border: 1px solid #FFA39E; border-radius: 6px;
+  padding: 12px 16px; color: #CF1322; font-size: 12px;
+}
+
+/* ===== 10. 响应式 (移动端 < 768px) ===== */
+
+@media (max-width: 767px) {
+  .mp-hero-title { font-size: 22px !important; }
+  .mp-hero-subtitle { font-size: 13px !important; }
+  .mp-metric-num { font-size: 24px !important; }
+  .mp-dim-name { width: 56px; font-size: 10px; }
+  .mp-dim-val { width: 32px; font-size: 10px; }
+  .mp-state-step-dot { width: 20px; height: 20px; font-size: 10px; }
+  .mp-state-step-label { font-size: 10px; }
+  .mp-timeline { padding-left: 22px; }
+  .mp-timeline-dot { left: -18px; width: 14px; height: 14px; }
+  .mp-btn { padding: 5px 10px; font-size: 12px; }
+}

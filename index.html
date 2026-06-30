@@ -50,6 +50,8 @@ window.Iconify.disableRemoteAPI = true;
 </script>
 <!-- 自定义样式 -->
 <link rel="stylesheet" href="./assets/css/styles.css">
+<!-- W30 (2026-07-01 lex-coder) Phase 6.1 Marketplace UI 样式 (5 页面共用) -->
+<link rel="stylesheet" href="./assets/css/marketplace.css?v=1">
 </head>
 <body class="h-screen flex flex-col min-w-[1024px]">
 <!-- 顶部导航栏 -->
@@ -186,6 +188,11 @@ window.Iconify.disableRemoteAPI = true;
                 <iconify-icon class="text-xl mr-3" icon="mdi:chart-line"></iconify-icon>
                 <span class="sidebar-text">运营 Dashboard</span>
                 <span class="ml-auto text-[9px] bg-brand-tint text-brand px-1.5 py-0.5 rounded-full font-medium">7/26</span>
+            </div>
+            <div class="sidebar-item" onclick="switchView('marketplace-lawyers', this)">
+                <iconify-icon class="text-xl mr-3" icon="mdi:scale-balance"></iconify-icon>
+                <span class="sidebar-text">Marketplace</span>
+                <span class="ml-auto text-[9px] bg-ai-tint text-ai px-1.5 py-0.5 rounded-full font-medium">6.1</span>
             </div>
             <div class="sidebar-item" onclick="switchView('contract-review-upload', this)">
                 <iconify-icon class="text-xl mr-3" icon="mdi:shield-search"></iconify-icon>
@@ -352,6 +359,8 @@ window.Iconify.disableRemoteAPI = true;
 <!-- 司法观点库 (与知识库集成) -->
 <script src="./assets/js/judicial-data.js?v=22"></script>
 <script src="./assets/js/judicial.js?v=22"></script>
+<!-- W30 (2026-07-01 lex-coder) Phase 6.1 Marketplace UI (复用 W29 1b07d88 backend 7 API) -->
+<script src="./assets/js/marketplace.js?v=1"></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {

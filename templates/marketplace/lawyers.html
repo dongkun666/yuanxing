@@ -1,0 +1,196 @@
+<!--
+  W30 Phase 6.1 Marketplace - 律师 Marketplace 主页
+  复用: W29 1b07d88 backend (POST /lawyers + GET /lawyers/{id}) + W28 f713970 PRD
+  功能: 律师推荐 + 5 维度评分 + 地理位置 + 案件类型筛选 + 转介绍 / 协同入口
+  入口: 侧边栏 "Marketplace · 律师" → switchView('marketplace-lawyers')
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto mp-page mp-fade-in" id="view-marketplace-lawyers" data-view-source="marketplace/lawyers.html">
+
+<!-- ============ 顶部 Hero 横幅 ============ -->
+<header class="mp-hero-gradient text-white relative overflow-hidden flex-shrink-0">
+  <div class="absolute -top-32 -right-32 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
+  <div class="absolute -bottom-32 -left-32 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
+  <div class="relative px-4 md:px-6 py-5 md:py-7">
+    <div class="flex items-center gap-2 text-[11px] opacity-80 mb-2">
+      <iconify-icon icon="mdi:chevron-left" class="text-xs"></iconify-icon>
+      <span>工作台</span>
+      <iconify-icon icon="mdi:chevron-right" class="text-xs"></iconify-icon>
+      <span>Marketplace</span>
+      <iconify-icon icon="mdi:chevron-right" class="text-xs"></iconify-icon>
+      <span class="opacity-100 font-medium">律师推荐</span>
+    </div>
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-2">
+          <h1 class="text-xl md:text-2xl font-bold flex items-center gap-2 mp-hero-title">
+            <iconify-icon icon="mdi:scale-balance" class="text-2xl"></iconify-icon>
+            律师 Marketplace
+          </h1>
+          <span class="inline-flex items-center gap-1 text-[10px] text-white font-medium px-2 py-0.5 bg-white/20 rounded-sm">
+            <iconify-icon icon="mdi:storefront-outline" class="text-xs"></iconify-icon>
+            Phase 6.1
+          </span>
+          <span class="inline-flex items-center gap-1 text-[10px] text-white font-medium px-2 py-0.5 bg-urgent/80 rounded-sm">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            W30 上线
+          </span>
+        </div>
+        <p class="text-[12px] md:text-[13px] opacity-90 mp-hero-subtitle max-w-2xl">
+          律师 ↔ 律师 ↔ 律所 撮合平台。基于 5 维度评分 (专业 35% + 经验 20% + 地域 15% + 可接 15% + 评分 15%) 推荐 Top-K 律师，
+          支持转介绍 (5% 抽成) + 协同办案 (10% 抽成) + 跨境文件 (30% 抽成)。
+        </p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button class="h-9 px-3 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-xs rounded-md flex items-center gap-1" onclick="switchView('marketplace-cases')">
+          <iconify-icon icon="mdi:account-multiple-plus-outline"></iconify-icon>
+          协同办案
+        </button>
+        <button class="h-9 px-3 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-xs rounded-md flex items-center gap-1" onclick="switchView('marketplace-referrals')">
+          <iconify-icon icon="mdi:share-variant"></iconify-icon>
+          转介绍
+        </button>
+        <button class="h-9 px-3 bg-white text-brand text-xs font-semibold rounded-md flex items-center gap-1 hover:bg-white/90" onclick="switchView('marketplace-metrics')">
+          <iconify-icon icon="mdi:chart-line"></iconify-icon>
+          5 维指标
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ Marketplace 5 大入口 (W28 PRD 5 大方向) ============ -->
+<section class="px-4 md:px-6 py-4 bg-white border-b border-bg-border flex-shrink-0">
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 max-w-7xl mx-auto">
+    <a class="mp-entry-card block bg-brand-tint rounded-lg p-3 cursor-pointer" onclick="switchView('marketplace-lawyers')">
+      <div class="flex items-center gap-2 mb-1">
+        <iconify-icon icon="mdi:account-search-outline" class="text-brand text-xl"></iconify-icon>
+        <span class="text-sm font-semibold text-brand">律师推荐</span>
+      </div>
+      <p class="text-[10px] text-fg-tertiary leading-snug">5 维评分 + Top-K</p>
+    </a>
+    <a class="mp-entry-card block bg-success-tint rounded-lg p-3 cursor-pointer" onclick="switchView('marketplace-cases')">
+      <div class="flex items-center gap-2 mb-1">
+        <iconify-icon icon="mdi:account-multiple-plus-outline" class="text-success text-xl"></iconify-icon>
+        <span class="text-sm font-semibold text-success">协同办案</span>
+      </div>
+      <p class="text-[10px] text-fg-tertiary leading-snug">律师 A ↔ 律师 B ↔ 律所</p>
+    </a>
+    <a class="mp-entry-card block bg-warning-tint rounded-lg p-3 cursor-pointer" onclick="switchView('marketplace-referrals')">
+      <div class="flex items-center gap-2 mb-1">
+        <iconify-icon icon="mdi:share-variant" class="text-warning text-xl"></iconify-icon>
+        <span class="text-sm font-semibold text-warning">转介绍</span>
+      </div>
+      <p class="text-[10px] text-fg-tertiary leading-snug">5% 抽成, Marketplace 不抽</p>
+    </a>
+    <a class="mp-entry-card block bg-ai-tint rounded-lg p-3 cursor-pointer" onclick="switchView('marketplace-cross-border')">
+      <div class="flex items-center gap-2 mb-1">
+        <iconify-icon icon="mdi:earth" class="text-ai text-xl"></iconify-icon>
+        <span class="text-sm font-semibold text-ai">跨境文件</span>
+      </div>
+      <p class="text-[10px] text-fg-tertiary leading-snug">30% 抽成, W31 正式启用</p>
+    </a>
+    <a class="mp-entry-card block bg-wiki-tint rounded-lg p-3 cursor-pointer" onclick="switchView('marketplace-metrics')">
+      <div class="flex items-center gap-2 mb-1">
+        <iconify-icon icon="mdi:chart-line" class="text-wiki text-xl"></iconify-icon>
+        <span class="text-sm font-semibold text-wiki">5 维指标</span>
+      </div>
+      <p class="text-[10px] text-fg-tertiary leading-snug">Marketplace Dashboard</p>
+    </a>
+  </div>
+</section>
+
+<!-- ============ 强制 AI 辅助声明 (W11 PRD V5.0 § 11 + Marketplace 强声明) ============ -->
+<section class="px-4 md:px-6 py-3 bg-bg-subtle flex-shrink-0">
+  <div class="mp-disclaimer max-w-7xl mx-auto">
+    <div class="flex items-start gap-2">
+      <iconify-icon icon="mdi:alert-circle-outline" class="text-urgent flex-shrink-0 mt-0.5"></iconify-icon>
+      <div id="mp-lawyers-disclaimer">
+        LexPrime Phase 6.1 Marketplace 撮合 + 抽成 + 跨境文件复用基于模板规则引擎生成, 仅作为律师间协作的撮合与计费参考, 不构成正式法律意见, 不替代律师专业判断。具体案件由律师自主接案、自主协商、自主定价, Marketplace 不参与案件实质办理。跨境文件复用 Skill 3 v3.0 多律所模板, 实际发布前需律师本人审核、修改并签字确认。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 筛选区 ============ -->
+<section class="px-4 md:px-6 py-3 bg-white border-b border-bg-border flex-shrink-0">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-3">
+    <div class="md:col-span-2">
+      <label class="mp-label">搜索律师 / 律所 / 简介</label>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary">
+          <iconify-icon icon="mdi:magnify"></iconify-icon>
+        </span>
+        <input id="mp-lawyer-search" class="mp-input pl-10" placeholder="输入律师姓名 / 律所 / 简介关键词…">
+      </div>
+    </div>
+    <div>
+      <label class="mp-label">专业领域</label>
+      <select id="mp-lawyer-case-type" class="mp-input">
+        <option value="">全部专业</option>
+        <option value="contract_dispute">合同纠纷</option>
+        <option value="tort">民事侵权</option>
+        <option value="family">婚姻家庭</option>
+        <option value="equity">公司股权</option>
+        <option value="intellectual_property">知识产权</option>
+        <option value="labor_arbitration">劳动仲裁</option>
+        <option value="administrative_review">行政复议</option>
+        <option value="cross_border">跨境案件</option>
+        <option value="arbitration">国际仲裁</option>
+      </select>
+    </div>
+    <div>
+      <label class="mp-label">地域</label>
+      <select id="mp-lawyer-region" class="mp-input">
+        <option value="">全部地域</option>
+        <option value="北京">北京</option>
+        <option value="上海">上海</option>
+        <option value="深圳">深圳</option>
+        <option value="广州">广州</option>
+        <option value="香港">香港</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 律师列表 (动态渲染) ============ -->
+<main class="flex-1 px-4 md:px-6 py-4 overflow-y-auto">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-sm font-semibold flex items-center gap-2">
+        <iconify-icon icon="mdi:account-group-outline" class="text-brand"></iconify-icon>
+        Marketplace 律师池
+        <span id="mp-lawyer-count" class="text-[11px] text-fg-tertiary ml-1">(0 位)</span>
+      </h2>
+      <div class="text-[11px] text-fg-tertiary">按综合分降序</div>
+    </div>
+    <div id="mp-lawyers-list" class="mp-fade-in">
+      <div class="mp-loading">
+        <span class="mp-loading-spinner"></span>
+        加载律师池中…
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ 底部: 5 维评分算法说明 ============ -->
+<footer class="px-4 md:px-6 py-3 bg-bg-subtle border-t border-bg-border flex-shrink-0">
+  <details class="max-w-7xl mx-auto text-[11px] text-fg-tertiary">
+    <summary class="cursor-pointer hover:text-brand">关于 5 维度评分算法 (W15 recruit-1000 + W29 Marketplace)</summary>
+    <div class="mt-2 leading-relaxed">
+      <p class="mb-2"><strong>5 维度权重</strong>: 专业 0.35 + 经验 0.20 + 地域 0.15 + 可接 0.15 + 评分 0.15 = 100%</p>
+      <p class="mb-2"><strong>跨境能力 bonus</strong>: 支持跨境 +0.10, 支持跨境 + 语言匹配 (en-US) +0.15, 不支持跨境但需要跨境 -0.30</p>
+      <p class="mb-2"><strong>推荐阈值</strong>: 综合分 ≥ 0.6 为推荐候选, ≥ 0.8 为强推荐</p>
+      <p><strong>复用源</strong>: W15 d66fc33 (5 渠道 1000 律师) + W29 1b07d88 (Marketplace engine) + W28 f713970 PRD § 8.1</p>
+    </div>
+  </details>
+</footer>
+
+<script>
+(function() {
+    // 视图初始化 (router.switchView 在 50ms 后回调)
+    if (typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn.initLawyersView === 'function') {
+        window.MarketplaceFn.initLawyersView();
+    }
+})();
+</script>
+</div>

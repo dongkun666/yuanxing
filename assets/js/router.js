@@ -67,7 +67,13 @@
         // W10 (2026-06-30 lex-bd) 创始体验官招募页 (B2: 80 席剩余 + 6 模块 + 2 track event)
         'founding': 'founding/index.html',
         // W13 (2026-06-30 lex-coder) 运营 dashboard (4 业务 + 3 创史专属 + 7 SQL + 3 图表 + 5min 刷新)
-        'dashboard': 'dashboard/index.html'
+        'dashboard': 'dashboard/index.html',
+        // W30 (2026-07-01 lex-coder) Phase 6.1 Marketplace UI (W29 1b07d88 backend 7 API)
+        'marketplace-lawyers': 'marketplace/lawyers.html',
+        'marketplace-cases': 'marketplace/cases.html',
+        'marketplace-referrals': 'marketplace/referrals.html',
+        'marketplace-cross-border': 'marketplace/cross-border.html',
+        'marketplace-metrics': 'marketplace/metrics.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
@@ -199,6 +205,22 @@
                     if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
                 }, 50);
             }
+            if (viewId.indexOf('marketplace-') === 0) {
+                // W30 Phase 6.1 Marketplace 5 页面共用 init 函数 (marketplace.js, cached view path)
+                setTimeout(function() {
+                    var mpMap = {
+                        'marketplace-lawyers': 'initLawyersView',
+                        'marketplace-cases': 'initCasesView',
+                        'marketplace-referrals': 'initReferralsView',
+                        'marketplace-cross-border': 'initCrossBorderView',
+                        'marketplace-metrics': 'initMetricsView'
+                    };
+                    var fn = mpMap[viewId];
+                    if (fn && typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn[fn] === 'function') {
+                        window.MarketplaceFn[fn]();
+                    }
+                }, 50);
+            }
         } else {
             loadView(viewId, function(html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
@@ -261,13 +283,29 @@
                             }
                         }, 50);
                     }
-                    if (viewId === 'dashboard') {
-                        // W13 C1 dashboard 首次加载: view 内部 DOMContentLoaded 会触发 chart 初始化
-                        // 这里额外调一次确保 chart 在视图可见时重建
-                        setTimeout(function() {
-                            if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
-                        }, 100);
+            if (viewId === 'dashboard') {
+                // W13 C1 dashboard 首次加载: view 内部 DOMContentLoaded 会触发 chart 初始化
+                // 这里额外调一次确保 chart 在视图可见时重建
+                setTimeout(function() {
+                    if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
+                }, 100);
+            }
+            if (viewId.indexOf('marketplace-') === 0) {
+                // W30 Phase 6.1 Marketplace 5 页面共用 init 函数 (marketplace.js)
+                setTimeout(function() {
+                    var mpMap = {
+                        'marketplace-lawyers': 'initLawyersView',
+                        'marketplace-cases': 'initCasesView',
+                        'marketplace-referrals': 'initReferralsView',
+                        'marketplace-cross-border': 'initCrossBorderView',
+                        'marketplace-metrics': 'initMetricsView'
+                    };
+                    var fn = mpMap[viewId];
+                    if (fn && typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn[fn] === 'function') {
+                        window.MarketplaceFn[fn]();
                     }
+                }, 50);
+            }
                 }
             });
         }
