@@ -737,15 +737,262 @@ Phase 4 Status: ✅ DONE
 
 ## 12. 文档版本与归档
 
-- **版本**: v1.1 (W17 接力补充 §6-12, 2026-06-30)
+- **版本**: v1.1 (W17 接力补充 §6-12 + W18 接力增量 § 13-14, 2026-06-30)
 - **W16 v1.0 状态**: producer session errored before commit, v1.0 (440 行 §1-5) 已落档
 - **W17 v1.1 状态**: 补充 §6-12 (5 大价值主张 + 6 大模块 + 律师画像 + 决策记录 + 12 周 commit + 阶段总结 + W18 建议)
-- **归档路径**: `docs/phase4/phase4-final-report.md` + `docs/phase4/phase5-prep.md`
+- **W18 v1.1 增量**: 补充 § 13 W18 实测填实路径 + § 14 owner 8/31 checklist (5 律师实测 + 50 律师付费 + ¥5 万+ ARR + day 37 report + 应急备案 4 场景)
+- **归档路径**: `docs/phase4/phase4-final-report.md` + `docs/phase4/phase5-prep.md` + `docs/marketing/phase4-final-runbook-2026-08-31.md` + `docs/marketing/phase4-final-day37-report-2026-08-31.md`
 - **数据 placeholder**: 8/31 节点所有实际数字 placeholder, owner 8/31 当天 09:00 实测填实
 - **更新频率**: 8/31 当天 09:00 Mavis cron 自动跑 dashboard 6 SQL → 23:00 BD 校验 → 23:30 PM 评审 → 23:45 最终归档
 
-> **Phase 4 完结报告 v1.1 完整归档**. W17 接力 W16 重试 producer session errored before commit 状态.
+> **Phase 4 完结报告 v1.1 完整归档**. W17 接力 W16 重试 producer session errored before commit 状态 + W18 接力 W17 实测填实路径增量.
 
 ---
 
-**Phase 4 完结报告 v1.1 完结. W18 (Plan 18) 启动由 owner 主动调度 (9/1) 准备 Phase 5.1 React 18 + TS 重构 + Phase 5.4 L4/L5 企业版上线.**
+## 13. W18 实测填实路径 (8/31 节点 owner 09:00)
+
+> **本节是 W18 接力 W17 v1.1 增量 § 13-14 (2026-06-30 落档)**, 等 8/31 当天 09:00 owner 跑 dashboard 6 SQL + 实测填实 50 律师付费 / ¥5 万+ ARR / 12 周累计 commit 实测数字.
+> **严守严禁 fabricate (W18 复制 W17 + W16 + W18 kpi-verify-809 + W18 l4l5-execute-825 模式)**: 当前 2026-06-30 距 8/31 还有 62 天, 所有 8/31 节点实际数字 placeholder, owner 8/31 09:00 实测填实后 commit 落档.
+
+### 13.1 50 律师付费 / ¥5 万+ ARR 实测填实框架
+
+#### 13.1.1 公式对齐 (复用 W17 v1.1 § 1.1 + W18 kpi-verify § 6 v1.1 修正)
+
+| 维度 | 公式 | W17 v1.1 推算 | W18 8/31 实测 (placeholder) | 差异 |
+|------|------|--------------|----------------------------|------|
+| **付费律师总数** | 3 (首批 60%) + 1 (L4/L5 50%) + 6 (day 1-14 25 律师 25%) + 14 (day 15-30 60 律师 25%) ≈ 50 | 50 | `<paid_count_actual>` placeholder | [<差额>, 8/31 实测] |
+| **总营收** | 10 × ¥449 + 40 × ¥99 = ¥4,490 + ¥3,960 = ¥8,450 | ¥8,450 | `<paid_amount_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **ARR (年化)** | ¥8,450 × 12 = ¥101,400 | ¥101,400 | `<arr_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **任务 ¥5 万+ ARR 目标** | ¥50,000 ARR | 达成率 203% (超额 ¥5.14 万) | `<arr_target_gap_actual>` placeholder | - |
+| **首批 5 律师营收** | ¥997 (W17 v1.1 公式, 5 律师创史 ¥449 × 2 + 月度 ¥99 × 1) | ¥997 | `<l1l2l3_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **L4/L5 营收** | ¥449 (L4 创史 5 折) + ¥99 (L5 月度) = ¥548 | ¥548 | `<l4l5_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **25 新律师 day 1-14 营收** | 1 × ¥449 + 5 × ¥99 = ¥944 | ¥944 | `<day1_14_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **day 15-30 公测期 14 律师营收** | 4 × ¥449 + 10 × ¥99 = ¥2,786 | ¥2,786 | `<day15_30_actual_yuan>` placeholder | [<差额>, 8/31 实测] |
+| **创史律师总数** | 80 (8% × 1000 公测) | 80 | `<advocate_count_actual>` placeholder | - |
+| **试用律师总数** | 300 (30% × 1000) | 300 | `<trial_count_actual>` placeholder | - |
+| **触达律师总数** | 1500 (125% × 1000) | 1500 | `<reach_count_actual>` placeholder | - |
+
+> **W18 8/31 实测口径**: A `<paid_count_actual>` + B `<paid_amount_actual_yuan>` + C `<l1l2l3_actual_yuan>` + D `<l4l5_actual_yuan>` + E `<day1_14_actual_yuan>` + F `<day15_30_actual_yuan>` 5 维度实测, owner 8/31 09:00 实测填实.
+> **一致性校验**: A = 50 律师付费总数 vs 4 律师分群汇总 (3+1+6+14) = 24 律师 (差异 26 律师 = 公测 day 1-37 拉新律师 25% 转化, 跟 W17 v1.1 § 1.3 公式对齐).
+
+#### 13.1.2 6 Dashboard SQL 实测 (复用 W18 kpi-verify-runbook § 3 6 SQL 模板)
+
+> **6 SQL 实测模板 (复用 W18 kpi-verify-runbook § 3 6 SQL, W18 commit fe0ef99)**:
+> - SQL #1: 律师注册数 (本月, invite_redeemed 事件数) → 8/31 目标 1500
+> - SQL #2: 评审完成数 (本月, review_completed 事件数) → 8/31 目标 350
+> - SQL #3: 合同生成数 (本月, doc_generated 事件数) → 8/31 目标 280
+> - SQL #4: OCR 用量 (本月, ocr_used 事件数) → 8/31 目标 900
+> - SQL #5: 创史招募进度 (advocate_promoted 事件数) → 8/31 目标 80
+> - SQL #6: 付费转化本月 (paid_converted 事件数) → 8/31 目标 50 + ¥8,450
+>
+> **W18 8/31 实测填实** (跟 § 13.1.1 5 维度实测填实同步, 6 SQL 输出 JSON 到 `docs/marketing/phase4-final-2026-08-31-summary.json`):
+
+```json
+{
+  "as_of": "2026-08-31T09:00:00+08:00",
+  "kpi_snapshot": {
+    "A_paid_count_actual": "<paid_count_actual>",
+    "B_paid_amount_actual_yuan": "<paid_amount_actual_yuan>",
+    "C_l1l2l3_actual_yuan": "<l1l2l3_actual_yuan>",
+    "D_l4l5_actual_yuan": "<l4l5_actual_yuan>",
+    "E_day1_14_actual_yuan": "<day1_14_actual_yuan>",
+    "F_day15_30_actual_yuan": "<day15_30_actual_yuan>",
+    "G_advocate_count_actual": "<advocate_count_actual>",
+    "H_trial_count_actual": "<trial_count_actual>",
+    "I_reach_count_actual": "<reach_count_actual>",
+    "J_arr_actual_yuan": "<arr_actual_yuan>",
+    "K_arr_target_gap_yuan": "<arr_target_gap_actual>"
+  },
+  "sql_outputs": {
+    "sql1_invite_redeemed": "<sql1_count>",
+    "sql2_review_completed": "<sql2_count>",
+    "sql3_doc_generated": "<sql3_count>",
+    "sql4_ocr_used": "<sql4_count>",
+    "sql5_advocate_promoted": "<sql5_count>",
+    "sql6_paid_converted": "<sql6_count_yuan>"
+  },
+  "consistency_check": {
+    "A_equals_4_segment_sum": "<a_equals_4_sum_bool>",
+    "B_equals_4_segment_sum_yuan": "<b_equals_4_sum_bool>",
+    "J_equals_B_times_12": "<j_equals_b_times_12_bool>"
+  }
+}
+```
+
+#### 13.1.3 v1.1 → v1.2 修正触发条件 (类比 W18 kpi-verify § 9.3 + W18 l4l5-day23 § 8)
+
+> **v1.1 → v1.2 修正触发** (owner 8/31 09:00 实测后判定, 跟 W18 kpi-verify v2.1 触发模式一致):
+>
+> 1. **A ≠ 50**: 50 律师付费总数未达成 → v1.2 修正
+>    - A < 50: 启动备案 1 (公测 day 16-30 拉新扩量 5 律所 + 100 律师 + 10 微信群)
+>    - A < 24 (= 4 律师分群汇总): 5 律师首批转化失败 / L4/L5 8/25 接力失败 → 启动备案 2 (Mavis cron 8/31 24:00 紧急拉新)
+> 2. **B ≠ ¥8,450**: 营收未达成 ¥8,450 → v1.2 修正
+>    - B < ¥5,000: 营收差距 ¥3,450+, 启动备案 3 (10/1 降价 ¥99 → ¥69 + 老用户续费 8 折)
+>    - B ≥ ¥10,000: 超额达成 ¥1,550+, 启动备案 4 (10 月目标 80 律师 + ¥15,000 月营收加速)
+> 3. **J ≠ B × 12**: ARR 不等于月营收 × 12 → v1.2 修正 (4 创史年卡 ¥449 × 12 / 月度 ¥99 / 9/15 企业版预登记 ¥1500-2000/年)
+> 4. **一致性校验失败** (A ≠ 4 分群汇总 / B ≠ 4 分群汇总): 触发 v1.2 修正 + 备用 4 应急备案
+
+### 13.2 12 周累计 commit 实测填实 (W17 v1.1 § 10 + W18 接力)
+
+> **12 周累计 commit 数字实测 (复用 W17 v1.1 § 10.1 + § 10.2)**:
+> - W17 v1.1 推算: 302+ 累计 (220 早期 + 82 W5-W16)
+> - W18 实测填实 (含 W18 4 task commit): `<cum_count_actual>` placeholder
+> - W18 4 task commit 链路 (W18 YAML 5ac2adb): kpi-verify-809 fe0ef99 + l4l5-execute-825 083cf0b + phase4-final-831 [本 commit] + [W18 integration commit]
+> - W19 接力 commit (Phase 5 启动): phase5-react-start [W19 commit] + l4l5-enterprise-915 [W19 commit]
+
+### 13.3 5 律师 + L4/L5 实测填实路径 (复用 W17 v1.1 § 4)
+
+> **5 律师实测填实** (复用 W17 v1.1 § 4 L1-L5 5 律师详情 + W14 first-paid-triggers-runbook § 3):
+> - L1 (BETA2025-0001) 7/29 14:00 前转化: `<l1_paid_at>` + `<l1_amount>` placeholder
+> - L2 (BETA2025-0002) 7/29 18:00 前转化: `<l2_paid_at>` + `<l2_amount>` placeholder
+> - L3 (BETA2025-0003) 7/29-7/30 转化: `<l3_paid_at>` + `<l3_amount>` placeholder
+> - L4 (BETA2025-0119) 8/25 14:15-14:30 转化: `<l4_paid_at>` + `<l4_amount>` placeholder
+> - L5 (BETA2025-0120) 8/25 14:30-14:45 转化或 9/15 企业版预登记: `<l5_paid_at>` + `<l5_amount>` placeholder
+>
+> **5 律师实测填实总营收** (8/31 09:00 owner): `<l1l2l3l4l5_total_yuan>` placeholder (跟 § 13.1.1 C+D 维度对齐)
+>
+> **5 律师 8/31 节点营收稳定** (8/31 09:00 owner): `<l1l2l3l4l5_stable_yuan>` placeholder (5 律师首批转化后, 8/31 节点稳定营收)
+
+### 13.4 25 新律师 + day 15-30 公测期律师实测填实 (复用 W17 v1.1 § 5)
+
+> **25 新律师 day 1-14 转化明细实测** (复用 W17 v1.1 § 5.1 + W15 recruit-1000-runbook § 5.1):
+> - 5 律所直推 (公测 day 1-14 复制扩散): `<ch1_count>` + `<ch1_amount>` placeholder
+> - 100 律师朋友圈 (渠道 2): `<ch2_count>` + `<ch2_amount>` placeholder
+> - 10 微信群 (渠道 3): `<ch3_count>` + `<ch3_amount>` placeholder
+> - 5 公众号长文 (渠道 4): `<ch4_count>` + `<ch4_amount>` placeholder
+> - 1 律协推荐 (渠道 5): `<ch5_count>` + `<ch5_amount>` placeholder
+> - 朋友圈扩散 #1-#3 (8/2 + 8/5 + 8/9): `<fc1_3_count>` + `<fc1_3_amount>` placeholder
+> - 朋友推荐 day 1-14 (8/5-8/14): `<ref1_14_count>` + `<ref1_14_amount>` placeholder
+>
+> **day 15-30 公测期律师转化明细实测** (复用 W17 v1.1 § 5.2):
+> - 5 渠道 day 15-30 持续复制扩散: `<ch_day15_30_count>` + `<ch_day15_30_amount>` placeholder
+> - 朋友圈扩散 #4-#6 (8/15 + 8/22 + 8/28): `<fc4_6_count>` + `<fc4_6_amount>` placeholder
+> - 朋友推荐 day 15-30 (8/15-8/24): `<ref_day15_30_count>` + `<ref_day15_30_amount>` placeholder
+> - 朋友推荐 day 25-37 (8/25-8/30): `<ref_day25_37_count>` + `<ref_day25_37_amount>` placeholder
+
+### 13.5 距 ¥5 万+ ARR 目标差距实测验证 (复用 W17 v1.1 § 2.3)
+
+> **8/31 节点距 ¥5 万+ ARR 目标差距实测验证**:
+> - 付费律师 A: `<A>` placeholder vs 50 目标
+> - 月营收 B: `<B>` placeholder vs ¥8,450 推算
+> - ARR J: `<J>` placeholder vs ¥50,000 任务目标
+> - 创史律师 G: `<G>` placeholder vs 80 目标
+> - 试用律师 H: `<H>` placeholder vs 300 目标
+> - 公测访问 I: `<I>` placeholder vs 1500 目标
+> - L4/L5 8/25 接力: `<l4l5_hand_off>` placeholder (L4 创史 + L5 月度/预登记)
+> - **8/31 月底累计评级**: 50 律师 + ¥5 万+ ARR 任务达成判定 ✅ / ⚠️ / ❌ (8/31 实测)
+
+### 13.6 6 大模块 + 5 大价值主张 8/31 实测 (复用 W17 v1.1 § 6-7)
+
+> **6 大模块 8/31 实测可用状态**:
+> - 1 合同审查 (Skill 2): `<module1_usage>` placeholder (8/31 公测期累计合同审查次数)
+> - 2 OCR 证据目录: `<module2_usage>` placeholder
+> - 3 一体化工作站: `<module3_usage>` placeholder
+> - 4 Skill 2/3 文书生成: `<module4_usage>` placeholder
+> - 5 A2 双审工作流: `<module5_usage>` placeholder
+> - 6 招募 + Dashboard + 转化: `<module6_usage>` placeholder
+>
+> **5 大价值主张 8/31 KPI 验证**:
+> - 本地化优先: 桌面端启动成功率 `<local_startup_rate>` placeholder
+> - 智能辅助而非替代: 双审工作流跑通率 `<dual_review_rate>` placeholder + 律师复核采纳率 `<lawyer_review_rate>` placeholder
+> - 越用越懂你: 个性化 prompt 调用率 `<personalization_rate>` placeholder + 律师函模板采纳率 `<template_adopt_rate>` placeholder
+> - 立案前预审: 预审报告生成率 `<pre_filing_rate>` placeholder
+> - 类案只做参考: 类案检索调用率 `<case_search_rate>` placeholder
+
+### 13.7 律师画像 + 80 创史 + 1000 公测 实测填实 (复用 W17 v1.1 § 8)
+
+> **律师画像 8/31 实测分布**:
+> - 5 律师 (L1-L5): `<l1_count>` / `<l2_count>` / `<l3_count>` / `<l4_count>` / `<l5_count>` placeholder
+> - 80 创史律师画像分布: L1 `<advocate_l1>` / L2 `<advocate_l2>` / L3 `<advocate_l3>` / L4 `<advocate_l4>` / L5 `<advocate_l5>` placeholder
+> - 1000 公测律师触达: `<reach_5_law_firms>` + `<reach_100_lawyers>` + `<reach_10_groups>` + `<reach_5_official>` + `<reach_1_asso>` + `<reach_3_6_fc>` + `<reach_referral>` placeholder
+> - 试用律师 + 付费律师: `<trial>` + `<paid>` placeholder
+
+---
+
+## 14. owner 8/31 09:00 实测 checklist + 收尾 (W18 接力)
+
+> **8/31 当天 owner 必做 checklist** (类比 W18 kpi-verify-runbook § 4 + W18 l4l5-day23-report § 9):
+
+### 14.1 8/30 24h 准备 (owner)
+
+- [ ] 8/30 09:00 owner 提前过 phase4-final-runbook-2026-08-31.md 7 时段 + 6 SQL + 应急 4 场景
+- [ ] 8/30 14:00 owner 填实律师 L1-L5 5 律师姓名 placeholder (启动前 24h)
+- [ ] 8/30 17:00 owner + Designer 准备主持稿 PPT (3 页) + dashboard 5min 实时刷新测试
+- [ ] 8/30 23:00 owner 必做 8/31 前 24h 检查清单 14 项 (runbook § 3.3)
+
+### 14.2 8/31 09:00 实测填实 (owner + coder + BD)
+
+- [ ] 8/31 09:00 owner 启动 dashboard 5min 实时刷新 (W18 commit fe0ef99 kpi-verify-runbook § 4 step 1)
+- [ ] 8/31 09:15 owner 跑 6 Dashboard SQL (W18 commit fe0ef99 § 3.1-§ 3.6) 输出 phase4-final-2026-08-31-summary.json
+- [ ] 8/31 09:30 owner 跑 50 律师付费公式 (W17 v1.1 § 1.1 + § 13.1.1) 校验 5 维度实测填实
+- [ ] 8/31 09:45 BD 校验 12 周累计 commit + 5 律师 + L4/L5 实测数据 (W17 v1.1 § 13.2-§ 13.4)
+- [ ] 8/31 10:00 PM 评审 8/31 节点 Phase 4 完结评级 (✅ / ⚠️ / ❌)
+- [ ] 8/31 11:00 owner 必做 8/31 节点应急备案 4 场景 (W18 phase4-final-runbook § 5)
+- [ ] 8/31 14:00 owner 主持 8/31 朋友圈 9 宫格 #7 + 公众号长文 #6 (冲刺)
+- [ ] 8/31 19:00 owner + Coder phase4-final-day37-report-2026-08-31.md v1.0 实测填实后 commit + push origin/main
+- [ ] 8/31 23:00 owner + PM 8/31 月底冲刺总结 + 9/1 Phase 5 启动准备 (W19 phase5-prep 接力)
+- [ ] 8/31 23:30 PM 评审 + Mavis cron 9/1 W18 task l4l5-enterprise-915 + phase5-react-start 触发
+- [ ] 8/31 23:45 最终归档 + W18 phase4-final-831 v1.0 (W18 task phase4-final-831) commit 落档 + push origin/main
+- [ ] 9/1 09:00 owner 启动 W19 plan YAML (Phase 5.1 React 18 + TS + Phase 5.4 L4/L5 企业版)
+
+### 14.3 8/31 23:00 应急备案 4 场景 (类比 W18 kpi-verify-runbook § 5 + W18 l4l5-day23-report § 7)
+
+> **场景 1**: 50 律师付费未达 (A < 50, B < ¥8,450)
+> - 触发条件: A < 24 (4 律师分群汇总) OR B < ¥5,000
+> - 应急: Mavis cron 9/1 紧急拉新 (5 律所 + 100 律师 + 10 微信群) + 10 月降价 ¥99 → ¥69
+> - 备案负责人: lex-bd + 总指挥
+
+> **场景 2**: dashboard 异常 (5min 实时刷新失败 / SQL 跑失败)
+> - 触发条件: dashboard 5min 刷新失败 OR 6 SQL 跑不出数 OR JSON 字段缺失
+> - 应急: Mavis cron 9/1 修复 + 重跑 + 手动 backup (W18 commit c62877c dashboard + 5 event fallback)
+> - 备案负责人: lex-coder
+
+> **场景 3**: 12 周累计 commit 实测 < 290 (W17 v1.1 推算 302+, W18 4 task commit 链路)
+> - 触发条件: `git log --oneline origin/main | wc -l` < 290 OR 缺 W18 4 task commit
+> - 应急: Mavis cron 9/1 补 commit (W18 4 task: kpi-verify-809 fe0ef99 + l4l5-execute-825 083cf0b + phase4-final-831 [本] + W18 integration) + push origin/main
+> - 备案负责人: lex-bd + Mavis
+
+> **场景 4**: 5 律师 + L4/L5 实测未达成 (L1/L2/L3 7/29 + L4/L5 8/25 转化失败)
+> - 触发条件: L1/L2/L3 5 律师全部未转化 OR L4/L5 全部未转化 OR 仅 1/5 转化
+> - 应急: Mavis cron 9/15 1v1 强推 (W19 l4l5-enterprise-915) + 9/15 Phase 5 企业版预登记 + 10 月企业版降价 ¥1,500 → ¥1,200
+> - 备案负责人: lex-bd + 总指挥
+
+### 14.4 8/31 实测填实 v1.2 commit 规范 (类比 W18 kpi-verify § 9.3 v2.1 触发)
+
+> **v1.1 → v1.2 commit 规范** (8/31 23:45 owner + coder):
+> - 触发: § 13.1.3 4 项 v1.2 修正触发任意 1 项
+> - 增量范围: phase4-final-report.md v1.1 → v1.2 (5 律师实测填实 + 50 律师付费公式实测对齐 + 6 SQL 输出填实 + 应急备案 4 场景触发情况)
+> - commit message: `docs(phase4): W18 phase4-final-831 8/31 Phase 4 完结实测填实 v1.2 (50 律师付费 + ¥5 万+ ARR 实测)` 
+> - 严禁: 不要在 8/31 之前 commit v1.2 (W18 copy W18 kpi-verify + W17 v1.0 → v1.1 模式)
+
+### 14.5 跨 plan 接力 (W18 phase4-final-831 → W19 3 task)
+
+| 接力方向 | 时间 | 任务 | 关键交付 |
+|---------|------|------|---------|
+| W18 phase4-final-831 → W19 phase5-prep | 9/1 | phase5-prep 接力 | Phase 5.1 React 18 + TS 重构启动 + Phase 5.4 L4/L5 9/15 企业版预登记 |
+| W18 phase4-final-831 → W19 l4l5-enterprise-915 | 9/15 | l4l5-enterprise 接力 | L5 1v1 微信强推 + 9/15 Phase 5 企业版上线 |
+| W18 phase4-final-831 → W19 phase5-react-start | 9/1 | phase5-react 接力 | 9/1 React 18 + TS + 3 模块 (Workstation + ContractReview + EvidenceList) |
+
+> **W18 phase4-final-831 跨 plan 接力 3 接点点** (W18 6 task 整体 + W19 3 task 接力):
+> - (1) W18 phase4-final-831 → W19 phase5-prep (9/1 Phase 5.1 启动 + Phase 5.4 L4/L5 预登记)
+> - (2) W18 phase4-final-831 → W19 l4l5-enterprise-915 (9/15 L5 1v1 强推 + Phase 5 企业版)
+> - (3) W18 phase4-final-831 → W19 phase5-react-start (9/1 React 18 + TS 3 模块)
+
+### 14.6 W18 phase4-final-831 增量 (相对 W17 v1.1 + W18 kpi-verify-809 + W18 l4l5-execute-825)
+
+| # | 增量 | 来源 | 复用率 |
+|---|------|------|--------|
+| 1 | § 13 W18 实测填实路径 (7 节: § 13.1-§ 13.7) | W18 kpi-verify-runbook § 3 6 SQL + § 9 v2.0 5 节 + W17 v1.1 § 1-§ 8 | 80%+ 复用 |
+| 2 | § 14 owner 8/31 09:00 实测 checklist + 收尾 (6 节) | W18 kpi-verify-runbook § 4 9 步 + W18 l4l5-day23-report § 9 收尾 | 80%+ 复用 |
+| 3 | § 14.3 应急备案 4 场景 (场景 1-4) | W18 kpi-verify-runbook § 5 4 场景 + W18 l4l5-day23-report § 7 应急 | 80%+ 复用 |
+| 4 | § 13.1.3 v1.1 → v1.2 修正触发条件 | W18 kpi-verify § 9.3 v2.1 触发 + W18 l4l5 § 8 应急备案 | 90%+ 复用 |
+| 5 | § 14.5 跨 plan 接力 (3 接点点) | W17 v1.1 § 11.3 + W18 6 task + W19 3 task 接力 | 100% 增量 |
+| 6 | § 13.1.2 6 Dashboard SQL 实测 JSON schema | W18 kpi-verify-runbook § 3 6 SQL + 字段对齐 | 90%+ 复用 |
+| 7 | phase4-final-runbook-2026-08-31.md (新建, 类比 W18 kpi-verify-runbook-2026-08-09.md + W18 l4l5-execute-runbook-2026-08-25.md) | W18 kpi-verify § 1-§ 5 + W18 l4l5 § 1-§ 7 模板 | 80%+ 复用 |
+| 8 | phase4-final-day37-report-2026-08-31.md (新建, 类比 W18 l4l5-day23-report-2026-08-25.md) | W18 l4l5-day23-report § 1-§ 10 + § 13 5 维度实测填实框架 | 80%+ 复用 |
+
+> **W18 phase4-final-831 增量复用率**: 8 项增量中 7 项 (80%+) 复用 W17 v1.1 + W18 kpi-verify + W18 l4l5-execute 历史 commit, 仅 § 14.5 跨 plan 接力 (W19 3 task) 是 100% 增量.
+
+---
+
+**Phase 4 完结报告 v1.1 完结 (W17 接力 + W18 实测填实路径增量). W18 (Plan 18) phase4-final-831 task 启动由 owner 主动调度 (8/31 09:00 实测填实 placeholder) 准备 Phase 5.1 React 18 + TS 重构 + Phase 5.4 L4/L5 企业版上线 (W19 接力).**

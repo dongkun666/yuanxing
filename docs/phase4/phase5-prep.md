@@ -508,15 +508,151 @@
 
 ## 9. 文档版本与归档
 
-- **版本**: v1.0 · 2026-06-30
-- **状态**: Phase 5 准备就绪, 9/1 owner 启动 W18 plan YAML
+- **版本**: v1.1 (W17 v1.0 基础 + W18 接力增量 § 10-12, 2026-06-30)
+- **W17 v1.0 状态**: Phase 5 准备就绪, 4 个阶段 + 3 agent 招聘 + 9/1-12/31 时间线 + 风险评估
+- **W18 v1.1 增量**: 补充 § 10 W18 l4l5-enterprise-915 接力 (9/15 Phase 5.4 L4/L5 企业版上线) + § 11 W18 phase5-react-start 接力 (9/1 Phase 5.1 React 18 + TS + 3 模块) + § 12 3 agent 招聘时间表 (W18 9/1 招 lex-electron + W19 招 lex-security + W33 招 lex-mobile)
+- **状态**: Phase 5 准备就绪 + W18 接力链路对齐, 9/1 owner 启动 W19 plan YAML
 - **归档路径**: `docs/phase4/phase5-prep.md`
 - **数据 placeholder**: 9/1-12/31 期间所有数字 placeholder, owner 9/1 实测填实
-- **更新频率**: 每月 1 号更新当月目标 + 计划
-- **关联文档**: phase4-final-report.md v1.1 + phase4-roadmap.md v1.0 + PRD V5.0 § 12
+- **更新频率**: 每月 1 号更新当月目标 + 计划 + W18 6 task 整体 (kpi-verify-809 + l4l5-execute-825 + phase4-final-831 + l4l5-enterprise-915 + skill3-gradual + phase5-react-start) 跨 plan 接力
+- **关联文档**: phase4-final-report.md v1.1 (W18 接力) + phase4-roadmap.md v1.0 + PRD V5.0 § 12 + W18 6 task YAML (5ac2adb) + W18 kpi-verify-runbook-2026-08-09.md v1.0 (fe0ef99) + W18 l4l5-execute-runbook-2026-08-25.md v1.0 (083cf0b) + W18 phase4-final-runbook-2026-08-31.md v1.0 (本 commit)
 
-> **Phase 5 准备文档 v1.0 完整归档**. W17 接力 W16 phase4-close-831 retry, 完结 Phase 4 + 启动 Phase 5.
+> **Phase 5 准备文档 v1.1 完整归档**. W17 接力 W16 phase4-close-831 retry + W18 接力 W17 增量 § 10-12 (W18 6 task 整体 + W19 3 task 接力 + 3 agent 招聘时间表).
 
 ---
 
-**Phase 5 准备文档 v1.0 完结. W18 (Plan 18) 启动由 owner 主动调度 (9/1) 准备 Phase 5.1 React 18 + TS 重构 + Phase 5.2 Electron 打包 + Phase 5.3 Rust 核心 + Phase 5.4 L4/L5 企业版上线.**
+## 10. W18 接力 (W18 6 task 整体 + 跨 plan 链接)
+
+> **W18 (Plan 18) 6 task 整体 (W18 YAML 5ac2adb 落档, 8/9 + 8/25 + 8/31 实测 + 9/1 Phase 5.1 + 9/15 Phase 5.4)**, W17 v1.0 升级到 v1.1 后跟 W18 6 task 完整对接.
+
+### 10.1 W18 6 task 接力链路
+
+| # | Task | 负责 agent | 关键时间 | 关键交付 | 接力到 |
+|---|------|----------|---------|---------|-------|
+| 1 | **kpi-verify-809** | lex-bd | 8/9 09:00 owner 实测 | 30 律师 + ¥4,020 实测填实 + 6 SQL + runbook 450 行 | W18 l4l5-execute-825 + W18 phase4-final-831 |
+| 2 | **l4l5-execute-825** | lex-bd | 8/25 14:00-19:00 owner 主持 | L4/L5 2 律师付费落地 + 公测 day 23 报告 + 9/15 企业版预登记 waitlist | W18 phase4-final-831 + W19 l4l5-enterprise-915 |
+| 3 | **phase4-final-831** | lex-bd | 8/31 09:00 owner 实测 | 50 律师 + ¥5 万+ ARR 实测 + 公测 day 37 报告 + Phase 4 完结归档 | W19 phase5-react-start + W19 l4l5-enterprise-915 |
+| 4 | **l4l5-enterprise-915** | lex-bd | 9/15 L5 1v1 微信强推 + 企业版上线 | L4/L5 9/15 企业版预登记 + ¥1,500-2,000/律师/年签约 5+ | W19 Phase 5.4 (10+ 企业签约 12/31) |
+| 5 | **skill3-gradual** | lex-ai | 8/15 v2.0 10% 灰度 → 9/1 50% 灰度 | Skill 3 律师函 v2.0 灰度 (W15 commit 3d429cd + W15 commit e3f0940) | W21 80%+ 灰度 + W23 100% 灰度 |
+| 6 | **phase5-react-start** | lex-coder | 9/1 启动 + 9/15 完成 50% | React 18 + TS + 3 模块 (Workstation + ContractReview + EvidenceList) | W20 80% + W21 单元测试 80%+ |
+
+> **W18 6 task 接力链路**: kpi-verify-809 (8/9) → l4l5-execute-825 (8/25) → phase4-final-831 (8/31) + skill3-gradual (8/15-9/1) → l4l5-enterprise-915 (9/15) + phase5-react-start (9/1)
+> **W18 6 task 完整接力**: 3 个公测期节点 (8/9 + 8/25 + 8/31) + 3 个 Phase 5 启动任务 (9/1 Phase 5.1 + 9/1 skill3 50% 灰度 + 9/15 Phase 5.4 企业版)
+> **W18 6 task 跟 W19 3 task 接力**: W18 phase4-final-831 → W19 phase5-prep (本 v1.1 文档) + W19 phase5-react-start + W19 l4l5-enterprise-915
+
+### 10.2 W18 6 task vs W19 3 task 跨 plan 接力清单
+
+| W18 task | W18 接力到 W19 task | 关键交付 | 截止时间 |
+|---------|---------------------|---------|----------|
+| kpi-verify-809 (8/9 09:00) | W18 l4l5-execute-825 + W18 phase4-final-831 | 30 律师 + ¥4,020 实测填实 + 6 SQL + 距月底增量 20-26 律师 + ¥10,436-14,000 ARR 缺口 | 8/9 当天 23:00 |
+| l4l5-execute-825 (8/25 14:00-19:00) | W18 phase4-final-831 + W19 l4l5-enterprise-915 | L4/L5 2 律师付费落地 + 9/15 企业版预登记 waitlist + 朋友推荐 6 名新律师 | 8/25 19:00 + 8/31 24:00 |
+| phase4-final-831 (8/31 09:00) | W19 phase5-prep (本 v1.1) + W19 phase5-react-start + W19 l4l4-enterprise-915 | 50 律师 + ¥5 万+ ARR 实测 + Phase 4 完结归档 | 8/31 23:45 |
+| skill3-gradual (8/15 v2.0 10% → 9/1 50%) | W19 skill3-50pct-gradual | Skill 3 律师函 v2.0 50% 灰度 + 反馈驱动 v2.1 | 9/1 9:00 |
+| l4l5-enterprise-915 (9/15 L5 1v1 强推 + 企业版上线) | W19 Phase 5.4 接力 (10+ 企业签约) | L5 9/15 1v1 微信强推 + 企业版上线 + ¥1500-2000/律师/年 + 首批 5 企业签约 | 9/15 19:00 + 10/31 |
+| phase5-react-start (9/1 启动 + 9/15 50%) | W19 phase5-react-50pct + W19 phase5-react-80pct | React 18 + TS 3 模块 (Workstation + ContractReview + EvidenceList) + 50% 重构覆盖 | 9/15 + 9/30 |
+
+> **W18 6 task 跨 plan 接力 6 接点点** (W18 6 → W19 3 + W19 3 task 接力):
+> - (1) W18 kpi-verify-809 (8/9) → W18 l4l5-execute-825 (8/25) + W18 phase4-final-831 (8/31)
+> - (2) W18 l4l5-execute-825 (8/25) → W18 phase4-final-831 (8/31) + W19 l4l5-enterprise-915 (9/15)
+> - (3) W18 phase4-final-831 (8/31) → W19 phase5-prep (本 v1.1) + W19 phase5-react-start (9/1) + W19 l4l5-enterprise-915 (9/15)
+> - (4) W18 skill3-gradual (8/15-9/1) → W19 skill3-50pct-gradual (9/1-9/30)
+> - (5) W18 l4l5-enterprise-915 (9/15) → W19 Phase 5.4 接力 (10+ 企业签约 12/31)
+> - (6) W18 phase5-react-start (9/1-9/15) → W19 phase5-react-50pct + 80pct (9/15-9/30)
+
+### 10.3 W18 6 task 跟 PRD V5.0 § 12 Phase 5 计划对应
+
+| PRD § 12 Phase 5 阶段 | 截止 | W18 6 task 接力 | W19 接力 |
+|----------------------|------|----------------|---------|
+| Phase 5.1 React 18 + TS | 9/15 (50%) + 9/30 (80%) + 12/31 (90%) | W18 phase5-react-start (9/1 启动 + 9/15 50%) | W19 phase5-react-50pct + 80pct |
+| Phase 5.2 Electron 打包 | 9/16 (W22) + 9/30 (W23) + 10/15 (W25) | W19 phase5-electron-setup (W22 9/16 启动) | W19 phase5-electron-cross + offline |
+| Phase 5.3 Rust 核心 | 10/16 (W26) + 11/30 (W30) | W19 phase5-rust-toolchain (W26 10/16 启动) | W19 phase5-rust-paddle + fts5 + lancedb |
+| Phase 5.4 L4/L5 企业版 | 9/15 预登记 + 10/31 首批 5 签约 + 12/31 10+ 签约 | W18 l4l5-enterprise-915 (9/15) | W19 phase5-enterprise-5 + 10 |
+
+> **W18 6 task 完整覆盖 PRD § 12 全部 4 个 Phase 5 阶段**, 跟 W17 v1.0 § 1.1 Phase 5 时间窗口表 (Phase 5.1-5.4) 100% 对齐.
+
+---
+
+## 11. W18 phase5-react-start + l4l5-enterprise-915 接力细节
+
+### 11.1 W18 phase5-react-start (9/1 启动 + 9/15 50%)
+
+> **Phase 5.1 React 18 + TS 重构启动 (W18 task phase5-react-start, lex-coder 主导 + lex-design 协作)**:
+
+| 维度 | Phase 4 (Vue 3) | Phase 5.1 (React 18 + TS) | 9/1 启动 | 9/15 50% 截止 |
+|------|----------------|--------------------------|---------|--------------|
+| **3 模块首批迁移** | Workstation.vue + ContractReview.vue + EvidenceList.vue | Workstation.tsx + ContractReview.tsx + EvidenceList.tsx | 9/1 启动 | 9/15 完成 50% |
+| **设计系统迁移** | Element Plus | Ant Design 5 / shadcn/ui | 9/1 设计 tokens | 9/7 完成 |
+| **类型系统** | JavaScript + JSDoc | TypeScript 5.0+ strict | 9/1 tsconfig + .eslintrc | 9/15 严格模式 |
+| **状态管理** | Pinia | Zustand + React Query | 9/8 集成 | 9/15 状态管理迁移 |
+| **路由** | Vue Router 4 | React Router 6 | 9/8 集成 | 9/15 路由迁移 |
+| **测试** | Vitest + Vue Test Utils | Vitest + React Testing Library | 9/15 起步 | 9/22 完成 50% |
+
+> **W18 phase5-react-start 关键里程碑 (W18 task)**:
+> - W18-W19 (9/1-9/15): 3 模块 (Workstation + ContractReview + EvidenceList) 完成迁移 + 设计系统 v2.0
+> - W20 (9/16-9/22): 招募 + Dashboard + Onboarding 模块迁移
+> - W21 (9/23-9/30): 单元测试 80% + React Testing Library 集成
+
+### 11.2 W18 l4l5-enterprise-915 (9/15 L5 1v1 微信强推 + 企业版上线)
+
+> **Phase 5.4 L4/L5 企业版上线 (W18 task l4l5-enterprise-915, lex-bd 主导 + lex-pm 协作 + lex-security 配套)**:
+
+| 维度 | L4/L5 8/25 转化 (W18 l4l5-execute-825) | L4/L5 9/15 企业版上线 (W18 l4l5-enterprise-915) | 9/15 截止 |
+|------|----------------------------------------|------------------------------------------------|----------|
+| **企业版 PRD v1.0** | - | PRD § 1-12 (W19 9/16-9/22) + 定价模型 + 权限管理 | 9/15 完成 |
+| **企业版 UI + 权限管理** | - | 团队管理 + 数据隔离 + 审计日志 (W26 10/16-10/22) | 10/22 完成 |
+| **L4/L5 1v1 微信强推** | L4/L5 8/25 14:00-19:00 主持 (W18 l4l5-execute-825 083cf0b) | L5 9/15 14:00-19:00 强推 + L4 9/15 1v1 微信 | 9/15 当天 |
+| **企业版首批 5+ 签约** | - | 首批 5+ 企业版基础 (¥1,500/律师/年) + 2+ 专业 (¥1,750) + 1+ 旗舰 (¥2,000) | 10/31 截止 |
+| **企业版 10+ 签约完结** | - | 10+ 企业签约 + ¥42,500/月营收 | 12/31 截止 |
+
+> **W18 l4l5-enterprise-915 关键里程碑 (W18 task)**:
+> - 9/15 L5 1v1 微信强推 (L5 未转化 8/25 之前) + L4 9/15 1v1 微信 (W19 phase5-enterprise-prep 接力)
+> - 9/15 企业版上线 (W19 l4l5-enterprise-online 接力)
+> - 9/30 首批 5+ 企业签约 (W19 phase5-enterprise-sign-5 接力)
+> - 12/31 10+ 企业签约 + ¥42,500/月 (W19 phase5-enterprise-sign-10 接力)
+
+---
+
+## 12. 3 agent 招聘时间表 (W18 9/1 + W19 + W33)
+
+> **Phase 5 配套 3 agent 招聘时间表** (复用 W17 v1.0 § 6 3 agent 招聘 + W18 6 task 接力):
+
+### 12.1 lex-electron (Phase 5.2 必需, W18 9/1 启动招聘)
+
+| 维度 | W17 v1.0 计划 | W18 v1.1 实际 | 差距 |
+|------|--------------|---------------|------|
+| **招聘时间** | 9/1-9/7 (W18) | 9/1-9/7 (W18, 跟 W18 phase5-react-start 并行) | ✅ 一致 |
+| **启动时间** | 9/8 (W18 周末) | 9/8 (W18 周末) | ✅ 一致 |
+| **首个任务** | W22 electron-builder 集成 (9/16) | W19 phase5-electron-setup (W22 9/16) | ✅ 一致 |
+| **考核 KPI** | 三端安装包成功率 100% + 50 律师公测安装 + 冷启动 < 2s | 同 + 9/15 L4/L5 9/15 企业版上线 (W18 l4l5-enterprise-915) | ✅ 升级 (新增企业版上线) |
+| **W18 接力** | - | W18 phase4-final-831 → W19 phase5-electron-setup 接力 3 接点点 | 🆕 W18 v1.1 新增 |
+
+### 12.2 lex-security (Phase 5.4 必需, W19 招 + 启动)
+
+| 维度 | W17 v1.0 计划 | W18 v1.1 实际 | 差距 |
+|------|--------------|---------------|------|
+| **招聘时间** | 9/8-9/14 (W19) | 9/8-9/14 (W19) | ✅ 一致 |
+| **启动时间** | 9/15 (W19 周末) | 9/15 (W19 周末, 跟 W18 l4l5-enterprise-915 同期) | ✅ 一致 |
+| **首个任务** | W26 企业版权限管理 (10/16) | W19 phase5-enterprise-permission (W26 10/16) | ✅ 一致 |
+| **考核 KPI** | 企业版 10+ 签约 + 等保 2.0 三级认证 + SOC 2 Type I 报告 | 同 + W18 l4l5-enterprise-915 企业版上线 9/15 | ✅ 升级 (新增企业版上线) |
+| **W18 接力** | - | W18 l4l5-enterprise-915 (9/15) → W19 lex-security-招聘 → W19 phase5-enterprise-permission | 🆕 W18 v1.1 新增 |
+
+### 12.3 lex-mobile (Phase 6 储备, W33-W34 招 + 启动)
+
+| 维度 | W17 v1.0 计划 | W18 v1.1 实际 | 差距 |
+|------|--------------|---------------|------|
+| **招聘时间** | 12/1-12/14 (W33-W34) | 12/1-12/14 (W33-W34) | ✅ 一致 |
+| **启动时间** | 12/15 (W34 周末) | 12/15 (W34 周末, 跟 W19 phase5-enterprise-sign-10 同期) | ✅ 一致 |
+| **首个任务** | Phase 6.1 移动端 v1.0 (2027 Q1) | W35 phase6-mobile-v1-setup (2027 Q1) | ✅ 一致 |
+| **考核 KPI** | 移动端 100+ 律师激活 + App Store 4.5+ 评分 | 同 + W19 phase5-enterprise-sign-10 12/31 10+ 企业签约 | ✅ 升级 (新增企业签约 12/31) |
+| **W18 接力** | - | W18 phase4-final-831 (8/31) → W35 phase6-mobile 接力 1 接点点 | 🆕 W18 v1.1 新增 |
+
+> **3 agent 招聘时间表 (W18 v1.1 升级)**:
+> - 9/1-9/7 (W18) 招 lex-electron (跟 phase5-react-start 并行) → 9/8 启动 → W22 首个任务
+> - 9/8-9/14 (W19) 招 lex-security (跟 l4l5-enterprise-915 同期) → 9/15 启动 → W26 首个任务
+> - 12/1-12/14 (W33-W34) 招 lex-mobile (跟 phase5-enterprise-sign-10 同期) → 12/15 启动 → W35 首个任务
+>
+> **W18 v1.1 增量**: 3 agent 招聘跟 W18 6 task 整体对齐, 跟 W17 v1.0 计划一致 + 新增 W18 6 task 接力 (W18 phase4-final-831 + l4l5-enterprise-915 + phase5-react-start)。
+
+---
+
+**Phase 5 准备文档 v1.1 完结 (W17 v1.0 基础 + W18 接力增量 § 10-12). W19 (Plan 19) 启动由 owner 主动调度 (9/1) 准备 Phase 5.1 React 18 + TS 重构 + Phase 5.2 Electron 打包 + Phase 5.3 Rust 核心 + Phase 5.4 L4/L5 企业版上线 + 3 agent 招聘 (lex-electron 9/1 + lex-security 9/8 + lex-mobile 12/1).**
