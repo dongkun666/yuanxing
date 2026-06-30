@@ -1,0 +1,314 @@
+version: 1
+plan:
+  name: "LexPrime Phase 5.3 Week 21: 3 W20 deferred retry + 11/1 Rust 核心 + 10/31 KPI"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: skill3-full-rollout
+    title: "Skill 3 v2.0 全量 100% rollout (W20 deferred 1 retry)"
+    prompt: |
+      W20 skill3-full-rollout deferred (2 cycles zero passes paused). W21 retry.
+
+      视 8/15 + 9/1 实测数据, 10/1 全量 100% 律师试用 v2.0.
+
+      必读文档:
+      - W19 skill3-gradual commit 2cc2d3a (Skill 3 v2.0 8/15 10% A/B + 9/1 50% 全量灰度 + 35 灰度测试)
+      - W15 skill3-iterate commit 3d429cd + e3f0940 (律师函 v2.0 模板 + skill3_letter_v2.yaml)
+      - W11 PRD V5.0 § 11 法务自检 (4 文书类型 + 5 维度风险标注)
+      - W12 A2 commit 829d25c (doc_workflow 状态机 + 4 文书风险标注)
+
+      W21 skill3-full-rollout 工作范围 (10/1 全量 100% rollout, lex-ai):
+
+      1. **10/1 全量 100% rollout** (lex-ai):
+         - 100% 律师试用 v2.0 (律师函 v2.0 + skill3_letter_v2.yaml)
+         - A/B test 关闭 (全部律师 v2.0)
+         - 跟踪同样 3 指标: 5 维度评分 + 转化率 + 律师满意度
+         - 全量报告 docs/marketing/skill3-v2-100pct-rollout-2026-10-01.md
+
+      2. **Skill 3 v1.0 退役** (lex-ai):
+         - 11/1 v1.0 律师函 + skill3_letter_v1.yaml 退役
+         - 兼容性: 现有 v1.0 文书数据保留 (W12 A2 doc_workflow 不动)
+         - 11/1 之后只支持 v2.0
+
+      3. **git commit + push** (1 commit: 10/1 全量 100% + 11/1 v1.0 退役)
+
+      Stop when (Skill 3 v2.0 全量 100% rollout 完成):
+      - 10/1 100% 律师试用 v2.0
+      - 3 跟踪指标 (5 维度评分 + 转化率 + 律师满意度)
+      - 全量报告 (skill3-v2-100pct-rollout-2026-10-01.md)
+      - 11/1 v1.0 退役计划
+      - git log 显示 1+ Skill 3 全量 commit
+
+      严禁 (W16 + W17 + W18 + W19 + W20 严守 fabricate 原则, W21 复制):
+      - 不要 fabricate 10/1 数据 (实测为主, owner 10/1 09:00 跑 A/B test 关闭数据)
+      - forward-execute placeholder 模式 (数字全部 [10/1 实测填实])
+    verify_prompt: |
+      独立验证 Skill 3 v2.0 全量 100% rollout:
+      1. 10/1 100% 律师试用 v2.0 (A/B test 关闭)
+      2. 3 跟踪指标 (5 维度评分 + 转化率 + 律师满意度)
+      3. 全量报告 (skill3-v2-100pct-rollout-2026-10-01.md)
+      4. 11/1 v1.0 退役计划
+      5. 严守 fabricate 原则 (10/1 距今 63 天, 实际数字 forward-execute placeholder)
+      6. git log 显示 1+ Skill 3 全量 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-ai
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: agent-recruit-3
+    title: "3 agent 招聘 (UI 设计师 + 前端工程师 + 数据工程师) (W20 deferred 2 retry)"
+    prompt: |
+      W20 agent-recruit-3 deferred (2 cycles zero passes paused). W21 retry.
+
+      10/1-10/15 招聘 JD + 简历筛选. 3 agent 拟招.
+
+      必读文档:
+      - W17 phase4 commit 14af1a3 (Phase 5 准备 3 agent 招聘)
+      - W3-W10 PRD V5.0 (5 大价值主张 + 6 大模块)
+      - W19 phase5-react commit 83d4695 (React 18 + TS 重构)
+      - W20 phase5-electron commit 2349e41 (Electron 17.4.11 跨平台打包)
+      - W11 B2 commit a99e941 (招募页 6 模块 + 100 律师)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 100 律师)
+      - W6 commit 22d4e11 + 081031a (115 邀请码 + 创史招募准备)
+
+      W21 agent-recruit-3 工作范围 (10/1-10/15 招聘, Mavis owner):
+
+      1. **10/1-10/15 招聘 JD 发布** (docs/recruit/agent-jd-w21.md):
+         - **UI 设计师** (lex-design): 设计系统 + 5 大价值主张视觉化 + 6 大模块组件 + 100 律师招募页设计. 3 年以上经验. 8-12K/月
+         - **前端工程师** (lex-coder-v2): React 18 + TS 重构 + Electron 17.4.11 打包 + 4 模板. 3 年以上. 12-18K/月
+         - **数据工程师** (lex-data-v2): prd_backlog + dashboard 6 SQL + 100 律师留存数据 + 创史招募 8 指标. 2 年以上. 10-15K/月
+         - 招聘渠道: BOSS 直聘 + 拉勾 + 脉脉 + 律师群 (复用 W6 邀请码律师私域)
+         - 简历截止: 10/15 24:00
+
+      2. **10/15 简历筛选 + 面试** (docs/recruit/agent-candidates-w21.md):
+         - 3 agent 各 10 份简历筛选 (共 30 份)
+         - 5 维度评分: 技术 (40%) + 文化匹配 (30%) + 经验 (20%) + 期望薪资 (10%)
+         - 10/15 终面: 3 agent 各 1 名 + 候补 1 名
+         - 录用决策: Mavis owner 拍板
+
+      3. **10/15-10/31 培训 + 上岗** (docs/recruit/agent-onboarding-w21.md):
+         - 10/16-10/20 第 1 周培训 (PRD V5.0 + 5 大价值 + 6 大模块 + 工作流)
+         - 10/21-10/25 第 2 周上手 (跟随现有 agent 跑小 task)
+         - 10/26-10/31 第 3 周独立 (小 task 独立完成)
+         - 11/1 W22 起 3 agent 正式进入 plan task 派发
+
+      4. **git commit + push** (1 commit: JD + 简历筛选 + 培训计划)
+
+      Stop when (3 agent 招聘完成):
+      - agent-jd-w21.md 完整 (3 agent JD + 招聘渠道)
+      - agent-candidates-w21.md 30 简历筛选 (5 维度评分)
+      - agent-onboarding-w21.md 培训 + 上岗计划
+      - 10/15 录用决策
+      - git log 显示 1+ 3 agent 招聘 commit
+
+      严禁 (W16 + W17 + W18 + W19 + W20 严守 fabricate 原则, W21 复制):
+      - 不要 fabricate 简历数据 (实测为主, owner 10/1-10/15 实际招聘)
+      - forward-execute placeholder 模式 (简历数据 [10/15 实测填实])
+    verify_prompt: |
+      独立验证 3 agent 招聘:
+      1. agent-jd-w21.md 完整 (3 agent JD: UI 设计师 + 前端工程师 + 数据工程师 + 招聘渠道)
+      2. agent-candidates-w21.md 30 简历筛选 (5 维度评分)
+      3. agent-onboarding-w21.md 培训 + 上岗计划 (3 周)
+      4. 10/15 录用决策
+      5. 严守 fabricate 原则 (10/15 距今 77 天, 实际数字 forward-execute placeholder)
+      6. git log 显示 1+ 3 agent 招聘 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase5-rust-core
+    title: "11/1 Phase 5.3 Rust 核心启动 (W21 新启动)"
+    prompt: |
+      11/1 Phase 5.3 Rust 核心启动. 重构 backend (FastAPI → Rust actix-web).
+
+      必读文档:
+      - W19 phase5-react commit 83d4695 (Phase 5.1 React 18 + TS 脚手架)
+      - W20 phase5-electron commit 2349e41 (Phase 5.2 Electron 17.4.11 跨平台打包)
+      - W17 phase4 commit 14af1a3 (Phase 5 准备 React + Electron + Rust)
+      - W11 PRD V5.0 § 11 法务自检 + 5 大价值主张 + 6 大模块
+      - backend/cases-crawler/api/ (W3-W12 现有 FastAPI 后端)
+      - W12 A2 commit 829d25c (doc_workflow 状态机 + 4 文书风险标注)
+      - W12 A2 commit 85278db (signature_router POST/GET)
+      - W13 dashboard commit c62877c (dashboard 7 指标 + 6 SQL)
+      - Phase 5 5 大价值主张 + 6 大模块 (V5.0 维持)
+      - Rust 1.83 + tokio 1.43 + actix-web 4 + rusqlite 0.32 官方文档
+
+      W21 phase5-rust-core 工作范围 (11/1 启动, Mavis owner + lex-coder):
+
+      1. **11/1 Rust 项目脚手架** (yuanxing/phase5-rust/):
+         - Rust 1.83 (LTS stable)
+         - tokio 1.43 (async runtime)
+         - actix-web 4 (web framework)
+         - rusqlite 0.32 (SQLite ORM)
+         - serde 1 (serialization)
+         - tracing 0.1 (logging)
+         - Cargo.toml + Cargo.lock + .cargo/config.toml
+
+      2. **11/1 第一周 4 模块 Rust 版** (lex-coder):
+         - 合同审查 (W5 contract_review_router) — actix-web
+         - OCR (W5 ocr_upload + W8 PaddleEngine) — actix-web + Python FFI
+         - 一体化 (W10 full_workflow_router) — actix-web + tokio
+         - Skill 2/3 (W3 contract_review skill + W9 doc_gen) — actix-web + Python FFI
+         - 不重写逻辑, 重构为 Rust 模块 (复用 Python 业务逻辑)
+         - 保留所有现有功能 (5 大价值主张 + 6 大模块)
+
+      3. **11/1 性能基准测试** (benchmark):
+         - 并发 1000: 合同审查 < 50ms (vs Python 250ms, 5x 提升)
+         - 并发 100: OCR < 500ms (vs Python 2.5s, 5x 提升)
+         - 内存使用 < 100MB (vs Python 500MB, 5x 提升)
+         - 启动时间 < 1s (vs Python 5s, 5x 提升)
+
+      4. **git commit + push** (1 commit: 11/1 脚手架 + 4 模块 Rust 版 + 性能基准)
+
+      Stop when (Phase 5.3 11/1 Rust 核心启动完成):
+      - Rust 1.83 + tokio + actix-web + rusqlite 脚手架 ✅
+      - 4 模块 Rust 版 (合同审查 + OCR + 一体化 + Skill 2/3)
+      - 性能提升 5x (4 项 benchmark)
+      - 保留所有现有功能
+      - git log 显示 1+ Phase 5.3 commit
+
+      严禁:
+      - 不要重写功能逻辑 (5 大价值主张 + 6 大模块保持一致)
+      - 不要修改 PRD (V5.0 维持, Phase 5.3 是实现层 Rust 重构)
+    verify_prompt: |
+      独立验证 Phase 5.3 Rust 核心启动:
+      1. Rust 1.83 + tokio + actix-web + rusqlite 脚手架 (Cargo.toml + src/main.rs)
+      2. 4 模块 Rust 版 (合同审查 + OCR + 一体化 + Skill 2/3)
+      3. 性能提升 5x (4 项 benchmark: 并发 1000 < 50ms + 并发 100 OCR < 500ms + 内存 < 100MB + 启动 < 1s)
+      4. 保留所有现有功能 (5 大价值主张 + 6 大模块)
+      5. git log 显示 1+ Phase 5.3 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: kpi-track-1031
+    title: "10/31 公测 day 66 KPI 实测跟踪 (W20 deferred 3 retry)"
+    prompt: |
+      W20 kpi-track-1031 deferred (2 cycles zero passes paused). W21 retry.
+
+      10/31 公测 day 66 节点. 30 律师 (8/9) + 50 律师 (8/31) + 100 律师 (10/31 目标) + 月 ¥10 万+ ARR.
+
+      必读文档:
+      - W19 l4l5-enterprise commit 69552f5 (9/15 L4/L5 + 1000 留存)
+      - W18 kpi-verify commit fe0ef99 (8/9 KPI 实测填实)
+      - W18 l4l5-execute commit 083cf0b (8/25 L4/L5 forward-execute)
+      - W18 phase4-final commit 75405be (8/31 Phase 4 完结 forward-execute)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 runbook)
+      - W11 PRD V5.0 § 10 公测期 KPI
+
+      W21 kpi-track-1031 工作范围 (10/1-10/31 实测, Mavis owner):
+
+      1. **dashboard 6 SQL 实测 (10/31 09:00 抓取)** (Mavis owner):
+         - 律师注册数 (本月) - paid_converted 事件数
+         - 评审完成数 (本月) - review_completed 事件数
+         - 合同生成数 (本月) - doc_generated 事件数
+         - OCR 用量 (本月) - ocr_used 事件数
+         - 创史招募进度 - advocate_promoted 事件数
+         - 付费转化 - paid_converted 事件数 (本月)
+
+      2. **100 律师付费验证** (kpi-snapshot-2026-10-31.md):
+         - 公式: 30 (8/9) + 50 (8/31) + 20 (9/1-9/30 期间 60 名 × 33% 转化) = 100 律师
+         - 实际: paid_converted 事件数 (10/31 09:00 实测)
+         - 营收快照: 100 × ¥449 创史 (20) + ¥99/月 (80) = 8980 + 7920 = 16900 元
+         - 距 ¥10 万+ ARR: 16900 × 6 = 101400 元 ≈ ¥10 万 ARR ✅ 达标
+         - 或 16900 × 12 = 202800 元 ≈ ¥20 万 ARR ✅ 超额
+
+      3. **公测 day 1-66 累计** (kpi-dashboard-726-1031.md):
+         - 触达率: 1200 律师 (5 渠道)
+         - 邀请码发完率: 1000+ 律师
+         - 试用转化率: 25% (250/1000)
+         - 付费转化率: 10% (100/1000) ✅ 超额 5% 目标
+         - 创史转化率: 8% (80/1000, 8/23 截止招满)
+
+      4. **应急备案** (公测 day 1-66 期间):
+         - 律师拒绝付费: ¥99/月 个人版备选
+         - 转化率 < 5%: 朋友圈 9 宫格加强 + 朋友推荐激励 ¥99/律师
+         - dashboard 异常: 手动 SQL 验证 + 应急联系
+
+      5. **git commit + push** (1 commit: 10/31 KPI 实测填实 + 营收快照)
+
+      Stop when (10/31 KPI 实测完成):
+      - 100 律师付费 + ¥10 万+ ARR 实测
+      - 6 dashboard SQL 实测填实
+      - kpi-snapshot-2026-10-31.md v2.0 (实测填实)
+      - kpi-dashboard-726-1031.md (公测 day 1-66 累计)
+      - git log 显示 1+ 10/31 commit
+
+      严禁 (W16 + W17 + W18 + W19 + W20 严守 fabricate 原则, W21 复制):
+      - 不要 fabricate 10/31 数据 (实测为主, owner 10/31 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 10/31 KPI 实测:
+      1. kpi-snapshot-2026-10-31.md v2.0 实测填实 (10/31 owner 跑 dashboard 6 SQL)
+      2. 100 律师付费验证 (paid_converted 事件数 = 30 + 50 + 20)
+      3. 营收快照 ¥10 万+ ARR 验证
+      4. kpi-dashboard-726-1031.md 公测 day 1-66 累计
+      5. 4 应急备案
+      6. git log 显示 1+ 10/31 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w21-integration
+    title: "W21 集成验证 (3 W20 deferred retry + Phase 5.3 Rust 核心 + 10/31 KPI)"
+    prompt: |
+      验证 W21 4 task 集成:
+      1. skill3-full-rollout (lex-ai AI 模型) — 10/1 Skill 3 v2.0 全量 100% rollout
+      2. agent-recruit-3 (lex-bd 营销 + Mavis owner) — 10/1-10/15 3 agent 招聘
+      3. phase5-rust-core (Mavis owner + lex-coder 工程) — 11/1 Phase 5.3 Rust 核心启动
+      4. kpi-track-1031 (lex-bd 营销 + Mavis owner) — 10/31 公测 day 66 KPI 实测
+      5. 3-4 agent deliverable 无冲突 (lex-ai + lex-bd + lex-coder + Mavis owner)
+      6. 3-4 agent 全部 git commit + push
+      7. **严禁 fabricate** (10/1 距今 63 天, 10/15 距今 77 天, 10/31 距今 93 天, 11/1 距今 94 天; 实际数字全部 forward-execute placeholder 由 owner 实测填实)
+      8. 10/1 Skill 3 全量 + 10/15 3 agent 上岗 + 10/31 100 律师 / 月 ¥10 万 ARR + 11/1 Phase 5.3 Rust 核心
+      9. Phase 4 完结 + Phase 5.1 + 5.2 + 5.3 跨月节奏
+      10. W22 建议 (一句话: 12/1 Phase 5.4 L4/L5 企业版全量 + 200 律师付费 + 50 律师企业版签约 10+ 律所 + Skill 3 v2.0 灰度转全量 + 3 agent 跑小 task 独立完成)
+
+      输出 W21 总结 + W22 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - skill3-full-rollout
+      - agent-recruit-3
+      - phase5-rust-core
+      - kpi-track-1031
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
