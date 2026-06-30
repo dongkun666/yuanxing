@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 全局基础 (跟 yuanxing 根保持一致) ===== */
+@layer base {
+  html, body, #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply bg-bg-subtle text-fg-primary font-sans antialiased;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* arco-card 兼容 (旧 vanilla 项目 UI 组件) */
+  .arco-card {
+    @apply bg-white rounded-xl border border-bg-border p-3 shadow-sm shadow-fg-primary/5;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-brand text-white font-medium rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 border border-bg-border text-fg-secondary font-medium rounded-lg hover:bg-bg-subtle transition-colors;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors;
+  }
+}
