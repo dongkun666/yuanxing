@@ -1,5 +1,5 @@
 """
-LexPrime W9 + W15 + W19 Skill 3 文书生成 API Router (lex-coder / lex-ai · 2026-06-30)
+LexPrime W9 + W15 + W19 + W21 Skill 3 文书生成 API Router (lex-coder / lex-ai · 2026-06-30)
 
 W9 C1 任务: 4 文书类型 + 4 模板 + 4 端点
 评审 #1 #2 期间 (W7 prd-feedback) 律师最常问 Top 3 新需求 = 自动生成法律文书.
@@ -16,6 +16,11 @@ W19 skill3-gradual 灰度:
 - POST /api/doc-gen/letter 自动按灰度配置路由 v1.0 / v2.0
 - 新增端点: GET /api/doc-gen/rollout/status, GET /api/doc-gen/metrics
 - 跟踪 3 指标: 5 维度评分 + 转化率 + 律师满意度
+
+W21 skill3-full-rollout:
+- 10/1 全量 100% (phase=rollout_100pct): 100% 律师走 v2.0
+- 11/1 v1.0 退役 (letter_v1_deprecated=True): 强制 v2.0, 即使 force_v1 也无效
+- 兼容性: 现有 v1.0 文书数据保留 (W12 A2 doc_workflow 不动), 11/1 后只支持 v2.0 生成
 
 端点 (8 个):
 - POST /api/doc-gen/complaint         起诉状生成
@@ -616,10 +621,18 @@ async def gen_letter(req: DocGenRequest):
     - 灰度阶段 disabled: 全部 v1.0
     - 灰度阶段 ab_10pct (8/15 起): 10% 律师走 v2.0 (内 50/50 A/B)
     - 灰度阶段 rollout_50pct (9/1 起): 50% 律师走 v2.0 (内 50/50 A/B)
-    - 灰度阶段 rollout_100pct: 全部 v2.0 (未来 W20+)
+    - 灰度阶段 rollout_100pct (10/1 起, W21): 全部 v2.0
+
+    W21 skill3-full-rollout:
+    - 10/1 全量 100% (phase=rollout_100pct, letter_v1_deprecated=False):
+      100% 律师走 v2.0, A/B test 关闭
+    - 11/1 v1.0 退役 (letter_v1_deprecated=True):
+      即使 force_v1 也强制 v2.0, 兼容旧 v1 数据走 v2 模板重渲
+    - 兼容性: 现有 v1.0 文书数据保留 (W12 A2 doc_workflow 不动)
 
     路由依据: hash(lawyer_id) → bucket (deterministic, 防止串扰)
     强制列表: env LEX_SKILL3_FORCE_V1 / LEX_SKILL3_FORCE_V2
+              (11/1 退役后 force_v1 无效, 全部走 v2)
 
     必填建议字段 (v1):
         recipient, sender, subject, facts, demands, deadline, consequence,
@@ -766,7 +779,13 @@ async def doc_gen_health():
 
 # ====== W19 skill3-gradual: rollout 状态字典 (供 /health + /rollout/status 复用) ======
 def _rollout_status_dict() -> Dict[str, Any]:
-    """灰度配置摘要 (dict 形式, 供多个端点共享)"""
+    """灰度配置摘要 (dict 形式, 供多个端点共享)
+
+    W21 skill3-full-rollout 扩展:
+        - letter_v1_deprecated: 11/1 退役开关 (False=10/1 全量 100%, True=11/1 退役后)
+        - deprecated_after_date: 退役触发日期 ("2026-11-01")
+        - backward_compat_note: 现有 v1.0 文书数据保留说明
+    """
     cfg = get_rollout_config()
     return {
         "phase": cfg.phase.value,
@@ -777,11 +796,18 @@ def _rollout_status_dict() -> Dict[str, Any]:
         "force_v1_lawyers_count": len(cfg.force_v1_lawyers),
         "force_v2_lawyers": list(cfg.force_v2_lawyers),  # 完整列表, 供 owner 验证
         "force_v1_lawyers": list(cfg.force_v1_lawyers),
+        # W21 skill3-full-rollout 新增字段
+        "letter_v1_deprecated": cfg.letter_v1_deprecated,  # 11/1 退役开关
+        "deprecated_after_date": "2026-11-01",  # 退役触发日期
+        "backward_compat_note": (
+            "现有 v1.0 文书数据保留 (W12 A2 doc_workflow 不动), "
+            "11/1 之后只支持 v2.0 生成 (POST /api/doc-gen/letter 自动走 v2.0)"
+        ),
         "phases_legend": {
             "disabled": "全 v1.0 (灰度前)",
             "ab_10pct": "8/15 v2.0 10% 灰度 + A/B 50/50 split",
             "rollout_50pct": "9/1 v2.0 全量 50% 灰度",
-            "rollout_100pct": "全 v2.0 (未来 W20+)",
+            "rollout_100pct": "10/1 v2.0 全量 100% (W21)",
         },
         "env_overrides": {
             "LEX_SKILL3_ROLLOUT_PHASE": cfg.phase.value,
@@ -789,6 +815,7 @@ def _rollout_status_dict() -> Dict[str, Any]:
             "LEX_SKILL3_AB_SPLIT": ",".join(str(x) for x in cfg.ab_split_within_v2),
             "LEX_SKILL3_FORCE_V2_count": len(cfg.force_v2_lawyers),
             "LEX_SKILL3_FORCE_V1_count": len(cfg.force_v1_lawyers),
+            "LEX_SKILL3_LETTER_V1_DEPRECATED": cfg.letter_v1_deprecated,  # W21 新增
         },
     }
 

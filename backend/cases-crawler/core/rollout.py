@@ -1,20 +1,25 @@
 """
-LexPrime W19 Skill 3 律师函 v2.0 灰度配置 (lex-ai · 2026-06-30)
+LexPrime W19 + W21 Skill 3 律师函 v2.0 灰度配置 (lex-ai · 2026-06-30)
 
-任务: W19 skill3-gradual
+任务:
+- W19 skill3-gradual: 8/15 + 9/1 灰度
+- W21 skill3-full-rollout: 10/1 全量 100% + 11/1 v1.0 退役
 必读:
 - W15 skill3-iterate commit 3d429cd + e3f0940 (律师函 v2.0 模板 + skill3_letter_v2.yaml)
 - W15 l4l5 commit 900948f (8/25 L4/L5 律师试用反馈)
-- W11 PRD V5.0 § 11 法务自检 (4 文书类型 + 5 维度风险标注)
+- W11 PRD V5.0 § 5.4 横切面 4: 技能引擎 Skill Hub (9 Skill) + § 5.6 当事人服务类文书 (律师函)
 - W12 A2 commit 829d25c (doc_workflow 状态机 + 4 文书风险标注)
 - 灰度阶段:
   - 8/15 v2.0 10% 灰度 (A/B test 50/50 split 律师)
   - 9/1 v2.0 全量 50% 灰度
+  - 10/1 v2.0 全量 100% (W21 skill3-full-rollout)
+  - 11/1 letter v1.0 退役 (W21 skill3-full-rollout, letter_v1_deprecated=True)
 
 实现:
 1. RolloutConfig: 灰度阶段 + 百分比 + 强制列表 (env / Settings 加载)
 2. assign_version(): hash(lawyer_id) 决定 v1.0 / v2.0 (deterministic)
 3. metrics: in-memory 跟踪 3 指标 (5 维度评分 + 转化率 + 律师满意度)
+4. W21 新增: letter_v1_deprecated flag (11/1 退役开关)
 
 数据:
 1. 接律师 ID + 文书类型 → 返回 (served_version: "letter_v1" | "letter_v2", bucket: "control" | "treatment_a" | "treatment_b")
@@ -76,6 +81,13 @@ class RolloutConfig:
         force_v2_lawyers: 强制走 v2.0 律师列表 (白名单, 用于评审 #N 关键律师)
         force_v1_lawyers: 强制走 v1.0 律师列表 (黑名单, 用于对照测试)
         enabled_doc_types: 参与灰度的文书类型 (默认 ["letter"])
+        letter_v1_deprecated: W21 skill3-full-rollout 新增 - 11/1 后 v1.0 退役开关
+                              (True = letter v1.0 强制走 v2.0, 即使 force_v1 也无效)
+                              默认 False (10/1 全量 100% 时仍允许 v1 fallback 灰度外)
+
+    W21 退役逻辑:
+        - 10/1 全量 100% (phase=rollout_100pct): letter_v1_deprecated=False (兼容)
+        - 11/1 之后 (phase=rollout_100pct + letter_v1_deprecated=True): 强制 v2.0
     """
 
     phase: RolloutPhase = RolloutPhase.DISABLED
@@ -84,6 +96,8 @@ class RolloutConfig:
     force_v2_lawyers: List[str] = field(default_factory=list)
     force_v1_lawyers: List[str] = field(default_factory=list)
     enabled_doc_types: List[str] = field(default_factory=lambda: ["letter"])
+    # W21 skill3-full-rollout 新增
+    letter_v1_deprecated: bool = False  # 11/1 后 = True
 
     def __post_init__(self) -> None:
         if not (0 <= self.rollout_pct <= 100):
@@ -105,6 +119,7 @@ class RolloutConfig:
             LEX_SKILL3_AB_SPLIT: "50,50" (默认 50/50)
             LEX_SKILL3_FORCE_V2: 逗号分隔律师 ID (白名单, 默认空)
             LEX_SKILL3_FORCE_V1: 逗号分隔律师 ID (黑名单, 默认空)
+            LEX_SKILL3_LETTER_V1_DEPRECATED: "true" / "false" (默认 false, 11/1 后 = true)
         """
         phase_str = os.getenv("LEX_SKILL3_ROLLOUT_PHASE", "disabled").lower()
         try:
@@ -126,12 +141,19 @@ class RolloutConfig:
             x.strip() for x in os.getenv("LEX_SKILL3_FORCE_V1", "").split(",") if x.strip()
         ]
 
+        # W21 skill3-full-rollout: 11/1 v1.0 退役开关 (env 加载)
+        letter_v1_deprecated_str = os.getenv(
+            "LEX_SKILL3_LETTER_V1_DEPRECATED", "false"
+        ).lower()
+        letter_v1_deprecated = letter_v1_deprecated_str in ("true", "1", "yes")
+
         return cls(
             phase=phase,
             rollout_pct=rollout_pct,
             ab_split_within_v2=ab_split,  # type: ignore[arg-type]
             force_v2_lawyers=force_v2,
             force_v1_lawyers=force_v1,
+            letter_v1_deprecated=letter_v1_deprecated,
         )
 
 
@@ -153,7 +175,8 @@ def set_rollout_config(cfg: RolloutConfig) -> None:
     _GLOBAL_CONFIG = cfg
     logger.info(
         f"[rollout] 配置更新: phase={cfg.phase.value} pct={cfg.rollout_pct}% "
-        f"ab={cfg.ab_split_within_v2} v2_force={len(cfg.force_v2_lawyers)} v1_force={len(cfg.force_v1_lawyers)}"
+        f"ab={cfg.ab_split_within_v2} v2_force={len(cfg.force_v2_lawyers)} v1_force={len(cfg.force_v1_lawyers)} "
+        f"letter_v1_deprecated={cfg.letter_v1_deprecated}"
     )
 
 
@@ -181,13 +204,14 @@ def assign_version(lawyer_id: str, doc_type: str = "letter") -> Tuple[LetterVers
         - version: LetterVersion.V1 / LetterVersion.V2
         - bucket: "control" (v1.0) / "treatment_a" (v2.0 A 组) / "treatment_b" (v2.0 B 组)
 
-    算法:
+    算法 (W19 + W21):
         1. doc_type 不在 enabled_doc_types → v1.0 (灰度范围外)
-        2. lawyer_id in force_v2_lawyers → v2.0 (treatment_a)
-        3. lawyer_id in force_v1_lawyers → v1.0 (control)
-        4. hash(lawyer_id) % 100 < rollout_pct → v2.0
+        2. W21: letter_v1_deprecated=True (11/1 之后) → 强制 v2.0 (退役开关)
+        3. lawyer_id in force_v2_lawyers → v2.0 (treatment_a)
+        4. lawyer_id in force_v1_lawyers → v1.0 (control)
+        5. hash(lawyer_id) % 100 < rollout_pct → v2.0
            否则 → v1.0
-        5. v2.0 内, hash(lawyer_id) % 100 < ab_split_a → treatment_a
+        6. v2.0 内, hash(lawyer_id) % 100 < ab_split_a → treatment_a
            否则 → treatment_b
     """
     cfg = get_rollout_config()
@@ -196,18 +220,30 @@ def assign_version(lawyer_id: str, doc_type: str = "letter") -> Tuple[LetterVers
     if doc_type not in cfg.enabled_doc_types:
         return LetterVersion.V1, "control"
 
-    # 2-3. 强制列表
+    # 2. W21 skill3-full-rollout: 11/1 v1.0 退役开关
+    # 优先级最高, 在 force_v2 / force_v1 / hash 判定之前
+    # 退役后即使 force_v1 也强制 v2.0 (兼容旧 v1 数据用 v2 模板重渲)
+    if cfg.letter_v1_deprecated and doc_type == "letter":
+        bucket_num = _hash_lawyer(lawyer_id)
+        threshold_a = cfg.ab_split_within_v2[0]
+        bucket = "treatment_a" if bucket_num < threshold_a else "treatment_b"
+        logger.info(
+            f"[rollout] letter v1.0 deprecated, 强制 v2.0: lawyer={lawyer_id} bucket={bucket}"
+        )
+        return LetterVersion.V2, bucket
+
+    # 3-4. 强制列表
     if lawyer_id in cfg.force_v2_lawyers:
         return LetterVersion.V2, "treatment_a"
     if lawyer_id in cfg.force_v1_lawyers:
         return LetterVersion.V1, "control"
 
-    # 4. rollout_pct 灰度判定
+    # 5. rollout_pct 灰度判定
     bucket_num = _hash_lawyer(lawyer_id)
     if bucket_num >= cfg.rollout_pct:
         return LetterVersion.V1, "control"
 
-    # 5. v2.0 内 A/B 分组
+    # 6. v2.0 内 A/B 分组
     threshold_a = cfg.ab_split_within_v2[0]
     if bucket_num < threshold_a:
         return LetterVersion.V2, "treatment_a"
