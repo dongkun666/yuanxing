@@ -1,20 +1,26 @@
 """
-LexPrime W9 Skill 3 文书生成 API Router (lex-coder · 2026-06-29)
+LexPrime W9 + W15 Skill 3 文书生成 API Router (lex-coder / lex-ai · 2026-06-30)
 
 W9 C1 任务: 4 文书类型 + 4 模板 + 4 端点
 评审 #1 #2 期间 (W7 prd-feedback) 律师最常问 Top 3 新需求 = 自动生成法律文书.
 A1 prd-feedback 归并后, W9 C1 落地 Skill 3.
 
-端点 (4 个):
+W15 skill3-iterate 扩展:
+- letter_v2 模板 (基于 8 律师试用反馈 mock 驱动迭代)
+- 新增端点: POST /api/doc-gen/letter-v2
+- 集成 doc_workflow (5 状态机) + signature_router (W12 A2 commit 829d25c + 85278db)
+
+端点 (5 个):
 - POST /api/doc-gen/complaint    起诉状生成
 - POST /api/doc-gen/defense     答辩状生成
 - POST /api/doc-gen/contract    合同生成
-- POST /api/doc-gen/letter      律师函生成
-- GET  /api/doc-gen/health      健康检查 (含 4 模板状态)
+- POST /api/doc-gen/letter      律师函生成 (v1.0)
+- POST /api/doc-gen/letter-v2   律师函生成 (v2.0, W15 反馈驱动)
+- GET  /api/doc-gen/health      健康检查 (含 5 模板状态)
 
 数据流:
 1. 接律师提交 {lawyer_id, case_id, template, facts, evidence, claims, parties, court, ...}
-2. 加载对应 Markdown 模板 (templates/docs/{complaint|defense|contract|letter}_v1.md)
+2. 加载对应 Markdown 模板 (templates/docs/{complaint|defense|contract|letter}_v1.md + letter_v2.md)
 3. 替换占位符 {{key}} → 律师字段值 (缺失字段用占位符原样兜底)
 4. 渲染 Markdown 内容
 5. 用 python-docx 1.2.0 生成 Word .docx (Base64 编码返回, 前端可下载)
@@ -23,6 +29,7 @@ A1 prd-feedback 归并后, W9 C1 落地 Skill 3.
 PRD:
 - § 5.4 Skill Hub
 - § 5.6 当事人服务类文书 (Skill 3 文书生成)
+- § 11 法务自检
 
 模板复用 W7 review_router 的 pattern: 内存级 _GEN_CACHE, 仅作幂等性查询 (本任务生成结果不强制缓存,
 W10+ 计划接 Redis + 异步 Worker).
@@ -81,6 +88,7 @@ TEMPLATE_FILES = {
     "defense": "defense_v1.md",
     "contract": "contract_v1.md",
     "letter": "letter_v1.md",
+    "letter_v2": "letter_v2.md",  # W15 skill3-iterate (8 律师反馈驱动)
 }
 
 TEMPLATE_VERSIONS = {
@@ -88,7 +96,11 @@ TEMPLATE_VERSIONS = {
     "defense": "v1.0-w9",
     "contract": "v1.0-w9",
     "letter": "v1.0-w9",
+    "letter_v2": "v2.0-w15",  # W15 skill3-iterate
 }
+
+# letter_v2 不计入 4 主类型 (DOC_TYPES), 但暴露端点 + health 报告
+ADDITIONAL_LETTER_VERSIONS = ["letter_v2"]
 
 
 # ====== 帮助函数: 模板路径 ======
@@ -262,8 +274,8 @@ def _md_to_docx_bytes(md_text: str, doc_type: str, title: str = "") -> bytes:
     # 注入元信息 (注释)
     meta_p = doc.add_paragraph()
     meta_run = meta_p.add_run(
-        f"\n[LexPrime 元枢法智 · Skill 3 文书生成 · {TEMPLATE_VERSIONS[doc_type]} · "
-        f"类型={DOC_TYPE_LABELS[doc_type]} · 生成时间={datetime.now(timezone.utc).isoformat()}]"
+        f"\n[LexPrime 元枢法智 · Skill 3 文书生成 · {TEMPLATE_VERSIONS.get(doc_type, 'v1.0')} · "
+        f"类型={DOC_TYPE_LABELS.get(doc_type, doc_type)} · 生成时间={datetime.now(timezone.utc).isoformat()}]"
     )
     meta_run.font.size = Pt(8)
     meta_run.font.color.rgb = None  # 灰色
@@ -340,6 +352,16 @@ DISCLAIMER_FULL = (
     "不构成正式法律意见, 律师应根据案件实际情况进行审核、修改和完善。"
 )
 
+# v2.0 文书免责声明 (含 8 律师反馈迭代说明)
+DISCLAIMER_V2 = (
+    "本律师函由 LexPrime 元枢法智 (Skill 3 文书生成 v2.0-w15) 自动生成, "
+    "内容基于律师提供的事实整理, 用于辅助律师起草。本函件仅供参考, "
+    "律师应根据案件实际情况、相关法律法规进行审核、修改和完善。 "
+    "本版本基于 8 律师试用反馈 (mock) 迭代, 新增: (1) 时限梯度 "
+    "(2) 法条具体引用 (3) 三段式事实 (4) 后果量化 (5) 履行步骤细化 "
+    "(6) 客户签字栏 (7) AI 5 维度风险标注块 (8) doc_workflow + signature_router 集成说明。"
+)
+
 
 # ====== 帮助函数: 生成文书 ======
 async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
@@ -389,7 +411,7 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
             docx_bytes = _md_to_docx_bytes(
                 rendered_md,
                 doc_type=doc_type,
-                title=DOC_TYPE_LABELS[doc_type],
+                title=DOC_TYPE_LABELS.get(doc_type, "律师函 v2.0"),
             )
             docx_base64 = base64.b64encode(docx_bytes).decode("ascii")
             docx_filename = f"{doc_type}-{gen_id}.docx"
@@ -416,8 +438,8 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
     return DocGenResponse(
         gen_id=gen_id,
         doc_type=doc_type,
-        doc_type_label=DOC_TYPE_LABELS[doc_type],
-        template_id=f"{doc_type}_v1",
+        doc_type_label=DOC_TYPE_LABELS.get(doc_type, doc_type),
+        template_id=_TEMPLATE_ID_MAP.get(doc_type, doc_type),
         template_version=TEMPLATE_VERSIONS[doc_type],
         lawyer_id=req.lawyer_id,
         case_id=req.case_id,
@@ -430,9 +452,19 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
         field_count=len(all_keys),
         latency_ms=latency_ms,
         generated_at=generated_at,
-        disclaimer=DISCLAIMER_FULL,
+        disclaimer=DISCLAIMER_V2 if doc_type == "letter_v2" else DISCLAIMER_FULL,
         next="GET /api/doc-gen/health",
     )
+
+
+# template_id 映射 (v1 主类型保持 "complaint_v1" 不变, v2 用 "letter_v2")
+_TEMPLATE_ID_MAP = {
+    "complaint": "complaint_v1",
+    "defense": "defense_v1",
+    "contract": "contract_v1",
+    "letter": "letter_v1",
+    "letter_v2": "letter_v2",
+}
 
 
 # ====== 端点 1: POST /api/doc-gen/complaint ======
@@ -486,16 +518,48 @@ async def gen_letter(req: DocGenRequest):
     return await _generate_doc("letter", req)
 
 
-# ====== 端点 5: GET /api/doc-gen/health ======
+# ====== 端点 5: POST /api/doc-gen/letter-v2 (W15 skill3-iterate) ======
+@router.post("/letter-v2", response_model=DocGenResponse)
+async def gen_letter_v2(req: DocGenRequest):
+    """律师函 v2.0 生成 (模板: letter_v2.md, W15 skill3-iterate)
+
+    基于 8 律师试用反馈 (mock) 迭代, 包含以下升级:
+    - 时限梯度 (deadline_primary + deadline_grad_*)
+    - 法条具体引用 (legal_basis / legal_basis_civil)
+    - 三段式事实 (facts_parties / facts_subject / facts_breach)
+    - 后果量化 (amount_in_dispute + interest_rate + consequence_other)
+    - 履行步骤细化 (demand_step_1/2/3)
+    - 客户签字栏 (lawyer_license_no)
+    - AI 5 维度风险标注块 (risk_dim_facts/legal/demand/deadline/consequence + risk_overall)
+    - doc_workflow + signature_router 集成说明
+
+    必填建议字段:
+        recipient, sender, subject, facts, demands, deadline, consequence,
+        lawyer_name, lawyer_phone, lawyer_license_no,
+        facts_parties, facts_subject, facts_breach,
+        demand_step_1, deadline_primary, deadline_grad_first, deadline_grad_final,
+        amount_in_dispute, interest_rate,
+        risk_dim_facts, risk_dim_legal, risk_dim_demand, risk_dim_deadline, risk_dim_consequence, risk_overall
+
+    集成:
+    - doc_workflow: PATCH /api/doc-gen/{doc_id}/state (W12 A2)
+    - signature_router: POST /api/signature/{doc_id} (W12 A2)
+    - 风险标注: POST /api/doc-gen/{doc_id}/risk-annotation (W12 A2)
+    """
+    return await _generate_doc("letter_v2", req)
+
+
+# ====== 端点 6: GET /api/doc-gen/health ======
 @router.get("/health")
 async def doc_gen_health():
-    """Skill 3 文书生成 健康检查 (4 模板状态)
+    """Skill 3 文书生成 健康检查 (4 主模板 + 1 letter_v2 扩展模板)
 
     返回:
         - status            ok / degraded
-        - templates_loaded  4 模板是否都能加载
+        - templates_loaded  所有模板是否都能加载 (4 主 + letter_v2)
         - docx_available    python-docx 是否可用
         - template_field_counts  每模板字段数 (用于前端 UI hint)
+        - additional_versions  letter 类型的 v2.0 等扩展
     """
     template_status: Dict[str, Dict[str, Any]] = {}
     for doc_type in DOC_TYPES:
@@ -521,16 +585,44 @@ async def doc_gen_health():
                 "path": str(_templates_dir() / TEMPLATE_FILES[doc_type]),
             }
 
-    all_loaded = all(s.get("loaded") for s in template_status.values())
+    # W15 扩展: letter_v2 状态 (附加版本)
+    additional_versions: Dict[str, Dict[str, Any]] = {}
+    for doc_type in ADDITIONAL_LETTER_VERSIONS:
+        try:
+            md = _load_template(doc_type)
+            fields = _extract_placeholders(md)
+            additional_versions[doc_type] = {
+                "label": DOC_TYPE_LABELS.get(doc_type, "律师函 v2.0"),
+                "version": TEMPLATE_VERSIONS[doc_type],
+                "loaded": True,
+                "field_count": len(fields),
+                "fields": fields,
+                "path": str(_templates_dir() / TEMPLATE_FILES[doc_type]),
+            }
+        except Exception as e:
+            additional_versions[doc_type] = {
+                "label": "律师函 v2.0",
+                "version": TEMPLATE_VERSIONS[doc_type],
+                "loaded": False,
+                "error": str(e),
+                "path": str(_templates_dir() / TEMPLATE_FILES[doc_type]),
+            }
+
+    all_loaded = all(s.get("loaded") for s in template_status.values()) and all(
+        s.get("loaded") for s in additional_versions.values()
+    )
 
     return {
         "status": "ok" if (all_loaded and DOCX_AVAILABLE) else "degraded",
         "service_id": "lexprime.skill.doc-gen",
-        "version": "0.1.0-w9",
+        "version": "0.2.0-w15",  # W15 升级到 0.2.0
         "docx_available": DOCX_AVAILABLE,
         "templates": template_status,
+        "additional_versions": additional_versions,  # W15: letter_v2
         "template_count": len(DOC_TYPES),
+        "additional_versions_count": len(ADDITIONAL_LETTER_VERSIONS),
         "templates_loaded": sum(1 for s in template_status.values() if s.get("loaded")),
+        "additional_versions_loaded": sum(1 for s in additional_versions.values() if s.get("loaded")),
         "doc_types": DOC_TYPES,
         "doc_type_labels": DOC_TYPE_LABELS,
         "endpoints": [
@@ -538,6 +630,7 @@ async def doc_gen_health():
             "POST /api/doc-gen/defense",
             "POST /api/doc-gen/contract",
             "POST /api/doc-gen/letter",
+            "POST /api/doc-gen/letter-v2",
             "GET /api/doc-gen/health",
         ],
     }
