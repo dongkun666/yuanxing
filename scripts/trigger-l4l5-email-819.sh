@@ -34,20 +34,51 @@
 #   - logs/cron/trigger-l4l5-email-819-YYYYMMDD-HHMMSS.log (执行日志)
 #
 # 状态:
-#   - W15 v1.0 落档 (2026-06-30)
+#   - W15 v1.0 落档 (2026-06-30)  ← 用了 SCRIPT_DIR/../.. (走两级) 路径 bug
+#   - W16 v1.1 路径修复 (2026-06-30):
+#     * PROJECT_ROOT: SCRIPT_DIR/../.. → SCRIPT_DIR/.. (走一级, 跟 trigger-paid-email-723.sh 一致)
+#     * Python 脚本路径: ${PROJECT_ROOT}/scripts/... → ${SCRIPT_DIR}/...
+#       (scripts/ 跟这个脚本同目录, 不在 PROJECT_ROOT/scripts/)
+#     * BASH_SOURCE 兜底: 当 BASH_SOURCE[0] 为空 (如 bash -c "..." 调用) 时
+#       回退到 $0 / readlink -f, 防止 silent fail
 #   - 等 2026-08-19 09:00 实际触发
 set -euo pipefail
 
 # 解析参数 (传到 Python send_email.py + log_trigger.py)
 PY_ARGS=("$@")
 
-# 计算 SCRIPT_DIR (这个 shell 所在目录, 跨 OS 兼容)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+# 计算 SCRIPT_DIR (这个 shell 所在目录, 跨 OS 兼容, 不依赖 cwd)
+# BASH_SOURCE[0] = 这个 shell 脚本自身路径
+# 兜底链:
+#   1. BASH_SOURCE[0]  (Git Bash / WSL bash / 常规 bash 调脚本)
+#   2. $0              (POSIX 兜底, 当 BASH_SOURCE 为空时, 例如 bash -c "..." 调用)
+#   3. readlink -f     (处理符号链接, 拿到真实路径)
+# 4. pwd 兜底        (若以上都失败, 至少拿到当前 cwd, 显式 fail 让 cron 知道)
+_SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
+if [ -z "$_SCRIPT_PATH" ] || [ "$_SCRIPT_PATH" = "bash" ]; then
+    # bash -c "..." 场景: $0 = "bash", BASH_SOURCE 为空
+    # 这种情况下 cron 一般直接写绝对路径调用, 此分支主要是防御性
+    echo "[ERROR] 无法定位脚本路径 (BASH_SOURCE 和 \$0 都为空)" >&2
+    echo "[INFO] 请用绝对路径调用: bash $PROJECT_ROOT/scripts/$(basename "$0") --dry-run" >&2
+    exit 1
+fi
+# 处理符号链接 (Linux/macOS 有 readlink -f, Windows Git Bash 也有; WSL 也有)
+if command -v readlink >/dev/null 2>&1; then
+    _SCRIPT_REAL="$(readlink -f "$_SCRIPT_PATH" 2>/dev/null || echo "$_SCRIPT_PATH")"
+else
+    _SCRIPT_REAL="$_SCRIPT_PATH"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$_SCRIPT_REAL")" && pwd)"
+# PROJECT_ROOT = yuanxing/ (SCRIPT_DIR 的上一级)
+# W15 v1.0 bug: 用了 SCRIPT_DIR/../.. 导致 PROJECT_ROOT = E:\元枢法智前端\ (根目录)
+# W16 v1.1 fix: 改为 SCRIPT_DIR/.. = E:\元枢法智前端\yuanxing\ (yuanxing 项目根)
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# 邮件触发脚本路径 (复用 W14 v1.0, 公测前补全 SMTP)
-SEND_EMAIL_SCRIPT="${PROJECT_ROOT}/scripts/send_email.py"
-LOG_TRIGGER_SCRIPT="${PROJECT_ROOT}/scripts/log_trigger.py"
+# 邮件触发脚本路径 (跟这个脚本同目录, yuanxing/scripts/)
+# W15 v1.0 bug: 用了 ${PROJECT_ROOT}/scripts/... 但 PROJECT_ROOT 算错 → 路径错
+# W16 v1.1 fix: 改用 ${SCRIPT_DIR}/... (跟 trigger-paid-email-723.sh:50-51 一致)
+SEND_EMAIL_SCRIPT="${SCRIPT_DIR}/send_email.py"
+LOG_TRIGGER_SCRIPT="${SCRIPT_DIR}/log_trigger.py"
 
 # 检查 Python 脚本存在
 if [ ! -f "$SEND_EMAIL_SCRIPT" ]; then

@@ -32,6 +32,10 @@
 # 状态:
 #   - W14 v1.0 落档 (2026-06-30)
 #   - W15 v1.1 路径修复 (2026-06-30): SCRIPT_DIR/../.. → SCRIPT_DIR/.. (yuanxing/ 而非根目录)
+#   - W16 v1.2 路径加固 (2026-06-30):
+#     * BASH_SOURCE 兜底: 当 BASH_SOURCE[0] 为空 (如 bash -c "..." 调用) 时
+#       回退到 $0 / readlink -f, 防止 silent fail
+#     * 跟 trigger-l4l5-email-819.sh 保持一致 (W16 w15-followup-path 同步加固)
 #   - 等 2026-07-23 09:00 实际触发
 set -euo pipefail
 
@@ -39,8 +43,27 @@ set -euo pipefail
 PY_ARGS=("$@")
 
 # 计算 SCRIPT_DIR (这个 shell 所在目录, 跨 OS 兼容, 不依赖 cwd)
-# BASH_SOURCE[0] = 这个 shell 脚本自身路径, 即使被 source 或符号链接调用也能正确定位
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# BASH_SOURCE[0] = 这个 shell 脚本自身路径
+# 兜底链:
+#   1. BASH_SOURCE[0]  (Git Bash / WSL bash / 常规 bash 调脚本)
+#   2. $0              (POSIX 兜底, 当 BASH_SOURCE 为空时, 例如 bash -c "..." 调用)
+#   3. readlink -f     (处理符号链接, 拿到真实路径)
+#   4. 显式 fail       (若以上都失败, cron 触发器会发邮件)
+_SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
+if [ -z "$_SCRIPT_PATH" ] || [ "$_SCRIPT_PATH" = "bash" ]; then
+    # bash -c "..." 场景: $0 = "bash", BASH_SOURCE 为空
+    # 这种情况下 cron 一般直接写绝对路径调用, 此分支主要是防御性
+    echo "[ERROR] 无法定位脚本路径 (BASH_SOURCE 和 \$0 都为空)" >&2
+    echo "[INFO] 请用绝对路径调用: bash $PROJECT_ROOT/scripts/$(basename "$0") --dry-run" >&2
+    exit 1
+fi
+# 处理符号链接 (Linux/macOS 有 readlink -f, Windows Git Bash 也有; WSL 也有)
+if command -v readlink >/dev/null 2>&1; then
+    _SCRIPT_REAL="$(readlink -f "$_SCRIPT_PATH" 2>/dev/null || echo "$_SCRIPT_PATH")"
+else
+    _SCRIPT_REAL="$_SCRIPT_PATH"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$_SCRIPT_REAL")" && pwd)"
 # PROJECT_ROOT = yuanxing/ (SCRIPT_DIR 的上一级)
 # W14 v1.0 bug: 用了 SCRIPT_DIR/../.. 导致 PROJECT_ROOT = E:\元枢法智前端\ (根目录)
 # W15 v1.1 fix: 改为 SCRIPT_DIR/.. = E:\元枢法智前端\yuanxing\ (yuanxing 项目根)
