@@ -1,5 +1,5 @@
 """
-LexPrime W9 + W15 Skill 3 文书生成 API Router (lex-coder / lex-ai · 2026-06-30)
+LexPrime W9 + W15 + W19 Skill 3 文书生成 API Router (lex-coder / lex-ai · 2026-06-30)
 
 W9 C1 任务: 4 文书类型 + 4 模板 + 4 端点
 评审 #1 #2 期间 (W7 prd-feedback) 律师最常问 Top 3 新需求 = 自动生成法律文书.
@@ -10,13 +10,22 @@ W15 skill3-iterate 扩展:
 - 新增端点: POST /api/doc-gen/letter-v2
 - 集成 doc_workflow (5 状态机) + signature_router (W12 A2 commit 829d25c + 85278db)
 
-端点 (5 个):
-- POST /api/doc-gen/complaint    起诉状生成
-- POST /api/doc-gen/defense     答辩状生成
-- POST /api/doc-gen/contract    合同生成
-- POST /api/doc-gen/letter      律师函生成 (v1.0)
-- POST /api/doc-gen/letter-v2   律师函生成 (v2.0, W15 反馈驱动)
-- GET  /api/doc-gen/health      健康检查 (含 5 模板状态)
+W19 skill3-gradual 灰度:
+- 8/15 v2.0 10% 灰度 (A/B test 50/50 split 律师)
+- 9/1 v2.0 全量 50% 灰度
+- POST /api/doc-gen/letter 自动按灰度配置路由 v1.0 / v2.0
+- 新增端点: GET /api/doc-gen/rollout/status, GET /api/doc-gen/metrics
+- 跟踪 3 指标: 5 维度评分 + 转化率 + 律师满意度
+
+端点 (8 个):
+- POST /api/doc-gen/complaint         起诉状生成
+- POST /api/doc-gen/defense           答辩状生成
+- POST /api/doc-gen/contract          合同生成
+- POST /api/doc-gen/letter            律师函生成 (W19 灰度自动路由 v1.0 / v2.0)
+- POST /api/doc-gen/letter-v2         律师函生成 (W15 反馈驱动, 显式 v2.0)
+- GET  /api/doc-gen/health            健康检查 (含 5 模板状态 + 灰度状态)
+- GET  /api/doc-gen/rollout/status    灰度阶段 + 百分比 + 强制列表
+- GET  /api/doc-gen/metrics           3 指标汇总 (5 维度评分 + 转化率 + 律师满意度)
 
 数据流:
 1. 接律师提交 {lawyer_id, case_id, template, facts, evidence, claims, parties, court, ...}
@@ -52,6 +61,14 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, HTTPException
 from loguru import logger
 from pydantic import BaseModel, Field, field_validator
+
+# W19 skill3-gradual 灰度配置 + 指标跟踪
+from core.rollout import (
+    LetterVersion,
+    assign_version,
+    get_metrics_collector,
+    get_rollout_config,
+)
 
 try:
     # python-docx 1.2.0 已装 (pip list 验证)
@@ -343,6 +360,19 @@ class DocGenResponse(BaseModel):
     generated_at: str
     disclaimer: str = Field(..., description="AI 辅助声明")
     next: str = Field(..., description="建议下一步 (GET /api/doc-gen/health)")
+    # ---- W19 skill3-gradual 灰度字段 ----
+    served_version: Optional[str] = Field(
+        None,
+        description="(W19 灰度) 实际服务的版本: letter_v1 / letter_v2 / complaint_v1 / ...",
+    )
+    bucket: Optional[str] = Field(
+        None,
+        description="(W19 灰度) A/B 测试 bucket: control / treatment_a / treatment_b",
+    )
+    rollout_phase: Optional[str] = Field(
+        None,
+        description="(W19 灰度) 灰度阶段: disabled / ab_10pct / rollout_50pct / rollout_100pct",
+    )
 
 
 # 强制 AI 辅助声明 (复用 Skill 2 / Skill 1 风格)
@@ -364,23 +394,52 @@ DISCLAIMER_V2 = (
 
 
 # ====== 帮助函数: 生成文书 ======
-async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
+async def _generate_doc(
+    doc_type: str, req: DocGenRequest, force_version: Optional[str] = None
+) -> DocGenResponse:
     """生成文书的内部实现 (4 端点共用)
 
     Args:
         doc_type: 4 种之一 (complaint/defense/contract/letter)
         req: DocGenRequest
+        force_version: 强制使用某个版本 (跳过 rollout 路由)
+            - "letter" → 走 rollout 路由
+            - "letter_v2" → 强制 v2.0
+            - "letter_v1" → 强制 v1.0 (灰度反向回退)
+            - None → 按 endpoint 默认 (gen_letter 自动路由, gen_letter_v2 强制 v2)
 
     Returns:
-        DocGenResponse (含 markdown + docx_base64)
+        DocGenResponse (含 markdown + docx_base64 + W19 灰度字段)
     """
     t0 = time.time()
 
+    # W19 skill3-gradual: 灰度路由 (仅 letter 启用)
+    served_version = doc_type  # 用于响应报告
+    template_key = doc_type     # 用于加载模板
+    bucket: Optional[str] = None
+    rollout_cfg = get_rollout_config()
+    rollout_phase = rollout_cfg.phase.value
+    if force_version is not None:
+        # 显式 v2.0 (letter-v2 端点) → 用 v2 模板
+        if force_version == "letter_v2":
+            template_key = "letter_v2"
+            served_version = "letter_v2"
+        else:
+            # force_version == "letter_v1" (灰度反向回退, 未来用)
+            template_key = "letter"
+            served_version = "letter_v1"
+        bucket = "explicit"
+    elif doc_type == "letter":
+        # POST /api/doc-gen/letter 自动按 rollout 路由
+        version, bucket = assign_version(req.lawyer_id, "letter")
+        template_key = _LETTER_VERSION_TO_TEMPLATE_KEY[version]
+        served_version = version.value
+
     # 1. 加载模板
     try:
-        template_md = _load_template(doc_type)
+        template_md = _load_template(template_key)
     except FileNotFoundError as e:
-        logger.error(f"[doc-gen.{doc_type}] 模板缺失: {e}")
+        logger.error(f"[doc-gen.{template_key}] 模板缺失: {e}")
         raise HTTPException(500, f"模板缺失: {e}")
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -410,14 +469,14 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
         try:
             docx_bytes = _md_to_docx_bytes(
                 rendered_md,
-                doc_type=doc_type,
-                title=DOC_TYPE_LABELS.get(doc_type, "律师函 v2.0"),
+                doc_type=template_key,
+                title=DOC_TYPE_LABELS.get(template_key, "律师函 v2.0"),
             )
             docx_base64 = base64.b64encode(docx_bytes).decode("ascii")
-            docx_filename = f"{doc_type}-{gen_id}.docx"
+            docx_filename = f"{template_key}-{gen_id}.docx"
             docx_size = len(docx_bytes)
         except Exception as e:
-            logger.exception(f"[doc-gen.{doc_type}] docx 生成失败: {e}")
+            logger.exception(f"[doc-gen.{template_key}] docx 生成失败: {e}")
             raise HTTPException(500, f"docx 生成失败: {e}")
 
     # 5. markdown 单独请求时跳过 docx
@@ -430,17 +489,49 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
     generated_at = datetime.now(timezone.utc).isoformat()
 
     logger.info(
-        f"[doc-gen.{doc_type}] gen_id={gen_id} lawyer={req.lawyer_id} "
+        f"[doc-gen.{template_key}] gen_id={gen_id} lawyer={req.lawyer_id} "
+        f"bucket={bucket} phase={rollout_phase} "
         f"filled={len(filled)}/{len(all_keys)} missing={len(missing)} "
         f"format={req.output_format} latency={latency_ms}ms"
     )
 
+    # W19 skill3-gradual: 记录 metric (3 指标跟踪)
+    try:
+        # 提取 v2.0 5 维度风险评分 (如果有)
+        risk_scores: Optional[Dict[str, float]] = None
+        if served_version == "letter_v2":
+            risk_scores = {}
+            for dim in ("facts", "legal", "demand", "deadline", "consequence"):
+                raw = req.fields.get(f"risk_dim_{dim}")
+                if raw is not None:
+                    try:
+                        risk_scores[dim] = float(raw)
+                    except (TypeError, ValueError):
+                        pass
+        from core.rollout import GenerationMetric
+        get_metrics_collector().record(
+            GenerationMetric(
+                lawyer_id=req.lawyer_id,
+                doc_type=template_key,
+                version=served_version,
+                bucket=bucket or "explicit",
+                timestamp=time.time(),
+                latency_ms=latency_ms,
+                filled_fields=len(filled),
+                missing_fields=len(missing),
+                risk_scores=risk_scores,
+            )
+        )
+    except Exception as e:
+        # metric 记录失败不影响主流程
+        logger.warning(f"[doc-gen.metrics] 记录失败: {e}")
+
     return DocGenResponse(
         gen_id=gen_id,
         doc_type=doc_type,
-        doc_type_label=DOC_TYPE_LABELS.get(doc_type, doc_type),
-        template_id=_TEMPLATE_ID_MAP.get(doc_type, doc_type),
-        template_version=TEMPLATE_VERSIONS[doc_type],
+        doc_type_label=DOC_TYPE_LABELS.get(template_key, template_key),
+        template_id=_TEMPLATE_ID_MAP.get(template_key, template_key),
+        template_version=TEMPLATE_VERSIONS.get(template_key, "v1.0-w9"),
         lawyer_id=req.lawyer_id,
         case_id=req.case_id,
         markdown=rendered_md,
@@ -452,8 +543,11 @@ async def _generate_doc(doc_type: str, req: DocGenRequest) -> DocGenResponse:
         field_count=len(all_keys),
         latency_ms=latency_ms,
         generated_at=generated_at,
-        disclaimer=DISCLAIMER_V2 if doc_type == "letter_v2" else DISCLAIMER_FULL,
+        disclaimer=DISCLAIMER_V2 if served_version == "letter_v2" else DISCLAIMER_FULL,
         next="GET /api/doc-gen/health",
+        served_version=served_version,
+        bucket=bucket,
+        rollout_phase=rollout_phase,
     )
 
 
@@ -464,6 +558,13 @@ _TEMPLATE_ID_MAP = {
     "contract": "contract_v1",
     "letter": "letter_v1",
     "letter_v2": "letter_v2",
+}
+
+# W19 skill3-gradual: LetterVersion -> TEMPLATE_FILES key 映射
+# (template key 用于加载 .md 文件, served_version 用于响应报告)
+_LETTER_VERSION_TO_TEMPLATE_KEY = {
+    LetterVersion.V1: "letter",
+    LetterVersion.V2: "letter_v2",
 }
 
 
@@ -506,22 +607,43 @@ async def gen_contract(req: DocGenRequest):
     return await _generate_doc("contract", req)
 
 
-# ====== 端点 4: POST /api/doc-gen/letter ======
+# ====== 端点 4: POST /api/doc-gen/letter (W19 灰度自动路由) ======
 @router.post("/letter", response_model=DocGenResponse)
 async def gen_letter(req: DocGenRequest):
-    """律师函生成 (模板: letter_v1.md)
+    """律师函生成 (W19 灰度自动路由 v1.0 / v2.0)
 
-    必填建议字段:
+    W19 skill3-gradual 灰度:
+    - 灰度阶段 disabled: 全部 v1.0
+    - 灰度阶段 ab_10pct (8/15 起): 10% 律师走 v2.0 (内 50/50 A/B)
+    - 灰度阶段 rollout_50pct (9/1 起): 50% 律师走 v2.0 (内 50/50 A/B)
+    - 灰度阶段 rollout_100pct: 全部 v2.0 (未来 W20+)
+
+    路由依据: hash(lawyer_id) → bucket (deterministic, 防止串扰)
+    强制列表: env LEX_SKILL3_FORCE_V1 / LEX_SKILL3_FORCE_V2
+
+    必填建议字段 (v1):
         recipient, sender, subject, facts, demands, deadline, consequence,
         lawyer_name, lawyer_phone
+
+    必填建议字段 (v2 增量, 已在 letter_v2 文档列):
+        lawyer_license_no, facts_parties/subject/breach, demand_step_1/2/3,
+        deadline_primary/grad_first/grad_final, amount_in_dispute, interest_rate,
+        risk_dim_facts/legal/demand/deadline/consequence, risk_overall
+
+    显式 v2.0: 用 POST /api/doc-gen/letter-v2 (不走灰度)
+
+    返回:
+        - served_version: 实际服务的版本 (letter_v1 / letter_v2)
+        - bucket: control / treatment_a / treatment_b
+        - rollout_phase: 当前灰度阶段
     """
     return await _generate_doc("letter", req)
 
 
-# ====== 端点 5: POST /api/doc-gen/letter-v2 (W15 skill3-iterate) ======
+# ====== 端点 5: POST /api/doc-gen/letter-v2 (W15 skill3-iterate, 显式 v2.0) ======
 @router.post("/letter-v2", response_model=DocGenResponse)
 async def gen_letter_v2(req: DocGenRequest):
-    """律师函 v2.0 生成 (模板: letter_v2.md, W15 skill3-iterate)
+    """律师函 v2.0 生成 (模板: letter_v2.md, W15 skill3-iterate, 显式 v2.0)
 
     基于 8 律师试用反馈 (mock) 迭代, 包含以下升级:
     - 时限梯度 (deadline_primary + deadline_grad_*)
@@ -545,8 +667,10 @@ async def gen_letter_v2(req: DocGenRequest):
     - doc_workflow: PATCH /api/doc-gen/{doc_id}/state (W12 A2)
     - signature_router: POST /api/signature/{doc_id} (W12 A2)
     - 风险标注: POST /api/doc-gen/{doc_id}/risk-annotation (W12 A2)
+
+    注: 显式 v2.0 端点, 不走灰度路由. 灰度验证请用 /api/doc-gen/letter.
     """
-    return await _generate_doc("letter_v2", req)
+    return await _generate_doc("letter_v2", req, force_version="letter_v2")
 
 
 # ====== 端点 6: GET /api/doc-gen/health ======
@@ -625,6 +749,8 @@ async def doc_gen_health():
         "additional_versions_loaded": sum(1 for s in additional_versions.values() if s.get("loaded")),
         "doc_types": DOC_TYPES,
         "doc_type_labels": DOC_TYPE_LABELS,
+        # W19 skill3-gradual 灰度状态 (合并 rollout/status 摘要)
+        "rollout": _rollout_status_dict(),
         "endpoints": [
             "POST /api/doc-gen/complaint",
             "POST /api/doc-gen/defense",
@@ -632,5 +758,101 @@ async def doc_gen_health():
             "POST /api/doc-gen/letter",
             "POST /api/doc-gen/letter-v2",
             "GET /api/doc-gen/health",
+            "GET /api/doc-gen/rollout/status",
+            "GET /api/doc-gen/metrics",
         ],
+    }
+
+
+# ====== W19 skill3-gradual: rollout 状态字典 (供 /health + /rollout/status 复用) ======
+def _rollout_status_dict() -> Dict[str, Any]:
+    """灰度配置摘要 (dict 形式, 供多个端点共享)"""
+    cfg = get_rollout_config()
+    return {
+        "phase": cfg.phase.value,
+        "rollout_pct": cfg.rollout_pct,
+        "ab_split_within_v2": list(cfg.ab_split_within_v2),
+        "enabled_doc_types": list(cfg.enabled_doc_types),
+        "force_v2_lawyers_count": len(cfg.force_v2_lawyers),
+        "force_v1_lawyers_count": len(cfg.force_v1_lawyers),
+        "force_v2_lawyers": list(cfg.force_v2_lawyers),  # 完整列表, 供 owner 验证
+        "force_v1_lawyers": list(cfg.force_v1_lawyers),
+        "phases_legend": {
+            "disabled": "全 v1.0 (灰度前)",
+            "ab_10pct": "8/15 v2.0 10% 灰度 + A/B 50/50 split",
+            "rollout_50pct": "9/1 v2.0 全量 50% 灰度",
+            "rollout_100pct": "全 v2.0 (未来 W20+)",
+        },
+        "env_overrides": {
+            "LEX_SKILL3_ROLLOUT_PHASE": cfg.phase.value,
+            "LEX_SKILL3_ROLLOUT_PCT": cfg.rollout_pct,
+            "LEX_SKILL3_AB_SPLIT": ",".join(str(x) for x in cfg.ab_split_within_v2),
+            "LEX_SKILL3_FORCE_V2_count": len(cfg.force_v2_lawyers),
+            "LEX_SKILL3_FORCE_V1_count": len(cfg.force_v1_lawyers),
+        },
+    }
+
+
+# ====== 端点 7: GET /api/doc-gen/rollout/status (W19 skill3-gradual) ======
+@router.get("/rollout/status")
+async def rollout_status():
+    """Skill 3 律师函 v2.0 灰度状态 (W19 skill3-gradual)
+
+    返回:
+        - phase: 当前灰度阶段
+        - rollout_pct: v2.0 灰度百分比 (0-100)
+        - ab_split_within_v2: A/B 分配比例 [treatment_a%, treatment_b%]
+        - enabled_doc_types: 参与灰度的文书类型
+        - force_v2_lawyers: 强制 v2.0 律师列表 (白名单, 用于评审 #N 关键律师)
+        - force_v1_lawyers: 强制 v1.0 律师列表 (黑名单, 用于对照测试)
+        - phases_legend: 阶段说明
+        - env_overrides: 当前生效的 env 变量
+
+    配置方式 (env):
+        - LEX_SKILL3_ROLLOUT_PHASE: disabled | ab_10pct | rollout_50pct | rollout_100pct
+        - LEX_SKILL3_ROLLOUT_PCT: 0-100 (默认 0)
+        - LEX_SKILL3_AB_SPLIT: "50,50" (默认 50/50)
+        - LEX_SKILL3_FORCE_V2: 逗号分隔律师 ID (白名单, 默认空)
+        - LEX_SKILL3_FORCE_V1: 逗号分隔律师 ID (黑名单, 默认空)
+
+    注: 灰度阶段切换 (8/15 + 9/1) 走 cron + env 切换, 不需要重启服务.
+    """
+    return {
+        "status": "ok",
+        "service_id": "lexprime.skill.doc-gen.rollout",
+        "rollout": _rollout_status_dict(),
+        "next": "GET /api/doc-gen/metrics",
+    }
+
+
+# ====== 端点 8: GET /api/doc-gen/metrics (W19 skill3-gradual) ======
+@router.get("/metrics")
+async def doc_gen_metrics():
+    """Skill 3 文书生成 3 指标汇总 (W19 skill3-gradual)
+
+    3 指标:
+    1. 5 维度评分 (letter v2.0 自动生成, 1+ lawyer 评分):
+       - 事实 / 法律意见 / 要求 / 时限 / 后果
+    2. 转化率: 生成后 7 天内 lawyer 是否付费
+    3. 律师满意度: 1-5 主动评分 (调用方更新 via POST /api/doc-gen/metrics/update)
+
+    返回:
+        - total_records: 总生成次数
+        - by_version: {letter_v1: N, letter_v2: N, complaint_v1: N, ...}
+        - by_bucket: {control: N, treatment_a: N, treatment_b: N}
+        - 5_dimension_avg_scores: {facts: 0.X, legal: 0.X, demand: 0.X, ...}
+        - conversion_rate_by_bucket: {control: 0.X, treatment_a: 0.X, treatment_b: 0.X}
+        - lawyer_satisfaction_avg: {control: 4.X, treatment_a: 4.X, treatment_b: 4.X}
+        - ab_test_winner: "treatment_a" | "treatment_b" | null (A/B test 赢家, 综合 3 指标)
+        - note: "实测为主, owner 8/15 + 9/1 跑灰度后填实"
+
+    注: in-memory 存储, 重启后清零. 生产应接 Prometheus / OpenTelemetry.
+    实际数字全部 [实测填实], owner 8/15 + 9/1 跑完灰度后用 patch 替换 placeholder.
+    """
+    return {
+        "status": "ok",
+        "service_id": "lexprime.skill.doc-gen.metrics",
+        "rollout_phase": get_rollout_config().phase.value,
+        "summary": get_metrics_collector().summary(),
+        "next": "GET /api/doc-gen/rollout/status",
     }
