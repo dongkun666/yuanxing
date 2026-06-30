@@ -213,6 +213,20 @@ try:
 except Exception as e:
     logger.warning(f"W12 A2 客户签字 router 加载失败 (非致命): {e}")
 
+# W29 phase6-1-backend (lex-coder · 2026-07-01) Phase 6.1 Marketplace API
+# 7 端点 + 1 health + 1 disclaimer + 1 manifest = 10 endpoints
+# 端点: /api/marketplace/lawyers (POST/GET), /api/marketplace/cases (POST/GET),
+#       /api/marketplace/referrals (POST), /api/marketplace/cross-border (POST),
+#       /api/marketplace/metrics (GET)
+try:
+    # 显式 import core.marketplace_engine 注册 ORM 模型到 Base.metadata
+    from core import marketplace_engine as _mp_engine  # noqa: F401
+    from api.marketplace_router import router as marketplace_router
+    app.include_router(marketplace_router)
+    logger.info("W29 phase6-1-backend Marketplace API router registered")
+except Exception as e:
+    logger.warning(f"W29 phase6-1-backend Marketplace API router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")

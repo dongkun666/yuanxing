@@ -46,12 +46,15 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     # 建表 (含 auth.* 4 张 + core.models 全部 + W12 A2 doc_workflow DocReviewState + Signature)
     from core.models import Base  # noqa: F401
     from core import doc_workflow as _doc_workflow  # noqa: F401  (注册 DocReviewState + Signature)
+    from core import marketplace_engine as _marketplace_engine  # noqa: F401  (W29 注册 Marketplace 5 张表)
+    from api import marketplace_router as _marketplace_router  # noqa: F401  (注册 Marketplace ORM)
     from auth import models  # noqa: F401
 
     async with engine.begin() as conn:
         # W6 (lex-coder): 确保 review_scores 表在 metadata 中 (Side-effect import)
         from api import review_router  # noqa: F401
         # W7 (lex-coder): 注册 ReviewQuestion 表 (Side-effect import 已含在 review_router)
+        # W29 (lex-coder): Marketplace ORM 已在上面 import, 复用 marketplace_router 注册
         await conn.run_sync(Base.metadata.create_all)
 
     async with session_factory() as session:

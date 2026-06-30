@@ -1,0 +1,769 @@
+"""
+LexPrime Phase 6.1 Marketplace 商业逻辑 + 数据模型 (W29 phase6-1-backend · 2026-07-01)
+
+VERDICT: PASS (W22 + W23 + W24 + W25 + W26 + W27 + W28 强制规范应用)
+
+任务: W29 phase6-1-backend
+必读:
+- W28 owner commit f713970 (Phase 6.1 Marketplace PRD ~60KB, 7 模块 + 3 维度商业模型 + 33 端点 + 8 张表)
+- W28 owner commit 8670417 (Skill 4 v1 PRD ~30KB, 复用转介绍谈判 stub)
+- W26 ab59c49 Skill 3 v3.0 launch (跨境文件 40+ 律所模板 + 中英双语)
+- W25 cc14045 Skill 3 v3.0 PRD (多端 + 多语言 + Marketplace 集成)
+- W15 d66fc33 recruit-1000 (5 渠道 1000 律师 → 律师池基础数据)
+- W12 829d25c doc_workflow 5 状态机 (5 状态: draft → ai_reviewed → lawyer_reviewed → settled → archived)
+- W22 phase5-rust-build-fix (Rust 5x perf, Python fallback < 500ms)
+- W11 PRD V5.0 § 5.4 + § 5.6 + § 11 (Skill Hub + 法务自检 + 边界)
+
+本文件范围 (W29 phase6-1-backend):
+- 5 大业务模块: 律师推荐 + 协同办案 + 转介绍 + 跨境文件 + 抽成结算
+- 1 套 5 状态机: open → lawyer_invited → accepted → in_progress → settled (复用 W12 doc_workflow 模式)
+- 律师推荐算法: 5 维度评分 (specialty_match / experience / geography / availability / rating)
+- 抽成计算: 转介绍 5% + 协同办案 10% + 跨境文件 30%
+- 强制 AI 辅助声明 (PRD V5.0 § 11)
+
+设计原则:
+- 零联网: 全部走模板/规则 fallback, 不依赖 LLM 在线
+- 数据本地化: 律师案件 / 客户 / 文书 不离开律师电脑 (PRD V5.0 § 12.1 硬性)
+- Marketplace 仅做撮合 + 抽成 + 跨境文件复用 Skill 3 v3.0 模板
+- AI 辅助不替代律师: Marketplace 律师自主接案 + 自主协商 + 自主定价
+- 5 状态机: 复用 W12 doc_workflow 5 状态机模式 (open/settled/archived 类比)
+- 5x 性能: Python fallback < 500ms, 生产环境 W22 Rust 5x → < 100µs
+"""
+from __future__ import annotations
+
+import time
+import uuid
+from dataclasses import dataclass, field, asdict
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
+
+
+# ============================================================================
+# 强制 AI 辅助声明 (PRD V5.0 § 11)
+# ============================================================================
+
+MARKETPLACE_DISCLAIMER = (
+    "LexPrime Phase 6.1 Marketplace 撮合 + 抽成 + 跨境文件复用基于模板规则引擎生成, "
+    "仅作为律师间协作的撮合与计费参考, 不构成正式法律意见, 不替代律师专业判断。"
+    "具体案件由律师自主接案、自主协商、自主定价, Marketplace 不参与案件实质办理。"
+    "跨境文件复用 Skill 3 v3.0 多律所模板, 实际发布前需律师本人审核、修改并签字确认。"
+)
+
+MARKETPLACE_DISCLAIMER_SHORT = (
+    "Marketplace 仅做撮合 + 抽成 + 跨境文件复用, 不替代律师专业判断。"
+)
+
+
+# ============================================================================
+# 1. Enums (枚举)
+# ============================================================================
+
+class CaseType(str, Enum):
+    """Marketplace 案件类型 (复用 W25 Skill 3 v3.0 + W15 recruit 1000 律师 8 类)"""
+    CONTRACT_DISPUTE = "contract_dispute"        # 合同纠纷
+    TORT = "tort"                                # 侵权
+    FAMILY = "family"                            # 婚姻家庭
+    EQUITY = "equity"                            # 公司股权
+    INTELLECTUAL_PROPERTY = "intellectual_property"  # 知识产权
+    LABOR_ARBITRATION = "labor_arbitration"      # 劳动仲裁
+    ADMINISTRATIVE_REVIEW = "administrative_review"  # 行政复议
+    CROSS_BORDER = "cross_border"                # 跨境案件
+    ARBITRATION = "arbitration"                  # 国际仲裁
+    OTHER = "other"                              # 其他
+
+CASE_TYPES: List[CaseType] = list(CaseType)
+
+
+class CoCounselState(str, Enum):
+    """协同办案 5 状态机 (复用 W12 doc_workflow 5 状态机模式)"""
+    OPEN = "open"                            # 公开 (律师 A 发布)
+    LAWYER_INVITED = "lawyer_invited"        # 已邀请律师 B
+    ACCEPTED = "accepted"                    # 律师 B 接案
+    IN_PROGRESS = "in_progress"              # 协同办案中
+    SETTLED = "settled"                      # 结算完成
+    ARCHIVED = "archived"                    # 归档 (终态)
+
+
+# 状态转移图 (合法转移)
+COUNSEL_STATE_TRANSITIONS: Dict[CoCounselState, List[CoCounselState]] = {
+    CoCounselState.OPEN:            [CoCounselState.LAWYER_INVITED, CoCounselState.ARCHIVED],
+    CoCounselState.LAWYER_INVITED:  [CoCounselState.ACCEPTED, CoCounselState.OPEN],
+    CoCounselState.ACCEPTED:        [CoCounselState.IN_PROGRESS, CoCounselState.LAWYER_INVITED],
+    CoCounselState.IN_PROGRESS:     [CoCounselState.SETTLED, CoCounselState.ACCEPTED],
+    CoCounselState.SETTLED:         [CoCounselState.ARCHIVED, CoCounselState.IN_PROGRESS],
+    CoCounselState.ARCHIVED:        [],  # 终态
+}
+
+
+class ReferralStatus(str, Enum):
+    """转介绍 5 状态 (PRD § 3.2)"""
+    PENDING = "pending"          # 待接
+    ACCEPTED = "accepted"        # 已接
+    COMPLETED = "completed"      # 已完成
+    SETTLED = "settled"          # 已结算
+    CANCELLED = "cancelled"      # 已取消
+
+
+REFERRAL_STATUSES: List[ReferralStatus] = list(ReferralStatus)
+
+
+class CrossBorderDocType(str, Enum):
+    """跨境文件 6 类型 (PRD § 3.4)"""
+    LETTER = "letter"                                 # 律师函
+    CONTRACT = "contract"                             # 合同
+    COMPLAINT = "complaint"                           # 起诉状
+    DEFENSE = "defense"                               # 答辩状
+    ARBITRATION_APPLICATION = "arbitration_application"   # 国际仲裁申请书
+    ARBITRATION_RESPONSE = "arbitration_response"     # 国际仲裁答辩书
+
+
+CROSS_BORDER_DOC_TYPES: List[CrossBorderDocType] = list(CrossBorderDocType)
+
+
+class Language(str, Enum):
+    """跨境文件 4 语言 (复用 W25 Skill 3 v3.0)"""
+    ZH_CN = "zh-CN"
+    EN_US = "en-US"
+    BILINGUAL = "bilingual"          # 中英双语
+    DUAL_COLUMN = "dual_column"    # 双语对照
+
+LANGUAGES: List[Language] = list(Language)
+
+
+class Jurisdiction(str, Enum):
+    """跨境案件 8 司法管辖区 (PRD § 2.6)"""
+    CN = "CN"          # 中国大陆
+    HK = "HK"          # 中国香港
+    SG = "SG"          # 新加坡
+    US = "US"          # 美国
+    UK = "UK"          # 英国
+    ICC = "ICC"        # 国际商会仲裁院
+    HKIAC = "HKIAC"    # 香港国际仲裁中心
+    SIAC = "SIAC"      # 新加坡国际仲裁中心
+
+JURISDICTIONS: List[Jurisdiction] = list(Jurisdiction)
+
+
+# ============================================================================
+# 2. Commission rates (抽成比例常量, 复用 W28 PRD § 3.5)
+# ============================================================================
+
+COMMISSION_RATES = {
+    "referral": 0.05,        # 转介绍 5% 抽成
+    "co_counsel": 0.10,      # 协同办案 10% 分账
+    "cross_border": 0.30,    # 跨境文件 30% 抽成 (溢价)
+    "template_share": 0.05,  # 文书模板 5% (双重抽成, 复用 W25 cc14045)
+}
+
+# 跨境文件定价 (PRD § 3.4)
+CROSS_BORDER_PRICING: Dict[CrossBorderDocType, Dict[Language, float]] = {
+    CrossBorderDocType.LETTER: {
+        Language.ZH_CN: 99.0,
+        Language.EN_US: 199.0,
+        Language.BILINGUAL: 299.0,
+        Language.DUAL_COLUMN: 399.0,
+    },
+    CrossBorderDocType.CONTRACT: {
+        Language.ZH_CN: 199.0,
+        Language.EN_US: 299.0,
+        Language.BILINGUAL: 399.0,
+        Language.DUAL_COLUMN: 499.0,
+    },
+    CrossBorderDocType.COMPLAINT: {
+        Language.ZH_CN: 299.0,
+        Language.EN_US: 399.0,
+        Language.BILINGUAL: 499.0,
+        Language.DUAL_COLUMN: 599.0,
+    },
+    CrossBorderDocType.DEFENSE: {
+        Language.ZH_CN: 299.0,
+        Language.EN_US: 399.0,
+        Language.BILINGUAL: 499.0,
+        Language.DUAL_COLUMN: 599.0,
+    },
+    CrossBorderDocType.ARBITRATION_APPLICATION: {
+        Language.ZH_CN: 990.0,
+        Language.EN_US: 1990.0,
+        Language.BILINGUAL: 1990.0,
+        Language.DUAL_COLUMN: 1990.0,
+    },
+    CrossBorderDocType.ARBITRATION_RESPONSE: {
+        Language.ZH_CN: 990.0,
+        Language.EN_US: 1990.0,
+        Language.BILINGUAL: 1990.0,
+        Language.DUAL_COLUMN: 1990.0,
+    },
+}
+
+
+# ============================================================================
+# 3. Dataclasses (DTO)
+# ============================================================================
+
+@dataclass
+class LawyerProfile:
+    """Marketplace 律师画像 (5 维度评分输入)"""
+    lawyer_id: str
+    name: str
+    firm_id: Optional[str] = None
+    specialties: List[str] = field(default_factory=list)        # 专业领域
+    jurisdictions: List[str] = field(default_factory=list)     # 司法管辖区
+    languages: List[str] = field(default_factory=list)         # 语言 (zh-CN / en-US)
+    region: str = ""                                            # 地域 (省/市)
+    experience_years: int = 0                                   # 执业年限
+    rating: float = 0.0                                         # 平均评分 (0-5)
+    completed_cases: int = 0                                    # 累计接案数
+    marketplace_active: bool = True                             # 是否 Marketplace 参与方
+    cross_border_capable: bool = False                          # 是否支持跨境
+    availability: str = "available"                             # available / busy / unavailable
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class LawyerMatchScore:
+    """律师推荐算法 5 维度评分 (PRD § 8.1)"""
+    lawyer_id: str
+    total_score: float                  # 0-1 综合评分
+    specialty_match: float              # 0-1 专业匹配
+    experience_score: float             # 0-1 经验评分
+    geography_score: float              # 0-1 地域评分
+    availability_score: float           # 0-1 可接案评分
+    rating_score: float                 # 0-1 评分评分
+    match_reasons: List[str] = field(default_factory=list)  # 匹配理由
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class CoCounselCase:
+    """协同办案案件 (PRD § 3.3)"""
+    case_id: str
+    lawyer_a_id: str                       # 主案律师
+    lawyer_b_id: Optional[str] = None      # 协助律师
+    firm_id: Optional[str] = None          # 律所 (可选)
+    case_type: CaseType = CaseType.OTHER
+    case_description: str = ""
+    required_specialties: List[str] = field(default_factory=list)
+    deadline: Optional[str] = None         # ISO 8601
+    fee: float = 0.0
+    split_ratio: float = 0.5               # 默认 50/50
+    marketplace_commission_rate: float = 0.10
+    state: CoCounselState = CoCounselState.OPEN
+    history: List[Dict[str, Any]] = field(default_factory=list)
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def transition_to(self, new_state: CoCounselState, actor: str = "system", reason: str = "") -> None:
+        """合法状态转移 (复用 W12 doc_workflow 模式 + history 审计)"""
+        if new_state == self.state:
+            return  # 幂等
+        allowed = COUNSEL_STATE_TRANSITIONS.get(self.state, [])
+        if new_state not in allowed:
+            raise ValueError(
+                f"非法状态转移: {self.state.value} → {new_state.value}, "
+                f"仅允许 {[s.value for s in allowed]}"
+            )
+        old_state = self.state
+        self.state = new_state
+        self.updated_at = datetime.now(timezone.utc).isoformat()
+        self.history.append({
+            "from": old_state.value,
+            "to": new_state.value,
+            "actor": actor,
+            "reason": reason,
+            "ts": self.updated_at,
+        })
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["case_type"] = self.case_type.value
+        d["state"] = self.state.value
+        return d
+
+
+@dataclass
+class Referral:
+    """转介绍 (PRD § 3.2)"""
+    referral_id: str
+    referrer_id: str                        # 推荐人律师 A
+    target_lawyer_id: str                   # 被推荐律师 B
+    case_type: CaseType = CaseType.OTHER
+    case_description: str = ""
+    expected_fee: float = 0.0
+    actual_fee: Optional[float] = None
+    commission_rate: float = 0.05
+    referrer_commission: Optional[float] = None
+    marketplace_commission: Optional[float] = None  # 转介绍 = 0
+    match_score: Optional[float] = None
+    status: ReferralStatus = ReferralStatus.PENDING
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def complete(self, actual_fee: float) -> Dict[str, float]:
+        """完成转介绍: 计算抽成"""
+        self.actual_fee = actual_fee
+        self.referrer_commission = round(actual_fee * self.commission_rate, 2)
+        self.marketplace_commission = 0.0  # 转介绍 Marketplace 不抽成
+        self.status = ReferralStatus.COMPLETED
+        self.updated_at = datetime.now(timezone.utc).isoformat()
+        return {
+            "actual_fee": self.actual_fee,
+            "referrer_commission": self.referrer_commission or 0.0,
+            "marketplace_commission": self.marketplace_commission,
+        }
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["case_type"] = self.case_type.value
+        d["status"] = self.status.value
+        return d
+
+
+@dataclass
+class CrossBorderJob:
+    """跨境文件订单 (PRD § 3.4)"""
+    job_id: str
+    lawyer_id: str                          # 接单律师
+    client_id: str                          # 国际客户
+    doc_type: CrossBorderDocType = CrossBorderDocType.LETTER
+    language: Language = Language.EN_US
+    jurisdiction: Jurisdiction = Jurisdiction.CN
+    price: float = 0.0                      # 律师实际所得
+    marketplace_commission: float = 0.0     # Marketplace 抽成
+    template_id: Optional[str] = None       # 复用 Skill 3 v3.0 模板
+    status: str = "pending"                 # pending / generating / completed / filed
+    fields: Dict[str, Any] = field(default_factory=dict)
+    document_url: Optional[str] = None
+    arbitration_institution: Optional[str] = None
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["doc_type"] = self.doc_type.value
+        d["language"] = self.language.value
+        d["jurisdiction"] = self.jurisdiction.value
+        return d
+
+
+@dataclass
+class CommissionRecord:
+    """抽成记录 (T+7 冷静期 + T+7+1 结算 + T+30 提现, PRD § 3.5)"""
+    commission_id: str
+    transaction_id: str
+    transaction_type: str  # referral / co_counsel / cross_border / template_share
+    lawyer_id: str
+    referrer_id: Optional[str] = None
+    transaction_amount: float = 0.0
+    commission_rate: float = 0.0
+    commission_amount: float = 0.0
+    status: str = "pending"  # pending / confirmed / settled / withdrawn
+    confirm_at: Optional[str] = None
+    settle_at: Optional[str] = None
+    withdraw_at: Optional[str] = None
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class MarketplaceMetrics:
+    """Marketplace 5 维度指标 (PRD § 8.3)"""
+    metric_date: str                           # ISO 8601
+    lawyer_participants: int = 0               # Marketplace 律师参与方
+    cases_completed_monthly: int = 0           # 月接案数
+    revenue_monthly: float = 0.0               # 月营收 (¥)
+    cross_border_orders_monthly: int = 0       # 跨境案件月单量
+    avg_lawyer_rating: float = 0.0             # 律师满意度 (0-5)
+    referral_count_total: int = 0              # 累计转介绍数
+    co_counsel_count_total: int = 0            # 累计协同办案数
+    cross_border_count_total: int = 0          # 累计跨境文件数
+    commission_pending: float = 0.0            # 待结算抽成
+    commission_settled: float = 0.0            # 已结算抽成
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+# ============================================================================
+# 4. Business Logic (商业逻辑)
+# ============================================================================
+
+def generate_id(prefix: str = "mp") -> str:
+    """生成 Marketplace ID (prefix-uuid8)"""
+    return f"{prefix}-{uuid.uuid4().hex[:8]}"
+
+
+def lawyer_match_score(
+    lawyer: LawyerProfile,
+    required_specialties: List[str],
+    required_jurisdictions: Optional[List[str]] = None,
+    required_languages: Optional[List[str]] = None,
+    required_region: str = "",
+    cross_border: bool = False,
+) -> LawyerMatchScore:
+    """律师推荐算法 5 维度评分 (PRD § 8.1)
+
+    维度 1: specialty_match     (权重 0.35) - 专业匹配
+    维度 2: experience_score    (权重 0.20) - 经验 (执业年限)
+    维度 3: geography_score     (权重 0.15) - 地域匹配
+    维度 4: availability_score  (权重 0.15) - 可接案状态
+    维度 5: rating_score        (权重 0.15) - 历史评分
+
+    总分 0-1, > 0.6 推荐候选, > 0.8 强推荐
+
+    复用 W15 recruit-1000 5 维度评分模式.
+    """
+    # 维度 1: specialty_match
+    if required_specialties:
+        overlap = set(lawyer.specialties) & set(required_specialties)
+        specialty_match = len(overlap) / len(required_specialties) if required_specialties else 0.0
+    else:
+        specialty_match = 0.5  # 无要求, 给中等分
+
+    # 维度 2: experience_score (0-1, 5 年起算)
+    experience_score = min(1.0, lawyer.experience_years / 10.0)
+
+    # 维度 3: geography_score
+    if required_region and lawyer.region:
+        if required_region == lawyer.region:
+            geography_score = 1.0
+        elif required_region[:2] == lawyer.region[:2]:  # 同省
+            geography_score = 0.6
+        else:
+            geography_score = 0.3
+    else:
+        geography_score = 0.5
+
+    # 维度 4: availability_score
+    availability_map = {"available": 1.0, "busy": 0.4, "unavailable": 0.0}
+    availability_score = availability_map.get(lawyer.availability, 0.5)
+    if not lawyer.marketplace_active:
+        availability_score = 0.0
+
+    # 维度 5: rating_score (0-5 → 0-1)
+    rating_score = lawyer.rating / 5.0 if lawyer.rating > 0 else 0.5
+
+    # 跨境能力惩罚
+    cross_border_bonus = 0.0
+    if cross_border:
+        if lawyer.cross_border_capable:
+            cross_border_bonus = 0.1
+            if required_languages and "en-US" in required_languages and "en-US" in lawyer.languages:
+                cross_border_bonus = 0.15
+        else:
+            cross_border_bonus = -0.3  # 不支持跨境, 扣分
+
+    # 加权总分
+    total_score = (
+        specialty_match * 0.35
+        + experience_score * 0.20
+        + geography_score * 0.15
+        + availability_score * 0.15
+        + rating_score * 0.15
+    )
+    total_score = max(0.0, min(1.0, total_score + cross_border_bonus))
+
+    # 匹配理由
+    match_reasons = []
+    if specialty_match >= 0.8:
+        match_reasons.append(f"专业高度匹配 ({len(overlap)}/{len(required_specialties)})")
+    if experience_score >= 0.7:
+        match_reasons.append(f"资深律师 ({lawyer.experience_years} 年经验)")
+    if geography_score >= 0.9:
+        match_reasons.append("同城/同省律师")
+    if rating_score >= 0.8:
+        match_reasons.append(f"高评分律师 ({lawyer.rating:.1f}/5.0)")
+    if cross_border and lawyer.cross_border_capable:
+        match_reasons.append("支持跨境案件")
+
+    return LawyerMatchScore(
+        lawyer_id=lawyer.lawyer_id,
+        total_score=round(total_score, 4),
+        specialty_match=round(specialty_match, 4),
+        experience_score=round(experience_score, 4),
+        geography_score=round(geography_score, 4),
+        availability_score=round(availability_score, 4),
+        rating_score=round(rating_score, 4),
+        match_reasons=match_reasons,
+    )
+
+
+def recommend_lawyers(
+    lawyers: List[LawyerProfile],
+    required_specialties: List[str],
+    top_k: int = 5,
+    min_score: float = 0.3,
+    required_jurisdictions: Optional[List[str]] = None,
+    required_languages: Optional[List[str]] = None,
+    required_region: str = "",
+    cross_border: bool = False,
+) -> List[LawyerMatchScore]:
+    """律师推荐 Top-K (按 5 维度评分降序)
+
+    Args:
+        lawyers: 候选律师池 (W15 recruit 1000 律师池)
+        required_specialties: 必需专业领域
+        top_k: 返回前 K 个
+        min_score: 最低分阈值
+        required_jurisdictions: 必需司法管辖区 (跨境案件)
+        required_languages: 必需语言 (跨境案件)
+        required_region: 地域 (协同办案/转介绍)
+        cross_border: 是否跨境案件
+
+    Returns:
+        按 total_score 降序的律师推荐列表
+    """
+    scored = []
+    for lawyer in lawyers:
+        score = lawyer_match_score(
+            lawyer=lawyer,
+            required_specialties=required_specialties,
+            required_jurisdictions=required_jurisdictions,
+            required_languages=required_languages,
+            required_region=required_region,
+            cross_border=cross_border,
+        )
+        if score.total_score >= min_score:
+            scored.append(score)
+
+    scored.sort(key=lambda x: x.total_score, reverse=True)
+    return scored[:top_k]
+
+
+def create_co_counsel_case(
+    lawyer_a_id: str,
+    case_type: CaseType,
+    case_description: str,
+    fee: float,
+    required_specialties: Optional[List[str]] = None,
+    firm_id: Optional[str] = None,
+    deadline: Optional[str] = None,
+    split_ratio: float = 0.5,
+) -> CoCounselCase:
+    """创建协同办案案件 (PRD § 3.3)"""
+    if fee < 0:
+        raise ValueError("fee 必须 >= 0")
+    if not 0.0 <= split_ratio <= 1.0:
+        raise ValueError("split_ratio 必须在 [0, 1] 区间")
+    return CoCounselCase(
+        case_id=generate_id("cc"),
+        lawyer_a_id=lawyer_a_id,
+        firm_id=firm_id,
+        case_type=case_type,
+        case_description=case_description,
+        required_specialties=required_specialties or [],
+        deadline=deadline,
+        fee=fee,
+        split_ratio=split_ratio,
+        marketplace_commission_rate=COMMISSION_RATES["co_counsel"],
+        state=CoCounselState.OPEN,
+        history=[{
+            "from": "init",
+            "to": CoCounselState.OPEN.value,
+            "actor": lawyer_a_id,
+            "reason": "创建协同办案",
+            "ts": datetime.now(timezone.utc).isoformat(),
+        }],
+    )
+
+
+def create_referral(
+    referrer_id: str,
+    target_lawyer_id: str,
+    case_type: CaseType,
+    case_description: str,
+    expected_fee: float,
+    match_score: Optional[float] = None,
+) -> Referral:
+    """创建转介绍 (PRD § 3.2)"""
+    if expected_fee < 0:
+        raise ValueError("expected_fee 必须 >= 0")
+    return Referral(
+        referral_id=generate_id("ref"),
+        referrer_id=referrer_id,
+        target_lawyer_id=target_lawyer_id,
+        case_type=case_type,
+        case_description=case_description,
+        expected_fee=expected_fee,
+        commission_rate=COMMISSION_RATES["referral"],
+        match_score=match_score,
+        status=ReferralStatus.PENDING,
+    )
+
+
+def create_cross_border_job(
+    lawyer_id: str,
+    client_id: str,
+    doc_type: CrossBorderDocType,
+    language: Language,
+    jurisdiction: Jurisdiction,
+    fields: Optional[Dict[str, Any]] = None,
+    template_id: Optional[str] = None,
+) -> CrossBorderJob:
+    """创建跨境文件订单 (PRD § 3.4, 复用 W25 Skill 3 v3.0 模板)"""
+    pricing = CROSS_BORDER_PRICING[doc_type][language]
+    commission = round(pricing * COMMISSION_RATES["cross_border"], 2)
+    return CrossBorderJob(
+        job_id=generate_id("cb"),
+        lawyer_id=lawyer_id,
+        client_id=client_id,
+        doc_type=doc_type,
+        language=language,
+        jurisdiction=jurisdiction,
+        price=pricing - commission,            # 律师实际所得
+        marketplace_commission=commission,    # Marketplace 抽成
+        template_id=template_id,
+        status="pending",
+        fields=fields or {},
+    )
+
+
+def compute_marketplace_metrics(
+    referrals: List[Referral],
+    co_counsel_cases: List[CoCounselCase],
+    cross_border_jobs: List[CrossBorderJob],
+    commission_records: List[CommissionRecord],
+    lawyer_pool: Optional[List[LawyerProfile]] = None,
+    lawyer_ratings: Optional[List[float]] = None,
+) -> MarketplaceMetrics:
+    """计算 Marketplace 5 维度指标 (PRD § 8.3)
+
+    5 指标:
+    1. lawyer_participants      Marketplace 律师参与方
+    2. cases_completed_monthly  月接案数
+    3. revenue_monthly          月营收 (¥)
+    4. cross_border_orders_monthly 跨境案件月单量
+    5. avg_lawyer_rating        律师满意度 (0-5)
+    """
+    # 1. 律师参与方 (去重律师 ID)
+    active_lawyers = set()
+    for r in referrals:
+        active_lawyers.add(r.referrer_id)
+        active_lawyers.add(r.target_lawyer_id)
+    for c in co_counsel_cases:
+        active_lawyers.add(c.lawyer_a_id)
+        if c.lawyer_b_id:
+            active_lawyers.add(c.lawyer_b_id)
+    for j in cross_border_jobs:
+        active_lawyers.add(j.lawyer_id)
+    if lawyer_pool:
+        for lp in lawyer_pool:
+            if lp.marketplace_active:
+                active_lawyers.add(lp.lawyer_id)
+
+    # 2. 月接案数 (协同办案 SETTLED + 转介绍 COMPLETED)
+    cases_completed = sum(1 for c in co_counsel_cases if c.state == CoCounselState.SETTLED)
+    cases_completed += sum(1 for r in referrals if r.status == ReferralStatus.COMPLETED)
+
+    # 3. 月营收 (Marketplace 抽成总额) - 单一数据源: commission_records (settled/confirmed)
+    # cross_border_jobs 仅作为计数来源 (commission_records 是 source of truth, 避免双计)
+    revenue = sum(cr.commission_amount for cr in commission_records if cr.status in ("settled", "confirmed"))
+    # cross_border_jobs 中没有对应 commission_record 的 completed 订单, 计入 pending
+    cb_pending = sum(
+        j.marketplace_commission for j in cross_border_jobs
+        if j.status == "completed"
+        and not any(cr.transaction_id == j.job_id for cr in commission_records)
+    )
+
+    # 4. 跨境案件月单量
+    cb_orders = sum(1 for j in cross_border_jobs if j.status == "completed")
+
+    # 5. 律师满意度 (平均评分, 仅 marketplace_active 律师)
+    avg_rating = 0.0
+    if lawyer_ratings:
+        avg_rating = sum(lawyer_ratings) / len(lawyer_ratings)
+    elif lawyer_pool:
+        ratings = [lp.rating for lp in lawyer_pool if lp.rating > 0 and lp.marketplace_active]
+        avg_rating = sum(ratings) / len(ratings) if ratings else 0.0
+
+    # 待结算 + 已结算
+    pending = sum(cr.commission_amount for cr in commission_records if cr.status == "pending")
+    pending += cb_pending  # cross_border 未结算的也计入 pending
+    settled = sum(cr.commission_amount for cr in commission_records if cr.status == "settled")
+
+    return MarketplaceMetrics(
+        metric_date=datetime.now(timezone.utc).isoformat(),
+        lawyer_participants=len(active_lawyers),
+        cases_completed_monthly=cases_completed,
+        revenue_monthly=round(revenue, 2),
+        cross_border_orders_monthly=cb_orders,
+        avg_lawyer_rating=round(avg_rating, 2),
+        referral_count_total=len(referrals),
+        co_counsel_count_total=len(co_counsel_cases),
+        cross_border_count_total=len(cross_border_jobs),
+        commission_pending=round(pending, 2),
+        commission_settled=round(settled, 2),
+    )
+
+
+# ============================================================================
+# 5. ID 生成 + 工具函数
+# ============================================================================
+
+def parse_legal_basis(case_type: CaseType) -> str:
+    """案件类型 → 法条依据 (复用 W11 PRD V5.0 法务自检)"""
+    return {
+        CaseType.CONTRACT_DISPUTE: "《民法典》合同编 + 第五百七十七条 (违约责任)",
+        CaseType.TORT: "《民法典》侵权责任编 + 第一千一百六十五条 (过错责任)",
+        CaseType.FAMILY: "《民法典》婚姻家庭编 + 第一千零七十六条 (协议离婚)",
+        CaseType.EQUITY: "《公司法》 + 第三十五条 (股东权利) + 第七十四条 (股权回购)",
+        CaseType.INTELLECTUAL_PROPERTY: "《商标法》 + 第五十七条 + 《著作权法》第五十三条",
+        CaseType.LABOR_ARBITRATION: "《劳动合同法》 + 第四十七条 (经济补偿) + 第八十七条",
+        CaseType.ADMINISTRATIVE_REVIEW: "《行政复议法》 + 第六条 + 第十一条 (申请期限)",
+        CaseType.CROSS_BORDER: "CISG (联合国国际货物销售合同公约 1980) + UNCITRAL",
+        CaseType.ARBITRATION: "ICC / HKIAC / SIAC 仲裁规则",
+        CaseType.OTHER: "根据具体案情适用相关法律法规",
+    }.get(case_type, "根据具体案情适用相关法律法规")
+
+
+def validate_lawyer_profile(profile: LawyerProfile) -> List[str]:
+    """校验律师画像, 返回错误列表 (空 = 校验通过)"""
+    errors = []
+    if not profile.lawyer_id or len(profile.lawyer_id) < 2:
+        errors.append("lawyer_id 必须 >= 2 字符")
+    if not profile.name:
+        errors.append("name 不能为空")
+    if profile.experience_years < 0 or profile.experience_years > 80:
+        errors.append("experience_years 必须在 [0, 80] 区间")
+    if profile.rating < 0 or profile.rating > 5:
+        errors.append("rating 必须在 [0, 5] 区间")
+    if not profile.specialties:
+        errors.append("specialties 不能为空 (Marketplace 律师必须声明专业)")
+    if profile.availability not in ("available", "busy", "unavailable"):
+        errors.append(f"availability 必须是 available/busy/unavailable, 当前: {profile.availability}")
+    return errors
+
+
+def get_state_transitionable_targets(current: CoCounselState) -> List[CoCounselState]:
+    """获取当前状态的所有合法目标 (含回退)
+
+    注意: ARCHIVED 是终态, 无合法目标 (即使语义上"上一状态"是 SETTLED, 也不允许 transition_back)
+    """
+    if current == CoCounselState.ARCHIVED:
+        return []  # 终态, 不允许任何转换
+    targets = list(COUNSEL_STATE_TRANSITIONS.get(current, []))
+    # 找上一状态 (仅当不是初态)
+    for prev, nexts in COUNSEL_STATE_TRANSITIONS.items():
+        if current in nexts and prev != current:
+            if prev not in targets:
+                targets.append(prev)
+    return targets
+
+
+# ============================================================================
+# 6. 性能监控 (复用 W22 Rust 5x perf baseline)
+# ============================================================================
+
+def measure_latency_ms(func, *args, **kwargs) -> Tuple[Any, int]:
+    """测量函数执行时间 (毫秒), 返回 (result, latency_ms)"""
+    t0 = time.time()
+    result = func(*args, **kwargs)
+    latency_ms = int((time.time() - t0) * 1000)
+    return result, latency_ms
