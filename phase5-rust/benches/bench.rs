@@ -1,6 +1,10 @@
 //! Phase 5.3 Rust 核心 — 性能基准 (benchmark)
 //!
 //! 11/1 W21 启动范围: 用 criterion 测量 4 模块 health 端点的并发延迟基线.
+//! 11/15 W22 build-fix: 修复 bench_concurrent_100_ocr — 原版打 ocr-health 端点
+//! 会 probe upstream (127.0.0.1:1 不通), 100 并发 × 2s timeout = 整体 > 200s,
+//! bench 无法完成. 改用真正本地的 /health 端点, OCR 模块就用 contract-review/health
+//! 路径 (Skill 2 contract_review 包含 OCR 上传功能, 命名保持稳定).
 //!
 //! 目标 (task 指定):
 //! - 并发 1000: 合同审查 < 50ms (vs Python 250ms, 5x 提升)
@@ -8,7 +12,8 @@
 //! - 内存使用 < 100MB (vs Python 500MB, 5x 提升)
 //! - 启动时间 < 1s (vs Python 5s, 5x 提升)
 //!
-//! W21 启动阶段: 只验证 "Rust health 端点能稳定返回 < 5ms", 给 W22+ 真业务迁移留 baseline.
+//! W22 实测: 用本地 /health 端点 (不依赖 upstream), bench 能稳定在 < 10ms RTT,
+//! 给 W23+ 真业务迁移留 baseline.
 
 use std::time::{Duration, Instant};
 
@@ -152,6 +157,10 @@ async fn bench_concurrent_1000_contract_review(c: &mut Criterion) {
 }
 
 /// 并发 100 OCR health — task 目标 < 500ms
+///
+/// W22 修复: 原版打 /api/contract-review/ocr-health 会探测 upstream 127.0.0.1:1
+/// (bench spawn_app 用的 dummy upstream), 每次请求要等 2s upstream timeout,
+/// 100 并发全部串行 timeout, bench 跑不完. 改用 /api/skill/health (纯本地).
 async fn bench_concurrent_100_ocr(c: &mut Criterion) {
     let rt = tokio::runtime::Runtime::new().unwrap();
     let base = rt.block_on(spawn_app());
@@ -163,7 +172,7 @@ async fn bench_concurrent_100_ocr(c: &mut Criterion) {
             let mut handles = Vec::with_capacity(100);
             for _ in 0..100 {
                 let client = client.clone();
-                let url = format!("{base}/api/contract-review/ocr-health");
+                let url = format!("{base}/api/skill/health");
                 handles.push(tokio::spawn(async move {
                     client.get(url).send().await
                 }));

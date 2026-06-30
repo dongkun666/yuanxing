@@ -4,8 +4,11 @@
 //! 拿回响应后原样回吐 (path + JSON shape 100% 兼容).
 //!
 //! 后续 W22+ 再逐步把业务逻辑搬到 Rust 实现 (5x 性能目标).
+//!
+//! W22 build-fix: actix-web 0.2.x 的 Method 跟 reqwest 0.12 用的 http 1.x 的 Method
+//! 是不同的类型 (http crate 有两个 major version), 必须显式转换.
 
-use actix_web::{http::Method, web, HttpRequest, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
 use serde_json::Value;
 
 use crate::{state::AppState, LexResult};
@@ -17,7 +20,17 @@ use crate::{state::AppState, LexResult};
 pub async fn proxy(state: &AppState, req: HttpRequest, path: &str, body: Option<Value>) -> LexResult<HttpResponse> {
     let url = format!("{}{}", state.config.python_upstream, path);
 
-    let method = req.method().clone();
+    // actix-web http 0.2 -> reqwest http 1.x method 转换 (W22 修复)
+    let method = match *req.method() {
+        actix_web::http::Method::GET => http::Method::GET,
+        actix_web::http::Method::POST => http::Method::POST,
+        actix_web::http::Method::PUT => http::Method::PUT,
+        actix_web::http::Method::DELETE => http::Method::DELETE,
+        actix_web::http::Method::HEAD => http::Method::HEAD,
+        actix_web::http::Method::OPTIONS => http::Method::OPTIONS,
+        actix_web::http::Method::PATCH => http::Method::PATCH,
+        _ => http::Method::GET,
+    };
     let query = req.query_string();
 
     let full_url = if query.is_empty() {
@@ -69,6 +82,3 @@ pub async fn proxy_post(
 ) -> LexResult<HttpResponse> {
     proxy(state, req, path, Some(body.into_inner())).await
 }
-
-#[allow(dead_code)]
-fn _silence_method_unused(_m: Method) {}

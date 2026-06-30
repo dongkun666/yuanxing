@@ -1338,6 +1338,7 @@ dependencies = [
  "criterion",
  "dotenvy",
  "futures",
+ "http 1.4.2",
  "once_cell",
  "parking_lot",
  "reqwest",

@@ -22,6 +22,9 @@ pub mod routes;
 pub mod state;
 pub mod upstream;
 
+// Build-script 注入的编译期元数据 (build.rs 写入 $OUT_DIR/build_metadata.rs)
+include!(concat!(env!("OUT_DIR"), "/build_metadata.rs"));
+
 pub use errors::{LexError, LexResult};
 pub use state::AppState;
 
@@ -32,4 +35,4 @@ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const DEFAULT_BIND: &str = "127.0.0.1:8001";
 
 /// Phase 5.3 启动版本标签
-pub const PHASE_TAG: &str = "phase5.3-rust-core/w21-scaffold";
+pub const PHASE_TAG: &str = "phase5.3-rust-core/w22-build-fix";

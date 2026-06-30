@@ -68,7 +68,7 @@ async fn test_root_health() {
     let body: serde_json::Value = resp.json().await.unwrap();
     assert_eq!(body["ok"], true);
     assert_eq!(body["service"], "lexprime-rust-core");
-    assert_eq!(body["phase"], "phase5.3-rust-core/w21-scaffold");
+    assert_eq!(body["phase"], "phase5.3-rust-core/w22-build-fix");
 }
 
 #[actix_web::test]
