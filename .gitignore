@@ -2,8 +2,8 @@
 node_modules/
 
 # Python 虚拟环境
-# - backend/venv312/ : Python 3.12.7 embeddable (W7 PaddleEngine 隔离环境, paddlepaddle 3.3.1 wheel 不支持 3.14)
-# - python-3.12.7-embed-amd64.zip : 同上的嵌入式分发包
+# - backend/venv312/ : Python 3.12.7 embeddable (W7 PaddleEngine 隔离环境, paddlepaddle 3.3.1 wheel 不支�?3.14)
+# - python-3.12.7-embed-amd64.zip : 同上的嵌入式分发�?
 backend/venv312/
 backend/python-3.12.7-embed-amd64.zip
 backend/venv*/
@@ -15,7 +15,7 @@ backend/venv*/
 *.bak*
 *.tmp
 
-# 编辑器
+# 编辑�?
 .vscode/
 .idea/
 *.swp
@@ -27,8 +27,22 @@ Thumbs.db
 npm-debug.log*
 
 # 编译产物（保留）
-# assets/css/tailwind.css  # 编译后的 CSS，需要提交
-# assets/css/tailwind-input.css  # 源 CSS，需要提交
+# assets/css/tailwind.css  # 编译后的 CSS，需要提�?
+# assets/css/tailwind-input.css  # �?CSS，需要提�?
 
-# Git worktrees（隔离工作区，与 .worktrees/ 配合 using-git-worktrees skill）
+# Git worktrees（隔离工作区，与 .worktrees/ 配合 using-git-worktrees skill�?
 .worktrees/
+
+# 环境变量 / 凭证文件 (W15 w14-followup-fixes 加)
+# - scripts/smtp-credentials.env : SMTP 真凭证 (公测前 7/22 总指挥填实, 不 commit)
+# - scripts/lawyer-emails.real.json : 律师真实邮箱 (公测前 7/22 总指挥填实, 不 commit)
+# - 任何 .env 文件 (e.g. backend/.env, ai-service/.env)
+.env
+.env.*
+scripts/smtp-credentials.env
+scripts/smtp-credentials.env.local
+scripts/lawyer-emails.real.json
+backend/.env
+backend/cases-crawler/.env
+backend/**/secrets.json
+!**/.env.example
