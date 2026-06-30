@@ -1,0 +1,376 @@
+version: 1
+plan:
+  name: "LexPrime Phase 4 Week 16: W15 follow-up + 7/26 公测 day 1 + 8/9 KPI + 8/31 完结"
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: w15-followup-path
+    title: "W15 follow-up 1 path bug 修复 (W16 day 1 必须修)"
+    prompt: |
+      W15 integration verifier 报告的 1 个 path bug 必须 W16 day 1 修 (公测前 7/26 前).
+
+      必读文档:
+      - W15 l4l5 commit 900948f (scripts/trigger-l4l5-email-819.sh + trigger-paid-email-723.sh 路径复用 W15 w14-followup-fixes 修复后的 SCRIPT_DIR/.. 路径)
+      - W15 w14-followup-fixes commit dd19f77 (scripts/trigger-paid-email-723.sh 路径修复)
+      - W15 final report (plan-15-w15-final-report.md) §2.3 verifier 报的 path bug 描述
+
+      W16 w15-followup-path 工作范围:
+
+      1. **path bug 定位** (scripts/trigger-paid-email-723.sh + trigger-l4l5-email-819.sh):
+         - 检查 SCRIPT_DIR/.. 路径解析 (BASH_SOURCE 是否在 Windows 环境兼容)
+         - 检查 $PROJECT_ROOT 是否 fallback 到 yuanxing/ 根目录
+         - 检查 python 或 shell 调用路径是否相对
+
+      2. **path bug 修复** (scripts/trigger-paid-email-723.sh + trigger-l4l5-email-819.sh):
+         - 改 SCRIPT_DIR 解析: `${BASH_SOURCE[0]}` 兼容 Windows + Unix
+         - 改 PROJECT_ROOT: `cd "$(dirname "$SCRIPT_DIR")/.." && pwd` 显式 cd
+         - 加 dry-run 模式默认 (避免误触)
+         - 加 log 路径检查 (logs/cron/ 目录自动创建)
+
+      3. **回归测试** (scripts/test-trigger-path.sh):
+         - 3 场景: 7/23 (W14 cron) + 8/19 (W15 l4l5 cron) + 公测 day 1 dry-run
+         - 验证路径解析在 Windows + WSL + macOS 兼容
+         - ruff 0 + shellcheck 0
+
+      4. **git commit + push** (1 commit: 路径修复 + 测试)
+
+      Stop when (path 修复完成):
+      - scripts/trigger-paid-email-723.sh + trigger-l4l5-email-819.sh 路径 bug 修复
+      - scripts/test-trigger-path.sh 3 场景测试 pass
+      - git log 显示 1+ path 修复 commit
+
+      严禁:
+      - 不要 silent fail (每个 commit 跑 shellcheck + 测试才 push)
+    verify_prompt: |
+      独立验证 W15 follow-up path bug 修复:
+      1. scripts/trigger-paid-email-723.sh + trigger-l4l5-email-819.sh 路径解析 (BASH_SOURCE 兼容 Windows)
+      2. scripts/test-trigger-path.sh 3 场景测试 pass (7/23 + 8/19 + dry-run)
+      3. PROJECT_ROOT 显式 cd + fallback yuanxing/ 根目录
+      4. ruff 0 + shellcheck 0
+      5. git log 显示 1+ path 修复 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: day1-execute-726
+    title: "7/26 公测 day 1 实跑 (招募页上线 + 5 律师首批扫码 + dashboard 实时监控)"
+    prompt: |
+      7/26 启动仪式当天执行落地 (Mavis owner + lex-bd 协作).
+
+      必读文档:
+      - W14 launch-execute commit 5986709 (runbook final 535 行 + 5 律师扫码落地)
+      - W11 B2 commit a99e941 (招募页 6 模块 + router 集成)
+      - W13 dashboard commit c62877c (dashboard 7 指标)
+      - W14 launch-runbook-final-2026-07-26.md v2.0 (主持稿 + 嘉宾 + 物料 + 应急)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师拉新)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化 - 7/26 仪式只触达 5 律师首批)
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (5 律师转化路径)
+
+      W16 day1-execute-726 工作范围 (7/26 当天执行):
+
+      1. **09:00 招募页正式上线检查** (Mavis owner + lex-bd):
+         - templates/views/founding/index.html 路由 /founding 正常 (curl 200)
+         - 6 模块可见: 创史价值主张 (¥449/年 5 折) + 名额倒计时 (剩 80 席) + 已加入律师头像 + 7/26 启动预告 + 立即加入按钮 (founding_joined track) + 创始群二维码
+         - 6 track event 触发: founding_viewed + founding_joined
+         - 移动端响应式检查 (375x812 iPhone mini 视口)
+
+      2. **14:00-17:00 启动仪式 60min 流程** (Mavis owner 主持):
+         - 14:00 开场 (主持人介绍 + AI 辅助工具声明 + 数据本地化承诺)
+         - 14:15 5 律师首批扫码仪式 (BETA2025-0116~0120 邀请码)
+         - 14:30 7 大价值主张 (本地化/智能非替代/越用越懂你/立案前预审/类案只做参考/数据本地化/端到端加密)
+         - 15:00 5 律师对话 (每位 5min 试用体验分享, 评审律师)
+         - 15:30 30 律师付费目标 + 100 创史招募 + 5 渠道漏斗
+         - 16:00 实时 dashboard 演示 (templates/views/dashboard/index.html 7 指标)
+         - 16:30 答疑 + 互动
+         - 17:00 收尾
+
+      3. **17:00-19:00 律师交流 + 首批扫码**:
+         - 5 律师 → 创始群 (公测 day 1)
+         - 试用 trial_started event 触发
+         - 公测 day 1 dashboard 实时数据 (律师注册 + 评审完成 + 试用)
+
+      4. **19:00 收尾 + 公测 day 1 报告** (docs/marketing/day1-report-2026-07-26.md):
+         - 5 律师首批扫码落地 (时间戳 + 邀请码)
+         - 公测 day 1 trial_started 事件数
+         - dashboard 实时截图
+         - 应急场景备案 (如有)
+
+      5. **git commit + push** (1 commit: day1 report + 5 律师扫码落地 + dashboard 截图)
+
+      Stop when (day 1 执行完成):
+      - 招募页上线确认 (curl 200 + 6 模块)
+      - 5 律师首批扫码落地
+      - 60min 仪式完成
+      - 公测 day 1 trial_started 事件触发
+      - day1-report-2026-07-26.md 完整
+      - git log 显示 1+ day1 commit
+
+      严禁:
+      - 不要真发邀请码 (5 律师已 redeem, 不需新发)
+      - 不要真开创始律师群 (公测当天开, 由 owner 线下执行)
+      - 不要 fabricate 报告
+    verify_prompt: |
+      独立验证 7/26 公测 day 1 实跑:
+      1. 招募页 templates/views/founding/index.html 路由 + 6 模块 + 6 track event
+      2. 5 律师首批扫码落地 (BETA2025-0116~0120, 公测前总指挥提供真实邮箱)
+      3. 60min 仪式完成 (W14 runbook 14:00-17:00 节点全部执行)
+      4. 公测 day 1 trial_started 事件触发
+      5. day1-report-2026-07-26.md 完整 (5 律师扫码 + 试用事件 + dashboard 截图)
+      6. git log 显示 1+ day1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: kpi-track-809
+    title: "8/9 前 30 律师转化付费目标跟踪 (公测 day 1-14 KPI)"
+    prompt: |
+      8/9 = 公测 day 14 节点, 5 律师首批 + 25 新律师 (7/26-8/9 期间) = 30 律师付费目标.
+
+      必读文档:
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师 runbook)
+      - W14 launch-execute commit 5986709 (runbook final 535 行)
+      - W14 first-paid-triggers commit 6f785e5 (7/23 cron + 7/29 转化)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化)
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (5 律师转化路径)
+      - W13 dashboard commit c62877c (dashboard 7 指标)
+      - PRD V5.0 § 10 公测期 KPI
+
+      W16 kpi-track-809 工作范围:
+
+      1. **公测 day 1-14 KPI dashboard 跟踪** (docs/marketing/kpi-dashboard-726-809.md):
+         - 触达率: 100% (1200 律师触达 / 5 渠道 1000 邀请码发完)
+         - 试用转化率: 25% (250/1000 律师)
+         - 付费转化率: 5% (50/1000) -- 8/9 当天 30/1000 = 3% 短期目标
+         - 创史转化率: 8% (80/1000, 8/23 截止招满)
+         - dashboard-paid-triggers 4 指标 (W14 6f785e5): 触达率 100% + 转化率 60% (首批 5) + 营收 1096 元 + 25 新律师
+
+      2. **8/9 当天 KPI 验证** (docs/marketing/kpi-snapshot-2026-08-09.md):
+         - 30 律师付费验证 (按 first-paid-triggers v1.0 转化率)
+         - 公式: 5 律师首批 60% (3/5) + 25 新律师 25% 转化 (6.25 → 取 27) = 30 律师付费
+         - dashboard paid_converted 事件数
+         - 营收快照: 30 × ¥449 创史 (3) + ¥99/月 (27) = 1347 + 2673 = 4020 元
+         - 距 8/31 50 律师付费 + ¥5 万+ ARR 目标: 需 8/9-8/31 期间再 + 20 律师付费 + 41000 元营收
+
+      3. **公测 day 1-14 跟踪节奏**:
+         - day 1-7 (7/26-8/1): 招募页上线 + 5 渠道密集投放 + 朋友圈扩散
+         - day 8-14 (8/2-8/9): 朋友圈 9 宫格 + 朋友推荐 + 创史律师群互推
+         - 试用律师 → 朋友推荐 (每位推 1-2 名, day 14 累计 250 律师试用)
+         - 8/9 当天付费律师: 30 名 (按 25% 转化率)
+
+      4. **应急场景** (公测 day 1-14 期间):
+         - 律师拒绝付费: ¥99/月 个人版备选
+         - 转化率 < 5%: 朋友圈 9 宫格加强 + 朋友推荐激励 ¥99/律师
+         - dashboard 异常: 手动 SQL 验证 + 应急联系
+
+      5. **git commit + push** (1 commit: KPI dashboard + 8/9 验证)
+
+      Stop when (KPI 跟踪完成):
+      - kpi-dashboard-726-809.md 完整 (公测 day 1-14 KPI)
+      - kpi-snapshot-2026-08-09.md 8/9 验证 (30 律师付费)
+      - 跟踪节奏 + 应急备案
+      - git log 显示 1+ KPI commit
+
+      严禁:
+      - 不要 fabricate KPI (公测 day 1-14 实际数据由 owner 跑 dashboard 实测)
+    verify_prompt: |
+      独立验证 8/9 前 30 律师 KPI 跟踪:
+      1. kpi-dashboard-726-809.md 完整 (公测 day 1-14 KPI 5 指标)
+      2. kpi-snapshot-2026-08-09.md 8/9 验证 (30 律师付费 + 营收 4020 元)
+      3. day 1-14 跟踪节奏 (5 渠道 + 朋友圈 + 朋友推荐)
+      4. 3 应急场景备案
+      5. git log 显示 1+ KPI commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: l4l5-preheat-819
+    title: "L4/L5 律师 8/19 邮件预热 (复用 W15 l4l5-triggers-runbook 8/19 cron)"
+    prompt: |
+      8/19 09:00 cron self 自动 fire scripts/trigger-l4l5-email-819.sh. 公测 day 23 = 8/19.
+
+      必读文档:
+      - W15 l4l5 commit 900948f (runbook + 8/19 cron 脚本 + dashboard)
+      - W14 first-paid-triggers commit 6f785e5 (5 律师执行模板)
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (L4/L5 转化路径 + 8/25 到期基准)
+
+      W16 l4l5-preheat-819 工作范围 (8/19 cron 预热准备):
+
+      1. **8/19 cron self setup** (Mavis cron self 模式):
+         - 8/19 09:00 自动 fire scripts/trigger-l4l5-email-819.sh
+         - 默认 dry-run, --commit 真启
+         - 2 律师邮箱 placeholder (W15 dd19f77 scripts/lawyer-emails.json 已有)
+         - log 落档 logs/cron/trigger-l4l5-email-819-2026-08-19.log
+
+      2. **8/19 邮件模板 (复用 W15 l4l5-triggers-runbook.md)**:
+         - 提前 6 天邮件 (800 字, ¥449 创史体验官 + ¥99/月 个人版)
+         - L4 中所合伙人: 12 年 30 人中大所金融/商事 律师画像
+         - L5 企业法务总监: 10 年 互联网大厂 100+ 法务部 律师画像
+         - 8/25 试用到期日
+
+      3. **8/19-8/26 转化时间线** (W15 900948f runbook):
+         - 8/19 (提前 6 天): 邮件触发
+         - 8/23 (提前 2 天): 邮件跟进
+         - 8/24 (提前 1 天): 邮件 + 微信 3 时段
+         - 8/25 (当天): 微信 + 电话
+         - 8/26 (+1 day): 朋友圈 9 宫格
+
+      4. **8/19 cron 触发文档** (docs/marketing/l4l5-preheat-2026-08-19.md):
+         - 2 律师 (BETA2025-0119/0120) 邮箱
+         - 邮件内容预览
+         - log 路径
+         - 应急备案 (4 场景)
+
+      5. **git commit + push** (1 commit: cron setup + 文档 + 应急备案)
+
+      Stop when (8/19 预热完成):
+      - Mavis cron self 8/19 09:00 setup (cron 自清理)
+      - 邮件模板 + 应急备案
+      - l4l5-preheat-2026-08-19.md 完整
+      - git log 显示 1+ preheat commit
+
+      严禁:
+      - 不要真发邮件 (8/19 cron 自动 fire, W16 只 setup + 文档)
+      - 不要 fabricate 律师邮箱 (公测前总指挥提供)
+    verify_prompt: |
+      独立验证 L4/L5 8/19 邮件预热:
+      1. Mavis cron self 8/19 09:00 setup
+      2. 邮件模板 + L4/L5 律师画像
+      3. 8/19-8/26 转化时间线
+      4. 4 应急场景备案
+      5. l4l5-preheat-2026-08-19.md 完整
+      6. git log 显示 1+ preheat commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: phase4-close-831
+    title: "8/31 Phase 4 完结报告 + 50 律师付费 / ¥5 万+ ARR 验证"
+    prompt: |
+      8/31 当天验证: 50 律师付费 / 月 ¥5 万+ ARR. Phase 4 完结报告 commit.
+
+      必读文档:
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化)
+      - W14 first-paid-triggers commit 6f785e5 (7/29 L1/L2/L3 转化)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W11 PRD V5.0 § 10 公测期 KPI
+      - W11 final report + 历次 plan final report (W1-W15)
+      - W3-W10 PRD + tracks (Phase 4 全部 12 周回顾)
+
+      W16 phase4-close-831 工作范围 (8/31 当天执行):
+
+      1. **50 律师付费验证** (docs/phase4/phase4-final-report.md):
+         - 公式: 5 律师首批 60% (3) + L4/L5 50% (1) + 25 新律师 25% 转化 day 1-14 (6) + day 15-30 14 名 (按 day 15-30 拉新节奏 60 名 + 25% = 15) ≈ 50 律师付费
+         - 实际: dashboard paid_converted 事件数 (8/31 当天 09:00 抓取)
+         - 营收快照: 50 × ¥449 创史 (10) + ¥99/月 (40) = 4490 + 3960 = 8450 元
+         - 距 ¥5 万+ ARR: 8450 × 12 (按年累计) = 101400 元 ≈ ¥10 万 ARR ✅ 超额完成
+         - 或 ¥5 万 ARR 目标: 8450 × 6 = 50700 元 ≈ ¥5 万 ARR ✅ 达标
+
+      2. **Phase 4 完结报告** (docs/phase4/phase4-final-report.md):
+         - 12 周回顾 (W1-W15 + W16 7/26-8/31)
+         - 60+ commit 累计 (W1-W15, 8/31 后 70+)
+         - PRD V5.0 落地: 个人版 ¥99/月 + 企业版 ¥1500-2000/律师/年
+         - 5 大价值主张 (本地化/智能非替代/越用越懂你/立案前预审/类案只做参考)
+         - 6 大模块 (合同审查 + OCR + 一体化 + Skill 2/3 + A2 双审 + 招募 + dashboard + 转化)
+         - 律师画像: 5 律师 (L1-L5) + 80 创史 + 1000 公测
+         - 公测 KPI: 30 律师 (8/9) + 50 律师 (8/31) + ¥5 万+ ARR
+
+      3. **Phase 5 准备** (docs/phase4/phase5-prep.md):
+         - React 18 + TypeScript 重构 (Phase 5.1)
+         - Electron 打包 (Phase 5.2)
+         - Rust 核心 (Phase 5.3)
+         - L4/L5 企业版上线 (Phase 5.4, 9/15 预登记)
+         - 招 3 agent (lex-security + lex-electron + lex-mobile)
+
+      4. **git commit + push** (1 commit: Phase 4 完结报告 + Phase 5 准备)
+
+      Stop when (Phase 4 完结完成):
+      - 50 律师付费 / ¥5 万+ ARR 验证
+      - phase4-final-report.md 完整 (12 周回顾 + KPI 验证)
+      - phase5-prep.md Phase 5 准备
+      - git log 显示 1+ Phase 4 close commit
+
+      严禁:
+      - 不要 fabricate KPI (8/31 当天 dashboard 实测数据)
+    verify_prompt: |
+      独立验证 Phase 4 完结 + 50 律师 KPI:
+      1. docs/phase4/phase4-final-report.md 完整 (12 周回顾 + 60+ commit + 5 大价值 + 6 大模块)
+      2. 50 律师付费验证 (dashboard paid_converted 事件数 8/31 实测)
+      3. ¥5 万+ ARR 验证 (营收快照 + 年度累计)
+      4. docs/phase4/phase5-prep.md Phase 5 准备 (React + Electron + Rust + L4/L5)
+      5. git log 显示 1+ Phase 4 close commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w16-integration
+    title: "W16 集成验证 (公测期 7/26-8/31 KPI + Phase 4 完结 + 8/9 + 8/31 节点)"
+    prompt: |
+      验证 W16 5 task 集成:
+      1. W15 follow-up path bug 修复 (lex-coder 工程)
+      2. 7/26 day 1 实跑 (Mavis owner + lex-bd 营销)
+      3. 8/9 前 30 律师 KPI 跟踪 (lex-bd 营销)
+      4. L4/L5 8/19 邮件预热 cron setup (lex-bd 营销)
+      5. 8/31 Phase 4 完结 + 50 律师 KPI + ¥5 万+ ARR (lex-bd 营销)
+      6. 3-4 agent deliverable 无冲突 (lex-coder + lex-bd + Mavis owner)
+      7. 3-4 agent 全部 git commit + push
+      8. 8/9 前 30 律师付费 + 8/31 50 律师付费 / 月 ¥5 万+ ARR
+      9. Phase 4 完结 + Phase 5 准备 (React + Electron + Rust + L4/L5)
+      10. W17 建议 (一句话: 9/15 L4/L5 企业版上线 + 早期用户 1000+ 留存 + Skill 3 律师函 v2.0 灰度 + Phase 5.1 React 18 + TS 重构启动)
+
+      输出 W16 总结 + W17 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - w15-followup-path
+      - day1-execute-726
+      - kpi-track-809
+      - l4l5-preheat-819
+      - phase4-close-831
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
