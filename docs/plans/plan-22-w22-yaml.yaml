@@ -1,0 +1,257 @@
+version: 1
+plan:
+  name: "LexPrime Phase 5.4 Week 22: W21 kpi-track retry + 11/15 Rust 5x bench + 12/1 L4/L5 全量 + 50 律所"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: kpi-track-1031
+    title: "10/31 公测 day 66 KPI 实测 (W21 deferred 1 retry)"
+    prompt: |
+      W21 kpi-track-1031 deferred (max_cycles=3 paused). W22 retry.
+
+      10/31 公测 day 66 节点. 30 律师 (8/9) + 50 律师 (8/31) + 100 律师 (10/31 目标) + 月 ¥10 万+ ARR.
+
+      必读文档:
+      - W19 l4l5-enterprise commit 69552f5 (9/15 L4/L5 + 1000 留存)
+      - W18 kpi-verify commit fe0ef99 (8/9 KPI 实测填实)
+      - W18 l4l5-execute commit 083cf0b (8/25 L4/L5 forward-execute)
+      - W18 phase4-final commit 75405be (8/31 Phase 4 完结 forward-execute)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 runbook)
+      - W11 PRD V5.0 § 10 公测期 KPI
+
+      W22 kpi-track-1031 工作范围 (10/1-10/31 实测, Mavis owner):
+
+      1. **dashboard 6 SQL 实测 (10/31 09:00 抓取)** (Mavis owner):
+         - 律师注册数 (本月) - paid_converted 事件数
+         - 评审完成数 (本月) - review_completed 事件数
+         - 合同生成数 (本月) - doc_generated 事件数
+         - OCR 用量 (本月) - ocr_used 事件数
+         - 创史招募进度 - advocate_promoted 事件数
+         - 付费转化 - paid_converted 事件数 (本月)
+
+      2. **100 律师付费验证** (kpi-snapshot-2026-10-31.md):
+         - 公式: 30 (8/9) + 50 (8/31) + 20 (9/1-9/30 期间 60 名 × 33% 转化) = 100 律师
+         - 实际: paid_converted 事件数 (10/31 09:00 实测)
+         - 营收快照: 100 × ¥449 创史 (20) + ¥99/月 (80) = 8980 + 7920 = 16900 元
+         - 距 ¥10 万+ ARR: 16900 × 6 = 101400 元 ≈ ¥10 万 ARR ✅ 达标
+         - 或 16900 × 12 = 202800 元 ≈ ¥20 万 ARR ✅ 超额
+
+      3. **公测 day 1-66 累计** (kpi-dashboard-726-1031.md):
+         - 触达率: 1200 律师 (5 渠道)
+         - 邀请码发完率: 1000+ 律师
+         - 试用转化率: 25% (250/1000)
+         - 付费转化率: 10% (100/1000) ✅ 超额 5% 目标
+         - 创史转化率: 8% (80/1000, 8/23 截止招满)
+
+      4. **应急备案** (公测 day 1-66 期间):
+         - 律师拒绝付费: ¥99/月 个人版备选
+         - 转化率 < 5%: 朋友圈 9 宫格加强 + 朋友推荐激励 ¥99/律师
+         - dashboard 异常: 手动 SQL 验证 + 应急联系
+
+      5. **git commit + push** (1 commit: 10/31 KPI 实测填实 + 营收快照)
+
+      Stop when (10/31 KPI 实测完成):
+      - 100 律师付费 + ¥10 万+ ARR 实测
+      - 6 dashboard SQL 实测填实
+      - kpi-snapshot-2026-10-31.md v2.0 (实测填实)
+      - kpi-dashboard-726-1031.md (公测 day 1-66 累计)
+      - git log 显示 1+ 10/31 commit
+
+      严禁 (W16 + W17 + W18 + W19 + W20 + W21 严守 fabricate 原则, W22 复制):
+      - 不要 fabricate 10/31 数据 (实测为主, owner 10/31 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 10/31 KPI 实测:
+      1. kpi-snapshot-2026-10-31.md v2.0 实测填实 (10/31 owner 跑 dashboard 6 SQL)
+      2. 100 律师付费验证 (paid_converted 事件数 = 30 + 50 + 20)
+      3. 营收快照 ¥10 万+ ARR 验证
+      4. kpi-dashboard-726-1031.md 公测 day 1-66 累计
+      5. 4 应急备案
+      6. git log 显示 1+ 10/31 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase5-rust-build-fix
+    title: "11/15 Phase 5.3 Rust build-script bug 修复 + 5x bench 验证 (W22 新启动)"
+    prompt: |
+      11/15 Phase 5.3 Rust build-script bug 解 + 5x bench 验证. W21 462e594 Rust 1.96.0 build-script bug 修复.
+
+      必读文档:
+      - W21 phase5-rust commit 462e594 (Rust 1.83 + tokio + actix-web + rusqlite 脚手架 + 4 模块路由)
+      - W20 phase5-electron commit 2349e41 (Electron 17.4.11 跨平台打包)
+      - W19 phase5-react commit 83d4695 (React 18 + TS 脚手架 + 3 模块)
+      - W17 phase4 commit 14af1a3 (Phase 5 准备 React + Electron + Rust)
+      - W11 PRD V5.0 § 11 法务自检 + 5 大价值主张 + 6 大模块
+      - backend/cases-crawler/api/ (W3-W12 现有 FastAPI 后端)
+      - W12 A2 commit 829d25c (doc_workflow 状态机 + 4 文书风险标注)
+      - W12 A2 commit 85278db (signature_router POST/GET)
+      - W13 dashboard commit c62877c (dashboard 7 指标 + 6 SQL)
+      - Rust 1.96.0 build-script bug 修复参考 (Cargo 1.96 已知 issue: build.rs 在多 target 时路径错误)
+
+      W22 phase5-rust-build-fix 工作范围 (11/15 启动, lex-coder):
+
+      1. **11/15 Rust build-script bug 修复** (yuanxing/phase5-rust/Cargo.toml + build.rs):
+         - Rust 1.96.0 → 1.83 LTS (修复 build-script bug)
+         - build.rs 路径修复 (多 target 支持)
+         - tokio 1.43 + actix-web 4 + rusqlite 0.32 依赖稳定
+         - cargo build 0 errors (Windows + Linux 跨平台)
+
+      2. **11/15 完整 4 benchmark** (yuanxing/phase5-rust/benches/):
+         - 并发 1000 合同审查 < 50ms (vs Python 250ms, 5x 提升)
+         - 并发 100 OCR < 500ms (vs Python 2.5s, 5x 提升)
+         - 内存使用 < 100MB (vs Python 500MB, 5x 提升)
+         - 启动时间 < 1s (vs Python 5s, 5x 提升)
+         - cargo bench 4 benchmark 全部通过
+
+      3. **11/15 4 模块完整业务逻辑** (yuanxing/phase5-rust/src/):
+         - 合同审查 (W5 contract_review_router → Rust module)
+         - OCR (W5 ocr_upload + W8 PaddleEngine → Rust module)
+         - 一体化 (W10 full_workflow_router → Rust module)
+         - Skill 2/3 (W3 contract_review + W9 doc_gen → Rust module)
+         - 完整功能 (5 大价值主张 + 6 大模块)
+
+      4. **git commit + push** (1 commit: 11/15 build-script bug 修复 + 4 benchmark + 4 模块完整)
+
+      Stop when (Phase 5.3 Rust 核心 11/15 完整完成):
+      - Rust 1.83 LTS + build-script bug 修复 ✅
+      - 4 benchmark 全部通过 (5x 性能)
+      - 4 模块完整业务逻辑
+      - 5 大价值主张 + 6 大模块完整
+      - cargo build 0 errors + cargo test pass
+      - git log 显示 1+ Phase 5.3 完整 commit
+
+      严禁:
+      - 不要修改 PRD (V5.0 维持, Phase 5.3 是实现层 Rust 重构)
+    verify_prompt: |
+      独立验证 Phase 5.3 Rust 核心 11/15 完整:
+      1. Rust 1.83 LTS + build-script bug 修复 (cargo build 0 errors)
+      2. 4 benchmark 全部通过 (并发 1000 < 50ms + 并发 100 OCR < 500ms + 内存 < 100MB + 启动 < 1s, 5x 提升)
+      3. 4 模块完整业务逻辑 (合同审查 + OCR + 一体化 + Skill 2/3)
+      4. 5 大价值主张 + 6 大模块完整
+      5. cargo test pass
+      6. git log 显示 1+ Phase 5.3 完整 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase5-4-enterprise
+    title: "12/1 Phase 5.4 L4/L5 企业版全量 + 50 律所签约 + 200 律师付费 (W22 新启动)"
+    prompt: |
+      12/1 Phase 5.4 L4/L5 企业版全量. 50 律所签约 (10+ 律所) + 200 律师付费.
+
+      必读文档:
+      - W21 agent-recruit-3 commit 0c8f01f (3 agent 招聘 + 10/15 上岗)
+      - W20 phase5-electron commit 2349e41 (Electron 17.4.11 跨平台打包)
+      - W19 l4l5-enterprise commit 69552f5 (9/15 L4/L5 企业版上线 + 1000 留存)
+      - W19 phase5-react commit 83d4695 (React 18 + TS 重构)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W11 PRD V5.0 § 9 商业模式 (企业版 ¥1500-2000/律师/年)
+      - W11 PRD V5.0 § 10 公测期 KPI
+
+      W22 phase5-4-enterprise 工作范围 (12/1 启动, lex-bd + Mavis owner):
+
+      1. **12/1 L4/L5 企业版全量上线** (docs/phase4/l4l5-enterprise-full-launch-2026-12-01.md):
+         - 9/15 试运营升级 12/1 全量上线
+         - 企业版定价: ¥1500-2000/律师/年 (30 人中大所金融/商事)
+         - 公测 day 96 节点: 200 律师付费目标 (从 100 律师 10/31 升级)
+         - 50 律所签约目标 (10+ 律所试用 + 40 律所意向)
+
+      2. **12/1 50 律所签约 runbook** (docs/phase4/l4l5-50-firms-runbook-2026-12-01.md):
+         - 5 律所 L1-L5 + 100 律师私域 + 10 微信群 + 5 公众号 + 1 律协 (W15 d66fc33)
+         - 12/1 首批 10 律所签约仪式
+         - 12/15 第二批 20 律所签约
+         - 12/31 第三批 20 律所签约 (累计 50)
+         - 跟踪指标: 50 律所签约 + 200 律师付费 + 月 ¥30 万+ ARR
+
+      3. **12/1 200 律师付费验证** (docs/phase4/l4l5-200-lawyers-snapshot-2026-12-31.md):
+         - 公式: 100 (10/31) + 100 (11/1-12/31 期间 200 名新律师 × 50% 转化) = 200 律师付费
+         - 实际: paid_converted 事件数 (12/31 09:00 实测, owner 跑 dashboard)
+         - 营收快照: 200 × ¥99/月 (160) + ¥449 创史 (30) + ¥1500-2000 企业版 (10) = 15840 + 13470 + 17500 = 46810 元
+         - 距 ¥30 万+ ARR: 46810 × 6 = 280860 元 ≈ ¥30 万 ARR ✅ 达标
+         - 或 46810 × 12 = 561720 元 ≈ ¥56 万 ARR ✅ 超额
+
+      4. **12/1 应急备案**:
+         - 律所拒绝签约: ¥99/月 个人版备选 + 朋友推荐
+         - 转化率 < 30%: 朋友圈 9 宫格加强 + 律协推荐
+         - dashboard 异常: 手动 SQL 验证
+
+      5. **git commit + push** (1 commit: 12/1 L4/L5 企业版全量 + 50 律所签约 + 200 律师付费 forward-execute)
+
+      Stop when (12/1 L4/L5 企业版全量 forward-execute placeholder 完成):
+      - l4l5-enterprise-full-launch-2026-12-01.md 完整
+      - l4l5-50-firms-runbook-2026-12-01.md 完整 (3 周 50 律所签约)
+      - l4l5-200-lawyers-snapshot-2026-12-31.md 完整
+      - 4 应急备案
+      - git log 显示 1+ Phase 5.4 commit
+
+      严禁 (W16 + W17 + W18 + W19 + W20 + W21 严守 fabricate 原则, W22 复制):
+      - 不要 fabricate 12/1 + 12/31 数据 (实测为主, owner 12/1 + 12/31 09:00 跑 dashboard)
+      - forward-execute placeholder 模式 (数字全部 [12/1 + 12/31 实测填实])
+    verify_prompt: |
+      独立验证 12/1 L4/L5 企业版全量 + 50 律所签约 + 200 律师付费:
+      1. l4l5-enterprise-full-launch-2026-12-01.md 完整
+      2. l4l5-50-firms-runbook-2026-12-01.md 完整 (3 周 50 律所签约)
+      3. l4l5-200-lawyers-snapshot-2026-12-31.md 完整 (200 律师 + ¥30 万+ ARR)
+      4. 4 应急备案
+      5. 严守 fabricate 原则 (12/1 距今 124 天, 12/31 距今 154 天, 实际数字 forward-execute placeholder)
+      6. git log 显示 1+ Phase 5.4 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w22-integration
+    title: "W22 集成验证 (10/31 KPI + 11/15 Rust 5x + 12/1 L4/L5 全量)"
+    prompt: |
+      验证 W22 3 task 集成:
+      1. kpi-track-1031 (lex-bd 营销 + Mavis owner) — 10/31 公测 day 66 KPI 实测
+      2. phase5-rust-build-fix (lex-coder 工程) — 11/15 Phase 5.3 Rust 5x bench 验证
+      3. phase5-4-enterprise (lex-bd 营销 + Mavis owner) — 12/1 L4/L5 企业版全量 + 50 律所 + 200 律师
+      4. 3 agent deliverable 无冲突 (lex-bd + lex-coder + Mavis owner)
+      5. 3 agent 全部 git commit + push
+      6. **严禁 fabricate** (10/31 距今 93 天, 11/15 距今 108 天, 12/1 距今 124 天, 12/31 距今 154 天; 实际数字全部 forward-execute placeholder 由 owner 实测填实)
+      7. 10/31 100 律师 / 月 ¥10 万 ARR + 11/15 Rust 5x + 12/1 L4/L5 全量 + 12/31 50 律所 / 200 律师 / 月 ¥30 万+ ARR
+      8. Phase 4 完结 + Phase 5.1 + 5.2 + 5.3 + 5.4 跨月节奏
+      9. W23 建议 (一句话: 1/1 公测半年节点 + Skill 3 v2.0 全面 + 3 agent 跑小 task 独立完成 + Phase 5.4 → 5.5 跨年)
+
+      输出 W22 总结 + W23 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - kpi-track-1031
+      - phase5-rust-build-fix
+      - phase5-4-enterprise
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
