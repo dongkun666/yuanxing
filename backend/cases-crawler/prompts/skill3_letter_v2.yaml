@@ -1,0 +1,238 @@
+# =============================================================================
+# LexPrime Skill 3 律师函 prompt v2.0 (lex-ai · 2026-06-30)
+# 基于 W9 v1.0 prompt 迭代 (8 律师试用反馈 mock 驱动)
+# W15 skill3-iterate 任务: 1 个 prompt 优化
+#
+# 升级要点 (mock 8 律师反馈):
+#   L1 王律师 (货物买卖)    → 时限梯度 (15/30/45 日)
+#   L2 李律师 (物业纠纷)    → 法条引用《民法典》第 XXX 条
+#   L3 张律师 (劳动关系)    → 三段式事实 (当事人 / 标的 / 违约行为)
+#   L4 赵律师 (知识产权)    → 后果量化 (标的计算 + 利息 + 维权成本)
+#   L5 陈律师 (婚姻家事)    → 履行步骤细化 (1/2/3 步)
+#   L6 周律师 (借贷纠纷)    → 客户签字栏 + 律师执业证号
+#   L7 吴律师 (合同纠纷)    → AI 5 维度风险标注块
+#   L8 郑律师 (行政争议)    → doc_workflow + signature_router 集成
+#
+# 风险标注阈值: 0.7 (v1.0) → 0.6 (v2.0, 提前预警)
+# =============================================================================
+
+version: "2.0-w15"
+based_on: "v1.0-w9"
+template_id: "letter_v2"
+owner: "lex-ai"
+created_at: "2026-06-30"
+
+# ---- 元数据 ----
+metadata:
+  skill: "skill:doc-gen"
+  doc_type: "letter"
+  language: "zh-CN"
+  feedback_driven: true
+  mock_feedback_count: 8
+  feedback_scenarios:
+    - id: "L1-王律师"
+      domain: "货物买卖"
+      issue: "时限模糊"
+      fix: "时限梯度 (15/30/45 日)"
+    - id: "L2-李律师"
+      domain: "物业纠纷"
+      issue: "法律依据笼统"
+      fix: "法条具体引用《民法典》第 XXX 条"
+    - id: "L3-张律师"
+      domain: "劳动关系"
+      issue: "事实陈述不清晰"
+      fix: "三段式事实 (当事人 / 标的 / 违约行为)"
+    - id: "L4-赵律师"
+      domain: "知识产权"
+      issue: "后果预警不够具体"
+      fix: "后果量化 (标的 + 利息 + 维权成本)"
+    - id: "L5-陈律师"
+      domain: "婚姻家事"
+      issue: "要求不够明确"
+      fix: "履行步骤细化 (1/2/3 步具体动作)"
+    - id: "L6-周律师"
+      domain: "借贷纠纷"
+      issue: "期限过短 + 签字栏缺失"
+      fix: "合理期限梯度 + 客户签字栏 + 律师执业证号"
+    - id: "L7-吴律师"
+      domain: "合同纠纷"
+      issue: "AI 标注没体现"
+      fix: "5 维度风险标注块 (事实/法律意见/要求/时限/后果)"
+    - id: "L8-郑律师"
+      domain: "行政争议"
+      issue: "工作流不联动"
+      fix: "doc_workflow 状态机 + signature_router 集成说明"
+
+# ---- 5 大风险维度 (来自 Skill 2 reviewer.py DOC_TYPE_RISK_DIMENSIONS["letter"]) ----
+risk_dimensions:
+  - name: "事实"
+    description: "三段式事实 (当事人/标的/违约行为) 是否完整清晰"
+    patterns_v2:
+      ok: ["贵方.{0,50}(?:行为|违约|违反)", "贵公司.{0,50}(?:行为|违约|违反)"]
+      advisory: ["据悉|据了解|据查", "(?:暂|尚)(?:不清楚|不明|待查)"]
+      major: ["(?:对方|贵方|贵司).{0,30}(?:可能|也许|或许).{0,30}(?:违约|违反)"]
+    depth_reasoning: |
+      检查三段式:
+      1) 当事人是否明确 (主体名称/地址/联系方式)
+      2) 标的 (合同标的物/服务/金额)
+      3) 违约行为 (具体行为 + 时间 + 后果)
+      缺一段 → advisory, 缺两段 → major, 三段全缺 → fatal
+  - name: "法律意见"
+    description: "法条引用是否具体到位 (条/款/项)"
+    patterns_v2:
+      ok: ["(?:律师|本律师).{0,20}(?:认为|意见|建议)", "《民法典》.{0,5}第[零一二三四五六七八九十百千\\d]+条"]
+      advisory: ["(?:相关法律|有关法律规定|依法)", "(?:可能|或许|也许)"]
+      major: ["(?:法律|法规|规定).{0,10}(?:待定|待查|暂不明确)"]
+    depth_reasoning: |
+      检查法条引用层级:
+      1) 法律层 (民法典/民事诉讼法/合同法等)
+      2) 条/款/项是否具体 (第 XXX 条 第 X 款)
+      3) 是否有司法解释补充
+      仅引用法律名 → advisory, 仅引用"依法" → major
+  - name: "要求"
+    description: "履行要求是否明确可执行 (具体步骤)"
+    patterns_v2:
+      ok: ["(?:要求|请|务必).{0,30}(?:停止|支付|履行|返还)", "第一步|第二步|第三步"]
+      advisory: ["请.{0,5}贵方.{0,10}考虑", "希望|建议"]
+      major: ["(?:尽快|及时|合理期限内).{0,30}(?:履行|处理|解决)"]
+    depth_reasoning: |
+      检查要求可执行性:
+      1) 具体动作 (支付/停止/履行/返还)
+      2) 具体金额 / 标的 / 对象
+      3) 具体步骤 (1/2/3 步)
+      仅笼统"请尽快" → major
+  - name: "时限"
+    description: "期限是否具体 (ISO 日期 yyyy-mm-dd) 且合理梯度"
+    patterns_v2:
+      ok: ["\\d+\\s*(?:日|天|工作日).{0,10}(?:内|之前)", "\\d{4}-\\d{2}-\\d{2}", "主期限|首期回复|宽限期|最终期限"]
+      advisory: ["(?:15|30)\\s*(?:日|天)(?:内)?", "合理期限"]
+      major: ["(?:尽快|及时|合理期限)", "无限期"]
+    depth_reasoning: |
+      检查时限梯度 (L1 王律师反馈):
+      1) 主期限 (具体 ISO 日期)
+      2) 首期回复 (15 日内书面回复)
+      3) 宽限期 (30 日内可协商延期)
+      4) 最终期限 (45 日强制截止)
+      单一 deadline 或"尽快" → major
+  - name: "后果"
+    description: "后果预警是否量化 (本金+利息+维权成本)"
+    patterns_v2:
+      ok: ["(?:否则|不然).{0,30}(?:诉讼|起诉|仲裁|追究)", "本金|利息|违约金|赔偿金", "律师费|诉讼费|保全费"]
+      advisory: ["(?:可能|将).{0,20}(?:追究|诉讼|起诉)", "一切法律后果"]
+      major: ["(?:后果|代价|损失).{0,10}(?:自担|自负)", "无限连带责任"]
+    depth_reasoning: |
+      检查后果量化 (L4 赵律师反馈):
+      1) 本金追偿 (具体金额)
+      2) 逾期利息 (按 LPR / 4 倍 LPR 计算)
+      3) 维权成本 (律师费/诉讼费/差旅费)
+      仅"一切法律后果" → major
+
+# ---- 风险阈值调整 (从 0.7 提前到 0.6) ----
+risk_threshold:
+  v1: 0.7
+  v2: 0.6
+  rationale: |
+    v1.0 阈值 0.7 过于宽松, 8 律师反馈后调整为 0.6, 给律师审核更多缓冲。
+    影响:
+    - 0.6-0.7 区间的 advisory 项从"低风险"升级为"中风险", 触发 AI 标注 + 律师重点复核
+    - 整体提前 1 档预警, 降低律师事后返工成本
+
+# ---- Prompt 模板 (深度推理版本) ----
+prompt_template: |
+  你是一名资深中国律师, 正在为客户起草一份律师函 (v2.0 模板)。
+
+  ## 案件背景
+  - 委托人: {{sender}}
+  - 收函人: {{recipient}}
+  - 主题: {{subject}}
+  - 律师: {{lawyer_name}} ({{lawyer_id}}), 执业证号 {{lawyer_license_no}}
+
+  ## 事实陈述 (三段式)
+  请按以下结构组织事实:
+  1. **当事人**: 谁对谁, 主体名称/地址/联系方式
+  2. **标的**: 合同/侵权/债务的标的 (物/服务/金额)
+  3. **违约行为**: 具体违约时间、行为、后果
+
+  ## 法律意见 (具体引用)
+  请具体引用法律条文:
+  - 《中华人民共和国民法典》第 XXX 条 第 X 款
+  - 不要笼统说"依法"或"相关法律"
+
+  ## 律师要求 (步骤细化)
+  请按 1/2/3 步具体动作细化要求:
+  - 第一步: 动作 + 对象 + 期限
+  - 第二步: ...
+  - 第三步 (可选): ...
+
+  ## 履行期限 (梯度设计)
+  - 主期限: {{deadline_primary}} (具体 ISO 日期)
+  - 首期回复: {{deadline_grad_first}} 日内书面回复
+  - 宽限期: {{deadline_grad_second}} 日内可协商延期
+  - 最终期限: {{deadline_grad_final}} (强制截止)
+
+  ## 法律后果 (量化)
+  - 本金: 人民币 {{amount_in_dispute}} 元
+  - 逾期利息: 按 {{interest_rate}} 计算 (参照 LPR / 4 倍 LPR)
+  - 维权成本: 律师费 / 诉讼费 / 保全费 / 差旅费
+
+  ## AI 5 维度风险标注 (自动)
+  完成正文后, 请按以下维度输出风险标注 (基于阈值 0.6):
+  - 事实: ok / advisory / major / fatal
+  - 法律意见: ok / advisory / major / fatal
+  - 要求: ok / advisory / major / fatal
+  - 时限: ok / advisory / major / fatal
+  - 后果: ok / advisory / major / fatal
+  综合风险: low (全 ok) / medium (1+ advisory) / high (1+ major/fatal)
+
+  ## 工作流集成 (v2.0 必含)
+  - doc_workflow 状态: draft → ai_reviewed → lawyer_reviewed → client_signed → archived
+  - signature_router: POST /api/signature/{doc_id} 接收客户签字
+  - 双审机制: AI 风险标注 + 律师人工复核
+
+  ## 输出格式 (Markdown)
+  1. 标题 + 函件编号
+  2. 致送人 + 委托人 + 律师
+  3. 三段式事实
+  4. 法律依据 (具体条文)
+  5. 履行要求 (1/2/3 步)
+  6. 履行期限 (梯度)
+  7. 法律后果 (量化)
+  8. AI 风险标注块 (5 维度 + 综合)
+  9. 联系方式 + 律师签字
+  10. 客户签字栏
+  11. AI 辅助声明
+
+# ---- 强制免责声明 ----
+disclaimer: |
+  本律师函由 LexPrime 元枢法智 (Skill 3 文书生成 v2.0-w15) 自动生成,
+  内容基于律师提供的事实整理, 用于辅助律师起草。本函件仅供参考,
+  律师应根据案件实际情况、相关法律法规进行审核、修改和完善。
+  本版本基于 8 律师试用反馈 (mock) 迭代, 新增: (1) 时限梯度
+  (2) 法条具体引用 (3) 三段式事实 (4) 后果量化 (5) 履行步骤细化
+  (6) 客户签字栏 (7) AI 5 维度风险标注块 (8) doc_workflow + signature_router 集成说明。
+
+# ---- 端点集成 (供后端 router 参考) ----
+endpoint_integration:
+  generation: "POST /api/doc-gen/letter-v2"
+  template_id: "letter_v2"
+  template_version: "v2.0-w15"
+  workflow_state: "PATCH /api/doc-gen/{doc_id}/state"
+  risk_annotation: "POST /api/doc-gen/{doc_id}/risk-annotation"
+  signature: "POST /api/signature/{doc_id}"
+  workflow_states_5:
+    - "draft"
+    - "ai_reviewed"
+    - "lawyer_reviewed"
+    - "client_signed"
+    - "archived"
+
+# ---- 验证指标 (Stop when) ----
+validation:
+  pytest_pass_rate: "100% (5 律师函样例)"
+  ruff_issues: 0
+  templates_loaded: ["letter_v2.md"]
+  endpoints_active: ["POST /api/doc-gen/letter-v2"]
+  integration_verified:
+    - "doc_workflow 5 状态转换 (PATCH /api/doc-gen/{doc_id}/state)"
+    - "signature_router 上传签字 (POST /api/signature/{doc_id})"
+    - "风险标注 5 维度 (POST /api/doc-gen/{doc_id}/risk-annotation)"
