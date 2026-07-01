@@ -1,0 +1,530 @@
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden" id="view-contract-review-negotiation" data-view-source="04-negotiation.html">
+  <style>
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .backdrop { background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
+  .modal-shadow { box-shadow: 0 16px 48px rgba(29,33,41,0.16); }
+  .fade-in { animation: fadeIn 250ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:none; } }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复: 模态框 → 全屏) */
+  @media (max-width: 767px) {
+    #view-contract-review-negotiation .fixed.inset-0.z-40.backdrop { padding: 0 !important; }
+    #view-contract-review-negotiation .bg-white.rounded-lg.modal-shadow {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+    }
+    #view-contract-review-negotiation .cr-modal-grid { grid-template-columns: 1fr !important; }
+    #view-contract-review-negotiation .cr-modal-side { max-height: 40vh !important; }
+    #view-contract-review-negotiation .cr-modal-bottom { flex-direction: column !important; }
+    #view-contract-review-negotiation .cr-modal-bottom button { width: 100% !important; }
+  }
+  </style>
+<!-- ============== 底层背景 (审查结果页) ============== -->
+<div class="fixed inset-0 bg-bg-subtle -z-10"></div>
+
+<!-- ============== 模态遮罩 ============== -->
+<div class="fixed inset-0 z-40 backdrop flex items-center justify-center p-6">
+
+  <!-- ============== 模态框 (1280px 宽) ============== -->
+  <div class="bg-white rounded-lg modal-shadow w-full max-w-[1280px] max-h-[90vh] flex flex-col fade-in">
+
+    <!-- ============ 模态框头部 ============ -->
+    <div class="px-6 py-4 border-b border-bg-border flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-md bg-ai flex items-center justify-center text-white">
+          <iconify-icon icon="mdi:strategy" class="text-xl"></iconify-icon>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            谈判策略
+            <span class="inline-flex items-center gap-1 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm">
+              <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 生成
+            </span>
+          </h2>
+          <p class="text-xs text-fg-tertiary mt-0.5">
+            数据服务采购合同 v3 · 乙方立场 · 基于 6 项风险条款生成 · 立场感知建议
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+          <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存策略
+        </button>
+        <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+          <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> 分享
+        </button>
+        <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+          <iconify-icon icon="mdi:download-outline"></iconify-icon> 导出
+        </button>
+        <button class="w-9 h-9 rounded-md text-fg-tertiary hover:bg-bg hover:text-fg-primary flex items-center justify-center">
+          <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ 风险条 (顶部) ============ -->
+    <div class="px-6 py-3 bg-gradient-to-r from-danger-tint via-warning-tint to-brand-tint border-b border-bg-border flex-shrink-0">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-danger"></span>
+          <span class="text-xs font-semibold text-danger">致命 1</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-warning"></span>
+          <span class="text-xs font-semibold text-warning">重大 2</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-brand"></span>
+          <span class="text-xs font-semibold text-brand">建议 3</span>
+        </div>
+        <div class="flex-1"></div>
+        <div class="text-[10px] text-fg-tertiary flex items-center gap-2">
+          <iconify-icon icon="mdi:lightbulb-on-outline" class="text-warning"></iconify-icon>
+          建议谈判顺序: <strong class="text-danger">红线条款</strong> → <strong class="text-warning">重大条款</strong> → <strong class="text-brand">建议条款</strong>
+        </div>
+        <span class="text-[10px] text-fg-tertiary">策略生成: 2026-06-29 14:35</span>
+      </div>
+    </div>
+
+    <!-- ============ 模态框正文 (滚动) ============ -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- ============ 4+8 主区 ============ -->
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- ============ 左 4 栏: 策略导航 (4 大策略) ============ -->
+        <div class="col-span-4 space-y-3">
+          <!-- 策略总览 -->
+          <div class="bg-white rounded-md border border-bg-border">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-ai" icon="mdi:strategy"></iconify-icon>
+                策略框架
+              </h4>
+            </div>
+            <nav class="p-2 space-y-1">
+              <a href="#priority" class="flex items-center gap-3 px-3 py-2.5 bg-brand text-white rounded-md shadow-sm">
+                <iconify-icon icon="mdi:order-numeric-ascending" class="text-base"></iconify-icon>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-semibold">1. 优先谈判条款</div>
+                  <div class="text-[10px] text-white/80">6 项 · 按致命/重大/建议</div>
+                </div>
+                <span class="bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">6</span>
+              </a>
+              <a href="#leverage" class="flex items-center gap-3 px-3 py-2.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded-md">
+                <iconify-icon icon="mdi:scale-balance" class="text-base"></iconify-icon>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-semibold">2. 谈判筹码</div>
+                  <div class="text-[10px] text-fg-tertiary">3 个杠杆条款</div>
+                </div>
+                <span class="text-[10px] text-fg-tertiary">3</span>
+              </a>
+              <a href="#redline" class="flex items-center gap-3 px-3 py-2.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded-md">
+                <iconify-icon icon="mdi:alert-octagon-outline" class="text-base"></iconify-icon>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-semibold">3. 红线条款</div>
+                  <div class="text-[10px] text-fg-tertiary">1 项 · 不可谈判</div>
+                </div>
+                <span class="text-[10px] text-fg-tertiary">1</span>
+              </a>
+              <a href="#stance" class="flex items-center gap-3 px-3 py-2.5 text-fg-secondary hover:bg-brand-tint hover:text-brand rounded-md">
+                <iconify-icon icon="mdi:account-tie-outline" class="text-base"></iconify-icon>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-semibold">4. 立场建议</div>
+                  <div class="text-[10px] text-fg-tertiary">乙方专属</div>
+                </div>
+              </a>
+            </nav>
+          </div>
+
+          <!-- 策略总览元信息 -->
+          <div class="bg-gradient-to-br from-ai/10 to-brand-tint3 rounded-md p-4 border border-ai/20">
+            <div class="flex items-center gap-2 mb-2">
+              <iconify-icon icon="mdi:information" class="text-ai"></iconify-icon>
+              <h4 class="font-semibold text-sm">策略概览</h4>
+            </div>
+            <div class="space-y-2 text-xs text-fg-secondary leading-relaxed">
+              <p>
+                <strong>核心目标:</strong> 将本合同乙方<strong>风险敞口</strong>从 6 项压缩至 1-2 项 (致命红线如无法消除, 建议放弃本次合作)。
+              </p>
+              <p>
+                <strong>预期结果:</strong> 通过优先解决 1 项致命 + 2 项重大风险, 预计可降低潜在损失 <strong class="text-success">¥120,000+</strong>。
+              </p>
+              <p>
+                <strong>谈判周期:</strong> 建议预留 2 轮谈判, 每轮 1 周。
+              </p>
+            </div>
+          </div>
+
+          <!-- 强制提醒 -->
+          <div class="bg-warning-tint border-l-4 border-warning rounded-md p-3 text-xs leading-relaxed text-fg-secondary">
+            <div class="flex items-center gap-1.5 font-semibold text-warning mb-1">
+              <iconify-icon icon="mdi:alert"></iconify-icon> 立场感知提示
+            </div>
+            以下策略基于<strong>乙方立场</strong>生成。如需切换立场 (甲方 / 丙方 / 审查方), 请返回上一步修改立场输入。
+          </div>
+        </div>
+
+        <!-- ============ 右 8 栏: 策略详情 ============ -->
+        <div class="col-span-8 space-y-4">
+
+          <!-- 1. 优先谈判条款 -->
+          <section id="priority" class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">1</span>
+                优先谈判条款
+                <span class="text-[10px] text-fg-tertiary font-normal">(按 fatal → major → advisory 排序)</span>
+              </h4>
+              <span class="text-[10px] text-fg-tertiary">6 项 · 总耗时建议 60-90 分钟</span>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <!-- P1: 致命 -->
+              <div class="px-4 py-3 hover:bg-danger-tint3 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="flex flex-col items-center gap-1 flex-shrink-0 w-12">
+                    <div class="w-7 h-7 rounded-full bg-danger text-white flex items-center justify-center text-xs font-bold">P1</div>
+                    <span class="text-[10px] text-danger font-semibold">致命</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5">
+                      <span class="text-[10px] font-mono text-danger font-bold">第 5 条</span>
+                      <h5 class="text-sm font-semibold">违约责任</h5>
+                      <span class="text-[10px] text-fg-tertiary">· 违约金过高 + 解除权不对等</span>
+                    </div>
+                    <div class="bg-danger-tint border-l-2 border-danger rounded p-2.5 mb-2">
+                      <div class="text-[10px] font-semibold text-danger mb-1">谈判目标</div>
+                      <p class="text-xs text-fg-secondary leading-relaxed">
+                        违约金比例 <strong>30% → 20%</strong>, 单方解除权改为<strong>双方协商解除或法定解除</strong>, 补充已付款项退还规则。
+                      </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                      <div class="bg-bg-subtle rounded p-2">
+                        <div class="text-[10px] text-fg-tertiary mb-0.5">让步空间</div>
+                        <div class="text-fg-primary font-medium">违约金: 18-25% 区间</div>
+                      </div>
+                      <div class="bg-bg-subtle rounded p-2">
+                        <div class="text-[10px] text-fg-tertiary mb-0.5">底线</div>
+                        <div class="text-danger font-medium">违约金 ≤ 25% + 退还规则明确</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right flex-shrink-0">
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">优先级</div>
+                    <div class="flex items-center gap-0.5">
+                      <iconify-icon icon="mdi:star" class="text-danger text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-danger text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-danger text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-danger text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-danger text-sm"></iconify-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- P2: 重大 -->
+              <div class="px-4 py-3 hover:bg-warning-tint3 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="flex flex-col items-center gap-1 flex-shrink-0 w-12">
+                    <div class="w-7 h-7 rounded-full bg-warning text-white flex items-center justify-center text-xs font-bold">P2</div>
+                    <span class="text-[10px] text-warning font-semibold">重大</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5">
+                      <span class="text-[10px] font-mono text-warning font-bold">第 8 条</span>
+                      <h5 class="text-sm font-semibold">争议管辖</h5>
+                    </div>
+                    <div class="bg-warning-tint border-l-2 border-warning rounded p-2.5 mb-2">
+                      <div class="text-[10px] font-semibold text-warning mb-1">谈判目标</div>
+                      <p class="text-xs text-fg-secondary leading-relaxed">
+                        管辖地改为<strong>被告住所地或合同履行地</strong> (上海 / 北京均可), 或<strong>约定仲裁机构</strong> (如上海仲裁委)。
+                      </p>
+                    </div>
+                  </div>
+                  <div class="text-right flex-shrink-0">
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">优先级</div>
+                    <div class="flex items-center gap-0.5">
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- P3: 重大 -->
+              <div class="px-4 py-3 hover:bg-warning-tint3 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="flex flex-col items-center gap-1 flex-shrink-0 w-12">
+                    <div class="w-7 h-7 rounded-full bg-warning text-white flex items-center justify-center text-xs font-bold">P3</div>
+                    <span class="text-[10px] text-warning font-semibold">重大</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5">
+                      <span class="text-[10px] font-mono text-warning font-bold">第 9 条</span>
+                      <h5 class="text-sm font-semibold">知识产权</h5>
+                    </div>
+                    <div class="bg-warning-tint border-l-2 border-warning rounded p-2.5">
+                      <div class="text-[10px] font-semibold text-warning mb-1">谈判目标</div>
+                      <p class="text-xs text-fg-secondary leading-relaxed">
+                        补充<strong>"乙方已有技术 / 开源组件"</strong>例外, 限制工作成果仅限<strong>本次项目范围</strong>。
+                      </p>
+                    </div>
+                  </div>
+                  <div class="text-right flex-shrink-0">
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">优先级</div>
+                    <div class="flex items-center gap-0.5">
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-warning text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- P4-P6: 建议 -->
+              <div class="px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="flex flex-col items-center gap-1 flex-shrink-0 w-12">
+                    <div class="w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">P4</div>
+                    <span class="text-[10px] text-brand font-semibold">建议</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-[10px] font-mono text-brand font-bold">第 11/12/13 条</span>
+                      <h5 class="text-sm font-semibold">解除 / 违约边界 / 通知方式 (3 项)</h5>
+                    </div>
+                    <p class="text-xs text-fg-secondary leading-relaxed">
+                      补充解除通知期限 (15 日异议期) + 间接损失排除 + 通知送达方式 (邮件 + 微信双轨)。
+                    </p>
+                  </div>
+                  <div class="text-right flex-shrink-0">
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">优先级</div>
+                    <div class="flex items-center gap-0.5">
+                      <iconify-icon icon="mdi:star" class="text-brand text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star" class="text-brand text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                      <iconify-icon icon="mdi:star-outline" class="text-fg-disabled text-sm"></iconify-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. 谈判筹码 -->
+          <section id="leverage" class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">2</span>
+                谈判筹码
+                <span class="text-[10px] text-fg-tertiary font-normal">(乙方可用的让步方向)</span>
+              </h4>
+            </div>
+            <div class="p-4 grid grid-cols-3 gap-3">
+              <div class="bg-brand-tint3 rounded-md p-3">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <iconify-icon icon="mdi:cash-clock" class="text-brand"></iconify-icon>
+                  <span class="text-xs font-semibold">付款节奏</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  接受<strong>预付款 20% → 验收后 70% → 质保期满 10%</strong> 三阶段付款, 换取违约金让步。
+                </p>
+                <div class="mt-2 text-[10px] text-brand">💡 可用度: 高</div>
+              </div>
+              <div class="bg-brand-tint3 rounded-md p-3">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <iconify-icon icon="mdi:clock-fast" class="text-brand"></iconify-icon>
+                  <span class="text-xs font-semibold">交付加速</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  承诺<strong>提前 2 周交付</strong>, 换取管辖和知识产权条款让步。
+                </p>
+                <div class="mt-2 text-[10px] text-brand">💡 可用度: 中</div>
+              </div>
+              <div class="bg-brand-tint3 rounded-md p-3">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                  <iconify-icon icon="mdi:shield-check-outline" class="text-brand"></iconify-icon>
+                  <span class="text-xs font-semibold">质保延长</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  提供<strong>6 个月免费质保</strong> (原 3 个月), 换取部分重大条款让步。
+                </p>
+                <div class="mt-2 text-[10px] text-brand">💡 可用度: 高</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. 红线条款 -->
+          <section id="redline" class="bg-white rounded-md shadow-card border-l-4 border-danger">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center text-xs font-bold">3</span>
+                红线条款
+                <span class="text-[10px] text-fg-tertiary font-normal">(律师无法通过谈判弥补, 一旦触发应放弃合作)</span>
+              </h4>
+              <span class="text-[10px] px-2 py-0.5 bg-danger text-white rounded-sm font-bold">1 项</span>
+            </div>
+            <div class="p-4">
+              <div class="flex items-start gap-3 bg-danger-tint border border-danger/30 rounded-md p-3">
+                <iconify-icon icon="mdi:alert-octagon" class="text-danger text-xl flex-shrink-0"></iconify-icon>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-xs font-mono font-bold text-danger">第 5 条</span>
+                    <h5 class="text-sm font-semibold text-danger">单方解除权不对等 (不可谈判)</h5>
+                  </div>
+                  <p class="text-xs text-fg-secondary leading-relaxed mb-2">
+                    如果对方坚持"仅甲方享有单方解除权且不退还已付款项", 此条款<strong>构成显失公平</strong>,
+                    一旦触发将导致乙方可能损失全部已付款项 (<strong class="text-danger">¥240,000+</strong>)。
+                  </p>
+                  <div class="text-xs text-fg-secondary leading-relaxed">
+                    <strong>建议处理:</strong> 明确告知对方"该条款为乙方签约的<strong>前提条件</strong>", 如无法修改, 建议<strong>放弃本次合作</strong>。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. 立场建议 (乙方专属) -->
+          <section id="stance" class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-6 h-6 rounded-full bg-ai text-white flex items-center justify-center text-xs font-bold">4</span>
+              <h4 class="font-semibold text-sm">立场建议 (乙方专属)</h4>
+              <span class="inline-flex items-center gap-1 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-white rounded-sm">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 生成
+              </span>
+            </div>
+            <div class="space-y-3 text-sm leading-relaxed text-fg-secondary">
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-1 flex items-center gap-1">
+                  <iconify-icon icon="mdi:target" class="text-ai"></iconify-icon>
+                  核心策略
+                </div>
+                <p>
+                  乙方在本次合作中处于<strong>弱势地位</strong> (服务提供方), 建议采取 <strong>"以退为进 + 借力打力"</strong> 策略:
+                  先以<strong>付款节奏 / 交付加速 / 质保延长</strong>等筹码换取对方在违约金、解除权、知识产权等核心条款上的让步。
+                </p>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-1 flex items-center gap-1">
+                  <iconify-icon icon="mdi:walk" class="text-ai"></iconify-icon>
+                  谈判节奏
+                </div>
+                <p>
+                  <strong>第 1 轮</strong> (开场): 提出所有 6 项风险条款, 不暴露优先级, 试探对方让步空间。<br>
+                  <strong>第 2 轮</strong> (深化): 重点突破 1 项致命 + 2 项重大, 用 3 个筹码换取。<br>
+                  <strong>第 3 轮</strong> (收尾): 处理 3 项建议条款, 争取"小赢"建立合作信心。
+                </p>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-1 flex items-center gap-1">
+                  <iconify-icon icon="mdi:check-decagram" class="text-ai"></iconify-icon>
+                  成功标准
+                </div>
+                <p>
+                  本次谈判的<strong>最低成功标准</strong>: 致命条款修改 (违约金 ≤ 25% + 解除权对等) + 至少 1 项重大条款修改。<br>
+                  <strong>理想结果</strong>: 全部致命/重大条款修改 + 至少 2 项建议条款修改。
+                </p>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-1 flex items-center gap-1">
+                  <iconify-icon icon="mdi:exit-run" class="text-danger"></iconify-icon>
+                  退出条件
+                </div>
+                <p class="text-danger font-medium">
+                  如对方在<strong>第 2 轮谈判后</strong>仍坚持: 违约金 > 30% + 解除权不对等 + 不愿退还已付款项, <strong>建议放弃本次合作</strong>。
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 历史案例 (类案检索) -->
+          <section class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-ai" icon="mdi:history"></iconify-icon>
+                历史谈判案例
+                <span class="text-[10px] text-fg-tertiary font-normal">(3 条相似案例)</span>
+                <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-normal">
+                  <iconify-icon icon="mdi:sparkles"></iconify-icon> 召回
+                </span>
+              </h4>
+              <a href="#" class="text-xs text-brand hover:underline">查看全部 →</a>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm font-medium">谈判成功</span>
+                  <span class="text-xs font-medium">杭州某科技 - 数据服务合同谈判</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  乙方通过"预付款 30% + 验收后 60% + 质保 10%"三阶段付款, 成功将违约金从 30% 降至 20%, 解除权改为双方协商。
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1.5">
+                  <span>用时 2 周 (3 轮)</span><span>·</span>
+                  <span>节省 ¥180,000 潜在损失</span>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm font-medium">谈判成功</span>
+                  <span class="text-xs font-medium">某 SaaS 公司 - 平台服务协议</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  乙方以"6 个月免费质保 + 优先技术支持"换取管辖地改为自己住所地, 知识产权补充"已有技术例外"条款。
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1.5">
+                  <span>用时 10 天 (2 轮)</span><span>·</span>
+                  <span>降低跨区诉讼成本约 40%</span>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-fg-subtle text-fg-tertiary rounded-sm font-medium">放弃合作</span>
+                  <span class="text-xs font-medium">某外包项目 - 显失公平合同</span>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed">
+                  对方坚持"单方解除权 + 30% 违约金", 乙方第 2 轮后放弃, 转向其他客户, 避免 ¥300,000+ 潜在损失。
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1.5">
+                  <span>用时 5 天 (2 轮)</span><span>·</span>
+                  <span>止损决策</span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ 模态框底部 ============ -->
+    <div class="px-6 py-4 border-t border-bg-border flex items-center justify-between flex-shrink-0 bg-bg-subtle">
+      <div class="text-xs text-fg-tertiary flex items-center gap-2">
+        <iconify-icon icon="mdi:information-outline" class="text-brand"></iconify-icon>
+        策略基于合同文本和历史案例生成, <strong>不构成法律意见, 最终判断以执业律师为准</strong>。
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="h-9 px-4 text-fg-secondary hover:text-brand text-sm">关闭</button>
+        <a href="03-suggestion-detail.html" class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+          <iconify-icon icon="mdi:lightbulb-on-outline"></iconify-icon> 查看条款修改建议
+        </a>
+        <button class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+          <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存为方案
+        </button>
+        <a href="05-export.html" class="h-9 px-5 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+          <iconify-icon icon="mdi:export-variant"></iconify-icon> 应用到审查报告并导出
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 设计水印 -->
+
+</div>

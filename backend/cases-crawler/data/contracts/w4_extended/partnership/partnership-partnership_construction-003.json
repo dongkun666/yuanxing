@@ -1,0 +1,136 @@
+{
+  "template_id": "partnership-partnership_construction-003",
+  "contract_type": "合伙协议",
+  "industry": "建筑合伙",
+  "title": "建筑工程合伙施工协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合伙施工项目",
+      "text": "甲乙共同承包购车建筑工程。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "甲方负责施工设备及部分资金 (作价人民币 15 万元), 乙方负责主要资金人民币 10 万元。"
+    },
+    {
+      "index": 3,
+      "title": "合伙期限",
+      "text": "合伙期限 3 年, 自 2027-03-10 起至项目竣工止。"
+    },
+    {
+      "index": 4,
+      "title": "分工",
+      "text": "甲方负责施工组织, 乙方负责财务及对外协调。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "工程款按出资比例分配, 优先收回成本后再分配利润。"
+    },
+    {
+      "index": 6,
+      "title": "质量责任",
+      "text": "因施工质量问题导致的违约责任, 由施工方 (甲方) 承担。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "质量责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "合伙施工项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建筑工程合伙施工协议",
+    "建筑合伙常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建筑工程合伙施工协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_construction",
+    "variant_idx": 3,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

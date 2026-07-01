@@ -1,0 +1,136 @@
+{
+  "template_id": "house-house_rent_residential-002",
+  "contract_type": "房屋合同",
+  "industry": "个人租赁",
+  "title": "个人住宅租赁合同(标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于佛山市南山区某路 88 号的房屋出租给乙方使用, 建筑面积 85 平方米。"
+    },
+    {
+      "index": 2,
+      "title": "租赁期限",
+      "text": "租赁期自 2026-11-08 起至 2027-04-25 止, 共 1 年。"
+    },
+    {
+      "index": 3,
+      "title": "租金及支付",
+      "text": "月租金人民币 50 万元, 乙方应于每月 5 日前支付下月租金。"
+    },
+    {
+      "index": 4,
+      "title": "押金",
+      "text": "乙方向甲方支付押金, 30 日内无息退还。"
+    },
+    {
+      "index": 5,
+      "title": "维修责任",
+      "text": "租赁期间, 房屋及附属设施的维修责任由甲方承担。"
+    },
+    {
+      "index": 6,
+      "title": "提前解约",
+      "text": "任何一方提前解除合同的, 须向守约方支付违约金。"
+    },
+    {
+      "index": 7,
+      "title": "争议管辖",
+      "text": "因本合同发生的争议, 任何一方均可向甲方住所地人民法院提起诉讼。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "租金及支付",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "提前解约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "维修责任",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "租赁期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "个人住宅租赁合同(标准版)",
+    "个人租赁常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于个人住宅租赁合同(标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_rent_residential",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,665 @@
+<!--
+  W8 PRD Backlog 总览看板 (lex-coder · 2026-06-29)
+  适用: W8 plan engine / PM / 总指挥 一屏掌握 PRD backlog ticket 全景
+  
+  设计原则 (W1 设计系统):
+  - 桌面优先 (PM 在办公室用大屏看) + 移动响应式 (总指挥通勤路上看)
+  - AI 紫色角标 + 强制 disclaimer
+  - 5 视图: 总览 / 按状态 / 按优先级 / 按 owner / 按来源律师
+  - 数据源: GET /api/backlog/board (backlog_router.py W8 新增)
+  
+  加载流程:
+  1. fetch /api/backlog/board → JSON
+  2. 渲染 4 张总览卡片 + 5 视图 (summary, by_status, by_priority, by_owner, by_source_lawyer)
+  3. ticket 卡片点击展开 source_question_id / assignee 操作按钮
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-backlog" data-view-source="backlog/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  /* ticket 数字大字号 */
+  .score-number { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+  /* 优先级色阶: P0 红 / P1 橙 / P2 黄 / P3 蓝 */
+  .prio-p0 { border-left: 4px solid #F53F3F; background: linear-gradient(90deg, #FEF0F0 0%, transparent 50%); }
+  .prio-p1 { border-left: 4px solid #FF7D00; background: linear-gradient(90deg, #FFF7E8 0%, transparent 50%); }
+  .prio-p2 { border-left: 4px solid #FFD666; background: linear-gradient(90deg, #FFFBE6 0%, transparent 50%); }
+  .prio-p3 { border-left: 4px solid #165DFF; background: linear-gradient(90deg, #E8F3FF 0%, transparent 50%); }
+  /* 状态徽章 */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;
+  }
+  .status-open { background: #FFF7E8; color: #D25400; }
+  .status-in_progress { background: #E8F5E9; color: #2E7D32; }
+  .status-done { background: #E3F2FD; color: #1565C0; }
+  .status-deferred { background: #F5F5F5; color: #616161; }
+  .status-wontfix { background: #FCE4E4; color: #C62828; }
+  /* owner 徽章 */
+  .owner-pm { background: #E3F2FD; color: #1565C0; }
+  .owner-coder { background: #E8F5E9; color: #2E7D32; }
+  .owner-ai { background: #F3E5F5; color: #6A1B9A; }
+  .owner-design { background: #FFE0B2; color: #E65100; }
+  .owner-data { background: #E0F2F1; color: #00695C; }
+  .owner-unassigned { background: #F5F5F5; color: #616161; }
+  /* view tab */
+  .view-tab {
+    cursor: pointer; padding: 8px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; transition: all 150ms ease-out;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .view-tab:hover { background: rgba(22, 93, 255, 0.06); color: #165DFF; }
+  .view-tab.active { background: #165DFF; color: white; }
+  .view-tab .count {
+    padding: 1px 6px; border-radius: 10px; font-size: 10px;
+    background: rgba(255,255,255,0.25);
+  }
+  .view-tab:not(.active) .count { background: #F0F2F5; color: #4E5969; }
+  /* ticket 卡 */
+  .ticket-card {
+    transition: all 150ms ease-out; cursor: pointer;
+  }
+  .ticket-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px);
+  }
+  /* bar track for priority / status visualization */
+  .bar-track {
+    height: 8px; background: #E5E6EB; border-radius: 9999px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 9999px; transition: width 400ms ease-out;
+  }
+  /* category 徽章 */
+  .cat-product { background: #E3F2FD; color: #1565C0; }
+  .cat-tech { background: #F3E5F5; color: #6A1B9A; }
+  .cat-legal { background: #FFE0B2; color: #E65100; }
+  .cat-other { background: #F5F5F5; color: #616161; }
+</style>
+
+<div class="flex flex-col min-h-full bg-bg-subtle">
+
+  <!-- ============ 顶部 header ============ -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:clipboard-list-outline" class="text-brand text-lg md:text-xl"></iconify-icon>
+            <span class="truncate">PRD Backlog 总览</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">W8 看板</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate" id="backlog-subtitle">加载中…</p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="backlog-refresh-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:refresh" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">刷新</span>
+        </button>
+        <button id="backlog-export-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:download" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">JSON 导出</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主体内容 ============ -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+
+    <!-- ============ 总览卡片 (4 张) ============ -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">总 Ticket</span>
+          <iconify-icon icon="mdi:ticket-outline" class="text-brand text-lg"></iconify-icon>
+        </div>
+        <p id="bl-total-tickets" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1">来自 review_questions</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">P0 高优</span>
+          <iconify-icon icon="mdi:alert-circle-outline" class="text-error text-lg"></iconify-icon>
+        </div>
+        <p id="bl-p0-tickets" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1"><span id="bl-completion">0</span> 完成率</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">进行中</span>
+          <iconify-icon icon="mdi:progress-clock" class="text-warning text-lg"></iconify-icon>
+        </div>
+        <p id="bl-in-progress" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1"><span id="bl-open">0</span> 待 triage</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">未分配</span>
+          <iconify-icon icon="mdi:account-question-outline" class="text-ai text-lg"></iconify-icon>
+        </div>
+        <p id="bl-unassigned" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+        <p class="text-[10px] text-fg-tertiary mt-1">PM 接手分配</p>
+      </div>
+    </div>
+
+    <!-- ============ 视图切换 tab ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-3 mb-5 fade-in flex items-center gap-2 overflow-x-auto">
+      <button class="view-tab active" data-view="summary">
+        <iconify-icon icon="mdi:view-dashboard-outline" class="text-base"></iconify-icon>
+        <span>总览</span>
+        <span class="count" id="bl-tab-summary">—</span>
+      </button>
+      <button class="view-tab" data-view="status">
+        <iconify-icon icon="mdi:flag-outline" class="text-base"></iconify-icon>
+        <span>按状态</span>
+        <span class="count" id="bl-tab-status">—</span>
+      </button>
+      <button class="view-tab" data-view="priority">
+        <iconify-icon icon="mdi:alert-decagram-outline" class="text-base"></iconify-icon>
+        <span>按优先级</span>
+        <span class="count" id="bl-tab-priority">—</span>
+      </button>
+      <button class="view-tab" data-view="owner">
+        <iconify-icon icon="mdi:account-group-outline" class="text-base"></iconify-icon>
+        <span>按 Owner</span>
+        <span class="count" id="bl-tab-owner">—</span>
+      </button>
+      <button class="view-tab" data-view="source">
+        <iconify-icon icon="mdi:account-tie-outline" class="text-base"></iconify-icon>
+        <span>按来源律师</span>
+        <span class="count" id="bl-tab-source">—</span>
+      </button>
+    </div>
+
+    <!-- ============ 视图 1: 总览 (默认) ============ -->
+    <div id="bl-view-summary" class="bl-view-panel">
+      <!-- 优先级 + 状态 双重维度条形图 -->
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold flex items-center gap-1.5">
+            <iconify-icon icon="mdi:chart-bar" class="text-brand"></iconify-icon>
+            优先级 + 状态分布
+          </h3>
+          <span class="text-[10px] text-fg-tertiary">P0 红 / P1 橙 / P2 黄 / P3 蓝</span>
+        </div>
+        <div id="bl-priority-bars" class="space-y-3">
+          <!-- 4 优先级条形图由 JS 渲染 -->
+        </div>
+      </div>
+
+      <!-- Next Actions 自动建议 -->
+      <div class="bg-gradient-to-br from-ai/5 to-brand/5 rounded-lg border border-ai/20 p-4 md:p-5 mb-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:lightbulb-on-outline" class="text-ai"></iconify-icon>
+          自动建议 (基于当前 backlog 状态)
+        </h3>
+        <ul id="bl-next-actions" class="space-y-1.5 text-[12px] text-fg-secondary">
+          <li class="text-fg-tertiary">加载中…</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ 视图 2: 按状态 ============ -->
+    <div id="bl-view-status" class="bl-view-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:flag-outline" class="text-brand"></iconify-icon>
+          按状态分组 (5 维度)
+        </h3>
+        <div id="bl-status-grouped" class="space-y-4">
+          <!-- 由 JS 渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 视图 3: 按优先级 ============ -->
+    <div id="bl-view-priority" class="bl-view-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:alert-decagram-outline" class="text-brand"></iconify-icon>
+          按优先级分组 (P0 红 → P3 蓝)
+        </h3>
+        <div id="bl-priority-grouped" class="space-y-4">
+          <!-- 由 JS 渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 视图 4: 按 Owner ============ -->
+    <div id="bl-view-owner" class="bl-view-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:account-group-outline" class="text-brand"></iconify-icon>
+          按 Owner 分组 (6 agents)
+        </h3>
+        <div id="bl-owner-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- 由 JS 渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 视图 5: 按来源律师 ============ -->
+    <div id="bl-view-source" class="bl-view-panel hidden">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:account-tie-outline" class="text-brand"></iconify-icon>
+          按来源律师 (L1-L5)
+        </h3>
+        <p class="text-[11px] text-fg-tertiary mb-3">每律师的 category 贡献度 (评审现场提问维度偏好)</p>
+        <div id="bl-source-grouped" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- 由 JS 渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 最近 ticket 列表 (10 条最新) ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:history" class="text-brand"></iconify-icon>
+          最近 10 条 Ticket
+          <span id="bl-recent-count" class="bg-bg text-fg-secondary text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1.5">0</span>
+        </h3>
+      </div>
+      <div id="bl-recent-list" class="space-y-2">
+        <!-- ticket 卡片由 JS 渲染 -->
+      </div>
+    </div>
+
+    <!-- ============ AI 角标 + 强制免责声明 ============ -->
+    <div class="bg-ai/5 border border-ai/20 rounded-lg p-3 mb-6">
+      <div class="flex items-start gap-2">
+        <iconify-icon icon="mdi:sparkles" class="text-ai text-base flex-shrink-0 mt-0.5"></iconify-icon>
+        <div class="text-[11px] text-fg-secondary leading-relaxed">
+          <strong class="text-ai">AI 辅助工具声明</strong> · 本看板聚合律师评审现场问题 → PRD backlog ticket, 自动归并 + 分配 + 状态跟踪, 供 PM 与总指挥排期决策参考.
+          AI 推断的优先级和 owner 仅供辅助, 最终由 PM 决策. 数据源: <code class="text-[10px] bg-white px-1 rounded">GET /api/backlog/board</code> 端点 (W8 backend/cases-crawler/api/backlog_router.py).
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== 视图切换 =====
+  var viewTabBtns = document.querySelectorAll('#view-backlog .view-tab');
+  viewTabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var view = btn.getAttribute('data-view');
+      viewTabBtns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.bl-view-panel').forEach(function(p) { p.classList.add('hidden'); });
+      var targetPanel = document.getElementById('bl-view-' + view);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+    });
+  });
+
+  // ===== 数据缓存 =====
+  var currentBoardData = null;
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function prioClass(p) {
+    return 'prio-' + (p || 'P1').toLowerCase();
+  }
+
+  function statusClass(s) {
+    return 'status-' + (s || 'open');
+  }
+
+  function ownerClass(o) {
+    if (o === 'lex-pm') return 'owner-pm';
+    if (o === 'lex-coder') return 'owner-coder';
+    if (o === 'lex-ai') return 'owner-ai';
+    if (o === 'lex-design') return 'owner-design';
+    if (o === 'lex-data') return 'owner-data';
+    return 'owner-unassigned';
+  }
+
+  function categoryClass(c) {
+    if (c === '产品') return 'cat-product';
+    if (c === '技术') return 'cat-tech';
+    if (c === '法务') return 'cat-legal';
+    return 'cat-other';
+  }
+
+  function ownerLabel(o) {
+    var map = {
+      'lex-pm': 'PM',
+      'lex-coder': 'Coder',
+      'lex-ai': 'AI',
+      'lex-design': 'Design',
+      'lex-data': 'Data',
+      'unassigned': '未分配'
+    };
+    return map[o] || o;
+  }
+
+  function statusLabel(s) {
+    var map = {
+      'open': '待 triage',
+      'in_progress': '进行中',
+      'done': '已完成',
+      'deferred': '推迟',
+      'wontfix': '不做'
+    };
+    return map[s] || s;
+  }
+
+  // ===== 加载 board =====
+  async function loadBacklogBoard() {
+    try {
+      var resp = await fetch('/api/backlog/board');
+      if (!resp.ok) {
+        document.getElementById('backlog-subtitle').textContent = '加载失败: ' + resp.status;
+        return;
+      }
+      var data = await resp.json();
+      currentBoardData = data;
+      renderBoard(data);
+    } catch (err) {
+      console.error('[backlog] load failed', err);
+      document.getElementById('backlog-subtitle').textContent = '加载错误: ' + err.message;
+    }
+  }
+
+  function renderBoard(data) {
+    var sum = data.summary || {};
+    var subtitle = sum.total_tickets
+      ? 'W8 backlog · ' + sum.total_tickets + ' tickets · 截止 ' + (data.generated_at || '').substring(0, 19)
+      : 'W8 backlog · 当前 0 ticket (导入后会显示)';
+    document.getElementById('backlog-subtitle').textContent = subtitle;
+
+    // 4 张总览卡片
+    document.getElementById('bl-total-tickets').textContent = sum.total_tickets || 0;
+    document.getElementById('bl-p0-tickets').textContent = sum.p0_tickets || 0;
+    document.getElementById('bl-in-progress').textContent = sum.in_progress_tickets || 0;
+    var unassignedTotal = 0;
+    if (data.by_owner && data.by_owner.unassigned) {
+      unassignedTotal = data.by_owner.unassigned.by_status.open || 0;
+      unassignedTotal += data.by_owner.unassigned.by_status.in_progress || 0;
+    }
+    document.getElementById('bl-unassigned').textContent = unassignedTotal;
+
+    var completion = Math.round((sum.completed_rate || 0) * 100);
+    document.getElementById('bl-completion').textContent = completion + '%';
+    document.getElementById('bl-open').textContent = sum.open_tickets || 0;
+
+    // Tab count
+    document.getElementById('bl-tab-summary').textContent = sum.total_tickets || 0;
+    document.getElementById('bl-tab-status').textContent = (data.by_status ? Object.keys(data.by_status).filter(function(k) { return data.by_status[k] > 0; }).length : 0);
+    document.getElementById('bl-tab-priority').textContent = (data.by_priority ? Object.keys(data.by_priority).filter(function(k) { return data.by_priority[k] > 0; }).length : 0);
+    document.getElementById('bl-tab-owner').textContent = (data.by_owner ? Object.keys(data.by_owner).length : 0);
+    document.getElementById('bl-tab-source').textContent = (data.by_source_lawyer ? Object.keys(data.by_source_lawyer).filter(function(k) { return k !== 'no_source'; }).length : 0);
+
+    // 视图 1: 总览 - 优先级条形图
+    renderPriorityBars(data);
+
+    // Next Actions
+    renderNextActions(sum.next_actions || []);
+
+    // 视图 2: 按状态
+    renderStatusView(data);
+
+    // 视图 3: 按优先级
+    renderPriorityView(data);
+
+    // 视图 4: 按 Owner
+    renderOwnerView(data);
+
+    // 视图 5: 按来源律师
+    renderSourceView(data);
+
+    // 最近 ticket 列表
+    renderRecentTickets(data.recent_tickets || []);
+  }
+
+  function renderPriorityBars(data) {
+    var container = document.getElementById('bl-priority-bars');
+    var priorities = [
+      { id: 'P0', label: 'P0 高优 (24h 内)', color: '#F53F3F', max: Math.max(data.summary.p0_tickets || 1, 1) },
+      { id: 'P1', label: 'P1 中优 (W8-W9)', color: '#FF7D00', max: Math.max(data.by_priority && data.by_priority.P1 ? data.by_priority.P1 : 0, 1) },
+      { id: 'P2', label: 'P2 低优 (W9-W10)', color: '#FFD666', max: Math.max(data.by_priority && data.by_priority.P2 ? data.by_priority.P2 : 0, 1) },
+      { id: 'P3', label: 'P3 备用 (W10+)', color: '#165DFF', max: Math.max(data.by_priority && data.by_priority.P3 ? data.by_priority.P3 : 0, 1) }
+    ];
+    var html = '';
+    priorities.forEach(function(p) {
+      var cnt = (data.by_priority && data.by_priority[p.id]) || 0;
+      var pct = Math.round(cnt / Math.max(p.max, 1) * 100);
+      html += '<div>' +
+        '<div class="flex items-center justify-between mb-1">' +
+          '<span class="text-xs font-medium">' + p.label + '</span>' +
+          '<span class="text-xs font-bold score-number">' + cnt + ' 条</span>' +
+        '</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%; background:' + p.color + ';"></div></div>' +
+      '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function renderNextActions(actions) {
+    var container = document.getElementById('bl-next-actions');
+    if (!actions || !actions.length) {
+      container.innerHTML = '<li class="text-fg-tertiary text-xs">暂无 next_actions, 等待 ticket 数据导入.</li>';
+      return;
+    }
+    var html = actions.map(function(a) {
+      return '<li class="flex items-start gap-1.5"><iconify-icon icon="mdi:chevron-right" class="text-ai text-sm flex-shrink-0 mt-0.5"></iconify-icon><span>' + escapeHtml(a) + '</span></li>';
+    }).join('');
+    container.innerHTML = html;
+  }
+
+  function renderStatusView(data) {
+    var container = document.getElementById('bl-status-grouped');
+    var html = '';
+    var statusList = [
+      { id: 'open', label: '待 triage', icon: 'mdi:flag-outline' },
+      { id: 'in_progress', label: '进行中', icon: 'mdi:progress-clock' },
+      { id: 'done', label: '已完成', icon: 'mdi:check-circle' },
+      { id: 'deferred', label: '推迟', icon: 'mdi:clock-alert-outline' },
+      { id: 'wontfix', label: '不做', icon: 'mdi:cancel' }
+    ];
+    statusList.forEach(function(st) {
+      var cnt = data.by_status[st.id] || 0;
+      if (cnt === 0) return;
+      var tickets = (data.recent_tickets || []).filter(function(t) { return t.status === st.id; });
+      html += '<div class="border border-bg-border rounded-lg overflow-hidden">' +
+        '<div class="flex items-center justify-between px-3 py-2 bg-bg-subtle">' +
+          '<div class="flex items-center gap-2">' +
+            '<iconify-icon icon="' + st.icon + '" class="text-base text-fg-secondary"></iconify-icon>' +
+            '<span class="text-sm font-medium">' + st.label + '</span>' +
+            '<span class="status-badge ' + statusClass(st.id) + '">' + cnt + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="divide-y divide-bg-border" data-status-list="' + st.id + '">' +
+          renderTicketRowsHTML(tickets.slice(0, 5), 'show') +
+        '</div>' +
+      '</div>';
+    });
+    if (!html) html = '<div class="text-center py-6 text-xs text-fg-tertiary">无 ticket 数据</div>';
+    container.innerHTML = html;
+  }
+
+  function renderPriorityView(data) {
+    var container = document.getElementById('bl-priority-grouped');
+    var html = '';
+    ['P0', 'P1', 'P2', 'P3'].forEach(function(prio) {
+      var cnt = (data.by_priority && data.by_priority[prio]) || 0;
+      if (cnt === 0) return;
+      var tickets = (data.recent_tickets || []).filter(function(t) { return t.priority === prio; });
+      html += '<div class="border border-bg-border rounded-lg overflow-hidden ' + prioClass(prio) + '">' +
+        '<div class="flex items-center justify-between px-3 py-2 bg-bg-subtle">' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="text-sm font-semibold">' + prio + '</span>' +
+            '<span class="text-[11px] text-fg-tertiary">' + (prio === 'P0' ? '24h 内必做' : prio === 'P1' ? 'W8-W9' : prio === 'P2' ? 'W9-W10' : 'W10+ 备用') + '</span>' +
+            '<span class="status-badge">' + cnt + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="divide-y divide-bg-border" data-priority-list="' + prio + '">' +
+          renderTicketRowsHTML(tickets.slice(0, 5), 'show') +
+        '</div>' +
+      '</div>';
+    });
+    if (!html) html = '<div class="text-center py-6 text-xs text-fg-tertiary">无 ticket 数据</div>';
+    container.innerHTML = html;
+  }
+
+  function renderOwnerView(data) {
+    var container = document.getElementById('bl-owner-grid');
+    var html = '';
+    var owners = Object.keys(data.by_owner || {}).sort();
+    owners.forEach(function(o) {
+      var stat = data.by_owner[o];
+      var total = stat.total || 0;
+      var done = (stat.by_status && stat.by_status.done) || 0;
+      var completion = total > 0 ? Math.round(done / total * 100) : 0;
+      html += '<div class="border border-bg-border rounded-lg p-3 hover:shadow-sm transition-all">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<div class="flex items-center gap-1.5">' +
+            '<iconify-icon icon="mdi:account" class="text-base text-fg-secondary"></iconify-icon>' +
+            '<span class="text-xs font-medium">' + escapeHtml(ownerLabel(o)) + '</span>' +
+          '</div>' +
+          '<span class="status-badge ' + ownerClass(o) + '">' + total + '</span>' +
+        '</div>' +
+        '<div class="space-y-1 text-[10px] text-fg-tertiary">' +
+          '<div class="flex justify-between"><span>open</span><span class="font-bold text-fg-secondary">' + (stat.by_status.open || 0) + '</span></div>' +
+          '<div class="flex justify-between"><span>in_progress</span><span class="font-bold text-fg-secondary">' + (stat.by_status.in_progress || 0) + '</span></div>' +
+          '<div class="flex justify-between"><span>done</span><span class="font-bold text-fg-secondary">' + (stat.by_status.done || 0) + '</span></div>' +
+        '</div>' +
+        '<div class="mt-2 pt-2 border-t border-bg-border">' +
+          '<div class="flex items-center justify-between text-[10px] text-fg-tertiary">' +
+            '<span>完成率</span>' +
+            '<span class="font-bold text-success">' + completion + '%</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    if (!html) html = '<div class="col-span-full text-center py-6 text-xs text-fg-tertiary">无 ticket 数据</div>';
+    container.innerHTML = html;
+  }
+
+  function renderSourceView(data) {
+    var container = document.getElementById('bl-source-grouped');
+    var html = '';
+    var lawyers = ['L1', 'L2', 'L3', 'L4', 'L5'];
+    lawyers.forEach(function(lid) {
+      if (!data.by_source_lawyer || !data.by_source_lawyer[lid]) {
+        // 律师没数据时, 也展示空卡
+      }
+      var stat = data.by_source_lawyer ? data.by_source_lawyer[lid] : null;
+      var total = stat ? stat.total : 0;
+      var cats = stat ? stat.by_category : {};
+      html += '<div class="border border-bg-border rounded-lg p-3">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<div class="flex items-center gap-1.5">' +
+            '<iconify-icon icon="mdi:account-tie" class="text-base text-fg-secondary"></iconify-icon>' +
+            '<span class="text-xs font-medium">' + lid + '</span>' +
+          '</div>' +
+          '<span class="status-badge">' + total + '</span>' +
+        '</div>' +
+        '<div class="space-y-1 text-[10px]">' +
+          ['产品', '技术', '法务', '其他'].map(function(c) {
+            var c2 = cats[c] || 0;
+            if (c2 === 0) return '';
+            return '<div class="flex justify-between">' +
+              '<span class="status-badge ' + categoryClass(c) + ' text-[9px]">' + c + '</span>' +
+              '<span class="font-bold text-fg-secondary">' + c2 + '</span>' +
+            '</div>';
+          }).join('') +
+          (total === 0 ? '<div class="text-fg-tertiary text-center py-1">无</div>' : '') +
+        '</div>' +
+      '</div>';
+    });
+    // 加上 no_source (seed 来源或手动 ticket)
+    if (data.by_source_lawyer && data.by_source_lawyer.no_source) {
+      var ns = data.by_source_lawyer.no_source;
+      html += '<div class="border border-bg-border rounded-lg p-3 border-dashed">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<div class="flex items-center gap-1.5">' +
+            '<iconify-icon icon="mdi:account-question" class="text-base text-fg-tertiary"></iconify-icon>' +
+            '<span class="text-xs font-medium text-fg-tertiary">seed/无来源</span>' +
+          '</div>' +
+          '<span class="status-badge">' + ns.total + '</span>' +
+        '</div>' +
+        '<p class="text-[10px] text-fg-tertiary">A1 PM 预填或手动 ticket</p>' +
+      '</div>';
+    }
+    if (!html) html = '<div class="col-span-full text-center py-6 text-xs text-fg-tertiary">无 ticket 数据</div>';
+    container.innerHTML = html;
+  }
+
+  function renderRecentTickets(tickets) {
+    document.getElementById('bl-recent-count').textContent = tickets.length;
+    var html = tickets.map(function(t) {
+      return renderTicketRowHTML(t);
+    }).join('');
+    document.getElementById('bl-recent-list').innerHTML = html || '<div class="text-center py-6 text-xs text-fg-tertiary">无 ticket</div>';
+  }
+
+  function renderTicketRowsHTML(tickets) {
+    return tickets.map(function(t) {
+      return renderTicketRowHTML(t);
+    }).join('');
+  }
+
+  function renderTicketRowHTML(t) {
+    return '<div class="ticket-card ' + prioClass(t.priority) + ' p-3">' +
+      '<div class="flex items-start gap-2">' +
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center gap-1.5 mb-1">' +
+            '<span class="status-badge ' + prioClass(t.priority).replace('prio-', 'prio-') + ' text-[10px]">' + t.priority + '</span>' +
+            '<span class="status-badge ' + categoryClass(t.category) + ' text-[10px]">' + escapeHtml(t.category) + '</span>' +
+            '<span class="status-badge ' + ownerClass(t.owner) + ' text-[10px]">' + escapeHtml(ownerLabel(t.owner)) + '</span>' +
+            (t.source_lawyer_id ? '<span class="text-[10px] text-fg-tertiary">· ' + escapeHtml(t.source_lawyer_id) + '</span>' : '') +
+          '</div>' +
+          '<h4 class="text-sm font-semibold leading-snug mb-1">' + escapeHtml(t.title) + '</h4>' +
+          (t.description ? '<p class="text-[11px] text-fg-secondary line-clamp-2 leading-relaxed">' + escapeHtml(t.description.length > 120 ? t.description.substring(0, 120) + '…' : t.description) + '</p>' : '') +
+          '<div class="flex items-center gap-3 mt-1.5 text-[10px] text-fg-tertiary">' +
+            '<span class="status-badge ' + statusClass(t.status) + '">' + statusLabel(t.status) + '</span>' +
+            '<span>#' + t.id + '</span>' +
+            (t.source_question_id ? '<span>← review_q #' + t.source_question_id + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // ===== Refresh / Export 按钮 =====
+  document.getElementById('backlog-refresh-btn').addEventListener('click', function() {
+    loadBacklogBoard();
+  });
+
+  document.getElementById('backlog-export-btn').addEventListener('click', function() {
+    if (!currentBoardData) {
+      alert('暂无数据, 请先刷新');
+      return;
+    }
+    var blob = new Blob([JSON.stringify(currentBoardData, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'prd-backlog-' + new Date().toISOString().substring(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ===== 暴露给 router.js =====
+  globalThis.__loadBacklogBoard = loadBacklogBoard;
+})();
+</script>
+</div>

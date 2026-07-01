@@ -1,0 +1,131 @@
+{
+  "template_id": "agency-agency_arbitration-005",
+  "contract_type": "委托代理",
+  "industry": "仲裁",
+  "title": "仲裁代理委托合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "委托事项",
+      "text": "甲方委托乙方律师代理经营周转仲裁案件。"
+    },
+    {
+      "index": 2,
+      "title": "委托权限",
+      "text": "乙方代理权限为一次性支付。"
+    },
+    {
+      "index": 3,
+      "title": "律师费",
+      "text": "律师费总额人民币 150 万元。"
+    },
+    {
+      "index": 4,
+      "title": "费用承担",
+      "text": "仲裁费、鉴定费等由甲方承担。"
+    },
+    {
+      "index": 5,
+      "title": "保密义务",
+      "text": "乙方对委托事项负有保密义务, 仲裁案件应特别关注保密性。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "仲裁案件本身的争议按仲裁规则解决, 本合同争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "律师费",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "保密义务",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "委托事项",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "委托权限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "仲裁代理委托合同",
+    "仲裁常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于仲裁代理委托合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "agency",
+    "skeleton": "agency_arbitration",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,69 @@
+{
+  "passed": 7,
+  "total": 7,
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "total",
+      "ok": true,
+      "details": 6076
+    },
+    {
+      "name": "categories",
+      "ok": true,
+      "details": {
+        "agency": 500,
+        "construction": 500,
+        "equity": 500,
+        "family": 500,
+        "house": 500,
+        "insurance": 500,
+        "ip": 500,
+        "labor": 500,
+        "loan": 520,
+        "partnership": 500,
+        "sales": 500,
+        "service": 500,
+        "_w3_baseline": 56
+      }
+    },
+    {
+      "name": "uniqueness",
+      "ok": true,
+      "details": 0.9808970099667774
+    },
+    {
+      "name": "annotations",
+      "ok": true,
+      "details": 5.0
+    },
+    {
+      "name": "fts5",
+      "ok": true,
+      "details": {
+        "fts_rows": 6076,
+        "templates": 6076
+      }
+    },
+    {
+      "name": "fts_perf",
+      "ok": true,
+      "details": {
+        "借款": 0.022,
+        "房屋": 0.021,
+        "劳动合同": 0.019,
+        "担保": 0.023,
+        "违约金": 0.021
+      }
+    },
+    {
+      "name": "lancedb",
+      "ok": true,
+      "details": {
+        "records": 6076,
+        "size_mb": 19.49,
+        "method": "hash_pseudo_embedding_384dim"
+      }
+    }
+  ]
+}

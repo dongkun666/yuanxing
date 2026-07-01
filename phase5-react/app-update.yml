@@ -1,0 +1,15 @@
+# LexPrime 元枢法智 · auto-update 配置 (electron-updater 协议)
+#
+# Phase 5.2 桌面端 auto-update 配置
+# electron-updater 在运行时读取此文件, 决定从哪个 URL 拉取更新
+# 生产配置: https://update.lexprime.cn/desktop/lexprime-phase5-react-0.2.0-mac.yml
+# 开发配置: 本地跳过 (autoUpdater 在 dev 模式不启动)
+
+provider: generic
+url: https://update.lexprime.cn/desktop
+channel: latest
+useMultipleRangeRequest: false
+updaterCacheDirName: lexprime-updater
+
+# 校验发布文件 (Phase 5.2 默认 SHA-512)
+# 配合 electron-builder publish.provider=generic 自动生成 *.blockmap + latest.yml

@@ -1,0 +1,141 @@
+{
+  "template_id": "house-house_rent_industrial-017",
+  "contract_type": "房屋合同",
+  "industry": "工业厂房",
+  "title": "工业厂房租赁合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于长沙市西湖区某路 88 号的厂房出租给乙方使用, 建筑面积 500 平方米。"
+    },
+    {
+      "index": 2,
+      "title": "租赁用途",
+      "text": "乙方用于工业生产, 不得用于办公或商业。"
+    },
+    {
+      "index": 3,
+      "title": "租赁期限",
+      "text": "租赁期自 2026-10-07 起至 2028-12-15 止。"
+    },
+    {
+      "index": 4,
+      "title": "租金及支付",
+      "text": "月租金人民币 100 万元, 乙方应于每季度首月 5 日前支付。"
+    },
+    {
+      "index": 5,
+      "title": "设施维护",
+      "text": "乙方应负责厂房及附属设施的日常维护, 大修由甲方负责。"
+    },
+    {
+      "index": 6,
+      "title": "环保与安全",
+      "text": "乙方应遵守环保与安全法规, 承担因生产造成的环境污染责任。"
+    },
+    {
+      "index": 7,
+      "title": "提前解约",
+      "text": "提前解除合同应支付相当于 6 个月租金的违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议管辖",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "环保与安全",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "提前解约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "租赁用途",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "租赁标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "工业厂房租赁合同",
+    "工业厂房常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于工业厂房租赁合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_rent_industrial",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

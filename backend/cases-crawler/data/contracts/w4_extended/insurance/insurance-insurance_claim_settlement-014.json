@@ -1,0 +1,142 @@
+{
+  "template_id": "insurance-insurance_claim_settlement-014",
+  "contract_type": "保险合同",
+  "industry": "理赔",
+  "title": "保险理赔协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "理赔申请人",
+      "text": "甲方为理赔申请人。"
+    },
+    {
+      "index": 2,
+      "title": "保险公司",
+      "text": "乙方为保险公司。"
+    },
+    {
+      "index": 3,
+      "title": "保险事故",
+      "text": "保险事故: 医疗。"
+    },
+    {
+      "index": 4,
+      "title": "核定损失",
+      "text": "经乙方核定, 保险事故造成的损失金额为人民币 15 万元。"
+    },
+    {
+      "index": 5,
+      "title": "理赔金额",
+      "text": "乙方应向甲方支付理赔款人民币 1 万元。"
+    },
+    {
+      "index": 6,
+      "title": "支付时间",
+      "text": "乙方应于本合同签订后 15 日内一次性支付。"
+    },
+    {
+      "index": 7,
+      "title": "结案",
+      "text": "理赔款支付后, 本案结案。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "核定损失",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "支付时间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "理赔金额",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "结案",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "保险理赔协议",
+    "理赔常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于保险理赔协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "insurance",
+    "skeleton": "insurance_claim_settlement",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

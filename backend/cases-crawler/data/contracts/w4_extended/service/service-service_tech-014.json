@@ -1,0 +1,146 @@
+{
+  "template_id": "service-service_tech-014",
+  "contract_type": "服务合同",
+  "industry": "技术服务",
+  "title": "技术服务合同(标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "服务内容",
+      "text": "乙方为甲方提供经营周转技术服务。"
+    },
+    {
+      "index": 2,
+      "title": "服务期限",
+      "text": "服务期自 2026-10-09 起至 2027-01-23 止, 共 18 个月。"
+    },
+    {
+      "index": 3,
+      "title": "服务费用",
+      "text": "服务费总额人民币 200 万元。"
+    },
+    {
+      "index": 4,
+      "title": "交付",
+      "text": "乙方应按合同约定的时间、方式交付技术服务成果。"
+    },
+    {
+      "index": 5,
+      "title": "知识产权",
+      "text": "服务成果的知识产权归甲方所有, 乙方保留署名权。"
+    },
+    {
+      "index": 6,
+      "title": "售后与维护",
+      "text": "乙方提供 18 个月 的免费维护, 维护期满后另行约定。"
+    },
+    {
+      "index": 7,
+      "title": "保密义务",
+      "text": "双方对在合作中知悉的对方商业秘密负有保密义务。"
+    },
+    {
+      "index": 8,
+      "title": "违约责任",
+      "text": "乙方逾期交付的, 按日万分之三向甲方支付违约金。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "知识产权",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "违约责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "售后与维护",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "服务期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "技术服务合同(标准版)",
+    "技术服务常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于技术服务合同(标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "service",
+    "skeleton": "service_tech",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,142 @@
+{
+  "template_id": "construction-construction_invest-016",
+  "contract_type": "工程承揽合同",
+  "industry": "BT 投资",
+  "title": "BT 投资建设合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "项目",
+      "text": "项目名称: 教育, 项目地点: 重庆市黄浦区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "投资人",
+      "text": "投资人为乙方, 负责项目的投融资及建设。"
+    },
+    {
+      "index": 3,
+      "title": "业主",
+      "text": "业主为甲方, 负责项目的回购。"
+    },
+    {
+      "index": 4,
+      "title": "投资额",
+      "text": "项目投资总额人民币 1 万元。"
+    },
+    {
+      "index": 5,
+      "title": "建设期",
+      "text": "建设期 5 年, 自 2026-08-13 起至 2031-11-30 止。"
+    },
+    {
+      "index": 6,
+      "title": "回购",
+      "text": "项目竣工验收后, 甲方按约定方式回购项目, 回购款人民币 15 万元。"
+    },
+    {
+      "index": 7,
+      "title": "移交",
+      "text": "乙方在甲方付清回购款后将项目移交给甲方。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "回购",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "移交",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "业主",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "BT 投资建设合同",
+    "BT 投资常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于BT 投资建设合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_invest",
+    "variant_idx": 16,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

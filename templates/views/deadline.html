@@ -1,0 +1,142 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-deadline">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+    <!-- 顶部标题 + 简介 -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <iconify-icon class="text-2xl text-brand" icon="mdi:clock-alert-outline"></iconify-icon>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-lg font-bold text-fg-primary">法律期限计算器</h1>
+                <p class="text-xs text-fg-secondary mt-1">选择案件类型 + 触发事件 + 起始日期，自动计算所有相关期限（上诉期/履行期/申请执行期/再审期等），告别手动算日期。</p>
+                <p class="text-[10px] text-fg-tertiary mt-1">⚠️ AI 辅助参考，请以现行法律法规和司法机关通知为准</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 案件类型选择 -->
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-md bg-brand-tint flex items-center justify-center">
+                <span class="text-xs font-bold text-brand">1</span>
+            </div>
+            <h2 class="text-sm font-semibold text-fg-primary">选择案件类型</h2>
+        </div>
+        <div class="flex flex-wrap gap-2" id="deadline-case-type-chips">
+            <button class="deadline-chip active" data-type="civil-first" onclick="selectDeadlineCaseType('civil-first', this)">
+                <iconify-icon class="text-base" icon="mdi:gavel"></iconify-icon>
+                民事一审
+            </button>
+            <button class="deadline-chip" data-type="civil-second" onclick="selectDeadlineCaseType('civil-second', this)">
+                <iconify-icon class="text-base" icon="mdi:scale-balance"></iconify-icon>
+                民事二审
+            </button>
+            <button class="deadline-chip" data-type="admin" onclick="selectDeadlineCaseType('admin', this)">
+                <iconify-icon class="text-base" icon="mdi:bank-outline"></iconify-icon>
+                行政诉讼
+            </button>
+            <button class="deadline-chip" data-type="criminal" onclick="selectDeadlineCaseType('criminal', this)">
+                <iconify-icon class="text-base" icon="mdi:shield-alert-outline"></iconify-icon>
+                刑事案件
+            </button>
+            <button class="deadline-chip" data-type="execution" onclick="selectDeadlineCaseType('execution', this)">
+                <iconify-icon class="text-base" icon="mdi:file-document-check-outline"></iconify-icon>
+                申请执行
+            </button>
+            <button class="deadline-chip" data-type="payment-order" onclick="selectDeadlineCaseType('payment-order', this)">
+                <iconify-icon class="text-base" icon="mdi:cash-fast"></iconify-icon>
+                支付令
+            </button>
+            <button class="deadline-chip" data-type="work-injury" onclick="selectDeadlineCaseType('work-injury', this)">
+                <iconify-icon class="text-base" icon="mdi:medical-bag"></iconify-icon>
+                工伤认定
+            </button>
+            <button class="deadline-chip" data-type="divorce" onclick="selectDeadlineCaseType('divorce', this)">
+                <iconify-icon class="text-base" icon="mdi:heart-broken"></iconify-icon>
+                婚姻家事
+            </button>
+            <button class="deadline-chip" data-type="arbitration" onclick="selectDeadlineCaseType('arbitration', this)">
+                <iconify-icon class="text-base" icon="mdi:scale-balance"></iconify-icon>
+                商事仲裁
+            </button>
+            <button class="deadline-chip" data-type="public-notice" onclick="selectDeadlineCaseType('public-notice', this)">
+                <iconify-icon class="text-base" icon="mdi:bullhorn-outline"></iconify-icon>
+                公示催告
+            </button>
+        </div>
+    </div>
+
+    <!-- 触发事件 + 日期 -->
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-md bg-brand-tint flex items-center justify-center">
+                <span class="text-xs font-bold text-brand">2</span>
+            </div>
+            <h2 class="text-sm font-semibold text-fg-primary">设置触发事件与起始日期</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">触发事件</label>
+                <div class="relative">
+                    <select id="deadline-event-select" class="w-full appearance-none bg-bg-subtle border border-bg-border rounded-lg pl-3 pr-9 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors">
+                        <!-- 动态填充 -->
+                    </select>
+                    <iconify-icon class="absolute right-3 top-1/2 -translate-y-1/2 text-fg-tertiary pointer-events-none" icon="mdi:chevron-down"></iconify-icon>
+                </div>
+                <p class="text-[10px] text-fg-tertiary mt-1" id="deadline-event-hint"></p>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">起始日期</label>
+                <input type="date" id="deadline-start-date" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors" onchange="recalculateDeadlines()"/>
+                <p class="text-[10px] text-fg-tertiary mt-1" id="deadline-today-hint"></p>
+            </div>
+        </div>
+        <!-- 一键快捷日期 -->
+        <div class="flex items-center gap-2 mt-3">
+            <span class="text-[10px] text-fg-tertiary mr-1">快捷：</span>
+            <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="setDeadlineDate(0)">今天</button>
+            <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="setDeadlineDate(-1)">昨天</button>
+            <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="setDeadlineDate(-7)">7 天前</button>
+            <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="setDeadlineDate(-30)">30 天前</button>
+            <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="setDeadlineDate(-90)">3 个月前</button>
+        </div>
+    </div>
+
+    <!-- 期限结果 -->
+    <div class="bg-white rounded-xl border border-bg-border p-5" id="deadline-results-card">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-md bg-success-tint flex items-center justify-center">
+                <iconify-icon class="text-sm text-success" icon="mdi:calendar-check-outline"></iconify-icon>
+            </div>
+            <h2 class="text-sm font-semibold text-fg-primary">期限计算结果</h2>
+            <span class="text-[10px] text-fg-tertiary ml-auto" id="deadline-results-count"></span>
+        </div>
+
+        <!-- 空态 -->
+        <div class="text-center py-8" id="deadline-empty">
+            <iconify-icon class="text-4xl text-fg-disabled" icon="mdi:calendar-arrow-right"></iconify-icon>
+            <p class="text-sm text-fg-tertiary mt-2">请选择案件类型 + 触发事件 + 起始日期</p>
+            <p class="text-[10px] text-fg-disabled mt-1">系统会自动计算所有相关期限</p>
+        </div>
+
+        <!-- 结果列表 (动态填充) -->
+        <div class="space-y-2.5 hidden" id="deadline-results-list">
+            <!-- 由 deadline.js 动态渲染 -->
+        </div>
+    </div>
+
+    <!-- 期限规则库（参考） -->
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <iconify-icon class="text-base text-fg-tertiary" icon="mdi:book-open-page-variant-outline"></iconify-icon>
+                <h2 class="text-sm font-semibold text-fg-primary">期限规则说明</h2>
+            </div>
+            <span class="text-[10px] text-fg-tertiary">数据来源：民事诉讼法/行政诉讼法/刑事诉讼法/民法典</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]" id="deadline-rule-refs">
+            <!-- 由 deadline.js 动态渲染 -->
+        </div>
+    </div>
+</div>
+</div>

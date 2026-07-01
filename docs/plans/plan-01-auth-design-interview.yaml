@@ -1,0 +1,155 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 1: Auth 启动 + 设计系统 v1'
+  max_concurrency: 4
+  max_consecutive_failures: 2
+  max_cycles: 5
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  # Task 1: Auth 项目脚手架 + DB schema (lex-coder)
+  - id: 'auth-scaffold'
+    title: 'Auth 项目脚手架 + DB schema'
+    prompt: |
+      在 LexPrime (元枢法智) 项目中启动 Track A: Auth 后端。
+
+      必读文档:
+      - PRD § 7.5 后端架构: E:\元枢法智前端\yuanxing\PRD.md
+      - PRD § 8 数据安全策略
+      - Track A 任务书: E:\元枢法智前端\yuanxing\docs\prd\tracks\A-auth.md
+
+      工作范围 (W1):
+      1. 选择 Rust Actix-web vs 继续 FastAPI Python, 给 1 句理由 (用户最终拍)
+      2. 在 backend/cases-crawler/ 下创建 auth/ 子模块:
+         - auth/models.py: User / LawyerProfile / Token / OTPLog 表 (SQLAlchemy 2.0)
+         - auth/schemas.py: Pydantic schemas
+         - auth/db.py: Database setup (复用现有 core/db.py)
+         - auth/main.py: FastAPI app skeleton
+      3. 数据库 schema 写入 backend/cases-crawler/db/schema.sql
+      4. 必跑验证: pytest backend/cases-crawler/tests/ 0 失败
+      5. 所有变更 git commit + push
+
+      Stop when:
+      - 目录结构 + 文件就位
+      - DB schema 完整
+      - pytest 通过
+      - git log 显示新 commit
+    assigned_to: 'lex-coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 Track A W1 交付:
+      1. 目录 backend/cases-crawler/auth/ 存在
+      2. 文件: models.py / schemas.py / db.py / main.py 都存在
+      3. schema.sql 已更新 (git diff 显示)
+      4. pytest 跑通 (自己跑一次)
+      5. git log 显示 W1 commit
+
+      PASS/FAIL 报告.
+    max_retries: 2
+
+  # Task 2: 设计系统 v1 (lex-design)
+  - id: 'design-system-v1'
+    title: 'LexPrime 设计系统 v1'
+    prompt: |
+      创建 LexPrime 设计系统第一版。
+
+      必读文档:
+      - PRD § 1.1 品牌色: #165DFF (深蓝选中态) / #E8F3FF (浅蓝弱化)
+      - PRD § 7.4 核心模块
+      - docs/prd/02-target-users.md
+
+      交付物:
+      1. docs/design-system.md (markdown 1 份, 涵盖):
+         - 品牌色: 主 #165DFF + 辅 #E8F3FF + 中性色 (灰阶 5 级)
+         - 字体: 标题 / 正文 / 辅助
+         - 间距: 4 / 8 / 12 / 16 / 24 / 32 / 48
+         - 圆角: sm / md / lg
+         - 阴影: sm / md / lg
+         - 组件: 按钮 / 输入框 / 卡片 / 模态框 / 标签
+         - 选中态: 统一深蓝 bg-brand text-white
+      2. 3 个高保真原型 (HTML + Tailwind):
+         - 工作台 (workstation) 首页
+         - 案件列表 (case-list) 列表页
+         - 案件详情 (case-detail) 头部
+      3. 放到 docs/designs/ 目录
+      4. git commit + push
+
+      Stop when:
+      - docs/design-system.md 1 份 (3-5 KB)
+      - 3 个 HTML 原型 (每个 1-3 KB)
+      - git log 显示新 commit
+    assigned_to: 'lex-design'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证设计系统 v1:
+      1. docs/design-system.md 存在, 包含 品牌色/字体/间距/组件 4 块
+      2. docs/designs/ 目录有 3 个 HTML 文件
+      3. 颜色 #165DFF 在原型里出现 (用 grep 验证)
+      4. git log 显示 W1 commit
+
+      PASS/FAIL 报告.
+    max_retries: 2
+
+  # Task 3: 律师访谈 #1 (lex-pm)
+  - id: 'lawyer-interview-1'
+    title: '律师访谈 #1 (目标律所名单 + 1 家访谈)'
+    prompt: |
+      启动 Track C: 律师访谈 10 家律所 PMF 验证, 先做 #1。
+
+      必读文档:
+      - PRD § 3 目标用户
+      - PRD § 10.3 推广策略
+      - docs/prd/tracks/C-lawyer-interview.md
+
+      交付物:
+      1. 访谈大纲 markdown: docs/interviews/outline.md (10-15 问, 覆盖: 痛点/工具/预算/期望)
+      2. 目标律所名单 (10+ 家): docs/interviews/target-list.md
+         - 3 家小所 (3-10 人)
+         - 3 家中所 (10-30 人)
+         - 2 家单飞律师
+         - 2 家企业法务 (公司)
+      3. 访谈 #1 纪要: docs/interviews/interview-01-<name>.md
+         - 律所基本信息
+         - 痛点 (按严重度排序 Top 5)
+         - 当前工具
+         - 付费意愿
+         - 内测意愿
+      4. 约访谈 #2-#3 (排时间)
+      5. git commit + push
+
+      注意: 实际访谈由用户 (总指挥) 线下进行, 你负责准备 + 纪要模板 + 协调时间.
+
+      Stop when:
+      - 3 份 markdown 文档就位
+      - 访谈 #1 纪要有实质内容 (≥ 1KB)
+      - #2-#3 访谈时间已约
+      - git log 显示 W1 commit
+    assigned_to: 'lex-pm'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证律师访谈 W1:
+      1. docs/interviews/outline.md 存在, 至少 10 个问题
+      2. docs/interviews/target-list.md 至少 10 家律所
+      3. docs/interviews/interview-01-*.md 存在, ≥ 1KB
+      4. git log 显示 W1 commit
+
+      PASS/FAIL 报告.
+    max_retries: 1
+
+  # Final: 集成验证 (W1 收尾)
+  - id: 'w1-integration'
+    title: 'W1 集成验证 (Auth + Design + Interview 联动)'
+    role: 'verify-as-task'
+    prompt: |
+      验证 W1 三个 Track 集成:
+      1. Auth scaffold + 设计系统 v1 + 访谈 #1 三者无冲突
+      2. Auth API 设计是否与设计系统组件一致 (按钮/输入框样式)
+      3. 访谈反馈是否影响 PRD (如发现新痛点, 写明)
+      4. 三个 agent 的 deliverable 都 git commit + push
+
+      输出 W1 总结 + W2 建议 (一句话).
+    assigned_to: 'verifier'
+    depends_on: ['auth-scaffold', 'design-system-v1', 'lawyer-interview-1']
+    max_retries: 1

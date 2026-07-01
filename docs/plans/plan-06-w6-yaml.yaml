@@ -1,0 +1,304 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 6: W6 律师访谈现场 + 公测预热 (A + B 并行)'
+  max_concurrency: 4
+  max_consecutive_failures: 2
+  max_cycles: 4
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  # Task 1: W6 律师访谈准备 (A1: lex-pm)
+  - id: 'w6-lawyer-interview-prep'
+    title: 'W6 律师访谈准备 (5 律师画像精细化 + 评审题库 + 评审流程手册)'
+    prompt: |
+      W5 已完成律师评审准备 v2 (review-template + scoring-rubric + 5 测试合同 baseline + 排期 v0.3 + PRD 反馈 v0.1).
+      W6 启动现场执行: 5 律师画像精细化 + 评审题库细化 + 评审流程手册 + 评审现场准备.
+
+      必读文档:
+      - W5 律师评审准备 commit 8437483 + 77a54dc + 54eb151
+      - W4 访谈 #3 #4 模板 commit 1c6b674
+      - W2 访谈 #2 模板 commit 4f00840
+      - docs/interviews/schedule.md (W5 排期 v0.3)
+      - docs/interviews/analysis-w1-w3.md (4 类律师画像 Top 10 痛点)
+      - docs/skills/contract-review/review-template.md (W5 lex-pm 评审模板)
+      - docs/skills/contract-review/scoring-rubric.md (5 维度评分)
+
+      W6 工作范围:
+      1. **5 律师画像精细化** (W6 Day 1):
+         - 至少 5 位律师 (单飞 1 + 小所 2 + 中所 1 + 企业法务 1)
+         - 每位: 姓名 / 律所 / 执业领域 / 从业年限 / 业务量 (年案件数) / 当前工具 / 痛点 Top 3 / 付费意愿 / 内测意愿
+         - 输出: docs/interviews/lawyer-profiles-w6.md (5 张表 + 总览)
+      2. **评审题库细化** (W6 Day 1-2):
+         - 5 维度 × 5 律师 = 25 个具体问题
+         - 维度 1: 致命/重大/建议三级识别准确率 (Skill 2)
+         - 维度 2: 修改建议实用性
+         - 维度 3: 谈判策略可执行性
+         - 维度 4: LLM 输出中立性 (0 违规)
+         - 维度 5: UI 流程合理性 (5 步内完成审查)
+         - 输出: docs/interviews/review-questions-w6.md (25 问 + 评分 Rubric)
+      3. **评审流程手册** (W6 Day 2):
+         - 7/19 在线 3 律师 (单飞 + 小所 × 2) — 评审 #1
+         - 7/26 在线 2 律师 (中所 + 企业法务) — 评审 #2
+         - 流程: 1) 总指挥开场 (5 min) → 2) Skill 2 UI 演示 (15 min) → 3) 5 测试合同试审 (30 min) → 4) 题库 Q&A (20 min) → 5) 律师评分填写 (15 min) → 6) 茶歇交流 (15 min) 共 100 min
+         - 输出: docs/interviews/review-process-w6.md (流程 + 时间表 + 角色分工)
+      4. **律师现场咨询通道** (W6 Day 2):
+         - 总指挥 42081 微信 (隐私脱敏)
+         - 邮箱 privacy@lexprime.com (脱敏)
+         - 输出: docs/interviews/contact-channel-w6.md
+      5. **评审后 24h 整理脚本** (W6 Day 3):
+         - 律师评分表收集 (Score App 见 Task 2) → 自动汇总 → docs/interviews/review-summary-w6.md
+         - lex-pm 24h 内出 5 个 lawyer_review_skill2_*.md + summary + prd-feedback v1.0
+         - 输出: scripts/aggregate-review-scores.py + 模板
+      6. **git commit + push** (3 commits: 1 画像+题库 / 1 流程手册 / 1 脚本+模板)
+
+      Stop when (W6 末):
+      - 5 律师画像就位 (docs/interviews/lawyer-profiles-w6.md)
+      - 25 问评审题库 + Rubric (docs/interviews/review-questions-w6.md)
+      - 评审流程手册 (docs/interviews/review-process-w6.md)
+      - 律师现场咨询通道 (docs/interviews/contact-channel-w6.md)
+      - 评审后 24h 整理脚本 (scripts/aggregate-review-scores.py)
+      - git log 显示 3+ W6 commits
+    assigned_to: 'lex-pm'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W6 律师访谈准备:
+      1. docs/interviews/lawyer-profiles-w6.md 5 张表 (姓名/律所/执业领域/痛点/付费意愿) 完整
+      2. docs/interviews/review-questions-w6.md 25 问 (5 维度 × 5 律师) 跟 W5 scoring-rubric 对齐
+      3. docs/interviews/review-process-w6.md 流程 + 时间表 + 角色分工
+      4. docs/interviews/contact-channel-w6.md 微信/邮箱脱敏
+      5. scripts/aggregate-review-scores.py 跑通 (5 测试合同 baseline 输入 → 汇总输出)
+      6. pytest 100% + ruff 0
+      7. git log 显示 3+ W6 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 2: W6 评审 Score App (A2: lex-coder)
+  - id: 'w6-review-score-app'
+    title: 'W6 评审 Score App (移动端评分 App + 5 测试合同试审界面)'
+    prompt: |
+      律师评审现场 (7/19 + 7/26) 需要 Score App: 律师用手机/平板/电脑现场给 Skill 2 审查结果打分.
+      简化版: 5 维度滑块 + 文字评论 + 自动提交到后端.
+
+      必读文档:
+      - W5 评审准备 commit 8437483 + 77a54dc + 54eb151
+      - W5 合同审查 UI 5 页面 commit e02ccb7
+      - W1 设计系统 docs/design-system.md + tailwind.config.js
+      - PRD § 11 风险与法务
+
+      W6 工作范围:
+      1. **Score App 前端** (W6 Day 1):
+         - 模板: templates/views/review/score-app.html (跟 W1 设计系统一致)
+         - 5 维度滑块 (致命准确率 / 建议实用性 / 策略可执行 / 中立性 / UI 流程) 0-10 分
+         - 文字评论 (textarea, 5 字段)
+         - 提交按钮 → POST /api/review/submit-score
+         - mobile-responsive (律师用手机填)
+      2. **Score App 后端** (W6 Day 2):
+         - POST /api/review/submit-score (FastAPI)
+         - 入参: lawyer_id / contract_id / scores{5 维度} / comments{5}
+         - SQLite 表: review_scores (id, lawyer_id, contract_id, dimension, score, comment, created_at)
+         - 落地: backend/cases-crawler/api/review_router.py
+      3. **测试合同 5 份** (复用 W5):
+         - 复用 backend/cases-crawler/data/fixtures/ (W5 lex-pm 准备)
+         - Score App 加载 5 份测试合同 (按合同类型分组: 房屋租赁 / 借款 / 劳动 / 服务 / 销售)
+         - 律师可切换 5 份合同 + 5 维度评分
+      4. **汇总接口** (W6 Day 3):
+         - GET /api/review/summary (聚合 5 律师 × 5 合同 = 25 条评分)
+         - 输出 JSON: 平均分 / 方差 / 律师具体评论 / 自动生成 prd-feedback v1.0
+         - 落地: scripts/aggregate-review-scores.py (跟 Task 1 配套)
+      5. **Demo 模式 fallback**:
+         - 律师评审现场若断网, 浏览器 localStorage 暂存 + 重连后自动提交
+      6. **必跑**: ruff 0 + pytest 100% + playwright 截图 (桌面 + 移动)
+      7. **git commit + push** (3 commits: 1 前端 / 1 后端 / 1 汇总)
+
+      Stop when (W6 末):
+      - Score App templates/views/review/score-app.html (mobile-responsive)
+      - POST /api/review/submit-score + GET /api/review/summary endpoint
+      - SQLite review_scores 表 + 5 律师 × 5 合同 = 25 条评分 schema
+      - scripts/aggregate-review-scores.py 跑通
+      - 浏览器 localStorage 断网 fallback
+      - pytest 100% + ruff 0
+      - git log 显示 3+ W6 commits
+    assigned_to: 'lex-coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W6 Score App:
+      1. templates/views/review/score-app.html 渲染 (Playwright 截图桌面 1440 + 移动 375)
+      2. POST /api/review/submit-score endpoint 跑通 (curl 验证 5 律师 × 5 合同 = 25 条)
+      3. GET /api/review/summary 聚合输出 JSON
+      4. SQLite review_scores 表存在 + 25 条样本数据可查
+      5. 5 维度滑块 + 评论 textarea + 提交按钮 全部存在
+      6. mobile-responsive (viewport meta + Tailwind responsive classes)
+      7. localStorage 断网 fallback 代码就位
+      8. pytest 100% + ruff 0
+      9. git log 显示 3+ W6 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 3: W6 公测 landing page (B1: lex-design)
+  - id: 'w6-beta-landing'
+    title: 'W6 公测 landing page (律师私域 + 邀请码 + 注册转化漏斗)'
+    prompt: |
+      W5 试用版 (Track D) 已就绪: 30 天免费试用 + 个人版 ¥99/月 + 企业版 ¥1500-2000/律师/年 + 创史体验官 ¥449/年.
+      W6 启动公测预热: 律师私域 landing page + 邀请码 + 转化漏斗. 7/19-7/26 评审律师 + 微信群律师首批触达.
+
+      必读文档:
+      - W5 试用版 commit 9e4bf89 + 6aca2b0 + c823976
+      - W5 定价 templates/views/pricing.html
+      - W1 设计系统 docs/design-system.md + tailwind.config.js (#165DFF 品牌色)
+      - PRD § 9 商业模式 + § 10 成功指标 + § 11 法务自检
+
+      W6 工作范围:
+      1. **公测 landing page** (W6 Day 1-2):
+         - 模板: templates/views/beta/index.html (跟 W1 设计系统一致)
+         - 7 大模块: 1) 顶部 hero (LexPrime 律师 AI 助手 + 注册 CTA) 2) 5 步使用流程 (上传案件 / 跑类案 / 跑合同 / 庭审准备 / 关注公众号) 3) 9 横切面 (UI 展示 + 风险标签) 4) 5 大价值主张 (数据本地化 / 智能但非替代 / 越用越懂你 / 立案预审 / 类案只做参考) 5) 试用注册表单 (邮箱 + 邀请码) 6) 创始体验官限量 100 名 7) 底部 footer
+         - 强制 AI 紫色角标 + 5 页面 disclaimer 跨页面统一
+         - mobile-responsive (律师 70% 移动端访问)
+      2. **邀请码系统** (W6 Day 2):
+         - 5 律师评审 + 10 微信群律师 + 100 创始体验官 = 115 邀请码
+         - 邀请码 schema: BETA2025-XXXX (4 位随机, 10000 种)
+         - 落地: backend/cases-crawler/api/invite_router.py
+         - POST /api/invite/generate (admin 入口, 限流 5/min)
+         - POST /api/invite/redeem (用户入口, 1 码 1 用)
+      3. **注册转化漏斗** (W6 Day 3):
+         - 漏斗 5 步: 1) 访问 landing 2) 看定价 3) 填邮箱 + 邀请码 4) 邮箱验证 5) 创建账号试用
+         - 跟踪: docs/marketing/funnel-tracking.md (5 步 event 字段 + 5 步转化率目标)
+         - 漏斗目标: 访问 → 试用 ≥ 30%, 试用 → 7 日活跃 ≥ 50%, 7 日活跃 → 30 日付费 ≥ 5%
+         - 7/19-8/9 首批 100 名律师试用, 9-10 月首批 10 付费律师目标
+      4. **公测营销文案** (W6 Day 3):
+         - 微信群推广文案 3 版本: 短版 (< 200 字) / 中版 (< 500 字) / 长版 (1000+ 字)
+         - 朋友圈卡片: 5 张 (产品截图 + 数据本地化 + 智能边界)
+         - 律师短视频脚本: 60s/30s/15s
+         - 输出: docs/marketing/beta-launch-materials.md
+      5. **PRD § 10 成功指标更新** (W6 Day 3):
+         - 北极星指标: 周活跃律师数 (WAU) 目标 W6 末 50, W7 末 100
+         - 漏斗指标: 访问 → 试用 ≥ 30%, 30 日付费 ≥ 5%
+         - 留存指标: 7 日回访 ≥ 60%, 30 日回访 ≥ 30%
+      6. **git commit + push** (3 commits: 1 landing / 1 邀请码 / 1 营销文案)
+
+      Stop when (W6 末):
+      - 公测 landing templates/views/beta/index.html (mobile-responsive)
+      - 邀请码系统 (115 码) + /api/invite/generate + /api/invite/redeem
+      - 转化漏斗 5 步跟踪 (docs/marketing/funnel-tracking.md)
+      - 营销文案 3 版本 (短/中/长) + 朋友圈卡片 5 张 + 短视频脚本 3 段
+      - PRD § 10 成功指标更新 (WAU 50/100 + 漏斗 + 留存)
+      - git log 显示 3+ W6 commits
+    assigned_to: 'lex-design'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W6 公测 landing page:
+      1. templates/views/beta/index.html 7 大模块 (hero / 5 步 / 9 横切面 / 5 价值 / 试用 / 创史 / footer) 完整
+      2. 邀请码系统 /api/invite/generate + /api/invite/redeem endpoint 跑通
+      3. 115 邀请码生成可查 (SQLite count)
+      4. 转化漏斗 5 步跟踪字段定义清晰
+      5. 营销文案 3 版本 + 5 朋友圈卡片 + 3 短视频脚本
+      6. PRD § 10 成功指标更新 (WAU 50/100 + 漏斗 + 留存)
+      7. mobile-responsive (viewport meta + Tailwind responsive)
+      8. AI 紫色角标 + disclaimer 5 页面统一
+      9. git log 显示 3+ W6 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 4: W6 邀请码 + 转化漏斗运营 (B2: lex-bd)
+  - id: 'w6-invite-code-ops'
+    title: 'W6 邀请码 + 转化漏斗运营 (5 律师私域 + 100 创始体验官招募 + 7/26 公测启动)'
+    prompt: |
+      W6 启动公测预热运营: 邀请码生成 + 律师私域触达 + 100 创始体验官招募 + 7/26 公测启动.
+
+      必读文档:
+      - W6 公测 landing page (Task 3 产出)
+      - W5 试用版 (Track D)
+      - W5 公测邀请函 (3 版本)
+      - PRD § 9 商业模式 + § 10 成功指标
+      - docs/interviews/schedule.md (5 律师评审 #1 #2)
+
+      W6 工作范围:
+      1. **邀请码生成 + 分发** (W6 Day 1-2):
+         - 115 个邀请码 (5 律师评审 + 10 微信群律师 + 100 创始体验官)
+         - 落地: scripts/generate-invite-codes.py (按 BETA2025-XXXX 格式生成)
+         - 输出: docs/marketing/invite-codes-list.csv (115 行)
+         - 分发渠道: 微信 (评审律师) + 微信群 (10 律师) + 公众号 (100 创史)
+      2. **律师私域触达** (W6 Day 1-3):
+         - 评审律师 5 位 (单飞 1 + 小所 2 + 中所 1 + 企业法务 1) — 微信 + 邮件双触达
+         - 微信群律师 10 位 — 朋友圈推广文案 + 群内 1 张卡 + 1 短文
+         - 律师协会 (北京 / 上海 / 深圳 3 大律协) — 邮件申请 100 创史席位
+         - 落地: docs/marketing/outreach-log-w6.md (触达时间 + 渠道 + 反馈)
+      3. **100 创史体验官招募** (W6 Day 2-3):
+         - 前 100 名律师: 1 年个人版 5 折 ¥449/年 + 终身优先客服
+         - 渠道: 律师协会邮件 + 律所 BD + 微信群
+         - 招募文案: docs/marketing/founding-member-pitch.md
+         - 目标: 7/19 前招满 30 名, 7/26 前招满 60 名, 8/9 前招满 100 名
+      4. **公测启动仪式** (W6 Day 3 / 7/26):
+         - 7/26 评审 #2 结束后同步公测启动
+         - 邮件群发 115 邀请码 + 公众号推送
+         - 落地: docs/marketing/beta-launch-event.md (7/26 流程)
+      5. **首月转化漏斗** (W6 Day 3-5):
+         - 跟踪 5 步漏斗 (访问 → 试用 → 7 日活跃 → 30 日活跃 → 付费)
+         - 7/19-8/9 数据汇总 → docs/marketing/funnel-data-w6.md
+         - 首月目标: 100 试用 / 50 活跃 / 5 付费
+      6. **PRD § 10 成功指标落地** (W6 Day 3):
+         - 跟踪 4 个指标: WAU / 漏斗 / 留存 / 付费
+         - 接入埋点: docs/marketing/tracking-events.md (5 个 event 字段)
+         - 数据看板: docs/marketing/dashboard-w6.md (每日更新, 由 Mavis 跑数据)
+      7. **git commit + push** (3 commits: 1 邀请码 / 1 触达 / 1 漏斗)
+
+      Stop when (W6 末):
+      - 115 邀请码生成 + 分发
+      - 5 评审律师 + 10 微信群律师 私域触达就位
+      - 100 创史体验官招募启动 (30+ 已确认意向)
+      - 7/26 公测启动仪式就绪
+      - 首月转化漏斗 5 步跟踪就位
+      - 4 指标埋点 + 看板
+      - git log 显示 3+ W6 commits
+    assigned_to: 'lex-bd'
+    verified_by: 'verifier'
+    verify_prompt: |
+      独立验证 W6 邀请码 + 转化漏斗运营:
+      1. 115 邀请码生成 (scripts/generate-invite-codes.py 跑通 + CSV 输出可查)
+      2. 5 评审律师 + 10 微信群律师 私域触达记录 (docs/marketing/outreach-log-w6.md)
+      3. 100 创史体验官招募文案 (docs/marketing/founding-member-pitch.md)
+      4. 7/26 公测启动仪式就绪 (docs/marketing/beta-launch-event.md)
+      5. 首月转化漏斗 5 步跟踪字段就位 (docs/marketing/funnel-tracking.md)
+      6. 4 指标埋点 + 看板 (docs/marketing/tracking-events.md + dashboard-w6.md)
+      7. 30+ 律师已确认意向 (CRM / outreach log)
+      8. git log 显示 3+ W6 commits
+
+      PASS/FAIL 报告.
+    max_retries: 2
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  # Task 5: W6 集成验证 (4 task 联动)
+  - id: 'w6-integration'
+    title: 'W6 集成验证 (律师访谈 + Score App + landing + 邀请码运营 联动)'
+    prompt: |
+      验证 W6 4 个 Track 集成:
+      1. 律师访谈准备 (lex-pm) 是否引用 Score App (lex-coder) 5 测试合同 + 评审流程
+      2. Score App (lex-coder) 评分提交是否落库 review_scores, 汇总接口给 lex-pm 24h 整理
+      3. 公测 landing page (lex-design) 邀请码输入是否对 lex-bd 邀请码库
+      4. 邀请码运营 (lex-bd) 分发是否走 landing page 注册路径
+      5. 4 agent deliverable 无冲突
+      6. 4 agent 全部 git commit + push
+
+      输出 W6 总结 + W7 建议 (一句话: 公测 + 企业版律所 BD + 文书 Skill)。
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on:
+      - 'w6-lawyer-interview-prep'
+      - 'w6-review-score-app'
+      - 'w6-beta-landing'
+      - 'w6-invite-code-ops'
+    max_retries: 1
+    timeout_ms: 900000
+    hang_alert_after_ms: 900000

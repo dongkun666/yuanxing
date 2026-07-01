@@ -1,0 +1,135 @@
+{
+  "template_id": "partnership-partnership_restaurant-008",
+  "contract_type": "合伙协议",
+  "industry": "餐饮合伙",
+  "title": "餐饮合伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合伙餐饮店",
+      "text": "甲乙共同投资经营技术升级餐饮店。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "甲方出资人民币 50 万元 (占 10%), 乙方出资人民币 8 万元 (占剩余份额)。"
+    },
+    {
+      "index": 3,
+      "title": "合伙期限",
+      "text": "合伙期限 5 年, 自 2026-09-22 起至 2028-09-26 止。"
+    },
+    {
+      "index": 4,
+      "title": "分工",
+      "text": "甲方负责经营, 乙方负责财务, 重大事项共同决定。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "餐饮店利润按出资比例分配, 每月结算一次。"
+    },
+    {
+      "index": 6,
+      "title": "退伙",
+      "text": "合伙人退伙应提前 30 日通知, 进行财产清算。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "分工",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "分工",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "餐饮合伙协议",
+    "餐饮合伙常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于餐饮合伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_restaurant",
+    "variant_idx": 8,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,137 @@
+{
+  "template_id": "family-family_adoption-017",
+  "contract_type": "婚姻家事合同",
+  "industry": "收养",
+  "title": "收养协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "收养人",
+      "text": "甲方为收养人, 符合《民法典》规定的收养条件。"
+    },
+    {
+      "index": 2,
+      "title": "被收养人",
+      "text": "被收养人为医疗 (未成年人/已成年)。"
+    },
+    {
+      "index": 3,
+      "title": "送养人",
+      "text": "送养人为乙方 (被收养人的生父母或其他监护人)。"
+    },
+    {
+      "index": 4,
+      "title": "收养关系",
+      "text": "自收养关系成立之日起, 甲方与被收养人之间建立父母子女关系。"
+    },
+    {
+      "index": 5,
+      "title": "权利义务",
+      "text": "甲方承担对被收养人的抚养、教育、保护义务, 被收养人享有与婚生子女同等的权利。"
+    },
+    {
+      "index": 6,
+      "title": "收养登记",
+      "text": "双方应于本合同签订后 30 日内办理收养登记。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "收养人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "收养关系",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "收养登记",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "权利义务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "收养协议",
+    "收养常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于收养协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_adoption",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

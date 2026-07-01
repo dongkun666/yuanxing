@@ -1,0 +1,142 @@
+{
+  "template_id": "family-family_divorce-011",
+  "contract_type": "婚姻家事合同",
+  "industry": "离婚",
+  "title": "离婚协议 (民政局版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "协议双方",
+      "text": "甲方与乙方自愿离婚, 签订本离婚协议。"
+    },
+    {
+      "index": 2,
+      "title": "婚姻状况",
+      "text": "双方于 2025-12-31 登记结婚, 现因感情破裂自愿离婚。"
+    },
+    {
+      "index": 3,
+      "title": "子女抚养",
+      "text": "双方育有 24 名子女, 抚养权归甲方, 乙方每月支付抚养费人民币 10 万元。"
+    },
+    {
+      "index": 4,
+      "title": "探望权",
+      "text": "乙方每月可探望子女 20 次, 甲方应予以配合。"
+    },
+    {
+      "index": 5,
+      "title": "财产分割",
+      "text": "夫妻共同财产按双方约定分割, 详见《财产分割清单》。"
+    },
+    {
+      "index": 6,
+      "title": "债务",
+      "text": "夫妻共同债务由双方共同承担, 个人债务由个人承担。"
+    },
+    {
+      "index": 7,
+      "title": "其他",
+      "text": "本协议一式三份, 双方各执一份, 民政局存档一份。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "财产分割",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "子女抚养",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "探望权",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "其他",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "离婚协议 (民政局版)",
+    "离婚常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于离婚协议 (民政局版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_divorce",
+    "variant_idx": 11,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

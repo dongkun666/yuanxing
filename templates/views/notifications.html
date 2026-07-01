@@ -1,0 +1,70 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-notifications">
+<div class="max-w-4xl mx-auto w-full space-y-5">
+<!-- 标题 + 返回 + 「···」菜单 -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1 text-xs text-fg-secondary hover:text-brand transition-colors" onclick="switchView('workstation')">
+<iconify-icon icon="mdi:arrow-left"></iconify-icon>
+<span>返回</span>
+</button>
+<span class="text-bg-border">|</span>
+<h3 class="text-base font-semibold text-fg-primary">全部通知</h3>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="markAllNotifications()">
+<iconify-icon icon="mdi:check-all"></iconify-icon>
+<span>全部已读</span>
+</button>
+<!-- 「···」菜单 (全部已读 / 清空通知) -->
+<div class="relative">
+<button class="px-2 py-1.5 text-xs rounded-lg text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="toggleNotifMoreMenu(event)" title="更多操作">
+<iconify-icon icon="mdi:dots-horizontal" class="text-base"></iconify-icon>
+</button>
+<div id="notifMoreMenu" class="hidden absolute right-0 top-full mt-1 w-44 bg-white rounded-lg border border-bg-border shadow-lg overflow-hidden z-[60]">
+<button class="w-full text-left px-3 py-2 text-xs text-fg-primary hover:bg-bg-subtle flex items-center gap-2" onclick="markAllNotifications(); toggleNotifMoreMenu(event);">
+<iconify-icon icon="mdi:check-all"></iconify-icon>
+<span>全部已读</span>
+</button>
+<div class="border-t border-bg-border"></div>
+<button class="w-full text-left px-3 py-2 text-xs text-danger hover:bg-danger-tint flex items-center gap-2" onclick="clearAllNotifications(); toggleNotifMoreMenu(event);">
+<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>
+<span>清空通知</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 三态 filter (状态维度) -->
+<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
+<iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
+<span class="text-xs text-fg-secondary font-medium">状态</span>
+<button data-filter="all" onclick="setNotificationsFilter('all')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium">全部</button>
+<button data-filter="unread" onclick="setNotificationsFilter('unread')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">未读</button>
+<button data-filter="read" onclick="setNotificationsFilter('read')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">已读</button>
+<span class="text-[10px] text-fg-tertiary ml-auto" id="notifications-count"></span>
+</div>
+<!-- 类型 filter (主题维度, 独立于三态叠加生效) -->
+<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-2 flex-wrap">
+<iconify-icon class="text-fg-tertiary text-base" icon="mdi:tag-outline"></iconify-icon>
+<span class="text-xs text-fg-secondary font-medium">类型</span>
+<button data-type="all" onclick="setNotificationsType('all')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium">全部类型</button>
+<button data-type="document" onclick="setNotificationsType('document')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<iconify-icon icon="mdi:file-document-outline" class="text-sm"></iconify-icon>文档
+</button>
+<button data-type="deadline" onclick="setNotificationsType('deadline')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<iconify-icon icon="mdi:clock-alert-outline" class="text-sm"></iconify-icon>截止
+</button>
+<button data-type="case" onclick="setNotificationsType('case')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<iconify-icon icon="mdi:gavel" class="text-sm"></iconify-icon>案件
+</button>
+<button data-type="member" onclick="setNotificationsType('member')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<iconify-icon icon="mdi:account-star-outline" class="text-sm"></iconify-icon>会员
+</button>
+<button data-type="system" onclick="setNotificationsType('system')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<iconify-icon icon="mdi:cog-outline" class="text-sm"></iconify-icon>系统
+</button>
+</div>
+<!-- 通知列表 -->
+<div class="space-y-3" id="notifications-list"></div>
+</div>
+</div>

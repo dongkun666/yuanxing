@@ -1,0 +1,233 @@
+version: 1
+plan:
+  name: "LexPrime Phase 5.5 Week 24: 1/15 公测半年中段 + 2/1 Skill 3 v3.0 启动 + 3 agent ≥ 80% 验收"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: phase5-5-mid-month
+    title: "1/15 公测半年中段 + Phase 5.5 中段节点 (W24 新启动)"
+    prompt: |
+      1/15 公测半年中段 + Phase 5.5 中段节点.
+
+      必读文档:
+      - W23 phase5-cross-year-summary commit a9e5fdd (1/15 跨年总结 + 2026 H1 vs H2 + 2027 路线 Phase 6+7)
+      - W23 phase5-5-celebration commit 432a073 (1/1 公测半年 + Phase 5.5 跨年启动 + Skill 3 v2.0 全面 + 3 agent ≥ 60%)
+      - W23 phase5-4-enterprise-retry commit c8b3b18 (12/1 L4/L5 全量 forward-execute + 50 律所 + 200 律师)
+      - W22 phase5-rust-build-fix commit 2792bd0 (5x perf 超额 + Rust 1.83 LTS + 5 bug fix)
+      - W22 kpi-track-1031 (10/31 100 律师 placeholder forward-execute)
+      - W11 PRD V5.0 § 10 公测期 KPI
+
+      W24 phase5-5-mid-month 工作范围 (1/15 启动, Mavis + lex-bd):
+
+      1. **1/15 公测半年中段** (docs/phase5/phase5-public-beta-half-year-mid-2027-01-15.md):
+         - 公测 day 189 (7/26 - 1/15 = 184 天) 累计
+         - 250 律师 (1/1) → 300 律师 (1/15) 滚动目标
+         - 月 ¥35 万 ARR (1/1) → ¥40 万 ARR (1/15)
+         - Phase 5.5 5 大新方向中段验收:
+           - 6 大模块 → 7 大模块 (Skill 4 自动谈判) — 中段进度 30%
+           - 个人版 + 企业版 + 律所版 (¥99,999 起) — 中段进度 50%
+           - 200 律所 + 800 律师 (H2 2027) — 中段进度 10%
+           - ¥200 万 ARR (H2 2027) — 中段进度 18%
+           - AI 辅助 + 律师 Marketplace — 中段进度 25%
+
+      2. **1/15 Phase 5.5 中段 + Phase 6 准备** (docs/phase5/phase5-5-mid-month-checkpoint-2027-01-15.md):
+         - Phase 5.5 中段 (1/15) → 完结 (2/1) 路线
+         - 2/1 Phase 5.5 完结
+         - 2/15 Phase 6.1 Marketplace 启动 (W25 接力)
+         - W25 计划 (1/16-1/31) 准备
+
+      3. **1/15 应急备案**:
+         - 中段律师增长 < 50 (1/15) → 朋友圈 9 宫格加强 + 律协推荐 + 法律公众号
+         - ARR < ¥35 万 (1/15) → ¥99/月 个人版冲刺 + 老用户续费激励
+         - 3 agent < 60% 完成率 → 培训 3 周强化 + 复盘 1/1-1/15 数据
+
+      4. **VERDICT 标记规范** (W22 + W23 验证): deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      5. **git commit + push** (1 commit: 1/15 中段 + Phase 6 准备 + W25 计划)
+
+      Stop when (1/15 中段完成):
+      - phase5-public-beta-half-year-mid-2027-01-15.md 完整 (184 天 + 300 律师 + ¥40 万 ARR + 5 大方向中段)
+      - phase5-5-mid-month-checkpoint-2027-01-15.md 完整 (Phase 5.5 中段→完结 + 2/15 Phase 6.1 启动 + W25 计划)
+      - 3 应急备案
+      - deliverable.md 顶部 'VERDICT: PASS' 大写标记
+      - git log 显示 1+ Phase 5.5 mid commit
+
+      严禁 (W18-W23 严守 fabricate 原则, W24 复制):
+      - 不要 fabricate 1/15 数据 (实测为主, owner 1/15 09:00 跑 dashboard)
+      - forward-execute placeholder 模式 (数字全部 [1/15 实测填实])
+    verify_prompt: |
+      独立验证 1/15 公测半年中段:
+      1. phase5-public-beta-half-year-mid-2027-01-15.md 完整 (184 天 + 300 律师 + ¥40 万 ARR + 5 大方向中段 5 项)
+      2. phase5-5-mid-month-checkpoint-2027-01-15.md 完整 (Phase 5.5 中段→完结 + 2/15 Phase 6.1 启动 + W25 计划)
+      3. 3 应急备案
+      4. **VERDICT: PASS 大写** 顶部标记 (W22 + W23 验证规范)
+      5. 严守 fabricate 原则 (1/15 距今 199 天, 实际数字 forward-execute placeholder)
+      6. git log 显示 1+ Phase 5.5 mid commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill3-v3-launch
+    title: "2/1 Skill 3 v3.0 律师函启动 (多端 + 多语言 + 多律所模板)"
+    prompt: |
+      2/1 Skill 3 v3.0 律师函启动 (W24 新启动).
+
+      必读文档:
+      - W23 phase5-5-celebration commit 432a073 (Skill 3 v2.0 全面应用 5 月 + 律师函 5000+ 累计 + Skill 3 v3.0 计划 1/15+2/1+3/1)
+      - W21 skill3-full-rollout commit 6929cc1 (Skill 3 律师函 v2.0 全量 100% rollout 10/1 + 11/1 v1.0 退役)
+      - W19 skill3-gradual commit 2cc2d3a (Skill 3 v2.0 8/15 10% A/B + 9/1 50% 全量 + 35 测试)
+      - W9 C1 doc_gen commit (W9 doc_gen_router 4 endpoint + 文书生成)
+      - W12 A2 commit 829d25c (doc_workflow 状态机 38 测试 + 4 文书风险标注)
+      - backend/cases-crawler/skills/contract_review/ + docs/skills/contract-review/
+
+      W24 skill3-v3-launch 工作范围 (2/1 启动, lex-ai):
+
+      1. **2/1 Skill 3 v3.0 PRD** (docs/skills/contract-review/skill3-v3-prd-2027-02-01.md):
+         - 多端 (移动 + iPad): React Native + Expo (复用 W19 React 18 + TS 脚手架 + Electron 17.4.11)
+         - 多语言 (中英): i18n 框架 react-i18next, 律师函双语模板
+         - 多律所模板 (40+ 律所): 律所模板库, 中伦 + 金杜 + 君合 + 30+ 大所合作
+
+      2. **2/1 Skill 3 v3.0 落档** (docs/skills/contract-review/skill3-v3-launch-2027-02-01.md):
+         - Skill 3 v2.0 (W21 6929cc1) → v3.0 (W24) 升级路径
+         - v3.0 测试 (移动 + iPad + 中英 + 40+ 律所模板) 35+ 测试
+         - v3.0 PRD + 测试报告
+         - v3.0 rollout 计划 (2/1 启动 + 2/15 50% + 3/1 100%)
+         - v2.0 退役计划 (4/1 退役, 跟 v1.0 退役节奏一致 W21)
+
+      3. **2/1 Skill 3 v3.0 测试套件**:
+         - 35 测试基线 (复用 W19 35 测试) + 40 律所模板测试 + 移动端 5 页面测试
+         - ruff 0 + pytest pass
+         - playwright 截图 (移动 + iPad + 桌面)
+
+      4. **VERDICT 标记规范**: deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      5. **git commit + push** (1 commit: 2/1 Skill 3 v3.0 律师函启动 + 4 件套)
+
+      Stop when (Skill 3 v3.0 启动完成):
+      - skill3-v3-prd-2027-02-01.md 完整 (多端 + 多语言 + 多律所模板 3 大方向)
+      - skill3-v3-launch-2027-02-01.md 完整 (升级路径 + 测试套件 + rollout 计划)
+      - 35+ 测试 + 40 律所模板测试 + 5 移动端页面测试
+      - pytest pass + ruff 0 + playwright 截图 (移动 + iPad + 桌面)
+      - deliverable.md 顶部 'VERDICT: PASS' 大写标记
+      - git log 显示 1+ Skill 3 v3.0 commit
+
+      严禁:
+      - 不要修改 W21 6929cc1 已有 v2.0 代码 (v3.0 是叠加, 2/15+3/1 接力)
+      - 不要 fabricate 2/1 数据 (实测为主, owner 2/1 09:00 跑 dashboard)
+    verify_prompt: |
+      独立验证 2/1 Skill 3 v3.0 律师函启动:
+      1. skill3-v3-prd-2027-02-01.md 完整 (多端 + 多语言 + 多律所模板 3 大方向)
+      2. skill3-v3-launch-2027-02-01.md 完整 (升级路径 + 测试套件 + rollout 计划)
+      3. 35+ 测试 + 40 律所模板测试 + 5 移动端页面测试
+      4. pytest pass + ruff 0 + playwright 截图 (3 viewport)
+      5. **VERDICT: PASS 大写** 顶部标记
+      6. 严守 fabricate 原则 (2/1 距今 216 天, 实际数字 forward-execute placeholder)
+      7. git log 显示 1+ Skill 3 v3.0 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-ai
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: agent-task-validation-2
+    title: "2/1 3 agent 跑小 task 独立完成 ≥ 80% 验收 (W23 60% 升级)"
+    prompt: |
+      2/1 3 agent 跑小 task 独立完成 ≥ 80% 验收 (W23 60% 升级).
+
+      必读文档:
+      - W23 phase5-5-celebration commit 432a073 (3 agent 上岗 60% 验收 + 培训 3 周 10/16-10/31)
+      - W21 agent-recruit-3 commit 0c8f01f (3 agent 招聘三件套 + 30 简历 + 5 维度评分)
+      - C:\Users\42081\.mavis\agents\lex-design + lex-coder-v2 + lex-data-v2 (3 agent 配置)
+
+      W24 agent-task-validation-2 工作范围 (2/1 启动, Mavis + lex-bd):
+
+      1. **2/1 3 agent 跑小 task 独立完成 ≥ 80% 验收** (docs/recruit/agent-task-validation-2-2027-02-01.md):
+         - UI 设计师 (lex-design): 12 个小 task (1/1-2/1 累计) 视觉 + icon + 配色 + Skill 3 v3.0 设计支持
+         - 前端工程师 (lex-coder-v2): 12 个小 task 端到端组件 + 测试 + Skill 3 v3.0 多端移动端
+         - 数据工程师 (lex-data-v2): 12 个小 task 数据看板 + SQL + 索引 + 备份
+         - 1/1 验收 60% (W23) → 2/1 验收 ≥ 80% (W24 升级)
+         - 3/1 期望 ≥ 90% (W26 接力)
+
+      2. **2/1 3 agent 培训强化** (W25 准备):
+         - 2/1-2/15 培训 2 周 (复用 W21 培训 3 周模式压缩)
+         - 复盘 1/1-2/1 数据
+         - 培训内容: Phase 6 路线 + Phase 6.1 Marketplace + AI 谈判
+         - 3 agent 派发 Phase 6.1 任务 (W25 接力)
+
+      3. **VERDICT 标记规范**: deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      4. **git commit + push** (1 commit: 2/1 3 agent ≥ 80% 验收 + 培训强化)
+
+      Stop when (3 agent ≥ 80% 验收完成):
+      - agent-task-validation-2-2027-02-01.md 完整 (3 agent × 12 task 验收 ≥ 80%)
+      - 培训强化计划完整
+      - deliverable.md 顶部 'VERDICT: PASS' 大写标记
+      - git log 显示 1+ agent-validation commit
+
+      严禁 (W21 + W23 严守 fabricate 原则, W24 复制):
+      - 不要 fabricate 2/1 数据 (实测为主, owner 2/1 09:00 跑 dashboard)
+      - forward-execute placeholder 模式 (数字全部 [2/1 实测填实])
+    verify_prompt: |
+      独立验证 2/1 3 agent ≥ 80% 验收:
+      1. agent-task-validation-2-2027-02-01.md 完整 (3 agent × 12 task 验收 ≥ 80%)
+      2. 培训强化计划 (2/1-2/15 培训 2 周 + 复盘)
+      3. **VERDICT: PASS 大写** 顶部标记
+      4. 严守 fabricate 原则 (2/1 距今 216 天, 实际数字 forward-execute placeholder)
+      5. git log 显示 1+ agent-validation commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w24-integration
+    title: "W24 集成验证 (1/15 中段 + 2/1 Skill 3 v3.0 + 3 agent ≥ 80%)"
+    prompt: |
+      验证 W24 3 task 集成:
+      1. phase5-5-mid-month (lex-bd) — 1/15 公测半年中段 + Phase 5.5 中段节点
+      2. skill3-v3-launch (lex-ai) — 2/1 Skill 3 v3.0 律师函启动 (多端 + 多语言 + 多律所模板)
+      3. agent-task-validation-2 (lex-bd) — 2/1 3 agent ≥ 80% 验收 (W23 60% 升级)
+      4. 3 agent deliverable 无冲突 (lex-bd × 2 + lex-ai)
+      5. 3 agent 全部 git commit + push + 含 'VERDICT: PASS' 大写标记 (W22 新教训应用)
+      6. **严禁 fabricate** (1/15 距今 199 天, 2/1 距今 216 天; 实际数字 forward-execute placeholder 由 owner 实测填实)
+      7. 1/15 中段 (184 天 + 300 律师 + ¥40 万 ARR + 5 大方向中段) + 2/1 Skill 3 v3.0 (多端 + 多语言 + 40+ 律所模板) + 3 agent ≥ 80%
+      8. Phase 4 + Phase 5 + Phase 5.5 完结 → Phase 6 准备
+      9. W25 建议 (一句话: 1/16-1/31 Phase 6.1 Marketplace 启动 + Phase 5.5 完结 + 3 agent ≥ 90%)
+
+      输出 W24 总结 + W25 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - phase5-5-mid-month
+      - skill3-v3-launch
+      - agent-task-validation-2
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

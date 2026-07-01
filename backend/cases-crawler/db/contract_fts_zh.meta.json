@@ -1,0 +1,62 @@
+{
+  "status": "ok",
+  "version": "w7-jieba-v1",
+  "tokenizer": "unicode61 + jieba pre-segmentation",
+  "templates_total": 6076,
+  "templates_inserted": 6076,
+  "templates_failed": 0,
+  "fts_rows": 12152,
+  "compare_queries": {
+    "房屋租赁合同": {
+      "segmented": "房屋 租赁 合同",
+      "hits": 284,
+      "elapsed_ms": 2.01
+    },
+    "违约金过高": {
+      "segmented": "违约金 过高",
+      "hits": 0,
+      "elapsed_ms": 0.0
+    },
+    "管辖不利": {
+      "segmented": "管辖 不利",
+      "hits": 0,
+      "elapsed_ms": 0.0
+    },
+    "排他义务": {
+      "segmented": "排 他 义务",
+      "hits": 0,
+      "elapsed_ms": 0.0
+    },
+    "单方解除": {
+      "segmented": "单方 解除",
+      "hits": 0,
+      "elapsed_ms": 0.0
+    },
+    "借款合同": {
+      "segmented": "借款 合同",
+      "hits": 692,
+      "elapsed_ms": 1.0
+    },
+    "劳动合同": {
+      "segmented": "劳动合同",
+      "hits": 412,
+      "elapsed_ms": 0.0
+    },
+    "知识产权": {
+      "segmented": "知识产权",
+      "hits": 446,
+      "elapsed_ms": 0.0
+    },
+    "管辖": {
+      "segmented": "管辖",
+      "hits": 12050,
+      "elapsed_ms": 0.0
+    },
+    "合同": {
+      "segmented": "合同",
+      "hits": 12118,
+      "elapsed_ms": 1.0
+    }
+  },
+  "elapsed_sec": 4.87
+}

@@ -1,0 +1,141 @@
+{
+  "template_id": "sales-sales_goods-012",
+  "contract_type": "销售合同",
+  "industry": "商品买卖",
+  "title": "商品买卖合同(标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "标的物",
+      "text": "甲方向乙方购买项目执行。"
+    },
+    {
+      "index": 2,
+      "title": "数量与单价",
+      "text": "数量 5件, 单价人民币 150 万元。"
+    },
+    {
+      "index": 3,
+      "title": "价款",
+      "text": "总价款人民币 10 万元。"
+    },
+    {
+      "index": 4,
+      "title": "交付",
+      "text": "甲方应于 2030-03-02 前将标的物交付乙方, 交付地点为乙方指定地点。"
+    },
+    {
+      "index": 5,
+      "title": "质量",
+      "text": "甲方保证标的物符合国家质量标准及双方约定的技术规格。"
+    },
+    {
+      "index": 6,
+      "title": "验收",
+      "text": "乙方应于收到标的物后 7 日内验收, 异议期内未提出异议的视为合格。"
+    },
+    {
+      "index": 7,
+      "title": "付款",
+      "text": "乙方应于验收合格后 30 日内一次性付清全部价款。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "验收",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "标的物",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "交付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "商品买卖合同(标准版)",
+    "商品买卖常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于商品买卖合同(标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_goods",
+    "variant_idx": 12,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

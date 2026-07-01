@@ -3,6 +3,9 @@
  * Phase 3 P0 - 后端 auth 端点未到位, 暂走 demo 模式 (API.auth.demo/login)
  *
  * 依赖: API (api.js), AppState (main.js)
+ *
+ * 当前架构: IIFE + globalThis 双绑定
+ * 评估过 ES module 化, ROI 不高 (见 docs/es-module-roi.md), 暂保留 IIFE
  */
 
 (function() {
@@ -49,7 +52,13 @@
             var token = localStorage.getItem(TOKEN_KEY);
             var userRaw = localStorage.getItem(STORAGE_KEY);
             if (token && userRaw) {
-                var user = JSON.parse(userRaw);
+                var user;
+                try { user = JSON.parse(userRaw); } catch (e) {
+                    // corrupted storage, clear and force re-login
+                    localStorage.removeItem(TOKEN_KEY);
+                    localStorage.removeItem(STORAGE_KEY);
+                    return;
+                }
                 if (typeof AppState !== 'undefined') {
                     AppState.token = token;
                     AppState.user = user;
@@ -82,7 +91,9 @@
             }
             try {
                 var raw = localStorage.getItem(STORAGE_KEY);
-                return raw ? JSON.parse(raw) : null;
+                if (!raw) return null;
+                var u = JSON.parse(raw);
+                return (u && typeof u === 'object') ? u : null;
             } catch (e) { return null; }
         },
 

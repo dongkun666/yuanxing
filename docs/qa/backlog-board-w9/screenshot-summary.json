@@ -1,0 +1,64 @@
+{
+  "captured": [
+    {
+      "view": "01-summary",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\01-summary-desktop.png",
+      "label": "总览"
+    },
+    {
+      "view": "02-status",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\02-status-desktop.png",
+      "label": "按状态"
+    },
+    {
+      "view": "03-priority",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\03-priority-desktop.png",
+      "label": "按优先级"
+    },
+    {
+      "view": "04-owner",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\04-owner-desktop.png",
+      "label": "按 Owner"
+    },
+    {
+      "view": "05-source",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\05-source-desktop.png",
+      "label": "按来源律师"
+    },
+    {
+      "view": "01-summary",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\01-summary-mobile.png",
+      "label": "总览"
+    },
+    {
+      "view": "02-status",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\02-status-mobile.png",
+      "label": "按状态"
+    },
+    {
+      "view": "03-priority",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\03-priority-mobile.png",
+      "label": "按优先级"
+    },
+    {
+      "view": "04-owner",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\04-owner-mobile.png",
+      "label": "按 Owner"
+    },
+    {
+      "view": "05-source",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\backlog-board-w9\\screenshots\\05-source-mobile.png",
+      "label": "按来源律师"
+    }
+  ]
+}

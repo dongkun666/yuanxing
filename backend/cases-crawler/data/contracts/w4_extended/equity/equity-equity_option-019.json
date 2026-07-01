@@ -1,0 +1,136 @@
+{
+  "template_id": "equity-equity_option-019",
+  "contract_type": "股权合同",
+  "industry": "期权激励",
+  "title": "股权期权激励协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "激励对象",
+      "text": "乙方为目标公司教育岗位员工, 符合期权激励对象条件。"
+    },
+    {
+      "index": 2,
+      "title": "授予期权",
+      "text": "甲方授予乙方目标公司 2% 股权对应的期权。"
+    },
+    {
+      "index": 3,
+      "title": "行权价",
+      "text": "行权价为每股人民币 8 万元。"
+    },
+    {
+      "index": 4,
+      "title": "行权条件",
+      "text": "乙方服务期满 6 个月 且绩效考核合格的, 可行权。"
+    },
+    {
+      "index": 5,
+      "title": "解锁安排",
+      "text": "期权分 6 期解锁, 每年解锁一期。"
+    },
+    {
+      "index": 6,
+      "title": "行权",
+      "text": "乙方应在解锁期内行权, 逾期未行权的视为放弃。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "行权价",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "解锁安排",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "激励对象",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "行权条件",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权期权激励协议",
+    "期权激励常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权期权激励协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_option",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

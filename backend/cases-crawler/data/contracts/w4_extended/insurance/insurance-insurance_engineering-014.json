@@ -1,0 +1,136 @@
+{
+  "template_id": "insurance-insurance_engineering-014",
+  "contract_type": "保险合同",
+  "industry": "工程保险",
+  "title": "工程保险合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "投保人",
+      "text": "甲方为投保人 (工程业主/承包商)。"
+    },
+    {
+      "index": 2,
+      "title": "保险人",
+      "text": "乙方为保险公司。"
+    },
+    {
+      "index": 3,
+      "title": "保险标的",
+      "text": "保险标的: 位于苏州市浦东新区某路 88 号的教育工程, 造价人民币 8 万元。"
+    },
+    {
+      "index": 4,
+      "title": "保险责任",
+      "text": "乙方对工程在建设期间因自然灾害、意外事故造成的工程本身损失、第三方责任等承担保险责任。"
+    },
+    {
+      "index": 5,
+      "title": "保险期间",
+      "text": "保险期间 2 年, 自 2027-04-06 起至 2032-04-15 止, 与工期一致。"
+    },
+    {
+      "index": 6,
+      "title": "保险费",
+      "text": "保险费人民币 15 万元。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "投保人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "保险责任",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "保险人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "保险期间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "工程保险合同",
+    "工程保险常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于工程保险合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "insurance",
+    "skeleton": "insurance_engineering",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

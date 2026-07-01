@@ -1,0 +1,141 @@
+{
+  "template_id": "house-house_rent_commercial-013",
+  "contract_type": "房屋合同",
+  "industry": "商业租赁",
+  "title": "商铺租赁合同(标准版)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于上海市海淀区某路 88 号的商铺出租给乙方使用, 建筑面积 50 平方米。"
+    },
+    {
+      "index": 2,
+      "title": "租赁用途",
+      "text": "乙方应按约定用途使用, 不得擅自变更。"
+    },
+    {
+      "index": 3,
+      "title": "租赁期限",
+      "text": "租赁期自 2027-05-28 起至 2027-06-21 止, 共 3 年。"
+    },
+    {
+      "index": 4,
+      "title": "租金及支付",
+      "text": "月租金人民币 30 万元, 乙方应于每月 5 日前支付。"
+    },
+    {
+      "index": 5,
+      "title": "押金及费用",
+      "text": "乙方向甲方支付押金, 合同到期无息退还。租赁期间的水电费、物业费等由乙方承担。"
+    },
+    {
+      "index": 6,
+      "title": "装修与改造",
+      "text": "乙方装修应经甲方书面同意, 退租时恢复原状。"
+    },
+    {
+      "index": 7,
+      "title": "提前解约",
+      "text": "任何一方提前解除合同的, 须向守约方支付相当于 6 个月租金的违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议管辖",
+      "text": "因本合同发生的争议, 任何一方均可向甲方住所地人民法院提起诉讼。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "租金及支付",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "提前解约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "装修与改造",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "租赁标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "商铺租赁合同(标准版)",
+    "商业租赁常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于商铺租赁合同(标准版)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_rent_commercial",
+    "variant_idx": 13,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

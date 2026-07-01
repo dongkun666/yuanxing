@@ -1,0 +1,324 @@
+version: 1
+plan:
+  name: "LexPrime Phase 4 Week 13: W12 C1 follow-up + 7/26 公测启动 + 首批转化"
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: c1-followup-dashboard
+    title: "C1 follow-up 1: templates/views/dashboard/index.html + router.js 'dashboard' viewFileMap 注册"
+    prompt: |
+      W12 C1 verifier 要求的 2 项 follow-up 之一. dashboard 自动接通需要前端视图.
+
+      必读文档:
+      - W12 C1 commit 9dac83c (verify checklist)
+      - W11 B2 commit a10aecc (dashboard 4 业务 + 3 创史专属指标 + 7 SQL)
+      - W11 B2 commit a99e941 (招募页 router 集成模式)
+      - W5 commit (router.js viewFileMap 注册模式)
+      - index.html sidebar (W12 C1 已加 'founding' 项)
+
+      W13 C1-followup-dashboard 工作范围:
+
+      1. **dashboard HTML** (templates/views/dashboard/index.html):
+         - 7 SQL 实时拉取 (W11 B2 commit a10aecc 已定义):
+           * 律师注册数 (本月)
+           * 评审完成数 (本月)
+           * 合同生成数 (本月)
+           * OCR 用量 (本月)
+           * 创史招募进度 (本周)
+           * 创史群活跃 (本周)
+           * 付费转化 (本月)
+         - 4 业务指标 + 3 创史专属指标 卡片
+         - 折线图 / 柱状图 / 漏斗图 (chart.js CDN)
+         - 实时刷新 (setInterval 5min)
+         - 移动端响应式
+
+      2. **router.js 'dashboard' viewFileMap 注册** (assets/js/router.js):
+         - 复制 founding 注册模式
+         - 路由 /dashboard
+         - track event dashboard_viewed
+
+      3. **index.html sidebar 集成** (index.html):
+         - 工作标签下加 '运营 dashboard' item
+         - mdi:chart-line 图标
+         - 跟 /founding 风格一致
+
+      4. **回归测试**:
+         - playwright 截图 dashboard (PC + 移动端各 1 张)
+         - 7 SQL 实测返回 200 + 数据正常 (从 lexprime.db 拉取)
+         - ruff 0
+
+      5. **git commit + push** (2 commits: 1 dashboard HTML / 1 router.js + index.html)
+
+      Stop when (dashboard 完成):
+      - templates/views/dashboard/index.html 7 指标卡片完整
+      - router.js 'dashboard' viewFileMap 注册
+      - index.html sidebar 集成
+      - playwright 截图 2 张
+      - git log 显示 2+ dashboard commit
+
+      严禁:
+      - 不要 fabricate 报告 (workspace 存在, 立即开始)
+      - 不要 silent fail (每个 commit 跑 ruff 才 push)
+    verify_prompt: |
+      独立验证 dashboard HTML + router 集成:
+      1. templates/views/dashboard/index.html 7 指标卡片完整
+      2. router.js 'dashboard' viewFileMap 注册 (curl /dashboard 返回 200)
+      3. index.html sidebar '运营 dashboard' item
+      4. playwright 截图 dashboard (PC + 移动端)
+      5. 7 SQL 实测从 lexprime.db 拉取返回 200 + 数据正常
+      6. git log 显示 2+ dashboard commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: c1-followup-screenshots
+    title: "C1 follow-up 2: playwright 截图招募页 PC + 移动端各 1 张"
+    prompt: |
+      W12 C1 verifier 要求的 2 项 follow-up 之一. 公测前需要视觉验证.
+
+      必读文档:
+      - W12 C1 commit 9dac83c (verify checklist)
+      - W11 B2 commit a99e941 (招募页 6 模块 + router + track event)
+      - W7 / W8 playwright 截图脚本模式 (assets/js/*-screenshots.js)
+
+      W13 C1-followup-screenshots 工作范围:
+
+      1. **playwright 截图** (assets/js/founding-screenshots.js):
+         - PC: 1440x900 视口 (桌面标准)
+         - 移动端: 375x812 视口 (iPhone 13 mini)
+         - 路由 /founding?dev=1
+         - 等网络空闲 (networkidle)
+         - 等 6 模块可见 (founding-value-prop / countdown / advocates / launch-teaser / join-btn / qrcode)
+         - 截图保存:
+           * tests/screenshots/founding-pc-{timestamp}.png
+           * tests/screenshots/founding-mobile-{timestamp}.png
+
+      2. **dev server 检查**:
+         - 确认 python -m http.server 8080 在跑
+         - 确认 http://127.0.0.1:8080/?dev=1 可访问
+         - 确认 templates/views/founding/index.html 路由正常
+
+      3. **6 模块完整性检查** (Playwright assertions):
+         - 创史价值主张 (¥449/年 5 折 + 终身优先客服)
+         - 名额倒计时 (剩 80 席 / 总 100 席)
+         - 已加入律师头像 (W11 B2 a99e941 track event)
+         - 7/26 启动预告
+         - 立即加入按钮 (founding_joined track)
+         - 创始群二维码 (placeholder 占位)
+
+      4. **git commit + push** (1 commit: founding-screenshots.js + 2 张 PNG)
+
+      Stop when (screenshots 完成):
+      - founding-pc-{timestamp}.png 存在
+      - founding-mobile-{timestamp}.png 存在
+      - 6 模块全部 Playwright assertions pass
+      - git log 显示 1+ screenshots commit
+
+      严禁:
+      - 不要 mock 截图 (必须真 playwright 跑)
+      - 不要 fabricate 报告 (workspace 存在, 立即开始)
+    verify_prompt: |
+      独立验证 playwright 截图:
+      1. founding-pc-{timestamp}.png 存在 + 6 模块可见
+      2. founding-mobile-{timestamp}.png 存在 + 移动端响应式
+      3. assets/js/founding-screenshots.js 可重跑 (idempotent)
+      4. dev server http://127.0.0.1:8080/?dev=1/founding 返回 200
+      5. git log 显示 1+ screenshots commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: launch-execute-726
+    title: "7/26 公测启动仪式执行 (60min + 招募页正式上线 + 5 律师首批扫码)"
+    prompt: |
+      7/26 启动仪式当天的执行落地.
+
+      必读文档:
+      - W11 C1 commit 4975d7e (launch-runbook v2 535 行)
+      - W11 C1 commit 4910305 (5 律师付费触发 v1.0)
+      - W10 B1 commit 0df6a74 (60min 启动仪式流程)
+      - W10 B1 commit ce98f64 (物料清单 + 5 事件业务漏斗)
+      - docs/marketing/first-paid-triggers.md (5 律师转化路径)
+      - docs/marketing/launch-runbook-2026-07-26.md (W11 C1 v2 主持稿)
+
+      W13 launch-execute-726 工作范围:
+
+      1. **执行运行手册** (runbook final):
+         - docs/marketing/launch-runbook-final-2026-07-26.md (覆盖 W11 v2, 加实测链接 + 应急联系人电话)
+         - 主持人: 总指挥
+         - 嘉宾: L1 单飞 + L2 小所合伙 + L3 小所婚姻 + L4 中所合伙 + L5 企业法务
+         - 时间节点:
+           * 09:00 招募页正式上线 (templates/views/founding/index.html 上线确认)
+           * 09:00-13:00 律师签到 + 物料分发
+           * 14:00-17:00 启动仪式 (60min 流程 + 茶歇)
+           * 17:00-19:00 律师交流 + 首批扫码
+           * 19:00 收尾
+         - 物料检查清单: 邀请函 + 招募页 + dashboard + 创始群二维码
+         - 应急: 直播卡顿 (备用推流) / 律师缺席 (线上接入) / 物料缺失 (应急联系供应商)
+
+      2. **首批 5 律师扫码落地跟踪**:
+         - docs/marketing/first-scan-tracking.md
+         - 5 律师扫码时间戳 + 邀请码 (BETA2025-0116~0120)
+         - 入群状态 + 试用状态 (trial_started event)
+         - 公测期 day 1-26 跟进节奏
+
+      3. **招募页上线确认**:
+         - templates/views/founding/index.html 路由正常
+         - 6 模块可见 + 6 track event 触发
+         - 移动端响应式
+
+      4. **dashboard 实时监控** (公测当天):
+         - docs/marketing/dashboard-w11.md 启用
+         - 5 律师扫码实时上 dashboard
+         - 创始群活跃度实时监控
+
+      5. **PRD V5.0 § 10 验证**:
+         - 公测期间 KPI: 30 名律师付费 (8/9 截止)
+         - 首批转化率目标 60% (3 / 5)
+         - 创史招募进度实时 dashboard
+
+      6. **git commit + push** (1 commit: runbook final + tracking + dashboard 启用)
+
+      Stop when (launch 完成):
+      - launch-runbook-final-2026-07-26.md 完整 (主持 + 嘉宾 + 物料 + 应急)
+      - first-scan-tracking.md 5 律师扫码落地
+      - 招募页上线确认 + 6 模块
+      - dashboard-w11.md 启用
+      - git log 显示 1+ launch commit
+
+      严禁:
+      - 不要真发邀请码 (7/26 之前不发, 由 W6 邀请码 API 落地)
+      - 不要真开创始律师群 (7/26 当天才开)
+      - 不要 fabricate 报告
+    verify_prompt: |
+      独立验证 7/26 启动仪式执行落地:
+      1. launch-runbook-final-2026-07-26.md 完整 (主持 + 嘉宾 + 物料 + 应急)
+      2. first-scan-tracking.md 5 律师扫码落地 (公测前 mock 数据 OK)
+      3. 招募页 templates/views/founding/index.html 路由 + 6 模块
+      4. dashboard-w11.md 启用 + /dashboard 路由
+      5. PRD V5.0 § 10 公测期间 KPI 验证
+      6. git log 显示 1+ launch commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: first-paid-triggers-729
+    title: "首批 5 律师 7/29 付费转化触发 (邮件 + 微信 + 朋友圈 9 宫格)"
+    prompt: |
+      按 first-paid-triggers.md 转化路径, 提前 6 天 (7/23) 邮件 + 提前 1 天 (7/28) 微信 + 当天 + 7/30 +1 day 触发.
+
+      必读文档:
+      - W11 C1 commit 4910305 (first-paid-triggers.md v1.0 完整)
+      - W11 C1 commit 4975d7e (launch-runbook v2 535 行, 含 5 律师试用到期日)
+      - docs/marketing/first-paid-triggers.md (W11 C1 v1.0)
+
+      W13 first-paid-triggers-729 工作范围:
+
+      1. **转化时间线 (W13 实际执行日历)**:
+         - 2026-07-23 (提前 6 天): 邮件触发 (800 字, ¥449/年 创史体验官 + ¥99/月 个人版)
+         - 2026-07-28 (提前 1 天): 微信 1v1 触发 (200 字 × 3 时段)
+         - 2026-07-29 (当天, L1/L2/L3 试用到期): 微信 + 电话
+         - 2026-07-30 (+1 day): 朋友圈 9 宫格推荐触发
+         - 2026-08-25 (L4/L5 试用到期): 同样触发 (W13 后 W14 重跑)
+
+      2. **转化路径脚本** (docs/marketing/first-paid-triggers-runbook.md):
+         - 邮件模板 (按 first-paid-triggers.md v1.0)
+         - 微信话术 (3 时段: 9-12 / 14-17 / 19-21)
+         - 朋友圈 9 宫格文案 (公测期 9 张律师好评截图)
+         - 朋友推荐触发 (创始群内互推)
+
+      3. **跟踪指标** (docs/marketing/dashboard-paid-triggers.md):
+         - 触达率: 100% (5/5 律师邮件 + 微信 + 朋友圈都触达)
+         - 转化率目标: 60% (3/5 律师付费)
+         - 营收目标: 1096 元 (3 × ¥449 创史 或 3 × ¥99/月)
+         - 公测期 7/26-8/9 期间 25 名新律师复制扩散 (60% 转化, 8220 元营收)
+
+      4. **应急场景**:
+         - 律师拒绝付费: 提供 ¥99/月 个人版备选 (W11 v0.7.4 § 11.6.5)
+         - 企业版要求: 转 lex-bd BD 流程 (W12 PRD § 11.6.7)
+         - 退款要求: 7 天无理由退款 (W12 PRD § 11.6.8)
+         - Stripe webhook 故障: 转账手动核对
+
+      5. **git commit + push** (1 commit: runbook + 跟踪 dashboard + 应急备案)
+
+      Stop when (paid triggers 完成):
+      - first-paid-triggers-runbook.md 完整 (邮件 + 微信 + 朋友圈)
+      - dashboard-paid-triggers.md 4 指标 + 公测期 25 名律师目标
+      - 4 应急场景备案
+      - git log 显示 1+ triggers commit
+
+      严禁:
+      - 不要真发邮件/微信 (公测期 day 7/23 才发, W13 只准备 runbook)
+      - 不要 fabricate 报告
+    verify_prompt: |
+      独立验证 5 律师 7/29 付费转化触发:
+      1. first-paid-triggers-runbook.md 完整 (邮件 + 微信 3 时段 + 朋友圈 9 宫格 + 朋友推荐)
+      2. dashboard-paid-triggers.md 4 指标 (触达率 + 转化率 + 营收 + 公测期 25 名律师)
+      3. 4 应急场景备案 (拒绝 / 企业版 / 退款 / Stripe webhook)
+      4. git log 显示 1+ triggers commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: w13-integration
+    title: "W13 集成验证 (公测首批转化就绪 + dashboard 视图接通 + W12 C1 follow-up 完成)"
+    prompt: |
+      验证 W13 4 task 集成:
+      1. C1 follow-up dashboard (lex-coder) + 截图 (lex-bd)
+      2. 7/26 launch-execute runbook (lex-bd)
+      3. first-paid-triggers-729 runbook (lex-bd)
+      4. 2-3 agent deliverable 无冲突 (lex-coder + lex-bd)
+      5. 2-3 agent 全部 git commit + push
+      6. 公测首批转化就绪 (招募页 + dashboard + 5 律师扫码落地 + 邮件/微信/朋友圈 runbook)
+      7. 8/9 前 30 名律师转化付费目标 → 8 月底 50 律师付费 / 月 ¥5 万+ ARR
+      8. W14 建议 (一句话: 8/25 L4/L5 律师转化触发 + 8 月底冲刺 50 律师付费 + Skill 3 文书迭代 + 早期用户拉新 1000+)
+
+      输出 W13 总结 + W14 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - c1-followup-dashboard
+      - c1-followup-screenshots
+      - launch-execute-726
+      - first-paid-triggers-729
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

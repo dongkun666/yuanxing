@@ -1,0 +1,136 @@
+{
+  "template_id": "ip-ip_patent_invalidation-002",
+  "contract_type": "知识产权合同",
+  "industry": "专利无效",
+  "title": "专利无效宣告请求合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "委托事项",
+      "text": "甲方委托乙方代理装修专利无效宣告请求事务。"
+    },
+    {
+      "index": 2,
+      "title": "目标专利",
+      "text": "目标专利: 著作权, 专利号 ZL94741791.X。"
+    },
+    {
+      "index": 3,
+      "title": "请求理由",
+      "text": "请求宣告专利无效的理由: 装修 (缺乏新颖性/创造性等)。"
+    },
+    {
+      "index": 4,
+      "title": "律师费",
+      "text": "律师费人民币 8 万元。"
+    },
+    {
+      "index": 5,
+      "title": "费用承担",
+      "text": "无效宣告请求官费、代理费由甲方承担。"
+    },
+    {
+      "index": 6,
+      "title": "保密义务",
+      "text": "乙方对委托事项负有保密义务。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "委托事项",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "目标专利",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "律师费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "保密义务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "专利无效宣告请求合同",
+    "专利无效常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于专利无效宣告请求合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "ip",
+    "skeleton": "ip_patent_invalidation",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

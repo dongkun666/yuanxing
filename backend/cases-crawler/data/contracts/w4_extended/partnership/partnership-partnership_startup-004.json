@@ -1,0 +1,136 @@
+{
+  "template_id": "partnership-partnership_startup-004",
+  "contract_type": "合伙协议",
+  "industry": "创业合伙",
+  "title": "创业合伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合伙企业",
+      "text": "甲乙丙三方共同投资设立技术升级 (以下简称合伙企业)。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "甲方出资人民币 500 万元, 占 5%; 乙方出资人民币 3 万元, 占剩余份额; 丙方以分期支付 (6 期)出资, 占剩余份额。"
+    },
+    {
+      "index": 3,
+      "title": "合伙期限",
+      "text": "合伙期限 3 个月, 自 2026-12-22 起至 2028-02-01 止。"
+    },
+    {
+      "index": 4,
+      "title": "事务执行",
+      "text": "合伙企业事务由全体合伙人共同决定, 重大事项需经全体一致同意。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "合伙企业利润按出资比例分配, 亏损亦按出资比例承担。"
+    },
+    {
+      "index": 6,
+      "title": "入伙与退伙",
+      "text": "新合伙人入伙需经全体一致同意; 合伙人退伙应提前 30 日通知。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "合伙期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "创业合伙协议",
+    "创业合伙常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于创业合伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_startup",
+    "variant_idx": 4,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

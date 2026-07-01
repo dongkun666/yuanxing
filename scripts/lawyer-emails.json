@@ -1,0 +1,89 @@
+{
+  "$schema": "./lawyer-emails.schema.json",
+  "_comment": "W15 w14-followup-fixes 5 律师邮箱 placeholder (lex-coder · 2026-06-30). 公测前 7/22 总指挥填实邮箱, 只改本文件 + scripts/smtp-credentials.env 一处即可. 邀请码 -> 邮箱 mapping 用于 scripts/trigger-paid-email-723.sh cron 触发.",
+  "_meta": {
+    "version": "1.0",
+    "created": "2026-06-30",
+    "author": "lex-coder",
+    "task": "W15 w14-followup-fixes",
+    "trigger_date_cst": "2026-07-23T09:00:00+08:00",
+    "trigger_script": "scripts/trigger-paid-email-723.sh",
+    "lawyer_count": 5,
+    "status": "placeholder — 公测前 7/22 总指挥填实"
+  },
+  "smtp": {
+    "_comment": "SMTP 配置从 scripts/smtp-credentials.env 读取 (公测前 7/22 总指挥填实)",
+    "env_file": "scripts/smtp-credentials.env",
+    "from_email": "founder@lexprime.cn",
+    "from_name": "LexPrime 创始人"
+  },
+  "lawyers": [
+    {
+      "slot": "L1",
+      "name": "<公测前填实 - 主办律师>",
+      "firm": "<公测前填实 - 律所>",
+      "title": "主办律师",
+      "email": "l1.founding@lexprime.cn",
+      "invite_code": "BETA2025-0001",
+      "trial_start": "2026-07-26",
+      "trial_end": "2026-07-29",
+      "tier": "personal",
+      "trigger_channel": "email",
+      "trigger_priority": "P0"
+    },
+    {
+      "slot": "L2",
+      "name": "<公测前填实 - 小型合伙人>",
+      "firm": "<公测前填实 - 律所>",
+      "title": "小型合伙人",
+      "email": "l2.founding@lexprime.cn",
+      "invite_code": "BETA2025-0002",
+      "trial_start": "2026-07-26",
+      "trial_end": "2026-07-29",
+      "tier": "personal",
+      "trigger_channel": "email",
+      "trigger_priority": "P0"
+    },
+    {
+      "slot": "L3",
+      "name": "<公测前填实 - 独立青年律师>",
+      "firm": "<公测前填实 - 律所>",
+      "title": "独立青年律师",
+      "email": "l3.founding@lexprime.cn",
+      "invite_code": "BETA2025-0003",
+      "trial_start": "2026-07-26",
+      "trial_end": "2026-07-29",
+      "tier": "personal",
+      "trigger_channel": "email",
+      "trigger_priority": "P0"
+    },
+    {
+      "slot": "L4",
+      "name": "<公测前填实 - 高级合伙人 (W12 重跑)>",
+      "firm": "<公测前填实 - 中所>",
+      "title": "高级合伙人",
+      "email": "l4.founding@lexprime.cn",
+      "invite_code": "BETA2025-0004",
+      "trial_start": "2026-07-26",
+      "trial_end": "2026-08-25",
+      "tier": "firm",
+      "trigger_channel": "email",
+      "trigger_priority": "P1"
+    },
+    {
+      "slot": "L5",
+      "name": "<公测前填实 - 企业法务 (W12 重跑)>",
+      "firm": "<公测前填实 - 公司>",
+      "title": "企业法务",
+      "email": "l5.founding@lexprime.cn",
+      "invite_code": "BETA2025-0005",
+      "trial_start": "2026-07-26",
+      "trial_end": "2026-08-25",
+      "tier": "enterprise",
+      "trigger_channel": "email",
+      "trigger_priority": "P1"
+    }
+  ],
+  "_tier_note": "L1/L2/L3 = 个人版 99 元/月, L4 = 中所合伙 ¥449, L5 = 企业法务 ¥449. 创史 5 折推荐见 first-paid-triggers-runbook.md § 3.1.",
+  "_trigger_note": "W14 first-paid-triggers-729 cron 7/23 09:00 CST 提前 6 天触发邮件, scripts/trigger-paid-email-723.sh 读取本 JSON 解析 5 律师邮箱 + 邀请码."
+}

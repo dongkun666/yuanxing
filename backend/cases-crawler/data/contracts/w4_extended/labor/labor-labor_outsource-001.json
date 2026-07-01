@@ -1,0 +1,136 @@
+{
+  "template_id": "labor-labor_outsource-001",
+  "contract_type": "劳动合同",
+  "industry": "岗位外包",
+  "title": "岗位外包协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "外包标的",
+      "text": "甲方将经营周转岗位外包给乙方 (外包服务商), 由乙方提供人员完成该岗位工作。"
+    },
+    {
+      "index": 2,
+      "title": "外包期限",
+      "text": "外包期自 2027-03-15 起至 2027-08-05 止, 共 10 年。"
+    },
+    {
+      "index": 3,
+      "title": "外包费用",
+      "text": "甲方按月支付外包服务费人民币 100 万元。"
+    },
+    {
+      "index": 4,
+      "title": "人员要求",
+      "text": "乙方应派驻符合甲方要求的人员, 人员变动应提前通知甲方。"
+    },
+    {
+      "index": 5,
+      "title": "管理责任",
+      "text": "乙方负责外包人员的管理、工资支付及社会保险缴纳。"
+    },
+    {
+      "index": 6,
+      "title": "用工风险",
+      "text": "乙方应自行承担与外包人员之间的劳动争议责任。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "用工风险",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "外包标的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "管理责任",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "外包期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "岗位外包协议",
+    "岗位外包常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于岗位外包协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_outsource",
+    "variant_idx": 1,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,136 @@
+{
+  "template_id": "ip-ip_patent_assignment-004",
+  "contract_type": "知识产权合同",
+  "industry": "专利转让",
+  "title": "专利转让合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "转让专利",
+      "text": "甲方将其拥有的实用新型专利 (专利号 ZL37978010.X) 转让给乙方。"
+    },
+    {
+      "index": 2,
+      "title": "转让价款",
+      "text": "转让价款人民币 30 万元。"
+    },
+    {
+      "index": 3,
+      "title": "交付",
+      "text": "甲方应于本合同生效后 15 日内向乙方交付专利证书原件。"
+    },
+    {
+      "index": 4,
+      "title": "变更登记",
+      "text": "双方应于本合同生效后 30 日内办理专利权人变更登记。"
+    },
+    {
+      "index": 5,
+      "title": "瑕疵担保",
+      "text": "甲方保证专利权属清晰, 无质押、许可等权利负担。"
+    },
+    {
+      "index": 6,
+      "title": "后续申请",
+      "text": "基于该专利的后续申请 (如分案、复审) 由乙方决定。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "转让专利",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "变更登记",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "后续申请",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "交付",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "专利转让合同",
+    "专利转让常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于专利转让合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "ip",
+    "skeleton": "ip_patent_assignment",
+    "variant_idx": 4,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

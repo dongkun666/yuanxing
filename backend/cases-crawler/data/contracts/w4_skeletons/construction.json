@@ -1,0 +1,1109 @@
+[
+  {
+    "name": "construction_general",
+    "title": "建设工程施工合同 (标准版)",
+    "contract_type": "工程承揽合同",
+    "industry": "建筑工程",
+    "fatal_keywords": [
+      "质量",
+      "工期"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程概况",
+        "工程名称: {usage}, 工程地点: {property_location}。"
+      ],
+      [
+        "工程内容",
+        "工程内容: 施工图范围内的全部内容。"
+      ],
+      [
+        "合同工期",
+        "合同工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "合同价款",
+        "合同价款人民币 {amount}, 包含全部工程内容。"
+      ],
+      [
+        "质量标准",
+        "工程质量应符合国家现行施工质量验收规范, 达到合格标准。"
+      ],
+      [
+        "付款",
+        "发包人按工程进度支付工程款, 详见《工程款支付计划表》。"
+      ],
+      [
+        "竣工验收",
+        "工程完工后, 双方应共同组织竣工验收。"
+      ],
+      [
+        "保修",
+        "工程保修期 {duration}, 自竣工验收合格之日起计算。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_subcontract",
+    "title": "建设工程分包合同",
+    "contract_type": "工程承揽合同",
+    "industry": "工程分包",
+    "fatal_keywords": [
+      "分包",
+      "质量"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "分包工程",
+        "分包工程: {usage}。"
+      ],
+      [
+        "总承包合同",
+        "总承包合同编号 {original_contract_id}, 总承包人为甲方。"
+      ],
+      [
+        "分包人",
+        "分包人为乙方。"
+      ],
+      [
+        "分包价款",
+        "分包价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "分包工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "质量",
+        "分包工程质量应符合总承包合同要求。"
+      ],
+      [
+        "付款",
+        "总承包人按分包工程进度支付分包款。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_design",
+    "title": "建设工程设计合同",
+    "contract_type": "工程承揽合同",
+    "industry": "工程设计",
+    "fatal_keywords": [
+      "设计",
+      "变更"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "设计内容",
+        "设计内容: {usage}。"
+      ],
+      [
+        "设计阶段",
+        "设计分方案设计、初步设计、施工图设计三个阶段。"
+      ],
+      [
+        "设计人",
+        "设计人为乙方 (设计单位)。"
+      ],
+      [
+        "设计费",
+        "设计费人民币 {amount}, 按阶段支付。"
+      ],
+      [
+        "设计周期",
+        "方案设计 {duration}, 初步设计 {duration}, 施工图设计 {duration}。"
+      ],
+      [
+        "设计变更",
+        "发包人要求变更设计的, 应书面通知设计人, 双方协商调整设计费及周期。"
+      ],
+      [
+        "知识产权",
+        "设计文件的知识产权归乙方所有, 发包人取得使用权。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_supervision",
+    "title": "建设工程监理合同",
+    "contract_type": "工程承揽合同",
+    "industry": "工程监理",
+    "fatal_keywords": [
+      "监理责任"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "监理工程",
+        "监理工程: {usage}, 工程地点: {property_location}。"
+      ],
+      [
+        "监理人",
+        "监理人为乙方。"
+      ],
+      [
+        "监理范围",
+        "监理范围包括工程质量、进度、造价、安全等。"
+      ],
+      [
+        "监理期限",
+        "监理期限 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "监理费",
+        "监理费人民币 {amount}。"
+      ],
+      [
+        "监理责任",
+        "监理人应按《建设工程监理规范》履行监理职责。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_procurement",
+    "title": "建设工程材料采购合同",
+    "contract_type": "工程承揽合同",
+    "industry": "建材采购",
+    "fatal_keywords": [
+      "质量"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "材料",
+        "甲方向乙方购买{usage}。"
+      ],
+      [
+        "规格与数量",
+        "规格 {commission_rate}, 数量 {installment_count} 吨。"
+      ],
+      [
+        "单价与总价",
+        "单价人民币 {amount}/吨, 总价人民币 {transfer_price}。"
+      ],
+      [
+        "质量",
+        "材料质量应符合国家标准及工程技术规格。"
+      ],
+      [
+        "交付",
+        "乙方应于 {end_date} 前交付, 交货地点为甲方工地。"
+      ],
+      [
+        "验收",
+        "甲方应于收货后 7 日内验收, 不合格的由乙方负责退换。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_decoration_company",
+    "title": "装修工程承包合同 (公司)",
+    "contract_type": "工程承揽合同",
+    "industry": "装修工程",
+    "fatal_keywords": [
+      "质量",
+      "保修"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "装修工程",
+        "装修工程: {usage}, 装修地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方 (装修公司)。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "材料",
+        "主要材料由乙方提供, 品牌、规格应经甲方确认。"
+      ],
+      [
+        "质量",
+        "装修质量应符合《住宅装饰装修工程施工规范》。"
+      ],
+      [
+        "保修",
+        "乙方提供 {duration} 的免费保修。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_labor_team",
+    "title": "施工劳务分包合同",
+    "contract_type": "工程承揽合同",
+    "industry": "施工劳务",
+    "fatal_keywords": [
+      "工伤"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "劳务分包",
+        "劳务分包内容: {usage}。"
+      ],
+      [
+        "发包人",
+        "发包人为甲方 (总承包人)。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方 (劳务分包人)。"
+      ],
+      [
+        "劳务费用",
+        "劳务费用人民币 {amount}, 按月结算。"
+      ],
+      [
+        "工期",
+        "劳务工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "安全管理",
+        "乙方应遵守施工安全规范, 承担施工人员的安全管理责任。"
+      ],
+      [
+        "工伤处理",
+        "乙方施工人员发生工伤的, 由乙方负责处理。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_invest",
+    "title": "BT 投资建设合同",
+    "contract_type": "工程承揽合同",
+    "industry": "BT 投资",
+    "fatal_keywords": [
+      "回购",
+      "移交"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "项目",
+        "项目名称: {usage}, 项目地点: {property_location}。"
+      ],
+      [
+        "投资人",
+        "投资人为乙方, 负责项目的投融资及建设。"
+      ],
+      [
+        "业主",
+        "业主为甲方, 负责项目的回购。"
+      ],
+      [
+        "投资额",
+        "项目投资总额人民币 {amount}。"
+      ],
+      [
+        "建设期",
+        "建设期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "回购",
+        "项目竣工验收后, 甲方按约定方式回购项目, 回购款人民币 {transfer_price}。"
+      ],
+      [
+        "移交",
+        "乙方在甲方付清回购款后将项目移交给甲方。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_consignment",
+    "title": "承揽合同 (加工定作)",
+    "contract_type": "工程承揽合同",
+    "industry": "承揽加工",
+    "fatal_keywords": [
+      "质量",
+      "交付"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "定作人",
+        "定作人为甲方。"
+      ],
+      [
+        "承揽人",
+        "承揽人为乙方。"
+      ],
+      [
+        "定作内容",
+        "定作内容: {usage}。"
+      ],
+      [
+        "定作价款",
+        "定作价款人民币 {amount}。"
+      ],
+      [
+        "交付",
+        "乙方应于 {end_date} 前将定作物交付甲方, 交付地点为甲方指定地点。"
+      ],
+      [
+        "质量",
+        "定作物质量应符合甲方要求及双方约定的技术规格。"
+      ],
+      [
+        "材料",
+        "材料由乙方提供, 费用包含在定作价款中。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_repair",
+    "title": "工程维修合同",
+    "contract_type": "工程承揽合同",
+    "industry": "工程维修",
+    "fatal_keywords": [
+      "保修"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "维修内容",
+        "维修内容: {usage}。"
+      ],
+      [
+        "维修人",
+        "维修人为乙方。"
+      ],
+      [
+        "维修地点",
+        "维修地点: {property_location}。"
+      ],
+      [
+        "维修费",
+        "维修费人民币 {amount}。"
+      ],
+      [
+        "维修期限",
+        "乙方应于 {end_date} 前完成维修。"
+      ],
+      [
+        "保修",
+        "维修后保修 {duration}。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_transport",
+    "title": "货物运输合同 (公路)",
+    "contract_type": "工程承揽合同",
+    "industry": "公路运输",
+    "fatal_keywords": [
+      "运输责任"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "托运人",
+        "托运人为甲方。"
+      ],
+      [
+        "承运人",
+        "承运人为乙方。"
+      ],
+      [
+        "货物",
+        "货物: {usage}, 数量: {installment_count} 件。"
+      ],
+      [
+        "运输",
+        "自 {start_date} 起运, 至 {end_date} 到达, 运输路线: {property_location} 至 {property_location}。"
+      ],
+      [
+        "运费",
+        "运费人民币 {amount}。"
+      ],
+      [
+        "运输责任",
+        "乙方对运输过程中货物的损毁、灭失承担责任, 除非能证明是因不可抗力或甲方过错。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_storage",
+    "title": "仓储合同",
+    "contract_type": "工程承揽合同",
+    "industry": "仓储",
+    "fatal_keywords": [
+      "保管责任"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "存货方",
+        "存货方为甲方。"
+      ],
+      [
+        "保管方",
+        "保管方为乙方。"
+      ],
+      [
+        "仓储物",
+        "仓储物: {usage}。"
+      ],
+      [
+        "仓储地点",
+        "仓储地点: {property_location}。"
+      ],
+      [
+        "仓储费",
+        "仓储费人民币 {amount}, 按月支付。"
+      ],
+      [
+        "仓储期限",
+        "仓储期限 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "保管责任",
+        "乙方应对仓储物妥善保管, 因乙方过错造成损失的, 乙方应承担赔偿责任。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_freight_forwarding",
+    "title": "货运代理合同",
+    "contract_type": "工程承揽合同",
+    "industry": "货代",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "委托人",
+        "委托人为甲方。"
+      ],
+      [
+        "受托人",
+        "受托人为乙方 (货运代理)。"
+      ],
+      [
+        "代理事项",
+        "乙方代理甲方办理{usage}货物的国际/国内运输事宜。"
+      ],
+      [
+        "代理范围",
+        "代理范围包括: 订舱、报关、报检、转运、仓储等。"
+      ],
+      [
+        "代理费",
+        "代理费按货物价值的 {commission_rate}% 收取, 人民币 {amount}。"
+      ],
+      [
+        "责任",
+        "乙方对自身过错造成的损失承担责任, 对承运人/第三方的过错不承担责任。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_logistics_service",
+    "title": "综合物流服务合同",
+    "contract_type": "工程承揽合同",
+    "industry": "综合物流",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "委托人",
+        "委托人为甲方。"
+      ],
+      [
+        "服务方",
+        "服务方为乙方。"
+      ],
+      [
+        "服务内容",
+        "乙方为甲方提供{usage}综合物流服务, 包括运输、仓储、配送等。"
+      ],
+      [
+        "服务期限",
+        "服务期限 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "服务费",
+        "服务费按实际服务量结算, 每月不超过人民币 {amount}。"
+      ],
+      [
+        "SLA",
+        "乙方应保证服务及时率不低于 {commission_rate}%。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_epc",
+    "title": "EPC 工程总承包合同",
+    "contract_type": "工程承揽合同",
+    "industry": "EPC",
+    "fatal_keywords": [
+      "总价",
+      "质量"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "项目",
+        "项目名称: {usage}, 项目地点: {property_location}。"
+      ],
+      [
+        "发包人",
+        "发包人为甲方。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方 (EPC 总承包商)。"
+      ],
+      [
+        "承包范围",
+        "承包范围: 设计、采购、施工、试运行等全过程。"
+      ],
+      [
+        "合同价款",
+        "合同总价人民币 {amount}, 固定总价 (除合同约定的调整事项外)。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "质量",
+        "工程质量应符合国家及行业现行标准, 达到合格标准。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_ppp",
+    "title": "PPP 项目合同",
+    "contract_type": "工程承揽合同",
+    "industry": "PPP",
+    "fatal_keywords": [
+      "特许经营",
+      "移交"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "项目",
+        "项目名称: {usage}, 项目地点: {property_location}。"
+      ],
+      [
+        "政府方",
+        "政府方为甲方。"
+      ],
+      [
+        "社会资本方",
+        "社会资本方为乙方。"
+      ],
+      [
+        "合作期限",
+        "合作期限 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "投资额",
+        "项目投资总额人民币 {amount}。"
+      ],
+      [
+        "回报机制",
+        "乙方通过{usage} (使用者付费/政府付费/可行性缺口补助) 收回投资并获得合理回报。"
+      ],
+      [
+        "移交",
+        "合作期满, 乙方将项目无偿移交给政府方。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_design_build",
+    "title": "DB 设计施工总承包合同",
+    "contract_type": "工程承揽合同",
+    "industry": "DB",
+    "fatal_keywords": [
+      "设计",
+      "质量"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "项目",
+        "项目名称: {usage}, 项目地点: {property_location}。"
+      ],
+      [
+        "发包人",
+        "发包人为甲方。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "承包范围",
+        "乙方负责本项目的设计及施工, 实行总价包干。"
+      ],
+      [
+        "合同价款",
+        "合同价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "质量",
+        "工程质量应符合国家及行业现行标准。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_demolition",
+    "title": "建筑物拆除合同",
+    "contract_type": "工程承揽合同",
+    "industry": "拆除",
+    "fatal_keywords": [
+      "安全",
+      "许可"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "拆除标的",
+        "甲方委托乙方拆除位于{property_location}的建筑物。"
+      ],
+      [
+        "拆除范围",
+        "拆除范围: {usage}。"
+      ],
+      [
+        "拆除期限",
+        "拆除期限 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "拆除费用",
+        "拆除费用人民币 {amount}。"
+      ],
+      [
+        "安全责任",
+        "乙方应遵守拆除安全规范, 承担拆除过程中的安全责任。"
+      ],
+      [
+        "许可",
+        "乙方应办理必要的拆除许可手续。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_renovation_owner",
+    "title": "家装施工合同 (业主版)",
+    "contract_type": "工程承揽合同",
+    "industry": "家装",
+    "fatal_keywords": [
+      "质量",
+      "环保"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "装修内容",
+        "装修内容: {usage}, 装修地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方 (装修公司)。"
+      ],
+      [
+        "装修方式",
+        "乙方包工包料 (除甲方自购主材外)。"
+      ],
+      [
+        "装修价款",
+        "装修价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "付款",
+        "合同签订付 30%, 水电完成付 30%, 泥木完成付 30%, 竣工验收付 10%。"
+      ],
+      [
+        "环保",
+        "装修材料应符合《室内装饰装修材料有害物质限量》国家标准。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_landscaping",
+    "title": "园林景观施工合同",
+    "contract_type": "工程承揽合同",
+    "industry": "园林",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程内容",
+        "工程内容: {usage}, 工程地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "苗木",
+        "苗木由乙方提供, 品种、规格应经甲方确认。"
+      ],
+      [
+        "养护",
+        "乙方提供 {duration} 的免费养护。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_municipality",
+    "title": "市政工程施工合同",
+    "contract_type": "工程承揽合同",
+    "industry": "市政",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程内容",
+        "工程内容: {usage} (道路/桥梁/给排水等市政工程)。"
+      ],
+      [
+        "工程地点",
+        "工程地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "质量",
+        "工程质量应符合国家及行业现行标准。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_intelligent",
+    "title": "智能化系统集成合同",
+    "contract_type": "工程承揽合同",
+    "industry": "智能化",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "项目",
+        "项目名称: {usage}, 项目地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程内容",
+        "工程内容: 综合布线、安防、楼宇自控等智能化系统的设计、设备供应、安装调试。"
+      ],
+      [
+        "合同价款",
+        "合同价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "验收",
+        "系统调试完成后, 双方应共同组织验收。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_environmental_protection",
+    "title": "环保工程施工合同",
+    "contract_type": "工程承揽合同",
+    "industry": "环保",
+    "fatal_keywords": [],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程内容",
+        "工程内容: {usage} (污水处理/废气处理/固废处置等环保工程)。"
+      ],
+      [
+        "工程地点",
+        "工程地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "排放标准",
+        "工程应达到国家及地方规定的排放标准。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_pile_foundation",
+    "title": "桩基工程施工合同",
+    "contract_type": "工程承揽合同",
+    "industry": "桩基工程",
+    "fatal_keywords": [
+      "质量",
+      "隐蔽"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程内容",
+        "工程内容: {usage} (钻孔灌注桩 / 预制管桩 / 人工挖孔桩)。"
+      ],
+      [
+        "工程地点",
+        "工程地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}, 按桩径和桩长结算。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "隐蔽验收",
+        "桩基属隐蔽工程, 应在覆盖前进行验收。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  },
+  {
+    "name": "construction_curtain_wall",
+    "title": "幕墙工程施工合同",
+    "contract_type": "工程承揽合同",
+    "industry": "幕墙工程",
+    "fatal_keywords": [
+      "安全",
+      "保修"
+    ],
+    "major_keywords": [
+      "争议"
+    ],
+    "clauses": [
+      [
+        "工程内容",
+        "工程内容: {usage} (玻璃幕墙 / 金属幕墙 / 石材幕墙)。"
+      ],
+      [
+        "工程地点",
+        "工程地点: {property_location}。"
+      ],
+      [
+        "承包人",
+        "承包人为乙方。"
+      ],
+      [
+        "工程价款",
+        "工程价款人民币 {amount}。"
+      ],
+      [
+        "工期",
+        "工期 {duration}, 自 {start_date} 起至 {end_date} 止。"
+      ],
+      [
+        "安全",
+        "幕墙施工属高空作业, 乙方应严格遵守安全规范。"
+      ],
+      [
+        "保修",
+        "工程保修期 {duration}。"
+      ],
+      [
+        "争议解决",
+        "争议由{jurisdiction}管辖。"
+      ]
+    ]
+  }
+]

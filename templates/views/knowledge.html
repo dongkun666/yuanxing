@@ -1,4 +1,4 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-knowledge">
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-knowledge">
 <div class="max-w-6xl mx-auto w-full space-y-5">
 <!-- 顶部 4 概念卡 (LLM Wiki 视角) -->
 <div class="grid grid-cols-4 gap-4">
@@ -86,7 +86,17 @@
 <span>巡检 (Lint)</span>
 <span class="text-[10px] bg-urgent-tint text-urgent px-1.5 py-0.5 rounded font-medium">4 待处理</span>
 </button>
+<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-colors" id="kb-tab-judicial" onclick="switchKnowledgeMainTab('judicial', this)">
+<iconify-icon class="text-lg" icon="mdi:bookshelf"></iconify-icon>
+<span>司法观点</span>
+<span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">12 条</span>
+</button>
 </div>
+</div>
+
+<!-- ============== Tab 4: 司法观点库 (与知识库集成) ============== -->
+<div id="kb-panel-judicial" class="kb-panel hidden space-y-4">
+<!-- 内容由 judicial.js 动态渲染 -->
 </div>
 
 <!-- ============== Tab 1: 摄入 (Ingest) ============== -->
@@ -167,7 +177,7 @@
 <th class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-36">操作</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-[#F2F3F5]">
+<tbody class="divide-y divide-bg">
 <!-- 编译中 1 -->
 <tr class="hover:bg-bg-subtle transition-colors">
 <td class="py-3 px-4">
@@ -380,7 +390,7 @@ Wiki 知识页
 <th class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-28">更新</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-[#F2F3F5]">
+<tbody class="divide-y divide-bg">
 <tr class="hover:bg-bg-subtle transition-colors" data-knowledge-title="合同纠纷处理要点">
 <td class="py-3 px-4">
 <p class="text-xs font-medium text-fg-primary">合同纠纷处理要点</p>
@@ -466,7 +476,7 @@ Wiki 知识页
 <h5 class="text-sm font-semibold text-fg-primary">孤儿页面</h5>
 <span class="text-[10px] bg-orange-50 text-urgent px-1.5 py-0.5 rounded font-medium">3 项</span>
 </div>
-<div class="divide-y divide-[#F2F3F5]">
+<div class="divide-y divide-bg">
 <div class="p-3 hover:bg-bg-subtle transition-colors">
 <p class="text-xs font-medium text-fg-primary">新业态用工关系认定</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">无反向链接 · 建议: 在「劳动合同解除」加入引用</p>
@@ -491,7 +501,7 @@ Wiki 知识页
 <h5 class="text-sm font-semibold text-fg-primary">过期知识</h5>
 <span class="text-[10px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded font-medium">2 项 (1 紧急)</span>
 </div>
-<div class="divide-y divide-[#F2F3F5]">
+<div class="divide-y divide-bg">
 <div class="p-3 hover:bg-bg-subtle transition-colors bg-red-50/30">
 <div class="flex items-center gap-2">
 <p class="text-xs font-medium text-fg-primary">民间借贷利率上限</p>
@@ -516,7 +526,7 @@ Wiki 知识页
 <h5 class="text-sm font-semibold text-fg-primary">内容矛盾</h5>
 <span class="text-[10px] bg-yellow-50 text-urgent px-1.5 py-0.5 rounded font-medium">1 项</span>
 </div>
-<div class="divide-y divide-[#F2F3F5]">
+<div class="divide-y divide-bg">
 <div class="p-3 hover:bg-bg-subtle transition-colors">
 <p class="text-xs font-medium text-fg-primary">网络服务提供者责任</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">两个 Wiki 页面表述不一致:</p>
@@ -538,7 +548,7 @@ Wiki 知识页
 <h5 class="text-sm font-semibold text-fg-primary">缺失引用</h5>
 <span class="text-[10px] bg-blue-50 text-brand px-1.5 py-0.5 rounded font-medium">5 项</span>
 </div>
-<div class="divide-y divide-[#F2F3F5]">
+<div class="divide-y divide-bg">
 <div class="p-3 hover:bg-bg-subtle transition-colors">
 <p class="text-xs font-medium text-fg-primary">合同纠纷处理要点</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">引用了 [[违约金酌减规则]] 但该页面不存在 · 建议创建</p>
@@ -571,3 +581,5 @@ Wiki 知识页
 
 </div>
 </div>
+
+

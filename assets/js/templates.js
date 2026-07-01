@@ -12,10 +12,21 @@
         document.querySelectorAll('.template-tab').forEach(function(tab) {
             tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
             tab.classList.add('text-gray-500', 'border-transparent');
+            tab.removeAttribute('data-active');
         });
         if (btn) {
             btn.classList.remove('text-gray-500', 'border-transparent');
             btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
+            btn.setAttribute('data-active', 'true');
+        }
+        // 官方 tab 仅列表视图: 切到 official 时强制把视图切换按钮对齐到 list
+        if (tabName === 'official') {
+            var listBtn = document.querySelector('.template-view-btn[data-view="list"]');
+            if (listBtn) switchTemplateView('list', listBtn);
+        }
+        // 切到个人 tab: 渲染个人模板 (从 AppState.personalTemplates 数据驱动, 含持久化)
+        if (tabName === 'personal') {
+            if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
         }
     }
 
@@ -75,6 +86,15 @@
     }
 
     function switchTemplateView(viewName, btn) {
+        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效)
+        // 检查当前激活的 tab: 官方 tab 时强制 list + 把按钮高亮对齐到 list 按钮
+        // 通过 data-active 属性追踪当前 tab (由 switchTemplateTab 设置)
+        var activeTabBtn = document.querySelector('.template-tab[data-active="true"]');
+        var activeTab = activeTabBtn ? (activeTabBtn.textContent.indexOf('个人') >= 0 ? 'personal' : 'official') : 'personal';
+        if (activeTab === 'official') {
+            viewName = 'list';
+            btn = document.querySelector('.template-view-btn[data-view="list"]');
+        }
         document.querySelectorAll('.template-view-btn').forEach(function(b) {
             b.classList.remove('bg-blue-50', 'text-[#165DFF]');
             b.classList.add('text-gray-500', 'hover:text-gray-700');
@@ -84,10 +104,12 @@
             btn.classList.remove('text-gray-500', 'hover:text-gray-700');
         }
         // 切换 personal + official 两个 tab 内的视图
+        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效), 强制 list
         ['personal', 'official'].forEach(function(tab) {
+            var effectiveView = (tab === 'official') ? 'list' : viewName;
             var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
             var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
-            if (viewName === 'list') {
+            if (effectiveView === 'list') {
                 if (listView) listView.classList.remove('hidden');
                 if (cardView) cardView.classList.add('hidden');
             } else {
@@ -99,6 +121,88 @@
         if (viewName === 'card' && typeof applyOfficialFilter === 'function') {
             applyOfficialFilter();
         }
+    }
+
+    function persistPersonalTemplates() {
+        if (typeof AppState === 'undefined') return;
+        try { localStorage.setItem('lexprime_personal_templates', JSON.stringify(AppState.personalTemplates)); } catch (e) { console.warn('持久化个人模板失败:', e); }
+    }
+
+    // 简单 HTML 转义 (防止 name 含 <> 时 XSS)
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // 分类标签颜色映射 (复用 submitUploadTemplate 已有 colorCls)
+    function personalCategoryColor(c) {
+        var colorCls = {
+            '诉状类': 'bg-brand-tint text-brand',
+            '答辩类': 'bg-wiki-tint text-wiki',
+            '合同类': 'bg-warning-tint text-warning',
+            '申请类': 'bg-success-tint text-success'
+        };
+        return colorCls[c] || 'bg-bg-subtle text-fg-secondary';
+    }
+
+    // 渲染个人模板列表 (列表视图 + 卡片视图) - 数据驱动
+    function renderPersonalTemplates() {
+        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
+        var tbody = document.querySelector('#template-tab-personal tbody');
+        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
+        if (!tbody) return;
+        var htmlStr = '';
+        AppState.personalTemplates.forEach(function(t) {
+            var cls = personalCategoryColor(t.category);
+            var sizeHtml = t.size ? '<span class="text-[10px] text-fg-tertiary ml-1">(' + escapeHtml(t.size) + ')</span>' : '';
+            htmlStr += '<tr class="hover:bg-bg-subtle group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
+                '<td class="py-3 px-5">' +
+                    '<div class="flex items-center gap-2">' +
+                        '<iconify-icon class="text-base text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
+                        '<span class="text-sm text-fg-primary font-medium">' + escapeHtml(t.name) + '</span>' +
+                        sizeHtml +
+                    '</div>' +
+                '</td>' +
+                '<td class="py-3 px-5"><span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(t.category) + '</span></td>' +
+                '<td class="py-3 px-5 text-xs text-fg-secondary">' + escapeHtml(t.creator || '') + '</td>' +
+                '<td class="py-3 px-5 text-xs text-fg-tertiary">' + escapeHtml(t.updatedAt || '') + '</td>' +
+                '<td class="py-3 px-5 text-center">' +
+                    '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">使用</button>' +
+                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">编辑</button>' +
+                        '<button class="text-xs text-danger hover:bg-danger-tint px-2 py-1 rounded" onclick="deletePersonalTemplate(this)">删除</button>' +
+                    '</div>' +
+                '</td>' +
+            '</tr>';
+        });
+        tbody.innerHTML = htmlStr;
+        // 卡片视图 (同步)
+        if (cardContainer) {
+            var cardHtml = '';
+            AppState.personalTemplates.forEach(function(t) {
+                var cls = personalCategoryColor(t.category);
+                cardHtml += '<div class="bg-white border border-bg-border rounded-xl p-4 hover:shadow-md hover:border-brand transition-all cursor-pointer group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
+                    '<div class="flex items-start justify-between mb-3">' +
+                        '<iconify-icon class="text-2xl text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
+                        '<span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(t.category) + '</span>' +
+                    '</div>' +
+                    '<h4 class="text-sm font-bold text-fg-primary mb-2 group-hover:text-brand">' + escapeHtml(t.name) + '</h4>' +
+                    '<p class="text-[10px] text-fg-tertiary mb-3">' + (t.size || '') + ' · ' + escapeHtml(t.creator || '') + ' · ' + escapeHtml(t.updatedAt || '') + '</p>' +
+                    '<div class="flex items-center justify-end gap-2 text-[10px] pt-3 border-t border-bg-border">' +
+                        '<button class="text-brand hover:bg-brand-tint3 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); showToast(\'已使用该模板\')">' +
+                            '<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用' +
+                        '</button>' +
+                        '<button class="text-danger hover:bg-danger-tint px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); deletePersonalTemplate(this)">' +
+                            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            cardContainer.innerHTML = cardHtml;
+        }
+        // 头部计数
+        var headerCount = document.querySelector('.template-view-header-count');
+        if (headerCount) headerCount.textContent = '共 ' + AppState.personalTemplates.length + ' 个';
     }
 
     function openUploadTemplateModal() {
@@ -158,113 +262,52 @@
         // 选中的格式 radio
         var fmtRadio = document.querySelector('input[name="upload-template-format"]:checked');
         var fmt = fmtRadio ? fmtRadio.value : ext;
-        // 类型徽章颜色 (按分类)
-        var colorCls = {
-            '诉状类': 'bg-blue-100 text-blue-700',
-            '答辩类': 'bg-purple-100 text-purple-700',
-            '合同类': 'bg-orange-100 text-orange-700',
-            '申请类': 'bg-green-100 text-green-700'
-        };
-        var cls = colorCls[category] || 'bg-gray-100 text-gray-600';
         // 当前用户 (mock 张律师)
         var creator = '张律师';
         var now = new Date();
         var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
         var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-        // 创建新行, 插到 tbody 顶部
-        var tbody = document.querySelector('#template-tab-personal tbody');
-        if (!tbody) { showToast('模板列表不存在'); return; }
-        var tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-50 group';
-        tr.setAttribute('data-template-category', category);
-        tr.innerHTML = '<td class="py-3 px-5">' +
-            '<div class="flex items-center gap-2">' +
-            '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>' +
-            '<span class="text-sm text-gray-800 font-medium">' + name.replace(/</g, '&lt;') + '</span>' +
-            '<span class="text-[10px] text-gray-400">(' + sizeText + ')</span>' +
-            '</div>' +
-            '</td>' +
-            '<td class="py-3 px-5"><span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + category + '</span></td>' +
-            '<td class="py-3 px-5 text-xs text-gray-600">' + creator + '</td>' +
-            '<td class="py-3 px-5 text-xs text-gray-500">' + timeStr + '</td>' +
-            '<td class="py-3 px-5 text-center">' +
-            '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">使用</button>' +
-            '<button class="text-xs text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded">编辑</button>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deletePersonalTemplate(this)">删除</button>' +
-            '</div>' +
-            '</td>';
-        tbody.insertBefore(tr, tbody.firstChild);
-        // 同时添加到卡片视图
-        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
-        if (cardContainer) {
-            var card = document.createElement('div');
-            card.className = 'bg-white border border-[#E5E6EB] rounded-xl p-4 hover:shadow-md hover:border-[#165DFF] transition-all cursor-pointer group';
-            card.setAttribute('data-template-category', category);
-            card.innerHTML = '<div class="flex items-start justify-between mb-3">' +
-                '<iconify-icon class="text-2xl text-[#165DFF]" icon="mdi:file-document-outline"></iconify-icon>' +
-                '<span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + category + '</span>' +
-                '</div>' +
-                '<h4 class="text-sm font-bold text-gray-800 mb-2 group-hover:text-[#165DFF]">' + name.replace(/</g, '&lt;') + '</h4>' +
-                '<div class="flex items-center justify-between text-[10px] text-gray-400 pt-3 border-t border-gray-100">' +
-                '<span class="flex items-center gap-1"><iconify-icon icon="mdi:account-outline"></iconify-icon>' + creator + '</span>' +
-                '<span>' + timeStr + '</span>' +
-                '</div>';
-            cardContainer.insertBefore(card, cardContainer.firstChild);
-        }
-        // 更新"全部"标签数字
-        if (typeof updateAllCategoryCount === 'function') updateAllCategoryCount();
-        // 更新对应分类标签数字
-        var tabBtn = document.querySelector('.personal-category-tab[data-category="' + category + '"]');
-        if (tabBtn) {
-            var m = tabBtn.textContent.match(/\((\d+)\)/);
-            if (m) tabBtn.textContent = category + ' (' + (parseInt(m[1]) + 1) + ')';
-        }
-        // 更新弹窗内分类数
-        var item = document.querySelector('.category-item[data-category="' + category + '"]');
-        if (item) {
-            var countSpan = item.querySelector('span.text-\\[10px\\]');
-            if (countSpan) {
-                var cm = countSpan.textContent.match(/\d+/);
-                if (cm) countSpan.textContent = '(' + (parseInt(cm[0]) + 1) + ' 个模板)';
-            }
-        }
-        // 更新标题栏"共 N 个"数字
-        var headerCount = document.querySelector('.template-view-header-count');
-        if (headerCount) {
-            var hm = headerCount.textContent.match(/\d+/);
-            if (hm) headerCount.textContent = '共 ' + (parseInt(hm[0]) + 1) + ' 个';
-        }
+        // 数据驱动: push 到 AppState.personalTemplates + 持久化
+        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
+        var newId = 'p_' + Date.now();
+        AppState.personalTemplates.unshift({
+            id: newId,
+            name: name,
+            category: category,
+            creator: creator,
+            updatedAt: timeStr,
+            size: sizeText,
+            fmt: '.' + fmt
+        });
+        persistPersonalTemplates();
+        // 重渲染整个个人模板列表 (列表 + 卡片视图同步)
+        renderPersonalTemplates();
         closeUploadTemplateModal();
         showToast('模板「' + name + '」已上传');
     }
 
     function deletePersonalTemplate(btn) {
         if (!confirm('确定删除该模板?')) return;
+        // 数据驱动: 从 AppState.personalTemplates 按 id 删 + 持久化 + 重渲染
+        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
         var tr = btn.closest('tr');
-        if (!tr) return;
-        var category = tr.getAttribute('data-template-category');
-        var rowName = tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '';
-        tr.remove();
-        // 同步删除卡片视图中的对应卡片
-        document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
-            var cardName = card.querySelector('h4') ? card.querySelector('h4').textContent.trim() : '';
-            if (card.getAttribute('data-template-category') === category && (rowName === '' || cardName === rowName || cardName.indexOf(rowName.split(' (')[0]) === 0)) {
-                card.remove();
-            }
-        });
-        if (typeof updateAllCategoryCount === 'function') updateAllCategoryCount();
-        if (category) {
-            var tabBtn = document.querySelector('.personal-category-tab[data-category="' + category + '"]');
-            if (tabBtn) {
-                var m = tabBtn.textContent.match(/\((\d+)\)/);
-                if (m) {
-                    var n = Math.max(0, parseInt(m[1]) - 1);
-                    tabBtn.textContent = category + ' (' + n + ')';
-                }
-            }
+        var card = btn.closest('.bg-white.border.rounded-xl');
+        var templateId = (tr && tr.getAttribute('data-template-id')) || (card && card.getAttribute('data-template-id'));
+        if (!templateId) {
+            // fallback: 按名字找
+            var rowName = tr ? (tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '') : '';
+            var idx = AppState.personalTemplates.findIndex(function(t) { return t.name === rowName; });
+            if (idx >= 0) templateId = AppState.personalTemplates[idx].id;
         }
-        showToast('已删除');
+        if (templateId) {
+            var idx2 = AppState.personalTemplates.findIndex(function(t) { return t.id === templateId; });
+            if (idx2 >= 0) AppState.personalTemplates.splice(idx2, 1);
+            persistPersonalTemplates();
+            renderPersonalTemplates();
+            showToast('已删除');
+        } else {
+            showToast('找不到模板');
+        }
     }
 
     function openCategoryManageModal() {
@@ -486,37 +529,23 @@
 
 
     function applyOfficialFilter() {
-        // 读取搜索词
-        var searchEl = document.getElementById('official-search');
-        if (searchEl) _officialSearch = searchEl.value.trim().toLowerCase();
-        // 清除按钮显隐
-        var clearEl = document.getElementById('official-search-clear');
-        if (clearEl) {
-            if (_officialSearch) { clearEl.classList.remove('hidden'); }
-            else { clearEl.classList.add('hidden'); }
-        }
-        // 双重过滤: cat + type + search
+        // 双重过滤: cat + type
         var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
         rows.forEach(function(tr) {
             var cat = tr.getAttribute('data-template-category');
             var typ = tr.getAttribute('data-template-type');
-            var title = (tr.querySelector('td:first-child') ? tr.querySelector('td:first-child').textContent : '').toLowerCase();
             var catMatch = _officialCategory === 'all' || cat === _officialCategory;
             var typeMatch = _officialType === 'all' || typ === _officialType;
-            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
-            tr.style.display = (catMatch && typeMatch && searchMatch) ? '' : 'none';
+            tr.style.display = (catMatch && typeMatch) ? '' : 'none';
         });
         var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
         var visibleCount = 0;
         cards.forEach(function(card) {
             var cat = card.getAttribute('data-template-category');
             var typ = card.getAttribute('data-template-type');
-            var titleEl = card.querySelector('h4');
-            var title = titleEl ? titleEl.textContent.toLowerCase() : '';
             var catMatch = _officialCategory === 'all' || cat === _officialCategory;
             var typeMatch = _officialType === 'all' || typ === _officialType;
-            var searchMatch = !_officialSearch || title.indexOf(_officialSearch) > -1;
-            var visible = catMatch && typeMatch && searchMatch;
+            var visible = catMatch && typeMatch;
             card.style.display = visible ? '' : 'none';
             if (visible) visibleCount++;
         });
@@ -542,12 +571,6 @@
         if (countEl) countEl.textContent = visibleCount;
         var totalEl = document.getElementById('official-card-total');
         if (totalEl) totalEl.textContent = cards.length;
-    }
-
-    function clearOfficialSearch() {
-        var searchEl = document.getElementById('official-search');
-        if (searchEl) searchEl.value = '';
-        applyOfficialFilter();
     }
 
     function previewOfficialTemplate(cardEl) {

@@ -1,0 +1,131 @@
+{
+  "template_id": "labor-labor_work_injury-003",
+  "contract_type": "劳动合同",
+  "industry": "工伤",
+  "title": "工伤赔偿协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "员工信息",
+      "text": "乙方系甲方员工, 在购车工作过程中发生工伤事故。"
+    },
+    {
+      "index": 2,
+      "title": "伤残等级",
+      "text": "经劳动能力鉴定, 乙方伤残等级为1级。"
+    },
+    {
+      "index": 3,
+      "title": "工伤待遇",
+      "text": "甲方按《工伤保险条例》支付乙方一次性伤残补助金等工伤待遇, 合计人民币 30 万元。"
+    },
+    {
+      "index": 4,
+      "title": "医疗费",
+      "text": "工伤医疗费用由工伤保险基金按规定支付, 不足部分由甲方承担。"
+    },
+    {
+      "index": 5,
+      "title": "劳动关系",
+      "text": "乙方工伤痊愈后, 双方继续履行劳动合同。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "工伤待遇",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "伤残等级",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "医疗费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "员工信息",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "工伤赔偿协议",
+    "工伤常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于工伤赔偿协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_work_injury",
+    "variant_idx": 3,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

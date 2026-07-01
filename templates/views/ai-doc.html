@@ -1,0 +1,113 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-ai-doc">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+    <!-- 顶部说明 -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100 p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <iconify-icon class="text-2xl text-purple-500" icon="mdi:file-document-edit-outline"></iconify-icon>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-lg font-bold text-fg-primary">AI 文书生成</h1>
+                <p class="text-xs text-fg-secondary mt-1">选择文书类型 + 填写关键信息, AI 自动起草专业法律文书。支持起诉状/答辩状/律师函/合同/调解书/催告函 6 大类。</p>
+                <p class="text-[10px] text-fg-tertiary mt-1">⚠️ AI 辅助起草, 需律师审核后使用; 不构成正式法律意见</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        <!-- 左侧: 表单 -->
+        <div class="lg:col-span-2 space-y-4">
+            <!-- 文书类型选择 -->
+            <div class="bg-white rounded-xl border border-bg-border p-5">
+                <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon class="text-base text-fg-tertiary" icon="mdi:file-document-multiple-outline"></iconify-icon>
+                    <h2 class="text-sm font-semibold text-fg-primary">1. 选择文书类型</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-2" id="ai-doc-type-chips">
+                    <button class="ai-doc-type-chip active" data-type="complaint" onclick="selectAIDocType('complaint', this)">
+                        <iconify-icon class="text-xl" icon="mdi:scale-balance"></iconify-icon>
+                        <span>起诉状</span>
+                    </button>
+                    <button class="ai-doc-type-chip" data-type="defense" onclick="selectAIDocType('defense', this)">
+                        <iconify-icon class="text-xl" icon="mdi:shield-check-outline"></iconify-icon>
+                        <span>答辩状</span>
+                    </button>
+                    <button class="ai-doc-type-chip" data-type="lawyer-letter" onclick="selectAIDocType('lawyer-letter', this)">
+                        <iconify-icon class="text-xl" icon="mdi:email-arrow-right-outline"></iconify-icon>
+                        <span>律师函</span>
+                    </button>
+                    <button class="ai-doc-type-chip" data-type="contract" onclick="selectAIDocType('contract', this)">
+                        <iconify-icon class="text-xl" icon="mdi:file-sign"></iconify-icon>
+                        <span>合同</span>
+                    </button>
+                    <button class="ai-doc-type-chip" data-type="mediation" onclick="selectAIDocType('mediation', this)">
+                        <iconify-icon class="text-xl" icon="mdi:handshake-outline"></iconify-icon>
+                        <span>调解书</span>
+                    </button>
+                    <button class="ai-doc-type-chip" data-type="demand-letter" onclick="selectAIDocType('demand-letter', this)">
+                        <iconify-icon class="text-xl" icon="mdi:bell-ring-outline"></iconify-icon>
+                        <span>催告函</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 表单字段 -->
+            <div class="bg-white rounded-xl border border-bg-border p-5">
+                <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon class="text-base text-fg-tertiary" icon="mdi:form-textbox"></iconify-icon>
+                    <h2 class="text-sm font-semibold text-fg-primary">2. 填写关键信息</h2>
+                </div>
+                <div class="space-y-3" id="ai-doc-form-fields">
+                    <!-- 动态填充 -->
+                </div>
+            </div>
+
+            <!-- 生成按钮 -->
+            <button class="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-brand to-purple-500 hover:opacity-90 rounded-xl transition-opacity flex items-center justify-center gap-2 shadow-md" onclick="generateAIDocument()">
+                <iconify-icon class="text-base" icon="mdi:magic-staff"></iconify-icon>
+                一键 AI 生成
+            </button>
+        </div>
+
+        <!-- 右侧: 生成结果 -->
+        <div class="lg:col-span-3">
+            <div class="bg-white rounded-xl border border-bg-border p-5 h-full flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon class="text-base text-fg-tertiary" icon="mdi:text-box-edit-outline"></iconify-icon>
+                        <h2 class="text-sm font-semibold text-fg-primary">生成结果</h2>
+                    </div>
+                    <div class="flex items-center gap-2 hidden" id="ai-doc-actions">
+                        <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="copyAIDocument()">
+                            <iconify-icon class="text-xs" icon="mdi:content-copy"></iconify-icon>
+                            复制全文
+                        </button>
+                        <button class="text-[10px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors" onclick="downloadAIDocument()">
+                            <iconify-icon class="text-xs" icon="mdi:download"></iconify-icon>
+                            下载
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 空态 -->
+                <div class="flex-1 flex flex-col items-center justify-center text-center py-12" id="ai-doc-empty">
+                    <iconify-icon class="text-5xl text-fg-disabled" icon="mdi:text-box-search-outline"></iconify-icon>
+                    <p class="text-sm text-fg-tertiary mt-3">填写左侧表单, 点击"一键 AI 生成"</p>
+                    <p class="text-[10px] text-fg-disabled mt-1">AI 流式输出, 5-10 秒完成</p>
+                </div>
+
+                <!-- 流式输出 -->
+                <div class="flex-1 overflow-y-auto hidden" id="ai-doc-output-wrap">
+                    <pre class="text-xs leading-relaxed whitespace-pre-wrap font-sans text-fg-primary" id="ai-doc-output"></pre>
+                </div>
+
+                <!-- 打字指示器 -->
+                <div class="text-center py-4 hidden" id="ai-doc-typing">
+                    <iconify-icon class="text-2xl text-brand animate-spin" icon="mdi:loading"></iconify-icon>
+                    <p class="text-xs text-fg-tertiary mt-2">AI 正在起草...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

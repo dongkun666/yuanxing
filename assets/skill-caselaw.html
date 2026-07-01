@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Skill 1 · 类案检索与裁判参考 - LexPrime 元枢法智</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23165DFF'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'%3E法%3C/text%3E%3C/svg%3E" />
+<!-- LexPrime 全局样式 -->
+<link rel="stylesheet" href="./assets/css/styles.css" />
+<link rel="stylesheet" href="./assets/css/tailwind.css" />
+<!-- ECharts (统计图表) -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  /* Skill 1 局部样式 (语言规范: 严格中立, 不用"胜诉率"等) */
+  body { background: #f5f7fa; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .skill-header { background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%); color: white; }
+  .stat-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 20px; }
+  .traffic-green { background: #10b981; }
+  .traffic-yellow { background: #f59e0b; }
+  .traffic-red { background: #ef4444; }
+  .traffic-gray { background: #9ca3af; }
+  .case-card { background: white; border-radius: 8px; border-left: 4px solid #165DFF; padding: 14px 16px; margin-bottom: 12px; }
+  .outcome-chip { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+  .outcome-原告胜诉 { background: #d1fae5; color: #065f46; }
+  .outcome-被告胜诉 { background: #fee2e2; color: #991b1b; }
+  .outcome-部分支持 { background: #fef3c7; color: #92400e; }
+  .outcome-调解 { background: #dbeafe; color: #1e40af; }
+  .outcome-撤诉 { background: #e5e7eb; color: #374151; }
+  .outcome-其他 { background: #f3f4f6; color: #6b7280; }
+  .disclaimer { background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 16px; font-size: 12px; color: #6b7280; line-height: 1.6; }
+  .lang-guard-warn { color: #dc2626; font-weight: 500; }
+  .loading-spinner { border: 3px solid #e5e7eb; border-top-color: #165DFF; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  input, select, textarea { font-family: inherit; font-size: 14px; }
+  .field-label { display: block; font-size: 13px; color: #374151; margin-bottom: 6px; font-weight: 500; }
+  .field-input { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; transition: border-color 0.2s; }
+  .field-input:focus { border-color: #165DFF; box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1); }
+  .btn-primary { background: #165DFF; color: white; padding: 10px 20px; border-radius: 6px; font-weight: 500; transition: background 0.2s; border: none; cursor: pointer; }
+  .btn-primary:hover { background: #0E42D2; }
+  .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<!-- ===== 顶部导航 ===== -->
+<header class="skill-header px-8 py-5 shadow-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <iconify-icon icon="mdi:gavel" class="text-3xl"></iconify-icon>
+      <div>
+        <h1 class="text-xl font-bold">Skill 1 · 类案检索与裁判参考</h1>
+        <p class="text-sm opacity-90 mt-1">多维度检索 · 统计参考 · 中立用语</p>
+      </div>
+    </div>
+    <a href="./index.html" class="text-sm opacity-90 hover:opacity-100 flex items-center gap-1">
+      <iconify-icon icon="mdi:arrow-left"></iconify-icon> 返回主页
+    </a>
+  </div>
+</header>
+
+<!-- ===== 主体内容 ===== -->
+<main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-12 gap-6">
+
+  <!-- ===== 左栏: 检索表单 ===== -->
+  <aside class="col-span-12 lg:col-span-4">
+    <div class="stat-card">
+      <h2 class="text-base font-semibold mb-4 flex items-center gap-2">
+        <iconify-icon icon="mdi:magnify" class="text-blue-600"></iconify-icon>
+        检索条件
+      </h2>
+
+      <form id="search-form" class="space-y-4">
+        <div>
+          <label class="field-label">案由 <span class="text-red-500">*</span></label>
+          <select id="cause" required class="field-input">
+            <option value="">-- 请选择案由 --</option>
+            <optgroup label="合同纠纷">
+              <option value="民间借贷纠纷">民间借贷纠纷</option>
+              <option value="买卖合同纠纷">买卖合同纠纷</option>
+              <option value="借款合同纠纷">借款合同纠纷</option>
+              <option value="服务合同纠纷">服务合同纠纷</option>
+              <option value="租赁合同纠纷">租赁合同纠纷</option>
+              <option value="担保合同纠纷">担保合同纠纷</option>
+              <option value="保险合同纠纷">保险合同纠纷</option>
+            </optgroup>
+            <optgroup label="婚姻家事">
+              <option value="离婚纠纷">离婚纠纷</option>
+              <option value="财产分割纠纷">财产分割纠纷</option>
+              <option value="继承纠纷">继承纠纷</option>
+              <option value="抚养费纠纷">抚养费纠纷</option>
+            </optgroup>
+            <optgroup label="侵权责任">
+              <option value="人身损害赔偿">人身损害赔偿</option>
+              <option value="产品责任纠纷">产品责任纠纷</option>
+              <option value="医疗损害赔偿">医疗损害赔偿</option>
+              <option value="交通事故责任">交通事故责任</option>
+            </optgroup>
+            <optgroup label="知识产权">
+              <option value="专利侵权纠纷">专利侵权纠纷</option>
+              <option value="商标侵权纠纷">商标侵权纠纷</option>
+              <option value="著作权侵权纠纷">著作权侵权纠纷</option>
+            </optgroup>
+            <optgroup label="刑事">
+              <option value="故意伤害罪">故意伤害罪</option>
+              <option value="危险驾驶罪">危险驾驶罪</option>
+              <option value="诈骗罪">诈骗罪</option>
+              <option value="盗窃罪">盗窃罪</option>
+            </optgroup>
+            <optgroup label="行政">
+              <option value="行政处罚纠纷">行政处罚纠纷</option>
+              <option value="土地征收补偿">土地征收补偿</option>
+            </optgroup>
+            <optgroup label="执行">
+              <option value="执行异议">执行异议</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">关键事实 (可选, ≤ 4000 字)</label>
+          <textarea id="facts" rows="4" class="field-input" placeholder="案情摘要 / 起诉状要点 / 关键证据..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">审理法院</label>
+            <input id="court" type="text" class="field-input" placeholder="例: 上海一中院" />
+          </div>
+          <div>
+            <label class="field-label">法官姓名</label>
+            <input id="judge_name" type="text" class="field-input" placeholder="例: 王某" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">年份起</label>
+            <input id="year_from" type="number" min="2000" max="2030" value="2020" class="field-input" />
+          </div>
+          <div>
+            <label class="field-label">年份止</label>
+            <input id="year_to" type="number" min="2000" max="2030" value="2025" class="field-input" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">地域 (省)</label>
+            <input id="region" type="text" class="field-input" placeholder="例: 上海" />
+          </div>
+          <div>
+            <label class="field-label">案件类型</label>
+            <select id="case_type" class="field-input">
+              <option value="">不限</option>
+              <option value="民事">民事</option>
+              <option value="刑事">刑事</option>
+              <option value="行政">行政</option>
+              <option value="执行">执行</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label">审理程序</label>
+            <select id="procedure" class="field-input">
+              <option value="">不限</option>
+              <option value="一审">一审</option>
+              <option value="二审">二审</option>
+              <option value="再审">再审</option>
+              <option value="执行">执行</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">涉案金额 (元)</label>
+            <input id="amount_dispute" type="number" min="0" class="field-input" placeholder="0" />
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label">返回条数</label>
+          <input id="top_k" type="number" min="1" max="50" value="20" class="field-input" />
+        </div>
+
+        <div class="flex items-center gap-4 text-sm">
+          <label class="flex items-center gap-1">
+            <input id="include_judge_style" type="checkbox" checked />
+            <span>法官风格</span>
+          </label>
+          <label class="flex items-center gap-1">
+            <input id="include_amount_stats" type="checkbox" checked />
+            <span>金额统计</span>
+          </label>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="submit-btn" type="submit" class="btn-primary flex-1 flex items-center justify-center gap-2">
+            <iconify-icon icon="mdi:magnify"></iconify-icon>
+            检索类案
+          </button>
+          <button id="reset-btn" type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+            清空
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 红黄绿灯说明 -->
+    <div class="stat-card mt-4">
+      <h3 class="text-sm font-semibold mb-3">红黄绿灯说明</h3>
+      <div class="space-y-2 text-xs">
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full traffic-green"></span> 样本 ≥ 20 且支持率 &gt; 60%</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full traffic-yellow"></span> 样本 10-19 或支持率 30-60%</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full traffic-red"></span> 样本 &lt; 10 或支持率 &lt; 30%</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full traffic-gray"></span> 样本 = 0 (无结果)</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== 右栏: 检索结果 ===== -->
+  <section class="col-span-12 lg:col-span-8">
+    <div id="result-container" class="hidden">
+      <!-- 顶部: 红黄绿灯 + 样本数 -->
+      <div class="stat-card mb-4">
+        <div class="flex items-center gap-3">
+          <span id="traffic-light" class="w-4 h-4 rounded-full"></span>
+          <div class="flex-1">
+            <div class="font-semibold text-base" id="result-title">-- 件样本</div>
+            <div class="text-xs text-gray-500 mt-1" id="result-meta">--</div>
+          </div>
+          <div class="text-xs text-gray-500" id="latency-info">--</div>
+        </div>
+        <div id="narrative-block" class="mt-4 p-3 bg-gray-50 rounded text-sm text-gray-700 leading-relaxed"></div>
+      </div>
+
+      <!-- 柱状图: 年份支持率 -->
+      <div id="bar-chart-card" class="stat-card mb-4 hidden">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <iconify-icon icon="mdi:chart-bar" class="text-blue-600"></iconify-icon>
+          各年份样本中支持原告诉请的比例 (%)
+        </h3>
+        <div id="bar-chart" style="height: 240px;"></div>
+      </div>
+
+      <!-- 箱线图: 判赔金额 -->
+      <div id="box-chart-card" class="stat-card mb-4 hidden">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <iconify-icon icon="mdi:chart-box" class="text-blue-600"></iconify-icon>
+          判赔金额分布 (元)
+        </h3>
+        <div id="box-chart" style="height: 200px;"></div>
+        <div id="amount-stats-text" class="text-xs text-gray-600 mt-2"></div>
+      </div>
+
+      <!-- 法官风格 -->
+      <div id="judge-card" class="stat-card mb-4 hidden">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <iconify-icon icon="mdi:account-tie" class="text-blue-600"></iconify-icon>
+          法官审理风格
+        </h3>
+        <div id="judge-content" class="text-sm text-gray-700 leading-relaxed"></div>
+      </div>
+
+      <!-- 判例列表 -->
+      <div class="stat-card">
+        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+          <iconify-icon icon="mdi:format-list-bulleted" class="text-blue-600"></iconify-icon>
+          相似判例 (<span id="result-count">0</span>)
+        </h3>
+        <div id="case-list"></div>
+      </div>
+
+      <!-- 强制免责声明 (PRD § 5.7 硬约束) -->
+      <div class="disclaimer mt-6">
+        <div id="disclaimer-text">以上数据仅为已公开裁判文书的统计结果, 不代表对本案结果的任何预测或判断。LexPrime 类案检索 Skill 输出仅供执业律师研究参考, 不构成法律意见, 更不替代律师的专业判断。</div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div id="empty-state" class="stat-card text-center py-16">
+      <iconify-icon icon="mdi:gavel" class="text-6xl text-gray-300"></iconify-icon>
+      <p class="text-gray-500 mt-4">请填写左侧检索条件, 点击 "检索类案" 按钮</p>
+      <p class="text-xs text-gray-400 mt-2">所有数据基于已公开裁判文书, 仅供研究参考</p>
+    </div>
+
+    <!-- 加载状态 -->
+    <div id="loading-state" class="stat-card text-center py-16 hidden">
+      <div class="flex justify-center mb-4">
+        <div class="loading-spinner"></div>
+      </div>
+      <p class="text-gray-600">检索中... (P95 &lt; 1s)</p>
+    </div>
+
+    <!-- 错误状态 -->
+    <div id="error-state" class="stat-card text-center py-16 hidden">
+      <iconify-icon icon="mdi:alert-circle" class="text-5xl text-red-400"></iconify-icon>
+      <p class="text-red-600 mt-3 font-semibold">检索失败</p>
+      <p class="text-xs text-gray-500 mt-2" id="error-msg"></p>
+    </div>
+  </section>
+</main>
+
+<!-- ===== Iconify 图标 ===== -->
+<script src="./assets/js/iconify-icon.min.js"></script>
+<!-- ===== Skill 1 JS ===== -->
+<script>
+/**
+ * LexPrime Skill 1: 类案检索与裁判参考 — 前端逻辑
+ *
+ * PRD § 5.7 硬约束:
+ * - 所有 narrative 文案通过 backend language_guard 校验 (后端兜底)
+ * - 前端再过一遍客户端 regex (防御性编程, 防止后端 bypass)
+ * - 红黄绿灯 + 柱状图 + 箱线图 + 强制免责声明
+ */
+
+const API_BASE = (window.location.hostname === 'localhost' && window.location.port === '3000')
+  ? 'http://localhost:8000'  // 本地 dev 后端
+  : '/api';                  // 相对路径 (生产)
+
+// ===== 客户端 language_guard (防御性, 与后端保持一致) =====
+const FORBIDDEN_HIGH = [
+  /本案\s*胜诉率/i,
+  /胜诉率\s*(约|大概|为|是)?\s*\d/i,
+  /预计\s*本案/i,
+  /预计\s*判赔/i,
+  /预计\s*.{0,20}\s*元/i,
+  /预计\s*.{0,20}\s*天/i,
+  /本案\s*将会/i,
+  /该\s*法官\s*.{0,15}(好|坏|偏袒|不公|优秀|较差)/i,
+];
+
+function clientCheckNarrative(text) {
+  if (!text) return { ok: true, violations: [] };
+  const violations = [];
+  for (const pat of FORBIDDEN_HIGH) {
+    const m = text.match(pat);
+    if (m) violations.push(m[0]);
+  }
+  return { ok: violations.length === 0, violations };
+}
+
+// ===== 表单提交 =====
+const form = document.getElementById('search-form');
+const submitBtn = document.getElementById('submit-btn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await runSearch();
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  form.reset();
+  document.getElementById('result-container').classList.add('hidden');
+  document.getElementById('error-state').classList.add('hidden');
+  document.getElementById('empty-state').classList.remove('hidden');
+});
+
+async function runSearch() {
+  const cause = document.getElementById('cause').value.trim();
+  if (!cause) { alert('请选择案由'); return; }
+
+  // 收集表单
+  const req = {
+    cause,
+    facts: document.getElementById('facts').value.trim(),
+    court: document.getElementById('court').value.trim() || null,
+    judge_name: document.getElementById('judge_name').value.trim() || null,
+    year_from: parseInt(document.getElementById('year_from').value) || null,
+    year_to: parseInt(document.getElementById('year_to').value) || null,
+    region: document.getElementById('region').value.trim() || null,
+    case_type: document.getElementById('case_type').value || null,
+    procedure: document.getElementById('procedure').value || null,
+    amount_dispute: parseFloat(document.getElementById('amount_dispute').value) || null,
+    top_k: parseInt(document.getElementById('top_k').value) || 20,
+    include_judge_style: document.getElementById('include_judge_style').checked,
+    include_amount_stats: document.getElementById('include_amount_stats').checked,
+  };
+
+  // UI 状态切换
+  submitBtn.disabled = true;
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('error-state').classList.add('hidden');
+  document.getElementById('result-container').classList.add('hidden');
+  document.getElementById('loading-state').classList.remove('hidden');
+
+  try {
+    const resp = await fetch(API_BASE + '/skills/caselaw/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      throw new Error(err.detail || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    renderResults(data);
+  } catch (err) {
+    console.error('检索失败:', err);
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('error-state').classList.remove('hidden');
+    document.getElementById('error-msg').textContent = err.message;
+  } finally {
+    submitBtn.disabled = false;
+  }
+}
+
+// ===== 渲染结果 =====
+function renderResults(data) {
+  document.getElementById('loading-state').classList.add('hidden');
+  document.getElementById('result-container').classList.remove('hidden');
+
+  // 红黄绿灯
+  const trafficLight = document.getElementById('traffic-light');
+  trafficLight.className = 'w-4 h-4 rounded-full traffic-' + (data.ui_hints?.traffic_light || 'gray');
+
+  // 标题 + meta
+  const meta = data.query_meta;
+  const stats = data.statistics;
+  document.getElementById('result-title').textContent = `${stats.sample_size} 件样本 · ${meta.cause}`;
+  const filters = Object.entries(meta.filters_applied || {})
+    .filter(([k, v]) => v != null && v !== '' && k !== 'cause')
+    .map(([k, v]) => `${k}=${v}`).join(' · ');
+  document.getElementById('result-meta').textContent = filters || '无附加过滤';
+  document.getElementById('latency-info').textContent = `${meta.latency_ms}ms · ${meta.vector_store}`;
+
+  // narrative (后端已 guard, 前端再 check)
+  const narrative = stats.narrative || '';
+  const chk = clientCheckNarrative(narrative);
+  const narrativeBlock = document.getElementById('narrative-block');
+  if (!chk.ok) {
+    narrativeBlock.innerHTML = `<span class="lang-guard-warn">[语言规范警告] 检测到违规表述, 已替换为安全版本</span><br><br>${escapeHtml(narrative)}`;
+    console.warn('Narrative violations:', chk.violations);
+  } else {
+    narrativeBlock.textContent = narrative;
+  }
+
+  // 柱状图
+  const yearlyData = stats.support_rate_aggregate?.yearly_breakdown || [];
+  if (yearlyData.length > 0 && data.ui_hints?.show_bar_chart) {
+    document.getElementById('bar-chart-card').classList.remove('hidden');
+    renderBarChart(yearlyData);
+  } else {
+    document.getElementById('bar-chart-card').classList.add('hidden');
+  }
+
+  // 箱线图
+  const amountStats = stats.amount_stats;
+  if (amountStats && amountStats.median_cny != null && data.ui_hints?.show_box_plot) {
+    document.getElementById('box-chart-card').classList.remove('hidden');
+    renderBoxChart(amountStats);
+    document.getElementById('amount-stats-text').textContent =
+      `中位数 ${formatCurrency(amountStats.median_cny)} | 四分位距 ${formatCurrency(amountStats.q1_cny)}-${formatCurrency(amountStats.q3_cny)} | 极值 ${formatCurrency(amountStats.min_cny)}-${formatCurrency(amountStats.max_cny)} | 样本 ${amountStats.sample_with_amount}`;
+  } else {
+    document.getElementById('box-chart-card').classList.add('hidden');
+  }
+
+  // 法官卡片
+  const judgeStyle = stats.judge_style;
+  if (judgeStyle && data.ui_hints?.show_judge_card) {
+    document.getElementById('judge-card').classList.remove('hidden');
+    const judgeChk = clientCheckNarrative(judgeStyle.narrative || '');
+    const judgeContent = document.getElementById('judge-content');
+    if (!judgeChk.ok) {
+      judgeContent.innerHTML = `<span class="lang-guard-warn">[语言规范警告]</span> ${escapeHtml(judgeStyle.narrative)}`;
+    } else {
+      judgeContent.textContent = judgeStyle.narrative;
+    }
+  } else {
+    document.getElementById('judge-card').classList.add('hidden');
+  }
+
+  // 判例列表
+  const results = data.results || [];
+  document.getElementById('result-count').textContent = results.length;
+  const caseList = document.getElementById('case-list');
+  caseList.innerHTML = '';
+  if (results.length === 0) {
+    caseList.innerHTML = '<p class="text-gray-500 text-center py-8">未检索到匹配类案, 建议扩大检索条件或跳转公开查询 (联邦模式)。</p>';
+  } else {
+    results.forEach((c) => {
+      const card = document.createElement('div');
+      card.className = 'case-card';
+      card.innerHTML = `
+        <div class="flex items-start justify-between mb-2">
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-gray-900">${escapeHtml(c.case_id || '')}</div>
+            <div class="text-xs text-gray-500 mt-0.5">${escapeHtml(c.case_name || '')} · ${escapeHtml(c.cause || '')}</div>
+          </div>
+          <span class="outcome-chip outcome-${c.outcome}">${c.outcome || '其他'}</span>
+        </div>
+        <div class="text-xs text-gray-600 grid grid-cols-2 gap-2 mb-2">
+          <div><span class="text-gray-400">法院:</span> ${escapeHtml(c.court || '-')}</div>
+          <div><span class="text-gray-400">程序:</span> ${escapeHtml(c.procedure || '-')}</div>
+          <div><span class="text-gray-400">日期:</span> ${escapeHtml(c.judgment_date || '-')}</div>
+          <div><span class="text-gray-400">法官:</span> ${escapeHtml(c.judge_name || '-')}</div>
+          ${c.amount_awarded_cny ? `<div><span class="text-gray-400">判赔:</span> ${formatCurrency(c.amount_awarded_cny)}</div>` : ''}
+          <div><span class="text-gray-400">来源:</span> ${escapeHtml(c.source || '-')}</div>
+        </div>
+        ${c.summary ? `<div class="text-xs text-gray-700 leading-relaxed mb-2">${escapeHtml(c.summary)}</div>` : ''}
+        ${c.dispute_focus && c.dispute_focus.length > 0 ? `
+          <div class="flex flex-wrap gap-1 mb-2">
+            ${c.dispute_focus.map(f => `<span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded">${escapeHtml(f)}</span>`).join('')}
+          </div>` : ''}
+        <div class="text-xs text-gray-400">相似度: ${(c.relevance_score * 100).toFixed(1)}%</div>
+      `;
+      caseList.appendChild(card);
+    });
+  }
+
+  // 免责声明 (强制)
+  document.getElementById('disclaimer-text').textContent = data.disclaimer || '以上数据仅为已公开裁判文书的统计结果, 不代表对本案结果的任何预测或判断。';
+}
+
+// ===== ECharts 渲染 =====
+function renderBarChart(yearlyData) {
+  const chart = echarts.init(document.getElementById('bar-chart'));
+  const years = yearlyData.map(d => d.year);
+  const pcts = yearlyData.map(d => d.support_pct);
+  const totals = yearlyData.map(d => `${d.support_total}/${d.total}`);
+  chart.setOption({
+    tooltip: { trigger: 'axis', formatter: (params) => {
+      const i = params[0].dataIndex;
+      return `${years[i]}年<br/>支持率: ${pcts[i]}%<br/>(${totals[i]})`;
+    }},
+    grid: { top: 20, right: 20, bottom: 30, left: 40 },
+    xAxis: { type: 'category', data: years },
+    yAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' } },
+    series: [{
+      type: 'bar',
+      data: pcts,
+      itemStyle: { color: '#165DFF' },
+      label: { show: true, position: 'top', formatter: '{c}%' },
+    }],
+  });
+}
+
+function renderBoxChart(amountStats) {
+  const chart = echarts.init(document.getElementById('box-chart'));
+  const data = [
+    amountStats.min_cny,
+    amountStats.q1_cny,
+    amountStats.median_cny,
+    amountStats.q3_cny,
+    amountStats.max_cny,
+  ];
+  chart.setOption({
+    tooltip: { formatter: (params) => {
+      const labels = ['Min', 'Q1', '中位数', 'Q3', 'Max'];
+      return labels.map((l, i) => `${l}: ${formatCurrency(data[i])}`).join('<br/>');
+    }},
+    grid: { top: 20, right: 20, bottom: 30, left: 80 },
+    xAxis: { type: 'value', axisLabel: { formatter: (v) => `${v/10000}万` } },
+    yAxis: { type: 'category', data: ['判赔金额'] },
+    series: [{
+      type: 'boxplot',
+      data: [data],
+      itemStyle: { color: '#165DFF', borderColor: '#0E42D2' },
+    }],
+  });
+}
+
+// ===== 工具函数 =====
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text == null ? '' : String(text);
+  return div.innerHTML;
+}
+
+function formatCurrency(num) {
+  if (num == null) return '-';
+  const n = Number(num);
+  if (n >= 10000) return `${(n/10000).toFixed(1)}万元`;
+  return `${n.toLocaleString('zh-CN')}元`;
+}
+
+// ===== 页面加载时检查 API 健康 =====
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const resp = await fetch(API_BASE + '/skills/caselaw/health');
+    if (resp.ok) {
+      const data = await resp.json();
+      console.log('[Skill 1] API 健康:', data);
+    }
+  } catch (e) {
+    console.warn('[Skill 1] API 不可达:', e.message);
+  }
+});
+</script>
+</body>
+</html>

@@ -99,7 +99,7 @@
 <div class="fixed inset-0 z-50 bg-black/30 flex items-center justify-center hidden" id="schedule-modal" onclick="closeScheduleModal()">
 <div class="bg-white rounded-xl shadow-2xl w-[520px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-<h3 class="text-base font-bold text-fg-primary">新建日程</h3>
+<h3 class="text-base font-bold text-fg-primary" id="schedule-modal-title">新建日程</h3>
 <button class="text-fg-tertiary hover:text-fg-secondary text-lg leading-none" onclick="closeScheduleModal()">×</button>
 </div>
 <div class="p-6 space-y-4">
@@ -230,101 +230,145 @@
 </div>
 <!-- 日程详情弹窗 -->
 <div class="fixed inset-0 z-50 bg-black/30 flex items-center justify-center hidden" id="schedule-detail-modal" onclick="closeScheduleDetail()">
-<div class="bg-white rounded-xl shadow-2xl w-[560px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+<div class="bg-white rounded-xl shadow-2xl w-[640px] max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
 <!-- 头部，带类型色条 -->
-<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100" id="sdetail-header" style="border-left: 4px solid #165DFF;">
+<div class="flex items-start justify-between px-7 py-5 border-b border-gray-100" id="sdetail-header" style="border-left: 5px solid #165DFF;">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs px-2.5 py-1 rounded-full font-medium" id="sdetail-type-badge">开庭</span>
+<span class="text-xs text-fg-tertiary" id="sdetail-remind-text">提前 1 小时提醒</span>
+</div>
+<h3 class="text-xl font-bold text-fg-primary leading-tight" id="sdetail-title">日程标题</h3>
+</div>
+<button class="text-fg-tertiary hover:text-fg-secondary text-2xl leading-none ml-2" onclick="closeScheduleDetail()">×</button>
+</div>
+<!-- 倒计时条 -->
+<div class="px-7 py-4 border-b border-gray-50" id="sdetail-countdown-bar">
 <div class="flex items-center gap-3">
-<span class="text-xs bg-wiki-tint text-wiki px-2 py-0.5 rounded-full" id="sdetail-type-badge">开庭</span>
-<h3 class="text-base font-bold text-fg-primary" id="sdetail-title">日程标题</h3>
+<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
+<iconify-icon id="sdetail-countdown-icon" class="text-brand text-xl" icon="mdi:calendar-clock-outline"></iconify-icon>
 </div>
-<button class="text-fg-tertiary hover:text-fg-secondary text-lg leading-none" onclick="closeScheduleDetail()">×</button>
+<div>
+<div class="text-xs text-fg-tertiary">距今</div>
+<div class="text-base font-semibold text-fg-primary" id="sdetail-countdown">加载中...</div>
 </div>
-<div class="p-6 space-y-4">
+</div>
+</div>
+<div class="p-7 space-y-5">
 <!-- 时间信息 -->
 <div class="grid grid-cols-2 gap-4">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-brand text-sm" icon="mdi:calendar"></iconify-icon>
+<div class="flex items-center gap-3 bg-bg-subtle rounded-lg p-3">
+<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-brand text-lg" icon="mdi:calendar"></iconify-icon>
 </div>
 <div>
-<div class="text-xs text-fg-tertiary">日期</div>
-<div class="text-sm font-medium text-fg-primary" id="sdetail-date">2026-06-21</div>
+<div class="text-xs text-fg-tertiary mb-0.5">日期</div>
+<div class="text-base font-semibold text-fg-primary" id="sdetail-date">2026-06-21</div>
 </div>
 </div>
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-green-500 text-sm" icon="mdi:clock-outline"></iconify-icon>
+<div class="flex items-center gap-3 bg-bg-subtle rounded-lg p-3">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-green-500 text-lg" icon="mdi:clock-outline"></iconify-icon>
 </div>
 <div>
-<div class="text-xs text-fg-tertiary">时间</div>
-<div class="text-sm font-medium text-fg-primary" id="sdetail-time">09:00 - 11:00</div>
+<div class="text-xs text-fg-tertiary mb-0.5">时间</div>
+<div class="text-base font-semibold text-fg-primary" id="sdetail-time">09:00 - 11:00</div>
 </div>
 </div>
 </div>
 <!-- 关联案件 -->
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-warning-tint flex items-center justify-center">
-<iconify-icon class="text-orange-500 text-sm" icon="mdi:folder-outline"></iconify-icon>
+<div class="flex items-center gap-3 bg-bg-subtle rounded-lg p-3">
+<div class="w-10 h-10 rounded-lg bg-warning-tint flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-orange-500 text-lg" icon="mdi:folder-outline"></iconify-icon>
 </div>
-<div>
-<div class="text-xs text-fg-tertiary">关联案件</div>
-<div class="text-sm font-medium text-brand" id="sdetail-case">李明诉XX公司买卖合同纠纷</div>
+<div class="flex-1 min-w-0">
+<div class="text-xs text-fg-tertiary mb-0.5">关联案件</div>
+<div class="text-base font-semibold text-brand" id="sdetail-case">李明诉XX公司买卖合同纠纷</div>
 </div>
+<button id="sdetail-case-link" class="hidden text-xs text-brand bg-white border border-brand px-2.5 py-1 rounded hover:bg-brand-tint transition-colors flex items-center gap-1" onclick="goToCaseFromDetail()">
+<iconify-icon icon="mdi:arrow-top-right"></iconify-icon>
+<span>查看</span>
+</button>
 </div>
 <!-- 地点 -->
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-<iconify-icon class="text-purple-500 text-sm" icon="mdi:map-marker-outline"></iconify-icon>
+<div class="flex items-center gap-3 bg-bg-subtle rounded-lg p-3">
+<div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-purple-500 text-lg" icon="mdi:map-marker-outline"></iconify-icon>
 </div>
-<div>
-<div class="text-xs text-fg-tertiary">地点</div>
-<div class="text-sm font-medium text-fg-primary" id="sdetail-location">朝阳区人民法院 第3法庭</div>
+<div class="flex-1 min-w-0">
+<div class="text-xs text-fg-tertiary mb-0.5">地点</div>
+<div class="text-base font-medium text-fg-primary" id="sdetail-location">朝阳区人民法院 第3法庭</div>
 </div>
 </div>
 <!-- 备注 -->
-<div class="flex items-start gap-3" id="sdetail-note-row">
-<div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-fg-tertiary text-sm" icon="mdi:note-text-outline"></iconify-icon>
+<div class="flex items-start gap-3 bg-bg-subtle rounded-lg p-3" id="sdetail-note-row">
+<div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-fg-tertiary text-lg" icon="mdi:note-text-outline"></iconify-icon>
 </div>
-<div>
-<div class="text-xs text-fg-tertiary">备注</div>
-<div class="text-sm text-fg-secondary" id="sdetail-note">请带齐案件材料</div>
+<div class="flex-1 min-w-0">
+<div class="text-xs text-fg-tertiary mb-0.5">备注</div>
+<div class="text-sm text-fg-secondary whitespace-pre-wrap" id="sdetail-note">请带齐案件材料</div>
 </div>
 </div>
-<!-- 提醒信息 -->
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-<iconify-icon class="text-amber-500 text-sm" icon="mdi:bell-outline"></iconify-icon>
+<!-- 提醒信息 (保留, 头部已有简短, 这里详细说明) -->
+<div class="flex items-center gap-3 bg-bg-subtle rounded-lg p-3">
+<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+<iconify-icon class="text-amber-500 text-lg" icon="mdi:bell-outline"></iconify-icon>
 </div>
-<div>
-<div class="text-xs text-fg-tertiary">提醒设置</div>
-<div class="text-sm font-medium text-fg-primary" id="sdetail-remind">提前 1 小时提醒</div>
+<div class="flex-1">
+<div class="text-xs text-fg-tertiary mb-0.5">提醒设置</div>
+<div class="text-base font-medium text-fg-primary" id="sdetail-remind">提前 1 小时提醒</div>
 </div>
 </div>
 <!-- 冲突预警（动态） -->
-<div class="hidden bg-red-50 border border-red-200 rounded-lg p-3" id="sdetail-conflict">
+<div class="hidden bg-red-50 border border-red-200 rounded-lg p-4" id="sdetail-conflict">
 <div class="flex items-start gap-2">
-<iconify-icon class="text-red-500 text-base flex-shrink-0 mt-0.5" icon="mdi:alert-circle-outline"></iconify-icon>
+<iconify-icon class="text-red-500 text-xl flex-shrink-0 mt-0.5" icon="mdi:alert-circle-outline"></iconify-icon>
 <div>
-<div class="text-xs font-medium text-red-700 mb-1">⚠️ 存在时间冲突</div>
+<div class="text-sm font-medium text-red-700 mb-1">⚠️ 存在时间冲突</div>
 <div class="text-xs text-red-600" id="sdetail-conflict-detail"></div>
 </div>
 </div>
 </div>
+<!-- 智能准备 CTA -->
+<div class="border-t border-gray-100 pt-4">
+<div class="text-xs font-medium text-fg-tertiary mb-3 flex items-center gap-1">
+<iconify-icon icon="mdi:lightbulb-outline" class="text-warning"></iconify-icon>
+智能准备
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center gap-2 px-3 py-2 text-sm bg-brand-tint3 text-brand rounded-lg hover:bg-brand-tint transition-colors" onclick="openCaseAnalysisFromDetail()">
+<iconify-icon icon="mdi:chart-line"></iconify-icon>
+<span>案件分析</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-2 text-sm bg-success-tint text-success rounded-lg hover:bg-green-100 transition-colors" onclick="generatePrepChecklistFromDetail()">
+<iconify-icon icon="mdi:clipboard-list-outline"></iconify-icon>
+<span>生成准备清单</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-2 text-sm bg-warning-tint text-urgent rounded-lg hover:bg-amber-100 transition-colors" onclick="openAITrialCoach()">
+<iconify-icon icon="mdi:robot-outline"></iconify-icon>
+<span>AI 庭审助手</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-2 text-sm bg-bg text-fg-secondary rounded-lg hover:bg-bg-border transition-colors" onclick="duplicateSchedule()">
+<iconify-icon icon="mdi:content-copy"></iconify-icon>
+<span>复制日程</span>
+</button>
+</div>
+</div>
 </div>
 <!-- 底部操作栏 -->
-<div class="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+<div class="flex items-center justify-between px-7 py-4 border-t border-gray-100">
 <div class="flex items-center gap-2">
-<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-brand hover:bg-brand-tint3 rounded-lg transition-colors" onclick="editScheduleFromDetail()">
+<button class="flex items-center gap-1.5 px-4 py-2 text-sm text-brand bg-brand-tint3 hover:bg-brand-tint rounded-lg transition-colors font-medium" onclick="editScheduleFromDetail()">
 <iconify-icon icon="mdi:pencil-outline"></iconify-icon>
-                    编辑
-                </button>
-<button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors" onclick="deleteScheduleFromDetail()">
+编辑
+</button>
+<button class="flex items-center gap-1.5 px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors font-medium" onclick="deleteScheduleFromDetail()">
 <iconify-icon icon="mdi:delete-outline"></iconify-icon>
-                    删除
-                </button>
+删除
+</button>
 </div>
-<button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="closeScheduleDetail()">关闭</button>
+<button class="px-5 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors font-medium" onclick="closeScheduleDetail()">关闭</button>
 </div>
 </div>
 </div>

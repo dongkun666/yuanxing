@@ -1,0 +1,71 @@
+{
+  "captured": [
+    {
+      "type": "complaint",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\01-complaint-desktop.png",
+      "label": "起诉状"
+    },
+    {
+      "type": "defense",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\02-defense-desktop.png",
+      "label": "答辩状"
+    },
+    {
+      "type": "contract",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\03-contract-desktop.png",
+      "label": "合同"
+    },
+    {
+      "type": "letter",
+      "viewport": "desktop",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\04-letter-desktop.png",
+      "label": "律师函"
+    },
+    {
+      "type": "complaint",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\01-complaint-mobile.png",
+      "label": "起诉状"
+    },
+    {
+      "type": "defense",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\02-defense-mobile.png",
+      "label": "答辩状"
+    },
+    {
+      "type": "contract",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\03-contract-mobile.png",
+      "label": "合同"
+    },
+    {
+      "type": "letter",
+      "viewport": "mobile",
+      "file": "E:\\元枢法智前端\\yuanxing\\docs\\qa\\doc-gen-w9\\screenshots\\04-letter-mobile.png",
+      "label": "律师函"
+    }
+  ],
+  "console_errors": [
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+    "[desktop] Failed to load resource: net::ERR_CONNECTION_TIMED_OUT"
+  ],
+  "backend_responses": [
+    {
+      "status": 200,
+      "url": "/api/doc-gen/health",
+      "viewport": "desktop"
+    },
+    {
+      "status": 200,
+      "url": "/api/doc-gen/health",
+      "viewport": "mobile"
+    }
+  ]
+}

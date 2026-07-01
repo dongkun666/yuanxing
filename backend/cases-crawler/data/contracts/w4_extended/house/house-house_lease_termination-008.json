@@ -1,0 +1,136 @@
+{
+  "template_id": "house-house_lease_termination-008",
+  "contract_type": "房屋合同",
+  "industry": "解除协议",
+  "title": "房屋租赁合同解除协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "原合同",
+      "text": "原租赁合同编号 LX-294924, 签订日期 2025-12-31。"
+    },
+    {
+      "index": 2,
+      "title": "解除日期",
+      "text": "双方同意原租赁合同于 2027-05-22 解除。"
+    },
+    {
+      "index": 3,
+      "title": "费用结算",
+      "text": "截至解除日, 乙方应支付租金至解除日, 押金在扣除未结清费用后退还。"
+    },
+    {
+      "index": 4,
+      "title": "房屋返还",
+      "text": "乙方应于解除日将房屋返还甲方, 恢复原状 (合理磨损除外)。"
+    },
+    {
+      "index": 5,
+      "title": "违约责任",
+      "text": "因一方违约导致解除的, 违约方应按原合同约定承担违约金。"
+    },
+    {
+      "index": 6,
+      "title": "其他约定",
+      "text": "原合同其他条款不再履行, 本协议为最终结算依据。"
+    },
+    {
+      "index": 7,
+      "title": "争议管辖",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "违约责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "解除日期",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "原合同",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "其他约定",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "房屋租赁合同解除协议",
+    "解除协议常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于房屋租赁合同解除协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_lease_termination",
+    "variant_idx": 8,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

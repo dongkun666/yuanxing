@@ -1,0 +1,132 @@
+{
+  "template_id": "family-family_paternity-003",
+  "contract_type": "婚姻家事合同",
+  "industry": "亲子关系",
+  "title": "亲子关系确认协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "协议双方",
+      "text": "甲方 (父亲/母亲) 与乙方就子女购房的亲子关系确认事宜, 签订本协议。"
+    },
+    {
+      "index": 2,
+      "title": "亲子确认",
+      "text": "双方确认, 甲方与丙方 (子女) 存在亲子关系 (父子/母子)。"
+    },
+    {
+      "index": 3,
+      "title": "权利义务",
+      "text": "甲方作为丙方的法定监护人, 承担抚养、教育、保护义务。"
+    },
+    {
+      "index": 4,
+      "title": "财产",
+      "text": "甲方按月支付丙方抚养费人民币 30 万元。"
+    },
+    {
+      "index": 5,
+      "title": "探望",
+      "text": "乙方 (另一方) 每月可探望丙方 8 次。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 2,
+      "clause_title": "亲子确认",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "财产",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "探望",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "协议双方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "亲子关系确认协议",
+    "亲子关系常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于亲子关系确认协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_paternity",
+    "variant_idx": 3,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

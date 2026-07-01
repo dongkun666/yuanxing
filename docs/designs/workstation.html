@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作台 · LexPrime 设计系统原型</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { DEFAULT:'#165DFF', hover:'#4080FF', active:'#0E4AD8',
+                   tint:'#E8F3FF', tint2:'#EEF3FF', tint3:'#F2F7FF', tint4:'#E5EBFF' },
+          bg: { DEFAULT:'#F2F3F5', subtle:'#F7F8FA', border:'#E5E6EB' },
+          fg: { primary:'#1D2129', secondary:'#4E5969', tertiary:'#86909C', disabled:'#C9CDD4' },
+          success: { DEFAULT:'#00B42A', tint:'#E8FFEA' },
+          warning: { DEFAULT:'#FF7D00', tint:'#FFF7E6' },
+          danger:  { DEFAULT:'#F5222D', tint:'#FFF1F0' },
+          urgent:  { DEFAULT:'#FA8C16', tint:'#FFF3E0' },
+          ai: { DEFAULT:'#6C5CE7', tint:'#EDEBFF' },
+        },
+        fontSize: { xs:'12px', sm:'14px', base:'16px', lg:'20px', xl:'24px', '2xl':'32px' },
+        boxShadow: {
+          'card': '0 2px 8px rgba(29,33,41,0.06)',
+          'card-hover': '0 4px 12px rgba(29,33,41,0.08)',
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+</style>
+</head>
+<body class="bg-bg-subtle text-fg-primary text-sm">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ============== 左侧栏 ============== -->
+  <aside class="w-[220px] bg-white border-r border-bg-border flex flex-col">
+    <!-- Logo -->
+    <div class="h-14 px-5 flex items-center gap-2 border-b border-bg-border">
+      <div class="w-8 h-8 rounded-md bg-brand flex items-center justify-center text-white font-bold text-base">元</div>
+      <div>
+        <div class="text-sm font-bold leading-tight">元枢法智</div>
+        <div class="text-[10px] text-fg-tertiary leading-tight">LexPrime</div>
+      </div>
+    </div>
+
+    <!-- 导航 -->
+    <nav class="flex-1 py-3 space-y-1 overflow-y-auto">
+      <div class="px-5 py-1 text-[10px] font-medium text-fg-tertiary tracking-wider">主导航</div>
+
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md bg-brand text-white shadow-sm">
+        <iconify-icon icon="mdi:view-dashboard-outline" class="text-base"></iconify-icon>
+        <span class="font-medium">工作台</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:briefcase-outline" class="text-base"></iconify-icon>
+        <span>案件管理</span>
+        <span class="ml-auto bg-warning text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">3</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:account-multiple-outline" class="text-base"></iconify-icon>
+        <span>客户管理</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:calendar-month-outline" class="text-base"></iconify-icon>
+        <span>日程中心</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:file-document-multiple-outline" class="text-base"></iconify-icon>
+        <span>文书中心</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:gavel" class="text-base"></iconify-icon>
+        <span>庭审模拟</span>
+        <span class="ml-auto inline-flex items-center gap-0.5 text-[10px] text-ai">
+          <iconify-icon icon="mdi:sparkles"></iconify-icon> AI
+        </span>
+      </a>
+
+      <div class="px-5 py-1 pt-3 text-[10px] font-medium text-fg-tertiary tracking-wider">知识库</div>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:scale-balance" class="text-base"></iconify-icon>
+        <span>类案检索</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:book-open-variant" class="text-base"></iconify-icon>
+        <span>法规库</span>
+      </a>
+    </nav>
+
+    <!-- 用户区 -->
+    <div class="p-3 border-t border-bg-border flex items-center gap-2">
+      <div class="w-9 h-9 rounded-full bg-brand-tint text-brand flex items-center justify-center font-semibold">王</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium truncate">王律师</div>
+        <div class="text-[10px] text-fg-tertiary">个人版 · 试用 28 天</div>
+      </div>
+      <iconify-icon icon="mdi:cog-outline" class="text-fg-tertiary hover:text-brand cursor-pointer"></iconify-icon>
+    </div>
+  </aside>
+
+  <!-- ============== 主区 ============== -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- 顶部栏 -->
+    <header class="h-14 bg-white border-b border-bg-border px-6 flex items-center gap-4">
+      <h1 class="text-base font-semibold">工作台</h1>
+      <span class="text-xs text-fg-tertiary">2026年6月28日 · 周日</span>
+
+      <div class="flex-1"></div>
+
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:magnify"></iconify-icon> 搜索
+        <kbd class="text-[10px] text-fg-tertiary bg-bg-subtle px-1 rounded ml-1">Ctrl K</kbd>
+      </button>
+
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm relative">
+        <iconify-icon icon="mdi:bell-outline"></iconify-icon>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full"></span>
+      </button>
+
+      <button class="h-9 px-4 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+        <iconify-icon icon="mdi:plus"></iconify-icon>
+        新建案件
+      </button>
+    </header>
+
+    <!-- 内容滚动区 -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- 欢迎语 -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">下午好, 王律师</h2>
+          <p class="text-xs text-fg-tertiary mt-0.5">今天有 3 个日程, 距离最近开庭还有 4 小时 30 分</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+            <iconify-icon icon="mdi:calendar-edit"></iconify-icon> 今日日程
+          </button>
+          <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+            <iconify-icon icon="mdi:file-plus-outline"></iconify-icon> AI 起草文书
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 个统计卡片 -->
+      <div class="grid grid-cols-4 gap-3">
+        <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between hover:shadow-card-hover transition-shadow">
+          <div>
+            <p class="text-xs text-fg-tertiary mb-1">当前案件数</p>
+            <h3 class="text-2xl font-bold text-fg-primary leading-tight">12</h3>
+            <p class="text-[10px] text-success mt-1 flex items-center gap-0.5">
+              <iconify-icon icon="mdi:arrow-up"></iconify-icon> 20% 较上月
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-brand-tint3 rounded-full flex items-center justify-center text-brand">
+            <iconify-icon class="text-xl" icon="mdi:briefcase-outline"></iconify-icon>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between hover:shadow-card-hover transition-shadow">
+          <div>
+            <p class="text-xs text-fg-tertiary mb-1">即将开庭</p>
+            <h3 class="text-2xl font-bold text-fg-primary leading-tight">3</h3>
+            <p class="text-[10px] text-danger mt-1 flex items-center gap-0.5">
+              <iconify-icon icon="mdi:calendar-alert"></iconify-icon> 最近：6月28日 15:00
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-danger-tint rounded-full flex items-center justify-center text-danger">
+            <iconify-icon class="text-xl" icon="mdi:gavel"></iconify-icon>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between hover:shadow-card-hover transition-shadow">
+          <div>
+            <p class="text-xs text-fg-tertiary mb-1">待处理案件</p>
+            <h3 class="text-2xl font-bold text-fg-primary leading-tight">5</h3>
+            <p class="text-[10px] text-warning mt-1 flex items-center gap-0.5">
+              <iconify-icon icon="mdi:clock-outline"></iconify-icon> 3 份即将超期
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-warning-tint rounded-full flex items-center justify-center text-warning">
+            <iconify-icon class="text-xl" icon="mdi:file-clock-outline"></iconify-icon>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-md shadow-card p-4 flex items-center justify-between hover:shadow-card-hover transition-shadow">
+          <div>
+            <p class="text-xs text-fg-tertiary mb-1">已完结案件</p>
+            <h3 class="text-2xl font-bold text-fg-primary leading-tight">36</h3>
+            <p class="text-[10px] text-success mt-1 flex items-center gap-0.5">
+              <iconify-icon icon="mdi:check-circle"></iconify-icon> 全部归档完成
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-success-tint rounded-full flex items-center justify-center text-success">
+            <iconify-icon class="text-xl" icon="mdi:archive-check-outline"></iconify-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主内容区: 7+5 -->
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- 左 7: 今日日程 + 待办 -->
+        <div class="col-span-7 space-y-4">
+
+          <!-- 今日日程 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:calendar-text-outline"></iconify-icon>
+                今日日程
+                <span class="bg-brand text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1.5">5</span>
+              </h4>
+              <a href="#" class="text-xs text-brand hover:underline">查看全部 →</a>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <!-- 日程项 1 -->
+              <div class="px-4 py-3 flex items-start gap-3 hover:bg-brand-tint3 transition-colors cursor-pointer">
+                <div class="w-1 self-stretch bg-danger rounded-full"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-semibold text-danger">15:00</span>
+                    <span class="text-xs px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">开庭</span>
+                    <span class="text-[10px] text-fg-tertiary">(2026)京0105民初1234号</span>
+                  </div>
+                  <p class="text-sm font-medium mt-1">张某诉李某房屋买卖合同纠纷 — 北京市朝阳区人民法院 第三法庭</p>
+                  <p class="text-xs text-fg-tertiary mt-0.5">距离开庭 4 小时 30 分 · 建议提前 1 小时到达</p>
+                </div>
+                <button class="text-fg-tertiary hover:text-brand">
+                  <iconify-icon icon="mdi:dots-horizontal"></iconify-icon>
+                </button>
+              </div>
+
+              <!-- 日程项 2 -->
+              <div class="px-4 py-3 flex items-start gap-3 hover:bg-brand-tint3 transition-colors cursor-pointer">
+                <div class="w-1 self-stretch bg-warning rounded-full"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-semibold text-warning">17:30</span>
+                    <span class="text-xs px-1.5 py-0.5 bg-warning-tint text-warning rounded-sm">客户会面</span>
+                  </div>
+                  <p class="text-sm font-medium mt-1">与陈女士沟通离婚案件财产分割方案</p>
+                  <p class="text-xs text-fg-tertiary mt-0.5">星耀律师事务所 · 3 楼会议室</p>
+                </div>
+              </div>
+
+              <!-- 日程项 3 -->
+              <div class="px-4 py-3 flex items-start gap-3 hover:bg-brand-tint3 transition-colors cursor-pointer">
+                <div class="w-1 self-stretch bg-brand rounded-full"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-semibold text-brand">20:00</span>
+                    <span class="text-xs px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">截止提醒</span>
+                    <span class="inline-flex items-center gap-0.5 text-[10px] text-ai">
+                      <iconify-icon icon="mdi:sparkles"></iconify-icon> 自动
+                    </span>
+                  </div>
+                  <p class="text-sm font-medium mt-1">证据目录提交截止 — 王某民间借贷案</p>
+                  <p class="text-xs text-fg-tertiary mt-0.5">距截止还有 8 小时 · 已完成 70%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 待办 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:clipboard-check-outline"></iconify-icon>
+                待办事项
+                <span class="bg-warning text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1.5">8</span>
+              </h4>
+              <button class="text-xs text-brand hover:underline">+ 新建待办</button>
+            </div>
+            <div class="p-2 space-y-1">
+              <div class="flex items-center gap-3 px-2 py-2 hover:bg-brand-tint3 rounded transition-colors cursor-pointer">
+                <iconify-icon icon="mdi:checkbox-blank-circle-outline" class="text-fg-tertiary text-lg"></iconify-icon>
+                <span class="flex-1 text-sm">审阅张某房屋买卖合同起诉状草稿</span>
+                <span class="text-[10px] text-danger font-medium">今天</span>
+              </div>
+              <div class="flex items-center gap-3 px-2 py-2 hover:bg-brand-tint3 rounded transition-colors cursor-pointer">
+                <iconify-icon icon="mdi:checkbox-blank-circle-outline" class="text-fg-tertiary text-lg"></iconify-icon>
+                <span class="flex-1 text-sm">联系陈女士确认财产清单补充材料</span>
+                <span class="text-[10px] text-warning font-medium">明天</span>
+              </div>
+              <div class="flex items-center gap-3 px-2 py-2 hover:bg-brand-tint3 rounded transition-colors cursor-pointer line-through opacity-60">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-lg"></iconify-icon>
+                <span class="flex-1 text-sm">上传王某民间借贷案证据材料</span>
+                <span class="text-[10px] text-fg-tertiary">已完成</span>
+              </div>
+              <div class="flex items-center gap-3 px-2 py-2 hover:bg-brand-tint3 rounded transition-colors cursor-pointer">
+                <iconify-icon icon="mdi:checkbox-blank-circle-outline" class="text-fg-tertiary text-lg"></iconify-icon>
+                <span class="flex-1 text-sm">准备明日开庭质证提纲</span>
+                <span class="inline-flex items-center gap-0.5 text-[10px] text-ai">
+                  <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 辅助
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右 5: AI 助手 + 最近案件 -->
+        <div class="col-span-5 space-y-4">
+
+          <!-- AI 助手入口 -->
+          <div class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-md bg-ai flex items-center justify-center text-white">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-semibold">元枢 AI 助手</div>
+                <div class="text-[10px] text-fg-tertiary">基于本案上下文 · 5 大步骤全覆盖</div>
+              </div>
+            </div>
+            <div class="bg-white/80 rounded-md p-3 mb-2 text-xs">
+              <p class="text-fg-secondary">试试问:</p>
+              <div class="mt-1.5 space-y-1">
+                <div class="px-2 py-1 bg-brand-tint3 hover:bg-brand-tint rounded cursor-pointer text-fg-primary">"为张某案起草一份证据清单"</div>
+                <div class="px-2 py-1 bg-brand-tint3 hover:bg-brand-tint rounded cursor-pointer text-fg-primary">"明天的开庭有什么注意事项?"</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-md border border-bg-border px-3 py-2">
+              <iconify-icon icon="mdi:message-outline" class="text-fg-tertiary"></iconify-icon>
+              <span class="flex-1 text-xs text-fg-tertiary">向 AI 提问...</span>
+              <kbd class="text-[10px] text-fg-tertiary bg-bg-subtle px-1 rounded">Ctrl Space</kbd>
+            </div>
+          </div>
+
+          <!-- 最近案件 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:briefcase-clock-outline"></iconify-icon>
+                最近案件
+              </h4>
+              <a href="#" class="text-xs text-brand hover:underline">查看全部 →</a>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate">张某诉李某房屋买卖合同纠纷</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">紧急</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>民商事</span><span>·</span>
+                  <span>开庭准备</span><span>·</span>
+                  <span>2 小时前</span>
+                </div>
+              </div>
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate">陈女士离婚财产分割</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded-sm">进行中</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>婚姻家事</span><span>·</span>
+                  <span>委托手续</span><span>·</span>
+                  <span>昨天</span>
+                </div>
+              </div>
+              <div class="px-4 py-3 hover:bg-brand-tint3 cursor-pointer transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium truncate">王某民间借贷纠纷</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm">已立案</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+                  <span>民间借贷</span><span>·</span>
+                  <span>立案预审</span><span>·</span>
+                  <span>3 天前</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷入口 -->
+          <div class="bg-white rounded-md shadow-card p-3">
+            <h4 class="font-semibold text-sm mb-2 px-1">快捷入口</h4>
+            <div class="grid grid-cols-4 gap-2">
+              <button class="flex flex-col items-center gap-1 p-2 hover:bg-brand-tint rounded transition-colors">
+                <iconify-icon class="text-xl text-brand" icon="mdi:file-document-plus-outline"></iconify-icon>
+                <span class="text-[10px] text-fg-secondary">起草文书</span>
+              </button>
+              <button class="flex flex-col items-center gap-1 p-2 hover:bg-brand-tint rounded transition-colors">
+                <iconify-icon class="text-xl text-brand" icon="mdi:scale-balance"></iconify-icon>
+                <span class="text-[10px] text-fg-secondary">类案检索</span>
+              </button>
+              <button class="flex flex-col items-center gap-1 p-2 hover:bg-brand-tint rounded transition-colors">
+                <iconify-icon class="text-xl text-brand" icon="mdi:upload-outline"></iconify-icon>
+                <span class="text-[10px] text-fg-secondary">上传材料</span>
+              </button>
+              <button class="flex flex-col items-center gap-1 p-2 hover:bg-brand-tint rounded transition-colors">
+                <iconify-icon class="text-xl text-ai" icon="mdi:robot-happy-outline"></iconify-icon>
+                <span class="text-[10px] text-fg-secondary">AI 对话</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 设计系统水印 -->
+<div class="fixed bottom-3 right-3 text-[10px] text-fg-tertiary bg-white/80 backdrop-blur px-2 py-1 rounded shadow-sm">
+  LexPrime 设计系统 v1 · workstation.html
+</div>
+
+</body>
+</html>

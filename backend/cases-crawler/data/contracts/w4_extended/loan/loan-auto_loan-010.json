@@ -1,0 +1,147 @@
+{
+  "template_id": "loan-auto_loan-010",
+  "contract_type": "借款合同",
+  "industry": "汽车金融",
+  "title": "汽车消费贷款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "贷款金额",
+      "text": "贷款金额人民币 150 万元。"
+    },
+    {
+      "index": 2,
+      "title": "贷款用途",
+      "text": "用于购买理想Model Y。"
+    },
+    {
+      "index": 3,
+      "title": "贷款期限",
+      "text": "贷款期限 5 年, 共 60 期。"
+    },
+    {
+      "index": 4,
+      "title": "贷款利率",
+      "text": "贷款年利率 15%。"
+    },
+    {
+      "index": 5,
+      "title": "还款方式",
+      "text": "等额本息按里程碑支付, 每月 15 日为还款日。"
+    },
+    {
+      "index": 6,
+      "title": "抵押登记",
+      "text": "乙方应以标的车辆为本合同项下债务提供抵押担保, 并办理抵押登记。"
+    },
+    {
+      "index": 7,
+      "title": "保险义务",
+      "text": "乙方应在贷款存续期间为标的车辆投保交强险及商业险。"
+    },
+    {
+      "index": 8,
+      "title": "违约责任",
+      "text": "乙方连续 3 期或累计 6 期未按期还款的, 贷款人有权宣布贷款提前到期。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 8,
+      "clause_title": "违约责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "抵押登记",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "贷款用途",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "贷款期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "汽车消费贷款合同",
+    "汽车金融常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于汽车消费贷款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "auto_loan",
+    "variant_idx": 10,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

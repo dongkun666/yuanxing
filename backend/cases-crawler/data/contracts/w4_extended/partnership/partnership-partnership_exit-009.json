@@ -1,0 +1,134 @@
+{
+  "template_id": "partnership-partnership_exit-009",
+  "contract_type": "合伙协议",
+  "industry": "退伙",
+  "title": "合伙人退伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "原合伙协议",
+      "text": "原合伙协议编号 LX-195798, 签订日期 2025-12-31。"
+    },
+    {
+      "index": 2,
+      "title": "退伙人",
+      "text": "甲方为原合伙企业合伙人, 现申请退伙。"
+    },
+    {
+      "index": 3,
+      "title": "退伙日期",
+      "text": "退伙日期为 2028-09-28。"
+    },
+    {
+      "index": 4,
+      "title": "财产份额结算",
+      "text": "甲方退伙应分得的财产份额为人民币 500 万元。"
+    },
+    {
+      "index": 5,
+      "title": "债务承担",
+      "text": "甲方对退伙前合伙企业债务按原协议约定承担, 退伙后不再承担新债务。"
+    },
+    {
+      "index": 6,
+      "title": "竞业禁止",
+      "text": "甲方退伙后 5 年 内, 不得在与原合伙企业相竞争的企业任职。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "财产份额结算",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "竞业禁止",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "合伙人退伙协议",
+    "退伙常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于合伙人退伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_exit",
+    "variant_idx": 9,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

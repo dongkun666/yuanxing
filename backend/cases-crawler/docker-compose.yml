@@ -1,0 +1,127 @@
+version: '3.8'
+
+# LexPrime 数据基础设施
+# 启动: docker-compose up -d
+# 停止: docker-compose down
+# 重置 (删数据): docker-compose down -v
+
+services:
+  # ====== PostgreSQL (主存储) ======
+  postgres:
+    image: postgres:16-alpine
+    container_name: lexprime-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lexprime}
+      POSTGRES_USER: ${POSTGRES_USER:-lexprime}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lexprime_dev_pwd}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command: ["postgres", "-c", "max_connections=200", "-c", "shared_buffers=512MB"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lexprime}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ====== Elasticsearch (全文检索) ======
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+    container_name: lexprime-elasticsearch
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: true
+      ELASTIC_PASSWORD: ${ES_PASSWORD:-elastic_dev_pwd}
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    ports:
+      - "${ES_PORT:-9200}:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./db/elasticsearch_indices.json:/usr/share/elasticsearch/config/indices.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:${ES_PASSWORD:-elastic_dev_pwd} http://localhost:9200/_cluster/health | grep -q '\"status\":\"\\(green\\|yellow\\)\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  # ====== Neo4j (图数据库 - 股权穿透) ======
+  neo4j:
+    image: neo4j:5.25-community
+    container_name: lexprime-neo4j
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-neo4j_dev_pwd}
+      NEO4J_PLUGINS: '[]'
+      NEO4J_dbms_memory_heap_max__size: 1G
+      NEO4J_dbms_memory_pagecache_size: 512M
+    ports:
+      - "7474:7474"  # HTTP
+      - "${NEO4J_PORT:-7687}:7687"  # Bolt
+    volumes:
+      - neo4j_data:/data
+      - ./db/neo4j_constraints.cypher:/var/lib/neo4j/import/constraints.cypher:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:7474 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ====== Kibana (ES 可视化 - 可选) ======
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.1
+    container_name: lexprime-kibana
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD:-kibana_dev_pwd}
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    profiles:
+      - with-kibana  # 默认不启动, 需要时: docker-compose --profile with-kibana up
+
+  # ====== Neo4j Browser (可选) ======
+  # Neo4j 5.x 自带浏览器, 访问 http://localhost:7474
+
+  # ====== API 服务 (FastAPI) ======
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lexprime-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    volumes:
+      - ./api:/app/api:ro
+      - ./core:/app/core:ro
+      - ./logs:/app/logs
+    command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  postgres_data:
+    driver: local
+  es_data:
+    driver: local
+  neo4j_data:
+    driver: local

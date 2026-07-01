@@ -1,0 +1,143 @@
+{
+  "template_id": "loan-consumer_loan_installment-007",
+  "contract_type": "借款合同",
+  "industry": "消费金融",
+  "title": "消费分期贷款合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "贷款金额",
+      "text": "贷款金额人民币 8 万元。"
+    },
+    {
+      "index": 2,
+      "title": "贷款用途",
+      "text": "用于购买技术升级, 不得用于其他用途。"
+    },
+    {
+      "index": 3,
+      "title": "贷款期限与期数",
+      "text": "贷款期限 10 年, 共 120 期, 每月为一期。"
+    },
+    {
+      "index": 4,
+      "title": "贷款利率与 IRR",
+      "text": "贷款年利率 15%, IRR 不超过 36%。"
+    },
+    {
+      "index": 5,
+      "title": "还款方式",
+      "text": "等额本息预付 30% + 验收 70%, 每月 15 日为还款日。"
+    },
+    {
+      "index": 6,
+      "title": "提前还款",
+      "text": "借款人可提前还款, 但应支付未结清本金的 3%作为补偿。"
+    },
+    {
+      "index": 7,
+      "title": "逾期违约",
+      "text": "逾期按月 1%计收罚息, 并按1000 元收取一次性违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "提前还款",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "逾期违约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "贷款金额",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议增加邮件 / 签收 / 第三方见证等证据保全机制。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "贷款期限与期数",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "消费分期贷款合同",
+    "消费金融常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于消费分期贷款合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "consumer_loan_installment",
+    "variant_idx": 7,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

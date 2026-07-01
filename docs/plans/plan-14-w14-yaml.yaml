@@ -1,0 +1,216 @@
+version: 1
+plan:
+  name: "LexPrime Phase 4 Week 14: 7/26 启动仪式 runbook + 7/29 付费转化 runbook + 7/23 cron 触发"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 2
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: launch-execute-726
+    title: "7/26 公测启动仪式 runbook final (主持稿 + 嘉宾流程 + 物料 + 应急)"
+    prompt: |
+      7/26 启动仪式当天的执行落地 (W13 deferred).
+
+      必读文档:
+      - W11 C1 commit 4975d7e (launch-runbook v2 535 行)
+      - W11 C1 commit 4910305 (5 律师付费触发 v1.0)
+      - W10 B1 commit 0df6a74 (60min 启动仪式流程)
+      - W10 B1 commit ce98f64 (物料清单 + 5 事件业务漏斗)
+      - docs/marketing/first-paid-triggers.md (5 律师转化路径)
+      - docs/marketing/launch-runbook-2026-07-26.md (W11 C1 v2 主持稿)
+      - W12 final report (plan-12-w12-final-report.md)
+      - W13 final report (plan-13-w13-final-report.md) - 7/26 倒计时表
+      - templates/views/founding/index.html (招募页 6 模块, W11 B2 commit a99e941)
+      - templates/views/dashboard/index.html (dashboard 7 指标, W13 commit c62877c)
+
+      W14 launch-execute-726 工作范围:
+
+      1. **执行运行手册 final** (docs/marketing/launch-runbook-final-2026-07-26.md):
+         - 覆盖 W11 v2, 加实测链接 (招募页 /founding, dashboard /dashboard) + 应急联系人电话 (总指挥 + 5 律师)
+         - 主持人: 总指挥
+         - 嘉宾: L1 单飞 + L2 小所合伙 + L3 小所婚姻 + L4 中所合伙 + L5 企业法务
+         - 时间节点:
+           * 09:00 招募页正式上线确认 (templates/views/founding/index.html)
+           * 09:00-13:00 律师签到 + 物料分发 (邀请函 + 招募页 + dashboard + 创始群二维码)
+           * 14:00-17:00 启动仪式 (60min 流程 + 茶歇)
+             - 14:00 开场 (主持人介绍 + AI 辅助工具声明)
+             - 14:15 5 律师首批扫码仪式 (BETA2025-0116~0120)
+             - 14:30 7 大价值主张 (本地化/智能非替代/越用越懂你/立案前预审/类案只做参考/数据本地化/端到端加密)
+             - 15:00 5 律师对话 (每位 5min 试用体验分享)
+             - 15:30 30 律师付费目标 + 100 创史招募 + 5 渠道漏斗
+             - 16:00 实时 dashboard 演示 (templates/views/dashboard/index.html)
+             - 16:30 答疑 + 互动
+             - 17:00 收尾
+           * 17:00-19:00 律师交流 + 后续扫码 (公测期 day 1-26)
+           * 19:00 收尾
+         - 物料检查清单:
+           * 邀请函 (W10 B1 ce98f64, 邀请码 BETA2025-0116~1115 共 1000+)
+           * 招募页 (templates/views/founding/index.html)
+           * dashboard (templates/views/dashboard/index.html)
+           * 创始群二维码 (W11 B2 a99e941, 6 模块包含)
+         - 应急: 直播卡顿 (备用推流腾讯会议) / 律师缺席 (线上接入) / 物料缺失 (应急联系供应商)
+
+      2. **首批 5 律师扫码落地跟踪** (docs/marketing/first-scan-tracking.md):
+         - 5 律师扫码时间戳 (placeholder, 公测当天填实)
+         - 邀请码 (BETA2025-0116~0120)
+         - 入群状态 (trial_started event)
+         - 公测期 day 1-26 跟进节奏
+
+      3. **招募页 + dashboard 上线确认** (runbook 包含):
+         - templates/views/founding/index.html 路由 /founding + 6 模块 + 6 track event
+         - templates/views/dashboard/index.html 路由 /dashboard + 7 指标 + 3 chart.js
+         - 移动端响应式
+         - 公测当天 09:00 上线检查
+
+      4. **PRD V5.0 § 10 公测期 KPI 验证** (runbook 包含):
+         - 公测期间 KPI: 30 名律师付费 (8/9 截止)
+         - 首批转化率目标 60% (3 / 5)
+         - 创史招募进度 (8/23 截止招满 80 席)
+         - 实时 dashboard 监控
+
+      5. **git commit + push** (1 commit: launch-runbook-final-2026-07-26.md + first-scan-tracking.md)
+
+      Stop when (launch runbook 完成):
+      - launch-runbook-final-2026-07-26.md 完整 (主持 + 嘉宾 + 物料 + 应急)
+      - first-scan-tracking.md 5 律师扫码落地
+      - 招募页 + dashboard 上线确认
+      - PRD V5.0 § 10 公测期间 KPI 验证
+      - git log 显示 1+ launch commit
+
+      严禁:
+      - 不要真发邀请码 (7/26 之前不发, W6 邀请码 API 已落地)
+      - 不要真开创始律师群 (7/26 当天才开)
+      - 不要 fabricate 报告
+    verify_prompt: |
+      独立验证 7/26 启动仪式 runbook final:
+      1. launch-runbook-final-2026-07-26.md 完整 (主持 + 嘉宾 + 物料 + 应急 + 14:00-19:00 节点 + 60min 仪式细节)
+      2. first-scan-tracking.md 5 律师扫码落地 (公测前 placeholder OK, 7/26 当天填实)
+      3. 招募页 templates/views/founding/index.html 路由 + 6 模块
+      4. dashboard templates/views/dashboard/index.html 路由 + 7 指标
+      5. PRD V5.0 § 10 公测期间 KPI 验证
+      6. git log 显示 1+ launch commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: first-paid-triggers-729
+    title: "首批 5 律师 7/29 付费转化 runbook (邮件 + 微信 3 时段 + 朋友圈 9 宫格)"
+    prompt: |
+      按 first-paid-triggers.md 转化路径, 提前 6 天 (7/23) 邮件 + 提前 1 天 (7/28) 微信 + 当天 + 7/30 +1 day 触发 (W13 deferred).
+
+      必读文档:
+      - W11 C1 commit 4910305 (first-paid-triggers.md v1.0 完整)
+      - W11 C1 commit 4975d7e (launch-runbook v2 535 行, 含 5 律师试用到期日)
+      - docs/marketing/first-paid-triggers.md (W11 C1 v1.0)
+      - W11 B2 commit a10aecc (dashboard 4 业务 + 3 创史专属指标)
+      - W14 launch-execute-726 runbook final (7/26 仪式 + 公测期 KPI)
+
+      W14 first-paid-triggers-729 工作范围:
+
+      1. **转化时间线 (W14 实际执行日历)**:
+         - 2026-07-23 (提前 6 天): 邮件触发 (800 字, ¥449/年 创史体验官 + ¥99/月 个人版)
+         - 2026-07-28 (提前 1 天): 微信 1v1 触发 (200 字 × 3 时段: 9-12 / 14-17 / 19-21)
+         - 2026-07-29 (当天, L1/L2/L3 试用到期): 微信 + 电话
+         - 2026-07-30 (+1 day): 朋友圈 9 宫格推荐触发
+         - 2026-08-25 (L4/L5 试用到期): 同样触发 (W14 后 W15 重跑)
+
+      2. **转化路径脚本** (docs/marketing/first-paid-triggers-runbook.md):
+         - 邮件模板 (按 first-paid-triggers.md v1.0):
+           * subject: "您的 LexPrime 试用即将到期 - 创史体验官特别优惠"
+           * 800 字正文: 5 大价值主张 + 公测期 7/26-8/9 + 创史体验官 ¥449/年 5 折
+           * CTA 按钮: 立即升级创史体验官 / 继续个人版 ¥99/月
+         - 微信话术 (3 时段):
+           * 9-12 段 (晨间提醒): "早上好, 您的 LexPrime 试用今天到期..."
+           * 14-17 段 (午后跟进): "下午好, 想问下您对 LexPrime 体验如何..."
+           * 19-21 段 (晚间最终): "晚上好, 创史体验官名额剩 80 席, 5 折优惠今晚截止..."
+         - 朋友圈 9 宫格文案 (公测期 9 张律师好评截图):
+           * 第 1-3 张: 5 律师试用体验截图
+           * 第 4-6 张: dashboard 7 指标截图
+           * 第 7-9 张: 招募页 6 模块 + 创始群截图
+         - 朋友推荐触发 (创始群内互推): 5 律师每人推 3 名朋友 = 15 名新律师
+
+      3. **跟踪指标** (docs/marketing/dashboard-paid-triggers.md):
+         - 触达率: 100% (5/5 律师邮件 + 微信 + 朋友圈都触达)
+         - 转化率目标: 60% (3/5 律师付费)
+         - 营收目标: 1096 元 (3 × ¥449 创史 或 3 × ¥99/月)
+         - 公测期 7/26-8/9 期间 25 名新律师复制扩散 (60% 转化, 8220 元营收)
+         - dashboard-paid-triggers.md 加 4 指标 (触达率 + 转化率 + 营收 + 公测期 25 名律师)
+
+      4. **应急场景** (runbook 包含):
+         - 律师拒绝付费: 提供 ¥99/月 个人版备选 (W11 v0.7.4 § 11.6.5)
+         - 企业版要求: 转 lex-bd BD 流程 (W12 PRD § 11.6.7)
+         - 退款要求: 7 天无理由退款 (W12 PRD § 11.6.8)
+         - Stripe webhook 故障: 转账手动核对
+
+      5. **cron 触发脚本 setup** (scripts/trigger-paid-email-723.sh 或 .py):
+         - 7/23 09:00 自动 fire 邮件 (Mavis cron self 模式)
+         - 5 律师邮箱地址 placeholder (公测前填实)
+         - 邮件内容从 first-paid-triggers-runbook.md 读取
+         - 发送结果写到 dashboard-paid-triggers.md (触达率 log)
+
+      6. **git commit + push** (1 commit: runbook + tracking dashboard + 应急备案 + cron 脚本)
+
+      Stop when (triggers runbook 完成):
+      - first-paid-triggers-runbook.md 完整 (邮件 + 微信 3 时段 + 朋友圈 9 宫格 + 朋友推荐)
+      - dashboard-paid-triggers.md 4 指标
+      - 4 应急场景备案
+      - 7/23 cron self 脚本 setup (scripts/trigger-paid-email-723.sh)
+      - git log 显示 1+ triggers commit
+
+      严禁:
+      - 不要真发邮件/微信 (公测期 day 7/23 才发, W14 只准备 runbook + cron 脚本)
+      - 不要 fabricate 报告
+    verify_prompt: |
+      独立验证 5 律师 7/29 付费转化 runbook:
+      1. first-paid-triggers-runbook.md 完整 (邮件 + 微信 3 时段 + 朋友圈 9 宫格 + 朋友推荐)
+      2. dashboard-paid-triggers.md 4 指标 (触达率 + 转化率 + 营收 + 公测期 25 名律师)
+      3. 4 应急场景备案 (拒绝 / 企业版 / 退款 / Stripe webhook)
+      4. 7/23 cron self 脚本 setup (scripts/trigger-paid-email-723.sh)
+      5. git log 显示 1+ triggers commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: w14-integration
+    title: "W14 集成验证 (公测 7/26 + 7/29 转化就绪 + 7/23 cron 触发 setup)"
+    prompt: |
+      验证 W14 2 task 集成:
+      1. launch-execute-726 runbook (lex-bd)
+      2. first-paid-triggers-729 runbook (lex-bd)
+      3. 1 agent deliverable 无冲突
+      4. 1 agent 全部 git commit + push
+      5. 公测首批转化就绪 (招募页 + dashboard + 7/26 runbook + 7/29 runbook + 7/23 cron 脚本)
+      6. 8/9 前 30 名律师转化付费目标 → 8 月底 50 律师付费 / 月 ¥5 万+ ARR
+      7. W15 建议 (一句话: 8/25 L4/L5 律师转化触发 + 8 月底冲刺 50 律师付费 + Skill 3 文书迭代 + 早期用户拉新 1000+)
+
+      输出 W14 总结 + W15 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - launch-execute-726
+      - first-paid-triggers-729
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

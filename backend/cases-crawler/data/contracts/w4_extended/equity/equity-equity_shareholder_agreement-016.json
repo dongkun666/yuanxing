@@ -1,0 +1,136 @@
+{
+  "template_id": "equity-equity_shareholder_agreement-016",
+  "contract_type": "股权合同",
+  "industry": "股东协议",
+  "title": "股东协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "股东",
+      "text": "甲方、乙方、丙方为目标公司股东, 合计持股 100%。"
+    },
+    {
+      "index": 2,
+      "title": "股权结构",
+      "text": "甲方持股 1%, 乙方持股 60%, 丙方持股剩余份额。"
+    },
+    {
+      "index": 3,
+      "title": "股东会",
+      "text": "股东会为最高权力机构, 特别决议事项需经代表 2/3 以上表决权的股东通过。"
+    },
+    {
+      "index": 4,
+      "title": "董事会",
+      "text": "董事会由 3-5 名董事组成, 股东按持股比例推荐董事候选人。"
+    },
+    {
+      "index": 5,
+      "title": "股权转让",
+      "text": "股东向股东以外的人转让股权的, 其他股东在同等条件下有优先购买权。"
+    },
+    {
+      "index": 6,
+      "title": "反稀释",
+      "text": "目标公司后续融资的, 任何股东不得被以低于本轮估值稀释持股比例。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "解除权失衡"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "反稀释",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "股权结构",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "股东",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "董事会",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股东协议",
+    "股东协议常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股东协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_shareholder_agreement",
+    "variant_idx": 16,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

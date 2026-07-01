@@ -1,0 +1,281 @@
+version: 1
+plan:
+  name: "LexPrime Phase 6 Week 25: Skill 3 v3.0 retry 拆小 + 3 agent ≥ 80% retry + Phase 6.1 Marketplace 启动"
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: skill3-v3-prd-only
+    title: "2/1 Skill 3 v3.0 PRD-only retry (W24 deferred 1 retry, 拆小)"
+    prompt: |
+      W24 skill3-v3-launch deferred (producer FAST BATCH 但 deliverable_bytes=0). W25 retry, 拆小.
+
+      必读文档:
+      - W24 final report (skill3-v3-launch producer idle W24 新教训)
+      - W24 phase5-5-mid-month commit 4d2efaf (1/15 中段 W23 done)
+      - W23 phase5-5-celebration commit 432a073 (Skill 3 v2.0 全面 + Skill 3 v3.0 计划 1/15+2/1+3/1)
+      - W21 skill3-full-rollout commit 6929cc1 (Skill 3 v2.0 律师函)
+      - W19 skill3-gradual commit 2cc2d3a (Skill 3 v2.0 35 测试)
+      - W15 e3f0940 + W12 829d25c + W9 5d8ecdc (Skill 3 文书)
+
+      W25 skill3-v3-prd-only 工作范围 (2/1 启动, lex-ai):
+
+      **做 (本次只做 PRD, 不做测试 + rollout + 截图)**:
+      1. docs/skills/contract-review/skill3-v3-prd-2027-02-01.md 落地 (~30-50KB):
+         - 多端 (移动 + iPad) React Native + Expo + 复用 W19 React 18 脚手架 + Electron
+         - 多语言 (中英) react-i18next + 律师函双语模板 (中/英 2 套)
+         - 多律所模板 (40+ 律所): 列出 40+ 律所清单 (含中伦/金杜/君合 + 30+ 大所)
+         - PRD 结构: 目标/范围/功能/技术栈/数据流/测试/部署/9 章
+      2. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      3. 1 commit + push: 'docs(skill3): W25 Skill 3 v3.0 PRD 多端+多语言+40+ 律所模板 (W24 deferred retry PRD-only, full rollout+tests deferred W26)'
+
+      **不做 (deferred W26)**:
+      - skill3-v3-launch-2027-02-01.md (rollout 计划)
+      - 35 测试 + 40 律所模板测试 + 5 移动端测试
+      - 移动端 + iPad + 桌面 playwright 截图
+      - pytest + ruff + playwright
+      - W21 v2.0 代码 modifications
+
+      Stop when (PRD-only 完成):
+      - skill3-v3-prd-2027-02-01.md 落地 ~30-50KB
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Skill 3 v3.0 PRD commit
+
+      **严禁**:
+      - 不要同时做测试 + rollout + 截图 (W24 producer idle 反例, W25 单 task 拆小)
+      - 不要碰 W21 6929cc1 v2.0 代码
+      - 不要 fabricate 2/1 数据
+    verify_prompt: |
+      独立验证 PRD-only:
+      1. skill3-v3-prd-2027-02-01.md 落地 (~30-50KB, 9 章节目标/范围/功能/技术栈/数据流/测试/部署)
+      2. 多端 + 多语言 + 40+ 律所模板 3 大方向完整
+      3. **VERDICT: PASS 大写** 顶部标记
+      4. 严守 fabricate 原则 (2/1 距今 216 天)
+      5. git log 1+ Skill 3 v3.0 PRD commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-ai
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill3-v3-tests-only
+    title: "2/1 Skill 3 v3.0 测试套件 retry (W24 deferred 1 retry, 单独跑, 跟 PRD 并行)"
+    prompt: |
+      W24 skill3-v3-launch tests retry, 单独跑 (跟 skill3-v3-prd-only 并行).
+
+      W25 skill3-v3-tests-only 工作范围 (2/1 启动, lex-ai, max_concurrency=2 跟 PRD 并行):
+
+      **做 (本次只做测试, 不做 PRD + 截图 + rollout)**:
+      1. tests/skill3-v3/test_v3.py (~30-50 测试):
+         - 35 测试基线 (复用 W19 35 测试, 落地 additivity test 套件)
+         - 5 个 v3.0 multi-endpoint 测试 (移动端 mock)
+         - 5 个 v3.0 multi-language 测试 (中/英 双语 mock)
+         - 5 个 v3.0 multi-firm-template 测试 (mock 40+ 律所)
+      2. pytest pass + ruff 0
+      3. docs/skills/contract-review/skill3-v3-tests-2027-02-01.md (测试报告 + 覆盖率统计)
+      4. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      5. 1 commit + push: 'test(skill3): W25 Skill 3 v3.0 测试套件 50 测试 (35 baseline + 15 v3.0, W24 deferred retry tests-only, full 40 templates + 5 viewport W26 deferred)'
+
+      **不做 (deferred W26)**:
+      - PRD 内容 (W25 skill3-v3-prd-only 跑)
+      - rollout 计划
+      - 完整 40 律所模板独立测试 (40 个独立模板落地)
+      - 5 移动端 viewport 完整测试 (5 不同 viewport)
+      - iPad screenshot
+
+      Stop when (tests-only 完成):
+      - tests/skill3-v3/test_v3.py 50 测试落地 + pytest pass + ruff 0
+      - skill3-v3-tests-2027-02-01.md 测试报告落地
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Skill 3 v3.0 tests commit
+
+      **严禁**:
+      - 不要写 PRD (W25 skill3-v3-prd-only 跑, 不要竞争)
+      - 不要碰 W21 6929cc1 v2.0 代码
+    verify_prompt: |
+      独立验证 tests-only:
+      1. tests/skill3-v3/test_v3.py 50 测试落地
+      2. 35 baseline + 5 multi-endpoint + 5 multi-language + 5 multi-firm-template 完整
+      3. pytest pass + ruff 0
+      4. skill3-v3-tests-2027-02-01.md 测试报告
+      5. **VERDICT: PASS 大写** 顶部标记
+      6. git log 1+ Skill 3 v3.0 tests commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-ai
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: agent-task-validation-2-retry
+    title: "2/1 3 agent ≥ 80% 验收 retry (W24 deferred 1 retry)"
+    prompt: |
+      W24 agent-task-validation-2 deferred (max ready 未启动). W25 retry.
+
+      必读文档:
+      - W23 phase5-5-celebration commit 432a073 (3 agent 上岗 60% 验收 + 培训 3 周)
+      - W21 agent-recruit-3 commit 0c8f01f (3 agent 招聘三件套 + 30 简历 + 5 维度评分)
+      - C:\Users\42081\.mavis\agents\lex-design + lex-coder-v2 + lex-data-v2
+
+      W25 agent-task-validation-2-retry 工作范围 (2/1 启动, Mavis + lex-bd):
+
+      1. **2/1 3 agent ≥ 80% 验收** (docs/recruit/agent-task-validation-2-2027-02-01.md):
+         - UI 设计师 (lex-design): 12 个小 task (1/1-2/1 累计) 视觉 + icon + 配色 + Skill 3 v3.0 设计支持
+         - 前端工程师 (lex-coder-v2): 12 个小 task 端到端组件 + 测试 + Skill 3 v3.0 多端移动端
+         - 数据工程师 (lex-data-v2): 12 个小 task 数据看板 + SQL + 索引 + 备份
+         - 1/1 验收 60% (W23) → 2/1 验收 ≥ 80% (W25 retry)
+         - 3/1 期望 ≥ 90% (W26 接力)
+
+      2. **2/1 3 agent 培训强化** (W26 准备):
+         - 2/1-2/15 培训 2 周
+         - 复盘 1/1-2/1 数据
+         - 培训内容: Phase 6 路线 + Phase 6.1 Marketplace + AI 谈判
+         - 3 agent 派发 Phase 6.1 任务
+
+      3. **VERDICT 标记规范**: deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      4. **git commit + push** (1 commit: 2/1 3 agent ≥ 80% 验收 + 培训强化)
+
+      Stop when:
+      - agent-task-validation-2-2027-02-01.md 完整 (3 agent × 12 task ≥ 80%)
+      - 培训强化计划完整
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ agent-validation commit
+
+      **严禁**:
+      - 不要 fabricate 2/1 数据
+      - forward-execute placeholder 模式 (数字全部 [2/1 实测填实])
+    verify_prompt: |
+      独立验证 2/1 3 agent ≥ 80% 验收:
+      1. agent-task-validation-2-2027-02-01.md 完整
+      2. 培训强化计划 2 周
+      3. **VERDICT: PASS 大写** 顶部标记
+      4. 严守 fabricate 原则 (2/1 距今 216 天)
+      5. git log 1+ agent-validation commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: phase6-1-launch
+    title: "1/16 Phase 6.1 Marketplace 启动 (W25 新启动)"
+    prompt: |
+      1/16 Phase 6.1 Marketplace 启动 (W25 新启动).
+
+      必读文档:
+      - W24 phase5-5-mid-month commit 4d2efaf (1/15 中段 + Phase 6 准备 + W25 计划)
+      - W23 phase5-cross-year-summary commit a9e5fdd (1/15 跨年 + Phase 6+7 路线)
+      - W23 phase5-5-celebration commit 432a073 (1/1 公测半年 + Phase 5.5 跨年启动 + 5 大新方向)
+      - W22 phase5-rust-build-fix commit 2792bd0 (Rust 1.83 LTS + 5x perf)
+      - W19 phase5-react commit 83d4695 (React 18 + TS 重构)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W11 PRD V5.0 § 9-12 商业模式 + 公测 KPI + 法务自检
+
+      W25 phase6-1-launch 工作范围 (1/16 启动, Mavis + lex-coder):
+
+      1. **1/16 Phase 6.1 Marketplace PRD** (docs/phase6/phase6-1-marketplace-prd-2027-01-16.md):
+         - Phase 6.1 主题: 律师 Marketplace + AI 谈判
+         - 1/16-3/31 共 12 周 6 plan
+         - 6 大方向 (跟 W23 Phase 5.5 5 大方向 + 1 增量):
+           1. 律师 Marketplace: 律师 ↔ 律师 (转介绍 + 协同办案) (W25-W28)
+           2. Skill 4 AI 谈判第一版 (W25)
+           3. 7 大模块 (W26: Skill 4 落地)
+           4. 个人版 + 企业版 + 律所版 (¥99,999 起) (W27)
+           5. 200 律所 + 800 律师 (H2 2027) (W28)
+           6. AI 辅助 + 律师 Marketplace + 法律电商化 (W28)
+         - 目标: 500 律师付费 + 50 律所签约 + ¥100 万 ARR (Phase 6 完结 6/30)
+
+      2. **1/16 Skill 4 AI 谈判第一版** (docs/skills/negotiation/skill4-v1-prd-2027-01-16.md):
+         - Skill 4 PRD: AI 辅助谈判 (协助律师准备谈判策略 + 模拟对方 + 风险预警)
+         - Skill 4 v1 脚手架: 谈判策略生成器 (LLM 调用 + 风险标注)
+         - Skill 4 测试: 10 个 baseline 谈判场景测试
+         - 复用 W12 829d25c doc_workflow 状态机 + W22 2792bd0 Rust 5x perf
+
+      3. **1/16 W26-W28 路线**:
+         - W26 (1/16-1/31): Skill 4 v1 + Phase 6.1 backend Marketplace API
+         - W27 (2/1-2/15): 个人版 + 企业版 + 律所版定价 + 50 律所意向
+         - W28 (2/16-2/28): 200 律师滚 + Phase 6.1 阶段验收
+
+      4. **VERDICT 标记规范**: deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      5. **git commit + push** (1 commit: 1/16 Phase 6.1 Marketplace + Skill 4 v1 启动)
+
+      Stop when (Phase 6.1 启动完成):
+      - phase6-1-marketplace-prd-2027-01-16.md 完整 (~50-80KB)
+      - skill4-v1-prd-2027-01-16.md 完整 (~30-50KB)
+      - W26-W28 路线完整
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Phase 6.1 commit
+
+      **严禁**:
+      - 不要 fabricate 1/16 数据
+      - 不要碰 PRD V5.0 (Phase 6.1 是增量)
+    verify_prompt: |
+      独立验证 Phase 6.1 Marketplace 启动:
+      1. phase6-1-marketplace-prd-2027-01-16.md 完整 (~50-80KB, 6 大方向 + 12 周 6 plan)
+      2. skill4-v1-prd-2027-01-16.md 完整 (~30-50KB, Skill 4 v1 脚手架 + 10 测试基线)
+      3. W26-W28 路线完整 (3 plan W26-W28 接力)
+      4. **VERDICT: PASS 大写** 顶部标记
+      5. 严守 fabricate 原则 (1/16 距今 200 天)
+      6. git log 1+ Phase 6.1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w25-integration
+    title: "W25 集成验证 (Skill 3 v3.0 retry 拆小 + 3 agent ≥ 80% retry + Phase 6.1 启动)"
+    prompt: |
+      验证 W25 4 task 集成:
+      1. skill3-v3-prd-only (lex-ai) — Skill 3 v3.0 PRD-only (W24 deferred retry PRD-only)
+      2. skill3-v3-tests-only (lex-ai) — Skill 3 v3.0 tests-only 跟 PRD 并行 (max_concurrency=2)
+      3. agent-task-validation-2-retry (lex-bd) — 3 agent ≥ 80% 验收 retry (W24 deferred)
+      4. phase6-1-launch (lex-coder) — 1/16 Phase 6.1 Marketplace + Skill 4 v1 启动
+      5. 4 agent deliverable 无冲突 (lex-ai PRD + lex-ai tests + lex-bd agent + lex-coder phase6)
+      6. 4 agent 全部 git commit + push + 含 'VERDICT: PASS' 大写标记 (W22 + W23 + W24 lesson)
+      7. **严禁 fabricate** (2/1 距今 216 天, 1/16 距今 200 天; 实际数字 forward-execute placeholder 由 owner 实测填实)
+      8. 2/1 Skill 3 v3.0 PRD + tests (拆小并行) + 3 agent ≥ 80% + 1/16 Phase 6.1 Marketplace 启动
+      9. Phase 5.5 完结 → Phase 6 跨年 (W25 完成 = Phase 6 起步)
+      10. W26 建议 (一句话: 2/1-2/15 Skill 4 v1 落地 + Phase 6.1 backend Marketplace API + 3 agent ≥ 90%)
+
+      输出 W25 总结 + W26 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - skill3-v3-prd-only
+      - skill3-v3-tests-only
+      - agent-task-validation-2-retry
+      - phase6-1-launch
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

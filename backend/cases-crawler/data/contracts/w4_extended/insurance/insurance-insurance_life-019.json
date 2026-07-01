@@ -1,0 +1,146 @@
+{
+  "template_id": "insurance-insurance_life-019",
+  "contract_type": "保险合同",
+  "industry": "人身保险",
+  "title": "人身保险合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "投保人",
+      "text": "甲方为投保人。"
+    },
+    {
+      "index": 2,
+      "title": "保险人",
+      "text": "乙方为保险公司。"
+    },
+    {
+      "index": 3,
+      "title": "被保险人",
+      "text": "被保险人为购车。"
+    },
+    {
+      "index": 4,
+      "title": "保险金额",
+      "text": "保险金额人民币 300 万元。"
+    },
+    {
+      "index": 5,
+      "title": "保险责任",
+      "text": "乙方对被保险人身故、伤残、重大疾病等承担保险责任, 详见保险条款。"
+    },
+    {
+      "index": 6,
+      "title": "免责",
+      "text": "乙方对投保人故意杀害被保险人、被保险人故意犯罪等不承担保险责任。"
+    },
+    {
+      "index": 7,
+      "title": "保险费",
+      "text": "保险费人民币 150 万元, 甲方应按年支付。"
+    },
+    {
+      "index": 8,
+      "title": "保险期间",
+      "text": "保险期间 6 个月, 自 2026-11-24 起至 2028-06-09 止。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "免责",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "投保人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "保险人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "保险期间",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "人身保险合同",
+    "人身保险常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于人身保险合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "insurance",
+    "skeleton": "insurance_life",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

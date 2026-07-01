@@ -1,0 +1,123 @@
+<!--
+  W30 Phase 6.1 Marketplace - 转介绍记录
+  复用: W29 1b07d88 backend (POST /referrals) + W15 recruit-1000 5 渠道律师池
+  功能: 已发生 + 进行中 + 待处理 3 类转介绍, 5 状态 timeline, 5% 抽成
+  5 状态: pending → accepted → completed → settled (终态) → cancelled
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto mp-page mp-fade-in" id="view-marketplace-referrals" data-view-source="marketplace/referrals.html">
+
+<!-- ============ 顶部 header ============ -->
+<header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm flex-shrink-0">
+  <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+    <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('marketplace-lawyers')" title="返回 Marketplace 律师">
+      <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+    </button>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-1.5">
+        <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+          <iconify-icon icon="mdi:share-variant" class="text-warning text-lg md:text-xl"></iconify-icon>
+          <span class="truncate">转介绍记录</span>
+        </h1>
+        <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+          <iconify-icon icon="mdi:storefront-outline" class="text-xs"></iconify-icon>
+          <span class="hidden sm:inline">Phase 6.1</span>
+        </span>
+        <span class="text-[10px] text-fg-tertiary flex-shrink-0 hidden md:inline">5% 抽成 + Marketplace 不抽</span>
+      </div>
+      <p class="text-[11px] text-fg-tertiary truncate">律师 A 推荐 → 律师 B 接案 → 客户付费 → 5% 抽成结算 (Marketplace 不参与分账)</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <select id="mp-referrals-status" class="mp-input mp-btn-sm" style="padding: 4px 8px;">
+        <option value="">全部状态</option>
+        <option value="pending">待接</option>
+        <option value="accepted">已接</option>
+        <option value="completed">已完成</option>
+        <option value="settled">已结算</option>
+        <option value="cancelled">已取消</option>
+      </select>
+      <button id="mp-referrals-create-btn" class="mp-btn mp-btn-primary mp-btn-sm">
+        <iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+        <span class="hidden sm:inline">创建转介绍</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 累计统计横幅 ============ -->
+<section class="px-4 md:px-6 py-3 bg-bg-subtle flex-shrink-0">
+  <div id="mp-referrals-timeline" class="max-w-7xl mx-auto"></div>
+</section>
+
+<!-- ============ 转介绍列表 ============ -->
+<main class="flex-1 px-4 md:px-6 py-4 overflow-y-auto">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-sm font-semibold flex items-center gap-2 mb-3">
+      <iconify-icon icon="mdi:format-list-bulleted" class="text-warning"></iconify-icon>
+      转介绍详细记录
+    </h2>
+    <div id="mp-referrals-list" class="mp-fade-in">
+      <div class="mp-loading">
+        <span class="mp-loading-spinner"></span>
+        加载转介绍记录中…
+      </div>
+    </div>
+
+    <!-- 转介绍 5 状态 timeline 视觉说明 -->
+    <div class="bg-white rounded-lg p-4 mt-4 border border-bg-border">
+      <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+        <iconify-icon icon="mdi:timeline-text-outline" class="text-warning"></iconify-icon>
+        转介绍 5 状态 timeline
+      </h3>
+      <div class="mp-timeline">
+        <div class="mp-timeline-item">
+          <span class="mp-timeline-dot active"></span>
+          <div class="mp-timeline-title">待接 (pending)</div>
+          <div class="mp-timeline-meta">推荐人律师 A 创建, 等待律师 B 接案</div>
+        </div>
+        <div class="mp-timeline-item">
+          <span class="mp-timeline-dot"></span>
+          <div class="mp-timeline-title">已接 (accepted)</div>
+          <div class="mp-timeline-meta">律师 B 接案, 进入实际办理阶段</div>
+        </div>
+        <div class="mp-timeline-item">
+          <span class="mp-timeline-dot"></span>
+          <div class="mp-timeline-title">已完成 (completed)</div>
+          <div class="mp-timeline-meta">律师 B 完成案件, 客户付费 ¥X</div>
+        </div>
+        <div class="mp-timeline-item">
+          <span class="mp-timeline-dot"></span>
+          <div class="mp-timeline-title">已结算 (settled, 终态)</div>
+          <div class="mp-timeline-meta">5% 抽成: referrer_commission = ¥X × 5%, Marketplace 不抽成</div>
+        </div>
+        <div class="mp-timeline-item">
+          <span class="mp-timeline-dot cancelled"></span>
+          <div class="mp-timeline-title">已取消 (cancelled)</div>
+          <div class="mp-timeline-meta">任一方取消, 不产生抽成</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 抽成计算说明 -->
+    <div class="bg-white rounded-lg p-4 mt-4 border border-bg-border">
+      <h3 class="text-sm font-semibold mb-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:calculator-variant-outline" class="text-warning"></iconify-icon>
+        转介绍抽成计算 (W28 PRD § 3.2 + § 3.5)
+      </h3>
+      <div class="text-[12px] text-fg-secondary space-y-1 leading-relaxed">
+        <p>• 推荐人 (律师 A): <code class="px-1.5 py-0.5 bg-bg-subtle rounded">referrer_commission = actual_fee × 5%</code></p>
+        <p>• 被推荐律师 (律师 B): <code class="px-1.5 py-0.5 bg-bg-subtle rounded">¥actual_fee × (1 - 5%)</code></p>
+        <p>• Marketplace: <code class="px-1.5 py-0.5 bg-bg-subtle rounded">¥0 (转介绍不抽)</code></p>
+        <p class="text-fg-tertiary text-[11px]">例: 实际收费 ¥200,000 → 律师 A 抽成 ¥10,000, 律师 B 得 ¥190,000, Marketplace 抽 ¥0</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function() {
+    if (typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn.initReferralsView === 'function') {
+        window.MarketplaceFn.initReferralsView();
+    }
+})();
+</script>
+</div>

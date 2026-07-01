@@ -1,0 +1,142 @@
+{
+  "template_id": "equity-equity_trust-018",
+  "contract_type": "股权合同",
+  "industry": "股权信托",
+  "title": "股权信托合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "委托人",
+      "text": "甲方为股权所有人, 拟将其股权设立信托。"
+    },
+    {
+      "index": 2,
+      "title": "受托人",
+      "text": "乙方为信托公司, 担任受托人。"
+    },
+    {
+      "index": 3,
+      "title": "信托财产",
+      "text": "信托财产为目标公司 10% 股权, 价值人民币 50 万元。"
+    },
+    {
+      "index": 4,
+      "title": "信托目的",
+      "text": "信托目的: 教育 (如家族财富传承、员工激励等)。"
+    },
+    {
+      "index": 5,
+      "title": "信托期限",
+      "text": "信托期限 1 个月, 自 2026-12-24 起至 2032-02-26 止。"
+    },
+    {
+      "index": 6,
+      "title": "受益人",
+      "text": "受益人为甲方指定, 详见《信托合同附件》。"
+    },
+    {
+      "index": 7,
+      "title": "受托人义务",
+      "text": "乙方应按信托目的管理、处分信托财产, 履行忠实义务。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由乙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "信托财产",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "受托人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "信托目的",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "委托人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权信托合同",
+    "股权信托常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权信托合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_trust",
+    "variant_idx": 18,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

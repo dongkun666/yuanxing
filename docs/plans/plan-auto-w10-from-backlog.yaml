@@ -1,0 +1,436 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 10 自动调度 (from PRD backlog open P0/P1, 245 ticket)'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+  metadata:
+    generated_by: 'scripts/backlog_to_plan_tasks.py'
+    generated_at: '2026-06-29T13:49:22Z'
+    source: 'prd_backlog WHERE status=open AND priority IN (P0,P1)'
+    ticket_count: 245
+    ticket_distribution:
+      产品: 105
+      其他: 21
+      技术: 49
+      法务: 70
+tasks:
+
+  # Task auto: 产品 backlog 调度 (105 ticket)
+  - id: 'product-w10-auto'
+    title: 'W10 产品 backlog 自动调度 (105 ticket: P0=56, P1=49)'
+    prompt: |
+      W10 A2 自动调度: 从 PRD backlog 拉取 产品 类 open P0/P1 ticket (105 个), assigned_to=lex-pm. 
+
+      必读文档:
+      - docs/plans/plan-auto-w10-from-backlog.yaml (本 plan 的源)
+      - A1 docs/prd/backlog-w8.md (评审反馈原话)
+      - A2 scripts/backlog_to_plan_tasks.py (转换脚本)
+      - W9 plan-09-w9-yaml.yaml 范本 (W8 commit 5cdaabe 模式)
+
+      待办 ticket 清单 (按 P0 优先):
+      | ID | Priority | Owner | Title |
+      | --- | --- | --- | --- |
+      | #1 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #2 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #3 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #4 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #5 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #6 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #7 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #8 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #43 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #44 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #45 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #46 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #47 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #48 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #49 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #50 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #85 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #86 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #87 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #88 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #89 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #90 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #91 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #92 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #127 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #128 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #129 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #130 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #131 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #132 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #133 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #134 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #169 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #170 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #171 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #172 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #173 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #174 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #175 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #176 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #211 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #212 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #213 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #214 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #215 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #216 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #217 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #218 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #253 | P0 | lex-coder | UI 团队协同 (主任派单 + 授薪审查 + 主任审核) |
+      | #254 | P0 | lex-coder | UI 客户友好版 (隐藏法条 + 突出风险 + 客户白话解释) |
+      | #255 | P0 | lex-coder | 批量审查 UI (批量上传 + 批量审查 + 风险汇总 + 仪表盘) |
+      | #256 | P0 | lex-design | 私有化部署 UI (公司 Logo + 主题色 + 审计日志 + SSO + 数据导出 + 私有模型微调) |
+      | #257 | P0 | lex-ai | 跨 Skill 引用 (Skill 1+2 联动: 合同审查 → 类案检索) |
+      | #258 | P0 | lex-ai | 红黄绿灯规则详细定义 (yellow = 存在 major 无 fatal, 边界清晰化) |
+      | #259 | P0 | lex-ai | 风险分级按行业上下文动态调整 (婚姻家事产权归属 = major, IT 产权归属 = advisory) |
+      | #260 | P0 | lex-ai | '建议争取' 改 '建议明确约定' (避免客户误解) |
+      | #9 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #10 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #11 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #12 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #13 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #14 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #15 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #51 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #52 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #53 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #54 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #55 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #56 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #57 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #93 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #94 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #95 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #96 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #97 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #98 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #99 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #135 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #136 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #137 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #138 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #139 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #140 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #141 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #177 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #178 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #179 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #180 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #181 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #182 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #183 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #219 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #220 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #221 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #222 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #223 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #224 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #225 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+      | #261 | P1 | lex-coder | 立场切换 (甲方/乙方/丙方/审查方) |
+      | #262 | P1 | lex-ai | 立场组合 (联合体 / 多方合同 / 担保链) |
+      | #263 | P1 | lex-ai | 模板版本管理 (按行业/标的/复杂度) |
+      | #264 | P1 | lex-coder | 风险驾驶舱自动告警 (邮件/微信) |
+      | #265 | P1 | lex-coder | 跨部门权限管理 (业务部门只读, 法务部读写) |
+      | #266 | P1 | lex-design | § 3.21.4 智能界面适配 (按律师执业画像) |
+      | #267 | P1 | lex-ai | § 3.21.6 合同审查偏好记忆 (严苛度/行业侧重/风险阈值) |
+
+      工作范围:
+      1. 按 ticket 顺序逐一处理 (P0 先, P1 后)
+      2. 每完成 1 ticket 更新 prd_backlog.status = 'done' + updated_at
+      3. blocked > 2 cycle 推进 ticket 标 'deferred' (非 'wontfix', 留 W11 重审)
+      4. 所有 ticket 处理完后, 写 deliverable.md 归档
+
+      不要做:
+      - 不要动不在 ticket 清单的 ticket (避免 scope creep)
+      - 不要改 prd_backlog.priority (本期由 A2 调度, 不重新分级)
+    verify_prompt: |
+      独立验证 W10 产品 backlog 自动调度完成度:
+      1. 全部 105 ticket 状态变 done / deferred (open = 0)
+      2. deliverable.md 落档, 含 ticket id + 完成时间 + 阻塞原因 (如有)
+      3. pytest 100% + ruff 0
+      4. git log 显示 N+ commit (按 ticket 数)
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task auto: 技术 backlog 调度 (49 ticket)
+  - id: 'tech-w10-auto'
+    title: 'W10 技术 backlog 自动调度 (49 ticket: P0=21, P1=28)'
+    prompt: |
+      W10 A2 自动调度: 从 PRD backlog 拉取 技术 类 open P0/P1 ticket (49 个), assigned_to=lex-ai. 
+
+      必读文档:
+      - docs/plans/plan-auto-w10-from-backlog.yaml (本 plan 的源)
+      - A1 docs/prd/backlog-w8.md (评审反馈原话)
+      - A2 scripts/backlog_to_plan_tasks.py (转换脚本)
+      - W9 plan-09-w9-yaml.yaml 范本 (W8 commit 5cdaabe 模式)
+
+      待办 ticket 清单 (按 P0 优先):
+      | ID | Priority | Owner | Title |
+      | --- | --- | --- | --- |
+      | #19 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #20 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #21 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #61 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #62 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #63 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #103 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #104 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #105 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #145 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #146 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #147 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #187 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #188 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #189 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #229 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #230 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #231 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #271 | P0 | lex-ai | OCR 引擎冷启动优化 (PaddleOcrEngine + Tesseract fallback, 冷启动 < 10s |
+      | #272 | P0 | lex-ai | 批量审查支持 PDF/Word/扫描件混合上传 (OCR 集成) |
+      | #273 | P0 | lex-coder | SSO 集成 LDAP/Active Directory (公司账号登录) |
+      | #22 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #23 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #24 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #25 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #64 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #65 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #66 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #67 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #106 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #107 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #108 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #109 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #148 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #149 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #150 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #151 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #190 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #191 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #192 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #193 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #232 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #233 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #234 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #235 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+      | #274 | P1 | lex-coder | 审计日志 IP 地址 + 操作类型 (细化) |
+      | #275 | P1 | lex-ai | 私有模型微调 (公司行业条款 + 历史合同) |
+      | #276 | P1 | lex-ai | W7 PaddleEngine 接入 (兼容 PaddleOCR 2.7 + 3.7 API) |
+      | #277 | P1 | lex-ai | W8 D1 venv312 paddlepaddle 装包 + D2 FTS5 jieba 索引重建 |
+
+      工作范围:
+      1. 按 ticket 顺序逐一处理 (P0 先, P1 后)
+      2. 每完成 1 ticket 更新 prd_backlog.status = 'done' + updated_at
+      3. blocked > 2 cycle 推进 ticket 标 'deferred' (非 'wontfix', 留 W11 重审)
+      4. 所有 ticket 处理完后, 写 deliverable.md 归档
+
+      不要做:
+      - 不要动不在 ticket 清单的 ticket (避免 scope creep)
+      - 不要改 prd_backlog.priority (本期由 A2 调度, 不重新分级)
+    verify_prompt: |
+      独立验证 W10 技术 backlog 自动调度完成度:
+      1. 全部 49 ticket 状态变 done / deferred (open = 0)
+      2. deliverable.md 落档, 含 ticket id + 完成时间 + 阻塞原因 (如有)
+      3. pytest 100% + ruff 0
+      4. git log 显示 N+ commit (按 ticket 数)
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task auto: 法务 backlog 调度 (70 ticket)
+  - id: 'legal-w10-auto'
+    title: 'W10 法务 backlog 自动调度 (70 ticket: P0=35, P1=35)'
+    prompt: |
+      W10 A2 自动调度: 从 PRD backlog 拉取 法务 类 open P0/P1 ticket (70 个), assigned_to=lex-ai. 
+
+      必读文档:
+      - docs/plans/plan-auto-w10-from-backlog.yaml (本 plan 的源)
+      - A1 docs/prd/backlog-w8.md (评审反馈原话)
+      - A2 scripts/backlog_to_plan_tasks.py (转换脚本)
+      - W9 plan-09-w9-yaml.yaml 范本 (W8 commit 5cdaabe 模式)
+
+      待办 ticket 清单 (按 P0 优先):
+      | ID | Priority | Owner | Title |
+      | --- | --- | --- | --- |
+      | #27 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #28 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #29 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #30 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #31 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #69 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #70 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #71 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #72 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #73 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #111 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #112 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #113 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #114 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #115 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #153 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #154 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #155 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #156 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #157 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #195 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #196 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #197 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #198 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #199 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #237 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #238 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #239 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #240 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #241 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #279 | P0 | lex-ai | 房屋租赁 clause 4 押金条款 baseline 升级 major |
+      | #280 | P0 | lex-ai | 借款合同 clause 3 利息 24% 边界 baseline 升级 major |
+      | #281 | P0 | lex-ai | 销售合同 clause 5 终身维修 baseline 升级 major |
+      | #282 | P0 | lex-ai | 劳动合同 clause 7 永久保密 baseline 升级 major |
+      | #283 | P0 | lex-ai | 服务合同 clause 4 知识产权 + clause 5 维护期 baseline 升级 major |
+      | #32 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #33 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #34 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #35 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #36 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #74 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #75 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #76 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #77 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #78 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #116 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #117 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #118 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #119 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #120 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #158 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #159 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #160 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #161 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #162 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #200 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #201 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #202 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #203 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #204 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #242 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #243 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #244 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #245 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #246 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+      | #284 | P1 | lex-ai | 法条 + 司法解释 + 地方高院裁判口径三级引用 |
+      | #285 | P1 | lex-ai | '司法保护' 加 '非胜诉保证' 免责声明 (避免客户误解) |
+      | #286 | P1 | lex-ai | 婚姻家事红线识别 (出轨/家暴/赌博/转移财产) |
+      | #287 | P1 | lex-ai | 筹码具体性 (短期/长期 + 让步幅度) |
+      | #288 | P1 | lex-ai | 维护期行业惯例 (IT ≥ 6-12 个月) |
+
+      工作范围:
+      1. 按 ticket 顺序逐一处理 (P0 先, P1 后)
+      2. 每完成 1 ticket 更新 prd_backlog.status = 'done' + updated_at
+      3. blocked > 2 cycle 推进 ticket 标 'deferred' (非 'wontfix', 留 W11 重审)
+      4. 所有 ticket 处理完后, 写 deliverable.md 归档
+
+      不要做:
+      - 不要动不在 ticket 清单的 ticket (避免 scope creep)
+      - 不要改 prd_backlog.priority (本期由 A2 调度, 不重新分级)
+    verify_prompt: |
+      独立验证 W10 法务 backlog 自动调度完成度:
+      1. 全部 70 ticket 状态变 done / deferred (open = 0)
+      2. deliverable.md 落档, 含 ticket id + 完成时间 + 阻塞原因 (如有)
+      3. pytest 100% + ruff 0
+      4. git log 显示 N+ commit (按 ticket 数)
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-ai'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # Task auto: 其他 backlog 调度 (21 ticket)
+  - id: 'misc-w10-auto'
+    title: 'W10 其他 backlog 自动调度 (21 ticket: P0=7, P1=14)'
+    prompt: |
+      W10 A2 自动调度: 从 PRD backlog 拉取 其他 类 open P0/P1 ticket (21 个), assigned_to=lex-pm. 
+
+      必读文档:
+      - docs/plans/plan-auto-w10-from-backlog.yaml (本 plan 的源)
+      - A1 docs/prd/backlog-w8.md (评审反馈原话)
+      - A2 scripts/backlog_to_plan_tasks.py (转换脚本)
+      - W9 plan-09-w9-yaml.yaml 范本 (W8 commit 5cdaabe 模式)
+
+      待办 ticket 清单 (按 P0 优先):
+      | ID | Priority | Owner | Title |
+      | --- | --- | --- | --- |
+      | #39 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #81 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #123 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #165 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #207 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #249 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #291 | P0 | lex-pm | 隐私脱敏 3 档原则 (公开/内部/私密) + git 提交 checklist |
+      | #40 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #41 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #82 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #83 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #124 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #125 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #166 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #167 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #208 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #209 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #250 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #251 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+      | #292 | P1 | lex-pm | 律师推荐语 (评审律师推荐同行, 推动付费转化) |
+      | #293 | P1 | lex-pm | 引荐网络 #R3-#R6 (评审律师引荐同行) |
+
+      工作范围:
+      1. 按 ticket 顺序逐一处理 (P0 先, P1 后)
+      2. 每完成 1 ticket 更新 prd_backlog.status = 'done' + updated_at
+      3. blocked > 2 cycle 推进 ticket 标 'deferred' (非 'wontfix', 留 W11 重审)
+      4. 所有 ticket 处理完后, 写 deliverable.md 归档
+
+      不要做:
+      - 不要动不在 ticket 清单的 ticket (避免 scope creep)
+      - 不要改 prd_backlog.priority (本期由 A2 调度, 不重新分级)
+    verify_prompt: |
+      独立验证 W10 其他 backlog 自动调度完成度:
+      1. 全部 21 ticket 状态变 done / deferred (open = 0)
+      2. deliverable.md 落档, 含 ticket id + 完成时间 + 阻塞原因 (如有)
+      3. pytest 100% + ruff 0
+      4. git log 显示 N+ commit (按 ticket 数)
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+

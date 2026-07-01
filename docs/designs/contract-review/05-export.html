@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>导出报告 · 合同风险审查 · LexPrime</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { DEFAULT:'#165DFF', hover:'#4080FF', active:'#0E4AD8',
+                   tint:'#E8F3FF', tint2:'#EEF3FF', tint3:'#F2F7FF', tint4:'#E5EBFF' },
+          bg: { DEFAULT:'#F2F3F5', subtle:'#F7F8FA', border:'#E5E6EB' },
+          fg: { primary:'#1D2129', secondary:'#4E5969', tertiary:'#86909C', disabled:'#C9CDD4' },
+          success: { DEFAULT:'#00B42A', tint:'#E8FFEA' },
+          warning: { DEFAULT:'#FF7D00', tint:'#FFF7E6' },
+          danger:  { DEFAULT:'#F5222D', tint:'#FFF1F0' },
+          urgent:  { DEFAULT:'#FA8C16', tint:'#FFF3E0' },
+          ai: { DEFAULT:'#6C5CE7', tint:'#EDEBFF' },
+        },
+        fontSize: { xs:'12px', sm:'14px', base:'16px', lg:'20px', xl:'24px', '2xl':'32px' },
+        boxShadow: {
+          'card': '0 2px 8px rgba(29,33,41,0.06)',
+          'card-hover': '0 4px 12px rgba(29,33,41,0.08)',
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  /* 报告纸张样式 */
+  .paper {
+    background: white;
+    box-shadow: 0 4px 24px rgba(29,33,41,0.10), 0 1px 3px rgba(29,33,41,0.06);
+    border-radius: 4px;
+    padding: 48px 56px;
+    min-height: 600px;
+  }
+  .risk-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; }
+  .risk-bar > div { transition: width 400ms ease-out; }
+  /* 选中 tab 动画 */
+  .tab-active { box-shadow: 0 2px 8px rgba(22, 93, 255, 0.20); }
+</style>
+</head>
+<body class="bg-bg-subtle text-fg-primary text-sm">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- 左侧栏 -->
+  <aside class="w-[220px] bg-white border-r border-bg-border flex flex-col flex-shrink-0">
+    <div class="h-14 px-5 flex items-center gap-2 border-b border-bg-border">
+      <div class="w-8 h-8 rounded-md bg-brand flex items-center justify-center text-white font-bold text-base">元</div>
+      <div>
+        <div class="text-sm font-bold leading-tight">元枢法智</div>
+        <div class="text-[10px] text-fg-tertiary leading-tight">LexPrime</div>
+      </div>
+    </div>
+    <nav class="flex-1 py-3 space-y-1 overflow-y-auto">
+      <div class="px-5 py-1 text-[10px] font-medium text-fg-tertiary tracking-wider">主导航</div>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:view-dashboard-outline" class="text-base"></iconify-icon><span>工作台</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:briefcase-outline" class="text-base"></iconify-icon><span>案件管理</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:calendar-month-outline" class="text-base"></iconify-icon><span>日程中心</span>
+      </a>
+      <div class="px-5 py-1 pt-3 text-[10px] font-medium text-fg-tertiary tracking-wider">Skill Hub</div>
+      <a href="#" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand transition-colors">
+        <iconify-icon icon="mdi:scale-balance" class="text-base"></iconify-icon><span>类案检索</span>
+      </a>
+      <a href="02-review-result.html" class="flex items-center gap-3 mx-3 px-3 py-2 rounded-md bg-brand text-white shadow-sm">
+        <iconify-icon icon="mdi:shield-search" class="text-base"></iconify-icon><span>合同风险审查</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 主区 -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- 顶部 -->
+    <header class="h-14 bg-white border-b border-bg-border px-6 flex items-center gap-4 flex-shrink-0">
+      <a href="02-review-result.html" class="w-8 h-8 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
+        <iconify-icon icon="mdi:arrow-left"></iconify-icon>
+      </a>
+      <nav class="flex items-center gap-2 text-sm">
+        <a href="02-review-result.html" class="text-fg-tertiary hover:text-brand">数据服务采购合同 v3</a>
+        <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
+        <span class="text-fg-primary font-medium">导出报告</span>
+      </nav>
+      <div class="flex-1"></div>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:content-save-outline"></iconify-icon> 保存草稿
+      </button>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:printer-outline"></iconify-icon> 打印
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- ============ 8+4 主区: 报告预览 + 导出选项 ============ -->
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- ============ 左 8 栏: 报告预览 ============ -->
+        <div class="col-span-8 space-y-3">
+
+          <!-- 预览工具栏 -->
+          <div class="bg-white rounded-md shadow-card px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 text-xs text-fg-secondary">
+              <iconify-icon icon="mdi:file-eye-outline" class="text-brand"></iconify-icon>
+              <span class="font-medium">报告预览</span>
+              <span class="text-fg-tertiary">· Word 样式 · A4</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button class="w-7 h-7 rounded text-fg-secondary hover:bg-bg flex items-center justify-center" title="缩小">
+                <iconify-icon icon="mdi:minus"></iconify-icon>
+              </button>
+              <span class="text-xs text-fg-tertiary px-2">100%</span>
+              <button class="w-7 h-7 rounded text-fg-secondary hover:bg-bg flex items-center justify-center" title="放大">
+                <iconify-icon icon="mdi:plus"></iconify-icon>
+              </button>
+              <div class="w-px h-5 bg-bg-border mx-1"></div>
+              <button class="w-7 h-7 rounded text-fg-secondary hover:bg-bg flex items-center justify-center" title="上一页">
+                <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+              </button>
+              <span class="text-xs text-fg-tertiary px-2">1 / 8</span>
+              <button class="w-7 h-7 rounded text-fg-secondary hover:bg-bg flex items-center justify-center" title="下一页">
+                <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- ============ 报告纸张 (封面 + 摘要 + 风险条款) ============ -->
+          <div class="paper">
+
+            <!-- 报告封面 -->
+            <div class="text-center pb-6 border-b-2 border-brand">
+              <div class="inline-flex items-center gap-1.5 text-ai text-xs font-medium mb-2">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon> LexPrime 合同风险审查报告
+              </div>
+              <h1 class="text-2xl font-bold mb-1">合同风险审查报告</h1>
+              <p class="text-base text-fg-secondary mb-3">数据服务采购合同 v3</p>
+              <div class="flex items-center justify-center gap-3 text-xs text-fg-tertiary">
+                <span>审查时间: 2026-06-29 14:32</span>
+                <span>·</span>
+                <span>审查律师: 王律师</span>
+                <span>·</span>
+                <span>报告编号: CR-2026-0629-001</span>
+              </div>
+            </div>
+
+            <!-- 项目元信息 -->
+            <div class="py-4 border-b border-bg-border">
+              <div class="grid grid-cols-4 gap-4 text-xs">
+                <div>
+                  <div class="text-fg-tertiary mb-1">合同类型</div>
+                  <div class="font-medium">数据服务 / 采购合同</div>
+                </div>
+                <div>
+                  <div class="text-fg-tertiary mb-1">立场</div>
+                  <div class="font-medium">乙方</div>
+                </div>
+                <div>
+                  <div class="text-fg-tertiary mb-1">标的金额</div>
+                  <div class="font-medium">¥1,200,000</div>
+                </div>
+                <div>
+                  <div class="text-fg-tertiary mb-1">审查耗时</div>
+                  <div class="font-medium">1.8s (P95 < 2s)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 风险总览 -->
+            <div class="py-4 border-b border-bg-border">
+              <h2 class="text-base font-semibold mb-3 flex items-center gap-2">
+                <iconify-icon icon="mdi:chart-donut" class="text-brand"></iconify-icon>
+                一、风险总览
+              </h2>
+
+              <!-- 4 灯 + 计数 -->
+              <div class="grid grid-cols-4 gap-2 mb-3">
+                <div class="bg-danger-tint rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-danger">1</div>
+                  <div class="text-[10px] text-danger mt-0.5">致命风险</div>
+                </div>
+                <div class="bg-warning-tint rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-warning">2</div>
+                  <div class="text-[10px] text-warning mt-0.5">重大风险</div>
+                </div>
+                <div class="bg-brand-tint rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-brand">3</div>
+                  <div class="text-[10px] text-brand mt-0.5">建议风险</div>
+                </div>
+                <div class="bg-success-tint rounded p-3 text-center">
+                  <div class="text-2xl font-bold text-success">10</div>
+                  <div class="text-[10px] text-success mt-0.5">合规条款</div>
+                </div>
+              </div>
+
+              <!-- 风险条 -->
+              <div class="risk-bar mb-2">
+                <div class="bg-danger" style="width:6%"></div>
+                <div class="bg-warning" style="width:12%"></div>
+                <div class="bg-brand" style="width:19%"></div>
+                <div class="bg-success" style="width:63%"></div>
+              </div>
+              <div class="text-[10px] text-fg-tertiary text-right mb-3">合计 16 条款 · 风险条款占比 37.5%</div>
+
+              <div class="text-xs leading-relaxed text-fg-secondary">
+                <strong>整体风险等级:</strong>
+                <span class="text-danger font-semibold">🔴 高风险</span>
+                — 存在 1 项致命风险 (违约金显失公平), 2 项重大风险 (管辖不利 / 知识产权模糊), 建议在合同签署前完成修改。
+              </div>
+            </div>
+
+            <!-- 高频风险 -->
+            <div class="py-4 border-b border-bg-border">
+              <h2 class="text-base font-semibold mb-2 flex items-center gap-2">
+                <iconify-icon icon="mdi:trending-up" class="text-brand"></iconify-icon>
+                二、高频风险类型
+              </h2>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] px-2 py-1 bg-danger-tint text-danger rounded">违约金过高 (1)</span>
+                <span class="text-[10px] px-2 py-1 bg-danger-tint text-danger rounded">解除权不对等 (1)</span>
+                <span class="text-[10px] px-2 py-1 bg-warning-tint text-warning rounded">管辖约定不利 (1)</span>
+                <span class="text-[10px] px-2 py-1 bg-warning-tint text-warning rounded">知识产权模糊 (1)</span>
+                <span class="text-[10px] px-2 py-1 bg-brand-tint text-brand rounded">违约边界模糊 (1)</span>
+                <span class="text-[10px] px-2 py-1 bg-brand-tint text-brand rounded">通知方式不明 (1)</span>
+              </div>
+            </div>
+
+            <!-- 致命风险详述 (示例 1 条, 报告完整 6 条) -->
+            <div class="py-4 border-b border-bg-border">
+              <h2 class="text-base font-semibold mb-3 flex items-center gap-2">
+                <iconify-icon icon="mdi:alert-octagon" class="text-danger"></iconify-icon>
+                三、风险条款详述
+              </h2>
+
+              <!-- 致命条款 1 -->
+              <div class="mb-3 border border-danger/30 rounded overflow-hidden">
+                <div class="bg-danger-tint px-3 py-2 flex items-center gap-2 border-b border-danger/30">
+                  <span class="text-[10px] font-mono font-bold text-danger">第 5 条</span>
+                  <span class="text-sm font-semibold">违约责任</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
+                  <span class="text-[10px] text-danger font-medium ml-auto">置信度 95%</span>
+                </div>
+                <div class="p-3 text-xs space-y-2.5 leading-relaxed">
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">条款原文</div>
+                    <p class="text-fg-secondary bg-bg-subtle p-2 rounded">
+                      乙方未按约定履行义务的, 应向甲方支付合同总额 30% 的违约金, 且甲方有权单方解除合同并不退还已付款项。甲方违约的, 乙方可主张实际损失赔偿。
+                    </p>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">风险分类</div>
+                    <p>违约金过高 / 单方解除权不对等</p>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">法律依据</div>
+                    <p>《民法典》第五百八十五条 (违约金), 第四百九十六条 (格式条款)</p>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">风险描述</div>
+                    <p>违约金 30% 约定可能存在被法院认定"过分高于实际损失"而被酌情调减的风险; 同时, 单方解除权不对等进一步加剧权利失衡, 存在被认定格式条款无效的风险。</p>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">修改建议</div>
+                    <p class="text-fg-secondary">建议将违约金比例下调至 20%, 将单方解除权改为双方协商解除或法定解除, 并补充已付款项退还规则。</p>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">修改后条款 (节选)</div>
+                    <div class="bg-bg-subtle p-2 rounded text-fg-secondary code-block">
+                      任何一方未按约定履行义务的, 应向守约方支付合同总额
+                      <span class="bg-success/20 text-success px-1 rounded">【建议 20%】</span>
+                      的违约金。一方违约构成根本违约的,
+                      <span class="bg-success/20 text-success px-1 rounded">守约方</span>
+                      有权主张解除合同, ...
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-[10px] text-fg-tertiary mb-0.5">立场影响</div>
+                    <p class="text-danger font-medium">⚠️ 对乙方极为不利</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 重大条款 1 (简版) -->
+              <div class="mb-3 border border-warning/30 rounded overflow-hidden">
+                <div class="bg-warning-tint px-3 py-2 flex items-center gap-2 border-b border-warning/30">
+                  <span class="text-[10px] font-mono font-bold text-warning">第 8 条</span>
+                  <span class="text-sm font-semibold">争议管辖</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning text-white rounded-sm font-bold">重大</span>
+                  <span class="text-[10px] text-warning font-medium ml-auto">置信度 88%</span>
+                </div>
+                <div class="p-3 text-xs space-y-1.5">
+                  <p class="text-fg-secondary">管辖地约定对乙方不利 (北京朝阳), 跨区诉讼成本高, 建议改为被告住所地或约定仲裁机构。</p>
+                </div>
+              </div>
+
+              <p class="text-[10px] text-fg-tertiary text-center">... 报告共含 6 项风险条款详述, 完整内容请见导出文件</p>
+            </div>
+
+            <!-- 谈判策略摘要 -->
+            <div class="py-4 border-b border-bg-border">
+              <h2 class="text-base font-semibold mb-2 flex items-center gap-2">
+                <iconify-icon icon="mdi:strategy" class="text-ai"></iconify-icon>
+                四、谈判策略摘要
+                <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-normal">
+                  <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 生成
+                </span>
+              </h2>
+              <div class="text-xs leading-relaxed text-fg-secondary space-y-1.5">
+                <p><strong>核心策略:</strong> 以"付款节奏 / 交付加速 / 质保延长"等筹码换取对方在违约金、解除权、知识产权等核心条款上的让步。</p>
+                <p><strong>红线条款:</strong> 第 5 条 (单方解除权不对等) 为乙方签约前提条件, 如无法修改, 建议放弃合作。</p>
+                <p><strong>预期结果:</strong> 成功解决致命 + 重大条款后, 预计可降低潜在损失 ¥120,000+。</p>
+              </div>
+            </div>
+
+            <!-- 免责声明 -->
+            <div class="py-4">
+              <h2 class="text-base font-semibold mb-2 flex items-center gap-2">
+                <iconify-icon icon="mdi:alert-circle-outline" class="text-warning"></iconify-icon>
+                五、免责声明
+              </h2>
+              <div class="text-[10px] leading-relaxed text-fg-tertiary bg-bg-subtle p-3 rounded">
+                <p class="mb-1.5">
+                  本审查报告仅为基于合同文本的客观风险标注与法律依据提示, <strong>不构成法律意见, 更不替代律师的专业判断</strong>。
+                </p>
+                <p class="mb-1.5">
+                  报告中的修改建议、谈判策略、历史案例仅供参考, 具体应用需结合案件实际情况、当事人诉求和司法实践综合判断。
+                </p>
+                <p>
+                  本报告由 LexPrime AI 系统自动生成, 经王律师人工审核。最终法律意见以执业律师签署的正式意见为准。
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============ 右 4 栏: 导出选项 + 邮件发送 ============ -->
+        <div class="col-span-4 space-y-3">
+
+          <!-- 导出格式 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:export-variant"></iconify-icon>
+                选择导出格式
+              </h4>
+            </div>
+            <div class="p-3 space-y-2">
+              <!-- Word -->
+              <button class="w-full p-3 bg-brand-tint3 border-2 border-brand rounded-md text-left flex items-center gap-3 tab-active">
+                <div class="w-10 h-10 rounded bg-brand text-white flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon="mdi:file-word-box" class="text-xl"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold">Word 文档 (.docx)</span>
+                    <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded-sm">推荐</span>
+                  </div>
+                  <div class="text-[10px] text-fg-tertiary mt-0.5">可编辑 · 含修订痕迹 · 约 245 KB</div>
+                </div>
+                <iconify-icon icon="mdi:check-circle" class="text-brand text-xl"></iconify-icon>
+              </button>
+              <!-- PDF -->
+              <button class="w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand">
+                <div class="w-10 h-10 rounded bg-danger-tint text-danger flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon="mdi:file-pdf-box" class="text-xl"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-semibold">PDF 文档 (.pdf)</div>
+                  <div class="text-[10px] text-fg-tertiary mt-0.5">只读 · 不可编辑 · 约 380 KB</div>
+                </div>
+              </button>
+              <!-- Markdown -->
+              <button class="w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand">
+                <div class="w-10 h-10 rounded bg-fg-subtle text-fg-secondary flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon="mdi:language-markdown-outline" class="text-xl"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-semibold">Markdown (.md)</div>
+                  <div class="text-[10px] text-fg-tertiary mt-0.5">纯文本 · 适合版本管理 · 约 18 KB</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 报告配置 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:cog-outline"></iconify-icon>
+                报告配置
+              </h4>
+            </div>
+            <div class="p-3 space-y-2.5 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-brand">
+                <span>包含修改后条款模板</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-brand">
+                <span>包含谈判策略 (立场感知)</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-brand">
+                <span>包含历史相似样本</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 accent-brand">
+                <span>包含 Diff 视图</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-brand">
+                <span>页脚免责声明</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 accent-brand">
+                <span>水印 (含律师姓名)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 邮件发送律师 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:email-outline"></iconify-icon>
+                发送给所内律师
+              </h4>
+              <span class="text-[10px] text-fg-tertiary">可选</span>
+            </div>
+            <div class="p-3 space-y-2.5">
+              <div>
+                <label class="text-[10px] text-fg-secondary mb-1 block">收件人 (多选)</label>
+                <div class="border border-bg-border rounded-md p-2 min-h-[60px]">
+                  <div class="flex flex-wrap gap-1">
+                    <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">
+                      王律师 (我) <iconify-icon icon="mdi:close" class="text-xs cursor-pointer"></iconify-icon>
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 bg-brand-tint text-brand rounded-sm">
+                      李律师 (高级合伙人) <iconify-icon icon="mdi:close" class="text-xs cursor-pointer"></iconify-icon>
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 bg-bg-subtle text-fg-secondary rounded-sm cursor-pointer hover:bg-brand-tint hover:text-brand">
+                      <iconify-icon icon="mdi:plus" class="text-xs"></iconify-icon> 添加
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="text-[10px] text-fg-secondary mb-1 block">邮件主题</label>
+                <input type="text" class="w-full h-8 px-2 border border-bg-border rounded text-xs" value="[合同审查] 数据服务采购合同 v3 - 1 项致命风险待处理">
+              </div>
+              <div>
+                <label class="text-[10px] text-fg-secondary mb-1 block">邮件正文</label>
+                <textarea class="w-full h-20 px-2 py-1.5 border border-bg-border rounded text-xs resize-none" placeholder="请添加补充说明...">李律师好,
+
+本次合同审查发现 1 项致命风险, 请协助评审修改建议。详见附件 Word 报告。
+
+主要风险:
+1. 第 5 条 - 违约金 30% + 单方解除权不对等 (致命)
+2. 第 8 条 - 管辖约定对乙方不利 (重大)
+3. 第 9 条 - 知识产权归属 + 已有技术未排除 (重大)
+
+建议在 7/5 前完成修改方案, 以便 7/10 前完成合同签署。
+
+王律师</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 主操作 -->
+          <div class="space-y-2">
+            <button class="w-full h-11 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center justify-center gap-1.5 shadow-sm">
+              <iconify-icon icon="mdi:download" class="text-lg"></iconify-icon>
+              下载 Word 报告
+            </button>
+            <button class="w-full h-10 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1.5">
+              <iconify-icon icon="mdi:email-send-outline"></iconify-icon>
+              发送邮件 (含附件)
+            </button>
+            <button class="w-full h-10 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1.5">
+              <iconify-icon icon="mdi:content-save-outline"></iconify-icon>
+              保存到案件 (关联)
+            </button>
+          </div>
+
+          <!-- 性能 + 体积 -->
+          <div class="bg-bg-subtle rounded-md p-3 text-[10px] text-fg-tertiary space-y-1">
+            <div class="flex items-center justify-between">
+              <span>Word 生成耗时</span>
+              <span class="text-success font-medium">~1.2s</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>预计文件大小</span>
+              <span class="font-medium">245 KB</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>含 OCR / 图表</span>
+              <span class="text-warning font-medium">否 (轻量)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>页数估算</span>
+              <span class="font-medium">8 页</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 强制免责声明 ============ -->
+      <div class="text-[10px] text-fg-tertiary text-center py-3 border-t border-bg-border bg-white rounded-md shadow-sm">
+        <iconify-icon icon="mdi:alert-circle-outline" class="text-warning"></iconify-icon>
+        导出报告基于 AI 自动生成的客观风险标注, <strong>不构成法律意见, 更不替代律师的专业判断</strong>。
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 设计水印 -->
+<div class="fixed bottom-3 right-3 text-[10px] text-fg-tertiary bg-white/80 backdrop-blur px-2 py-1 rounded shadow-sm z-20">
+  LexPrime · Skill 2 UI v1 · 05-export.html
+</div>
+
+</body>
+</html>

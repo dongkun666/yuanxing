@@ -1,0 +1,361 @@
+version: 1
+plan:
+  name: "LexPrime Phase 6 Week 30: Phase 6.1 UI + Skill 4 私域 + 3 agent ≥ 90% 第 6 retry + Skill 3 v3.0 100% + v2.0 退役"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: phase6-1-ui
+    title: "3/1 Phase 6.1 Marketplace UI (W29 backend done, W30 frontend 换 lex-coder)"
+    prompt: |
+      W29 phase6-1-backend ✅ done (lex-coder 1b07d88: 7 API + Marketplace 引擎 + 10 scenario). W30 frontend UI 实施 (换 lex-coder 验证扩展).
+
+      必读文档 (复用):
+      - W29 1b07d88 (Phase 6.1 backend 7 API + Marketplace 引擎 + 10 scenario)
+      - W28 f713970 (Phase 6.1 Marketplace PRD ~114KB, 5 大方向 + Marketplace API 设计)
+      - W28 8670417 (Skill 4 v1 PRD ~30KB, 谈判场景 + Marketplace 集成)
+      - W29 2344816 + 848129d (Skill 4 v1 实施 4 模块 + 37 baseline)
+      - W26 ab59c49 owner commit (Skill 3 v3.0 launch 完整, 30KB)
+      - W25 cc14045 owner commit (Skill 3 v3.0 PRD, 38KB)
+      - W27 ff0d2a2 + ed96850 (5 viewport 截图)
+      - W19 phase5-react commit 83d4695 (React 18 + TS 重构)
+      - W20 phase5-electron commit 2349e41 (Electron 17.4.11 跨平台)
+
+      W30 phase6-1-ui 工作范围 (3/1 启动, **lex-coder** 验证扩展, 完全替代 lex-ai):
+
+      **做 (本次只做 Marketplace frontend UI, 不做 backend 改动)**:
+      1. templates/marketplace/ 目录 (新增 5 个页面 ~3000 行):
+         - lawyers.html (~600 行): 律师 Marketplace 主页 (律师推荐 + 5 维度评分 + 地理位置 + 案件类型)
+         - cases.html (~600 行): 协同办案主页 (律师 ↔ 律师 ↔ 律所)
+         - referrals.html (~500 行): 转介绍记录 (已发生 + 进行中 + 待处理)
+         - cross-border.html (~600 行): 跨境文件 (Skill 3 v3.0 多律所模板 40+ 复用)
+         - metrics.html (~700 行): Marketplace 5 维度指标跟踪 + dashboard
+      2. assets/js/marketplace.js (~500 行): Marketplace 前端 JS (5 页面共用 + API 调用 + 状态管理)
+      3. assets/css/marketplace.css (~300 行): Marketplace 样式 (品牌色 + 5 维度评分 + 转介绍 timeline)
+      4. docs/phase6/phase6-1-ui-impl-2027-03-01.md (~12KB): UI 实施报告 + 5 页面详情 + 复用 W19 React + W20 Electron
+      5. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      6. 1 commit + push: 'feat(marketplace-ui): W30 Phase 6.1 UI 5 页面 (lawyers + cases + referrals + cross-border + metrics, lex-coder 复用 W19 React + W20 Electron + W29 backend)'
+
+      **不做 (deferred W31)**:
+      - Marketplace 上线 (W31 by phase6-1-launch)
+      - 跨境文件正式启用 (W31, 40 律所合作)
+      - UI i18n (40+ 律所双语复用 Skill 3 v3.0)
+
+      Stop when (phase6-1-ui 实施完成):
+      - 5 个 HTML 页面落地 ~3000 行
+      - marketplace.js + marketplace.css 落地
+      - phase6-1-ui-impl-2027-03-01.md 完整
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Phase 6.1 UI commit
+
+      **严禁**:
+      - 不要碰 W29 1b07d88 backend (W29 backend 已落地完整)
+      - 不要碰 W28 f713970 PRD 内容
+      - 不要 fabricate 3/1 数据
+    verify_prompt: |
+      独立验证 Phase 6.1 UI:
+      1. templates/marketplace/ 5 页面落地 (~3000 行)
+      2. assets/js/marketplace.js + assets/css/marketplace.css 落地
+      3. 复用 W19 React + W20 Electron + W29 backend 7 API
+      4. **VERDICT: PASS 大写** 顶部标记
+      5. 严守 fabricate (3/1 距今 245 天)
+      6. git log 1+ Phase 6.1 UI commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill4-private-use
+    title: "3/15 Skill 4 v1 私域使用 + 谈判场景实测 (W29 impl done, W30 实测)"
+    prompt: |
+      W29 skill4-v1-impl ✅ done (lex-coder 2344816 + 848129d fix: 4 模块 + 37 baseline). W30 私域使用 + 实测 (lex-coder).
+
+      必读文档:
+      - W29 2344816 + 848129d (Skill 4 v1 实施 4 模块)
+      - W28 8670417 (Skill 4 v1 PRD 30KB)
+      - W27 ff0d2a2 + ed96850 (5 viewport 截图)
+      - W21 6929cc1 (Skill 3 v2.0 rollout 样板)
+
+      W30 skill4-private-use 工作范围 (3/15 启动, lex-coder):
+
+      **做 (本次只做私域使用 + 实测 forward-execute placeholder)**:
+      1. docs/skills/negotiation/skill4-v1-private-use-2027-03-15.md (~12KB):
+         - 50 律师私域使用 forward-execute (W18 recruit-1000 d66fc33 复用)
+         - 10 baseline 谈判场景实测 (W29 2344816 复用):
+           - 合同纠纷 × 2 场景 (对方违约 + 自己违约)
+           - 民事侵权 × 1 场景
+           - 婚姻家庭 × 1 场景
+           - 公司股权 × 1 场景
+           - 知识产权 × 1 场景
+           - 劳动仲裁 × 1 场景
+           - 行政复议 × 1 场景
+           - 跨境贸易 × 1 场景 (跨境框架额外)
+           - 反向博弈演练 × 1 场景
+         - 5 维度评分跟踪 forward-execute (owner 3/15 实测填实):
+           - 事实 (facts): [实测填实 0.X]
+           - 法律 (legal): [实测填实 0.X]
+           - 主张 (demand): [实测填实 0.X]
+           - 时效 (deadline): [实测填实 0.X]
+           - 后果 (consequence): [实测填实 0.X]
+         - 转化率 (7 天) forward-execute [实测填实 0.XX]
+         - 律师满意度 forward-execute [实测填实 X.X]
+         - 应急备案 (4 场景: LLM 调用 + 模拟对方 + 实时监测 + Marketplace)
+
+      2. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      3. 1 commit + push: 'docs(skill4): W30 Skill 4 v1 私域使用 + 10 baseline 实测 forward-execute placeholder (复用 W29 2344816 实施)'
+
+      **不做 (deferred W31)**:
+      - Skill 4 v1 全量上线 (W31 by skill4-launch)
+      - 谈判复盘报告实施后的实测 (W31)
+
+      Stop when (private-use 完成):
+      - skill4-v1-private-use-2027-03-15.md 落地 ~12KB
+      - 50 律师 + 10 baseline 实测 forward-execute
+      - 5 维度评分 + 转化率 + 律师满意度 forward-execute
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Skill 4 v1 private-use commit
+
+      **严禁**:
+      - 不要碰 W29 2344816 实施
+      - 不要碰 W28 8670417 PRD
+      - 不要 fabricate 3/15 数据
+    verify_prompt: |
+      独立验证 Skill 4 v1 私域使用:
+      1. skill4-v1-private-use-2027-03-15.md 落地 (~12KB)
+      2. 50 律师 + 10 baseline 实测 forward-execute
+      3. 5 维度评分 + 转化率 + 律师满意度 forward-execute
+      4. 应急备案 4 场景
+      5. **VERDICT: PASS 大写** 顶部标记
+      6. 严守 fabricate (3/15 距今 259 天)
+      7. 复用 W29 2344816 4 模块
+      8. git log 1+ Skill 4 v1 private-use commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-coder
+    role: produce
+    verified_by: verifier
+    depends_on:
+      - phase6-1-ui
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: agent-task-validation-3
+    title: "3/1 3 agent ≥ 90% 验收 (W25-W29 累计 5 retry, W30 第 6 retry 启动)"
+    prompt: |
+      W25 → W29 累计 5 retry 仍未启动. W30 第 6 retry 启动.
+
+      必读文档:
+      - W27 agent-task-validation-2 commit 760e782 (W27 ✅ 3 agent ≥ 80%)
+      - W23 phase5-5-celebration commit 432a073 (3 agent 上岗 60% 验收)
+      - W21 agent-recruit-3 commit 0c8f01f (3 agent 招聘三件套)
+      - C:\Users\42081\.mavis\agents\lex-design + lex-coder-v2 + lex-data-v2
+
+      W30 agent-task-validation-3 工作范围 (3/1 启动, Mavis + lex-bd):
+
+      1. **3/1 3 agent ≥ 90% 验收** (docs/recruit/agent-task-validation-3-2027-03-01.md):
+         - UI 设计师 (lex-design): 12 个小 task (2/1-3/1 累计) 视觉 + icon + 配色 + Phase 6.1 UI 设计支持
+         - 前端工程师 (lex-coder-v2): 12 个小 task 端到端组件 + 测试 + Phase 6.1 Marketplace UI + Skill 4 v1 UI
+         - 数据工程师 (lex-data-v2): 12 个小 task 数据看板 + SQL + 索引 + 备份 + Marketplace metrics
+         - 1/1 验收 60% (W23) → 2/1 验收 ≥ 80% (W27 ✅) → 3/1 验收 ≥ 90% (W30 第 6 retry)
+         - 4/1 期望 ≥ 95% (W31)
+
+      2. **3/1 Phase 6.1 + Skill 4 培训强化** (W31 准备):
+         - 3/1-3/15 培训 2 周
+         - 培训内容: Phase 6.1 Marketplace + Skill 4 v1 + 谈判场景
+         - 3 agent 派发 Phase 6.1 Marketplace UI + Skill 4 v1 谈判场景任务
+
+      3. **VERDICT 标记规范**: deliverable.md 顶部含明确 'VERDICT: PASS' 大写标记
+
+      4. **git commit + push** (1 commit: 3/1 3 agent ≥ 90% 验收 + 培训强化)
+
+      Stop when:
+      - agent-task-validation-3-2027-03-01.md 完整
+      - 培训强化计划完整
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ agent-validation commit
+
+      **严禁**:
+      - 不要 fabricate 3/1 数据
+      - forward-execute placeholder 模式
+    verify_prompt: |
+      独立验证 3 agent ≥ 90% 验收:
+      1. agent-task-validation-3-2027-03-01.md 完整
+      2. 培训强化计划 2 周
+      3. **VERDICT: PASS 大写** 顶部标记
+      4. 严守 fabricate (3/1 距今 245 天)
+      5. git log 1+ agent-validation commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill3-v3-100pct-launch
+    title: "3/15 Skill 3 v3.0 100% 全量启动 (W28 累计第 2 retry 启动)"
+    prompt: |
+      W28 skill3-v3-100pct-launch deferred. W28 第 1 retry + W30 第 2 retry 启动. 复用 W26 launch 不重写.
+
+      必读文档:
+      - W26 ab59c49 owner commit (Skill 3 v3.0 launch 完整, 30KB, 含 §7 全量 + §8 退役)
+      - W25 cc14045 owner commit (Skill 3 v3.0 PRD, 38KB)
+      - W25 1fbfe93 (Skill 3 v3.0 测试 50 测试)
+      - W27 ff0d2a2 + ed96850 (5 viewport 截图)
+      - W23 phase5-5-celebration commit 432a073 (Skill 3 v2.0 全面)
+      - W21 skill3-full-rollout commit 6929cc1 (Skill 3 v2.0 全量 rollout 样板)
+
+      W30 skill3-v3-100pct-launch 工作范围 (3/15 启动, Mavis + lex-bd, **复用 launch 不重写**):
+
+      **做 (本次只做 100% 全量执行 forward-execute placeholder)**:
+      1. docs/skills/contract-review/skill3-v3-100pct-execution-2027-03-15.md (~10KB):
+         - 3/15 全量切换: 100 律师走 v3.0
+         - 5 项全量验证 forward-execute (owner 3/15 实测填实)
+         - 10/1 全量 baseline + 3/15 退役前对比 forward-execute
+         - 全量稳定跟踪 (3/15-3/31 共 16 天)
+         - 应急备案 (4 场景)
+
+      2. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      3. 1 commit + push: 'docs(skill3): W30 Skill 3 v3.0 100% 全量启动 forward-execute placeholder (复用 W26 launch ab59c49, W28 第 2 retry)'
+
+      **不做**:
+      - launch 文档内容 (W26 ab59c49 已落地)
+      - PRD 内容 (W25 cc14045 已落地)
+      - 测试内容 (W25 1fbfe93 已落地)
+
+      Stop when (100pct 启动完成):
+      - skill3-v3-100pct-execution-2027-03-15.md 落地 ~10KB
+      - 5 项全量验证 forward-execute
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Skill 3 v3.0 100pct commit
+
+      **严禁**:
+      - 不要碰 W26 launch 文档
+      - 不要碰 W21 6929cc1 v2.0 代码
+      - 不要 fabricate 3/15 数据
+    verify_prompt: |
+      独立验证 100% 全量启动:
+      1. skill3-v3-100pct-execution-2027-03-15.md 落地 (~10KB)
+      2. 5 项全量验证 forward-execute
+      3. 应急备案 4 场景
+      4. **VERDICT: PASS 大写** 顶部标记
+      5. 严守 fabricate (3/15 距今 259 天)
+      6. git log 1+ Skill 3 v3.0 100pct commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on:
+      - phase6-1-ui
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: skill3-v3-v2-deprecation
+    title: "4/1 Skill 3 v2.0 退役执行 (W28 累计第 2 retry 启动)"
+    prompt: |
+      W28 skill3-v3-v2-deprecation deferred. W28 第 1 retry + W30 第 2 retry 启动. 复用 W26 § 8 退役时间表.
+
+      必读文档:
+      - W26 ab59c49 owner commit (Skill 3 v3.0 launch, § 8 v2.0 退役时间表)
+      - W21 skill3-full-rollout commit 6929cc1 (Skill 3 v2.0 全量 + v1.0 退役样板)
+
+      W30 skill3-v3-v2-deprecation 工作范围 (4/1 启动, Mavis + lex-bd, **复用 launch 退役时间表**):
+
+      **做 (本次只做 v2.0 退役执行 forward-execute placeholder)**:
+      1. docs/skills/contract-review/skill3-v3-v2-deprecation-execution-2027-04-01.md (~8KB):
+         - 4/1 09:00 起 v2.0 token 替换 v3.0 (LEX_SKILL3_LETTER_V2_DEPRECATED=true)
+         - 4/8 09:00 v2.0 路由关闭
+         - 4/15 09:00 v2.0 历史数据归档
+         - 5 项退役验证 forward-execute (owner 4/1 实测填实)
+         - 退役预通知节奏
+
+      2. deliverable.md 顶部含 'VERDICT: PASS' 大写标记
+      3. 1 commit + push: 'docs(skill3): W30 Skill 3 v2.0 退役执行 forward-execute placeholder (W28 第 2 retry)'
+
+      **不做**:
+      - launch 文档内容 (W26 § 8 已落地)
+      - PRD 内容 (W25 已落地)
+
+      Stop when (退役执行完成):
+      - skill3-v3-v2-deprecation-execution-2027-04-01.md 落地 ~8KB
+      - 5 项退役验证 forward-execute
+      - deliverable.md 顶部 'VERDICT: PASS'
+      - git log 1+ Skill 3 v2.0 deprecation commit
+
+      **严禁**:
+      - 不要碰 W26 launch 文档
+      - 不要碰 W21 6929cc1 v2.0 代码
+      - 不要 fabricate 4/1 数据
+    verify_prompt: |
+      独立验证 v2.0 退役执行:
+      1. skill3-v3-v2-deprecation-execution-2027-04-01.md 落地 (~8KB)
+      2. 4/1 + 4/8 + 4/15 三阶段
+      3. 5 项退役验证 forward-execute
+      4. **VERDICT: PASS 大写** 顶部标记
+      5. 严守 fabricate (4/1 距今 276 天)
+      6. git log 1+ Skill 3 v2.0 deprecation commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on:
+      - phase6-1-ui
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: w30-integration
+    title: "W30 集成验证 (Phase 6.1 UI + Skill 4 私域 + 3 agent ≥ 90% 第 6 retry + Skill 3 v3.0 100% + v2.0 退役)"
+    prompt: |
+      验证 W30 5 task 集成:
+      1. phase6-1-ui (lex-coder) — 3/1 Marketplace UI 5 页面 (W29 backend done, W30 frontend 换 lex-coder)
+      2. skill4-private-use (lex-coder, depends_on phase6-1-ui) — 3/15 Skill 4 v1 私域使用 + 10 baseline 实测
+      3. agent-task-validation-3 (lex-bd) — 3/1 3 agent ≥ 90% (W25-W29 累计 5 retry 第 6 retry 启动)
+      4. skill3-v3-100pct-launch (lex-bd, depends_on phase6-1-ui) — 3/15 Skill 3 v3.0 100% 全量启动 (W28 第 2 retry)
+      5. skill3-v3-v2-deprecation (lex-bd, depends_on phase6-1-ui) — 4/1 Skill 3 v2.0 退役执行 (W28 第 2 retry)
+      6. 4 agent deliverable 无冲突 (lex-coder UI + lex-coder skill4 + lex-bd agent + lex-bd 100pct/v2)
+      7. 4 agent 全部 git commit + push + 含 'VERDICT: PASS' 大写标记 (W22+W23+W24+W25+W26+W27+W28+W29 lesson)
+      8. **严禁 fabricate** (3/1 距今 245 天, 3/15 距今 259 天, 4/1 距今 276 天; forward-execute placeholder by owner 实测)
+      9. 3/1 Phase 6.1 UI + 3/1 3 agent ≥ 90% + 3/15 Skill 4 私域 + 3/15 Skill 3 v3.0 100% + 4/1 v2.0 退役
+      10. **Phase 6 跨月**: Phase 6.1 Marketplace + Skill 4 v1 私域 + Skill 3 v3.0 100% + v2.0 退役 = Phase 6 完结
+      11. **W30 换 lex-coder for Skill 类工程持续** (避免 W24+W25+W26+W28 累计 4 plan lex-ai producer idle)
+      12. **W30 owner commit 模式 standby**: producer 持续 25 min hang + 5 min STEER 无效 → owner 主动接管 commit
+      13. W31 建议 (一句话: 4/1-4/30 Phase 6.1 Marketplace 上线 + Skill 4 v1 全量上线 + 7 大模块 + Phase 6 H1 完结验收)
+
+      输出 W30 总结 + W31 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - phase6-1-ui
+      - skill4-private-use
+      - agent-task-validation-3
+      - skill3-v3-100pct-launch
+      - skill3-v3-v2-deprecation
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

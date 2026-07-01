@@ -1,0 +1,142 @@
+{
+  "template_id": "construction-construction_epc-008",
+  "contract_type": "工程承揽合同",
+  "industry": "EPC",
+  "title": "EPC 工程总承包合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "项目",
+      "text": "项目名称: 医疗, 项目地点: 广州市海淀区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "发包人",
+      "text": "发包人为甲方。"
+    },
+    {
+      "index": 3,
+      "title": "承包人",
+      "text": "承包人为乙方 (EPC 总承包商)。"
+    },
+    {
+      "index": 4,
+      "title": "承包范围",
+      "text": "承包范围: 设计、采购、施工、试运行等全过程。"
+    },
+    {
+      "index": 5,
+      "title": "合同价款",
+      "text": "合同总价人民币 300 万元, 固定总价 (除合同约定的调整事项外)。"
+    },
+    {
+      "index": 6,
+      "title": "工期",
+      "text": "工期 1 个月, 自 2027-05-12 起至 2026-12-15 止。"
+    },
+    {
+      "index": 7,
+      "title": "质量",
+      "text": "工程质量应符合国家及行业现行标准, 达到合格标准。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "工期",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "发包人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "EPC 工程总承包合同",
+    "EPC常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于EPC 工程总承包合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_epc",
+    "variant_idx": 8,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

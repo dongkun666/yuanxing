@@ -1,0 +1,714 @@
+<!--
+  W13 C1 dashboard 运营看板 (lex-coder · 2026-06-30)
+  适用: 公测期 7/26 启动后 + 创史招募期 80 席 - BD/总指挥 一屏掌握 4 业务 + 3 创史专属指标
+  设计原则 (W1 设计系统 + founding/index.html):
+  - PC 优先 + 移动响应式 (iPad/手机查 4+3 指标)
+  - AI 紫色角标 + 强制 disclaimer
+  - 7 指标卡片: 4 业务 (注册/试用/付费/创史 CVR) + 3 创史专属 (招募/活跃/付费)
+  - 3 图表: 7 日折线 + 5 渠道柱状 + 6 事件漏斗 (chart.js 4.4 CDN, ~60KB)
+  - 实时刷新: setInterval 5min 拉 /api/dashboard/w11, 失败 fallback 内嵌目标值
+  - 公测启动倒计时: 距 7/26 还剩 N 天 (W11 B2 启动仪式零基础 → 7/26 23:00 首跑 7 SQL)
+  - 5 渠道对比表 + 异常预警 SOP 卡片 (dashboard_w11.md §4 + §5.1)
+  - track event: dashboard_viewed (DOMContentLoaded) + dashboard_refreshed (手动 + 5min 自动)
+
+  加载流程:
+  1. fetch /api/dashboard/w11?period=current → JSON
+  2. 后端返回 200 → 用真实数据 (Mavis cron 23:00 跑 7 SQL 后写入的 dashboard_w11_auto_2026-07-26.json)
+  3. 后端 404 / network error → fallback 内嵌 dashboard_w11.md §1.1 + §1.2 目标值
+  4. 渲染 7 卡片 + 3 图表, track event dashboard_viewed
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-dashboard" data-view-source="dashboard/index.html">
+<style>
+  /* ===== W13 dashboard 设计系统 ===== */
+  .fade-in { animation: fadeIn 250ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  /* 数字大字号 */
+  .score-number { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+  /* hero 渐变 */
+  .hero-gradient { background: linear-gradient(135deg, #165DFF 0%, #6C5CE7 60%, #0EA5E9 100%); }
+  /* 倒计时脉冲 */
+  @keyframes pulse-urgent { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  .pulse-urgent { animation: pulse-urgent 2s ease-in-out infinite; }
+  /* 指标卡片: 进度条 */
+  .progress-track {
+    height: 8px; background: #F0F2F5; border-radius: 9999px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 9999px; transition: width 600ms ease-out;
+  }
+  /* 4 业务指标色 */
+  .metric-reg { background: linear-gradient(135deg, #E8F3FF 0%, #FFFFFF 100%); border-color: rgba(22, 93, 255, 0.15); }
+  .metric-trial { background: linear-gradient(135deg, #E5F8EE 0%, #FFFFFF 100%); border-color: rgba(7, 193, 96, 0.15); }
+  .metric-paid { background: linear-gradient(135deg, #FFF1DC 0%, #FFFFFF 100%); border-color: rgba(250, 140, 22, 0.15); }
+  .metric-advocate { background: linear-gradient(135deg, #EDE7FE 0%, #FFFFFF 100%); border-color: rgba(108, 92, 231, 0.15); }
+  /* 3 创史专属色 (紫色深浅) */
+  .metric-recruit { background: linear-gradient(135deg, #F3E5F5 0%, #FFFFFF 100%); border-color: rgba(108, 92, 231, 0.25); }
+  .metric-engagement { background: linear-gradient(135deg, #E0F7FA 0%, #FFFFFF 100%); border-color: rgba(14, 165, 233, 0.25); }
+  .metric-founding-paid { background: linear-gradient(135deg, #FFF7E8 0%, #FFFFFF 100%); border-color: rgba(255, 125, 0, 0.25); }
+  /* 阈值标签 */
+  .badge-good { background: #E8F5E9; color: #2E7D32; }
+  .badge-warn { background: #FFF7E8; color: #D25400; }
+  .badge-bad { background: #FCE4E4; color: #C62828; }
+  /* 渠道对比条形图 (CSS bar, 不依赖 chart.js) */
+  .bar-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 0;
+  }
+  .bar-name { width: 110px; font-size: 12px; color: #4E5969; flex-shrink: 0; }
+  .bar-track-c {
+    flex: 1; height: 18px; background: #F0F2F5; border-radius: 6px; overflow: hidden; position: relative;
+  }
+  .bar-fill-c {
+    height: 100%; border-radius: 6px; transition: width 500ms ease-out;
+  }
+  .bar-val { width: 64px; font-size: 12px; font-weight: 600; color: #1D2129; text-align: right; flex-shrink: 0; font-feature-settings: "tnum"; }
+  /* refresh 按钮旋转 */
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .icon-spin { animation: spin 600ms linear infinite; }
+  /* 数据源标签 */
+  .source-tag {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
+  }
+  .source-api { background: #E3F2FD; color: #1565C0; }
+  .source-fallback { background: #FFF7E8; color: #D25400; }
+</style>
+
+<div class="flex flex-col min-h-full bg-bg-subtle">
+
+  <!-- ============ 顶部 header ============ -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回工作台">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:chart-line" class="text-brand text-lg md:text-xl"></iconify-icon>
+            <span class="truncate">运营 Dashboard</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">W13 看板</span>
+          </span>
+          <span id="ds-source-tag" class="source-tag source-fallback hidden sm:inline-flex">
+            <iconify-icon icon="mdi:database-off-outline" class="text-xs"></iconify-icon>
+            <span>目标值</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate" id="ds-subtitle">加载中…</p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="ds-refresh-btn" class="h-9 px-3 bg-white border border-bg-border rounded-md text-xs text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1">
+          <iconify-icon icon="mdi:refresh" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">刷新</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主体内容 ============ -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+
+    <!-- ============ Hero 倒计时横幅 ============ -->
+    <section class="hero-gradient text-white rounded-2xl px-5 py-6 md:px-8 md:py-8 mb-5 relative overflow-hidden fade-in">
+      <div class="absolute -top-32 -right-32 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="absolute -bottom-32 -left-32 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="relative grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-semibold mb-3">
+            <iconify-icon icon="mdi:rocket-launch-outline" class="text-sm"></iconify-icon>
+            公测期 7/26 - 8/24 · 创史招募期 80 席
+          </div>
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight">距公测启动仪式</h2>
+          <p class="mt-1 text-sm md:text-base opacity-90">7/26 14:00-19:00 腾讯会议 · Mavis cron 23:00 首跑 7 SQL 写入 SQLite 日看板</p>
+        </div>
+        <div class="grid grid-cols-4 gap-2 md:gap-3">
+          <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20 pulse-urgent">
+            <div class="text-2xl md:text-3xl font-bold score-number" id="cd-days">--</div>
+            <div class="text-[10px] opacity-80 mt-0.5">天</div>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div class="text-2xl md:text-3xl font-bold score-number" id="cd-hours">--</div>
+            <div class="text-[10px] opacity-80 mt-0.5">时</div>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div class="text-2xl md:text-3xl font-bold score-number" id="cd-mins">--</div>
+            <div class="text-[10px] opacity-80 mt-0.5">分</div>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+            <div class="text-2xl md:text-3xl font-bold score-number" id="cd-secs">--</div>
+            <div class="text-[10px] opacity-80 mt-0.5">秒</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4 业务指标卡片 ============ -->
+    <section class="mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:chart-bar" class="text-brand"></iconify-icon>
+          4 业务指标 · 公测期 30 天 (PRD §11.6.1)
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">日看板 + 4 周周报加权</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <!-- 1. 注册转化率 -->
+        <div class="metric-reg rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">注册转化率</span>
+            <iconify-icon icon="mdi:account-check-outline" class="text-brand text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-reg-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 ≥ 80% (trial / redeemed)</p>
+          <div class="progress-track mt-2"><div id="m-reg-bar" class="progress-fill bg-brand" style="width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-reg-num">—</span> / 1,025 累计</p>
+        </div>
+        <!-- 2. 试用转化率 -->
+        <div class="metric-trial rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">试用转化率</span>
+            <iconify-icon icon="mdi:test-tube" class="text-success text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-trial-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 ≥ 15% (redeemed / landing)</p>
+          <div class="progress-track mt-2"><div id="m-trial-bar" class="progress-fill bg-success" style="width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-trial-num">—</span> / 235 累计</p>
+        </div>
+        <!-- 3. 付费转化率 -->
+        <div class="metric-paid rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">付费转化率</span>
+            <iconify-icon icon="mdi:cash-multiple" class="text-urgent text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-paid-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 ≥ 25% (paid / trial)</p>
+          <div class="progress-track mt-2"><div id="m-paid-bar" class="progress-fill" style="background:#FA8C16; width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-paid-num">—</span> / 51 累计</p>
+        </div>
+        <!-- 4. 创史转化率 -->
+        <div class="metric-advocate rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">创史转化率</span>
+            <iconify-icon icon="mdi:crown-outline" class="text-ai text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-adv-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 ≥ 60% (advocate / trial)</p>
+          <div class="progress-track mt-2"><div id="m-adv-bar" class="progress-fill bg-ai" style="width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-adv-num">—</span> / 191 累计</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3 创史专属指标卡片 ============ -->
+    <section class="mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:crown" class="text-ai"></iconify-icon>
+          3 创史专属指标 · 80 席招募期 (W11 B2 升级)
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">剩 <span id="ds-founding-remaining">—</span> 席未发</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        <!-- 创史招募率 -->
+        <div class="metric-recruit rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">创史招募率</span>
+            <iconify-icon icon="mdi:target" class="text-ai text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-recruit-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 100% (8/23 周日前招满 80)</p>
+          <div class="progress-track mt-2"><div id="m-recruit-bar" class="progress-fill bg-ai" style="width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-recruit-num">—</span> / 80 席目标</p>
+        </div>
+        <!-- 创史群活跃 -->
+        <div class="metric-engagement rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">创史群活跃</span>
+            <iconify-icon icon="mdi:account-group" class="text-wiki text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-engage-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">Day 30 反馈 ≥ 80%</p>
+          <div class="progress-track mt-2"><div id="m-engage-bar" class="progress-fill" style="background:#0EA5E9; width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-engage-num">—</span> 反馈 / 创史律师</p>
+        </div>
+        <!-- 创史付费转化 -->
+        <div class="metric-founding-paid rounded-xl shadow-card border p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary font-medium">创史付费转化</span>
+            <iconify-icon icon="mdi:star-circle-outline" class="text-urgent text-lg"></iconify-icon>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <p id="m-foundp-val" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
+            <span class="text-[11px] text-fg-tertiary">%</span>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1">目标 ≥ 30% (首年 5 折激励)</p>
+          <div class="progress-track mt-2"><div id="m-foundp-bar" class="progress-fill" style="background:#FF7D00; width:0%"></div></div>
+          <p class="text-[10px] text-fg-tertiary mt-1.5"><span id="m-foundp-num">—</span> 付费 / 创史律师</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 折线图: 7 日趋势 (5 事件) ============ -->
+    <section class="bg-white rounded-xl shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:chart-line" class="text-brand"></iconify-icon>
+          7 日趋势 · 6 事件漏斗
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">公测 7/26 Day 0 起每日累计</span>
+      </div>
+      <div style="position:relative; height:240px;">
+        <canvas id="ds-chart-trend"></canvas>
+      </div>
+    </section>
+
+    <!-- ============ 渠道对比 + 漏斗图 (双列) ============ -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-5">
+      <!-- 5 渠道对比 -->
+      <section class="bg-white rounded-xl shadow-card border border-bg-border p-4 md:p-5 fade-in">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold flex items-center gap-1.5">
+            <iconify-icon icon="mdi:finance" class="text-brand"></iconify-icon>
+            5 渠道对比 (公测期 30 天加权)
+          </h3>
+          <span class="text-[10px] text-fg-tertiary">来自 dashboard_w11.md §4</span>
+        </div>
+        <div id="ds-channel-bars" class="space-y-2">
+          <!-- 5 channel bars 由 JS 渲染 -->
+        </div>
+      </section>
+      <!-- 6 事件漏斗 -->
+      <section class="bg-white rounded-xl shadow-card border border-bg-border p-4 md:p-5 fade-in">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold flex items-center gap-1.5">
+            <iconify-icon icon="mdi:filter-variant" class="text-urgent"></iconify-icon>
+            6 事件漏斗 (公测期 30 天累计)
+          </h3>
+          <span class="text-[10px] text-fg-tertiary">Mavis cron 23:00 写入</span>
+        </div>
+        <div style="position:relative; height:240px;">
+          <canvas id="ds-chart-funnel"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ 异常预警 SOP 卡片 ============ -->
+    <section class="bg-white rounded-xl shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold flex items-center gap-1.5">
+          <iconify-icon icon="mdi:alert-decagram-outline" class="text-danger"></iconify-icon>
+          异常预警阈值 (Mavis 跑日报时检测)
+        </h3>
+        <span class="text-[10px] text-fg-tertiary">BD 12h-24h 响应</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead class="text-fg-tertiary text-[10px]">
+            <tr class="border-b border-bg-border">
+              <th class="text-left py-2 px-2 font-medium">异常</th>
+              <th class="text-left py-2 px-2 font-medium">触发条件</th>
+              <th class="text-left py-2 px-2 font-medium">级别</th>
+              <th class="text-left py-2 px-2 font-medium">响应</th>
+            </tr>
+          </thead>
+          <tbody id="ds-alerts-body" class="text-fg-secondary">
+            <!-- 8 行异常 alert 由 JS 渲染 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 数据源 + AI 角标 + 法律免责声明 ============ -->
+    <div class="space-y-3 mb-6">
+      <div class="bg-ai/5 border border-ai/20 rounded-lg p-3 flex items-start gap-2">
+        <iconify-icon icon="mdi:sparkles" class="text-ai text-base flex-shrink-0 mt-0.5"></iconify-icon>
+        <div class="text-[11px] text-fg-secondary leading-relaxed">
+          <strong class="text-ai">AI 辅助工具声明 · </strong>本看板聚合 6 事件埋点 + 邀请码状态 + 反馈问卷, 自动跑 7 SQL + 漏斗转换, 供 BD/总指挥运营决策参考.
+          AI 推断的指标基线和预警阈值仅供参考, 最终由 BD 人工校验 + 总指挥拍板.
+          数据源: <code class="text-[10px] bg-white px-1 rounded">GET /api/dashboard/w11?period=current</code> (W11 C1 §0.5 自动 dashboard, Mavis cron 23:00 落地).
+        </div>
+      </div>
+      <div class="bg-white border border-bg-border rounded-lg p-3 text-[10px] text-fg-tertiary leading-relaxed">
+        <strong class="text-fg-secondary">法律免责声明 · </strong>
+        LexPrime 是律师的 AI 辅助工具, 全部指标聚合数据仅供参考, 不构成法律意见, 最终判断以执业律师 + BD 实际跑数据为准.
+        创始团队不对律师使用 LexPrime 做出的任何运营决策承担责任.
+        <span class="text-ai">数据本地化 · 端到端加密 · 律师法/律所执业纪律合规</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- chart.js 4.4 CDN (折线 + 漏斗, ~60KB gzip) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== 静态目标值 (从 docs/marketing/dashboard_w11.md §1.1 + §1.2 + §1.3 + §4 整理) =====
+  // 公测 7/26 启动前 fetch 后端 /api/dashboard/w11 会 404, 用这组数据 fallback
+  // Mavis cron 23:00 跑 7 SQL 后, 后端会替换为真实累计值
+  var FALLBACK_TARGETS = {
+    'meta': {
+      'campaign_window': '2026-07-26 ~ 2026-08-24',
+      'goal_window': '30 天 + 8 月底',
+      'data_source': 'fallback (dashboard_w11.md §1.1 目标值)',
+      'last_updated': '2026-06-30 03:33 CST',
+      'invite_codes_total': 1115,
+      'founding_seats_total': 80,
+      'founding_seats_remaining': 80
+    },
+    'metrics': {
+      'registration_cvr': { 'target_pct': 80, 'numerator': 0, 'denominator': 0, 'numerator_label': '试用律师', 'denominator_label': '兑换律师' },
+      'trial_cvr':         { 'target_pct': 15, 'numerator': 0, 'denominator': 0, 'numerator_label': '兑换律师', 'denominator_label': 'landing 访问' },
+      'paid_cvr':          { 'target_pct': 25, 'numerator': 0, 'denominator': 0, 'numerator_label': '付费律师', 'denominator_label': '试用律师' },
+      'advocate_cvr':      { 'target_pct': 60, 'numerator': 0, 'denominator': 0, 'numerator_label': '创史律师', 'denominator_label': '试用律师' },
+      'founding_recruit':  { 'target_pct': 100, 'numerator': 0, 'denominator': 80, 'numerator_label': '已发创史席', 'denominator_label': '80 席目标' },
+      'founding_engagement': { 'target_pct': 80, 'numerator': 0, 'denominator': 0, 'numerator_label': '反馈完成', 'denominator_label': '创史律师' },
+      'founding_paid':     { 'target_pct': 30, 'numerator': 0, 'denominator': 0, 'numerator_label': '创史付费', 'denominator_label': '创史律师' }
+    },
+    'cumulative_target': {
+      'landing_viewed': 1025,
+      'invite_redeemed': 235,
+      'trial_started': 199,
+      'paid_converted': 51,
+      'advocate_promoted': 191
+    },
+    'daily_trend': [
+      // 7 日 mock (公测 7/26-8/01) - 全部 0 因未启动, 7/26 启动后填实
+      { 'day': '07-26', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '07-27', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '07-28', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '07-29', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '07-30', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '07-31', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 },
+      { 'day': '08-01', 'landing': 0, 'redeemed': 0, 'trial': 0, 'paid': 0, 'advocate': 0, 'feedback': 0 }
+    ],
+    'channels': [
+      { 'name': '评审律师 (5)',   'reach': 5,    'landing': 5,    'redeemed': 5,    'trial': 5,    'paid': 3,    'advocate': 5,    'cvr_paid': 50 },
+      { 'name': '微信群律师 (10)', 'reach': 10,   'landing': 20,   'redeemed': 10,   'trial': 8,    'paid': 2,    'advocate': 5,    'cvr_paid': 20 },
+      { 'name': '创史公开段 (95)', 'reach': 95,   'landing': 95,   'redeemed': 76,   'trial': 68,   'paid': 22,   'advocate': 76,   'cvr_paid': 30 },
+      { 'name': '律协推荐 (100)',  'reach': 100,  'landing': 100,  'redeemed': 80,   'trial': 72,   'paid': 22,   'advocate': 80,   'cvr_paid': 30 },
+      { 'name': '公开报名 (800+)', 'reach': 800,  'landing': 800,  'redeemed': 60,   'trial': 42,   'paid': 2,    'advocate': 21,   'cvr_paid': 5 },
+      { 'name': '加权平均',         'reach': 1010, 'landing': 1020, 'redeemed': 231, 'trial': 195, 'paid': 49,  'advocate': 187, 'cvr_paid': 25 }
+    ],
+    'alerts': [
+      { 'name': '试用转化率', 'condition': '< 10% (目标 15%)', 'level': '红色', 'response': '12h' },
+      { 'name': '注册转化率', 'condition': '< 60% (目标 80%)', 'level': '红色', 'response': '12h' },
+      { 'name': '付费转化率', 'condition': '< 15% (目标 25%)', 'level': '黄色', 'response': '24h' },
+      { 'name': '创史转化率', 'condition': '< 40% (目标 60%)', 'level': '黄色', 'response': '24h' },
+      { 'name': '创史招募率', 'condition': '< 80% (8/23 前)', 'level': '红色', 'response': '12h' },
+      { 'name': '创史群活跃', 'condition': '< 50% (Day 7/14/23/30)', 'level': '黄色', 'response': '24h' },
+      { 'name': '创史付费转化', 'condition': '< 15% (目标 30%)', 'level': '红色', 'response': '24h' },
+      { 'name': '邀请码激活停滞', 'condition': '单日变化 < 5 (连续 3 天)', 'level': '黄色', 'response': '12h' }
+    ]
+  };
+
+  var chartRefs = { trend: null, funnel: null };
+  var currentSnapshot = null;
+
+  // ===== Track 函数 (客户端埋点, W11 B2 + dashboard 复用) =====
+  function track(event_name, properties) {
+    properties = properties || {};
+    var payload = {
+      event: event_name,
+      user_id: properties.user_id || 'dashboard_visitor',
+      session_id: properties.session_id || (window.__dashboardSessionId || (window.__dashboardSessionId = 'ds_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8))),
+      created_at: new Date().toISOString(),
+      page_url: window.location.pathname,
+      properties: properties
+    };
+    console.log('[track]', event_name, payload);
+    try {
+      var arr = JSON.parse(localStorage.getItem('__dashboard_events') || '[]');
+      arr.push(payload);
+      if (arr.length > 100) arr = arr.slice(-100);
+      localStorage.setItem('__dashboard_events', JSON.stringify(arr));
+    } catch (e) { /* localStorage 不可用 */ }
+    // 未来 W11 末接入 launch_funnel.md §1.0 后端
+  }
+
+  // ===== Fetch 数据 (后端先, fallback 内嵌目标值) =====
+  async function loadDashboardData() {
+    var apiUrl = '/api/dashboard/w11?period=current';
+    try {
+      var resp = await fetch(apiUrl, { headers: { 'Accept': 'application/json' } });
+      if (resp.ok) {
+        var data = await resp.json();
+        return { 'data': data, 'source': 'api' };
+      }
+      console.warn('[dashboard] /api/dashboard/w11 返回 ' + resp.status + ', fallback 目标值');
+    } catch (err) {
+      console.warn('[dashboard] fetch 失败, fallback 目标值:', err.message);
+    }
+    return { 'data': FALLBACK_TARGETS, 'source': 'fallback' };
+  }
+
+  // ===== 倒计时 (距 7/26 14:00 启动仪式) =====
+  function updateCountdown() {
+    var target = new Date('2026-07-26T14:00:00+08:00');
+    var now = new Date();
+    var diffMs = target - now;
+    if (diffMs < 0) diffMs = 0;
+    var days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    var secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+    var set = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = String(v).padStart(2, '0'); };
+    set('cd-days', days);
+    set('cd-hours', hours);
+    set('cd-mins', mins);
+    set('cd-secs', secs);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ===== 渲染 7 指标卡片 =====
+  function renderMetrics(metrics, source) {
+    var m = metrics;
+    var renderOne = function(key, valId, barId, numId, color, total) {
+      var item = m[key];
+      if (!item) return;
+      var num = item.numerator || 0;
+      var den = item.denominator || 0;
+      var pct = den > 0 ? Math.round(num * 100.0 / den) : 0;
+      var targetPct = item.target_pct || 0;
+      var valEl = document.getElementById(valId);
+      var barEl = document.getElementById(barId);
+      var numEl = document.getElementById(numId);
+      if (valEl) valEl.textContent = (source === 'api' && den > 0) ? pct : '—';
+      if (barEl) {
+        var reach = Math.min(100, targetPct > 0 ? Math.round(pct / targetPct * 100) : 0);
+        barEl.style.width = reach + '%';
+      }
+      if (numEl) {
+        if (den > 0) {
+          numEl.textContent = num + ' / ' + den;
+        } else {
+          numEl.textContent = total + ' (目标基线)';
+        }
+      }
+    };
+    renderOne('registration_cvr',  'm-reg-val',     'm-reg-bar',     'm-reg-num',     '#165DFF', m.registration_cvr.target_pct);
+    renderOne('trial_cvr',         'm-trial-val',   'm-trial-bar',   'm-trial-num',   '#00B42A', m.trial_cvr.target_pct);
+    renderOne('paid_cvr',          'm-paid-val',    'm-paid-bar',    'm-paid-num',    '#FA8C16', m.paid_cvr.target_pct);
+    renderOne('advocate_cvr',      'm-adv-val',     'm-adv-bar',     'm-adv-num',     '#6C5CE7', m.advocate_cvr.target_pct);
+    renderOne('founding_recruit',  'm-recruit-val', 'm-recruit-bar', 'm-recruit-num', '#6C5CE7', '80');
+    renderOne('founding_engagement', 'm-engage-val','m-engage-bar',  'm-engage-num',  '#0EA5E9', m.founding_engagement.target_pct);
+    renderOne('founding_paid',     'm-foundp-val',  'm-foundp-bar',  'm-foundp-num',  '#FF7D00', m.founding_paid.target_pct);
+  }
+
+  // ===== 7 日趋势折线图 =====
+  function renderTrendChart(daily) {
+    var canvas = document.getElementById('ds-chart-trend');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (chartRefs.trend) chartRefs.trend.destroy();
+    var labels = (daily || []).map(function(d) { return d.day; });
+    var datasets = [
+      { 'label': 'landing',     'color': '#165DFF', 'key': 'landing' },
+      { 'label': 'redeemed',    'color': '#00B42A', 'key': 'redeemed' },
+      { 'label': 'trial',       'color': '#FA8C16', 'key': 'trial' },
+      { 'label': 'paid',        'color': '#F5222D', 'key': 'paid' },
+      { 'label': 'advocate',    'color': '#6C5CE7', 'key': 'advocate' },
+      { 'label': 'feedback',    'color': '#0EA5E9', 'key': 'feedback' }
+    ].map(function(d) {
+      return {
+        'label': d.label,
+        'data': (daily || []).map(function(r) { return r[d.key] || 0; }),
+        'borderColor': d.color,
+        'backgroundColor': d.color + '22',
+        'tension': 0.3,
+        'borderWidth': 2,
+        'pointRadius': 3,
+        'pointBackgroundColor': d.color,
+        'fill': false
+      };
+    });
+    chartRefs.trend = new Chart(canvas.getContext('2d'), {
+      'type': 'line',
+      'data': { 'labels': labels, 'datasets': datasets },
+      'options': {
+        'responsive': true,
+        'maintainAspectRatio': false,
+        'plugins': {
+          'legend': { 'position': 'bottom', 'labels': { 'font': { 'size': 10 }, 'boxWidth': 10, 'padding': 8 } },
+          'tooltip': { 'mode': 'index', 'intersect': false }
+        },
+        'scales': {
+          'x': { 'grid': { 'display': false }, 'ticks': { 'font': { 'size': 10 } } },
+          'y': { 'beginAtZero': true, 'ticks': { 'font': { 'size': 10 } }, 'grid': { 'color': '#F0F2F5' } }
+        }
+      }
+    });
+  }
+
+  // ===== 6 事件漏斗图 (横向 bar 模拟漏斗) =====
+  function renderFunnelChart(cum) {
+    var canvas = document.getElementById('ds-chart-funnel');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (chartRefs.funnel) chartRefs.funnel.destroy();
+    var labels = ['landing 访问', 'redeemed 兑换', 'trial 试用', 'paid 付费', 'advocate 创史'];
+    var target = cum || {};
+    var data = [target.landing_viewed || 0, target.invite_redeemed || 0, target.trial_started || 0, target.paid_converted || 0, target.advocate_promoted || 0];
+    var colors = ['#165DFF', '#00B42A', '#FA8C16', '#F5222D', '#6C5CE7'];
+    chartRefs.funnel = new Chart(canvas.getContext('2d'), {
+      'type': 'bar',
+      'data': {
+        'labels': labels,
+        'datasets': [{
+          'label': '公测期目标 (累计)',
+          'data': data,
+          'backgroundColor': colors,
+          'borderColor': colors,
+          'borderWidth': 1
+        }]
+      },
+      'options': {
+        'indexAxis': 'y',
+        'responsive': true,
+        'maintainAspectRatio': false,
+        'plugins': {
+          'legend': { 'display': false },
+          'tooltip': { 'callbacks': { 'label': function(ctx) { return '目标 ' + ctx.parsed.x + ' 名'; } } }
+        },
+        'scales': {
+          'x': { 'beginAtZero': true, 'ticks': { 'font': { 'size': 10 } }, 'grid': { 'color': '#F0F2F5' } },
+          'y': { 'ticks': { 'font': { 'size': 11 } }, 'grid': { 'display': false } }
+        }
+      }
+    });
+  }
+
+  // ===== 5 渠道对比 (CSS bars) =====
+  function renderChannelBars(channels) {
+    var container = document.getElementById('ds-channel-bars');
+    if (!container) return;
+    if (!channels || channels.length === 0) {
+      container.innerHTML = '<div class="text-center text-xs text-fg-tertiary py-6">渠道数据待加载</div>';
+      return;
+    }
+    var maxPaid = Math.max.apply(null, channels.map(function(c) { return c.paid || 0; })) || 1;
+    var html = channels.map(function(c) {
+      var pct = Math.round((c.paid || 0) / maxPaid * 100);
+      var color = c.name.indexOf('加权平均') !== -1 ? '#165DFF' : (c.name.indexOf('律协') !== -1 ? '#0EA5E9' : (c.name.indexOf('创史') !== -1 ? '#6C5CE7' : (c.name.indexOf('微信') !== -1 ? '#07C160' : '#FA8C16')));
+      return '<div class="bar-row">' +
+        '<span class="bar-name truncate">' + c.name + '</span>' +
+        '<div class="bar-track-c"><div class="bar-fill-c" style="width:' + pct + '%; background:' + color + ';"></div></div>' +
+        '<span class="bar-val">' + (c.paid || 0) + ' 付费</span>' +
+      '</div>';
+    }).join('');
+    container.innerHTML = html;
+  }
+
+  // ===== 8 异常 alert 表格 =====
+  function renderAlerts(alerts) {
+    var tbody = document.getElementById('ds-alerts-body');
+    if (!tbody || !alerts) return;
+    var levelClass = function(l) { return l === '红色' ? 'badge-bad' : 'badge-warn'; };
+    var html = alerts.map(function(a) {
+      return '<tr class="border-b border-bg-border last:border-0">' +
+        '<td class="py-2.5 px-2 font-medium text-fg-primary">' + a.name + '</td>' +
+        '<td class="py-2.5 px-2">' + a.condition + '</td>' +
+        '<td class="py-2.5 px-2"><span class="badge ' + levelClass(a.level) + '">' + a.level + '</span></td>' +
+        '<td class="py-2.5 px-2">' + a.response + '</td>' +
+      '</tr>';
+    }).join('');
+    tbody.innerHTML = html;
+  }
+
+  // ===== 渲染数据源标签 + 最后更新时间 =====
+  function renderSubtitle(meta, source) {
+    var sub = document.getElementById('ds-subtitle');
+    var tag = document.getElementById('ds-source-tag');
+    if (sub && meta) {
+      sub.textContent = '公测期 ' + (meta.campaign_window || '7/26 - 8/24') + ' · 最后更新: ' + (meta.last_updated || '从未') + (source === 'api' ? ' (API 实时)' : ' (目标值基线)');
+    }
+    if (tag) {
+      tag.className = 'source-tag ' + (source === 'api' ? 'source-api' : 'source-fallback');
+      var icon = tag.querySelector('iconify-icon');
+      var span = tag.querySelector('span');
+      if (icon && span) {
+        icon.setAttribute('icon', source === 'api' ? 'mdi:database-check-outline' : 'mdi:database-off-outline');
+        span.textContent = source === 'api' ? 'API 实时' : '目标值';
+      }
+    }
+    var rem = document.getElementById('ds-founding-remaining');
+    if (rem && meta) rem.textContent = meta.founding_seats_remaining || '—';
+  }
+
+  // ===== 主 load 函数 =====
+  async function loadAndRender(triggerSource) {
+    var refreshBtn = document.getElementById('ds-refresh-btn');
+    var refreshIcon = refreshBtn ? refreshBtn.querySelector('iconify-icon') : null;
+    if (refreshIcon) refreshIcon.classList.add('icon-spin');
+    var sub = document.getElementById('ds-subtitle');
+    if (sub) sub.textContent = '刷新中…';
+
+    var result = await loadDashboardData();
+    currentSnapshot = result.data;
+    renderSubtitle(result.data.meta || {}, result.source);
+    renderMetrics(result.data.metrics || {}, result.source);
+    renderTrendChart(result.data.daily_trend || []);
+    renderFunnelChart(result.data.cumulative_target || {});
+    renderChannelBars(result.data.channels || []);
+    renderAlerts(result.data.alerts || []);
+    if (sub) {
+      var lastUpd = result.data.meta && result.data.meta.last_updated;
+      sub.textContent = '公测期 7/26 - 8/24 · 最后更新: ' + (lastUpd || '从未') + (result.source === 'api' ? ' (API 实时)' : ' (目标值基线, 7/26 后实跑)');
+    }
+    if (refreshIcon) refreshIcon.classList.remove('icon-spin');
+    if (triggerSource !== 'auto') {
+      track('dashboard_refreshed', { 'source': triggerSource || 'manual', 'data_source': result.source });
+    }
+  }
+
+  // ===== DOMContentLoaded =====
+  document.addEventListener('DOMContentLoaded', function() {
+    loadAndRender('auto');
+    track('dashboard_viewed', {
+      'campaign_window': '2026-07-26 ~ 2026-08-24',
+      'page_url': window.location.pathname
+    });
+  });
+
+  // ===== 手动刷新按钮 =====
+  var refreshBtn = document.getElementById('ds-refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() { loadAndRender('manual_button'); });
+  }
+
+  // ===== 5 min 自动刷新 =====
+  setInterval(function() { loadAndRender('auto_5min'); }, 5 * 60 * 1000);
+
+  // ===== 暴露给 router =====
+  window.__loadDashboardView = function() {
+    // 重新初始化 chart (视图重新可见时)
+    if (currentSnapshot) {
+      renderTrendChart(currentSnapshot.daily_trend || []);
+      renderFunnelChart(currentSnapshot.cumulative_target || {});
+    }
+  };
+})();
+</script>

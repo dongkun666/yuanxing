@@ -1,0 +1,137 @@
+<!--
+  W30 Phase 6.1 Marketplace - 跨境文件 (Skill 3 v3.0 多律所模板 40+ 复用)
+  复用: W29 1b07d88 backend (POST /cross-border) + W25 cc14045 + W26 ab59c49 Skill 3 v3.0 launch
+  功能: 跨境文件定价表 (6 文档类型 × 4 语言) + 8 司法管辖区 + 30% 抽成
+  状态: W31 正式启用, 40 律所合作接力
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto mp-page mp-fade-in" id="view-marketplace-cross-border" data-view-source="marketplace/cross-border.html">
+
+<!-- ============ 顶部 header ============ -->
+<header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm flex-shrink-0">
+  <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+    <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('marketplace-lawyers')" title="返回 Marketplace 律师">
+      <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+    </button>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-1.5">
+        <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+          <iconify-icon icon="mdi:earth" class="text-wiki text-lg md:text-xl"></iconify-icon>
+          <span class="truncate">跨境文件</span>
+        </h1>
+        <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+          <iconify-icon icon="mdi:storefront-outline" class="text-xs"></iconify-icon>
+          <span class="hidden sm:inline">Phase 6.1</span>
+        </span>
+        <span class="inline-flex items-center gap-0.5 text-[10px] text-urgent font-medium px-1.5 py-0.5 bg-urgent-tint rounded-sm flex-shrink-0">
+          <iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+          <span class="hidden sm:inline">W31 启用</span>
+        </span>
+        <span class="text-[10px] text-fg-tertiary flex-shrink-0 hidden md:inline">Skill 3 v3.0 多律所模板 40+</span>
+      </div>
+      <p class="text-[11px] text-fg-tertiary truncate">国际客户下单 → 中国律师接案 → 跨境文件生成 (复核 W25 Skill 3 v3.0 模板) → 30% Marketplace 抽成</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <select id="mp-cb-doc-type" class="mp-input mp-btn-sm hidden md:block" style="padding: 4px 8px;">
+        <option value="">全部文档</option>
+        <option value="letter">律师函</option>
+        <option value="contract">合同</option>
+        <option value="complaint">起诉状</option>
+        <option value="defense">答辩状</option>
+        <option value="arbitration_application">仲裁申请书</option>
+        <option value="arbitration_response">仲裁答辩书</option>
+      </select>
+      <select id="mp-cb-language" class="mp-input mp-btn-sm hidden md:block" style="padding: 4px 8px;">
+        <option value="">全部语言</option>
+        <option value="zh-CN">中文</option>
+        <option value="en-US">英文</option>
+        <option value="bilingual">中英双语</option>
+        <option value="dual_column">双语对照</option>
+      </select>
+      <button id="mp-cb-create-btn" class="mp-btn mp-btn-primary mp-btn-sm">
+        <iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+        <span class="hidden sm:inline">创建订单</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 强制声明 (W25 Skill 3 v3.0 + Marketplace) ============ -->
+<section class="px-4 md:px-6 py-3 bg-bg-subtle flex-shrink-0">
+  <div class="mp-disclaimer max-w-7xl mx-auto">
+    <div class="flex items-start gap-2">
+      <iconify-icon icon="mdi:earth" class="text-wiki flex-shrink-0 mt-0.5"></iconify-icon>
+      <div>
+        <strong class="text-fg-primary">跨境文件 Marketplace (Phase 6.1 + Skill 3 v3.0 联动):</strong>
+        跨境文件复用 W25 cc14045 + W26 ab59c49 Skill 3 v3.0 多律所模板 (40+ 律所, 中英双语 + 双语对照 + 国际仲裁 ICC / HKIAC / SIAC),
+        实际发布前需律师本人审核、修改并签字确认。Marketplace 仅做撮合 + 30% 抽成, 不参与跨境文件实质生成。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 文档 × 4 语言 定价表 ============ -->
+<section class="px-4 md:px-6 py-4 overflow-x-auto flex-shrink-0">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-sm font-semibold flex items-center gap-2 mb-3">
+      <iconify-icon icon="mdi:table-large" class="text-wiki"></iconify-icon>
+      跨境文件定价表 (6 文档类型 × 4 语言 = 24 组合)
+      <span class="text-[11px] text-fg-tertiary ml-1 font-normal">¥ 99-1990 / 份, 30% Marketplace 抽成</span>
+    </h2>
+    <div class="bg-white rounded-lg border border-bg-border overflow-hidden">
+      <div id="mp-cb-pricing" class="overflow-x-auto">
+        <div class="mp-loading">
+          <span class="mp-loading-spinner"></span>
+          加载定价表…
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 跨境文件订单列表 ============ -->
+<main class="flex-1 px-4 md:px-6 py-4 overflow-y-auto">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-sm font-semibold flex items-center gap-2 mb-3">
+      <iconify-icon icon="mdi:earth-arrow-right" class="text-wiki"></iconify-icon>
+      跨境文件订单
+      <span class="text-[11px] text-fg-tertiary ml-1 font-normal">8 司法管辖区 (CN / HK / SG / US / UK / ICC / HKIAC / SIAC)</span>
+    </h2>
+    <div id="mp-cb-list" class="mp-fade-in">
+      <div class="mp-loading">
+        <span class="mp-loading-spinner"></span>
+        加载订单中…
+      </div>
+    </div>
+
+    <!-- 8 司法管辖区 + Skill 3 v3.0 模板说明 -->
+    <div class="bg-white rounded-lg p-4 mt-4 border border-bg-border">
+      <h3 class="text-sm font-semibold mb-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:map-marker-radius-outline" class="text-wiki"></iconify-icon>
+        8 司法管辖区 + Skill 3 v3.0 模板 ID
+      </h3>
+      <div class="text-[12px] text-fg-secondary space-y-2 leading-relaxed">
+        <div class="flex flex-wrap gap-1.5">
+          <span class="mp-jur-tag">CN</span> 中国大陆
+          <span class="mp-jur-tag">HK</span> 中国香港
+          <span class="mp-jur-tag">SG</span> 新加坡
+          <span class="mp-jur-tag">US</span> 美国
+          <span class="mp-jur-tag">UK</span> 英国
+          <span class="mp-jur-tag">ICC</span> ICC 国际仲裁
+          <span class="mp-jur-tag">HKIAC</span> 港国际仲裁
+          <span class="mp-jur-tag">SIAC</span> 新国际仲裁
+        </div>
+        <p class="text-[11px] text-fg-tertiary">模板 ID 示例: <code class="px-1.5 py-0.5 bg-bg-subtle rounded">skill3-letter-v3-en</code>, <code class="px-1.5 py-0.5 bg-bg-subtle rounded">skill3-arbitration-v3-bilingual</code></p>
+        <p class="text-[11px] text-fg-tertiary">跨境文件实际发布前需律师本人审核、修改并签字确认 (W11 PRD V5.0 § 11 + Skill 3 v3.0 launch 规范)</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function() {
+    if (typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn.initCrossBorderView === 'function') {
+        window.MarketplaceFn.initCrossBorderView();
+    }
+})();
+</script>
+</div>

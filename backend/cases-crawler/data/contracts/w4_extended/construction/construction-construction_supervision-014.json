@@ -1,0 +1,136 @@
+{
+  "template_id": "construction-construction_supervision-014",
+  "contract_type": "工程承揽合同",
+  "industry": "工程监理",
+  "title": "建设工程监理合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "监理工程",
+      "text": "监理工程: 购车, 工程地点: 合肥市朝阳区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "监理人",
+      "text": "监理人为乙方。"
+    },
+    {
+      "index": 3,
+      "title": "监理范围",
+      "text": "监理范围包括工程质量、进度、造价、安全等。"
+    },
+    {
+      "index": 4,
+      "title": "监理期限",
+      "text": "监理期限 3 年, 自 2027-03-24 起至 2028-03-19 止。"
+    },
+    {
+      "index": 5,
+      "title": "监理费",
+      "text": "监理费人民币 30 万元。"
+    },
+    {
+      "index": 6,
+      "title": "监理责任",
+      "text": "监理人应按《建设工程监理规范》履行监理职责。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由中国国际经济贸易仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "监理责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "监理费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "监理工程",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "监理期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建设工程监理合同",
+    "工程监理常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建设工程监理合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_supervision",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

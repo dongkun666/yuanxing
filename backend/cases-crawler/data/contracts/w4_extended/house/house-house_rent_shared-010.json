@@ -1,0 +1,142 @@
+{
+  "template_id": "house-house_rent_shared-010",
+  "contract_type": "房屋合同",
+  "industry": "合租租赁",
+  "title": "合租租赁合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "租赁标的",
+      "text": "甲方将位于昆明市武侯区某路 88 号的房屋中的某间出租给乙方使用, 为合租房屋。"
+    },
+    {
+      "index": 2,
+      "title": "租赁期限",
+      "text": "租赁期自 2027-05-06 起至 2028-03-08 止, 共 3 个月。"
+    },
+    {
+      "index": 3,
+      "title": "租金及分摊",
+      "text": "乙方月租金为人民币 20 万元, 公共区域水电费、网络费等按比例分摊。"
+    },
+    {
+      "index": 4,
+      "title": "押金",
+      "text": "乙方向甲方支付押金, 无息退还。"
+    },
+    {
+      "index": 5,
+      "title": "公共区域使用",
+      "text": "乙方应合理使用公共区域 (厨房、卫生间等), 不得影响其他合租人。"
+    },
+    {
+      "index": 6,
+      "title": "噪音与作息",
+      "text": "乙方应遵守合理的作息时间, 晚上 11 点后避免噪音。"
+    },
+    {
+      "index": 7,
+      "title": "提前解约",
+      "text": "提前解约应支付 2 个月租金作为违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议管辖",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "公共区域使用",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "隐含义务"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "提前解约",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议管辖",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "押金",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "租赁期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "合租租赁合同",
+    "合租租赁常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于合租租赁合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "house",
+    "skeleton": "house_rent_shared",
+    "variant_idx": 10,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

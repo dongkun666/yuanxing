@@ -1,0 +1,37 @@
+{
+  "w3": 56,
+  "w4": 6020,
+  "errors": 0,
+  "elapsed_sec": 2.34,
+  "total_templates": 6076,
+  "total_clauses": 41025,
+  "total_annotations": 30380,
+  "total_fts_rows": 6076,
+  "fts_perf": {
+    "FTS5 借款": {
+      "query": "借款",
+      "results": 3,
+      "elapsed_ms": 0.13
+    },
+    "FTS5 房屋": {
+      "query": "房屋",
+      "results": 2,
+      "elapsed_ms": 0.04
+    },
+    "FTS5 劳动合同": {
+      "query": "劳动合同",
+      "results": 0,
+      "elapsed_ms": 0.03
+    },
+    "FTS5 担保": {
+      "query": "担保",
+      "results": 161,
+      "elapsed_ms": 0.03
+    },
+    "FTS5 违约金过高": {
+      "query": "违约金过高",
+      "results": 0,
+      "elapsed_ms": 0.03
+    }
+  }
+}

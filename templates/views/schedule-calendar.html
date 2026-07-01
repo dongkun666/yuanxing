@@ -1,4 +1,4 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-schedule-calendar">
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-schedule-calendar">
 <div class="max-w-5xl mx-auto w-full space-y-5">
 <!-- 标题 + 返回 -->
 <div class="flex items-center justify-between">
@@ -7,13 +7,82 @@
 <iconify-icon icon="mdi:arrow-left"></iconify-icon>
 <span>返回</span>
 </button>
-<span class="text-[#E5E6EB]">|</span>
+<span class="text-bg-border">|</span>
 <h3 class="text-base font-semibold text-fg-primary">日程管理</h3>
 </div>
 <div class="flex items-center gap-2">
-<button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors">今天</button>
-<button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors">+ 新增</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="openScheduleModal()">
+            <iconify-icon icon="mdi:plus"></iconify-icon>
+            <span>新增</span>
+        </button>
+    </div>
 </div>
+<!-- 年月日筛选 -->
+<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
+    <iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
+    <span class="text-xs text-fg-secondary font-medium">日期筛选</span>
+    <select id="schedule-filter-year" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部年份</option>
+        <option value="2026">2026 年</option>
+    </select>
+    <select id="schedule-filter-month" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部月份</option>
+        <option value="01">1 月</option>
+        <option value="02">2 月</option>
+        <option value="03">3 月</option>
+        <option value="04">4 月</option>
+        <option value="05">5 月</option>
+        <option value="06">6 月</option>
+        <option value="07">7 月</option>
+        <option value="08">8 月</option>
+        <option value="09">9 月</option>
+        <option value="10">10 月</option>
+        <option value="11">11 月</option>
+        <option value="12">12 月</option>
+    </select>
+    <select id="schedule-filter-day" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
+        <option value="">全部日期</option>
+        <option value="01">1 日</option>
+        <option value="02">2 日</option>
+        <option value="03">3 日</option>
+        <option value="04">4 日</option>
+        <option value="05">5 日</option>
+        <option value="06">6 日</option>
+        <option value="07">7 日</option>
+        <option value="08">8 日</option>
+        <option value="09">9 日</option>
+        <option value="10">10 日</option>
+        <option value="11">11 日</option>
+        <option value="12">12 日</option>
+        <option value="13">13 日</option>
+        <option value="14">14 日</option>
+        <option value="15">15 日</option>
+        <option value="16">16 日</option>
+        <option value="17">17 日</option>
+        <option value="18">18 日</option>
+        <option value="19">19 日</option>
+        <option value="20">20 日</option>
+        <option value="21">21 日</option>
+        <option value="22">22 日</option>
+        <option value="23">23 日</option>
+        <option value="24">24 日</option>
+        <option value="25">25 日</option>
+        <option value="26">26 日</option>
+        <option value="27">27 日</option>
+        <option value="28">28 日</option>
+        <option value="29">29 日</option>
+        <option value="30">30 日</option>
+        <option value="31">31 日</option>
+    </select>
+    <button onclick="jumpToToday()" class="ml-2 px-3 py-1.5 text-xs rounded-lg border border-bg-border text-brand bg-brand-tint hover:bg-brand hover:text-white transition-colors flex items-center gap-1">
+        <iconify-icon class="text-xs" icon="mdi:calendar-today"></iconify-icon>
+        <span>今天</span>
+    </button>
+    <button onclick="clearScheduleFilter()" class="ml-auto px-3 py-1.5 text-xs text-fg-tertiary hover:text-danger transition-colors flex items-center gap-1">
+        <iconify-icon class="text-xs" icon="mdi:close-circle-outline"></iconify-icon>
+        <span>清除筛选</span>
+    </button>
+    <span class="text-[10px] text-fg-tertiary ml-1" id="schedule-filter-count"></span>
 </div>
 <!-- 庭审冲突预警条 -->
 <div class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mb-3 flex items-start gap-3" id="court-conflict-bar">
@@ -28,115 +97,35 @@
 <iconify-icon icon="mdi:close"></iconify-icon>
 </button>
 </div>
-<!-- 月历头 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="flex items-center justify-between px-5 py-3 bg-bg-subtle border-b border-bg-border">
-<button class="text-sm text-fg-secondary hover:text-brand"><iconify-icon icon="mdi:chevron-left"></iconify-icon></button>
-<span class="text-sm font-semibold text-fg-primary">2026 年 8 月</span>
-<button class="text-sm text-fg-secondary hover:text-brand"><iconify-icon icon="mdi:chevron-right"></iconify-icon></button>
-</div>
-<div class="grid grid-cols-7 text-center text-[10px] text-fg-tertiary font-medium py-2 border-b border-[#F2F3F5]">
-<span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
-</div>
-<div class="grid grid-cols-7 text-center">
-<div class="py-3 text-xs text-fg-disabled">27</div>
-<div class="py-3 text-xs text-fg-disabled">28</div>
-<div class="py-3 text-xs text-fg-disabled">29</div>
-<div class="py-3 text-xs text-fg-disabled">30</div>
-<div class="py-3 text-xs text-fg-disabled">31</div>
-<div class="py-3 text-xs text-fg-disabled">1</div>
-<div class="py-3 text-xs text-fg-disabled">2</div>
-<div class="py-3 text-xs text-fg-secondary">3</div>
-<div class="py-3 text-xs text-fg-secondary">4</div>
-<div class="py-3 text-xs text-fg-secondary">5</div>
-<div class="py-3 text-xs text-fg-secondary">6</div>
-<div class="py-3 text-xs text-fg-secondary">7</div>
-<div class="py-3 text-xs text-fg-disabled">8</div>
-<div class="py-3 text-xs text-fg-disabled">9</div>
-<div class="py-3 text-xs text-fg-secondary">10</div>
-<div class="py-3 text-xs text-fg-secondary">11</div>
-<div class="py-3 text-xs text-fg-secondary">12</div>
-<div class="py-3 text-xs text-fg-secondary">13</div>
-<div class="py-3 text-xs text-fg-secondary">14</div>
-<div class="py-3 text-xs text-fg-disabled">15</div>
-<div class="py-3 text-xs text-fg-disabled">16</div>
-<div class="py-3 text-xs text-fg-secondary">17</div>
-<div class="py-3 text-xs text-fg-secondary">18</div>
-<div class="py-3 text-xs text-fg-secondary">19</div>
-<div class="py-3 text-xs text-fg-secondary">20</div>
-<div class="py-3 text-xs relative">
-<span class="text-xs text-fg-secondary">21</span>
-<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-brand"></div>
-</div>
-<div class="py-3 text-xs text-fg-disabled">22</div>
-<div class="py-3 text-xs text-fg-disabled">23</div>
-<div class="py-3 text-xs text-fg-secondary">24</div>
-<div class="py-3 text-xs relative">
-<span class="text-xs font-bold text-white bg-[#F5222D] w-7 h-7 rounded-full flex items-center justify-center mx-auto">25</span>
-<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-[#F5222D]"></div>
-</div>
-<div class="py-3 text-xs text-fg-secondary">26</div>
-<div class="py-3 text-xs text-fg-secondary">27</div>
-<div class="py-3 text-xs relative">
-<span class="text-xs text-fg-secondary">28</span>
-<div class="mx-auto mt-0.5 w-1.5 h-1.5 rounded-full bg-urgent"></div>
-</div>
-<div class="py-3 text-xs text-fg-disabled">29</div>
-<div class="py-3 text-xs text-fg-disabled">30</div>
-<div class="py-3 text-xs text-fg-disabled">31</div>
-<div class="py-3 text-xs text-fg-disabled">1</div>
-<div class="py-3 text-xs text-fg-disabled">2</div>
-<div class="py-3 text-xs text-fg-disabled">3</div>
-<div class="py-3 text-xs text-fg-disabled">4</div>
-<div class="py-3 text-xs text-fg-disabled">5</div>
-<div class="py-3 text-xs text-fg-disabled">6</div>
-</div>
-</div>
 <!-- 庭审日程列表 -->
 <div class="bg-white rounded-xl border border-bg-border p-5">
-<h4 class="text-sm font-semibold text-fg-primary mb-4">本月庭审安排</h4>
-<div class="space-y-3">
-<div class="flex items-start gap-3 p-3 rounded-lg bg-danger-tint border-l-4 border-danger cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(1)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-danger">25</p>
-<p class="text-[10px] text-danger">周二</p>
+<div class="flex items-center justify-between mb-4">
+    <h4 class="text-sm font-semibold text-fg-primary">本月庭审安排</h4>
+    <div class="flex items-center gap-3">
+        <!-- 三态过滤: 全部 / 待办 / 已完成 (默认全部) -->
+        <div id="schedule-filter-tabs" class="flex items-center gap-1"></div>
+        <span class="text-xs text-fg-tertiary" id="schedule-count"></span>
+    </div>
 </div>
-<div class="flex-1">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-fg-primary">开庭 · 民间借贷纠纷</p>
-<span class="text-[10px] bg-[#F5222D] text-white font-medium px-2 py-0.5 rounded">今天</span>
+<div class="space-y-3" id="schedule-list"></div>
+<!-- 完全空态: 没有任何日程 -->
+<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-empty">
+    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-plus-outline"></iconify-icon>
+    <p class="text-sm">还没有日程安排</p>
+    <button onclick="openScheduleModal()" class="mt-3 px-4 py-1.5 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1 mx-auto">
+        <iconify-icon icon="mdi:plus"></iconify-icon>
+        <span>新建第一个日程</span>
+    </button>
 </div>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京01民初128号 · 张三诉李四</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 09:30 · 北京市第一中级人民法院 第3法庭</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-warning-tint border-l-4 border-[#FAAD14] cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(5)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-urgent">28</p>
-<p class="text-[10px] text-urgent">周五</p>
-</div>
-<div class="flex-1">
-<p class="text-sm font-medium text-fg-primary">开庭 · 劳动争议仲裁</p>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京02民初256号 · 王五诉某科技公司</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 14:00 · 北京市劳动人事争议仲裁委员会</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
-<div class="flex items-start gap-3 p-3 rounded-lg bg-brand-tint border-l-4 border-brand cursor-pointer hover:shadow-sm transition-shadow" onclick="openScheduleDetail(7)">
-<div class="flex-shrink-0 text-center w-10">
-<p class="text-lg font-bold text-brand">21</p>
-<p class="text-[10px] text-brand">周五</p>
-</div>
-<div class="flex-1">
-<p class="text-sm font-medium text-fg-primary">证据交换 · 知识产权侵权</p>
-<p class="text-xs text-fg-secondary mt-0.5">(2026)京04民初345号 · A公司诉B公司</p>
-<p class="text-[10px] text-fg-tertiary mt-0.5">🕐 10:00 · 北京市第四中级人民法院</p>
-</div>
-<button class="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); openCaseAnalysis()">准备</button>
-</div>
+<!-- 筛选空态: 有日程但被筛掉 -->
+<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-no-result">
+    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-search-outline"></iconify-icon>
+    <p class="text-sm">当前筛选条件下没有庭审安排</p>
+    <button onclick="clearScheduleFilter()" class="mt-3 px-4 py-1.5 text-xs text-brand hover:bg-brand-tint rounded-lg transition-colors">清除筛选</button>
 </div>
 </div>
 </div>
 </div>
 <!-- 案件动态列表 -->
+
+

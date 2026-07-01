@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lexprime.skill.contract-review.output.v1",
+  "title": "合同风险审查 Skill 输出 Schema",
+  "description": "审查结果 + 三级风险标注 + 修改建议 + 谈判策略。所有 narrative 字段必须通过 language_guard 检查 (禁用'合同必败'/'合同必胜'等确定性预测)。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["query_meta", "clause_reviews", "risk_summary", "negotiation_strategy", "disclaimer"],
+  "properties": {
+    "query_meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_type", "stance", "searched_at", "latency_ms", "total_clauses", "returned_count"],
+      "properties": {
+        "contract_type": {"type": "string"},
+        "stance": {"type": "string"},
+        "industry": {"type": "string"},
+        "jurisdiction": {"type": "string"},
+        "searched_at": {"type": "string", "format": "date-time"},
+        "latency_ms": {"type": "integer", "description": "端到端审查耗时, P95 目标 ≤ 2000ms"},
+        "total_clauses": {"type": "integer", "description": "合同条款总数"},
+        "returned_count": {"type": "integer", "description": "实际审查并返回的条款数"},
+        "model_used": {"type": "string"},
+        "embedding_model": {"type": "string"}
+      }
+    },
+    "clause_reviews": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["clause_id", "clause_index", "clause_title", "risk_level", "risk_categories"],
+        "properties": {
+          "clause_id": {"type": "string", "description": "条款唯一 ID (格式: clause-{index})"},
+          "clause_index": {"type": "integer", "description": "条款序号 (1-based)"},
+          "clause_title": {"type": "string", "description": "条款标题 (如 '租赁期限', '违约责任')"},
+          "clause_text": {"type": "string", "description": "条款原文 (≤ 1000 字)"},
+          "risk_level": {
+            "type": "string",
+            "enum": ["fatal", "major", "advisory", "ok"],
+            "description": "风险等级: fatal=致命 / major=重大 / advisory=建议 / ok=合规"
+          },
+          "risk_categories": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "显失公平",
+                "违法条款",
+                "重大遗漏",
+                "隐含义务",
+                "争议管辖不利",
+                "表述模糊",
+                "可优化",
+                "金额异常",
+                "期限异常",
+                "举证困难",
+                "解除权失衡",
+                "违约金过高",
+                "管辖连接点异常",
+                "其他"
+              ]
+            },
+            "description": "风险分类标签 (可多选)"
+          },
+          "legal_basis": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "法律依据 (法条 + 司法解释, 最多 5 条)"
+          },
+          "risk_description": {
+            "type": "string",
+            "maxLength": 800,
+            "description": "风险描述 (LLM 生成, 必须通过 language_guard, 禁止确定性预测)"
+          },
+          "modification_suggestion": {
+            "type": "string",
+            "maxLength": 1200,
+            "description": "修改建议 (仅 fatal/major 必须返回, advisory 可选)"
+          },
+          "modified_clause_template": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "修改后的条款模板 (LexPrime 文书生成器格式, 律师可一键替换)"
+          },
+          "stance_impact": {
+            "type": "string",
+            "enum": ["不利", "中性", "有利", "需结合上下文判断"],
+            "description": "基于律师立场的风险影响评估"
+          },
+          "reviewer_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "审查置信度 (0-1, 用于 UI 提示)"
+          },
+          "retrieval_evidence": {
+            "type": "array",
+            "maxItems": 5,
+            "description": "W4 相似历史风险样本 (双路召回), 仅 fatal/major 风险条款返回",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sample_id", "contract_id", "clause_id", "risk_level", "similarity"],
+              "properties": {
+                "sample_id": {"type": "string", "description": "历史样本 ID (格式: {contract_id}::clause-{idx}::ann-{n})"},
+                "contract_id": {"type": "string", "description": "历史合同模板 ID"},
+                "contract_type": {"type": "string"},
+                "clause_id": {"type": "string"},
+                "clause_title": {"type": "string"},
+                "risk_level": {"type": "string", "enum": ["fatal", "major", "advisory"]},
+                "risk_categories": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "risk_description": {"type": "string"},
+                "modification_suggestion": {"type": "string"},
+                "similarity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "cosine 相似度 (BGE 归一化后 dot product)"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": ["contract_risks_index", "fallback"],
+                  "description": "数据源: contract_risks_index = LanceDB 真实检索, fallback = 索引未就位"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "risk_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fatal_count", "major_count", "advisory_count", "ok_count", "overall_risk_level", "narrative"],
+      "properties": {
+        "fatal_count": {"type": "integer", "description": "致命风险条款数 (显失公平 / 违法 / 重大遗漏)"},
+        "major_count": {"type": "integer", "description": "重大风险条款数 (隐含义务 / 争议管辖不利)"},
+        "advisory_count": {"type": "integer", "description": "建议风险条款数 (表述模糊 / 可优化)"},
+        "ok_count": {"type": "integer", "description": "合规条款数"},
+        "overall_risk_level": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "整体风险等级: high=存在致命风险 / medium=存在重大风险 / low=仅建议"
+        },
+        "narrative": {
+          "type": "string",
+          "maxLength": 800,
+          "description": "整体审查叙述 (LLM 生成), **强制通过 language_guard 检查, 禁止'合同必败'/'合同必胜'等表述**"
+        },
+        "top_risk_categories": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {"type": "string"},
+              "count": {"type": "integer"}
+            }
+          },
+          "description": "高频风险分类 top 5"
+        }
+      }
+    },
+    "negotiation_strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "priority_clauses": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"},
+          "description": "建议优先谈判的条款 ID 列表 (按 fatal > major > advisory 排序)"
+        },
+        "leverage_points": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "properties": {
+              "clause_id": {"type": "string"},
+              "leverage": {"type": "string", "maxLength": 300, "description": "谈判筹码描述"},
+              "trade_off": {"type": "string", "maxLength": 300, "description": "可能的让步方向"}
+            }
+          },
+          "description": "谈判筹码与让步方向"
+        },
+        "walk_away_signals": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {"type": "string"},
+          "description": "建议放弃谈判的红线条款 (致命风险, 律师无法通过谈判弥补)"
+        },
+        "stance_specific_advice": {
+          "type": "string",
+          "maxLength": 800,
+          "description": "基于立场的谈判策略 (甲方/乙方/丙方/审查方), 必须通过 language_guard"
+        }
+      }
+    },
+    "version_diff": {
+      "type": "object",
+      "description": "版本比对结果 (include_version_diff=true 时返回)",
+      "additionalProperties": false,
+      "properties": {
+        "baseline_version_id": {"type": "string"},
+        "compared_version_id": {"type": "string"},
+        "added_clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clause_index": {"type": "integer"},
+              "clause_title": {"type": "string"},
+              "risk_level": {"type": "string"},
+              "added_text": {"type": "string"}
+            }
+          }
+        },
+        "removed_clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clause_index": {"type": "integer"},
+              "clause_title": {"type": "string"},
+              "removed_text": {"type": "string"}
+            }
+          }
+        },
+        "modified_clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clause_index": {"type": "integer"},
+              "clause_title": {"type": "string"},
+              "diff_type": {"type": "string", "enum": ["text_modified", "risk_changed"]},
+              "old_text": {"type": "string"},
+              "new_text": {"type": "string"},
+              "risk_level_change": {"type": "string", "description": "旧等级 → 新等级 (例: major → fatal)"}
+            }
+          }
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "版本比对叙述, 必须通过 language_guard"
+        }
+      }
+    },
+    "trajectory": {
+      "type": "object",
+      "description": "上下文压缩 trace (T-REF-25)",
+      "additionalProperties": false,
+      "properties": {
+        "raw_token_count": {"type": "integer"},
+        "compressed_token_count": {"type": "integer"},
+        "compression_strategy": {"type": "string", "enum": ["none", "top_k_truncate", "summary_extract", "hierarchical"]},
+        "compression_ratio": {"type": "number"}
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "default": "本审查仅为基于合同文本的客观风险标注与法律依据提示, 不构成法律意见, 更不替代律师的专业判断。",
+      "description": "底部强制免责声明 (PRD § 5.4 硬约束)"
+    },
+    "ui_hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "traffic_light": {
+          "type": "string",
+          "enum": ["red", "yellow", "green", "gray"],
+          "description": "红黄绿灯: 红色=存在致命风险 / 黄色=存在重大风险 / 绿色=仅建议 / 灰色=无审查"
+        },
+        "show_diff_panel": {"type": "boolean", "description": "是否显示版本比对面板"},
+        "show_strategy_modal": {"type": "boolean", "description": "是否显示谈判策略弹窗"},
+        "highlight_clauses": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "需要高亮的条款 ID 列表 (按风险等级)"
+        },
+        "export_format": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["word", "pdf", "markdown"]},
+          "description": "支持的导出格式"
+        },
+        "retrieval_stats": {
+          "type": "object",
+          "description": "W4 双路召回统计 (LanceDB 索引就位 + 旁证命中率)",
+          "additionalProperties": false,
+          "properties": {
+            "index_enabled": {"type": "boolean", "description": "LanceDB 索引是否就位"},
+            "embedding_model": {"type": "string"},
+            "fatal_major_clauses": {"type": "integer", "description": "致命/重大风险条款总数"},
+            "clauses_with_evidence": {"type": "integer", "description": "成功召回旁证的条款数"},
+            "recall_pct": {"type": "number", "description": "旁证命中率 (0-100)"}
+          }
+        }
+      }
+    }
+  }
+}

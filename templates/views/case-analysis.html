@@ -1,4 +1,4 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-case-analysis">
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-case-analysis">
 <div class="max-w-5xl mx-auto w-full space-y-5">
 <!-- 返回按钮 + 标题 -->
 <div class="flex items-center gap-3">
@@ -6,7 +6,7 @@
 <iconify-icon icon="mdi:arrow-left"></iconify-icon>
 <span>返回案件列表</span>
 </button>
-<span class="text-[#E5E6EB]">|</span>
+<span class="text-bg-border">|</span>
 <h3 class="text-base font-semibold text-fg-primary">智能卷宗分析</h3>
 </div>
 <!-- 案件选择 -->
@@ -33,7 +33,7 @@
 <p>原告张三与被告李四系朋友关系。2025年3月，李四以资金周转为由向张三借款人民币50万元，约定年利率15%，借款期限6个月，并出具借条一份。</p>
 <p>借款到期后，李四仅偿还本金10万元及部分利息，剩余40万元本金及利息经多次催要未果。张三遂诉至法院，要求李四偿还剩余借款本金及利息。</p>
 </div>
-<div class="mt-3 pt-3 border-t border-[#F2F3F5]">
+<div class="mt-3 pt-3 border-t border-bg-border">
 <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
 <iconify-icon icon="mdi:source-branch"></iconify-icon>
 <span>信息来源：起诉状、借条、转账记录、催收聊天记录</span>
@@ -51,19 +51,19 @@
 <span class="text-fg-tertiary">案由</span>
 <span class="text-fg-secondary font-medium">民间借贷纠纷</span>
 </div>
-<div class="flex justify-between text-xs pt-2 border-t border-[#F2F3F5]">
+<div class="flex justify-between text-xs pt-2 border-t border-bg-border">
 <span class="text-fg-tertiary">标的金额</span>
 <span class="text-fg-secondary font-medium">¥500,000</span>
 </div>
-<div class="flex justify-between text-xs pt-2 border-t border-[#F2F3F5]">
+<div class="flex justify-between text-xs pt-2 border-t border-bg-border">
 <span class="text-fg-tertiary">代理阶段</span>
 <span class="text-fg-secondary font-medium">一审</span>
 </div>
-<div class="flex justify-between text-xs pt-2 border-t border-[#F2F3F5]">
+<div class="flex justify-between text-xs pt-2 border-t border-bg-border">
 <span class="text-fg-tertiary">复杂度</span>
 <span class="text-urgent font-medium">中等</span>
 </div>
-<div class="flex justify-between text-xs pt-2 border-t border-[#F2F3F5]">
+<div class="flex justify-between text-xs pt-2 border-t border-bg-border">
 <span class="text-fg-tertiary">材料数量</span>
 <span class="text-fg-secondary font-medium">12 份</span>
 </div>
@@ -82,7 +82,7 @@
 <p class="text-[10px] text-fg-secondary mt-1">借条形式要件完整，有双方签字捺印。转账记录显示50万元已实际交付。被告可能抗辩款项性质为投资款而非借款。</p>
 <p class="text-[10px] text-brand mt-1">类案参考：近3年本法院87件类似案件中，72件认定借款关系成立（约82.8%）</p>
 </div>
-<div class="p-3 rounded-lg bg-bg-subtle border-l-4 border-[#FAAD14]">
+<div class="p-3 rounded-lg bg-bg-subtle border-l-4 border-urgent">
 <p class="text-xs font-medium text-fg-primary">焦点二：利息约定是否超过法定上限</p>
 <p class="text-[10px] text-fg-secondary mt-1">约定年利率15%，当前LPR为3.45%，4倍LPR为13.8%。超出部分法院可能不予支持。</p>
 <p class="text-[10px] text-urgent mt-1">⚠️ 超出的1.2%部分需调整，建议修改为按LPR 4倍计算</p>
@@ -102,15 +102,15 @@
 <h4 class="text-sm font-semibold text-fg-primary">已有证据</h4>
 </div>
 <div class="space-y-2">
-<div class="flex items-center justify-between text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center justify-between text-xs py-2 border-b border-bg-border">
 <span class="text-fg-secondary">借条（原件）</span>
 <span class="text-[10px] text-success font-medium">采信度高</span>
 </div>
-<div class="flex items-center justify-between text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center justify-between text-xs py-2 border-b border-bg-border">
 <span class="text-fg-secondary">银行转账记录</span>
 <span class="text-[10px] text-success font-medium">采信度高</span>
 </div>
-<div class="flex items-center justify-between text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center justify-between text-xs py-2 border-b border-bg-border">
 <span class="text-fg-secondary">微信催收聊天记录</span>
 <span class="text-[10px] text-urgent font-medium">需公证</span>
 </div>
@@ -126,15 +126,15 @@
 <h4 class="text-sm font-semibold text-fg-primary">缺失/待补充</h4>
 </div>
 <div class="space-y-2">
-<div class="flex items-center gap-2 text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center gap-2 text-xs py-2 border-b border-bg-border">
 <iconify-icon class="text-danger text-sm" icon="mdi:circle-small"></iconify-icon>
 <span class="text-fg-secondary">被告身份信息（身份证复印件）</span>
 </div>
-<div class="flex items-center gap-2 text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center gap-2 text-xs py-2 border-b border-bg-border">
 <iconify-icon class="text-urgent text-sm" icon="mdi:circle-small"></iconify-icon>
 <span class="text-fg-secondary">利息计算明细表</span>
 </div>
-<div class="flex items-center gap-2 text-xs py-2 border-b border-[#F2F3F5]">
+<div class="flex items-center gap-2 text-xs py-2 border-b border-bg-border">
 <iconify-icon class="text-urgent text-sm" icon="mdi:circle-small"></iconify-icon>
 <span class="text-fg-secondary">催收过程完整记录</span>
 </div>
@@ -170,7 +170,7 @@
 </div>
 </div>
 </div>
-<div class="mt-3 pt-3 border-t border-[#F2F3F5] text-[10px] text-fg-tertiary flex items-center gap-1">
+<div class="mt-3 pt-3 border-t border-bg-border text-[10px] text-fg-tertiary flex items-center gap-1">
 <iconify-icon icon="mdi:information-outline"></iconify-icon>
 <span>以上分析基于当前案件材料自动生成，仅供参考。建议结合案件实际情况综合判断。</span>
 </div>
@@ -178,3 +178,5 @@
 </div>
 </div>
 <!-- 日程管理 -->
+
+

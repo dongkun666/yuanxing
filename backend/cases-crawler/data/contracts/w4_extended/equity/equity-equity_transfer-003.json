@@ -1,0 +1,141 @@
+{
+  "template_id": "equity-equity_transfer-003",
+  "contract_type": "股权合同",
+  "industry": "股权转让",
+  "title": "股权转让合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "转让股权",
+      "text": "甲方将其持有的目标公司 10% 股权转让给乙方。"
+    },
+    {
+      "index": 2,
+      "title": "目标公司",
+      "text": "目标公司: XX 有限公司, 注册资本人民币 200 万元。"
+    },
+    {
+      "index": 3,
+      "title": "转让价款",
+      "text": "转让价款人民币 150 万元。"
+    },
+    {
+      "index": 4,
+      "title": "其他股东意见",
+      "text": "其他股东 (丙方) 同意本次股权转让, 放弃优先购买权。"
+    },
+    {
+      "index": 5,
+      "title": "工商变更",
+      "text": "双方应于本合同签订后 15 日内办理工商变更登记。"
+    },
+    {
+      "index": 6,
+      "title": "过渡期",
+      "text": "过渡期内, 目标公司损益由乙方按受让比例承担或享有。"
+    },
+    {
+      "index": 7,
+      "title": "违约责任",
+      "text": "任何一方违约, 应按转让价款的 20% 向守约方支付违约金。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "违约责任",
+      "risk_level": "major",
+      "risk_categories": [
+        "管辖连接点异常",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "其他股东意见",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "过渡期",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "工商变更",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "股权转让合同",
+    "股权转让常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于股权转让合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "equity",
+    "skeleton": "equity_transfer",
+    "variant_idx": 3,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

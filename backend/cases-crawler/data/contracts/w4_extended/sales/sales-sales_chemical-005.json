@@ -1,0 +1,136 @@
+{
+  "template_id": "sales-sales_chemical-005",
+  "contract_type": "销售合同",
+  "industry": "化工",
+  "title": "化工产品买卖合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "化工产品",
+      "text": "甲方向乙方购买装修。"
+    },
+    {
+      "index": 2,
+      "title": "规格",
+      "text": "规格按双方确认的技术规格书执行。"
+    },
+    {
+      "index": 3,
+      "title": "数量与价格",
+      "text": "数量 6 吨, 单价人民币 150 万元/吨。"
+    },
+    {
+      "index": 4,
+      "title": "质量",
+      "text": "化工产品应符合国家标准及双方技术规格。"
+    },
+    {
+      "index": 5,
+      "title": "包装与运输",
+      "text": "包装按危险品 / 非危险品相关规定执行。"
+    },
+    {
+      "index": 6,
+      "title": "安全责任",
+      "text": "乙方应提供产品安全技术说明书 (MSDS)。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 4,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "安全责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "化工产品",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "规格",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "化工产品买卖合同",
+    "化工常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于化工产品买卖合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "sales",
+    "skeleton": "sales_chemical",
+    "variant_idx": 5,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

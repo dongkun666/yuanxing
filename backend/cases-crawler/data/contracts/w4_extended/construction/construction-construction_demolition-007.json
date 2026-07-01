@@ -1,0 +1,136 @@
+{
+  "template_id": "construction-construction_demolition-007",
+  "contract_type": "工程承揽合同",
+  "industry": "拆除",
+  "title": "建筑物拆除合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "拆除标的",
+      "text": "甲方委托乙方拆除位于福州市天河区某路 88 号的建筑物。"
+    },
+    {
+      "index": 2,
+      "title": "拆除范围",
+      "text": "拆除范围: 技术升级。"
+    },
+    {
+      "index": 3,
+      "title": "拆除期限",
+      "text": "拆除期限 2 年, 自 2027-06-16 起至 2028-12-04 止。"
+    },
+    {
+      "index": 4,
+      "title": "拆除费用",
+      "text": "拆除费用人民币 50 万元。"
+    },
+    {
+      "index": 5,
+      "title": "安全责任",
+      "text": "乙方应遵守拆除安全规范, 承担拆除过程中的安全责任。"
+    },
+    {
+      "index": 6,
+      "title": "许可",
+      "text": "乙方应办理必要的拆除许可手续。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "安全责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释第六十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "许可",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "拆除范围",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "拆除费用",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "建筑物拆除合同",
+    "拆除常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于建筑物拆除合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_demolition",
+    "variant_idx": 7,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

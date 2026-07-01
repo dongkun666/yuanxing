@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# 环境
+.env
+.env.local
+*.env
+!.env.example
+
+# 数据 (cncases 102GB)
+data/raw/*
+data/processed/*
+data/licenses/*
+data/*.db
+data/*.db-journal
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/licenses/.gitkeep
+
+# W4: LanceDB 向量库 (平台相关二进制, 用 scripts/index_contracts.py 重建)
+data/lancedb/
+data/lancedb_test*/
+!data/lancedb/.gitkeep
+
+# 日志
+logs/*
+!logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.docker/

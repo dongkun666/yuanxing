@@ -1,0 +1,142 @@
+{
+  "template_id": "construction-construction_storage-002",
+  "contract_type": "工程承揽合同",
+  "industry": "仓储",
+  "title": "仓储合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "存货方",
+      "text": "存货方为甲方。"
+    },
+    {
+      "index": 2,
+      "title": "保管方",
+      "text": "保管方为乙方。"
+    },
+    {
+      "index": 3,
+      "title": "仓储物",
+      "text": "仓储物: 经营周转。"
+    },
+    {
+      "index": 4,
+      "title": "仓储地点",
+      "text": "仓储地点: 厦门市黄浦区某路 88 号。"
+    },
+    {
+      "index": 5,
+      "title": "仓储费",
+      "text": "仓储费人民币 20 万元, 按月支付。"
+    },
+    {
+      "index": 6,
+      "title": "仓储期限",
+      "text": "仓储期限 5 年, 自 2026-11-13 起至 2032-04-18 止。"
+    },
+    {
+      "index": 7,
+      "title": "保管责任",
+      "text": "乙方应对仓储物妥善保管, 因乙方过错造成损失的, 乙方应承担赔偿责任。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "保管责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议修改为按 LPR × 1.5 倍 或按日万分之五 等司法保护上限内表述。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "仓储费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "仓储期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "保管方",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "仓储合同",
+    "仓储常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于仓储合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_storage",
+    "variant_idx": 2,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

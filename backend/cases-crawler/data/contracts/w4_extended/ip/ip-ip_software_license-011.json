@@ -1,0 +1,136 @@
+{
+  "template_id": "ip-ip_software_license-011",
+  "contract_type": "知识产权合同",
+  "industry": "软件许可",
+  "title": "软件许可使用合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "许可软件",
+      "text": "甲方为软件 (版本 ZL63549799.X) 的著作权人。"
+    },
+    {
+      "index": 2,
+      "title": "许可方式",
+      "text": "10 (独占/非独占) 许可, 乙方可在 120 台设备上使用。"
+    },
+    {
+      "index": 3,
+      "title": "许可范围",
+      "text": "许可范围限于乙方内部使用, 不得用于商业转售。"
+    },
+    {
+      "index": 4,
+      "title": "许可费",
+      "text": "许可费人民币 100 万元。"
+    },
+    {
+      "index": 5,
+      "title": "禁止行为",
+      "text": "乙方不得对软件进行反编译、反向工程或修改。"
+    },
+    {
+      "index": 6,
+      "title": "维护",
+      "text": "甲方提供 10 年 的免费升级及技术支持。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由甲方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "许可软件",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "许可费",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "维护",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "许可方式",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "软件许可使用合同",
+    "软件许可常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于软件许可使用合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "ip",
+    "skeleton": "ip_software_license",
+    "variant_idx": 11,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

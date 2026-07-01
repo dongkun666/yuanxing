@@ -1,0 +1,236 @@
+[
+  {"name":"sales_goods","title":"商品买卖合同(标准版)","contract_type":"销售合同","industry":"商品买卖","fatal_keywords":["质量","验收"],"major_keywords":["争议"],
+   "clauses":[
+     ["标的物","甲方向乙方购买{usage}。"],
+     ["数量与单价","数量 {commission_rate}件, 单价人民币 {amount}。"],
+     ["价款","总价款人民币 {transfer_price}。"],
+     ["交付","甲方应于 {end_date} 前将标的物交付乙方, 交付地点为乙方指定地点。"],
+     ["质量","甲方保证标的物符合国家质量标准及双方约定的技术规格。"],
+     ["验收","乙方应于收到标的物后 7 日内验收, 异议期内未提出异议的视为合格。"],
+     ["付款","乙方应于验收合格后 30 日内一次性付清全部价款。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_online","title":"电商零售合同 (平台版)","contract_type":"销售合同","industry":"电商","fatal_keywords":["退货","质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["商品","甲方在乙方平台销售{usage}。"],
+     ["佣金","乙方收取销售额的 {commission_rate}% 作为佣金。"],
+     ["结算","每月 15 日结算上月货款。"],
+     ["退货","7 天无理由退货, 运费由甲方承担。"],
+     ["质量责任","甲方对商品质量承担责任, 因质量问题导致的纠纷由甲方处理。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_international","title":"进出口贸易合同","contract_type":"销售合同","industry":"进出口贸易","fatal_keywords":["保险","付款"],"major_keywords":["争议"],
+   "clauses":[
+     ["商品","甲方向乙方购买{usage}。"],
+     ["价格条款","价格按 {repayment_method} (FOB/CIF/CFR 等) 计算。"],
+     ["总价","总价款 USD {amount}。"],
+     ["装运","甲方应于 {end_date} 前完成装运, 装运港为中国主要港口。"],
+     ["保险","保险按 ICC (A) 条款办理, 保险金额为发票金额的 110%。"],
+     ["付款","乙方应通过不可撤销信用证付款, 信用证应于装运前 30 日开到卖方。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_secondhand","title":"二手物品买卖合同","contract_type":"销售合同","industry":"二手","fatal_keywords":["瑕疵"],"major_keywords":["争议"],
+   "clauses":[
+     ["物品","甲方向乙方出售{usage}。"],
+     ["物品状况","甲方保证物品实际状况与描述一致, 乙方已现场查看确认。"],
+     ["价款","总价款人民币 {amount}。"],
+     ["交付","双方应于 {end_date} 前办理物品交付, 风险自交付时转移。"],
+     ["瑕疵担保","甲方对物品承担 {duration} 的瑕疵担保责任。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_vehicle","title":"汽车买卖合同 (新车)","contract_type":"销售合同","industry":"汽车","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["车辆","甲方向乙方出售{vehicle_brand}{vehicle_type}。"],
+     ["车辆配置","车辆配置按《车辆配置清单》确认, 作为本合同附件。"],
+     ["价款","车辆价款人民币 {amount}。"],
+     ["付款","乙方按{repayment_method}支付车款。"],
+     ["交付","甲方应于 {end_date} 前交付车辆, 交付时应一并交付车辆合格证、发票、保修手册等。"],
+     ["质量保证","车辆按厂家三包政策享受质量保证。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_bulk","title":"大宗商品买卖合同","contract_type":"销售合同","industry":"大宗商品","fatal_keywords":["质量","结算"],"major_keywords":["争议"],
+   "clauses":[
+     ["商品","甲方向乙方购买{usage}。"],
+     ["数量","数量 {commission_rate}吨, 允许 ±5% 溢短装。"],
+     ["单价与总价","单价人民币 {amount}/吨, 总价约人民币 {transfer_price}。"],
+     ["质量标准","质量按国标 GB/T xxx 执行。"],
+     ["交付","自 {start_date} 至 {end_date} 期间分批交付, 具体提货时间由乙方提前 7 日通知。"],
+     ["结算","双方按批次结算, 每批次提货后 5 日内付款。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_fmcg","title":"快消品经销合同","contract_type":"销售合同","industry":"快消品","fatal_keywords":["市场支持","账期"],"major_keywords":["争议"],
+   "clauses":[
+     ["产品","甲方授权乙方在{property_location}区域内销售{usage}。"],
+     ["授权性质","本合同为非独家经销, 甲方有权在该区域内发展其他经销商。"],
+     ["销售目标","乙方年度销售目标为人民币 {amount}。"],
+     ["进货价格","乙方进货价格为甲方建议零售价的 {commission_rate}%。"],
+     ["市场支持","甲方按销售额的 {handling_fee_rate}% 向乙方支付市场推广费。"],
+     ["账期","甲方给予乙方 60 天的账期。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_real_estate_bulk","title":"商业地产批量买卖合同","contract_type":"销售合同","industry":"商业地产","fatal_keywords":["交付"],"major_keywords":["争议"],
+   "clauses":[
+     ["标的","甲方将位于{property_location}的商业用房批量出售给乙方, 总面积 10000 平方米。"],
+     ["单价与总价","单价人民币 {amount}/平方米, 总价人民币 {transfer_price}。"],
+     ["付款","乙方按{repayment_method}支付房款。"],
+     ["交付","甲方应于 {end_date} 前将符合交付条件的房屋交付乙方。"],
+     ["过户","双方应于交付后 30 日内办理房屋过户登记。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_medical_device","title":"医疗器械买卖合同","contract_type":"销售合同","industry":"医疗器械","fatal_keywords":["质量标准"],"major_keywords":["争议"],
+   "clauses":[
+     ["设备","甲方向乙方出售{usage}。"],
+     ["设备配置","设备配置按《设备配置清单》确认, 作为本合同附件。"],
+     ["价款","设备价款人民币 {amount}。"],
+     ["质量标准","设备应符合国家医疗器械相关标准, 具备医疗器械注册证。"],
+     ["安装与培训","甲方负责设备安装调试, 并对乙方操作人员进行培训。"],
+     ["保修","设备保修 {duration}, 保修期内非人为故障由甲方免费维修。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_drug","title":"药品买卖合同","contract_type":"销售合同","industry":"药品","fatal_keywords":["质量","不良反应"],"major_keywords":["争议"],
+   "clauses":[
+     ["药品","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}盒, 单价人民币 {amount}。"],
+     ["质量","药品应符合《中国药典》标准, 具备药品批文及检验报告。"],
+     ["冷链","需冷链运输的药品, 全程温度应控制在 2-8°C。"],
+     ["验收","乙方应于收货当日验收, 不合格的不得销售或使用。"],
+     ["不良反应","发生药品不良反应的, 双方应及时通报, 按《药品不良反应报告管理办法》处理。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_food","title":"食品买卖合同","contract_type":"销售合同","industry":"食品","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["食品","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}kg, 单价人民币 {amount}。"],
+     ["质量","食品应符合《食品安全法》及相关国家标准, 具备食品生产许可证及检验报告。"],
+     ["保质期","交付时食品剩余保质期不少于总保质期的 2/3。"],
+     ["冷链","需冷链运输的食品, 全程温度应符合要求。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_cosmetic","title":"化妆品买卖合同","contract_type":"销售合同","industry":"化妆品","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["化妆品","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}件, 单价人民币 {amount}。"],
+     ["质量","化妆品应符合《化妆品监督管理条例》及相关国家标准。"],
+     ["注册备案","特殊化妆品应取得注册证, 普通化妆品应完成备案。"],
+     ["不良反应","发生化妆品不良反应的, 双方应及时通报, 按规定处理。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_clothing","title":"服装买卖合同","contract_type":"销售合同","industry":"服装","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["服装","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}件, 单价人民币 {amount}。"],
+     ["质量","服装应符合国家纺织品安全标准, 不含有毒有害物质。"],
+     ["尺码","尺码应符合国家标准或双方约定的尺码表。"],
+     ["换货","非人为质量问题, 7 日内可换货, 运费由乙方承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_digital","title":"数码产品买卖合同","contract_type":"销售合同","industry":"数码","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["产品","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}台, 单价人民币 {amount}。"],
+     ["质量","产品应为全新原厂正品, 具备完整包装、说明书、保修卡。"],
+     ["保修","产品按厂家三包政策享受保修, 保修期 {duration}。"],
+     ["验收","甲方应于收到产品后 7 日内验收, 异议期内未提出异议的视为合格。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_appliance","title":"家电买卖合同","contract_type":"销售合同","industry":"家电","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["家电","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}台, 单价人民币 {amount}。"],
+     ["质量","家电应为全新正品, 具备产品合格证、保修卡、说明书。"],
+     ["送货与安装","乙方负责送货上门, 并按需提供安装服务。"],
+     ["保修","家电按厂家三包政策享受保修, 主要部件保修 3 年。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_material","title":"建材买卖合同","contract_type":"销售合同","industry":"建材","fatal_keywords":["质量","环保"],"major_keywords":["争议"],
+   "clauses":[
+     ["建材","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {commission_rate}吨, 单价人民币 {amount}。"],
+     ["质量","建材应符合国家强制性标准, 具备产品合格证及检验报告。"],
+     ["环保","室内装饰装修材料应符合《室内装饰装修材料有害物质限量》国家标准。"],
+     ["交付","乙方应按甲方指定时间、地点交付建材。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_steel","title":"钢材买卖合同","contract_type":"销售合同","industry":"钢材","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["钢材","甲方向乙方购买{usage}。"],
+     ["规格与数量","规格 {commission_rate}mm, 数量 {installment_count} 吨。"],
+     ["单价","单价人民币 {amount}/吨, 按实际过磅重量结算。"],
+     ["质量","钢材应符合 GB/T xxx 标准, 具备产品质量证明书。"],
+     ["交付","乙方应于 {end_date} 前交付, 交货地点为甲方指定仓库。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_coal","title":"煤炭买卖合同","contract_type":"销售合同","industry":"煤炭","fatal_keywords":["质量标准"],"major_keywords":["争议"],
+   "clauses":[
+     ["煤炭","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {installment_count} 吨, 单价人民币 {amount}/吨。"],
+     ["质量标准","发热量不低于 {commission_rate} 大卡 / kg, 硫分不高于 0.8%。"],
+     ["交付","自 {start_date} 至 {end_date} 期间分批交付。"],
+     ["结算","双方按批次结算, 每批次交付后 5 日内付款。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_chemical","title":"化工产品买卖合同","contract_type":"销售合同","industry":"化工","fatal_keywords":["质量","安全"],"major_keywords":["争议"],
+   "clauses":[
+     ["化工产品","甲方向乙方购买{usage}。"],
+     ["规格","规格按双方确认的技术规格书执行。"],
+     ["数量与价格","数量 {installment_count} 吨, 单价人民币 {amount}/吨。"],
+     ["质量","化工产品应符合国家标准及双方技术规格。"],
+     ["包装与运输","包装按危险品 / 非危险品相关规定执行。"],
+     ["安全责任","乙方应提供产品安全技术说明书 (MSDS)。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_book","title":"图书买卖合同","contract_type":"销售合同","industry":"图书","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["图书","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {installment_count} 册, 单价人民币 {amount}。"],
+     ["质量","图书应为正版, 印刷质量符合国家标准, 不得有缺页、倒装等印刷问题。"],
+     ["包装","乙方应妥善包装, 确保运输过程中图书不受损坏。"],
+     ["退换货","非人为质量问题, 30 日内可退换货, 运费由乙方承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_agricultural","title":"农产品买卖合同","contract_type":"销售合同","industry":"农业","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["农产品","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {installment_count} 公斤, 单价人民币 {amount}/公斤。"],
+     ["质量","农产品应符合国家食品安全标准, 农药残留、重金属等指标符合要求。"],
+     ["产地证明","乙方应提供农产品产地证明及检验报告。"],
+     ["交付","乙方应于 {end_date} 前交付, 运输方式由双方协商。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_livestock","title":"活体动物买卖合同","contract_type":"销售合同","industry":"活体","fatal_keywords":["健康"],"major_keywords":["争议"],
+   "clauses":[
+     ["动物","甲方向乙方购买{usage}。"],
+     ["数量与价格","数量 {installment_count} 头, 单价人民币 {amount}。"],
+     ["健康状况","乙方保证动物健康, 无传染病, 具备动物检疫合格证明。"],
+     ["交付","乙方应于 {end_date} 前交付, 运输由甲方负责。"],
+     ["验收","甲方应于收到动物后 7 日内验收, 发生疾病的应立即通知乙方。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_pet","title":"宠物买卖合同","contract_type":"销售合同","industry":"宠物","fatal_keywords":["健康","退换"],"major_keywords":["争议"],
+   "clauses":[
+     ["宠物","甲方向乙方购买{usage}。"],
+     ["价格","宠物价格人民币 {amount}。"],
+     ["健康保证","乙方保证宠物健康, 已完成必要的疫苗接种及驱虫, 具备动物检疫合格证明。"],
+     ["退换","交付后 15 日内发现宠物有先天性疾病或传染病的, 甲方可要求退换或退款。"],
+     ["饲养指导","乙方应向甲方提供必要的饲养指导。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_antique","title":"古董字画买卖合同","contract_type":"销售合同","industry":"古董","fatal_keywords":["真伪","瑕疵"],"major_keywords":["争议"],
+   "clauses":[
+     ["物品","甲方向乙方购买{usage}。"],
+     ["真伪","乙方保证物品为真品, 并出具真伪鉴定证书。"],
+     ["价款","价款人民币 {amount}。"],
+     ["交付","双方应于 {end_date} 办理物品交付, 同时办理所有权转移手续。"],
+     ["瑕疵担保","乙方对物品承担 {duration} 的瑕疵担保责任, 真伪问题的可申请鉴定。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"sales_software_license","title":"软件许可销售合同","contract_type":"销售合同","industry":"软件","fatal_keywords":["许可","知识产权"],"major_keywords":["争议"],
+   "clauses":[
+     ["软件","甲方向乙方购买{usage}软件许可。"],
+     ["许可范围","许可为非独家、不可转让的使用权, 限 {commission_rate} 个用户。"],
+     ["许可费用","许可费人民币 {amount}。"],
+     ["维护","乙方提供 {duration} 的免费升级及技术支持。"],
+     ["知识产权","软件知识产权归乙方所有, 甲方仅取得使用权。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]}
+]

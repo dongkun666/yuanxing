@@ -1,0 +1,456 @@
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden" id="view-contract-review-suggestion" data-view-source="03-suggestion-detail.html">
+  <style>
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  /* diff 视图 */
+  .diff-line { padding: 2px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; line-height: 1.6; }
+  .diff-add { background: #E8FFEA; color: #00B42A; }
+  .diff-add::before { content: '+ '; color: #00B42A; font-weight: bold; }
+  .diff-del { background: #FFF1F0; color: #F5222D; text-decoration: line-through; }
+  .diff-del::before { content: '- '; color: #F5222D; font-weight: bold; }
+  .diff-context { color: #86909C; }
+  .diff-context::before { content: '  '; }
+  /* 代码块 */
+  .code-block { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7; }
+  /* W7: 移动端 < 768px 适配 (W4 P3 修复) */
+  @media (max-width: 767px) {
+    #view-contract-review-suggestion .cr-header-nav { display: none !important; }
+    #view-contract-review-suggestion .cr-header-actions .cr-header-btn-text { display: none !important; }
+    #view-contract-review-suggestion .cr-content { padding: 0.75rem !important; }
+    #view-contract-review-suggestion .cr-12-col { grid-template-columns: 1fr !important; }
+    #view-contract-review-suggestion .cr-8-col,
+    #view-contract-review-suggestion .cr-4-col { grid-column: span 1 / span 1 !important; }
+    #view-contract-review-suggestion .cr-tab-row { flex-wrap: wrap !important; }
+    #view-contract-review-suggestion .cr-summary-actions { flex-direction: column !important; }
+    #view-contract-review-suggestion .cr-summary-actions button { width: 100% !important; }
+  }
+  </style>
+<div class="flex h-screen overflow-hidden">
+
+  <!-- 左侧栏 -->
+  
+
+  <!-- 主区 -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- 顶部 -->
+    <header class="h-14 bg-white border-b border-bg-border px-6 flex items-center gap-4 flex-shrink-0">
+      <a href="02-review-result.html" class="w-8 h-8 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center">
+        <iconify-icon icon="mdi:arrow-left"></iconify-icon>
+      </a>
+      <nav class="flex items-center gap-2 text-sm">
+        <a href="02-review-result.html" class="text-fg-tertiary hover:text-brand">数据服务采购合同 v3</a>
+        <iconify-icon icon="mdi:chevron-right" class="text-fg-tertiary text-base"></iconify-icon>
+        <span class="text-fg-primary font-medium truncate max-w-[300px]">第 5 条 · 违约责任 · 修改建议</span>
+      </nav>
+      <div class="flex-1"></div>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        <iconify-icon icon="mdi:chevron-left"></iconify-icon> 上一条
+      </button>
+      <span class="text-xs text-fg-tertiary">1 / 6</span>
+      <button class="h-9 px-3 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center gap-1.5 text-sm">
+        下一条 <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+      </button>
+      <a href="05-export.html" class="h-9 px-4 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center gap-1.5 shadow-sm">
+        <iconify-icon icon="mdi:export-variant"></iconify-icon> 导出报告
+      </a>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+
+      <!-- ============ 条款上下文头部 ============ -->
+      <div class="bg-white rounded-md shadow-card p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="text-xs font-mono font-bold text-danger bg-danger-tint px-2 py-0.5 rounded">第 5 条</span>
+              <h1 class="text-xl font-semibold">违约责任</h1>
+              <span class="text-[10px] px-1.5 py-0.5 bg-danger text-white rounded-sm font-bold">致命</span>
+              <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm font-medium">违约金过高</span>
+              <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm font-medium">解除权不对等</span>
+              <span class="inline-flex items-center gap-1 text-[10px] text-ai px-1.5 py-0.5 bg-ai-tint rounded-sm">
+                <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 建议
+              </span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-fg-tertiary">
+              <span class="flex items-center gap-1">
+                <iconify-icon icon="mdi:bullseye-arrow"></iconify-icon> 置信度
+                <span class="font-semibold text-danger">95%</span>
+                <div class="w-16 h-1.5 bg-bg rounded-full overflow-hidden">
+                  <div class="h-full bg-danger" style="width:95%"></div>
+                </div>
+              </span>
+              <span class="flex items-center gap-1">
+                <iconify-icon icon="mdi:account-tie-outline"></iconify-icon> 立场影响:
+                <span class="font-semibold text-danger">对乙方极为不利</span>
+              </span>
+              <span class="flex items-center gap-1">
+                <iconify-icon icon="mdi:scale-balance"></iconify-icon> 关联法条:
+                <a href="#" class="text-brand hover:underline">《民法典》第 585 条</a>
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-1.5">
+            <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+              <iconify-icon icon="mdi:star-outline"></iconify-icon> 收藏
+            </button>
+            <button class="h-9 px-3 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+              <iconify-icon icon="mdi:share-variant-outline"></iconify-icon> 分享建议
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 8+4 主区 ============ -->
+      <div class="grid grid-cols-12 gap-4">
+
+        <!-- ============ 左 8 栏: 条款 + diff + 模板 ============ -->
+        <div class="col-span-8 space-y-4">
+
+          <!-- 原始条款 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-fg-secondary" icon="mdi:format-quote-open"></iconify-icon>
+                原始条款
+              </h4>
+              <span class="text-[10px] text-fg-tertiary">第 5 条 · 违约责任</span>
+            </div>
+            <div class="p-4">
+              <p class="text-sm leading-relaxed bg-danger-tint border border-danger/30 rounded-md p-4 text-fg-primary">
+                乙方未按约定履行义务的, 应向甲方支付合同总额
+                <span class="bg-danger/20 border-b-2 border-danger px-1 rounded">30%</span>
+                的违约金, 且甲方有权
+                <span class="bg-danger/20 border-b-2 border-danger px-1 rounded">单方解除合同并不退还已付款项</span>。
+                甲方违约的, 乙方可主张实际损失赔偿。
+              </p>
+              <div class="mt-3 flex items-center gap-2 text-xs text-fg-tertiary">
+                <iconify-icon icon="mdi:lightbulb-on-outline" class="text-warning"></iconify-icon>
+                <span>风险点 1: 违约金 30% 约定过高, 司法实践中通常以实际损失的 130% 为上限参考, 存在被法院酌情调减的风险</span>
+              </div>
+              <div class="mt-1.5 flex items-center gap-2 text-xs text-fg-tertiary">
+                <iconify-icon icon="mdi:lightbulb-on-outline" class="text-warning"></iconify-icon>
+                <span>风险点 2: 单方解除权不对等 (仅甲方享有), 违反平等自愿原则, 加重乙方义务</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI 修改建议 (核心) -->
+          <div class="bg-white rounded-md shadow-card border-l-4 border-danger">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-ai" icon="mdi:lightbulb-on-outline"></iconify-icon>
+                AI 修改建议
+                <span class="inline-flex items-center gap-1 text-[10px] text-ai font-normal px-1.5 py-0.5 bg-ai-tint rounded-sm">
+                  <iconify-icon icon="mdi:sparkles"></iconify-icon> AI 生成
+                </span>
+                <span class="text-[10px] text-danger font-medium">(致命风险 · 必填)</span>
+              </h4>
+              <div class="flex items-center gap-1.5">
+                <button class="h-7 px-2 text-xs text-fg-secondary hover:text-brand flex items-center gap-1">
+                  <iconify-icon icon="mdi:content-copy"></iconify-icon> 复制
+                </button>
+                <button class="h-7 px-2 text-xs text-fg-secondary hover:text-brand flex items-center gap-1">
+                  <iconify-icon icon="mdi:refresh"></iconify-icon> 重新生成
+                </button>
+              </div>
+            </div>
+            <div class="p-4 space-y-4">
+              <!-- 修改思路 -->
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-2 flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                  修改思路
+                </div>
+                <p class="text-sm leading-relaxed text-fg-secondary pl-6.5">
+                  建议将违约金比例从 <strong class="text-danger">30%</strong> 下调至 <strong class="text-success">20%</strong>
+                  (司法实践合理区间), 同时将<strong>单方解除权</strong>改为<strong>双方协商解除或法定解除</strong>,
+                  并明确已付款项的退还规则, 平衡双方权利义务。
+                </p>
+              </div>
+
+              <!-- 修改后条款模板 (代码块) -->
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-2 flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                  修改后条款模板
+                  <span class="text-[10px] text-fg-tertiary font-normal">(LexPrime 文书生成器格式)</span>
+                </div>
+                <div class="bg-bg-subtle border border-bg-border rounded-md p-4 code-block text-fg-primary">
+                  <div class="text-xs text-fg-tertiary mb-2">第 5 条 违约责任 (修改建议稿)</div>
+                  <div class="leading-relaxed">
+                    <span class="text-fg-tertiary">5.1</span> 任何一方未按约定履行义务的, 应向守约方支付合同总额
+                    <span class="bg-success/20 text-success px-1 rounded">【建议 20%】</span>
+                    的违约金。<br>
+                    <span class="text-fg-tertiary">5.2</span> 一方违约构成根本违约的,
+                    <span class="bg-success/20 text-success px-1 rounded">守约方</span>
+                    有权主张解除合同; 主张解除合同的一方应书面通知对方,
+                    <span class="bg-success/20 text-success px-1 rounded">对方在收到通知后 15 日内未提出异议的, 合同自通知到达之日起解除</span>。<br>
+                    <span class="text-fg-tertiary">5.3</span> 因乙方原因导致合同解除的, 甲方应
+                    <span class="bg-success/20 text-success px-1 rounded">在扣除已发生成本后退还剩余款项</span>;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;因甲方原因导致合同解除的, 乙方有权
+                    <span class="bg-success/20 text-success px-1 rounded">要求退还全部已付款项并赔偿实际损失</span>。<br>
+                    <span class="text-fg-tertiary">5.4</span> 违约金不足以弥补守约方实际损失的, 违约方应就超出部分继续承担赔偿责任。
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diff 视图 -->
+              <div>
+                <div class="text-xs font-semibold text-fg-primary mb-2 flex items-center gap-1.5">
+                  <span class="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center text-[10px] font-bold">3</span>
+                  条款 Diff (变化部分)
+                </div>
+                <div class="bg-bg-subtle border border-bg-border rounded-md overflow-hidden">
+                  <div class="bg-bg border-b border-bg-border px-3 py-1.5 text-[10px] text-fg-tertiary font-mono flex items-center justify-between">
+                    <span>第 5 条 违约责任</span>
+                    <span class="flex items-center gap-2">
+                      <span class="text-success">+ 添加 3 处</span>
+                      <span class="text-danger">- 删除 1 处</span>
+                    </span>
+                  </div>
+                  <div class="code-block">
+                    <div class="diff-line diff-del">乙方未按约定履行义务的, 应向甲方支付合同总额 30% 的违约金,</div>
+                    <div class="diff-line diff-add">任何一方未按约定履行义务的, 应向守约方支付合同总额 20% 的违约金。</div>
+                    <div class="diff-line diff-context">&nbsp;</div>
+                    <div class="diff-line diff-del">且甲方有权单方解除合同并不退还已付款项。</div>
+                    <div class="diff-line diff-add">一方违约构成根本违约的, 守约方有权主张解除合同;</div>
+                    <div class="diff-line diff-add">主张解除合同的一方应书面通知对方, 对方在收到通知后 15 日内</div>
+                    <div class="diff-line diff-add">未提出异议的, 合同自通知到达之日起解除。</div>
+                    <div class="diff-line diff-context">&nbsp;</div>
+                    <div class="diff-line diff-context">甲方违约的, 乙方可主张实际损失赔偿。</div>
+                    <div class="diff-line diff-add">因乙方原因导致合同解除的, 甲方应在扣除已发生成本后退还剩余款项;</div>
+                    <div class="diff-line diff-add">因甲方原因导致合同解除的, 乙方有权要求退还全部已付款项并赔偿实际损失。</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 操作按钮 -->
+              <div class="flex items-center gap-2 pt-2 border-t border-bg-border">
+                <button class="h-9 px-4 bg-danger text-white rounded-md text-sm font-medium flex items-center gap-1.5 hover:opacity-90 shadow-sm">
+                  <iconify-icon icon="mdi:check-circle"></iconify-icon> 采用此建议
+                </button>
+                <button class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center gap-1.5">
+                  <iconify-icon icon="mdi:pencil-outline"></iconify-icon> 编辑后采用
+                </button>
+                <button class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-danger hover:text-danger flex items-center gap-1.5">
+                  <iconify-icon icon="mdi:close-circle-outline"></iconify-icon> 忽略此建议
+                </button>
+                <div class="flex-1"></div>
+                <a href="04-negotiation.html" class="h-9 px-3 bg-ai text-white rounded-md text-sm font-medium flex items-center gap-1.5 hover:opacity-90">
+                  <iconify-icon icon="mdi:strategy"></iconify-icon> 查看谈判策略
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 风险描述展开 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-fg-secondary" icon="mdi:file-document-outline"></iconify-icon>
+                详细风险描述
+              </h4>
+            </div>
+            <div class="p-4 text-sm leading-relaxed text-fg-secondary space-y-2.5">
+              <p>
+                <strong>1. 违约金比例 30% 过高:</strong>
+                根据《民法典》第五百八十五条第二款, "约定的违约金过分高于造成的损失的, 人民法院可以予以适当减少"。
+                司法实践中, 法院通常以实际损失的 <strong>130%</strong> 作为违约金合理上限的参考, 30% 的固定比例在
+                <strong>标的额较大 (¥1,200,000) 时</strong>, 即违约金可达 ¥360,000, 远超一般服务合同的实际损失范围。
+              </p>
+              <p>
+                <strong>2. 单方解除权不对等:</strong>
+                条款仅赋予甲方"单方解除且不退还已付款项"的权利, 乙方不享有同等权利, 违反《民法典》公平原则,
+                存在被认定格式条款无效的风险 (《民法典》第四百九十六条)。
+              </p>
+              <p>
+                <strong>3. 退还规则缺失:</strong>
+                合同未约定解除后已付款项的结算方式, 容易引发后续争议, 增加诉讼成本。
+              </p>
+              <div class="bg-warning-tint border-l-4 border-warning p-3 rounded mt-3 text-xs">
+                <div class="flex items-center gap-1.5 font-semibold text-warning mb-1">
+                  <iconify-icon icon="mdi:alert-circle"></iconify-icon> 建议优先级: 致命
+                </div>
+                强烈建议在合同签署前完成修改, 否则乙方可能面临重大经济风险。建议将本条作为谈判的首要红线条款。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 右 4 栏: 法条 + 历史样本 ============ -->
+        <div class="col-span-4 space-y-4">
+
+          <!-- 法律依据 -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:book-open-page-variant-outline"></iconify-icon>
+                法律依据
+                <span class="text-[10px] text-fg-tertiary font-normal">(3 部 5 条)</span>
+              </h4>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-start gap-2 mb-1">
+                  <iconify-icon icon="mdi:bookmark" class="text-brand flex-shrink-0 mt-0.5"></iconify-icon>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold">《民法典》第五百八十五条</div>
+                    <div class="text-[10px] text-fg-tertiary mt-0.5">违约金 · 第一款</div>
+                  </div>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed pl-5">
+                  当事人可以约定一方违约时应当根据违约情况向对方支付一定数额的违约金, 也可以约定因违约产生的损失赔偿额的计算方法。
+                </p>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-start gap-2 mb-1">
+                  <iconify-icon icon="mdi:bookmark" class="text-brand flex-shrink-0 mt-0.5"></iconify-icon>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold">《民法典》第五百八十五条</div>
+                    <div class="text-[10px] text-fg-tertiary mt-0.5">违约金 · 第二款</div>
+                  </div>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed pl-5">
+                  约定的违约金过分高于造成的损失的, 人民法院或者仲裁机构可以根据当事人的请求予以适当减少。
+                </p>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-start gap-2 mb-1">
+                  <iconify-icon icon="mdi:bookmark" class="text-brand flex-shrink-0 mt-0.5"></iconify-icon>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold">《民法典》第四百九十六条</div>
+                    <div class="text-[10px] text-fg-tertiary mt-0.5">格式条款</div>
+                  </div>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed pl-5">
+                  格式条款不合理地免除或者减轻其责任、加重对方责任、限制对方主要权利的, 该格式条款无效。
+                </p>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-start gap-2 mb-1">
+                  <iconify-icon icon="mdi:gavel" class="text-fg-tertiary flex-shrink-0 mt-0.5"></iconify-icon>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-xs font-semibold">最高人民法院《关于适用合同法...》</div>
+                    <div class="text-[10px] text-fg-tertiary mt-0.5">司法解释</div>
+                  </div>
+                </div>
+                <p class="text-[10px] text-fg-secondary leading-relaxed pl-5">
+                  违约金超过造成损失的 30% 的, 一般可以认定为"过分高于造成的损失"。
+                </p>
+              </a>
+            </div>
+            <div class="p-3 border-t border-bg-border">
+              <a href="#" class="text-xs text-brand hover:underline flex items-center gap-1 justify-center">
+                <iconify-icon icon="mdi:open-in-new"></iconify-icon> 在法规库查看完整条文
+              </a>
+            </div>
+          </div>
+
+          <!-- 历史相似样本 (类案检索结果) -->
+          <div class="bg-white rounded-md shadow-card">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-ai" icon="mdi:history"></iconify-icon>
+                历史相似样本
+                <span class="text-[10px] text-fg-tertiary font-normal">(3 条)</span>
+                <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-normal">
+                  <iconify-icon icon="mdi:sparkles"></iconify-icon> 召回
+                </span>
+              </h4>
+            </div>
+            <div class="divide-y divide-bg-border">
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded-sm">致命</span>
+                  <span class="text-xs font-medium truncate">数据服务合同 (杭州某科技)</span>
+                </div>
+                <p class="text-[10px] text-fg-tertiary line-clamp-2 leading-relaxed">
+                  违约金 30% 被法院认定过分高于实际损失, 酌情调减至 18%...
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1">
+                  <span class="text-success">相似度 92%</span>
+                  <span>·</span>
+                  <span>2025-08-15</span>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded-sm">重大</span>
+                  <span class="text-xs font-medium truncate">软件开发外包合同</span>
+                </div>
+                <p class="text-[10px] text-fg-tertiary line-clamp-2 leading-relaxed">
+                  单方解除权不对等被认定格式条款无效, 法院按公平原则重新分配...
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1">
+                  <span class="text-success">相似度 88%</span>
+                  <span>·</span>
+                  <span>2025-11-22</span>
+                </div>
+              </a>
+              <a href="#" class="block px-4 py-3 hover:bg-brand-tint3 transition-colors">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded-sm">重大</span>
+                  <span class="text-xs font-medium truncate">SaaS 服务协议模板</span>
+                </div>
+                <p class="text-[10px] text-fg-tertiary line-clamp-2 leading-relaxed">
+                  解除后结算方式约定不明, 引发诉讼, 增加诉累成本...
+                </p>
+                <div class="flex items-center gap-2 text-[10px] text-fg-tertiary mt-1">
+                  <span class="text-success">相似度 81%</span>
+                  <span>·</span>
+                  <span>2026-02-08</span>
+                </div>
+              </a>
+            </div>
+            <div class="p-3 border-t border-bg-border">
+              <a href="#" class="text-xs text-brand hover:underline flex items-center gap-1 justify-center">
+                <iconify-icon icon="mdi:scale-balance"></iconify-icon> 在类案检索中查看全部
+              </a>
+            </div>
+          </div>
+
+          <!-- 建议元信息 -->
+          <div class="bg-white rounded-md shadow-card p-4 space-y-2 text-xs">
+            <h4 class="font-semibold text-sm mb-2 flex items-center gap-2">
+              <iconify-icon class="text-brand" icon="mdi:information-outline"></iconify-icon>
+              建议元信息
+            </h4>
+            <div class="flex items-center justify-between">
+              <span class="text-fg-tertiary">建议来源</span>
+              <span class="font-medium">Skill 2 v0.1.0 + 模板库</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-fg-tertiary">建议生成</span>
+              <span class="font-medium text-ai">AI 自动</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-fg-tertiary">法条引用</span>
+              <span class="font-medium">3 部 5 条</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-fg-tertiary">模板来源</span>
+              <span class="font-medium">服务合同 (修订稿)</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-fg-tertiary">语言规范</span>
+              <span class="font-medium text-success flex items-center gap-1">
+                <iconify-icon icon="mdi:check-circle"></iconify-icon> 0 违规
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 强制免责声明 ============ -->
+      <div class="text-[10px] text-fg-tertiary text-center py-3 border-t border-bg-border bg-white rounded-md shadow-sm">
+        <iconify-icon icon="mdi:alert-circle-outline" class="text-warning"></iconify-icon>
+        本建议为基于合同文本和法律依据的客观参考, <strong>不构成法律意见, 更不替代律师的专业判断</strong>。最终条款以双方协商一致为准。
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 设计水印 -->
+
+</div>

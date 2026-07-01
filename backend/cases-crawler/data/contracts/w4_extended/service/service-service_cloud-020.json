@@ -1,0 +1,137 @@
+{
+  "template_id": "service-service_cloud-020",
+  "contract_type": "服务合同",
+  "industry": "云服务",
+  "title": "云服务合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "服务内容",
+      "text": "乙方为甲方提供教育云服务。"
+    },
+    {
+      "index": 2,
+      "title": "服务期限",
+      "text": "服务期自 2026-11-01 起至 2028-08-03 止, 共 5 年。"
+    },
+    {
+      "index": 3,
+      "title": "服务费用",
+      "text": "服务费按使用量计费, 每月不超过人民币 150 万元。"
+    },
+    {
+      "index": 4,
+      "title": "SLA",
+      "text": "乙方应保证服务可用性不低于 99.9%, 未达成的按比例退还服务费。"
+    },
+    {
+      "index": 5,
+      "title": "数据安全",
+      "text": "乙方应按行业最佳实践保护甲方数据, 遵守《数据安全法》。"
+    },
+    {
+      "index": 6,
+      "title": "数据迁移",
+      "text": "服务终止时, 乙方应协助甲方完成数据迁移。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由丙方住所地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 5,
+      "clause_title": "数据安全",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "隐含义务",
+        "违法条款"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "服务内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "服务期限",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "数据迁移",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "云服务合同",
+    "云服务常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于云服务合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "service",
+    "skeleton": "service_cloud",
+    "variant_idx": 20,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

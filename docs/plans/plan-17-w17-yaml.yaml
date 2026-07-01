@@ -1,0 +1,171 @@
+version: 1
+plan:
+  name: "LexPrime Phase 4 Week 17: W16 phase4 retry + kpi v1.1 fixes"
+  max_concurrency: 1
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers:
+      - verifier
+    audit_sample_rate: 0
+    strict_mode: false
+
+tasks:
+  - id: phase4-close-831
+    title: "W16 phase4-close-831 重派 (8/31 Phase 4 完结报告 + 50 律师付费 / ¥5 万+ ARR 验证)"
+    prompt: |
+      W16 phase4-close-831 producer session errored (mvs_bbd4cb0f9f1342c0818ea07d9afd83e5) before commit. W17 retry.
+
+      必读文档:
+      - W16 final report (plan-16-w16-final-report.md) §4 W17 接力
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化 runbook)
+      - W14 first-paid-triggers commit 6f785e5 (7/29 L1/L2/L3 转化)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W14 launch-execute commit 5986709 (runbook final 535 行)
+      - W11 PRD V5.0 § 10 公测期 KPI
+      - W11 final report + 历次 plan final report (W1-W16)
+      - W3-W10 PRD + tracks (Phase 4 全部 12 周回顾)
+      - W16 kpi-track commit 83613c4 (8/9 KPI 跟踪 + 2 v1.1 修复 trail)
+
+      W17 phase4-close-831 工作范围 (8/31 当天执行):
+
+      1. **50 律师付费验证** (docs/phase4/phase4-final-report.md):
+         - 公式: 5 律师首批 60% (3) + L4/L5 50% (1) + 25 新律师 25% 转化 day 1-14 (6) + day 15-30 14 名 (按 day 15-30 拉新节奏 60 名 + 25% = 15) ≈ 50 律师付费
+         - 实际: dashboard paid_converted 事件数 (8/31 当天 09:00 抓取, owner 实测)
+         - 营收快照: 50 × ¥449 创史 (10) + ¥99/月 (40) = 4490 + 3960 = 8450 元
+         - 距 ¥5 万+ ARR: 8450 × 12 (按年累计) = 101400 元 ≈ ¥10 万 ARR ✅ 超额完成
+         - 或 ¥5 万 ARR 目标: 8450 × 6 = 50700 元 ≈ ¥5 万 ARR ✅ 达标
+
+      2. **Phase 4 完结报告** (docs/phase4/phase4-final-report.md):
+         - 12 周回顾 (W1-W17)
+         - 90+ commit 累计 (W1-W17)
+         - PRD V5.0 落地: 个人版 ¥99/月 + 企业版 ¥1500-2000/律师/年
+         - 5 大价值主张 (本地化/智能非替代/越用越懂你/立案前预审/类案只做参考)
+         - 6 大模块 (合同审查 + OCR + 一体化 + Skill 2/3 + A2 双审 + 招募 + dashboard + 转化)
+         - 律师画像: 5 律师 (L1-L5) + 80 创史 + 1000 公测
+         - 公测 KPI: 30 律师 (8/9) + 50 律师 (8/31) + ¥5 万+ ARR
+
+      3. **Phase 5 准备** (docs/phase4/phase5-prep.md):
+         - React 18 + TypeScript 重构 (Phase 5.1)
+         - Electron 打包 (Phase 5.2)
+         - Rust 核心 (Phase 5.3)
+         - L4/L5 企业版上线 (Phase 5.4, 9/15 预登记)
+         - 招 3 agent (lex-security + lex-electron + lex-mobile)
+
+      4. **git commit + push** (1 commit: Phase 4 完结报告 + Phase 5 准备)
+
+      Stop when (Phase 4 完结完成):
+      - 50 律师付费 / ¥5 万+ ARR 验证
+      - phase4-final-report.md 完整 (12 周回顾 + KPI 验证)
+      - phase5-prep.md Phase 5 准备
+      - git log 显示 1+ Phase 4 close commit
+
+      严禁 (W16 严守 fabricate 原则, W17 复制):
+      - **不要 fabricate 8/31 数据** (6/30 距 8/31 还有 32 天, 全部 placeholder)
+      - 实际数字由 owner 8/31 当天 09:00 dashboard 实测填实
+      - runbook / 模板 / 应急备案 / 跟踪节奏可以写, 实际数字必须 placeholder
+      - 复制 W16 kpi worker 模式 (2 v1.1 修复建议 trail 模式)
+    verify_prompt: |
+      独立验证 Phase 4 完结 + 50 律师 KPI:
+      1. docs/phase4/phase4-final-report.md 完整 (12 周回顾 + 90+ commit + 5 大价值 + 6 大模块)
+      2. 50 律师付费验证 (dashboard paid_converted 事件数 8/31 实测 placeholder)
+      3. ¥5 万+ ARR 验证 (营收快照 + 年度累计 placeholder)
+      4. docs/phase4/phase5-prep.md Phase 5 准备 (React + Electron + Rust + L4/L5)
+      5. **严禁 fabricate** (8/31 距今 32 天, 实际数字全部 placeholder, owner 8/31 09:00 实测填实)
+      6. git log 显示 1+ Phase 4 close commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  - id: kpi-v1.1-fixes
+    title: "W16 kpi v1.1 修复 (5 律师批次 + 距月底 ARR 增量人数)"
+    prompt: |
+      W16 kpi-track-809 verifier 报 2 v1.1 修复:
+      1. **5 律师批次 ¥997/¥1,096 内部数学不一致** (L1+L2 创史 ¥898 + L3 月度 ¥99 = ¥997, 不是 ¥1,096)
+      2. **snapshot §2.3 距月底 ARR 增量人数 35 应为 20-26** (50-30=20, +L4/L5=26)
+
+      必读文档:
+      - W16 kpi commit 83613c4 (kpi-dashboard-726-809.md + kpi-snapshot-2026-08-09.md)
+      - W16 final report §2.2 kpi 严守 fabricate 原则
+      - W11 C1 first-paid-triggers v1.0 commit 4910305 (5 律师转化路径)
+      - W15 l4l5 commit 900948f (8/25 L4/L5 转化)
+      - W15 recruit-1000 commit d66fc33 (5 渠道 1000 律师)
+      - W16 verifier verdict detail (mvs_defd7... session)
+
+      W17 kpi-v1.1-fixes 工作范围:
+
+      1. **5 律师批次 v1.1 修复** (docs/marketing/kpi-snapshot-2026-08-09.md v1.1):
+         - L1 + L2 + L3 5 律师 7/29 试用到期转化 batch
+         - 真实营收: L1+L2 创史 ¥898 (2 × ¥449) + L3 月度 ¥99 (1 × ¥99) = ¥997 (不是 ¥1,096)
+         - ¥1,096 是 v1.0 错误 (假设 3 创史 + 2 月度, 实际 2 创史 + 1 月度)
+         - 修正 v1.1 行 1.1.1 公式
+         - commit v1.1 (增量 5 律师批次数学)
+
+      2. **snapshot §2.3 距月底 ARR 增量人数 v1.1 修复** (kpi-snapshot-2026-08-09.md v1.1):
+         - 公式: 50 律师付费目标 - 30 律师 (8/9 节点) = 20 律师
+         - + L4/L5 律师 (8/25 试用到期) = 26 律师
+         - 范围: 20-26 律师 (不是 35)
+         - 修正 v1.1 行 2.3 公式
+         - 营收增量: 20-26 律师 × ¥99/月 = 1980-2574 元 (7/26-8/31 期间新增)
+         - 总营收: ¥4,020 (8/9) + 1980-2574 (8/9-8/31) = 6000-6594 元
+         - 距 ¥5 万+ ARR: 6000-6594 × 6 = 36000-39564 元 (8/31 截止)
+
+      3. **git commit + push** (1 commit: v1.1 修复 2 项)
+
+      Stop when (kpi v1.1 fixes 完成):
+      - 5 律师批次 v1.1 修复 (¥1,096 → ¥997)
+      - snapshot §2.3 距月底 ARR 增量人数 v1.1 修复 (35 → 20-26)
+      - 营收增量 v1.1 修正 (6000-6594 元)
+      - git log 显示 1+ kpi v1.1 commit
+
+      严禁:
+      - 不要 fabricate (跟 W16 kpi 严守 placeholder 原则一致, 但 v1.1 fix 是数学修正非未来数据)
+    verify_prompt: |
+      独立验证 W16 kpi v1.1 修复:
+      1. 5 律师批次 v1.1 修复: L1+L2 创史 ¥898 + L3 月度 ¥99 = ¥997 (不是 ¥1,096)
+      2. snapshot §2.3 距月底 ARR 增量人数 v1.1 修复: 20-26 律师 (不是 35)
+      3. 营收增量 v1.1 修正: 6000-6594 元 (8/31 截止)
+      4. git log 显示 1+ kpi v1.1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: lex-bd
+    role: produce
+    verified_by: verifier
+    depends_on: []
+    gates: []
+    max_retries: 1
+    timeout_ms: 1200000
+    hang_alert_after_ms: 900000
+
+  - id: w17-integration
+    title: "W17 集成验证 (Phase 4 完结 + KPI v1.1 fixes)"
+    prompt: |
+      验证 W17 2 task 集成:
+      1. phase4-close-831 retry (lex-bd 营销) — 50 律师付费 / ¥5 万+ ARR 验证 + Phase 4 完结
+      2. kpi-v1.1-fixes (lex-bd 营销) — 5 律师批次 + 距月底 ARR 增量人数修复
+      3. 1 agent deliverable 无冲突
+      4. 1 agent 全部 git commit + push
+      5. **严禁 fabricate** (8/31 距今 32 天, 实际数字全部 placeholder, owner 8/31 09:00 实测填实)
+      6. 8/9 前 30 律师付费 + 8/31 50 律师付费 / 月 ¥5 万+ ARR (W18 owner 跑实测)
+      7. Phase 4 完结 + Phase 5 准备 (React + Electron + Rust + L4/L5)
+      8. W18 建议 (一句话: 9/15 L4/L5 企业版上线 + 早期用户 1000+ 留存 + Skill 3 律师函 v2.0 灰度 + Phase 5.1 React 18 + TS 重构启动)
+
+      输出 W17 总结 + W18 建议.
+    assigned_to: verifier
+    role: verify-as-task
+    depends_on:
+      - phase4-close-831
+      - kpi-v1.1-fixes
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

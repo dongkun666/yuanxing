@@ -1,0 +1,146 @@
+{
+  "template_id": "loan-loan_working_capital_long-014",
+  "contract_type": "借款合同",
+  "industry": "中长期借款",
+  "title": "企业流动资金借款合同 (中长期)",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "借款金额",
+      "text": "借款金额人民币 1 万元。"
+    },
+    {
+      "index": 2,
+      "title": "借款用途",
+      "text": "用于技术升级。"
+    },
+    {
+      "index": 3,
+      "title": "借款期限",
+      "text": "借款期限 10 年, 自 2027-06-19 起至 2027-12-28 止, 属中长期借款。"
+    },
+    {
+      "index": 4,
+      "title": "利息",
+      "text": "借款年利率 18%, 按季结息。"
+    },
+    {
+      "index": 5,
+      "title": "还款计划",
+      "text": "乙方按以下计划还款: 分期支付 (6 期)。"
+    },
+    {
+      "index": 6,
+      "title": "担保",
+      "text": "本合同项下借款由第三方担保。"
+    },
+    {
+      "index": 7,
+      "title": "财务承诺",
+      "text": "乙方承诺在借款存续期间保持约定的资产负债率与流动比率。"
+    },
+    {
+      "index": 8,
+      "title": "违约与提前到期",
+      "text": "乙方违反财务承诺或未按期支付利息的, 贷款人有权宣布借款提前到期。"
+    },
+    {
+      "index": 9,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 8,
+      "clause_title": "违约与提前到期",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "利息",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百八十五条 (违约金)"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 9,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "借款金额",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "还款计划",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "企业流动资金借款合同 (中长期)",
+    "中长期借款常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于企业流动资金借款合同 (中长期)场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "loan",
+    "skeleton": "loan_working_capital_long",
+    "variant_idx": 14,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

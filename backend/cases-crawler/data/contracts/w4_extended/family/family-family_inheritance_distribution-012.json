@@ -1,0 +1,131 @@
+{
+  "template_id": "family-family_inheritance_distribution-012",
+  "contract_type": "婚姻家事合同",
+  "industry": "继承",
+  "title": "法定继承分配协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "被继承人",
+      "text": "被继承人 XX 集团 于 2026-12-31 去世, 留有遗产 (位于长沙市西湖区某路 88 号的房产, 价值约人民币 100 万元)。"
+    },
+    {
+      "index": 2,
+      "title": "法定继承人",
+      "text": "法定继承人包括: 甲方、乙方、丙方。"
+    },
+    {
+      "index": 3,
+      "title": "继承份额",
+      "text": "经全体法定继承人协商, 遗产分配比例为: 甲方 5%, 乙方 30%, 丙方剩余份额。"
+    },
+    {
+      "index": 4,
+      "title": "过户",
+      "text": "继承人应在协议签订后 30 日内办理房屋过户登记。"
+    },
+    {
+      "index": 5,
+      "title": "债务",
+      "text": "被继承人的债务由各继承人按继承份额承担。"
+    },
+    {
+      "index": 6,
+      "title": "争议解决",
+      "text": "争议由上海国际仲裁中心管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "被继承人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《民法典》第六百八十条 (禁止高利放贷)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议修改为标的物所在地 / 合同签订地 / 双方住所地任一 或约定仲裁条款。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "继承份额",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "债务",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "法定继承人",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "法定继承分配协议",
+    "继承常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于法定继承分配协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "family",
+    "skeleton": "family_inheritance_distribution",
+    "variant_idx": 12,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

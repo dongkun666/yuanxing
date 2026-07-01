@@ -1,0 +1,137 @@
+{
+  "template_id": "ip-ip_franchise-019",
+  "contract_type": "知识产权合同",
+  "industry": "特许加盟",
+  "title": "特许经营 (加盟) 合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "特许人",
+      "text": "甲方为技术升级品牌的特许人, 拥有注册商标及经营资源。"
+    },
+    {
+      "index": 2,
+      "title": "被特许人",
+      "text": "乙方拟加盟甲方品牌。"
+    },
+    {
+      "index": 3,
+      "title": "特许经营资源",
+      "text": "特许经营资源包括注册商标、专利、专有技术、经营模式等。"
+    },
+    {
+      "index": 4,
+      "title": "加盟费",
+      "text": "加盟费人民币 100 万元, 乙方应于本合同签订之日一次性支付。"
+    },
+    {
+      "index": 5,
+      "title": "持续费用",
+      "text": "乙方应按月支付特许经营持续指导费 (销售额的 2%)。"
+    },
+    {
+      "index": 6,
+      "title": "统一管理",
+      "text": "乙方应遵守甲方的统一经营模式, 包括店面形象、产品标准、服务规范等。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 1,
+      "clause_title": "特许人",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违约金过高",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违反法律强制性规定, 可能被认定无效。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "统一管理",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "金额异常"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款金额异常, 远超合理范围。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "解除权失衡",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款管辖连接点异常, 存在被认定无效的风险。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 3,
+      "clause_title": "特许经营资源",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "持续费用",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "特许经营 (加盟) 合同",
+    "特许加盟常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于特许经营 (加盟) 合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "ip",
+    "skeleton": "ip_franchise",
+    "variant_idx": 19,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

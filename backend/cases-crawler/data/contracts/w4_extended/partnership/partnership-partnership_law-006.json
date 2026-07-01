@@ -1,0 +1,136 @@
+{
+  "template_id": "partnership-partnership_law-006",
+  "contract_type": "合伙协议",
+  "industry": "律师事务所",
+  "title": "律师事务所合伙协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "合伙律师事务所",
+      "text": "甲方、乙方、丙方共同设立教育律师事务所。"
+    },
+    {
+      "index": 2,
+      "title": "出资",
+      "text": "各方出资人民币 10 万元, 份额均等。"
+    },
+    {
+      "index": 3,
+      "title": "合伙期限",
+      "text": "合伙期限 10 年, 自 2027-04-17 起至 2028-06-19 止。"
+    },
+    {
+      "index": 4,
+      "title": "合伙人会议",
+      "text": "合伙人会议为最高权力机构, 重大事项需经全体一致同意。"
+    },
+    {
+      "index": 5,
+      "title": "利润分配",
+      "text": "合伙利润按合伙人会议决议分配, 一般采取基本报酬 + 效益分成方式。"
+    },
+    {
+      "index": 6,
+      "title": "执业责任",
+      "text": "因执业活动产生的法律责任, 由合伙律师事务所承担, 重大过失合伙人按约定承担。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "执业责任",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《消费者权益保护法》第二十四条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议增加对等权利义务条款, 平衡双方利益。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "重大遗漏",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "表述模糊"
+      ],
+      "legal_basis": [
+        "《民事诉讼法》第二十四条",
+        "《民事诉讼法》第三十五条"
+      ],
+      "risk_description": "该条款约定单方住所地管辖, 对非约定方应诉成本较高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "出资",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "利润分配",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述, 建议律师审查时关注。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "律师事务所合伙协议",
+    "律师事务所常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于律师事务所合伙协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "partnership",
+    "skeleton": "partnership_law",
+    "variant_idx": 6,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

@@ -1,0 +1,252 @@
+[
+  {"name":"service_consulting","title":"咨询服务合同(标准版)","contract_type":"服务合同","industry":"咨询服务","fatal_keywords":["知识产权","违约"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}咨询服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费总额人民币 {amount}, 乙方应按里程碑交付。"],
+     ["交付方式","乙方应以书面报告形式向甲方交付咨询成果。"],
+     ["知识产权","咨询成果的知识产权归甲方所有, 乙方未经许可不得使用。"],
+     ["保密义务","双方对在合作中知悉的对方商业秘密负有保密义务。"],
+     ["违约责任","乙方逾期交付的, 按{penalty_rate}向甲方支付违约金。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_tech","title":"技术服务合同(标准版)","contract_type":"服务合同","industry":"技术服务","fatal_keywords":["知识产权","违约"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}技术服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["交付","乙方应按合同约定的时间、方式交付技术服务成果。"],
+     ["知识产权","服务成果的知识产权归甲方所有, 乙方保留署名权。"],
+     ["售后与维护","乙方提供 {duration} 的免费维护, 维护期满后另行约定。"],
+     ["保密义务","双方对在合作中知悉的对方商业秘密负有保密义务。"],
+     ["违约责任","乙方逾期交付的, 按{penalty_rate}向甲方支付违约金。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_design","title":"设计服务合同","contract_type":"服务合同","industry":"设计服务","fatal_keywords":["知识产权"],"major_keywords":["争议"],
+   "clauses":[
+     ["设计内容","乙方为甲方提供{usage}设计服务。"],
+     ["设计阶段","设计分初稿、修改稿、定稿三个阶段, 乙方应按阶段交付。"],
+     ["设计费用","设计费总额人民币 {amount}。"],
+     ["付款方式","签订合同付 30%, 初稿交付付 30%, 定稿交付付 40%。"],
+     ["知识产权","甲方付清全部设计费后, 设计成果的知识产权归甲方所有。"],
+     ["修改与确认","甲方在初稿阶段可提出修改意见, 定稿后修改另行收费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_marketing","title":"营销服务合同","contract_type":"服务合同","industry":"营销服务","fatal_keywords":["KPI","数据保护"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}营销服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["KPI 考核","乙方应达到约定 KPI, 未达成的按比例扣减服务费。"],
+     ["知识产权","服务期间产生的创意、素材的知识产权按双方约定归属。"],
+     ["数据保护","乙方应按《个人信息保护法》规定处理甲方提供的数据。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_cleaning","title":"保洁服务合同","contract_type":"服务合同","industry":"保洁服务","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}保洁服务。"],
+     ["服务地点","服务地点为甲方指定地点。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费总额人民币 {amount}, 按月支付。"],
+     ["服务质量","乙方应按约定的保洁标准提供服务, 甲方有权监督检查。"],
+     ["设备与耗材","乙方应自带保洁工具及耗材, 特殊清洁剂费用由甲方承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_catering","title":"餐饮服务合同","contract_type":"服务合同","industry":"餐饮服务","fatal_keywords":["食品安全"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}餐饮服务。"],
+     ["服务地点","服务地点为甲方指定地点。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费按月结算, 每月人民币 {amount}。"],
+     ["食品安全","乙方应遵守《食品安全法》, 确保食品卫生与安全。"],
+     ["服务质量","乙方应按约定的餐饮标准提供服务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_legal","title":"法律服务委托合同","contract_type":"服务合同","industry":"法律服务","fatal_keywords":["律师费","委托"],"major_keywords":["争议"],
+   "clauses":[
+     ["委托事项","甲方委托乙方律师代理{usage}法律事务。"],
+     ["委托权限","乙方代理权限为{repayment_method} (一般/特别授权)。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 或至案件终结。"],
+     ["律师费","律师费总额人民币 {amount}, 风险代理的按胜诉金额的 {commission_rate}% 收取。"],
+     ["费用承担","差旅费、诉讼费、鉴定费等实际支出由甲方承担。"],
+     ["保密义务","乙方对委托事项负有保密义务。"],
+     ["解除","甲方可随时解除委托, 但应支付已完成工作的律师费。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_translation","title":"翻译服务合同","contract_type":"服务合同","industry":"翻译服务","fatal_keywords":["质量"],"major_keywords":["争议"],
+   "clauses":[
+     ["翻译内容","乙方为甲方提供{usage}翻译服务。"],
+     ["翻译语种","源语言为中文, 目标语言为英文。"],
+     ["交付期限","乙方应于 {end_date} 前交付翻译稿件。"],
+     ["翻译费用","翻译费按千字人民币 {amount}计算, 总价按实际交付字数结算。"],
+     ["质量要求","翻译质量应准确、通顺, 符合行业表达习惯。"],
+     ["修改","甲方可在交付后 7 日内提出修改意见, 乙方免费修改一次。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_medical","title":"医疗服务合同","contract_type":"服务合同","industry":"医疗服务","fatal_keywords":["医疗质量","知情同意"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}医疗服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["医疗质量","乙方应按医疗规范提供医疗服务, 保障医疗安全。"],
+     ["知情同意","乙方应向甲方充分告知医疗方案、风险及替代方案。"],
+     ["病历与隐私","乙方应按法律规定保管病历, 保护甲方隐私。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_education","title":"教育培训服务合同","contract_type":"服务合同","industry":"教育服务","fatal_keywords":["退费"],"major_keywords":["争议"],
+   "clauses":[
+     ["培训内容","乙方为甲方提供{usage}培训服务。"],
+     ["培训时间","培训自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["培训费用","培训费人民币 {amount}。"],
+     ["退费规则","开课前退课的, 扣除 10% 手续费; 开课后原则上不退费, 特殊情况协商。"],
+     ["教学质量","乙方应保证培训质量, 达到约定的培训目标。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_logistics","title":"物流服务合同","contract_type":"服务合同","industry":"物流","fatal_keywords":["运输责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}物流服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费按实际运输量结算, 每月结算一次, 总额不超过人民币 {amount}。"],
+     ["运输责任","乙方应对运输过程中货物的损毁、灭失承担责任, 除非能证明是因不可抗力或甲方过错。"],
+     ["保险","乙方应为运输货物投保货运险, 保险费用由乙方承担。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_decoration","title":"装修服务合同","contract_type":"服务合同","industry":"装修","fatal_keywords":["材料","验收"],"major_keywords":["争议"],
+   "clauses":[
+     ["装修内容","乙方为甲方提供{usage}装修服务。"],
+     ["装修地点","装修地点为甲方指定地点。"],
+     ["装修期限","装修期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["装修费用","装修费总额人民币 {amount}。"],
+     ["装修材料","乙方应使用符合国家标准的装修材料, 主材品牌、规格应经甲方确认。"],
+     ["验收","装修完成后, 双方应共同验收, 验收合格后进入保修期。"],
+     ["保修期","乙方提供 {duration} 的免费保修。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_wedding","title":"婚庆服务合同","contract_type":"服务合同","industry":"婚庆","fatal_keywords":["变更","取消"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}婚庆服务。"],
+     ["服务时间","婚庆服务时间 {start_date}。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["服务内容清单","附《婚庆服务清单》作为本合同附件, 双方签字确认。"],
+     ["定金","甲方应于签订本合同之日支付定金人民币 {down_payment}。"],
+     ["变更与取消","甲方变更或取消的, 已支付定金作为违约金不予退还。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_beauty","title":"美容服务合同","contract_type":"服务合同","industry":"美容","fatal_keywords":["过敏","不良反应"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}美容服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["服务质量","乙方应使用符合国家标准的美容产品, 保障服务安全。"],
+     ["过敏与不良反应","甲方应告知乙方过敏史, 因甲方未告知造成的不良反应由甲方自行承担。"],
+     ["退款","未消费的金额, 甲方可申请退款, 扣除已消费部分。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_fitness","title":"健身服务合同 (会员卡)","contract_type":"服务合同","industry":"健身","fatal_keywords":["退款"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}健身服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["会员卡使用","甲方可在服务期内不限次数使用乙方健身设施。"],
+     ["转让","会员卡可转让一次, 但应办理书面变更手续。"],
+     ["退款","开卡后 7 日内未使用的, 甲方可申请全额退款; 已使用的, 按比例扣除。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_housekeeping","title":"家政服务合同","contract_type":"服务合同","industry":"家政","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}家政服务。"],
+     ["服务地点","服务地点为甲方指定地点。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费人民币 {amount}。"],
+     ["服务时间","乙方每日工作 8 小时, 每周休息 1 天。"],
+     ["工作内容","包括日常保洁、做饭、照顾老人 / 儿童等, 具体内容按甲方需求。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_repair","title":"维修服务合同","contract_type":"服务合同","industry":"维修","fatal_keywords":["保修"],"major_keywords":["争议"],
+   "clauses":[
+     ["维修内容","乙方为甲方提供{usage}维修服务。"],
+     ["维修地点","维修地点为甲方指定地点 (或乙方维修车间)。"],
+     ["维修期限","乙方应于 {end_date} 前完成维修。"],
+     ["维修费用","维修费人民币 {amount}。"],
+     ["配件","配件费用按实际使用结算, 品牌、规格应经甲方确认。"],
+     ["保修","维修后保修 {duration}。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_audit","title":"审计服务合同","contract_type":"服务合同","industry":"审计","fatal_keywords":["独立性"],"major_keywords":["争议"],
+   "clauses":[
+     ["审计内容","乙方为甲方提供{usage}审计服务。"],
+     ["审计期间","审计期间为甲方指定的会计期间。"],
+     ["审计费用","审计费人民币 {amount}。"],
+     ["审计报告","乙方应于 {end_date} 前出具审计报告。"],
+     ["独立性","乙方及审计人员应保持独立性, 遵守职业道德。"],
+     ["保密义务","乙方对在审计中知悉的甲方财务信息负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_accounting","title":"会计代账服务合同","contract_type":"服务合同","industry":"代账","fatal_keywords":["申报"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}代账服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","每月代账费人民币 {amount}。"],
+     ["凭证提供","甲方应在每月 10 日前提供当月会计凭证, 否则乙方不承担延迟责任。"],
+     ["税务申报","乙方负责甲方月度 / 季度税务申报。"],
+     ["保密义务","乙方对在代账中知悉的甲方财务信息负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_it_ops","title":"IT 运维服务合同","contract_type":"服务合同","industry":"IT 运维","fatal_keywords":["SLA","数据安全"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}IT 运维服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费每月人民币 {amount}。"],
+     ["服务级别","乙方应提供 7×24 小时的故障响应服务, 严重故障 2 小时内响应。"],
+     ["SLA","乙方应保证服务可用性不低于 99.5%。"],
+     ["数据安全","乙方应按 ISO 27001 标准保护甲方数据。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_cloud","title":"云服务合同","contract_type":"服务合同","industry":"云服务","fatal_keywords":["数据安全"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}云服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费按使用量计费, 每月不超过人民币 {amount}。"],
+     ["SLA","乙方应保证服务可用性不低于 99.9%, 未达成的按比例退还服务费。"],
+     ["数据安全","乙方应按行业最佳实践保护甲方数据, 遵守《数据安全法》。"],
+     ["数据迁移","服务终止时, 乙方应协助甲方完成数据迁移。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_advertising","title":"广告服务合同","contract_type":"服务合同","industry":"广告","fatal_keywords":["内容审查"],"major_keywords":["争议"],
+   "clauses":[
+     ["广告内容","乙方为甲方提供{usage}广告服务。"],
+     ["广告形式","广告形式为{repayment_method}。"],
+     ["投放时间","广告投放时间 {start_date} 至 {end_date}。"],
+     ["广告费用","广告费总额人民币 {amount}。"],
+     ["广告内容审查","甲方应保证广告内容合法、合规、真实, 不得含有虚假宣传。"],
+     ["广告效果","乙方应按约定完成广告投放, 实际效果受市场等多因素影响, 不作保证。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_pr","title":"公关服务合同","contract_type":"服务合同","industry":"公关","fatal_keywords":[],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}公关服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费总额人民币 {amount}。"],
+     ["服务内容清单","附《公关服务清单》作为本合同附件。"],
+     ["保密义务","双方对在合作中知悉的对方商业秘密负有保密义务。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_courier","title":"快递服务合同","contract_type":"服务合同","industry":"快递","fatal_keywords":["递送责任"],"major_keywords":["争议"],
+   "clauses":[
+     ["服务内容","乙方为甲方提供{usage}快递服务。"],
+     ["服务期限","服务期自 {start_date} 起至 {end_date} 止, 共 {duration}。"],
+     ["服务费用","服务费按快递单结算, 月结总额不超过人民币 {amount}。"],
+     ["递送责任","乙方应对递送过程中快件的损毁、灭失、延误承担责任。"],
+     ["保价","甲方可选择保价, 保价费按声明价值的 {commission_rate}% 收取。"],
+     ["争议解决","争议由{jurisdiction}管辖。"]
+   ]},
+  {"name":"service_software_dev","title":"App 开发服务合同","contract_type":"服务合同","industry":"App 开发","fatal_keywords":["知识产权","违约"],"major_keywords":["争议"],
+   "clauses":[
+     ["开发内容","乙方为甲方开发一款移动 App, 含 iOS 和 Android。"],
+     ["开发周期","开发周期 6 个月。"],
+     ["费用","总费用 80 万元。"],
+     ["知识产权","App 知识产权归甲方所有。"],
+     ["维护","上线后免费维护 3 个月。"],
+     ["逾期","乙方逾期交付按日 0.5% 扣款。"]
+   ]}
+]

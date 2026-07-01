@@ -1,0 +1,136 @@
+{
+  "template_id": "construction-construction_pile_foundation-013",
+  "contract_type": "工程承揽合同",
+  "industry": "桩基工程",
+  "title": "桩基工程施工合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "工程内容",
+      "text": "工程内容: 教育 (钻孔灌注桩 / 预制管桩 / 人工挖孔桩)。"
+    },
+    {
+      "index": 2,
+      "title": "工程地点",
+      "text": "工程地点: 济南市黄浦区某路 88 号。"
+    },
+    {
+      "index": 3,
+      "title": "承包人",
+      "text": "承包人为乙方。"
+    },
+    {
+      "index": 4,
+      "title": "工程价款",
+      "text": "工程价款人民币 300 万元, 按桩径和桩长结算。"
+    },
+    {
+      "index": 5,
+      "title": "工期",
+      "text": "工期 10 年, 自 2027-02-12 起至 2027-09-10 止。"
+    },
+    {
+      "index": 6,
+      "title": "隐蔽验收",
+      "text": "桩基属隐蔽工程, 应在覆盖前进行验收。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地或合同签订地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 6,
+      "clause_title": "隐蔽验收",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "违法条款",
+        "显失公平"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款单方加重对方义务, 涉嫌显失公平。",
+      "modification_suggestion": "建议参考行业惯例与司法实践, 调整金额至合理范围。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议区分法定解除与违约解除, 违约金按实际损失计算。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "工程内容",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "工程地点",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "工期",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "桩基工程施工合同",
+    "桩基工程常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于桩基工程施工合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_pile_foundation",
+    "variant_idx": 13,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

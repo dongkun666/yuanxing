@@ -1,0 +1,154 @@
+{
+  "query_meta": {
+    "contract_type": "房屋租赁",
+    "stance": "乙方",
+    "industry": "个人租赁",
+    "jurisdiction": "上海",
+    "searched_at": "2026-06-29T02:00:00+08:00",
+    "latency_ms": 1850,
+    "total_clauses": 7,
+    "returned_count": 7,
+    "model_used": "qwen2.5:7b",
+    "embedding_model": "BAAI/bge-small-zh-v1.5"
+  },
+  "clause_reviews": [
+    {
+      "clause_id": "clause-1",
+      "clause_index": 1,
+      "clause_title": "租赁标的",
+      "clause_text": "甲方将位于上海市浦东新区某某路 123 号 1502 室房屋(以下简称'该房屋')出租给乙方使用。建筑面积 85 平方米。",
+      "risk_level": "advisory",
+      "risk_categories": ["表述模糊"],
+      "legal_basis": ["《民法典》第七百零三条"],
+      "risk_description": "房屋地址表述完整, 但缺少权属证明附件 (房产证 / 不动产权证) 引用, 建议在合同附件中明确。",
+      "modification_suggestion": "在合同附件中加入'房屋权属证明复印件', 并在合同正文中明确: '甲方保证对该房屋拥有合法出租权, 否则乙方有权解除合同并要求赔偿。'",
+      "stance_impact": "需结合上下文判断",
+      "reviewer_confidence": 0.78
+    },
+    {
+      "clause_id": "clause-3",
+      "clause_index": 3,
+      "clause_title": "租金及支付",
+      "clause_text": "月租金为人民币 5000 元整, 乙方应于每月 5 日前支付下月租金。逾期支付的, 每逾期一天, 按月租金的 5% 加收违约金。",
+      "risk_level": "fatal",
+      "risk_categories": ["违约金过高"],
+      "legal_basis": [
+        "《民法典》第五百八十五条",
+        "《最高人民法院关于适用〈中华人民共和国民法典〉合同编通则若干问题的解释》第六十五条"
+      ],
+      "risk_description": "逾期违约金按月租金的 5%/日计算, 年化违约金率约为 1825%, 远超 LPR 四倍司法保护上限, 司法实践中通常被认定为'违约金过高'并予以调减。",
+      "modification_suggestion": "建议修改为: '逾期支付的, 每逾期一天, 按当期应付租金的万分之五 (年化 1.825%) 加收违约金。' 或采用'逾期 × LPR × 1.5 倍' 等司法保护上限内表述。",
+      "modified_clause_template": "乙方应于每月 5 日前向甲方支付当月租金人民币 5000 元整。逾期支付的, 自逾期之日起, 按当期应付租金为基数, 按全国银行间同业拆借中心公布的同期 LPR 的 1.5 倍计算逾期违约金, 直至实际清偿之日止。",
+      "stance_impact": "不利",
+      "reviewer_confidence": 0.95,
+      "retrieval_evidence": [
+        {
+          "sample_id": "loan-p2p-01::clause-4::ann-0",
+          "contract_id": "loan-p2p-01",
+          "contract_type": "借款合同",
+          "clause_id": "loan-p2p-01::clause-4",
+          "clause_title": "违约责任",
+          "risk_level": "fatal",
+          "risk_categories": ["违约金过高"],
+          "risk_description": "该条款违约金按日 5% 计算, 司法实践中通常被认定为过高并调减。",
+          "modification_suggestion": "建议修改为'按 LPR × 1.5 倍' 等司法保护上限内表述。",
+          "similarity": 0.974,
+          "source": "contract_risks_index"
+        },
+        {
+          "sample_id": "loan-guaranteed-01::clause-4::ann-0",
+          "contract_id": "loan-guaranteed-01",
+          "contract_type": "借款合同",
+          "clause_id": "loan-guaranteed-01::clause-4",
+          "clause_title": "违约责任",
+          "risk_level": "fatal",
+          "risk_categories": ["违约金过高"],
+          "risk_description": "逾期按日 0.5% 加收违约金, 司法实践中通常被调减。",
+          "modification_suggestion": "建议修改为'按 LPR × 1.5 倍'。",
+          "similarity": 0.973,
+          "source": "contract_risks_index"
+        }
+      ]
+    },
+    {
+      "clause_id": "clause-6",
+      "clause_index": 6,
+      "clause_title": "提前解约",
+      "clause_text": "任何一方提前解除合同的, 须向守约方支付相当于 6 个月租金的违约金。",
+      "risk_level": "major",
+      "risk_categories": ["显失公平", "解除权失衡"],
+      "legal_basis": ["《民法典》第五百六十二条", "《民法典》第五百六十三条"],
+      "risk_description": "该条款对提前解约方施加了 6 个月租金的高额违约金, 未区分法定解除权 (如房屋不符合安全标准、甲方迟延交付等) 与违约解约。如乙方因甲方违约 (如房屋存在重大瑕疵) 而解除合同, 仍需支付高额违约金, 显失公平。",
+      "modification_suggestion": "建议区分法定解除与违约解除: '因一方违约导致对方行使法定解除权的, 守约方有权要求违约方赔偿实际损失, 但不承担本合同约定的解约违约金。因不可归责于双方的事由导致合同无法履行的, 双方互不承担违约责任。'",
+      "stance_impact": "不利",
+      "reviewer_confidence": 0.88
+    },
+    {
+      "clause_id": "clause-7",
+      "clause_index": 7,
+      "clause_title": "争议管辖",
+      "clause_text": "因本合同发生的争议, 双方协商不成的, 任何一方均可向甲方住所地人民法院提起诉讼。",
+      "risk_level": "advisory",
+      "risk_categories": ["争议管辖不利", "表述模糊"],
+      "legal_basis": ["《民事诉讼法》第二十四条", "《民事诉讼法》第三十五条"],
+      "risk_description": "约定甲方住所地法院管辖, 对乙方不利 (乙方需赴甲方所在地应诉, 增加成本)。未约定具体级别管辖 (基层 / 中级), 表述可优化。",
+      "modification_suggestion": "建议改为: '因本合同发生的争议, 双方协商不成的, 任何一方均可向房屋所在地或合同签订地人民法院提起诉讼。' 或约定仲裁 (如上海仲裁委员会)。",
+      "stance_impact": "不利",
+      "reviewer_confidence": 0.85
+    }
+  ],
+  "risk_summary": {
+    "fatal_count": 1,
+    "major_count": 1,
+    "advisory_count": 2,
+    "ok_count": 3,
+    "overall_risk_level": "high",
+    "narrative": "本合同共审查 7 个条款, 其中存在 1 个致命风险条款 (逾期违约金过高) 与 1 个重大风险条款 (提前解约违约金显失公平)。建议乙方在签约前重点协商逾期违约金计算方式, 并就提前解约条款区分法定解除与违约解除的情形。",
+    "top_risk_categories": [
+      {"category": "违约金过高", "count": 1},
+      {"category": "显失公平", "count": 1},
+      {"category": "解除权失衡", "count": 1},
+      {"category": "争议管辖不利", "count": 1},
+      {"category": "表述模糊", "count": 2}
+    ]
+  },
+  "negotiation_strategy": {
+    "priority_clauses": ["clause-3", "clause-6", "clause-7"],
+    "leverage_points": [
+      {
+        "clause_id": "clause-3",
+        "leverage": "违约金过高条款司法实践中会被调减, 甲方实际收益与约定差距大",
+        "trade_off": "可承诺按时支付换取违约金下调"
+      },
+      {
+        "clause_id": "clause-7",
+        "leverage": "争议管辖可约定房屋所在地或仲裁, 甲方通常会接受",
+        "trade_off": "可放弃其他次要条款换取管辖优化"
+      }
+    ],
+    "walk_away_signals": [],
+    "stance_specific_advice": "乙方立场: 重点关注逾期违约金 (clause-3) 与提前解约 (clause-6) 两条, 这两条对乙方构成实质性经济风险。建议先与甲方协商修改, 若甲方拒绝, 需评估签约风险或考虑仲裁条款。"
+  },
+  "version_diff": null,
+  "trajectory": {
+    "raw_token_count": 2100,
+    "compressed_token_count": 2100,
+    "compression_strategy": "none",
+    "compression_ratio": 1.0
+  },
+  "disclaimer": "本审查仅为基于合同文本的客观风险标注与法律依据提示, 不构成法律意见, 更不替代律师的专业判断。",
+  "ui_hints": {
+    "traffic_light": "red",
+    "show_diff_panel": false,
+    "show_strategy_modal": true,
+    "highlight_clauses": ["clause-3", "clause-6"],
+    "export_format": ["word", "pdf", "markdown"],
+    "retrieval_stats": {
+      "index_enabled": true,
+      "embedding_model": "BAAI/bge-small-zh-v1.5",
+      "fatal_major_clauses": 2,
+      "clauses_with_evidence": 2,
+      "recall_pct": 100.0
+    }
+  }
+}

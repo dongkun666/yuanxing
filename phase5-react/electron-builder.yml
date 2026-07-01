@@ -1,0 +1,157 @@
+appId: cn.lexprime.desktop
+productName: LexPrime 元枢法智
+copyright: Copyright © 2026 LexPrime (元枢法智)
+artifactName: ${productName}-${version}-${platform}-${arch}.${ext}
+directories:
+  output: dist-installer
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+  - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+  - "!**/node_modules/.bin"
+  - "!**/*.map"
+extraResources:
+  - from: "../assets"
+    to: "assets"
+    filter: ["**/*"]
+  - from: "../docs"
+    to: "docs"
+    filter: ["**/*.md"]
+asar: true
+asarUnpack:
+  - "**/node_modules/electron-updater/**/*"
+publish:
+  # Phase 5.2 私有更新源 (Phase 6 切换为 GitHub Releases)
+  # 配置文件: app-update.yml (运行时读取, electron-updater 协议)
+  - provider: generic
+    url: https://update.lexprime.cn/desktop
+    channel: latest
+    useMultipleRangeRequest: false
+
+# ===== Windows: NSIS 安装包 .exe =====
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: ${productName}-${version}-win-${arch}.${ext}
+  # icon: build/icon.ico   # Phase 5.2 用默认 Electron 图标 (生产需替换)
+  publisherName: LexPrime (元枢法智)
+  verifyUpdateCodeSignature: false  # 未签名时跳过校验
+  # ===== Code Signing (Windows) =====
+  # 生产签名需要:
+  # 1. EV 代码签名证书 (.pfx 格式)
+  # 2. 设置环境变量 (build 前):
+  #    CSC_LINK=file:///path/to/cert.pfx  (或 base64 字符串)
+  #    CSC_KEY_PASSWORD=<password>
+  # 3. 重新运行 npm run dist:win
+  # 注: 未设置环境变量时 electron-builder 会尝试打开字面路径, 所以保持注释状态
+  # certificateFile: ${env.CSC_LINK}
+  # certificatePassword: ${env.CSC_KEY_PASSWORD}
+  signingHashAlgorithms:
+    - sha256
+  rfc3161TimeStampServer: http://timestamp.digicert.com
+
+# ===== macOS: DMG 安装包 =====
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64  # Intel
+        - arm64  # Apple Silicon (M1/M2)
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  category: public.app-category.business
+  # icon: build/icon.icns   # Phase 5.2 用默认 Electron 图标
+  hardenedRuntime: false  # 未签名时关闭 hardened runtime
+  gatekeeperAssess: false
+  # ===== macOS 公证 (Notarization) =====
+  # electron-builder 23.6.0 不支持内联 notarize, 用 afterSign 钩子:
+  # 1. 安装 @electron/notarize: npm i -D @electron/notarize
+  # 2. 在 build/notarize.js 写 afterSign 脚本
+  # 3. 设置环境变量:
+  #    APPLE_ID=<apple-id@example.com>
+  #    APPLE_APP_SPECIFIC_PASSWORD=<app-specific-password>
+  #    APPLE_TEAM_ID=<10-char-team-id>
+  # 详细脚本见 build/notarize.js (Phase 5.2 占位)
+  extendInfo:
+    NSHumanReadableCopyright: Copyright © 2026 LexPrime (元枢法智)
+    CFBundleDocumentTypes:
+      - CFBundleTypeName: LexPrime Case File
+        CFBundleTypeRole: Editor
+        LSHandlerRank: Owner
+        LSItemContentTypes:
+          - com.lexprime.case
+  darkModeSupport: true
+
+# ===== Linux: AppImage 安装包 =====
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+  # icon: build/icon.png   # Phase 5.2 用默认 Electron 图标
+  category: Office
+  vendor: LexPrime (元枢法智)
+  synopsis: 法律 AI Agent 桌面端 · 律师单人版
+  description: |
+    LexPrime 元枢法智 · 律师单人版 MVP
+    AI 辅助不替代律师 · 5 大价值主张 · 6 大模块
+  desktop:
+    entry:
+      Name: LexPrime 元枢法智
+      Comment: 法律 AI Agent 桌面端
+      Categories: Office;Legal;
+      Keywords: legal;lawyer;AI;contract;
+      StartupNotify: true
+      StartupWMClass: LexPrime 元枢法智
+  mimeTypes:
+    - application/x-lexprime-case
+
+# ===== NSIS 安装包配置 (Windows 详细) =====
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: LexPrime 元枢法智
+  uninstallDisplayName: LexPrime 元枢法智 (${version})
+  # installerIcon: build/icon.ico   # Phase 5.2 用默认 Electron 图标
+  # uninstallerIcon: build/icon.ico
+  # installerHeader: build/installer-header.bmp  # Phase 5.2 跳过自定义位图
+  # installerSidebar: build/installer-sidebar.bmp
+  deleteAppDataOnUninstall: false
+  artifactName: ${productName}-${version}-win-${arch}-setup.${ext}
+
+# ===== DMG 配置 (macOS 详细) =====
+dmg:
+  title: ${productName} ${version}
+  # icon: build/icon.icns   # Phase 5.2 用默认
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+  window:
+    width: 540
+    height: 380
+  writeUpdateInfo: true
+
+# ===== AppImage 配置 (Linux 详细) =====
+appImage:
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+  license: ../LICENSE
+
+# ===== 跨平台构建矩阵提示 =====
+# 实际跨平台构建建议:
+# 1. Windows .exe:   在 Windows 上跑 `npm run dist:win` (NSIS)
+# 2. macOS .dmg:     在 macOS 上跑 `npm run dist:mac` (避免公证问题)
+# 3. Linux .AppImage: 在 Linux (Ubuntu 22.04) 上跑 `npm run dist:linux`
+# 跨平台编译 (从 Windows 跑 macOS / Linux) 仅用于开发测试, 正式发版需在对应平台构建

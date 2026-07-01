@@ -1,0 +1,22 @@
+{
+  "total": 6076,
+  "embedding_method": "hash_pseudo_embedding_384dim",
+  "embedding_note": "LexPrime W4 自建伪 embedding, 实际应使用 sentence-transformers BGE 中文模型",
+  "schema": {
+    "vector": "list[float] 384-dim (待替换为真实 BGE embedding)",
+    "template_id": "str",
+    "contract_type": "str",
+    "industry": "str",
+    "title": "str",
+    "content": "str (full text, all clauses joined)",
+    "applicable_scenarios": "list[str]",
+    "lawyer_notes": "str",
+    "source": "str (W3 baseline / W4 程序化生成)",
+    "category": "str"
+  },
+  "load_instructions": {
+    "python": "\nimport lancedb\nimport pyarrow as pa\nimport json\n\ndb = lancedb.connect('./lancedb_data')\ntable = db.create_table('contract_templates', data=records, mode='overwrite')\n# 搜索\nresults = table.search(query_vector).limit(5).to_list()\n",
+    "alternative_no_lancedb": "\n# 如果 lex-ai 暂时无法用 LanceDB, 可直接用 SQLite + FTS5\nimport sqlite3\nconn = sqlite3.connect('contract_templates.db')\n# 全文搜索\nresults = conn.execute(\n    \"SELECT template_id, title FROM contract_fts WHERE contract_fts MATCH ?\",\n    ('借款 担保',)\n).fetchall()\n"
+  },
+  "records_path": "E:\\元枢法智前端\\yuanxing\\backend\\cases-crawler\\data\\lancedb_export\\contract_records.json"
+}

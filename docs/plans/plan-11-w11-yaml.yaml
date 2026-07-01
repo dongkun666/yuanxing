@@ -1,0 +1,247 @@
+version: 1
+plan:
+  name: 'LexPrime Phase 4 Week 11: W10 A2 + B2 接力 + 7/26 公测仪式执行落地 (自动模式)'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 3
+  auto_accept: true
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+
+tasks:
+  # ============================================================
+  # Track A: W10 A2 接力 (双审工作流 + 签字)
+  # ============================================================
+
+  - id: 'a2-doc-review-workflow'
+    title: 'A2 双审工作流 (律师+AI 双审) + 风险标注 + 客户签字确认'
+    prompt: |
+      W10 A2 producer error 没跑, W11 A2 接力 (auto-scheduler 派生).
+      律师输入事实 → AI 生成草稿 → AI 风险标注 → 律师审核修改 → 客户签字 → 归档.
+
+      必读文档:
+      - W10 A1 commit 8a299cf + 746d76d + 30e607a (一体化全流程 + OCR 缓存 + cwd 修复)
+      - W9 C1 commit 37eda95 + 5d8ecdc (4 端点 + 4 模板)
+      - W3 Skill 2 SKILL.md § 4 端到端流程
+      - PRD V5.0 § 11 法务自检
+
+      W11 A2 工作范围:
+      1. **双审状态机**:
+         - backend/cases-crawler/core/doc_workflow.py
+         - 状态: draft → ai_reviewed → lawyer_reviewed → client_signed → archived
+         - PATCH /api/doc-gen/{doc_id}/state (state + reason + actor)
+      2. **AI 风险标注** (集成 Skill 2 reviewer):
+         - 4 文书类型各自风险维度:
+           - 起诉: 案由 / 诉讼请求 / 事实理由 / 法条引用
+           - 答辩: 反驳 / 抗辩 / 反诉 / 证据
+           - 合同: 标的 / 价款 / 履行 / 违约 / 管辖
+           - 律师函: 事实 / 法律意见 / 要求 / 时限 / 后果
+      3. **客户签字确认**:
+         - backend/cases-crawler/api/signature_router.py
+         - POST /api/signature/{doc_id} (上传签字图片 + 律师执业证号 + 时间戳)
+         - GET /api/signature/{doc_id} (查询签字状态)
+         - SQLite signatures 表
+      4. **前端双审界面**:
+         - templates/views/doc-review/index.html
+         - 左侧: 文书 draft + AI 风险标注 (高亮)
+         - 右侧: 状态机 + 律师修改记录 + 客户签字上传
+         - 集成到 router.js
+      5. **回归测试**:
+         - pytest 100% + ruff 0
+         - playwright 截图双审界面
+      6. **git commit + push** (3 commits: 1 状态机 / 1 签字 / 1 前端)
+
+      Stop when (A2 完成):
+      - doc_workflow.py 状态机 5 状态转换跑通
+      - signature_router 2 端点落档
+      - 4 文书风险标注接入 Skill 2 reviewer
+      - templates/views/doc-review/index.html 双审界面
+      - pytest 100% + ruff 0
+      - git log 显示 3+ A2 commit
+    verify_prompt: |
+      独立验证 A2 双审工作流:
+      1. doc_workflow.py 5 状态转换跑通
+      2. signature_router POST/GET 2 端点跑通
+      3. 4 文书风险标注接入 Skill 2 reviewer
+      4. templates/views/doc-review/index.html 双审界面 playwright 截图
+      5. pytest 100% + ruff 0
+      6. git log 显示 3+ A2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-pm'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # Track B: W10 B2 接力 (100 创史招募 + 1000 公测律师)
+  # ============================================================
+
+  - id: 'b2-founding-member-recruit'
+    title: 'B2 100 创史体验官招募 (¥449/年) + 1000 公测律师邀请函 + 招募页 + 邀请码 1000+'
+    prompt: |
+      W10 B2 producer error 没跑, W11 B2 接力 (auto-scheduler 派生).
+      招募 100 创史体验官 + 1000 公测律师, 7/26 启动仪式当天触发.
+
+      必读文档:
+      - W10 B1 commit 0df6a74 + ce98f64 (启动仪式流程 + 物料 + 漏斗 + PRD v0.7.3)
+      - W6 commit 22d4e11 (115 邀请码生成)
+      - W6 commit 081031a (创史招募准备)
+      - W8 commit 5766845 (W6 邀请码 API)
+      - W9 commit 5437535 (backlog 评审真数据 L1 已 redeem)
+      - docs/prd/09-business-model.md
+
+      W11 B2 工作范围:
+      1. **100 创史体验官招募**:
+         - docs/marketing/founding-member-recruit.md
+         - 100 名额 (115 - 15 已发 = 80 实际剩余)
+         - 价值主张: 1 年个人版 5 折 ¥449/年 + 终身优先客服 + 创始律师群
+         - 招募渠道: 5 律所直推 (L1-L5) + 100 律师私域 + 10 微信群
+         - 落地路径: 个人版 → 邀请码 redeem → 创史体验官群邀请
+      2. **1000 公测律师邀请函**:
+         - docs/marketing/beta-launch-1000-invitation.md
+         - 目标: 7/26-8/9 邀请 1000 律师, 转化 80 创史 + 50 付费
+         - 漏斗: 邀请函打开 → 点击 landing → 邀请码 redeem → 30 天试用 → 付费
+         - 渠道: 5 律所 + 100 律师朋友圈 + 10 微信群 + 5 公众号 + 1 律协
+      3. **招募页 templates/views/founding/index.html**:
+         - 6 模块: 创史价值主张 / 名额倒计时 / 已加入律师头像 / 7/26 启动预告 / 立即加入按钮 / 创始群二维码
+         - 集成到 router.js
+         - 集成 track event (founding_viewed / founding_joined)
+      4. **邀请码运营**:
+         - 复用 W6 邀请码 API
+         - 生成 1000 个新邀请码 (BETA2025-0116-BETA2025-1115)
+         - 落地 docs/marketing/invite-codes-list.csv (跟 W6 115 码合并到 1000+)
+      5. **跟踪指标**:
+         - docs/marketing/dashboard-w11.md
+         - 4 指标 + 创史专属 3 指标: 创史招募率 / 群活跃 / 付费转化
+      6. **git commit + push** (3 commits: 1 创史招募 / 1 邀请函 / 1 招募页 + dashboard)
+
+      Stop when (B2 完成):
+      - 100 创史招募计划完整 (80 名额 + 5 律所 + 100 律师 + 10 微信群)
+      - 1000 公测律师邀请函落档 (5 渠道漏斗)
+      - templates/views/founding/index.html 招募页 6 模块
+      - 邀请码 CSV 更新到 1000+ 码
+      - dashboard-w11 加创史专属 3 指标
+      - git log 显示 3+ B2 commit
+
+      不要做:
+      - 不要真发邀请码 (等 7/26 启动仪式)
+      - 不要开创始律师群 (7/26 才开)
+    verify_prompt: |
+      独立验证 B2 100 创史招募 + 1000 公测邀请:
+      1. 100 创史体验官招募计划完整
+      2. 1000 公测律师邀请函落档 (5 渠道漏斗)
+      3. templates/views/founding/index.html 招募页 6 模块
+      4. 邀请码 CSV 更新到 1000+ 码
+      5. dashboard-w11 加创史专属 3 指标
+      6. git log 显示 3+ B2 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-bd'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # Track C: 7/26 启动仪式执行落地 (5 律师首批付费触发)
+  # ============================================================
+
+  - id: 'c1-execute-726-launch-event'
+    title: 'C1 7/26 启动仪式执行 (60min 流程跑通 + 5 律师首批付费触发 + 招募页上线)'
+    prompt: |
+      W10 B1 物料就绪 (60min 流程 + 邀请函 + 物料 + 漏斗 + PRD v0.7.3), W11 C1 跑执行.
+      7/26 启动仪式当天的执行落地.
+
+      必读文档:
+      - W10 B1 commit 0df6a74 + ce98f64 (启动仪式流程 + 物料清单)
+      - W6 beta-launch-event.md (60min 流程原始版)
+      - docs/marketing/dashboard-w6.md + dashboard-w11.md
+      - PRD V5.0 § 9+§ 10
+
+      W11 C1 工作范围:
+      1. **执行运行手册** (run-book):
+         - docs/marketing/launch-runbook-2026-07-26.md
+         - 主持人 (总指挥) + 嘉宾流程 + 物料检查清单 + 应急联系人
+         - 时间节点: 14:00-17:00 启动仪式 + 17:00-19:00 茶歇交流 + 19:00 收尾
+         - 应急: 直播卡顿/律师缺席/物料缺失 备案
+      2. **5 律师首批付费触发**:
+         - docs/marketing/first-paid-triggers.md
+         - 5 律师 (L1 单飞 + L2 小所合伙 + L3 小所婚姻 + L4 中所合伙 + L5 企业法务) 30 天试用到期日 (2026-07-29)
+         - 提前 3 天 (2026-07-23) 发付费转化邮件 + 微信
+         - 转化路径: trial_expired → 微信跟进 → ¥449/年 创史体验官 或 ¥99/月 个人版
+         - 跟踪指标: 首批付费转化率 (5 / 30 = 16.7% 基准)
+      3. **招募页 + dashboard 上线**:
+         - templates/views/founding/index.html 上线 (7/26 09:00)
+         - dashboard-w11.md 自动 dashboard (实时拉取 prd_backlog 数据)
+         - 集成到 sidebar (W6 landing 风格)
+      4. **首批 8 月底转化目标**:
+         - 30 名律师付费 (首批 5 + 7/26-8/9 期间 25)
+         - 50 名律师付费 (8/31 截止)
+         - 月 ¥5 万+ ARR
+      5. **PRD 同步 + git commit** (1 commit: 执行 runbook + 转化触发脚本)
+
+      Stop when (C1 完成):
+      - docs/marketing/launch-runbook-2026-07-26.md 完整 (主持人 + 嘉宾 + 物料 + 应急)
+      - docs/marketing/first-paid-triggers.md 完整 (5 律师转化触发脚本)
+      - templates/views/founding/index.html 上线 (7/26 09:00)
+      - dashboard-w11.md 自动 dashboard 接通
+      - PRD V5.0 § 10 成功指标加 8 月底转化目标
+      - git log 显示 1+ C1 commit
+
+      不要做:
+      - 不要真发邮件 (7/23 才发, 提前 3 天)
+      - 不要真直播 (7/26 当天才直播)
+    verify_prompt: |
+      独立验证 C1 7/26 启动仪式执行:
+      1. docs/marketing/launch-runbook-2026-07-26.md 完整 (主持人 + 嘉宾 + 物料 + 应急)
+      2. docs/marketing/first-paid-triggers.md 5 律师转化触发脚本
+      3. templates/views/founding/index.html 上线 (含路由)
+      4. dashboard-w11.md 自动 dashboard 接通
+      5. PRD V5.0 § 10 加 8 月底转化目标
+      6. git log 显示 1+ C1 commit
+
+      PASS/FAIL 报告.
+    assigned_to: 'lex-bd'
+    role: 'produce'
+    verified_by: 'verifier'
+    depends_on: []
+    gates: []
+    max_retries: 2
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000
+
+  # ============================================================
+  # 集成验证 (W11 全 plan 收口)
+  # ============================================================
+  - id: 'w11-integration'
+    title: 'W11 集成验证 (A2 双审 + B2 创史招募 + C1 7/26 仪式执行)'
+    prompt: |
+      验证 W11 3 task 集成:
+      1. A2 双审工作流 + 风险标注 + 客户签字
+      2. B2 100 创史招募 + 1000 公测律师邀请函 + 招募页 + 邀请码 1000+
+      3. C1 7/26 启动仪式执行 runbook + 5 律师付费触发 + 招募页上线
+      4. 3 agent deliverable 无冲突 (lex-pm + lex-bd ×2)
+      5. 3 agent 全部 git commit + push
+      6. 7/26 公测 + 评审 #2 + 创史颁奖就绪
+      7. 8/9 前 30 名律师转化付费目标
+      8. 8 月底 50 律师付费 / 月 ¥5 万+ ARR
+      9. W12 建议 (一句话: 公测首批 30 律师转化付费 + 早期用户拉新 1000+ + Skill 3 文书迭代)
+
+      输出 W11 总结 + W12 建议.
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['a2-doc-review-workflow', 'b2-founding-member-recruit', 'c1-execute-726-launch-event']
+    gates: []
+    max_retries: 1
+    timeout_ms: 1800000
+    hang_alert_after_ms: 1500000

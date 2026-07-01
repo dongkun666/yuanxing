@@ -1,0 +1,1038 @@
+<!--
+  W27 Skill 3 v3.0 Launch Showcase Page (lex-coder · 2026-06-30)
+  5 viewport 截图专用, 复用 W25 cc14045 PRD + W26 ab59c49 launch 文档内容
+  拍 5 张图:
+    - desktop-1920.png  (1920x1080)
+    - mobile-375.png    (375x812 iPhone)
+    - ipad-pro-1024.png (1024x1366 iPad Pro)
+    - ipad-mini-768.png (768x1024)
+    - desktop-1280.png  (1280x800)
+  数据 placeholder 全部 forward-execute (W26 § 0 严禁 fabricate)
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill 3 律师函 v3.0 Launch · 2027-02-15 · LexPrime</title>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+  :root {
+    --brand: #165DFF;
+    --brand-hover: #0E42D2;
+    --brand-tint: rgba(22, 93, 255, 0.08);
+    --ai: #7C3AED;
+    --ai-tint: rgba(124, 58, 237, 0.08);
+    --success: #00B42A;
+    --warning: #FF7D00;
+    --danger: #F53F3F;
+    --fg-primary: #1D2129;
+    --fg-secondary: #4E5969;
+    --fg-tertiary: #86909C;
+    --bg-subtle: #F7F8FA;
+    --bg-border: #E5E6EB;
+    --bg-card: #FFFFFF;
+    --shadow-card: 0 2px 8px rgba(29, 33, 41, 0.06);
+    --shadow-elev: 0 6px 24px rgba(29, 33, 41, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    color: var(--fg-primary);
+    background: var(--bg-subtle);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  code, pre { font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace; }
+
+  /* ====== 顶部 hero ====== */
+  .hero {
+    background: linear-gradient(135deg, #165DFF 0%, #7C3AED 100%);
+    color: white;
+    padding: 48px 32px;
+  }
+  .hero-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 24px;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .hero-meta-item {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cta-primary {
+    background: white;
+    color: var(--brand);
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cta-secondary {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    padding: 24px;
+    color: var(--fg-primary);
+    box-shadow: var(--shadow-elev);
+    backdrop-filter: blur(8px);
+  }
+  .hero-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--fg-secondary);
+  }
+  .hero-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-card-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--fg-secondary);
+    background: #F7F8FA;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    max-height: 220px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-card-body::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, #F7F8FA);
+  }
+  .hero-card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .hero-stat {
+    background: #F7F8FA;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .hero-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--brand);
+  }
+  .hero-stat-label {
+    font-size: 11px;
+    color: var(--fg-tertiary);
+    margin-top: 2px;
+  }
+
+  /* ====== main container ====== */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+
+  /* ====== section 通用 ====== */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--fg-tertiary);
+    margin-top: 4px;
+  }
+  .section-tag {
+    background: var(--brand-tint);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* ====== 3 维度升级卡 ====== */
+  .upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .upgrade-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+  }
+  .upgrade-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .upgrade-card-icon.device { background: linear-gradient(135deg, #165DFF, #4080FF); }
+  .upgrade-card-icon.lang   { background: linear-gradient(135deg, #7C3AED, #A78BFA); }
+  .upgrade-card-icon.firm   { background: linear-gradient(135deg, #00B42A, #4ECB73); }
+  .upgrade-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .upgrade-card .upgrade-card-subtitle {
+    font-size: 12px;
+    color: var(--fg-tertiary);
+    margin-bottom: 12px;
+  }
+  .upgrade-card ul {
+    list-style: none;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--fg-secondary);
+  }
+  .upgrade-card ul li::before {
+    content: "✓ ";
+    color: var(--success);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* ====== 时间线 4 阶段 ====== */
+  .timeline {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow-card);
+  }
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 180px 120px 110px 100px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    align-items: center;
+    border-bottom: 1px dashed var(--bg-border);
+    font-size: 13px;
+  }
+  .timeline-row.head {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--bg-border);
+  }
+  .timeline-row .stage {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stage-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--fg-tertiary);
+  }
+  .stage-dot.active { background: var(--brand); box-shadow: 0 0 0 4px var(--brand-tint); }
+  .stage-dot.done { background: var(--success); }
+  .stage-dot.deprecate { background: var(--warning); }
+  .timeline-row .date { color: var(--fg-secondary); font-family: ui-monospace, monospace; font-size: 12px; }
+  .timeline-row .pct {
+    background: var(--brand-tint);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+  }
+  .timeline-row .pct.full { background: rgba(0,180,42,0.12); color: var(--success); }
+  .timeline-row .pct.deprecate { background: rgba(255,125,0,0.12); color: var(--warning); }
+  .timeline-row .desc { color: var(--fg-secondary); font-size: 12px; }
+
+  /* ====== 5 viewport 模拟演示区 ====== */
+  .viewport-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .viewport-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow-card);
+  }
+  .viewport-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--brand-tint);
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .viewport-card-mock {
+    background: #F7F8FA;
+    border: 1px solid var(--bg-border);
+    border-radius: 8px;
+    aspect-ratio: 4 / 3;
+    position: relative;
+    overflow: hidden;
+  }
+  .viewport-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .viewport-card-meta {
+    font-size: 11px;
+    color: var(--fg-tertiary);
+    margin-top: 2px;
+    font-family: ui-monospace, monospace;
+  }
+  .viewport-mock-1 {
+    display: flex;
+    height: 100%;
+  }
+  .vm-sidebar {
+    background: #1D2129;
+    width: 22%;
+  }
+  .vm-main {
+    flex: 1;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .vm-header-bar {
+    background: var(--brand);
+    height: 12px;
+    border-radius: 2px;
+  }
+  .vm-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .vm-tab {
+    background: white;
+    border: 1px solid var(--bg-border);
+    border-radius: 3px;
+    height: 14px;
+    flex: 1;
+  }
+  .vm-tab.active {
+    background: var(--brand);
+    border-color: var(--brand);
+  }
+  .vm-content {
+    background: white;
+    border: 1px solid var(--bg-border);
+    border-radius: 4px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+  }
+  .vm-block {
+    background: #F0F2F5;
+    border-radius: 2px;
+    height: 100%;
+  }
+  .vm-cta {
+    background: var(--brand);
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  /* ====== 双语对照 ====== */
+  .i18n-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .i18n-pane {
+    border: 1px solid var(--bg-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .i18n-pane.zh { background: rgba(22, 93, 255, 0.04); }
+  .i18n-pane.en { background: rgba(124, 58, 237, 0.04); }
+  .i18n-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .i18n-tag.zh { background: rgba(22, 93, 255, 0.12); color: var(--brand); }
+  .i18n-tag.en { background: rgba(124, 58, 237, 0.12); color: var(--ai); }
+  .i18n-pane h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .i18n-pane p {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    line-height: 1.6;
+  }
+
+  /* ====== 40+ 律所模板网格 ====== */
+  .firm-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .firm-cell {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--fg-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .firm-cell-icon {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, var(--brand), var(--ai));
+    color: white;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .firm-cell.bucket-top { border-color: var(--brand); background: var(--brand-tint); }
+  .firm-cell.bucket-mid { border-color: var(--ai); background: var(--ai-tint); }
+
+  /* ====== 底部 AI 角标 ====== */
+  .ai-banner {
+    background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(22,93,255,0.06));
+    border: 1px solid rgba(124,58,237,0.18);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .ai-banner-icon {
+    background: var(--ai);
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ai-banner-content {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--fg-secondary);
+  }
+  .ai-banner-content strong { color: var(--ai); }
+
+  /* ====== 响应式 - 移动端 ====== */
+  @media (max-width: 768px) {
+    .hero { padding: 24px 16px; }
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .hero h1 { font-size: 26px; }
+    .hero-subtitle { font-size: 14px; }
+    .container { padding: 16px; }
+    .upgrade-grid { grid-template-columns: 1fr; }
+    .viewport-grid { grid-template-columns: 1fr; }
+    .i18n-card { grid-template-columns: 1fr; }
+    .firm-grid { grid-template-columns: repeat(2, 1fr); }
+    .timeline-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: 12px 0;
+    }
+    .timeline-row.head { display: none; }
+  }
+  @media (min-width: 769px) and (max-width: 1100px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .upgrade-grid { grid-template-columns: 1fr; }
+    .viewport-grid { grid-template-columns: repeat(2, 1fr); }
+    .firm-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Hero ============ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">
+        <iconify-icon icon="mdi:rocket-launch-outline"></iconify-icon>
+        LexPrime Track A · W26 Skill 3 v3.0 Launch
+      </div>
+      <h1>Skill 3 律师函 v3.0 · 2027-02-15 Launch</h1>
+      <p class="hero-subtitle">
+        v2.0 通用模板 (W15-W21) → v3.0 升级: <strong>多端 (iOS/Android/iPad) + 中英双语 + 40+ 律所定制模板</strong>.
+        W21 letter v2.0 全面应用 6 个月 + W25 PRD 550 行 + 50 测试 100% pass, 2/15 启动 5% 灰度, 3/1 50%, 3/15 100% 全量, 4/1 v2.0 退役.
+      </p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <iconify-icon icon="mdi:calendar-start"></iconify-icon>
+          启动: 2027-02-15 09:00
+        </span>
+        <span class="hero-meta-item">
+          <iconify-icon icon="mdi:calendar-end"></iconify-icon>
+          v2.0 退役: 2027-04-01
+        </span>
+        <span class="hero-meta-item">
+          <iconify-icon icon="mdi:account-multiple-check"></iconify-icon>
+          期望覆盖: 500 律师 · 100 律所
+        </span>
+        <span class="hero-meta-item">
+          <iconify-icon icon="mdi:file-document-multiple"></iconify-icon>
+          期望生成: 10000+ 律师函/月
+        </span>
+      </div>
+      <div class="hero-cta">
+        <button class="cta-primary">
+          <iconify-icon icon="mdi:file-document-arrow-right-outline"></iconify-icon>
+          体验 Skill 3 v3.0 律师函
+        </button>
+        <button class="cta-secondary">
+          <iconify-icon icon="mdi:book-open-page-variant-outline"></iconify-icon>
+          阅读 Launch 文档 (W26)
+        </button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-header">
+        <iconify-icon icon="mdi:email-fast-outline" class="text-brand"></iconify-icon>
+        <span>Skill 3 律师函预览 · v3.0-w26</span>
+        <span style="margin-left:auto; color: var(--success); font-size: 11px;">
+          <iconify-icon icon="mdi:check-circle"></iconify-icon>
+          生成中 · 1.8s
+        </span>
+      </div>
+      <div class="hero-card-title">
+        <iconify-icon icon="mdi:scale-balance" class="text-brand"></iconify-icon>
+        关于[XX 公司]拖欠货款事宜的律师函
+      </div>
+      <div class="hero-card-body">
+        <strong>致: XX 有限公司</strong><br>
+        北京市中伦文德律师事务所<br>
+        律师: 张明 (执业证号 11101200XXXXXXXX)<br>
+        <br>
+        我所受 <em>北京 A 科技有限公司</em> (以下简称"委托人") 委托, 就贵司拖欠货款事宜, 函告如下:<br>
+        <br>
+        一、事实依据<br>
+        2026 年 11 月, 双方签订《设备采购合同》(合同编号: PO-2026-11-XXX), 约定总金额 ¥ 320,000.00, 验收后 30 日内付款...<br>
+        <br>
+        二、法律分析<br>
+        根据《中华人民共和国民法典》第六百二十六条...<br>
+        <br>
+        三、要求事项<br>
+        1. 收到本函 7 日内支付拖欠货款 ¥ 320,000.00<br>
+        2. 逾期利息按 LPR 计算...<br>
+      </div>
+      <div class="hero-card-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">5/5</div>
+          <div class="hero-stat-label">5 维度评分</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">320K</div>
+          <div class="hero-stat-label">涉案金额</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">7d</div>
+          <div class="hero-stat-label">回复期限</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Main ============ -->
+<div class="container">
+
+  <!-- ====== 3 维度升级 ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <iconify-icon icon="mdi:arrow-up-bold-circle-outline" class="text-brand"></iconify-icon>
+          v2.0 → v3.0 三维度升级
+        </div>
+        <div class="section-subtitle">W25 PRD § 1.2-1.5 · W21 v2.0 (W15 8 律师反馈) → W26 v3.0 (W25 PRD 多端+多语言+多律所)</div>
+      </div>
+      <span class="section-tag">v3.0 · additive 渐进升级</span>
+    </div>
+    <div class="upgrade-grid">
+      <div class="upgrade-card">
+        <div class="upgrade-card-icon device">
+          <iconify-icon icon="mdi:cellphone-link"></iconify-icon>
+        </div>
+        <h3>多端覆盖 (Multi-Device)</h3>
+        <div class="upgrade-card-subtitle">桌面 + iOS + Android + iPad · 5 viewport</div>
+        <ul>
+          <li>iOS 17+ Safari &amp; App (React Native 0.73 + Expo 51)</li>
+          <li>Android 14+ Chrome &amp; APK</li>
+          <li>iPad Pro 12.9"/ iPad mini 8.3" 自适应</li>
+          <li>桌面 1920×1080 + 1280×800 双分辨率</li>
+          <li>Mobile-First 交互重构 (触控 + 滑动)</li>
+        </ul>
+      </div>
+      <div class="upgrade-card">
+        <div class="upgrade-card-icon lang">
+          <iconify-icon icon="mdi:translate"></iconify-icon>
+        </div>
+        <h3>中英双语 (Bilingual)</h3>
+        <div class="upgrade-card-subtitle">中英 markdown 模板 + react-i18next</div>
+        <ul>
+          <li>中英对照双栏 (主文 + 译文切换)</li>
+          <li>跨境案件 (涉外律所 / 国际客户 / 国际仲裁)</li>
+          <li>英文 prompt 独立 yaml (skill3_letter_v3_en.yaml)</li>
+          <li>法律术语双语词典 (200+ 词条)</li>
+          <li>Bucket 标签 i18n (zh-CN / en-US)</li>
+        </ul>
+      </div>
+      <div class="upgrade-card">
+        <div class="upgrade-card-icon firm">
+          <iconify-icon icon="mdi:office-building-cog-outline"></iconify-icon>
+        </div>
+        <h3>40+ 律所定制模板</h3>
+        <div class="upgrade-card-subtitle">10 大综合 + 50 中型 + 20 中小型所</div>
+        <ul>
+          <li>头部 10 大综合所 (中伦/君合/金杜/方达/汉坤/通商/...)</li>
+          <li>50 中型所 (京都/天元/中伦文德/...)</li>
+          <li>20 中小型所 (按地域 + 业务领域)</li>
+          <li>律所 hash 分配 (42 律所 hash 稳定)</li>
+          <li>5 维度评分 ≥ 0.7 准入门槛</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 4 阶段时间线 ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <iconify-icon icon="mdi:timeline-clock-outline" class="text-brand"></iconify-icon>
+          4 阶段 rollout 时间线
+        </div>
+        <div class="section-subtitle">W26 launch § 1.1 · 2/15 启动 → 3/1 50% → 3/15 100% → 4/1 v2.0 退役</div>
+      </div>
+      <span class="section-tag">45 天升级窗口</span>
+    </div>
+    <div class="timeline">
+      <div class="timeline-row head">
+        <div>阶段</div>
+        <div>日期</div>
+        <div>灰度比例</div>
+        <div>公测 day</div>
+        <div>覆盖</div>
+      </div>
+      <div class="timeline-row">
+        <div class="stage">
+          <span class="stage-dot done"></span>
+          预热 (W26 启动)
+        </div>
+        <div class="date">02-10 → 02-14</div>
+        <div><span class="pct">5 律师试用</span></div>
+        <div>229-233</div>
+        <div class="desc">5 创史律师 + L4/L5 合伙人验证 v3.0 多端 + 中英 + 律所模板</div>
+      </div>
+      <div class="timeline-row">
+        <div class="stage">
+          <span class="stage-dot active"></span>
+          2/15 启动 (W26)
+        </div>
+        <div class="date">2027-02-15 09:00</div>
+        <div><span class="pct">5%</span></div>
+        <div>234</div>
+        <div class="desc">50 律师 / 10 律所 / 100+ 律师函 · 验证移动端 + iPad + 跨境</div>
+      </div>
+      <div class="timeline-row">
+        <div class="stage">
+          <span class="stage-dot active"></span>
+          3/1 50% (W27)
+        </div>
+        <div class="date">2027-03-01 09:00</div>
+        <div><span class="pct">50%</span></div>
+        <div>248</div>
+        <div class="desc">250 律师 / 50 律所 / 1000+ 律师函 · Marketplace 公测 (5% 抽成)</div>
+      </div>
+      <div class="timeline-row">
+        <div class="stage">
+          <span class="stage-dot active"></span>
+          3/15 100% (W28)
+        </div>
+        <div class="date">2027-03-15 09:00</div>
+        <div><span class="pct full">100%</span></div>
+        <div>262</div>
+        <div class="desc">500 律师 / 100 律所 / 5000+ 律师函 · 40+ 律所模板全量</div>
+      </div>
+      <div class="timeline-row">
+        <div class="stage">
+          <span class="stage-dot deprecate"></span>
+          4/1 v2.0 退役 (W29)
+        </div>
+        <div class="date">2027-04-01 09:00</div>
+        <div><span class="pct deprecate">letter_v2_deprecated</span></div>
+        <div>279</div>
+        <div class="desc">v2.0 通用模板退役 · 全员 v3.0 + 40+ 律所定制模板 (W21 退役节奏一致)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 5 viewport 演示 ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <iconify-icon icon="mdi:responsive" class="text-brand"></iconify-icon>
+          5 viewport 适配演示
+        </div>
+        <div class="section-subtitle">W25 PRD § 3.1 · W26 launch § 4.2 · Mobile-First 响应式设计</div>
+      </div>
+      <span class="section-tag">5 viewport 完整覆盖</span>
+    </div>
+    <div class="viewport-grid">
+      <div class="viewport-card">
+        <span class="viewport-card-tag"><iconify-icon icon="mdi:monitor"></iconify-icon> Desktop HD</span>
+        <div class="viewport-card-mock">
+          <div class="viewport-mock-1">
+            <div class="vm-sidebar"></div>
+            <div class="vm-main">
+              <div class="vm-header-bar"></div>
+              <div class="vm-tabs">
+                <div class="vm-tab active"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+              </div>
+              <div class="vm-content">
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+              </div>
+              <div class="vm-cta"></div>
+            </div>
+          </div>
+        </div>
+        <div class="viewport-card-name"><iconify-icon icon="mdi:monitor-dashboard"></iconify-icon> 桌面 1920×1080</div>
+        <div class="viewport-card-meta">1920×1080 · Windows / macOS · 主用办公场景</div>
+      </div>
+      <div class="viewport-card">
+        <span class="viewport-card-tag"><iconify-icon icon="mdi:cellphone"></iconify-icon> Mobile iPhone</span>
+        <div class="viewport-card-mock">
+          <div class="viewport-mock-1" style="flex-direction: column;">
+            <div class="vm-header-bar" style="height: 18px;"></div>
+            <div class="vm-main" style="padding: 4px;">
+              <div class="vm-tabs" style="flex-direction: column; gap: 2px;">
+                <div class="vm-tab active"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+              </div>
+              <div class="vm-content" style="grid-template-columns: 1fr;">
+                <div class="vm-block" style="height: 30%;"></div>
+                <div class="vm-block" style="height: 30%;"></div>
+              </div>
+              <div class="vm-cta"></div>
+            </div>
+          </div>
+        </div>
+        <div class="viewport-card-name"><iconify-icon icon="mdi:cellphone"></iconify-icon> 移动 375×812</div>
+        <div class="viewport-card-meta">375×812 · iPhone 13/14/15 · Safari 17+</div>
+      </div>
+      <div class="viewport-card">
+        <span class="viewport-card-tag"><iconify-icon icon="mdi:tablet"></iconify-icon> iPad Pro</span>
+        <div class="viewport-card-mock">
+          <div class="viewport-mock-1">
+            <div class="vm-sidebar" style="width: 16%;"></div>
+            <div class="vm-main">
+              <div class="vm-header-bar"></div>
+              <div class="vm-tabs">
+                <div class="vm-tab active"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+                <div class="vm-tab"></div>
+              </div>
+              <div class="vm-content" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+                <div class="vm-block"></div>
+              </div>
+              <div class="vm-cta"></div>
+            </div>
+          </div>
+        </div>
+        <div class="viewport-card-name"><iconify-icon icon="mdi:tablet"></iconify-icon> iPad 1024×1366</div>
+        <div class="viewport-card-meta">1024×1366 · iPad Pro 12.9" · Safari 17+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 中英双语对照 ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <iconify-icon icon="mdi:translate" class="text-brand"></iconify-icon>
+          中英双语对照 · 跨境案件支持
+        </div>
+        <div class="section-subtitle">W25 PRD § 3.2 · react-i18next · 中英双栏 + 跨境案件 prompt 双语</div>
+      </div>
+      <span class="section-tag">i18n · zh-CN / en-US</span>
+    </div>
+    <div class="i18n-card">
+      <div class="i18n-pane zh">
+        <span class="i18n-tag zh"><iconify-icon icon="mdi:translate-variant"></iconify-icon> 中文 (主)</span>
+        <h4>关于[XX 公司]拖欠货款事宜的律师函</h4>
+        <p>
+          致: XX 有限公司<br>
+          我所受<strong>北京 A 科技有限公司</strong>(以下简称"委托人")委托, 就贵司拖欠货款事宜, 函告如下:<br>
+          一、事实依据 · 二、法律分析 · 三、要求事项<br>
+          根据《<strong>中华人民共和国民法典</strong>》第六百二十六条...
+        </p>
+      </div>
+      <div class="i18n-pane en">
+        <span class="i18n-tag en"><iconify-icon icon="mdi:earth"></iconify-icon> English (Translation)</span>
+        <h4>Legal Letter on Outstanding Payment Owed by [XX Co., Ltd.]</h4>
+        <p>
+          To: XX Co., Ltd.<br>
+          Our firm, on behalf of <strong>Beijing A Technology Co., Ltd.</strong> (the "Client"), hereby formally notifies your company regarding the outstanding payment in accordance with <strong>the Civil Code of the PRC</strong>, Article 626...<br>
+          I. Factual Basis · II. Legal Analysis · III. Demands
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 40+ 律所模板 ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">
+          <iconify-icon icon="mdi:office-building-cog-outline" class="text-brand"></iconify-icon>
+          40+ 律所定制模板 (hash 分配稳定)
+        </div>
+        <div class="section-subtitle">W25 PRD § 4.1 · 10 大综合所 + 50 中型所 + 20 中小型所 · 5 维度评分 ≥ 0.7</div>
+      </div>
+      <span class="section-tag">hash 稳定 (42 律所) · A/B winner</span>
+    </div>
+    <div class="firm-grid">
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">中</div>
+        中伦律师事务所
+      </div>
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">君</div>
+        君合律师事务所
+      </div>
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">金</div>
+        金杜律师事务所
+      </div>
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">方</div>
+        方达律师事务所
+      </div>
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">汉</div>
+        汉坤律师事务所
+      </div>
+      <div class="firm-cell bucket-top">
+        <div class="firm-cell-icon">通</div>
+        通商律师事务所
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">京</div>
+        京都律师事务所
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">天</div>
+        天元律师事务所
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">中</div>
+        中伦文德
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">大</div>
+        大成律师事务所
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">德</div>
+        德恒律师事务所
+      </div>
+      <div class="firm-cell bucket-mid">
+        <div class="firm-cell-icon">盈</div>
+        盈科律师事务所
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">北</div>
+        北京天同
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">国</div>
+        国浩律师
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">中</div>
+        中银律师
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">锦</div>
+        锦天城
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">海</div>
+        海问律师
+      </div>
+      <div class="firm-cell">
+        <div class="firm-cell-icon">竞</div>
+        竞天公诚
+      </div>
+    </div>
+    <div style="margin-top: 12px; font-size: 12px; color: var(--fg-tertiary); text-align: right;">
+      <iconify-icon icon="mdi:dots-grid"></iconify-icon>
+      +24 律所 (中型 38 + 中小型 20) · 总计 42 律所 · hash bucket 50/50
+    </div>
+  </div>
+
+  <!-- ====== AI 角标 ====== -->
+  <div class="ai-banner">
+    <div class="ai-banner-icon">
+      <iconify-icon icon="mdi:sparkles" style="font-size: 18px;"></iconify-icon>
+    </div>
+    <div class="ai-banner-content">
+      <strong>AI 辅助工具声明</strong> · 本页面展示 Skill 3 律师函 v3.0 升级路径 (W26 launch 2/15 启动).
+      v3.0 由 v2.0 (W15-W21) <strong>additive 渐进</strong>升级, 不替换, 100% 向后兼容. 数据 placeholder
+      (5 律师/50 律师/250 律师/500 律师/5 维度评分) 全部 forward-execute, 2/15 + 3/1 + 3/15 + 4/1 当天 09:00 由 owner 实测填实.
+      <br>
+      依据: <code style="background: white; padding: 1px 4px; border-radius: 2px; font-size: 11px;">skill3-v3-launch-2027-02-01.md</code> (W26 ab59c49 ~30KB) ·
+      <code style="background: white; padding: 1px 4px; border-radius: 2px; font-size: 11px;">skill3-v3-prd-2027-02-01.md</code> (W25 cc14045 ~38KB) ·
+      <code style="background: white; padding: 1px 4px; border-radius: 2px; font-size: 11px;">test_v3.py</code> (W25 1fbfe93 50 测试 pass).
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+{
+  "template_id": "construction-construction_design_build-017",
+  "contract_type": "工程承揽合同",
+  "industry": "DB",
+  "title": "DB 设计施工总承包合同",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "项目",
+      "text": "项目名称: 经营周转, 项目地点: 苏州市南山区某路 88 号。"
+    },
+    {
+      "index": 2,
+      "title": "发包人",
+      "text": "发包人为甲方。"
+    },
+    {
+      "index": 3,
+      "title": "承包人",
+      "text": "承包人为乙方。"
+    },
+    {
+      "index": 4,
+      "title": "承包范围",
+      "text": "乙方负责本项目的设计及施工, 实行总价包干。"
+    },
+    {
+      "index": 5,
+      "title": "合同价款",
+      "text": "合同价款人民币 150 万元。"
+    },
+    {
+      "index": 6,
+      "title": "工期",
+      "text": "工期 5 年, 自 2026-11-18 起至 2028-10-28 止。"
+    },
+    {
+      "index": 7,
+      "title": "质量",
+      "text": "工程质量应符合国家及行业现行标准。"
+    },
+    {
+      "index": 8,
+      "title": "争议解决",
+      "text": "争议由北京仲裁委员会管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 7,
+      "clause_title": "质量",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "显失公平",
+        "违约金过高"
+      ],
+      "legal_basis": [
+        "《劳动合同法》第二十六条 (劳动合同无效)"
+      ],
+      "risk_description": "该条款违约金约定过高, 司法实践中通常被调减。",
+      "modification_suggestion": "建议增加违约金 / 担保 / 争议解决等必备条款。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 8,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "争议管辖不利",
+        "举证困难"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款解除权失衡, 一方解约成本过低或过高。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "工期",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 4,
+      "clause_title": "承包范围",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 1,
+      "clause_title": "项目",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "可优化",
+        "期限异常"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议结合行业惯例与司法实践, 优化条款表述。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "DB 设计施工总承包合同",
+    "DB常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于DB 设计施工总承包合同场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "construction",
+    "skeleton": "construction_design_build",
+    "variant_idx": 17,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

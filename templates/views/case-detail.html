@@ -1,4 +1,4 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-hidden" id="view-case">
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-hidden" id="view-case">
 <!-- 顶部标题栏 - 扩展显示更多案件元数据 -->
 <div class="flex-none px-6 py-3 bg-white border-b border-bg-border flex items-center justify-between">
 <div class="flex items-center gap-4">
@@ -229,102 +229,183 @@
 </div>
 </div>
 </div>
-<!-- Tab: 时间线 -->
+<!-- Tab: 时间线 (可视化时间轴升级版) -->
 <div class="hidden max-h-full h-fit overflow-y-auto p-6 bg-bg" id="case-tab-timeline">
 <div class="max-w-4xl w-full mx-auto">
-<div class="flex justify-between items-center mb-4">
-<h3 class="text-sm font-semibold text-fg-primary">案件时间线</h3>
+<!-- 顶部 toolbar: 标题 + 节点统计 + AI 入口 + 添加 -->
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+<div class="flex items-center gap-2.5">
+<h3 class="text-base font-bold text-fg-primary">案件时间线</h3>
+<span class="text-[11px] text-fg-tertiary bg-bg-subtle px-2 py-0.5 rounded-full">5 个节点</span>
+<button class="text-[11px] text-brand bg-brand-tint3 hover:bg-brand-tint px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors" title="AI 自动识别文书/录音/邮件中的关键时间点">
+<iconify-icon class="text-xs" icon="mdi:auto-fix"></iconify-icon>
+            AI 智能整理
+        </button>
+</div>
 <button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-brand text-white hover:bg-blue-600 transition-colors flex items-center gap-1.5" onclick="openAddTimelineModal()">
 <iconify-icon class="text-sm" icon="mdi:plus"></iconify-icon>
-添加时间线
-</button>
+            添加时间线
+        </button>
 </div>
-<div class="relative pl-8 border-l-2 border-brand/30 space-y-6" id="timeline-container">
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-brand flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:file-sign"></iconify-icon>
+<!-- 时间线容器: CSS Grid 列布局 (节点列 48px + 卡片列 1fr) - 根治 absolute + overflow 重叠 -->
+<div class="space-y-0" id="timeline-container">
+<!-- 节点 1: 已完成 - 绿 (合同签订) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-green-500 flex items-center justify-center shadow-sm z-10">
+<iconify-icon class="text-base text-green-500" icon="mdi:check"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4 ml-4 group">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">签订采购框架协议</span>
-<div class="flex items-center gap-2">
-<span class="text-[10px] text-fg-tertiary">2025-10-12</span>
-<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
-<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
-</button>
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
 </div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
+<div class="p-4 pl-5">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1 flex-wrap">
+<span class="text-sm font-semibold text-fg-primary">签订采购框架协议</span>
+<span class="text-[10px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded-full font-medium">合同</span>
 </div>
-<p class="text-xs text-fg-tertiary">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
+<p class="text-xs text-fg-tertiary leading-relaxed">原、被告双方签署 SH-2025-1012 号《采购框架协议》</p>
 </div>
-</div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-warning-tint0 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:file-document"></iconify-icon>
-</div>
-<div class="bg-white rounded-xl border border-bg-border p-4 ml-4 group">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">发出催款函</span>
-<div class="flex items-center gap-2">
-<span class="text-[10px] text-fg-tertiary">2026-03-15</span>
-<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
-<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+<div class="flex items-center gap-1.5 flex-none ml-3">
+<span class="text-[11px] text-fg-tertiary">2025-10-12</span>
+<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)">
+<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>
 </button>
 </div>
 </div>
-<p class="text-xs text-fg-tertiary">原告委托律所向被告发出律师催款函</p>
 </div>
 </div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:gavel"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4 ml-4 group">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">法院立案</span>
-<div class="flex items-center gap-2">
-<span class="text-[10px] text-fg-tertiary">2026-06-01</span>
-<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
-<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+<!-- 节点 2: 已完成 - 橙 (催款函) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-orange-500 flex items-center justify-center shadow-sm z-10">
+<iconify-icon class="text-base text-orange-500" icon="mdi:file-document"></iconify-icon>
+</div>
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>
+<div class="p-4 pl-5">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1 flex-wrap">
+<span class="text-sm font-semibold text-fg-primary">发出催款函</span>
+<span class="text-[10px] bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded-full font-medium">律师函</span>
+</div>
+<p class="text-xs text-fg-tertiary leading-relaxed">原告委托律所向被告发出律师催款函</p>
+</div>
+<div class="flex items-center gap-1.5 flex-none ml-3">
+<span class="text-[11px] text-fg-tertiary">2026-03-15</span>
+<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)">
+<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>
 </button>
 </div>
 </div>
-<p class="text-xs text-fg-tertiary">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
 </div>
 </div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-purple-500 flex items-center justify-center text-white shadow">
-<iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4 ml-4 group">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium">排期开庭</span>
-<div class="flex items-center gap-2">
-<span class="text-[10px] text-fg-tertiary">2026-08-25</span>
-<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
-<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+<!-- 节点 3: 已完成 - 蓝 (立案) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="completed">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center shadow-sm z-10">
+<iconify-icon class="text-base text-blue-500" icon="mdi:gavel"></iconify-icon>
+</div>
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+<div class="p-4 pl-5">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1 flex-wrap">
+<span class="text-sm font-semibold text-fg-primary">法院立案</span>
+<span class="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-full font-medium">立案</span>
+</div>
+<p class="text-xs text-fg-tertiary leading-relaxed">北京市第一中级人民法院正式立案，案号 (2026)京01民初128号</p>
+</div>
+<div class="flex items-center gap-1.5 flex-none ml-3">
+<span class="text-[11px] text-fg-tertiary">2026-06-01</span>
+<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)">
+<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>
 </button>
 </div>
 </div>
-<p class="text-xs text-fg-tertiary">第3法庭 · 合议庭审理</p>
-<span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full mt-1 inline-block">距开庭 4 天</span>
 </div>
 </div>
-<div class="relative">
-<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-brand-tint30 flex items-center justify-center text-white shadow animate-pulse">
-<iconify-icon class="text-xs" icon="mdi:pencil"></iconify-icon>
 </div>
-<div class="bg-white rounded-xl border-2 border-brand p-4 ml-4 shadow-md group">
-<div class="flex items-center justify-between mb-1">
-<span class="text-sm font-medium text-brand">当前 · 文书准备</span>
-<div class="flex items-center gap-2">
-<span class="text-[10px] text-fg-tertiary">进行中</span>
-<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">
-<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>
+<!-- 节点 4: 待办 - 紫 (开庭排期) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="upcoming">
+<div class="relative flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center shadow-sm z-10">
+<iconify-icon class="text-base text-purple-500" icon="mdi:calendar-clock"></iconify-icon>
+</div>
+<!-- 节点圆形浮在卡片间隙中央, 自然形成时间轴隐喻 (无需独立连线) -->
+</div>
+<div class="relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div>
+<div class="p-4 pl-5">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1 flex-wrap">
+<span class="text-sm font-semibold text-fg-primary">排期开庭</span>
+<span class="text-[10px] bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">开庭</span>
+<span class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full font-bold flex items-center gap-0.5">
+<iconify-icon class="text-[10px]" icon="mdi:alarm"></iconify-icon>
+                            距开庭 4 天
+                        </span>
+</div>
+<p class="text-xs text-fg-tertiary leading-relaxed">第3法庭 · 合议庭审理</p>
+</div>
+<div class="flex items-center gap-1.5 flex-none ml-3">
+<span class="text-[11px] text-fg-tertiary">2026-08-25</span>
+<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)">
+<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>
 </button>
 </div>
 </div>
-<p class="text-xs text-fg-tertiary">起草民事起诉状、准备证据清单及证据材料</p>
-<span class="text-[10px] bg-brand-tint text-brand px-1.5 py-0.5 rounded-full mt-1 inline-block">当前阶段</span>
+</div>
+</div>
+</div>
+<!-- 节点 5: 当前 - 品牌蓝 (文书准备) - 双倍尺寸 + pulse ring, 无连线 (最后节点) -->
+<div class="grid grid-cols-[48px_1fr] gap-x-3 timeline-item" data-status="current">
+<div class="relative flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-lg ring-4 ring-brand-tint animate-pulse z-10">
+<iconify-icon class="text-lg" icon="mdi:pencil-ruler"></iconify-icon>
+</div>
+<!-- 最后节点: 无连线 -->
+</div>
+<div class="relative bg-white rounded-xl border-2 border-brand shadow-lg group overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand"></div>
+<div class="p-4 pl-5">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1 flex-wrap">
+<span class="text-sm font-bold text-brand">当前 · 文书准备</span>
+<span class="text-[10px] bg-brand text-white px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5">
+<iconify-icon class="text-[10px]" icon="mdi:lightning-bolt"></iconify-icon>
+                            进行中
+                        </span>
+</div>
+<p class="text-xs text-fg-secondary leading-relaxed">起草民事起诉状、准备证据清单及证据材料</p>
+</div>
+<div class="flex items-center gap-1.5 flex-none ml-3">
+<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)">
+<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>
+</button>
+</div>
+</div>
+<div class="mt-2 pt-2 border-t border-bg-border/50 flex items-center gap-3 text-[11px] text-fg-tertiary flex-wrap">
+<span class="flex items-center gap-0.5">
+<iconify-icon class="text-xs text-brand" icon="mdi:file-document-multiple"></iconify-icon>
+                            起诉状 草稿中
+                        </span>
+<span class="flex items-center gap-0.5">
+<iconify-icon class="text-xs text-orange-500" icon="mdi:clock-alert-outline"></iconify-icon>
+                            证据清单 待整理
+                        </span>
 </div>
 </div>
 </div>
@@ -1036,4 +1117,6 @@
 </div>
 </div>
 </div>
+
+
 

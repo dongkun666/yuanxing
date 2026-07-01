@@ -1,0 +1,136 @@
+{
+  "template_id": "labor-labor_termination-013",
+  "contract_type": "劳动合同",
+  "industry": "协商解除",
+  "title": "协商解除劳动合同协议",
+  "clauses": [
+    {
+      "index": 1,
+      "title": "原合同",
+      "text": "原劳动合同编号 LX-301178, 签订日期 2025-12-31。"
+    },
+    {
+      "index": 2,
+      "title": "解除日期",
+      "text": "双方同意原劳动合同于 2027-10-05 解除。"
+    },
+    {
+      "index": 3,
+      "title": "经济补偿",
+      "text": "甲方支付乙方经济补偿金人民币 150 万元, 双方确认再无其他争议。"
+    },
+    {
+      "index": 4,
+      "title": "工作交接",
+      "text": "乙方应于解除日前完成工作交接, 返还公司财产。"
+    },
+    {
+      "index": 5,
+      "title": "保密与竞业",
+      "text": "乙方继续履行原合同中的保密及竞业禁止义务。"
+    },
+    {
+      "index": 6,
+      "title": "社保转移",
+      "text": "甲方应于解除日办理社保关系转移手续。"
+    },
+    {
+      "index": 7,
+      "title": "争议解决",
+      "text": "争议由标的物所在地管辖。"
+    }
+  ],
+  "annotations_count": 5,
+  "annotations": [
+    {
+      "clause_index": 3,
+      "clause_title": "经济补偿",
+      "risk_level": "fatal",
+      "risk_categories": [
+        "金额异常",
+        "重大遗漏"
+      ],
+      "legal_basis": [
+        "《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条"
+      ],
+      "risk_description": "该条款存在重大遗漏, 缺乏必要保障机制。",
+      "modification_suggestion": "建议删除违反法律强制性规定的表述, 改为合法替代方案。",
+      "stance_impact": "需结合上下文判断"
+    },
+    {
+      "clause_index": 7,
+      "clause_title": "争议解决",
+      "risk_level": "major",
+      "risk_categories": [
+        "表述模糊",
+        "争议管辖不利"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款表述模糊, 关键权利义务不明确。",
+      "modification_suggestion": "建议选择合同履行地或与合同有实际联系地点的法院。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 2,
+      "clause_title": "解除日期",
+      "risk_level": "major",
+      "risk_categories": [
+        "举证困难",
+        "管辖连接点异常"
+      ],
+      "legal_basis": [
+        "《民法典》第五百六十三条 (法定解除)"
+      ],
+      "risk_description": "该条款可能导致举证困难, 建议增加书面确认机制。",
+      "modification_suggestion": "建议细化关键概念定义, 附操作细则。",
+      "stance_impact": "不利"
+    },
+    {
+      "clause_index": 5,
+      "clause_title": "保密与竞业",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》合同编通则解释"
+      ],
+      "risk_description": "该条款可结合具体业务场景进一步优化表述。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    },
+    {
+      "clause_index": 6,
+      "clause_title": "社保转移",
+      "risk_level": "advisory",
+      "risk_categories": [
+        "期限异常",
+        "可优化"
+      ],
+      "legal_basis": [
+        "《民法典》相关条款"
+      ],
+      "risk_description": "该条款期限设置可参考行业惯例进一步优化。",
+      "modification_suggestion": "建议参考同类合同常用期限范围调整。",
+      "stance_impact": "中性"
+    }
+  ],
+  "applicable_scenarios": [
+    "协商解除劳动合同协议",
+    "协商解除常见场景",
+    "律师实务高频合同"
+  ],
+  "lawyer_notes": "本模板适用于协商解除劳动合同协议场景, 基于律师实务高频结构整理, 风险标注已参考《民法典》及司法解释。使用前请根据实际案情调整金额、期限、管辖地等关键参数, 并审查风险标注项, 必要时咨询专业律师。",
+  "metadata": {
+    "category": "labor",
+    "skeleton": "labor_termination",
+    "variant_idx": 13,
+    "source": "LexPrime W4 程序化生成",
+    "generated_at": "2026-06-29"
+  },
+  "created_at": "2026-06-29",
+  "updated_at": "2026-06-29"
+}

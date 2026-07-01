@@ -1,51 +1,16 @@
-        // ===== 全局应用状态 =====
-        var AppState = {
-            isYearly: false,
-            selectedPayment: 'alipay',
-            selectedDynamicType: '紧急',
-            selectedExtractSource: 'case',
-            batchFiles: [],
-            dynamicsViewData: [],
-            autoSaveTimer: null,
-            dynamicAttachments: [],
-            // Phase 3 P0: Auth 状态 (auth.js 会填充)
-            user: null,
-            token: null,
-        };
 
-        // ===== 视图缓存管理 =====
-        var viewCache = {};
+        /**
+ * 主脚本 - helper 函数 + 案件/客户/模板配置
+ * 拆分自原 script.js (2026-06-28 IIFE 拆分计划)
+ * AppState/viewCache/viewFileMap/loadView/switchView/switchSidebarTab/bootstrapApp
+ * 等已抽离到独立模块: app-state.js / router.js / bootstrap.js
+ *
+ * 加载顺序: api/auth/app-state/router → 业务模块 → script.js → bootstrap.js
+ * 依赖: AppState (app-state.js), switchView (router.js), showToast (本文件)
+ */
 
-        // 视图文件名映射
-        var viewFileMap = {
-            'login': 'login.html',
-            'workstation': 'workstation.html',
-            'schedule-list': 'schedule-list.html',
-            'attention-list': 'attention-list.html',
-            'case-list': 'case-list.html',
-            'case-analysis': 'case-analysis.html',
-            'schedule-calendar': 'schedule-calendar.html',
-            'case-dynamics': 'case-dynamics.html',
-            'attachment-list': 'attachment-list.html',
-            'case': 'case-detail.html',
-            'client': 'client.html',
-            'client-detail': 'client-detail.html',
-            'template': 'template.html',
-            'knowledge': 'knowledge.html',
-            'ai': 'ai.html',
-            'subscription': 'subscription.html',
-            'payment': 'payment.html',
-            'payment-success': 'payment-success.html',
-            'orders': 'orders.html',
-            'member-center': 'member-center.html',
-            'account-settings': 'account-settings.html',
-            'archive': 'archive.html'
-        };
-
-        // 动态加载视图
-        // 开发模式: URL 含 ?dev=1 时跳过 viewCache, 每次重新拉取最新 HTML
-        var isDevMode = window.location.search.indexOf('dev=1') !== -1 ||
-                         window.location.search.indexOf('dev=') !== -1 && /dev=(\d+)/.test(window.location.search) && RegExp.$1 !== '0';
+(function() {
+    'use strict';
 
         // ===== 案件列表筛选 =====
         var caseCurrentPage = 1;
@@ -54,7 +19,29 @@
 
         // ===== 案件详情页操作 =====
         function shareCase() {
-            showToast('分享案件功能开发中');
+            var idx = (typeof globalThis.currentCaseIndex !== 'undefined') ? globalThis.currentCaseIndex : -1;
+            if (idx < 0) {
+                showToast('请先打开一个案件', 'warning');
+                return;
+            }
+            var caseMeta = [
+                { caseName: '李明诉XX公司买卖合同纠纷', caseNumber: '(2026)京01民初128号' },
+                { caseName: '赵六劳动争议仲裁案', caseNumber: '(2026)京02民初256号' },
+                { caseName: '张三合同纠纷案', caseNumber: '(2026)京03民初789号' },
+                { caseName: '某科技公司股权纠纷案', caseNumber: '(2026)京04民初345号' },
+                { caseName: '王华借贷纠纷案', caseNumber: '(2026)京05民初567号' }
+            ];
+            var meta = caseMeta[idx] || { caseName: '案件', caseNumber: 'N/A' };
+            var shareText = '【LexPrime 案件分享】\n案号: ' + meta.caseNumber + '\n案名: ' + meta.caseName + '\n查看详情: ' + location.origin + '/case/' + idx;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareText).then(function() {
+                    showToast('案件信息已复制到剪贴板', 'success');
+                }).catch(function() {
+                    prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+                });
+            } else {
+                prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+            }
         }
 
         // ===== 归档管理操作 =====
@@ -116,107 +103,6 @@
             }
         };
 
-        // 视图切换逻辑
-        function switchView(viewId, el) {
-            var target = document.getElementById('view-' + viewId);
-            if (target) {
-                // 视图已存在，直接显示
-                document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
-                target.classList.remove('hidden');
-                if (viewId === 'schedule-list' || viewId === 'attention-list') {
-                    target.classList.add('flex-col');
-                }
-                // 修复 template 视图: 浏览器重组 DOM 后把卡片视图和孤儿卡片放到主体 div 直接子级
-                if (viewId === 'template') {
-                    fixTemplateViewDOM();
-                }
-            } else {
-                // 视图未加载，动态加载
-                loadView(viewId, function(html) {
-                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
-                    var newTarget = document.getElementById('view-' + viewId);
-                    if (newTarget) {
-                        document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
-                        newTarget.classList.remove('hidden');
-                        if (viewId === 'schedule-list' || viewId === 'attention-list') {
-                            newTarget.classList.add('flex-col');
-                        }
-                        if (viewId === 'template') {
-                            // 延迟修复, 等 DOM 稳定
-                            setTimeout(fixTemplateViewDOM, 100);
-                            setTimeout(fixTemplateViewDOM, 500);
-                        }
-                    }
-                });
-            }
-
-            // 更新侧边栏状态
-            if (el) {
-                document.querySelectorAll('.sidebar-item').forEach(function(item) { item.classList.remove('active'); });
-                el.classList.add('active');
-            }
-
-            // 切换 workstation 时刷新今日日程角标
-            if (viewId === 'workstation') {
-                setTimeout(updateTodayScheduleBadge, 50);
-            }
-        }
-
-        // 侧边栏标签页切换
-        function switchSidebarTab(tab) {
-            var tabWork = document.getElementById('sidebarTabWork');
-            var tabAI = document.getElementById('sidebarTabAI');
-            var btns = document.querySelectorAll('.sidebar-tab-btn');
-            
-            btns.forEach(function(btn) { btn.classList.remove('active'); });
-            
-            if (tab === 'work') {
-                if (tabWork) tabWork.classList.remove('hidden');
-                if (tabAI) tabAI.classList.add('hidden');
-                if (btns[0]) btns[0].classList.add('active');
-                
-                // 隐藏AI视图，显示当前激活的工作视图
-                var viewAI = document.getElementById('view-ai');
-                if (viewAI) viewAI.classList.add('hidden');
-                // 默认显示工作台
-                var ws = document.getElementById('view-workstation');
-                if (ws) ws.classList.remove('hidden');
-            } else {
-                if (tabWork) tabWork.classList.add('hidden');
-                if (tabAI) tabAI.classList.remove('hidden');
-                if (btns[1]) btns[1].classList.add('active');
-                
-                // 清除侧边栏菜单项高亮（AI模式下无对应工作菜单项）
-                document.querySelectorAll('.sidebar-item').forEach(function(item) {
-                    item.classList.remove('active');
-                });
-                
-                // 隐藏所有工作视图，显示AI视图
-                document.querySelectorAll('.view-content').forEach(function(v) { v.classList.add('hidden'); });
-                
-                // 动态加载AI视图（如果尚未加载）
-                var viewAI = document.getElementById('view-ai');
-                if (!viewAI) {
-                    loadView('ai', function(html) {
-                        document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
-                        var newViewAI = document.getElementById('view-ai');
-                        if (newViewAI) newViewAI.classList.remove('hidden');
-                        // 显示AI新对话子视图
-                        var aiViewChat = document.getElementById('aiViewChat');
-                        if (aiViewChat) aiViewChat.classList.remove('hidden');
-                    });
-                } else {
-                    viewAI.classList.remove('hidden');
-                    // 显示AI新对话子视图
-                    var aiViewChat = document.getElementById('aiViewChat');
-                    if (aiViewChat) aiViewChat.classList.remove('hidden');
-                    var aiViewSkills = document.getElementById('aiViewSkills');
-                    if (aiViewSkills) aiViewSkills.classList.add('hidden');
-                    var aiViewHistory = document.getElementById('aiViewHistory');
-                    if (aiViewHistory) aiViewHistory.classList.add('hidden');
-                }
-            }
-        }
 
         // AI 子标签页切换
 
@@ -236,45 +122,6 @@
 
         // 更多菜单切换（每个标签各自独立菜单）
 
-        // 点击页面其他位置关闭所有菜单
-        document.addEventListener('click', function(e) {
-            var menuWork = document.getElementById('moreMenuWork');
-            var menuAI = document.getElementById('moreMenuAI');
-
-            // 检查点击是否在任意「更多」按钮或菜单内部
-            var isClickInBtn = e.target.closest('[onclick*="toggleMoreMenu"]');
-
-            if (!isClickInBtn) {
-                if (menuWork) menuWork.classList.add('hidden');
-                if (menuAI) menuAI.classList.add('hidden');
-            }
-
-            // 点击外部关闭通知面板
-            var panel = document.getElementById('notificationPanel');
-            var notifBtn = document.querySelector('[onclick*="toggleNotifications"]');
-            if (panel && notifBtn && !panel.contains(e.target) && !notifBtn.contains(e.target)) {
-                panel.classList.add('hidden');
-            }
-        });
-
-        // 更多菜单操作
-
-        // 待办事项切换
-
-        // 修改日程
-
-        // 删除日程
-
-        // 通知面板切换
-
-        // 全部已读
-
-        // 用户菜单切换
-
-        // 初始加载
-        window.onload = function() {
-            // 页面加载完毕
-        };
 
         // 跳转到会员订阅页面
 
@@ -647,16 +494,75 @@
 
     // 解绑第三方账号
 
-    // ===== 日程冲突检测（模拟数据） =====
-    const scheduleData = [
-        { id: 1, title: '李明诉XX公司买卖合同纠纷开庭', date: getTodayDate(), time: '09:00', endTime: '11:00', type: '开庭', location: '朝阳区人民法院 第3法庭' },
-        { id: 2, title: '王华借贷纠纷 - 策略讨论', date: getTodayDate(), time: '14:00', endTime: '15:30', type: '会议', location: '线上会议' },
-        { id: 3, title: '提交张三合同纠纷补充证据', date: getTodayDate(), time: '16:00', endTime: '16:30', type: '待办', location: '' },
-        { id: 4, title: '律所月度合伙人会议', date: getTodayDate(), time: '10:30', endTime: '11:30', type: '其他', location: '大会议室' },
-        { id: 5, title: '某科技公司股权纠纷二审开庭', date: getTodayDate(), time: '15:00', endTime: '17:00', type: '开庭', location: '北京市高级人民法院 第8法庭' },
-        { id: 6, title: '赵六劳动争议仲裁开庭', date: getFutureDate(1), time: '09:00', endTime: '12:00', type: '开庭', location: '朝阳区劳动仲裁委' },
-        { id: 7, title: '张三合同纠纷证据交换', date: getFutureDate(2), time: '14:00', endTime: '16:00', type: '开庭', location: '海淀区人民法院' },
-    ];
+    // ===== 日程冲突检测（移到 AppState 让 schedule.js 可访问） =====
+    AppState.scheduleData = (function() {
+        // 优先读 localStorage (持久化用户日程); 损坏/空则回退到 mock 数据
+        try {
+            var saved = localStorage.getItem('lexprime_schedule_data');
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data)) return data;
+            }
+        } catch (e) { /* corrupted storage, fall through to mock */ }
+        return [
+            { id: 1, title: '李明诉XX公司买卖合同纠纷开庭', date: getTodayDate(), time: '09:00', endTime: '11:00', type: '开庭', location: '朝阳区人民法院 第3法庭' },
+            { id: 2, title: '王华借贷纠纷 - 策略讨论', date: getTodayDate(), time: '14:00', endTime: '15:30', type: '会议', location: '线上会议' },
+            { id: 3, title: '提交张三合同纠纷补充证据', date: getTodayDate(), time: '16:00', endTime: '16:30', type: '待办', location: '', completed: true },
+            { id: 4, title: '律所月度合伙人会议', date: getTodayDate(), time: '10:30', endTime: '11:30', type: '其他', location: '大会议室', completed: true },
+            { id: 5, title: '某科技公司股权纠纷二审开庭', date: getTodayDate(), time: '15:00', endTime: '17:00', type: '开庭', location: '北京市高级人民法院 第8法庭' },
+            { id: 6, title: '赵六劳动争议仲裁开庭', date: getFutureDate(1), time: '09:00', endTime: '12:00', type: '开庭', location: '朝阳区劳动仲裁委' },
+            { id: 7, title: '张三合同纠纷证据交换', date: getFutureDate(2), time: '14:00', endTime: '16:00', type: '开庭', location: '海淀区人民法院' },
+        ];
+    })();
+
+    // 通知数据 (AppState.notifications)
+    // 优先读 localStorage (持久化用户已读状态); 损坏/空则回退到 mock
+    // 字段: id, type (document/deadline/case/member/system), icon, color, title, desc, timeAgo, timestamp, unread, linkTo, linkParam
+    AppState.notifications = (function() {
+        try {
+            var saved = localStorage.getItem('lexprime_notifications');
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data) && data.length > 0) return data;
+            }
+        } catch (e) {}
+        return [
+            { id: 'n1', type: 'document', icon: 'mdi:file-document-outline', color: 'brand', title: '起诉状已生成', desc: '李明诉XX公司买卖合同纠纷案的起诉状已完成 AI 草拟', timeAgo: '3 分钟前', timestamp: Date.now() - 3 * 60 * 1000, unread: true, linkTo: 'case', linkParam: '1' },
+            { id: 'n2', type: 'deadline', icon: 'mdi:clock-alert-outline', color: 'danger', title: '证据提交即将截止', desc: '王华借贷纠纷案举证期还剩 2 天, 请尽快准备补充证据', timeAgo: '15 分钟前', timestamp: Date.now() - 15 * 60 * 1000, unread: true, linkTo: 'case', linkParam: '2' },
+            { id: 'n3', type: 'case', icon: 'mdi:check-circle-outline', color: 'success', title: '案件已归档', desc: '张三合同纠纷案已完成结案归档, 可在归档列表查阅', timeAgo: '1 小时前', timestamp: Date.now() - 60 * 60 * 1000, unread: false, linkTo: 'archive', linkParam: '' },
+            { id: 'n4', type: 'deadline', icon: 'mdi:calendar-clock-outline', color: 'warning', title: '明日开庭提醒', desc: '某科技公司股权纠纷案明日 09:00 开庭, 建议提前准备材料', timeAgo: '2 小时前', timestamp: Date.now() - 2 * 60 * 60 * 1000, unread: true, linkTo: 'schedule-calendar', linkParam: '' },
+            { id: 'n5', type: 'case', icon: 'mdi:gavel', color: 'brand', title: '新案件已立案', desc: '赵六劳动争议仲裁案已立案, 进入准备阶段', timeAgo: '昨天 16:20', timestamp: Date.now() - 24 * 60 * 60 * 1000, unread: false, linkTo: 'case', linkParam: '6' },
+            { id: 'n6', type: 'document', icon: 'mdi:file-pdf-box', color: 'brand', title: '合同审查完成', desc: '北京某科技公司股权回购协议审查报告已生成', timeAgo: '昨天 10:15', timestamp: Date.now() - 26 * 60 * 60 * 1000, unread: false, linkTo: 'case', linkParam: '7' },
+            { id: 'n7', type: 'member', icon: 'mdi:account-star-outline', color: 'warning', title: '会员即将到期', desc: '专业版会员还剩 7 天到期, 续费可继续享 8 折优惠', timeAgo: '3 天前', timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'subscription', linkParam: '' },
+            { id: 'n8', type: 'system', icon: 'mdi:update', color: 'brand', title: '系统升级通知', desc: 'LexPrime v2.1 已发布: 新增日程管理三态过滤, 工作台空态优化等', timeAgo: '5 天前', timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000, unread: false, linkTo: 'workstation', linkParam: '' },
+        ];
+    })();
+
+    // 工作台「今日日程」当前查看的日期 (AppState.todayScheduleDate)
+    // 字符串 'YYYY-MM-DD', 默认今天, 用户可前后翻页查看历史/未来日程
+    // 不持久化 (用户关掉浏览器重新打开默认回到今天, 避免「上次看的是几号」困惑)
+    AppState.todayScheduleDate = (function() {
+        var d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    })();
+
+    // 个人模板 (AppState.personalTemplates) - 持久化用户上传的模板 (含初始 mock)
+    // 字段: id, name, category, creator, updatedAt, size, fmt
+    AppState.personalTemplates = (function() {
+        try {
+            var saved = localStorage.getItem('lexprime_personal_templates');
+            if (saved) {
+                var data = JSON.parse(saved);
+                if (Array.isArray(data)) return data;
+            }
+        } catch (e) {}
+        // 初始 mock 3 条 (来自原 hardcoded HTML)
+        return [
+            { id: 'p1', name: '起诉状-借款合同 v1', category: '诉状类', creator: '张律师', updatedAt: '2026-06-15 14:30', size: '', fmt: '.docx' },
+            { id: 'p2', name: '答辩状-买卖合同 v2', category: '答辩类', creator: '李律师', updatedAt: '2026-06-18 10:15', size: '', fmt: '.docx' },
+            { id: 'p3', name: '律师函-催款函 v1', category: '合同类', creator: '王律师', updatedAt: '2026-06-20 16:40', size: '', fmt: '.docx' }
+        ];
+    })();
 
     // ===== 新建日程弹窗 =====
 
@@ -796,119 +702,11 @@
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
-    // ===== Phase 3 P0: Login 表单处理 (依赖 auth.js 已加载) =====
-    function initLoginView() {
-        var loginTabBtn = document.getElementById('login-tab-btn');
-        var registerTabBtn = document.getElementById('register-tab-btn');
-        var loginForm = document.getElementById('login-form');
-        var registerForm = document.getElementById('register-form');
-        var demoBtn = document.getElementById('demo-login-btn');
-        var loginError = document.getElementById('login-error');
-        var registerError = document.getElementById('register-error');
+    // ===== globalThis 桥接 (IIFE 内导出, 让其他模块可见) =====
+    globalThis.showToast = showToast;
+    globalThis.shareCase = shareCase;
 
-        if (loginTabBtn && registerTabBtn) {
-            loginTabBtn.addEventListener('click', function() {
-                loginTabBtn.classList.add('bg-white', 'text-brand', 'shadow-sm');
-                loginTabBtn.classList.remove('text-fg-secondary');
-                registerTabBtn.classList.remove('bg-white', 'text-brand', 'shadow-sm');
-                registerTabBtn.classList.add('text-fg-secondary');
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-            });
-            registerTabBtn.addEventListener('click', function() {
-                registerTabBtn.classList.add('bg-white', 'text-brand', 'shadow-sm');
-                registerTabBtn.classList.remove('text-fg-secondary');
-                loginTabBtn.classList.remove('bg-white', 'text-brand', 'shadow-sm');
-                loginTabBtn.classList.add('text-fg-secondary');
-                registerForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-            });
-        }
-
-        function showError(el, msg) {
-            if (!el) return;
-            el.textContent = msg;
-            el.classList.remove('hidden');
-        }
-        function hideError(el) {
-            if (!el) return;
-            el.textContent = '';
-            el.classList.add('hidden');
-        }
-
-        if (loginForm) {
-            loginForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                hideError(loginError);
-                var email = document.getElementById('login-email').value.trim();
-                var password = document.getElementById('login-password').value;
-                var res = await Auth.login(email, password);
-                if (res.ok) {
-                    showToast('登录成功, 欢迎 ' + (res.user.displayName || res.user.email));
-                    switchView('workstation');
-                } else {
-                    showError(loginError, res.error || '登录失败');
-                }
-            });
-        }
-
-        if (registerForm) {
-            registerForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                hideError(registerError);
-                var name = document.getElementById('register-name').value.trim();
-                var email = document.getElementById('register-email').value.trim();
-                var password = document.getElementById('register-password').value;
-                if (password.length < 6) {
-                    showError(registerError, '密码至少 6 位');
-                    return;
-                }
-                var res = await Auth.register(email, password, name);
-                if (res.ok) {
-                    showToast('注册成功, 欢迎 ' + (res.user.displayName || res.user.email));
-                    switchView('workstation');
-                } else {
-                    showError(registerError, res.error || '注册失败');
-                }
-            });
-        }
-
-        if (demoBtn) {
-            demoBtn.addEventListener('click', async function() {
-                var res = await Auth.demoLogin();
-                if (res.ok) {
-                    showToast('进入 Demo 模式');
-                    switchView('workstation');
-                } else {
-                    showToast('Demo 模式失败');
-                }
-            });
-        }
-    }
-
-    // 启动时: 未登录 → login, 已登录 → workstation
-    (function() {
-        var startView = (typeof Auth !== 'undefined' && Auth.isLoggedIn && Auth.isLoggedIn())
-            ? 'workstation'
-            : 'login';
-        // 等 DOM ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() { switchView(startView); });
-        } else {
-            switchView(startView);
-        }
         // login view 加载后绑定事件
-        var origSwitchView = switchView;
-        // 不重写, 改用 MutationObserver 监听 view-login 出现
-        var observer = new MutationObserver(function() {
-            if (document.getElementById('view-login') && !document.getElementById('view-login').classList.contains('hidden')) {
-                initLoginView();
-                observer.disconnect();
-            }
-        });
-        if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
     })();
 
 
