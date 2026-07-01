@@ -205,6 +205,21 @@
                     if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
                 }, 50);
             }
+            if (viewId === 'orders') {
+                setTimeout(function() {
+                    if (typeof window.initOrders === 'function') window.initOrders();
+                }, 50);
+            }
+            if (viewId === 'archive') {
+                setTimeout(function() {
+                    if (typeof window.initArchive === 'function') window.initArchive();
+                }, 50);
+            }
+            if (viewId === 'case-analysis') {
+                setTimeout(function() {
+                    if (typeof window.initCaseAnalysis === 'function') window.initCaseAnalysis();
+                }, 50);
+            }
             if (viewId.indexOf('marketplace-') === 0) {
                 // W30 Phase 6.1 Marketplace 5 页面共用 init 函数 (marketplace.js, cached view path)
                 setTimeout(function() {
@@ -288,6 +303,21 @@
                 // 这里额外调一次确保 chart 在视图可见时重建
                 setTimeout(function() {
                     if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
+                }, 100);
+            }
+            if (viewId === 'orders') {
+                setTimeout(function() {
+                    if (typeof window.initOrders === 'function') window.initOrders();
+                }, 100);
+            }
+            if (viewId === 'archive') {
+                setTimeout(function() {
+                    if (typeof window.initArchive === 'function') window.initArchive();
+                }, 100);
+            }
+            if (viewId === 'case-analysis') {
+                setTimeout(function() {
+                    if (typeof window.initCaseAnalysis === 'function') window.initCaseAnalysis();
                 }, 100);
             }
             if (viewId.indexOf('marketplace-') === 0) {

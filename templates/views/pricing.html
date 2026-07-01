@@ -50,19 +50,14 @@
           </p>
           <!-- 价格区 -->
           <div class="mt-6">
-            <div class="flex items-baseline gap-1" id="pricing-basic-monthly">
-              <span class="text-4xl font-bold text-fg-primary">¥99</span>
-              <span class="text-sm text-fg-tertiary">/月</span>
+            <div class="flex items-baseline gap-1">
+              <span class="text-4xl font-bold text-fg-primary">免费</span>
             </div>
-            <div class="mt-1 text-xs text-fg-tertiary hidden" id="pricing-basic-yearly">
-              <span class="text-4xl font-bold text-fg-primary">¥899</span>
-              <span class="text-sm text-fg-tertiary">/年</span>
-              <span class="ml-2 text-success font-medium">省 ¥289</span>
-            </div>
+            <p class="mt-1 text-xs text-fg-tertiary">永久免费体验核心功能</p>
           </div>
-          <a href="#" onclick="openPaymentModal('basic')"
+          <a href="#" onclick="openPaymentModal('free')"
              class="mt-6 block px-4 py-2.5 text-center bg-white text-fg-primary border border-bg-border rounded-lg text-sm font-medium hover:border-brand hover:text-brand transition-colors">
-            选择基础版
+            免费注册
           </a>
         </div>
         <!-- 功能列表 -->
@@ -115,13 +110,13 @@
           </p>
           <div class="mt-6">
             <div class="flex items-baseline gap-1" id="pricing-pro-monthly">
-              <span class="text-4xl font-bold text-brand">¥199</span>
+              <span class="text-4xl font-bold text-brand">¥299</span>
               <span class="text-sm text-fg-tertiary">/月</span>
             </div>
             <div class="mt-1 text-xs text-fg-tertiary hidden" id="pricing-pro-yearly">
-              <span class="text-4xl font-bold text-brand">¥1,910</span>
+              <span class="text-4xl font-bold text-brand">¥2,399</span>
               <span class="text-sm text-fg-tertiary">/年</span>
-              <span class="ml-2 text-success font-medium">省 ¥478</span>
+              <span class="ml-2 text-success font-medium">省 ¥1,189</span>
             </div>
           </div>
           <a href="#" onclick="openPaymentModal('pro')"
@@ -172,14 +167,19 @@
             适合 10+ 人中大所 / 公司法务 / 团队协作
           </p>
           <div class="mt-6">
-            <div class="flex items-baseline gap-1">
-              <span class="text-3xl font-bold text-fg-primary">¥1,500-2,000</span>
+            <div class="flex items-baseline gap-1" id="pricing-ent-monthly">
+              <span class="text-3xl font-bold text-fg-primary">¥899</span>
+              <span class="text-sm text-fg-tertiary">/月</span>
             </div>
-            <div class="mt-1 text-xs text-fg-tertiary">/律师/年 · 按席位阶梯定价</div>
+            <div class="mt-1 text-xs text-fg-tertiary hidden" id="pricing-ent-yearly">
+              <span class="text-3xl font-bold text-fg-primary">¥7,199</span>
+              <span class="text-sm text-fg-tertiary">/年</span>
+              <span class="ml-2 text-success font-medium">省 ¥3,589</span>
+            </div>
           </div>
-          <a href="#contact" onclick="openContactModal()"
+          <a href="#" onclick="openPaymentModal('enterprise')"
              class="mt-6 block px-4 py-2.5 text-center bg-white text-fg-primary border border-bg-border rounded-lg text-sm font-medium hover:border-brand hover:text-brand transition-colors">
-            联系商务
+            选择企业版
           </a>
         </div>
         <ul class="mt-7 space-y-3 text-sm flex-1">

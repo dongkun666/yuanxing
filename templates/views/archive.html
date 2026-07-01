@@ -19,7 +19,7 @@
 <option value="劳动争议">劳动争议</option>
 </select>
 <span id="archiveResultCount" class="text-xs text-fg-tertiary ml-auto"></span>
-<button class="px-4 py-2 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1.5">
+<button class="px-4 py-2 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1.5" id="archive-export-btn">
 <iconify-icon class="text-sm" icon="mdi:download-outline"></iconify-icon>
 批量导出
 </button>
@@ -43,57 +43,7 @@
 </tr>
 </thead>
 <tbody id="archiveTableBody" class="divide-y divide-bg">
-<tr class="hover:bg-bg-subtle transition-colors" data-year="2025">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(0)">(2025)京01民终456号</span></td>
-<td class="py-3 px-4 text-xs text-fg-secondary">房屋买卖合同纠纷</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">陈某某</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">某某房地产公司</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2025-12-15</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2">
-<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(0)">查看</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive(0)">还原</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive(0)">删除</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-year="2025">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(1)">(2025)京02民终789号</span></td>
-<td class="py-3 px-4 text-xs text-fg-secondary">借款合同纠纷</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">赵某某</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">王某某</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2025-11-20</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2">
-<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(1)">查看</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive(1)">还原</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive(1)">删除</button>
-</div>
-</td>
-</tr>
-<tr class="hover:bg-bg-subtle transition-colors" data-year="2024">
-<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>
-<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(2)">(2024)京01民终123号</span></td>
-<td class="py-3 px-4 text-xs text-fg-secondary">劳动争议</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">孙某某</td>
-<td class="py-3 px-4 text-xs text-fg-secondary">某某科技公司</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">2024-12-01</td>
-<td class="text-center py-3 px-4">
-<div class="flex items-center justify-center gap-2">
-<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(2)">查看</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-brand hover:underline" onclick="restoreArchive(2)">还原</button>
-<span class="text-bg-border">|</span>
-<button class="text-xs text-danger hover:underline" onclick="deleteArchive(2)">删除</button>
-</div>
-</td>
-</tr>
+<tr><td colspan="7" class="py-10 text-center text-xs text-fg-tertiary">加载中...</td></tr>
 </tbody>
 </table>
 </div>
@@ -109,125 +59,3 @@
 </div>
 </div>
 </div>
-<script>
-var archiveCurrentPage = 1;
-
-function filterArchiveList() {
-    var searchInput = document.getElementById('archiveSearchInput');
-    var yearFilter = document.getElementById('archiveYearFilter');
-    var typeFilter = document.getElementById('archiveTypeFilter');
-    var tbody = document.getElementById('archiveTableBody');
-    var resultCount = document.getElementById('archiveResultCount');
-    var pageSizeSelect = document.getElementById('archivePageSize');
-    var paginationInfo = document.getElementById('archivePaginationInfo');
-    var paginationBtns = document.getElementById('archivePaginationBtns');
-
-    if (!searchInput || !tbody) return;
-
-    var searchText = searchInput.value.trim().toLowerCase();
-    var yearValue = yearFilter ? yearFilter.value : '';
-    var typeValue = typeFilter ? typeFilter.value : '';
-    var pageSize = pageSizeSelect ? parseInt(pageSizeSelect.value) : 10;
-
-    var rows = tbody.querySelectorAll('tr');
-    var filteredRows = [];
-
-    rows.forEach(function(row) {
-        var caseNum = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-        var caseType = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-        var plaintiff = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
-        var defendant = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
-        var rowYear = row.getAttribute('data-year') || '';
-
-        var matchSearch = !searchText ||
-            caseNum.includes(searchText) ||
-            caseType.includes(searchText) ||
-            plaintiff.includes(searchText) ||
-            defendant.includes(searchText);
-
-        var matchYear = !yearValue || rowYear === yearValue;
-        var matchType = !typeValue || caseType.includes(typeValue);
-
-        if (matchSearch && matchYear && matchType) {
-            filteredRows.push(row);
-        }
-    });
-
-    archiveCurrentPage = 1;
-
-    if (resultCount) {
-        resultCount.textContent = '共 ' + filteredRows.length + ' 条';
-    }
-
-    var totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
-    if (archiveCurrentPage > totalPages) archiveCurrentPage = totalPages;
-
-    var startIdx = (archiveCurrentPage - 1) * pageSize;
-    var endIdx = startIdx + pageSize;
-
-    rows.forEach(function(row) { row.style.display = 'none'; });
-    filteredRows.forEach(function(row, idx) {
-        if (idx >= startIdx && idx < endIdx) {
-            row.style.display = '';
-        }
-    });
-
-    if (paginationInfo) {
-        paginationInfo.textContent = '共 ' + filteredRows.length + ' 条，第 ' + archiveCurrentPage + '/' + totalPages + ' 页';
-    }
-
-    if (paginationBtns) {
-        paginationBtns.innerHTML = '';
-        for (var i = 1; i <= totalPages; i++) {
-            var btn = document.createElement('button');
-            btn.className = 'w-7 h-7 rounded text-xs flex items-center justify-center ' +
-                (i === archiveCurrentPage ? 'bg-brand text-white' : 'bg-white hover:bg-bg-subtle text-fg-secondary border border-bg-border');
-            btn.textContent = i;
-            btn.onclick = (function(page) {
-                return function() {
-                    archiveCurrentPage = page;
-                    filterArchiveList();
-                };
-            })(i);
-            paginationBtns.appendChild(btn);
-        }
-    }
-}
-
-function toggleAllArchive(checkbox) {
-    var checkboxes = document.querySelectorAll('.archive-checkbox');
-    checkboxes.forEach(function(cb) {
-        cb.checked = checkbox.checked;
-    });
-}
-
-function openArchiveDetail(id) {
-    // 委托给 cases-list.js 实现的版本
-    if (typeof globalThis.openArchiveDetail === 'function') {
-        globalThis.openArchiveDetail(id);
-    } else {
-        showToast('查看归档案件 #' + id);
-    }
-}
-
-function restoreArchive(id) {
-    if (typeof globalThis.restoreArchive === 'function') {
-        globalThis.restoreArchive(id);
-    } else {
-        showToast('案件还原功能开发中');
-    }
-}
-
-function deleteArchive(id) {
-    if (typeof globalThis.deleteArchive === 'function') {
-        globalThis.deleteArchive(id);
-    } else {
-        showToast('删除归档功能开发中');
-    }
-}
-
-// 初始化
-filterArchiveList();
-</script>
-
-
