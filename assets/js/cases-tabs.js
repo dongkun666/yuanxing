@@ -123,6 +123,27 @@
         var modal = document.getElementById('add-evidence-catalog-modal');
         if (modal) {
             modal.classList.add('hidden');
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '手动创建证据目录';
+            var submitBtn = modal.querySelector('[onclick="saveCatalogEdit()"]');
+            if (!submitBtn) submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
+            if (submitBtn) {
+                submitBtn.textContent = '添加';
+                submitBtn.setAttribute('onclick', 'submitEvidenceCatalog()');
+            }
+            editingCatalogRow = null;
+        }
+    }
+
+    function getTypeClass(type) {
+        if (type === '书证') {
+            return 'bg-brand-tint text-brand';
+        } else if (type === '电子数据') {
+            return 'bg-wiki-tint text-wiki';
+        } else if (type === '视听资料') {
+            return 'bg-warning-tint text-orange-700';
+        } else {
+            return 'bg-gray-100 text-gray-700';
         }
     }
 
@@ -149,42 +170,45 @@
         var tbody = document.getElementById('evidence-catalog-list');
         if (!tbody) return;
 
-        var typeClass = '';
-        if (type === '书证') {
-            typeClass = 'bg-blue-100 text-blue-700';
-        } else if (type === '电子数据') {
-            typeClass = 'bg-purple-100 text-purple-700';
-        } else if (type === '视听资料') {
-            typeClass = 'bg-orange-100 text-orange-700';
-        } else {
-            typeClass = 'bg-gray-100 text-gray-700';
-        }
+        var typeClass = getTypeClass(type);
 
         var newRow = document.createElement('tr');
         newRow.className = 'hover:bg-gray-50 group';
+        newRow.setAttribute('data-catalog-item', '');
+        newRow.setAttribute('data-number', number || '');
+        newRow.setAttribute('data-type', type);
+        newRow.setAttribute('data-name', name);
+        newRow.setAttribute('data-description', description || '');
+        newRow.setAttribute('data-pages', pages || '');
         if (catalogSelectedFiles.length > 0) {
             newRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
         }
 
         var linkedFilesHtml = '';
         if (catalogSelectedFiles.length > 0) {
-            linkedFilesHtml = '<p class="text-[10px] text-gray-400 mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+            linkedFilesHtml = '<p class="text-[10px] text-fg-tertiary mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
         }
 
         newRow.innerHTML =
-            '<td class="text-center py-3 px-4 text-xs text-gray-700">' + (number || '') + '</td>' +
-            '<td class="text-center py-3 px-4"><span class="text-[10px] ' + typeClass + ' px-2 py-0.5 rounded">' + type + '</span></td>' +
-            '<td class="py-3 px-4 text-xs text-gray-800">' + name + linkedFilesHtml + '</td>' +
-            '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + description + '">' + (description || '-') + '</td>' +
-            '<td class="text-center py-3 px-4 text-xs text-gray-500">' + (pages || '-') + '</td>' +
-            '<td class="text-center py-3 px-4">' +
+            '<td class="py-3 px-5 text-center"><span class="inline-flex w-7 h-7 bg-brand-tint3 text-brand rounded items-center justify-center text-xs font-bold">' + (number || '') + '</span></td>' +
+            '<td class="py-3 px-5">' +
+            '<div class="flex items-center gap-2 mb-0.5">' +
+            '<span class="text-[10px] ' + typeClass + ' px-1.5 py-0.5 rounded font-medium">' + type + '</span>' +
+            '<span class="text-sm text-fg-primary font-medium">' + name + '</span>' +
+            '</div>' +
+            '<p class="text-[10px] text-fg-tertiary truncate max-w-2xl">' + (description || '') + '</p>' +
+            linkedFilesHtml +
+            '</td>' +
+            '<td class="py-3 px-5 text-center text-xs text-fg-secondary">' + (pages || '-') + ' 页</td>' +
+            '<td class="py-3 px-5 text-center">' +
             '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
-            '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+            '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
+            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
             '</div>' +
             '</td>';
 
         tbody.appendChild(newRow);
+        renumberCatalogItems();
         closeAddEvidenceCatalogModal();
         showToast('证据目录已添加');
     }
@@ -230,7 +254,10 @@
             var modalTitle = modal.querySelector('h3');
             if (modalTitle) modalTitle.textContent = '编辑证据目录';
             var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
-            if (submitBtn) submitBtn.textContent = '保存';
+            if (submitBtn) {
+                submitBtn.textContent = '保存';
+                submitBtn.setAttribute('onclick', 'saveCatalogEdit()');
+            }
 
             loadCatalogFileList();
             setTimeout(function() {
@@ -245,20 +272,91 @@
         }
     }
 
+    function saveCatalogEdit() {
+        if (!editingCatalogRow) return;
+
+        var number = document.getElementById('catalog-number').value.trim();
+        var name = document.getElementById('catalog-name').value.trim();
+        var pages = document.getElementById('catalog-pages').value.trim();
+        var description = document.getElementById('catalog-description').value.trim();
+
+        var typeRadios = document.getElementsByName('catalog-type');
+        var type = '书证';
+        for (var i = 0; i < typeRadios.length; i++) {
+            if (typeRadios[i].checked) {
+                type = typeRadios[i].value;
+                break;
+            }
+        }
+
+        if (!name) {
+            showToast('请输入证据材料名称');
+            return;
+        }
+
+        var typeClass = getTypeClass(type);
+
+        editingCatalogRow.setAttribute('data-number', number || '');
+        editingCatalogRow.setAttribute('data-type', type);
+        editingCatalogRow.setAttribute('data-name', name);
+        editingCatalogRow.setAttribute('data-description', description || '');
+        editingCatalogRow.setAttribute('data-pages', pages || '');
+        if (catalogSelectedFiles.length > 0) {
+            editingCatalogRow.setAttribute('data-linked-files', JSON.stringify(catalogSelectedFiles));
+        } else {
+            editingCatalogRow.removeAttribute('data-linked-files');
+        }
+
+        var linkedFilesHtml = '';
+        if (catalogSelectedFiles.length > 0) {
+            linkedFilesHtml = '<p class="text-[10px] text-fg-tertiary mt-0.5">关联：' + catalogSelectedFiles.map(function(f) { return f.name; }).join('、') + '</p>';
+        }
+
+        var cells = editingCatalogRow.querySelectorAll('td');
+        if (cells.length >= 4) {
+            cells[0].innerHTML = '<span class="inline-flex w-7 h-7 bg-brand-tint3 text-brand rounded items-center justify-center text-xs font-bold">' + (number || '') + '</span>';
+            cells[1].innerHTML =
+                '<div class="flex items-center gap-2 mb-0.5">' +
+                '<span class="text-[10px] ' + typeClass + ' px-1.5 py-0.5 rounded font-medium">' + type + '</span>' +
+                '<span class="text-sm text-fg-primary font-medium">' + name + '</span>' +
+                '</div>' +
+                '<p class="text-[10px] text-fg-tertiary truncate max-w-2xl">' + (description || '') + '</p>' +
+                linkedFilesHtml;
+            cells[2].textContent = (pages || '-') + ' 页';
+        }
+
+        renumberCatalogItems();
+        closeAddEvidenceCatalogModal();
+
+        var submitBtn = document.querySelector('#add-evidence-catalog-modal [onclick="saveCatalogEdit()"]');
+        if (submitBtn) {
+            submitBtn.textContent = '添加';
+            submitBtn.setAttribute('onclick', 'submitEvidenceCatalog()');
+        }
+
+        editingCatalogRow = null;
+        showToast('证据目录已更新');
+    }
+
+    function renumberCatalogItems() {
+        var tbody = document.getElementById('evidence-catalog-list');
+        if (!tbody) return;
+        var rows = tbody.querySelectorAll('tr[data-catalog-item]');
+        rows.forEach(function(r, index) {
+            var newNum = index + 1;
+            r.setAttribute('data-number', newNum);
+            var numCell = r.querySelector('td:first-child span');
+            if (numCell) numCell.textContent = newNum;
+        });
+    }
+
     function deleteCatalogItem(btn) {
         if (!confirm('确定要删除该证据目录项吗？')) return;
         var row = btn.closest('tr');
         if (row) {
             row.remove();
             showToast('证据目录已删除');
-            var tbody = document.getElementById('evidence-catalog-list');
-            if (tbody) {
-                var rows = tbody.querySelectorAll('tr');
-                rows.forEach(function(r, index) {
-                    var numCell = r.querySelector('td:first-child');
-                    if (numCell) numCell.textContent = index + 1;
-                });
-            }
+            renumberCatalogItems();
         }
     }
 
@@ -270,43 +368,76 @@
             if (!tbody) return;
 
             var aiItems = [
-                { number: 14, type: '书证', typeClass: 'bg-blue-100 text-blue-700', name: 'AI分析报告', description: 'AI自动分析生成的证据关联性分析报告', pages: '见附件' },
-                { number: 15, type: '电子数据', typeClass: 'bg-purple-100 text-purple-700', name: '银行流水记录', description: '银行账户资金往来明细，证明资金流向', pages: '56-60' },
-                { number: 16, type: '视听资料', typeClass: 'bg-orange-100 text-orange-700', name: '现场勘查视频', description: '第三方机构现场勘查记录视频', pages: '见光盘' }
+                { type: '书证', name: 'AI分析报告', description: 'AI自动分析生成的证据关联性分析报告', pages: '见附件' },
+                { type: '电子数据', name: '银行流水记录', description: '银行账户资金往来明细，证明资金流向', pages: '56-60' },
+                { type: '视听资料', name: '现场勘查视频', description: '第三方机构现场勘查记录视频', pages: '见光盘' }
             ];
 
             aiItems.forEach(function(item) {
+                var typeClass = getTypeClass(item.type);
                 var newRow = document.createElement('tr');
                 newRow.className = 'hover:bg-gray-50 group';
+                newRow.setAttribute('data-catalog-item', '');
+                newRow.setAttribute('data-type', item.type);
+                newRow.setAttribute('data-name', item.name);
+                newRow.setAttribute('data-description', item.description);
+                newRow.setAttribute('data-pages', item.pages);
+
+                var currentCount = tbody.querySelectorAll('tr[data-catalog-item]').length + 1;
+                newRow.setAttribute('data-number', currentCount);
+
                 newRow.innerHTML =
-                    '<td class="text-center py-3 px-4 text-xs text-gray-700">' + item.number + '</td>' +
-                    '<td class="text-center py-3 px-4"><span class="text-[10px] ' + item.typeClass + ' px-2 py-0.5 rounded">' + item.type + '</span></td>' +
-                    '<td class="py-3 px-4 text-xs text-gray-800">' + item.name + '</td>' +
-                    '<td class="py-3 px-4 text-[11px] text-gray-500 max-w-[300px] truncate" title="' + item.description + '">' + item.description + '</td>' +
-                    '<td class="text-center py-3 px-4 text-xs text-gray-500">' + item.pages + '</td>' +
-                    '<td class="text-center py-3 px-4">' +
+                    '<td class="py-3 px-5 text-center"><span class="inline-flex w-7 h-7 bg-brand-tint3 text-brand rounded items-center justify-center text-xs font-bold">' + currentCount + '</span></td>' +
+                    '<td class="py-3 px-5">' +
+                    '<div class="flex items-center gap-2 mb-0.5">' +
+                    '<span class="text-[10px] ' + typeClass + ' px-1.5 py-0.5 rounded font-medium">' + item.type + '</span>' +
+                    '<span class="text-sm text-fg-primary font-medium">' + item.name + '</span>' +
+                    '</div>' +
+                    '<p class="text-[10px] text-fg-tertiary truncate max-w-2xl">' + item.description + '</p>' +
+                    '</td>' +
+                    '<td class="py-3 px-5 text-center text-xs text-fg-secondary">' + item.pages + ' 页</td>' +
+                    '<td class="py-3 px-5 text-center">' +
                     '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                    '<button class="text-[10px] text-[#165DFF] hover:bg-blue-50 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
-                    '<button class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
+                    '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded" onclick="editCatalogItem(this)">编辑</button>' +
+                    '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded" onclick="deleteCatalogItem(this)">删除</button>' +
                     '</div>' +
                     '</td>';
                 tbody.appendChild(newRow);
             });
 
+            renumberCatalogItems();
             showToast('AI已成功生成证据目录（共3项）');
         }, 1500);
     }
 
     // ===== 时间线 =====
+    var editingTimelineItem = null;
+
+    function getTimelineStatusColor(status) {
+        var colorMap = {
+            'completed': { node: 'green-500', bar: 'green-500', tagBg: 'bg-green-50', tagText: 'text-green-700', icon: 'mdi:check' },
+            'current': { node: 'brand', bar: 'brand', tagBg: 'bg-brand', tagText: 'text-white', icon: 'mdi:pencil-ruler' },
+            'upcoming': { node: 'purple-500', bar: 'purple-500', tagBg: 'bg-purple-50', tagText: 'text-purple-700', icon: 'mdi:calendar-clock' }
+        };
+        return colorMap[status] || colorMap['completed'];
+    }
+
     function openAddTimelineModal() {
         var modal = document.getElementById('add-timeline-modal');
         if (modal) {
             modal.classList.remove('hidden');
             document.getElementById('timeline-title').value = '';
             document.getElementById('timeline-date').value = '';
-            document.getElementById('timeline-color').value = '#165DFF';
+            document.getElementById('timeline-color').value = 'completed';
             document.getElementById('timeline-desc').value = '';
             document.getElementById('timeline-tag').value = '';
+            document.getElementById('timeline-status') && (document.getElementById('timeline-status').value = 'completed');
+            editingTimelineItem = null;
+
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '添加时间线';
+            var submitBtn = modal.querySelector('[onclick="submitTimeline()"]');
+            if (submitBtn) submitBtn.textContent = '添加';
         }
     }
 
@@ -314,13 +445,42 @@
         var modal = document.getElementById('add-timeline-modal');
         if (modal) {
             modal.classList.add('hidden');
+            editingTimelineItem = null;
+        }
+    }
+
+    function editTimeline(btn) {
+        var item = btn.closest('.timeline-item');
+        if (!item) return;
+
+        editingTimelineItem = item;
+
+        var title = item.querySelector('.timeline-title')?.textContent?.trim() || '';
+        var date = item.getAttribute('data-date') || '';
+        var status = item.getAttribute('data-status') || 'completed';
+        var desc = item.querySelector('.timeline-desc')?.textContent?.trim() || '';
+        var tag = item.querySelector('.timeline-tag')?.textContent?.trim() || '';
+
+        var modal = document.getElementById('add-timeline-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.getElementById('timeline-title').value = title;
+            document.getElementById('timeline-date').value = date;
+            document.getElementById('timeline-color').value = status;
+            document.getElementById('timeline-desc').value = desc;
+            document.getElementById('timeline-tag').value = tag;
+
+            var modalTitle = modal.querySelector('h3');
+            if (modalTitle) modalTitle.textContent = '编辑时间线';
+            var submitBtn = modal.querySelector('[onclick="submitTimeline()"]');
+            if (submitBtn) submitBtn.textContent = '保存';
         }
     }
 
     function submitTimeline() {
         var title = document.getElementById('timeline-title').value.trim();
         var date = document.getElementById('timeline-date').value;
-        var color = document.getElementById('timeline-color').value;
+        var status = document.getElementById('timeline-color').value;
         var desc = document.getElementById('timeline-desc').value.trim();
         var tag = document.getElementById('timeline-tag').value.trim();
 
@@ -333,53 +493,159 @@
             return;
         }
 
-        var container = document.getElementById('timeline-container');
-        if (!container) {
-            showToast('时间线容器未找到');
-            return;
+        if (editingTimelineItem) {
+            updateTimelineItem(editingTimelineItem, title, date, status, desc, tag);
+            showToast('时间线已更新');
+        } else {
+            var container = document.getElementById('timeline-container');
+            if (!container) {
+                showToast('时间线容器未找到');
+                return;
+            }
+            var newItem = createTimelineElement(title, date, status, desc, tag);
+            container.appendChild(newItem);
+            showToast('时间线已添加');
         }
+
+        closeAddTimelineModal();
+        sortTimeline();
+    }
+
+    function createTimelineElement(title, date, status, desc, tag) {
+        var colors = getTimelineStatusColor(status);
+        var item = document.createElement('div');
+        item.className = 'grid grid-cols-[48px_1fr] gap-x-3 timeline-item';
+        item.setAttribute('data-status', status);
+        item.setAttribute('data-date', date);
+
+        var isCurrent = status === 'current';
+        var nodeClass = isCurrent
+            ? 'w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-lg ring-4 ring-brand-tint animate-pulse z-10'
+            : 'w-9 h-9 rounded-full bg-white border-2 border-' + colors.node + ' flex items-center justify-center shadow-sm z-10';
+        var iconColor = isCurrent ? 'text-white' : 'text-' + colors.node;
+        var borderClass = isCurrent ? 'border-2 border-brand shadow-lg' : 'border border-bg-border hover:border-brand/40 hover:shadow-md';
 
         var tagHtml = '';
         if (tag) {
-            tagHtml = '<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">' + tag + '</span>';
+            tagHtml = '<span class="timeline-tag text-[10px] ' + colors.tagBg + ' ' + colors.tagText + ' px-1.5 py-0.5 rounded-full font-medium">' + tag + '</span>';
         }
 
-        var iconClass = 'mdi:calendar';
-        if (color === '#165DFF') iconClass = 'mdi:file-document';
-        else if (color === 'orange-500') iconClass = 'mdi:file-document-outline';
-        else if (color === 'green-500') iconClass = 'mdi:gavel';
-        else if (color === 'purple-500') iconClass = 'mdi:calendar';
-        else if (color === 'red-500') iconClass = 'mdi:alert-circle';
-        else iconClass = 'mdi:clock';
-
-        var newItem = document.createElement('div');
-        newItem.className = 'relative';
-        newItem.innerHTML = '<div class="absolute -left-10 top-0 w-7 h-7 rounded-full bg-' + color.split('-')[0] + (color.includes('-') ? '-' + color.split('-')[1] : '') + ' flex items-center justify-center text-white shadow">' +
-            '<iconify-icon class="text-xs" icon="' + iconClass + '"></iconify-icon>' +
+        item.innerHTML =
+            '<div class="relative flex flex-col items-center">' +
+            '<div class="' + nodeClass + '">' +
+            '<iconify-icon class="' + (isCurrent ? 'text-lg' : 'text-base') + ' ' + iconColor + '" icon="' + colors.icon + '"></iconify-icon>' +
             '</div>' +
-            '<div class="bg-white rounded-xl border border-[#E5E6EB] p-4 ml-4 group">' +
-            '<div class="flex items-center justify-between mb-1">' +
-            '<span class="text-sm font-medium">' + title + '</span>' +
-            '<div class="flex items-center gap-2">' +
-            '<span class="text-[10px] text-gray-400">' + date + '</span>' +
-            '<button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity" onclick="deleteTimeline(this)">' +
-            '<iconify-icon class="text-sm" icon="mdi:delete-outline"></iconify-icon>' +
+            '</div>' +
+            '<div class="relative bg-white rounded-xl ' + borderClass + ' transition-all group overflow-hidden mb-3">' +
+            '<div class="absolute left-0 top-0 bottom-0 w-1 bg-' + colors.bar + '"></div>' +
+            '<div class="p-4 pl-5">' +
+            '<div class="flex items-start justify-between mb-1.5">' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 mb-1 flex-wrap">' +
+            '<span class="timeline-title text-sm font-semibold text-fg-primary">' + title + '</span>' +
+            tagHtml +
+            '</div>' +
+            '<p class="timeline-desc text-xs text-fg-tertiary leading-relaxed">' + (desc || '') + '</p>' +
+            '</div>' +
+            '<div class="flex items-center gap-1.5 flex-none ml-3">' +
+            '<span class="text-[11px] text-fg-tertiary">' + date + '</span>' +
+            '<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-brand transition-opacity p-1" onclick="editTimeline(this)" title="编辑">' +
+            '<iconify-icon class="text-base" icon="mdi:pencil-outline"></iconify-icon>' +
+            '</button>' +
+            '<button class="opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-red-500 transition-opacity p-1" onclick="deleteTimeline(this)" title="删除">' +
+            '<iconify-icon class="text-base" icon="mdi:delete-outline"></iconify-icon>' +
             '</button>' +
             '</div>' +
             '</div>' +
-            (desc ? '<p class="text-xs text-gray-500">' + desc + '</p>' : '') +
-            (tagHtml ? tagHtml : '') +
             '</div>' +
             '</div>';
 
-        container.appendChild(newItem);
-        closeAddTimelineModal();
-        showToast('时间线已添加');
+        return item;
+    }
+
+    function updateTimelineItem(item, title, date, status, desc, tag) {
+        var colors = getTimelineStatusColor(status);
+        var isCurrent = status === 'current';
+
+        item.setAttribute('data-status', status);
+        item.setAttribute('data-date', date);
+
+        var titleEl = item.querySelector('.timeline-title');
+        if (titleEl) titleEl.textContent = title;
+
+        var descEl = item.querySelector('.timeline-desc');
+        if (descEl) descEl.textContent = desc || '';
+
+        var dateEl = item.querySelector('.flex.items-center.gap-1\.5 span');
+        if (dateEl) dateEl.textContent = date;
+
+        var tagContainer = item.querySelector('.flex.items-center.gap-2.mb-1');
+        if (tagContainer) {
+            var existingTag = tagContainer.querySelector('.timeline-tag');
+            if (tag) {
+                if (existingTag) {
+                    existingTag.textContent = tag;
+                    existingTag.className = 'timeline-tag text-[10px] ' + colors.tagBg + ' ' + colors.tagText + ' px-1.5 py-0.5 rounded-full font-medium';
+                } else {
+                    var newTag = document.createElement('span');
+                    newTag.className = 'timeline-tag text-[10px] ' + colors.tagBg + ' ' + colors.tagText + ' px-1.5 py-0.5 rounded-full font-medium';
+                    newTag.textContent = tag;
+                    titleEl && titleEl.parentNode.insertBefore(newTag, titleEl.nextSibling);
+                }
+            } else if (existingTag) {
+                existingTag.remove();
+            }
+        }
+
+        var card = item.querySelector('.relative.bg-white.rounded-xl');
+        if (card) {
+            var bar = card.querySelector('.absolute.left-0');
+            if (bar) {
+                bar.className = 'absolute left-0 top-0 bottom-0 w-1 bg-' + colors.bar;
+            }
+            if (isCurrent) {
+                card.className = 'relative bg-white rounded-xl border-2 border-brand shadow-lg group overflow-hidden';
+            } else {
+                card.className = 'relative bg-white rounded-xl border border-bg-border hover:border-brand/40 hover:shadow-md transition-all group overflow-hidden mb-3';
+            }
+        }
+
+        var node = item.querySelector('.relative.flex.flex-col.items-center > div');
+        if (node) {
+            var icon = node.querySelector('iconify-icon');
+            if (isCurrent) {
+                node.className = 'w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white shadow-lg ring-4 ring-brand-tint animate-pulse z-10';
+                if (icon) {
+                    icon.className = 'text-lg text-white';
+                    icon.setAttribute('icon', colors.icon);
+                }
+            } else {
+                node.className = 'w-9 h-9 rounded-full bg-white border-2 border-' + colors.node + ' flex items-center justify-center shadow-sm z-10';
+                if (icon) {
+                    icon.className = 'text-base text-' + colors.node;
+                    icon.setAttribute('icon', colors.icon);
+                }
+            }
+        }
+    }
+
+    function sortTimeline() {
+        var container = document.getElementById('timeline-container');
+        if (!container) return;
+        var items = Array.from(container.querySelectorAll('.timeline-item'));
+        items.sort(function(a, b) {
+            var dateA = new Date(a.getAttribute('data-date') || '');
+            var dateB = new Date(b.getAttribute('data-date') || '');
+            return dateA - dateB;
+        });
+        items.forEach(function(item) {
+            container.appendChild(item);
+        });
     }
 
     function deleteTimeline(btn) {
         if (!confirm('确定要删除这条时间线吗？')) return;
-        var item = btn.closest('.relative');
+        var item = btn.closest('.timeline-item');
         if (item) {
             item.remove();
             showToast('时间线已删除');
@@ -705,6 +971,50 @@
         if (listView) listView.classList.remove('hidden');
     }
 
+    // ===== 初始化 =====
+    function initTimelineItems() {
+        var container = document.getElementById('timeline-container');
+        if (!container) return;
+
+        var items = container.querySelectorAll('.timeline-item');
+        items.forEach(function(item) {
+            if (!item.getAttribute('data-date')) {
+                var dateSpan = item.querySelector('.flex.items-center.gap-1\\.5 > span');
+                if (dateSpan) {
+                    item.setAttribute('data-date', dateSpan.textContent.trim());
+                }
+            }
+
+            var titleEl = item.querySelector('.text-sm.font-semibold, .text-sm.font-bold');
+            if (titleEl && !titleEl.classList.contains('timeline-title')) {
+                titleEl.classList.add('timeline-title');
+            }
+
+            var tagEl = item.querySelector('.rounded-full.font-medium:not(.timeline-tag)');
+            if (tagEl && !tagEl.classList.contains('timeline-tag') && tagEl.textContent.trim() !== '' && tagEl.textContent.trim().length < 10) {
+                tagEl.classList.add('timeline-tag');
+            }
+
+            var descEl = item.querySelector('.text-xs.leading-relaxed');
+            if (descEl && !descEl.classList.contains('timeline-desc')) {
+                descEl.classList.add('timeline-desc');
+            }
+
+            var actionGroup = item.querySelector('.flex.items-center.gap-1\\.5.flex-none');
+            if (actionGroup && !actionGroup.querySelector('[onclick="editTimeline(this)"]')) {
+                var dateSpan = actionGroup.querySelector('span');
+                var editBtn = document.createElement('button');
+                editBtn.className = 'opacity-0 group-hover:opacity-100 text-fg-tertiary hover:text-brand transition-opacity p-1';
+                editBtn.setAttribute('onclick', 'editTimeline(this)');
+                editBtn.setAttribute('title', '编辑');
+                editBtn.innerHTML = '<iconify-icon class="text-base" icon="mdi:pencil-outline"></iconify-icon>';
+                if (dateSpan) {
+                    dateSpan.parentNode.insertBefore(editBtn, dateSpan.nextSibling);
+                }
+            }
+        });
+    }
+
     // ===== 双绑定 =====
     globalThis.addEvidenceCatalogItem = addEvidenceCatalogItem;
     globalThis.loadCatalogFileList = loadCatalogFileList;
@@ -713,12 +1023,16 @@
     globalThis.closeAddEvidenceCatalogModal = closeAddEvidenceCatalogModal;
     globalThis.submitEvidenceCatalog = submitEvidenceCatalog;
     globalThis.editCatalogItem = editCatalogItem;
+    globalThis.saveCatalogEdit = saveCatalogEdit;
     globalThis.deleteCatalogItem = deleteCatalogItem;
+    globalThis.renumberCatalogItems = renumberCatalogItems;
     globalThis.aiCreateEvidenceCatalog = aiCreateEvidenceCatalog;
     globalThis.openAddTimelineModal = openAddTimelineModal;
     globalThis.closeAddTimelineModal = closeAddTimelineModal;
     globalThis.submitTimeline = submitTimeline;
+    globalThis.editTimeline = editTimeline;
     globalThis.deleteTimeline = deleteTimeline;
+    globalThis.initTimelineItems = initTimelineItems;
     globalThis.openUploadEvidenceModal = openUploadEvidenceModal;
     globalThis.closeUploadEvidenceModal = closeUploadEvidenceModal;
     globalThis.submitEvidence = submitEvidence;

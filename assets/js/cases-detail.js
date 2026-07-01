@@ -210,6 +210,10 @@
             btn.classList.remove('border-transparent', 'text-gray-500');
             btn.classList.add('border-[#165DFF]', 'text-[#165DFF]');
         }
+
+        if (tabName === 'timeline' && typeof initTimelineItems === 'function') {
+            initTimelineItems();
+        }
     }
 
     function switchMaterialsTab(tabName, btn) {
