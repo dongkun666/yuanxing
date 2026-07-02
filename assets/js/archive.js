@@ -291,31 +291,33 @@
         }
     }
 
-    function restoreArchive(id) {
+    async function restoreArchive(id) {
         var item = _archiveData.find(function (x) {
             return x.id === id;
         });
         if (!item) return;
-        if (confirm('确定要将案件 "' + item.caseNum + '" 从归档中还原吗？')) {
+        var confirmed = await Utils.showConfirm('确定要将案件 "' + item.caseNum + '" 从归档中还原吗？');
+        if (confirmed) {
             _archiveData = _archiveData.filter(function (x) {
                 return x.id !== id;
             });
             renderArchiveTable();
-            if (typeof showToast === 'function') showToast('案件已还原');
+            Utils.showToast('success', '案件已还原');
         }
     }
 
-    function deleteArchive(id) {
+    async function deleteArchive(id) {
         var item = _archiveData.find(function (x) {
             return x.id === id;
         });
         if (!item) return;
-        if (confirm('确定要永久删除归档案件 "' + item.caseNum + '" 吗？此操作不可撤销。')) {
+        var confirmed = await Utils.showConfirm('确定要永久删除归档案件 "' + item.caseNum + '" 吗？此操作不可撤销。');
+        if (confirmed) {
             _archiveData = _archiveData.filter(function (x) {
                 return x.id !== id;
             });
             renderArchiveTable();
-            if (typeof showToast === 'function') showToast('案件已删除');
+            Utils.showToast('success', '案件已删除');
         }
     }
 

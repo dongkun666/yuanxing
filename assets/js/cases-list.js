@@ -124,7 +124,7 @@
         filterCaseList();
     }
 
-    function archiveCase(idx) {
+    async function archiveCase(idx) {
         if (idx === undefined || idx === null) {
             // 兼容无参调用: 从 currentCaseIndex 读
             idx = globalThis.currentCaseIndex;
@@ -133,7 +133,8 @@
             showToast('请先点击案件"详情"再归档', 'warning');
             return;
         }
-        if (!confirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。')) return;
+        var confirmed = await Utils.showConfirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。');
+        if (!confirmed) return;
         var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
         if (archived.indexOf(idx) === -1) archived.push(idx);
         localStorage.setItem('lexprime_archived', JSON.stringify(archived));
@@ -193,8 +194,9 @@
         input.select();
     }
 
-    function deleteCase(index) {
-        if (!confirm('确定要删除该案件吗？删除后不可恢复。')) return;
+    async function deleteCase(index) {
+        var confirmed = await Utils.showConfirm('确定要删除该案件吗？删除后不可恢复。');
+        if (!confirmed) return;
         var tbody = document.getElementById('caseTableBody');
         if (!tbody) return;
         var rows = tbody.querySelectorAll('tr');
@@ -453,13 +455,14 @@
         }
     }
 
-    function restoreArchive() {
+    async function restoreArchive() {
         var id = typeof globalThis.currentArchiveId !== 'undefined' ? globalThis.currentArchiveId : null;
         if (id === null || id === undefined) {
             showToast('请先选择要恢复的归档', 'warning');
             return;
         }
-        if (!confirm('确定要恢复此归档案件？恢复后会重新出现在案件列表中。')) return;
+        var confirmed = await Utils.showConfirm('确定要恢复此归档案件？恢复后会重新出现在案件列表中。');
+        if (!confirmed) return;
         var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
         archived = archived.filter(function (x) {
             return x !== id;
@@ -470,13 +473,14 @@
         else filterArchiveList();
     }
 
-    function deleteArchive() {
+    async function deleteArchive() {
         var id = typeof globalThis.currentArchiveId !== 'undefined' ? globalThis.currentArchiveId : null;
         if (id === null || id === undefined) {
             showToast('请先选择要删除的归档', 'warning');
             return;
         }
-        if (!confirm('确定要永久删除此归档？此操作不可恢复。')) return;
+        var confirmed = await Utils.showConfirm('确定要永久删除此归档？此操作不可恢复。');
+        if (!confirmed) return;
         var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
         archived = archived.filter(function (x) {
             return x !== id;

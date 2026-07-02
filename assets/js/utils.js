@@ -266,6 +266,230 @@
         _modalRegistry = {};
     }
 
+    var _toastTimer = null;
+
+    /**
+     * 轻量 Toast 提示
+     * @param {string} type - 类型 'success'|'error'|'info'|'warning'
+     * @param {string} message - 提示内容
+     * @param {number} [duration=3000] - 显示时长（毫秒）
+     */
+    function showToast(type, message, duration) {
+        if (!message) {
+            message = type;
+            type = 'info';
+        }
+        if (!duration) duration = 3000;
+
+        var typeConfig = {
+            success: {
+                bg: 'bg-green-50',
+                border: 'border-green-200',
+                text: 'text-green-700',
+                icon: 'mdi:check-circle-outline',
+                iconColor: 'text-green-500'
+            },
+            error: {
+                bg: 'bg-red-50',
+                border: 'border-red-200',
+                text: 'text-red-700',
+                icon: 'mdi:alert-circle-outline',
+                iconColor: 'text-red-500'
+            },
+            info: {
+                bg: 'bg-blue-50',
+                border: 'border-blue-200',
+                text: 'text-blue-700',
+                icon: 'mdi:information-outline',
+                iconColor: 'text-blue-500'
+            },
+            warning: {
+                bg: 'bg-amber-50',
+                border: 'border-amber-200',
+                text: 'text-amber-700',
+                icon: 'mdi:alert-outline',
+                iconColor: 'text-amber-500'
+            }
+        };
+
+        var config = typeConfig[type] || typeConfig.info;
+
+        var existing = document.querySelector('.utils-toast');
+        if (existing) existing.remove();
+        if (_toastTimer) {
+            clearTimeout(_toastTimer);
+            _toastTimer = null;
+        }
+
+        var toast = document.createElement('div');
+        toast.className =
+            'utils-toast fixed top-4 left-1/2 -translate-x-1/2 z-[9999] ' +
+            config.bg +
+            ' border ' +
+            config.border +
+            ' ' +
+            config.text +
+            ' text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-300 opacity-0 -translate-y-4';
+        toast.innerHTML =
+            '<iconify-icon icon="' +
+            config.icon +
+            '" class="' +
+            config.iconColor +
+            '"></iconify-icon><span>' +
+            escapeHtml(message) +
+            '</span>';
+        document.body.appendChild(toast);
+
+        requestAnimationFrame(function () {
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+        });
+
+        _toastTimer = setTimeout(function () {
+            toast.classList.add('opacity-0', '-translate-y-4');
+            setTimeout(function () {
+                if (toast.parentNode) toast.remove();
+            }, 300);
+            _toastTimer = null;
+        }, duration);
+    }
+
+    /**
+     * 确认对话框
+     * @param {string} message - 确认内容
+     * @param {string} [title] - 标题
+     * @returns {Promise<boolean>} - 用户是否确认
+     */
+    function showConfirm(message, title) {
+        return new Promise(function (resolve) {
+            var modalId = 'confirm-modal-' + Date.now();
+            var confirmed = false;
+
+            function close(result) {
+                confirmed = result;
+                closeFn();
+            }
+
+            var footer =
+                '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-modal-cancel>' +
+                '取消' +
+                '</button>' +
+                '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" data-modal-confirm>' +
+                '确定' +
+                '</button>';
+
+            var closeFn = showModal({
+                id: modalId,
+                title: title || '确认操作',
+                content: '<p class="text-sm text-fg-secondary">' + escapeHtml(message) + '</p>',
+                footer: footer,
+                size: 'sm',
+                icon: 'mdi:help-circle-outline',
+                onClose: function () {
+                    resolve(confirmed);
+                },
+                escClose: true
+            });
+
+            setTimeout(function () {
+                var modal = document.getElementById(modalId);
+                if (!modal) return;
+
+                var cancelBtn = modal.querySelector('[data-modal-cancel]');
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', function () {
+                        close(false);
+                    });
+                }
+
+                var confirmBtn = modal.querySelector('[data-modal-confirm]');
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', function () {
+                        close(true);
+                    });
+                }
+            }, 50);
+        });
+    }
+
+    /**
+     * 输入对话框
+     * @param {string} message - 提示内容
+     * @param {string} [defaultValue] - 默认值
+     * @param {string} [title] - 标题
+     * @returns {Promise<string|null>} - 用户输入的值，取消返回 null
+     */
+    function showPrompt(message, defaultValue, title) {
+        return new Promise(function (resolve) {
+            var modalId = 'prompt-modal-' + Date.now();
+            var result = null;
+
+            function close(val) {
+                result = val;
+                closeFn();
+            }
+
+            var content =
+                '<p class="text-sm text-fg-secondary mb-3" style="white-space: pre-wrap;">' +
+                escapeHtml(message) +
+                '</p>' +
+                '<input type="text" class="prompt-input w-full px-3 py-2 border border-bg-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/40" value="' +
+                escapeHtml(defaultValue || '') +
+                '">';
+
+            var footer =
+                '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-modal-cancel>' +
+                '取消' +
+                '</button>' +
+                '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" data-modal-confirm>' +
+                '确定' +
+                '</button>';
+
+            var closeFn = showModal({
+                id: modalId,
+                title: title || '请输入',
+                content: content,
+                footer: footer,
+                size: 'sm',
+                icon: 'mdi:form-textbox',
+                onClose: function () {
+                    resolve(result);
+                },
+                escClose: true
+            });
+
+            setTimeout(function () {
+                var modal = document.getElementById(modalId);
+                if (!modal) return;
+
+                var input = modal.querySelector('.prompt-input');
+                if (input) {
+                    input.focus();
+                    input.select();
+                    input.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter') {
+                            close(input.value);
+                        }
+                    });
+                }
+
+                var cancelBtn = modal.querySelector('[data-modal-cancel]');
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', function () {
+                        close(null);
+                    });
+                }
+
+                var confirmBtn = modal.querySelector('[data-modal-confirm]');
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', function () {
+                        close(input ? input.value : '');
+                    });
+                }
+            }, 50);
+        });
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -275,7 +499,10 @@
         formatNumber: formatNumber,
         deepClone: deepClone,
         showModal: showModal,
-        closeAllModals: closeAllModals
+        closeAllModals: closeAllModals,
+        showToast: showToast,
+        showConfirm: showConfirm,
+        showPrompt: showPrompt
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

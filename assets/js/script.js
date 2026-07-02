@@ -46,11 +46,11 @@
                 .then(function () {
                     showToast('案件信息已复制到剪贴板', 'success');
                 })
-                .catch(function () {
-                    prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+                .catch(async function () {
+                    await Utils.showPrompt('案件分享信息 (Ctrl+C 复制):', shareText);
                 });
         } else {
-            prompt('案件分享信息 (Ctrl+C 复制):', shareText);
+            Utils.showPrompt('案件分享信息 (Ctrl+C 复制):', shareText);
         }
     }
 
@@ -194,7 +194,7 @@
         if (!file) return;
 
         if (file.size > 10 * 1024 * 1024) {
-            alert('证件文件大小不能超过 10MB');
+            Utils.showToast('warning', '证件文件大小不能超过 10MB');
             return;
         }
 
@@ -214,7 +214,7 @@
 
     // 职业认证 - 提交审核
     function submitCertification() {
-        alert('您的律师执业认证申请已提交！\n我们将在 1-3 个工作日内完成审核。\n审核结果将以消息通知您。');
+        Utils.showToast('success', '您的律师执业认证申请已提交！我们将在 1-3 个工作日内完成审核。审核结果将以消息通知您。');
     }
 
     // 双因素认证切换
@@ -962,7 +962,7 @@
     }
     function addBatchFile(file) {
         if (AppState.batchFiles.length >= 20) {
-            alert('最多上传 20 个文件');
+            Utils.showToast('warning', '最多上传 20 个文件');
             return;
         }
         var icon = 'mdi:file-document-outline';
@@ -1029,7 +1029,7 @@
     }
     function confirmBatchUpload() {
         if (AppState.batchFiles.length === 0) {
-            alert('请先选择文件');
+            Utils.showToast('warning', '请先选择文件');
             return;
         }
         var count = AppState.batchFiles.length;
@@ -1040,7 +1040,7 @@
         renderBatchFiles();
         closeBatchUploadModal();
         setTimeout(function () {
-            alert('成功上传 ' + count + ' 个文件到附件列表');
+            Utils.showToast('success', '成功上传 ' + count + ' 个文件到附件列表');
         }, 100);
     }
 

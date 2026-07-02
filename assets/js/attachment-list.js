@@ -590,17 +590,18 @@
         }
     }
 
-    function deleteAttachment(id) {
+    async function deleteAttachment(id) {
         var f = _attachments.find(function (x) {
             return x.id === id;
         });
         if (!f) return;
-        if (confirm('确定要删除文件 "' + f.name + '" 吗？')) {
+        var confirmed = await Utils.showConfirm('确定要删除文件 "' + f.name + '" 吗？');
+        if (confirmed) {
             _attachments = _attachments.filter(function (x) {
                 return x.id !== id;
             });
             renderAttachments();
-            if (typeof showToast === 'function') showToast('文件已删除');
+            Utils.showToast('success', '文件已删除');
         }
     }
 

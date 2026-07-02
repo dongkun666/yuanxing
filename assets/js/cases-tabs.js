@@ -411,8 +411,9 @@
         }, 50);
     }
 
-    function deleteCatalogItem(btn) {
-        if (!confirm('确定要删除该证据目录项吗？')) return;
+    async function deleteCatalogItem(btn) {
+        var confirmed = await Utils.showConfirm('确定要删除该证据目录项吗？');
+        if (!confirmed) return;
         var row = btn.closest('tr');
         if (row) {
             row.remove();
@@ -642,8 +643,9 @@
         showToast('时间线已添加');
     }
 
-    function deleteTimeline(btn) {
-        if (!confirm('确定要删除这条时间线吗？')) return;
+    async function deleteTimeline(btn) {
+        var confirmed = await Utils.showConfirm('确定要删除这条时间线吗？');
+        if (!confirmed) return;
         var item = btn.closest('.relative');
         if (item) {
             item.remove();
@@ -763,8 +765,9 @@
         showToast('证件已上传');
     }
 
-    function deleteEvidence(btn) {
-        if (!confirm('确定要删除该证件吗？')) return;
+    async function deleteEvidence(btn) {
+        var confirmed = await Utils.showConfirm('确定要删除该证件吗？');
+        if (!confirmed) return;
         var item = btn.closest('.flex.items-center.justify-between');
         if (item) {
             item.remove();
@@ -870,8 +873,8 @@
         showToast('委托合同已上传');
     }
 
-    function deleteContract(btn) {
-        var confirmed = confirm('确定要删除该委托合同吗？');
+    async function deleteContract(btn) {
+        var confirmed = await Utils.showConfirm('确定要删除该委托合同吗？');
         if (confirmed) {
             var item = btn.closest('.flex.items-center.justify-between');
             if (item) {
@@ -996,8 +999,8 @@
         showToast('证据材料已上传');
     }
 
-    function deleteMaterial(btn) {
-        var confirmed = confirm('确定要删除该证据材料吗？');
+    async function deleteMaterial(btn) {
+        var confirmed = await Utils.showConfirm('确定要删除该证据材料吗？');
         if (confirmed) {
             var row = btn.closest('tr');
             if (row) {
@@ -1119,9 +1122,9 @@
         showToast(config.toast);
     }
 
-    function deleteDocument(btn, type) {
+    async function deleteDocument(btn, type) {
         var config = documentTypeMap[type];
-        var confirmed = confirm('确定要删除该文书吗？');
+        var confirmed = await Utils.showConfirm('确定要删除该文书吗？');
         if (confirmed) {
             var item = btn.closest('.flex.items-center.justify-between');
             if (item) {

@@ -183,7 +183,7 @@
         menu.classList.toggle('hidden');
     }
 
-    function handleMoreAction(action) {
+    async function handleMoreAction(action) {
         document.getElementById('moreMenuWork').classList.add('hidden');
         document.getElementById('moreMenuAI').classList.add('hidden');
         if (action === 'settings') {
@@ -191,9 +191,7 @@
             switchView('account-settings');
         } else if (action === 'check-update') {
             var current = window.APP_VERSION || '0.7.0';
-            if (typeof showToast === 'function') {
-                showToast('当前版本: v' + current + ' · 已是最新版本');
-            }
+            Utils.showToast('info', '当前版本: v' + current + ' · 已是最新版本');
         } else if (action === 'feedback') {
             openFeedbackModal();
         } else if (action === 'guide') {
@@ -201,11 +199,12 @@
         } else if (action === 'contact') {
             openContactModal();
         } else if (action === 'logout') {
-            if (confirm('确认退出登录？')) {
+            var logoutConfirm = await Utils.showConfirm('确认退出登录？');
+            if (logoutConfirm) {
                 if (typeof Auth !== 'undefined' && Auth.logout) {
                     Auth.logout();
                 }
-                showToast('已退出登录');
+                Utils.showToast('success', '已退出登录');
             }
         }
     }
@@ -359,7 +358,7 @@
     }
 
     function exportExtractResult() {
-        alert('报告已导出为Markdown格式（演示功能）');
+        Utils.showToast('success', '报告已导出为Markdown格式（演示功能）');
     }
 
     function handleAIInputKeydown(event) {

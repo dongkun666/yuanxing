@@ -43,7 +43,7 @@
         }
     }
 
-    function saveProfile() {
+    async function saveProfile() {
         var name = document.getElementById('profile-name');
         var phone = document.getElementById('profile-phone');
         var email = document.getElementById('profile-email');
@@ -52,24 +52,26 @@
         var bio = document.getElementById('profile-bio');
 
         if (!name || !name.value.trim()) {
-            alert('请输入姓名');
+            Utils.showToast('warning', '请输入姓名');
             if (name) name.focus();
             return;
         }
         if (!phone || !phone.value.trim()) {
-            alert('请输入手机号');
+            Utils.showToast('warning', '请输入手机号');
             if (phone) phone.focus();
             return;
         }
 
         var phoneVal = phone.value.trim();
         if (!/^1\d{10}$/.test(phoneVal) && !/^\d{3,4}\*{4}\d{4}$/.test(phoneVal)) {
-            if (!confirm('手机号格式异常，是否仍要保存？')) return;
+            var phoneConfirm = await Utils.showConfirm('手机号格式异常，是否仍要保存？');
+            if (!phoneConfirm) return;
         }
 
         var emailVal = email ? email.value.trim() : '';
         if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-            if (!confirm('邮箱格式不正确，是否仍要保存？')) return;
+            var emailConfirm = await Utils.showConfirm('邮箱格式不正确，是否仍要保存？');
+            if (!emailConfirm) return;
         }
 
         var displayGrid = document.querySelector('#profile-display .grid.grid-cols-2');
@@ -150,8 +152,8 @@
     }
 
     // ===== 头像/标签/认证 =====
-    function addTagInput(el) {
-        var tag = prompt('请输入专业领域名称：');
+    async function addTagInput(el) {
+        var tag = await Utils.showPrompt('请输入专业领域名称：', '');
         if (tag && tag.trim()) {
             var span = document.createElement('span');
             span.className =
@@ -217,8 +219,8 @@
         }
     }
 
-    function showAddTagDialog(el) {
-        var tag = prompt('请输入专业领域名称：\n（如：知识产权、刑事辩护、婚姻家事等）');
+    async function showAddTagDialog(el) {
+        var tag = await Utils.showPrompt('请输入专业领域名称：\n（如：知识产权、刑事辩护、婚姻家事等）', '');
         if (tag && tag.trim()) {
             var span = document.createElement('span');
             span.className =
@@ -237,21 +239,21 @@
         if (upload) upload.value = '';
     }
 
-    function toggle2FA(checkbox) {
+    async function toggle2FA(checkbox) {
         var status = document.getElementById('2fa-status');
         if (checkbox.checked) {
-            if (
-                confirm(
-                    '开启双因素认证将提高账号安全性。\n\n建议使用 Authenticator App（如 Google Authenticator、Microsoft Authenticator）或短信验证码。\n\n是否继续开启？'
-                )
-            ) {
+            var enableConfirm = await Utils.showConfirm(
+                '开启双因素认证将提高账号安全性。\n\n建议使用 Authenticator App（如 Google Authenticator、Microsoft Authenticator）或短信验证码。\n\n是否继续开启？'
+            );
+            if (enableConfirm) {
                 status.textContent = '已开启';
                 status.className = 'text-[10px] text-green-600 font-medium';
             } else {
                 checkbox.checked = false;
             }
         } else {
-            if (confirm('关闭双因素认证将降低账号安全等级，确定要关闭吗？')) {
+            var disableConfirm = await Utils.showConfirm('关闭双因素认证将降低账号安全等级，确定要关闭吗？');
+            if (disableConfirm) {
                 status.textContent = '未开启';
                 status.className = 'text-[10px] text-[#C9CDD4]';
             } else {
@@ -274,19 +276,25 @@
             '   IP：192.168.1.101\n' +
             '   最近活动：2 小时前\n' +
             '   [点击移除此设备]';
-        alert(deviceInfo);
+        Utils.showModal({
+            id: 'device-manager-modal',
+            title: '设备管理',
+            content: '<pre class="text-xs text-fg-secondary whitespace-pre-wrap font-mono bg-bg-subtle p-3 rounded-lg">' + Utils.escapeHtml(deviceInfo) + '</pre>',
+            size: 'md',
+            icon: 'mdi:devices'
+        });
     }
 
-    function confirmAccountDeletion() {
-        var step1 = confirm(
+    async function confirmAccountDeletion() {
+        var step1 = await Utils.showConfirm(
             '⚠️ 确认要注销账号吗？\n\n注销后：\n· 所有案件数据将被永久清除\n· 所有文书和材料将无法恢复\n· 您的会员权益将立即终止\n\n此操作不可撤销！'
         );
         if (step1) {
-            var step2 = prompt('请输入「确认注销」以继续操作：');
+            var step2 = await Utils.showPrompt('请输入「确认注销」以继续操作：', '');
             if (step2 === '确认注销') {
-                alert('您的账号注销申请已提交。\n系统将在 7 天冷静期后执行注销。\n在此期间重新登录可取消注销。');
+                Utils.showToast('success', '您的账号注销申请已提交。系统将在 7 天冷静期后执行注销。在此期间重新登录可取消注销。');
             } else {
-                alert('输入不正确，注销操作已取消。');
+                Utils.showToast('error', '输入不正确，注销操作已取消。');
             }
         }
     }
@@ -378,8 +386,9 @@
         showSaveSuccess('正在跳转至' + name + '授权页面...');
     }
 
-    function unbindAccount(name) {
-        if (confirm('确定要解绑' + name + '吗？解绑后可能影响相关功能使用。')) {
+    async function unbindAccount(name) {
+        var confirmed = await Utils.showConfirm('确定要解绑' + name + '吗？解绑后可能影响相关功能使用。');
+        if (confirmed) {
             showSaveSuccess(name + '已解绑');
         }
     }

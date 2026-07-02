@@ -187,8 +187,9 @@ function startCompile(btn) {
     }
 }
 
-function cancelCompile(btn) {
-    if (!confirm('确定取消本次 AI 编译？已完成的中间结果会保留。')) return;
+async function cancelCompile(btn) {
+    var confirmed = await Utils.showConfirm('确定取消本次 AI 编译？已完成的中间结果会保留。');
+    if (!confirmed) return;
     var row = btn.closest('tr');
     if (!row) return;
     var cells = row.querySelectorAll('td');
@@ -200,8 +201,9 @@ function cancelCompile(btn) {
         '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
 }
 
-function recompile(btn) {
-    if (!confirm('确定重新编译？LLM 会重新阅读原始资料并更新相关 Wiki 页面。')) return;
+async function recompile(btn) {
+    var confirmed = await Utils.showConfirm('确定重新编译？LLM 会重新阅读原始资料并更新相关 Wiki 页面。');
+    if (!confirmed) return;
     var row = btn.closest('tr');
     if (!row) return;
     var cells = row.querySelectorAll('td');
@@ -222,11 +224,20 @@ function recompile(btn) {
 function viewCompileProgress(btn) {
     var row = btn.closest('tr');
     var name = row ? row.querySelector('.text-xs.font-medium')?.textContent : '资料';
-    alert(
-        'AI 编译进度:\n\n资料: ' +
-            name +
-            '\n阶段: 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接\n\n预估剩余: 2 分钟'
-    );
+    var content =
+        '<p class="text-sm text-fg-secondary mb-2">AI 编译进度:</p>' +
+        '<div class="bg-bg-subtle p-3 rounded-lg text-xs text-fg-secondary space-y-1">' +
+        '<p><strong>资料:</strong> ' + Utils.escapeHtml(name) + '</p>' +
+        '<p><strong>阶段:</strong> 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接</p>' +
+        '<p><strong>预估剩余:</strong> 2 分钟</p>' +
+        '</div>';
+    Utils.showModal({
+        id: 'compile-progress-modal',
+        title: '编译进度',
+        content: content,
+        size: 'md',
+        icon: 'mdi:progress-clock'
+    });
 }
 
 function viewWikiPages(btn) {
@@ -254,7 +265,17 @@ function runLintNow() {
 }
 
 function simulateUpload() {
-    alert(
-        '上传资料:\n\n支持 PDF / Word / 扫描件 / 网页 URL\n上传后状态为「待编译」,可手动触发「AI 编译」,或开启自动编译。'
-    );
+    var content =
+        '<p class="text-sm text-fg-secondary mb-2">上传资料:</p>' +
+        '<div class="bg-bg-subtle p-3 rounded-lg text-xs text-fg-secondary space-y-1">' +
+        '<p>支持 PDF / Word / 扫描件 / 网页 URL</p>' +
+        '<p>上传后状态为「待编译」,可手动触发「AI 编译」,或开启自动编译。</p>' +
+        '</div>';
+    Utils.showModal({
+        id: 'upload-info-modal',
+        title: '上传资料说明',
+        content: content,
+        size: 'md',
+        icon: 'mdi:cloud-upload-outline'
+    });
 }

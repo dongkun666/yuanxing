@@ -542,8 +542,9 @@
     function initClear() {
         var btn = document.getElementById('score-clear-btn');
         if (!btn) return;
-        btn.addEventListener('click', function () {
-            if (!confirm('确认清空当前 5 维度评分 + 文字评论? (不影响已提交历史)')) return;
+        btn.addEventListener('click', async function () {
+            var confirmed = await Utils.showConfirm('确认清空当前 5 维度评分 + 文字评论? (不影响已提交历史)');
+            if (!confirmed) return;
             DIMENSIONS.forEach(function (d) {
                 SA.scores[d.id] = 5;
                 SA.comments[d.id] = '';

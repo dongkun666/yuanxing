@@ -217,19 +217,20 @@
     }
 
     // 清空通知
-    function clearAllNotifications() {
+    async function clearAllNotifications() {
         if (typeof AppState === 'undefined') return;
         if (AppState.notifications.length === 0) {
-            showToast('通知已是空的');
+            Utils.showToast('info', '通知已是空的');
             return;
         }
-        if (!confirm('确定清空所有通知？此操作不可恢复。')) return;
+        var confirmed = await Utils.showConfirm('确定清空所有通知？此操作不可恢复。');
+        if (!confirmed) return;
         AppState.notifications = [];
         persistNotifications();
         renderNotificationsPanel();
         renderNotificationsPage();
         updateNotificationBadge();
-        showToast('通知已清空');
+        Utils.showToast('success', '通知已清空');
     }
 
     // 「···」更多菜单 toggle

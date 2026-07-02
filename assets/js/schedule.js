@@ -20,7 +20,7 @@ function toggleTodo(el) {
     }
 }
 
-function editSchedule(btn) {
+async function editSchedule(btn) {
     var item = btn.closest('[onclick*="toggleTodo"]') || btn.parentElement.parentElement;
     var timeEl = item.querySelector('.text-sm.font-bold');
     var titleEl = item.querySelector('.text-sm.font-medium');
@@ -28,22 +28,23 @@ function editSchedule(btn) {
 
     if (titleEl) {
         var currentTitle = titleEl.textContent;
-        var newTitle = prompt('修改日程事项：', currentTitle);
+        var newTitle = await Utils.showPrompt('修改日程事项：', currentTitle);
         if (newTitle && newTitle.trim() !== '') {
             titleEl.textContent = newTitle.trim();
         }
     }
     if (descEl) {
         var currentDesc = descEl.textContent;
-        var newDesc = prompt('修改案件/描述：', currentDesc);
+        var newDesc = await Utils.showPrompt('修改案件/描述：', currentDesc);
         if (newDesc && newDesc.trim() !== '') {
             descEl.textContent = newDesc.trim();
         }
     }
 }
 
-function deleteSchedule(btn) {
-    if (confirm('确定删除此日程吗？')) {
+async function deleteSchedule(btn) {
+    var confirmed = await Utils.showConfirm('确定删除此日程吗？');
+    if (confirmed) {
         var item = btn.closest('[onclick*="toggleTodo"]');
         if (item) {
             item.remove();
@@ -637,18 +638,19 @@ function saveSchedule() {
 }
 
 // 删除日程 (从卡片按钮触发)
-function deleteScheduleItem(id) {
+async function deleteScheduleItem(id) {
     var item = AppState.scheduleData.find(function (s) {
         return s.id === id;
     });
     if (!item) return;
-    if (!confirm('确定删除「' + item.title + '」吗？')) return;
+    var confirmed = await Utils.showConfirm('确定删除「' + item.title + '」吗？');
+    if (!confirmed) return;
     var idx = AppState.scheduleData.findIndex(function (s) {
         return s.id === id;
     });
     if (idx > -1) AppState.scheduleData.splice(idx, 1);
     persistSchedule();
-    showToast('日程已删除');
+    Utils.showToast('success', '日程已删除');
     renderScheduleList();
     if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
     if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
@@ -1633,13 +1635,14 @@ function editScheduleFromDetail() {
     openScheduleModal();
 }
 
-function deleteScheduleFromDetail() {
+async function deleteScheduleFromDetail() {
     if (!currentDetailScheduleId) return;
-    if (confirm('确定要删除该日程吗？')) {
+    var confirmed = await Utils.showConfirm('确定要删除该日程吗？');
+    if (confirmed) {
         const idx = AppState.scheduleData.findIndex((s) => s.id === currentDetailScheduleId);
         if (idx > -1) AppState.scheduleData.splice(idx, 1);
         closeScheduleDetail();
-        alert('日程已删除');
+        Utils.showToast('success', '日程已删除');
         if (typeof openScheduleCalendar === 'function') openScheduleCalendar();
     }
 }
@@ -1747,7 +1750,7 @@ function conflictResolveAction(action) {
         if (pendingSchedule) {
             AppState.scheduleData.push(pendingSchedule);
             pendingSchedule = null;
-            alert('日程已创建（含冲突）');
+            Utils.showToast('warning', '日程已创建（含冲突）');
         }
         return;
     }
@@ -1756,7 +1759,7 @@ function conflictResolveAction(action) {
         if (pendingSchedule) {
             AppState.scheduleData.push(pendingSchedule);
             pendingSchedule = null;
-            alert('日程已调整至推荐时段');
+            Utils.showToast('success', '日程已调整至推荐时段');
         }
         return;
     }
@@ -2142,10 +2145,39 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+function showDynamicDetail(title, caseName, desc, attachments) {
+    var content =
+        '<div class="space-y-3 text-sm">' +
+        '<div>' +
+        '<p class="text-xs text-fg-tertiary mb-1">标题</p>' +
+        '<p class="text-fg-primary font-medium">' + Utils.escapeHtml(title) + '</p>' +
+        '</div>' +
+        '<div>' +
+        '<p class="text-xs text-fg-tertiary mb-1">案件</p>' +
+        '<p class="text-fg-secondary">' + Utils.escapeHtml(caseName) + '</p>' +
+        '</div>' +
+        '<div>' +
+        '<p class="text-xs text-fg-tertiary mb-1">描述</p>' +
+        '<p class="text-fg-secondary">' + Utils.escapeHtml(desc || '暂无描述') + '</p>' +
+        '</div>' +
+        '<div>' +
+        '<p class="text-xs text-fg-tertiary mb-1">附件</p>' +
+        '<p class="text-fg-secondary">' + Utils.escapeHtml(attachments || '无') + '</p>' +
+        '</div>' +
+        '</div>';
+    Utils.showModal({
+        id: 'dynamic-detail-modal',
+        title: '动态详情',
+        content: content,
+        size: 'md',
+        icon: 'mdi:information-outline'
+    });
+}
+
 function submitNewDynamic() {
     var title = document.getElementById('new-dynamic-title').value.trim();
     if (!title) {
-        alert('请填写动态标题');
+        Utils.showToast('warning', '请填写动态标题');
         return;
     }
     var desc = document.getElementById('new-dynamic-desc').value.trim();
@@ -2263,13 +2295,13 @@ function submitNewDynamic() {
         '<span class="text-[10px] text-gray-400"><iconify-icon icon="mdi:account-outline" class="mr-0.5"></iconify-icon>我</span>' +
         '</div>' +
         '</div>' +
-        '<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="alert(\'' +
+        '<button class="text-[11px] text-[#165DFF] hover:underline flex-shrink-0 mt-1" onclick="showDynamicDetail(\'' +
         escapeHtml(title) +
-        '\\n\\n案件：' +
+        '\', \'' +
         escapeHtml(caseName) +
-        '\\n' +
+        '\', \'' +
         (escapeHtml(desc.substring(0, 50)) || '') +
-        '\\n\\n附件：' +
+        '\', \'' +
         (AppState.dynamicAttachments.length > 0
             ? AppState.dynamicAttachments
                 .map(function (a) {

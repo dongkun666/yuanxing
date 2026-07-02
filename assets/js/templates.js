@@ -398,8 +398,9 @@ function submitUploadTemplate() {
     showToast('模板「' + name + '」已上传');
 }
 
-function deletePersonalTemplate(btn) {
-    if (!confirm('确定删除该模板?')) return;
+async function deletePersonalTemplate(btn) {
+    var confirmed = await Utils.showConfirm('确定删除该模板?');
+    if (!confirmed) return;
     // 数据驱动: 从 AppState.personalTemplates 按 id 删 + 持久化 + 重渲染
     if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
     var tr = btn.closest('tr');
@@ -861,7 +862,7 @@ function saveTemplateToPersonal(name) {
     if (typeof showToast === 'function') showToast('模板「' + name + '」已保存到个人模板库', 'success');
 }
 
-function deleteCategory(name) {
+async function deleteCategory(name) {
     // 检查该分类下是否还有模板 (在个人模板表格中)
     var rows = document.querySelectorAll('#template-tab-personal tbody tr');
     var hasTemplate = Array.from(rows).some(function (tr) {
@@ -872,7 +873,8 @@ function deleteCategory(name) {
         showToast('该分类下还有模板, 请先删除模板');
         return;
     }
-    if (!confirm('确定删除分类「' + name + '」?')) return;
+    var confirmed = await Utils.showConfirm('确定删除分类「' + name + '」?');
+    if (!confirmed) return;
     var item = document.querySelector('.category-item[data-category="' + name + '"]');
     if (item) item.remove();
     // 同步移除个人模板标签栏按钮
