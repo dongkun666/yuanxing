@@ -205,36 +205,80 @@ function renderPersonalTemplates() {
     if (headerCount) headerCount.textContent = '共 ' + AppState.personalTemplates.length + ' 个';
 }
 
+var _closeUploadTemplateModal = null;
+
 function openUploadTemplateModal() {
-    var modal = document.getElementById('upload-template-modal');
-    if (!modal) return;
-    // 同步分类下拉
-    var sel = document.getElementById('upload-template-category');
-    if (sel) {
-        sel.innerHTML = '<option value="">请选择分类</option>';
-        var cats = document.querySelectorAll('.category-item');
-        cats.forEach(function(item) {
-            var name = item.getAttribute('data-category');
-            var opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            sel.appendChild(opt);
-        });
-    }
-    // 重置表单
-    var nameInput = document.getElementById('upload-template-name');
-    if (nameInput) nameInput.value = '';
-    var fileInput = document.getElementById('upload-template-file');
-    if (fileInput) fileInput.value = '';
-    var filename = document.getElementById('upload-template-filename');
-    if (filename) filename.textContent = '点击或拖拽文件到此处';
-    modal.classList.remove('hidden');
+    var content =
+        '<div class="space-y-4">' +
+        '<div>' +
+        '<label class="text-xs text-fg-tertiary mb-1.5 block">模板名称 <span class="text-red-500">*</span></label>' +
+        '<input class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-name" placeholder="如：起诉状-借款合同 v3" maxlength="50" type="text"/>' +
+        '</div>' +
+        '<div>' +
+        '<label class="text-xs text-fg-tertiary mb-1.5 block">所属分类 <span class="text-red-500">*</span></label>' +
+        '<select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="upload-template-category">' +
+        '<option value="">请选择分类</option>' +
+        buildUploadCategoryOptions() +
+        '</select>' +
+        '</div>' +
+        '<div>' +
+        '<label class="text-xs text-fg-tertiary mb-1.5 block">文件格式</label>' +
+        '<div class="flex items-center gap-4 text-sm">' +
+        '<label class="flex items-center gap-1.5 cursor-pointer">' +
+        '<input checked class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="docx"/><span>.docx</span>' +
+        '</label>' +
+        '<label class="flex items-center gap-1.5 cursor-pointer">' +
+        '<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="pdf"/><span>.pdf</span>' +
+        '</label>' +
+        '<label class="flex items-center gap-1.5 cursor-pointer">' +
+        '<input class="text-brand focus:ring-brand" name="upload-template-format" type="radio" value="txt"/><span>.txt</span>' +
+        '</label>' +
+        '</div>' +
+        '</div>' +
+        '<div>' +
+        '<label class="text-xs text-fg-tertiary mb-1.5 block">模板文件 <span class="text-red-500">*</span></label>' +
+        '<div class="border-2 border-dashed border-bg-border rounded-lg p-6 text-center hover:border-brand transition-colors cursor-pointer" id="upload-template-dropzone" onclick="document.getElementById(\'upload-template-file\').click()">' +
+        '<iconify-icon class="text-3xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>' +
+        '<p class="text-sm text-fg-tertiary mt-2" id="upload-template-filename">点击或拖拽文件到此处</p>' +
+        '<p class="text-[10px] text-fg-tertiary mt-1">支持 .docx / .pdf / .txt, 单文件最大 10MB</p>' +
+        '<input accept=".docx,.pdf,.txt" class="hidden" id="upload-template-file" type="file" onchange="document.getElementById(\'upload-template-filename\').textContent = this.files[0] ? this.files[0].name : \'点击或拖拽文件到此处\'"/>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+
+    var footer =
+        '<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeUploadTemplateModal()">取消</button>' +
+        '<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-1.5 rounded-lg flex items-center gap-1.5" onclick="submitUploadTemplate()">' +
+        '<iconify-icon icon="mdi:cloud-upload-outline"></iconify-icon>上传' +
+        '</button>';
+
+    if (_closeUploadTemplateModal) _closeUploadTemplateModal();
+    _closeUploadTemplateModal = Utils.showModal({
+        id: 'upload-template-modal',
+        title: '上传模板',
+        icon: 'mdi:cloud-upload-outline',
+        content: content,
+        footer: footer,
+        size: 'md'
+    });
 }
 
+function buildUploadCategoryOptions() {
+    // 从主页面个人模板标签栏同步分类 (排除"全部")
+    var tabs = document.querySelectorAll('.personal-category-tab[data-category]:not([data-category="all"])');
+    var html = '';
+    tabs.forEach(function (tab) {
+        var name = tab.getAttribute('data-category');
+        if (name) html += '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>';
+    });
+    return html;
+}
 
 function closeUploadTemplateModal() {
-    var modal = document.getElementById('upload-template-modal');
-    if (modal) modal.classList.add('hidden');
+    if (_closeUploadTemplateModal) {
+        _closeUploadTemplateModal();
+        _closeUploadTemplateModal = null;
+    }
 }
 
 
@@ -310,14 +354,78 @@ function deletePersonalTemplate(btn) {
     }
 }
 
+var _closeCategoryManageModal = null;
+
 function openCategoryManageModal() {
-    var modal = document.getElementById('category-manage-modal');
-    if (modal) modal.classList.remove('hidden');
+    var content =
+        '<!-- 新建分类输入区 -->' +
+        '<div class="pb-4 mb-4 border-b border-gray-100">' +
+        '<label class="text-xs text-fg-tertiary mb-2 block">新建分类</label>' +
+        '<div class="flex items-center gap-2">' +
+        '<input class="flex-1 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white" id="new-category-input" placeholder="如：劳动仲裁类、知识产权类..." type="text" maxlength="20" onkeydown="if(event.key===\'Enter\') addCategory()"/>' +
+        '<button class="text-sm text-white bg-brand hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-1" onclick="addCategory()">' +
+        '<iconify-icon icon="mdi:plus"></iconify-icon>添加' +
+        '</button>' +
+        '</div>' +
+        '</div>' +
+        '<!-- 分类列表 -->' +
+        '<div class="text-xs text-fg-tertiary mb-3" id="category-list-count">共 0 个分类</div>' +
+        '<div class="space-y-2" id="category-list"></div>';
+
+    var footer =
+        '<button class="text-sm bg-white border border-bg-border hover:bg-gray-50 px-4 py-1.5 rounded-lg" onclick="closeCategoryManageModal()">关闭</button>';
+
+    if (_closeCategoryManageModal) _closeCategoryManageModal();
+    _closeCategoryManageModal = Utils.showModal({
+        id: 'category-manage-modal',
+        title: '个人模板分类管理',
+        icon: 'mdi:folder-cog-outline',
+        content: content,
+        footer: footer,
+        size: 'md'
+    });
+
+    // 同步现有分类到弹窗列表 (从主页面标签栏读取)
+    syncCategoryListToModal();
+}
+
+// 从主页面个人模板标签栏同步分类到弹窗内的列表
+function syncCategoryListToModal() {
+    var list = document.getElementById('category-list');
+    var countEl = document.getElementById('category-list-count');
+    if (!list) return;
+    list.innerHTML = '';
+    var tabs = document.querySelectorAll('.personal-category-tab[data-category]:not([data-category="all"])');
+    tabs.forEach(function (tab) {
+        var name = tab.getAttribute('data-category');
+        if (!name) return;
+        // 计算该分类下的模板数
+        var count = 0;
+        var rows = document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]');
+        rows.forEach(function (tr) {
+            if (tr.getAttribute('data-template-category') === name) count++;
+        });
+        var div = document.createElement('div');
+        div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
+        div.setAttribute('data-category', name);
+        div.innerHTML =
+            '<div class="flex items-center gap-3">' +
+            '<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>' +
+            '<span class="text-sm text-fg-primary font-medium">' + escapeHtml(name) + '</span>' +
+            '<span class="text-[10px] text-fg-tertiary">(' + count + ' 个模板)</span>' +
+            '</div>' +
+            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, '\\\'') + '\')">' +
+            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
+        list.appendChild(div);
+    });
+    if (countEl) countEl.textContent = '共 ' + tabs.length + ' 个分类';
 }
 
 function closeCategoryManageModal() {
-    var modal = document.getElementById('category-manage-modal');
-    if (modal) modal.classList.add('hidden');
+    if (_closeCategoryManageModal) {
+        _closeCategoryManageModal();
+        _closeCategoryManageModal = null;
+    }
 }
 
 function addCategory() {
