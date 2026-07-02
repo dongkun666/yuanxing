@@ -4,8 +4,9 @@ module.exports = {
     './index.html',
     './templates/modals.html',
     './templates/views/**/*.html',
-    './templates/marketplace/**/*.html',  // W30 (2026-07-01 lex-coder) Phase 6.1 Marketplace 5 页面
-    './assets/js/script.js'
+    './templates/marketplace/**/*.html',
+    './assets/js/*.js',
+    './assets/js/**/*.js'
   ],
   theme: {
     extend: {

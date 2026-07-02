@@ -147,6 +147,7 @@
             xl: 'max-w-2xl'
         };
 
+        var previousFocus = document.activeElement;
         var modal = document.getElementById(id);
         if (!modal) {
             modal = document.createElement('div');
@@ -160,18 +161,22 @@
             document.body.appendChild(modal);
         }
 
+        if (title) {
+            modal.setAttribute('aria-labelledby', id + '-title');
+        }
+
         var iconHtml = icon ? '<iconify-icon icon="' + icon + '" class="text-brand text-lg"></iconify-icon>' : '';
 
         modal.innerHTML =
             '<div class="bg-white rounded-2xl shadow-2xl w-full ' +
             sizeClasses[size] +
-            ' overflow-hidden">' +
+            ' overflow-hidden" role="document">' +
             '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<h3 id="' + id + '-title" class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
             iconHtml +
             title +
             '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="close()" aria-label="关闭">' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary focus:outline-none focus:ring-2 focus:ring-brand/40" data-modal-close aria-label="关闭">' +
             '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
             '</button>' +
             '</div>' +
@@ -185,12 +190,37 @@
                 : '') +
             '</div>';
 
+        function trapFocus(e) {
+            if (e.key !== 'Tab') return;
+            var focusable = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            if (focusable.length === 0) return;
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        }
+
         function close() {
             modal.classList.add('hidden');
             if (escClose) {
                 document.removeEventListener('keydown', onKeyDown);
             }
+            document.removeEventListener('keydown', trapFocus);
             delete _modalRegistry[id];
+            if (previousFocus && typeof previousFocus.focus === 'function') {
+                try { previousFocus.focus(); } catch (ignore) {}
+            }
             onClose();
         }
 
@@ -198,10 +228,23 @@
             if (e.key === 'Escape') close();
         }
 
+        var closeBtn = modal.querySelector('[data-modal-close]');
+        if (closeBtn) {
+            closeBtn.onclick = close;
+        }
+
         modal.classList.remove('hidden');
         if (escClose) {
             document.addEventListener('keydown', onKeyDown);
         }
+        document.addEventListener('keydown', trapFocus);
+
+        setTimeout(function () {
+            var firstInput = modal.querySelector(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            if (firstInput) firstInput.focus();
+        }, 50);
 
         _modalRegistry[id] = close;
 

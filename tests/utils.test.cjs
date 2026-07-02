@@ -3,27 +3,39 @@
 const assert = require('assert');
 const { describe, it } = require('node:test');
 
+function createMockModal() {
+    var modal = {
+        id: '',
+        className: '',
+        innerHTML: '',
+        setAttribute: function() {},
+        getAttribute: function() { return ''; },
+        addEventListener: function() {},
+        removeEventListener: function() {},
+        querySelector: function() { return { onclick: function() {}, focus: function() {} }; },
+        querySelectorAll: function() { return []; },
+        classList: { add: function() {}, remove: function() {}, contains: function() { return false; } },
+        appendChild: function() {}
+    };
+    return modal;
+}
+
 describe('Utils.showModal', function() {
-    it('should create modal with basic options', function() {
+    it('should create modal with basic options', async function() {
+        var mockModal = createMockModal();
         globalThis.document = {
             getElementById: function() { return null; },
-            createElement: function(type) {
-                return {
-                    id: '',
-                    className: '',
-                    setAttribute: function() {},
-                    addEventListener: function() {},
-                    innerHTML: '',
-                    appendChild: function() {},
-                    classList: { add: function() {}, remove: function() {} }
-                };
-            },
+            createElement: function(type) { return createMockModal(); },
             body: { appendChild: function() {} },
             addEventListener: function() {},
-            removeEventListener: function() {}
+            removeEventListener: function() {},
+            activeElement: null
         };
         globalThis.window = { location: {} };
-        globalThis.console = { error: function() {}, log: function() {} };
+        globalThis.console = { error: function() {}, log: function() {}, warn: function() {} };
+
+        delete require.cache[require.resolve('../assets/js/utils.js')];
+        delete globalThis.Utils;
 
         require('../assets/js/utils.js');
 
@@ -33,10 +45,13 @@ describe('Utils.showModal', function() {
             id: 'test-modal',
             title: 'Test Title',
             content: '<div>Test Content</div>',
-            footer: '<button>Close</button>'
+            footer: '<button>Close</button>',
+            escClose: false
         });
 
         assert.ok(typeof close === 'function', 'showModal should return close function');
+
+        await new Promise(function(resolve) { setTimeout(resolve, 100); });
     });
 });
 
@@ -59,6 +74,11 @@ describe('Utils.escapeHtml', function() {
                 return mockDiv;
             }
         };
+        globalThis.console = { warn: function() {} };
+
+        delete require.cache[require.resolve('../assets/js/utils.js')];
+        delete globalThis.Utils;
+
         require('../assets/js/utils.js');
         assert.strictEqual(Utils.escapeHtml('<script>alert(1)</script>'), '&lt;script&gt;alert(1)&lt;/script&gt;');
         assert.strictEqual(Utils.escapeHtml('"test"'), '&quot;test&quot;');
@@ -69,6 +89,12 @@ describe('Utils.escapeHtml', function() {
 
 describe('Utils.debounce', function() {
     it('should debounce function calls', function() {
+        delete require.cache[require.resolve('../assets/js/utils.js')];
+        delete globalThis.Utils;
+
+        globalThis.document = { createElement: function() { return { textContent: '' }; } };
+        globalThis.console = { warn: function() {} };
+
         require('../assets/js/utils.js');
         var count = 0;
         var fn = Utils.debounce(function() { count++; }, 100);
@@ -79,6 +105,12 @@ describe('Utils.debounce', function() {
 
 describe('Utils.formatDate', function() {
     it('should format dates correctly', function() {
+        delete require.cache[require.resolve('../assets/js/utils.js')];
+        delete globalThis.Utils;
+
+        globalThis.document = { createElement: function() { return { textContent: '' }; } };
+        globalThis.console = { warn: function() {} };
+
         require('../assets/js/utils.js');
         assert.ok(Utils.formatDate(new Date('2026-01-15'), 'YYYY-MM-DD') === '2026-01-15');
     });

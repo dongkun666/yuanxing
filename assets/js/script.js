@@ -1052,10 +1052,12 @@
         tabs.forEach(function (t) {
             t.classList.remove('text-brand');
             t.classList.add('text-fg-tertiary');
+            t.setAttribute('aria-selected', 'false');
         });
         if (btn) {
             btn.classList.remove('text-fg-tertiary');
             btn.classList.add('text-brand');
+            btn.setAttribute('aria-selected', 'true');
         }
     }
 

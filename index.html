@@ -330,25 +330,25 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 </footer>
 <!-- 移动端底部导航栏 -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-bg-border z-[90] pb-[env(safe-area-inset-bottom)]" id="mobile-tab-bar">
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-bg-border z-[90] pb-[env(safe-area-inset-bottom)]" id="mobile-tab-bar" role="tablist" aria-label="主导航">
 <div class="flex items-center justify-around h-14">
-<button class="flex flex-col items-center justify-center flex-1 h-full text-brand" onclick="switchView('workstation', this); setMobileTabActive(this);" data-mobile-tab="workstation">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-brand" onclick="switchView('workstation', this); setMobileTabActive(this);" data-mobile-tab="workstation" role="tab" aria-selected="true" aria-label="工作台">
 <iconify-icon class="text-xl mb-0.5" icon="mdi:view-dashboard-outline"></iconify-icon>
 <span class="text-[10px]">工作台</span>
 </button>
-<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToList('case-list', this); setMobileTabActive(this);" data-mobile-tab="cases">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToList('case-list', this); setMobileTabActive(this);" data-mobile-tab="cases" role="tab" aria-selected="false" aria-label="案件">
 <iconify-icon class="text-xl mb-0.5" icon="mdi:briefcase-outline"></iconify-icon>
 <span class="text-[10px]">案件</span>
 </button>
-<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('knowledge', this); setMobileTabActive(this);" data-mobile-tab="knowledge">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('knowledge', this); setMobileTabActive(this);" data-mobile-tab="knowledge" role="tab" aria-selected="false" aria-label="知识">
 <iconify-icon class="text-xl mb-0.5" icon="mdi:book-open-page-variant"></iconify-icon>
 <span class="text-[10px]">知识</span>
 </button>
-<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('marketplace-lawyers', this); setMobileTabActive(this);" data-mobile-tab="market">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('marketplace-lawyers', this); setMobileTabActive(this);" data-mobile-tab="market" role="tab" aria-selected="false" aria-label="市场">
 <iconify-icon class="text-xl mb-0.5" icon="mdi:storefront-outline"></iconify-icon>
 <span class="text-[10px]">市场</span>
 </button>
-<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToMemberCenter(); setMobileTabActive(this);" data-mobile-tab="profile">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToMemberCenter(); setMobileTabActive(this);" data-mobile-tab="profile" role="tab" aria-selected="false" aria-label="我的">
 <iconify-icon class="text-xl mb-0.5" icon="mdi:account-circle-outline"></iconify-icon>
 <span class="text-[10px]">我的</span>
 </button>
