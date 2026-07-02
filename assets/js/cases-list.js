@@ -39,6 +39,8 @@
         var pageSizeSelect = document.getElementById('casePageSize');
         var paginationInfo = document.getElementById('casePaginationInfo');
         var paginationBtns = document.getElementById('casePaginationBtns');
+        var emptyState = document.getElementById('caseEmptyState');
+        var tableElement = tbody ? tbody.closest('table') : null;
 
         if (!searchInput || !statusFilter || !typeFilter || !tbody) return;
 
@@ -77,6 +79,18 @@
 
         if (resultCount) {
             resultCount.textContent = '共 ' + filteredRows.length + ' 条';
+        }
+
+        if (emptyState && tableElement) {
+            if (filteredRows.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                tableElement.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                tableElement.classList.remove('hidden');
+            }
         }
 
         var totalPages = Math.ceil(filteredRows.length / pageSize) || 1;
@@ -400,41 +414,69 @@
         var clientName = document.getElementById('new-client-name').value.trim() || '待补充';
         var opponentName = document.getElementById('new-opponent-name').value.trim() || '待补充';
 
-        var statusClass = '';
+        var statusBadgeClass = '';
+        var statusIconColor = '';
         if (status === '进行中') {
-            statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            statusBadgeClass = 'status-badge status-progress';
+            statusIconColor = 'text-brand';
         } else if (status === '待开庭') {
-            statusClass = 'bg-amber-100 text-amber-700';
+            statusBadgeClass = 'status-badge status-pending';
+            statusIconColor = 'text-warning';
         } else if (status === '已结案') {
-            statusClass = 'bg-green-100 text-green-700';
+            statusBadgeClass = 'status-badge status-done';
+            statusIconColor = 'text-success';
         } else if (status === '已归档') {
-            statusClass = 'bg-gray-100 text-gray-600';
+            statusBadgeClass = 'status-badge status-done';
+            statusIconColor = 'text-fg-tertiary';
         } else {
-            statusClass = 'bg-[#E8F3FF] text-[#165DFF]';
+            statusBadgeClass = 'status-badge status-progress';
+            statusIconColor = 'text-brand';
         }
 
         var tbody = document.getElementById('caseTableBody');
         if (tbody) {
             var index = tbody.querySelectorAll('tr').length;
             var tr = document.createElement('tr');
-            tr.className = 'hover:bg-[#F7F8FA] transition-colors';
+            tr.className = 'case-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group';
             tr.setAttribute('data-status', status);
             tr.setAttribute('data-type', caseType);
+            tr.setAttribute('data-row-idx', index);
+            tr.style.opacity = '1';
+            tr.style.animation = 'none';
             tr.innerHTML = `
-                    <td class="py-3 px-4 text-xs font-medium text-[#1D2129] truncate" title="${caseName}">${caseName}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseNumber}">${caseNumber}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${caseType}">${caseType}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${clientName}">${clientName}</td>
-                    <td class="py-3 px-4 text-xs text-[#4E5969] truncate" title="${opponentName}">${opponentName}</td>
-                    <td class="text-center py-3 px-4 whitespace-nowrap"><span class="text-[10px] ${statusClass} font-medium px-2 py-0.5 rounded inline-block">${status}</span></td>
-                    <td class="text-center py-3 px-4 text-xs text-[#4E5969] truncate" title="待安排">待安排</td>
-                    <td class="text-center py-3 px-4 whitespace-nowrap">
-                        <div class="flex items-center justify-center gap-2">
-                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="openCaseDetail(${index})">详情</button>
-                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
-                            <button class="text-xs text-[#165DFF] hover:underline flex-shrink-0" onclick="archiveCase()">归档</button>
-                            <span class="text-[#E5E6EB] flex-shrink-0">|</span>
-                            <button class="text-xs text-red-500 hover:underline flex-shrink-0" onclick="deleteCase(${index})">删除</button>
+                    <td class="py-4 px-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="mdi:briefcase-outline" class="${statusIconColor} text-base"></iconify-icon>
+                            </div>
+                            <span class="text-sm font-medium text-fg-primary truncate" title="${caseName}">${caseName}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-5 text-sm text-fg-secondary truncate font-mono" title="${caseNumber}">${caseNumber}</td>
+                    <td class="py-4 px-5 text-sm text-fg-secondary truncate" title="${caseType}">${caseType}</td>
+                    <td class="py-4 px-5 text-sm text-fg-secondary truncate" title="${clientName}">${clientName}</td>
+                    <td class="py-4 px-5 text-sm text-fg-secondary truncate" title="${opponentName}">${opponentName}</td>
+                    <td class="text-center py-4 px-5 whitespace-nowrap"><span class="${statusBadgeClass} inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>${status}</span></td>
+                    <td class="text-center py-4 px-5 text-sm text-fg-secondary truncate" title="待安排">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <iconify-icon icon="mdi:calendar-clock-outline" class="text-fg-tertiary text-base"></iconify-icon>
+                            <span>待安排</span>
+                        </div>
+                    </td>
+                    <td class="text-center py-4 px-5 whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1">
+                            <button class="table-action-btn table-action-btn-primary" onclick="openCaseDetail(${index})">
+                                <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
+                                详情
+                            </button>
+                            <button class="table-action-btn table-action-btn-default" onclick="archiveCase()">
+                                <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
+                                归档
+                            </button>
+                            <button class="table-action-btn table-action-btn-danger" onclick="deleteCase(${index})">
+                                <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
+                                删除
+                            </button>
                         </div>
                     </td>
                 `;

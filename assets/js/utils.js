@@ -490,6 +490,237 @@
         });
     }
 
+    /**
+     * 空状态组件预设配置
+     */
+    var emptyStatePresets = {
+        'empty-list': {
+            icon: 'mdi:folder-open-outline',
+            title: '暂无数据',
+            description: '列表中还没有任何内容，快来添加第一条吧',
+            iconClass: 'empty-list'
+        },
+        'no-result': {
+            icon: 'mdi:magnify-scan',
+            title: '没有找到结果',
+            description: '没有匹配的内容，请尝试其他关键词',
+            iconClass: 'no-result'
+        },
+        'error': {
+            icon: 'mdi:alert-circle-outline',
+            title: '加载失败',
+            description: '抱歉，加载过程中出现了问题，请稍后重试',
+            iconClass: 'error'
+        },
+        'loading': {
+            icon: 'mdi:loading',
+            title: '加载中',
+            description: '正在加载数据，请稍候...',
+            iconClass: 'loading'
+        }
+    };
+
+    /**
+     * 创建空状态组件
+     * @param {Object} options - 配置选项
+     * @param {string} [options.preset] - 预设类型: 'empty-list' | 'no-result' | 'error' | 'loading'
+     * @param {string} [options.icon] - 自定义图标 (iconify icon name)
+     * @param {string} [options.title] - 标题文本
+     * @param {string} [options.description] - 描述文本
+     * @param {string} [options.actionText] - 主按钮文本
+     * @param {Function} [options.actionHandler] - 主按钮点击回调
+     * @param {string} [options.secondaryActionText] - 次按钮文本
+     * @param {Function} [options.secondaryActionHandler] - 次按钮点击回调
+     * @param {HTMLElement|string} [options.container] - 容器元素或选择器，传入则自动挂载
+     * @param {boolean} [options.returnElement=false] - 是否返回 DOM 元素，默认返回 HTML 字符串
+     * @returns {string|HTMLElement} - HTML 字符串或 DOM 元素
+     */
+    function createEmptyState(options) {
+        options = options || {};
+        var preset = options.preset ? emptyStatePresets[options.preset] : null;
+        var icon = options.icon || (preset ? preset.icon : 'mdi:folder-open-outline');
+        var title = options.title !== undefined ? options.title : (preset ? preset.title : '暂无数据');
+        var description = options.description !== undefined ? options.description : (preset ? preset.description : '');
+        var iconClass = preset ? preset.iconClass : '';
+        var actionText = options.actionText || '';
+        var actionHandler = options.actionHandler || null;
+        var secondaryActionText = options.secondaryActionText || '';
+        var secondaryActionHandler = options.secondaryActionHandler || null;
+        var returnElement = options.returnElement === true;
+        var container = options.container || null;
+
+        var actionHtml = '';
+        if (actionText || secondaryActionText) {
+            actionHtml = '<div class="empty-state-action">';
+            if (secondaryActionText) {
+                actionHtml += '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-empty-secondary>' + escapeHtml(secondaryActionText) + '</button>';
+            }
+            if (actionText) {
+                actionHtml += '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" data-empty-action>' + escapeHtml(actionText) + '</button>';
+            }
+            actionHtml += '</div>';
+        }
+
+        var html =
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon ' + iconClass + '">' +
+            '<iconify-icon icon="' + icon + '"></iconify-icon>' +
+            '</div>' +
+            (title ? '<div class="empty-state-title">' + escapeHtml(title) + '</div>' : '') +
+            (description ? '<div class="empty-state-description">' + escapeHtml(description) + '</div>' : '') +
+            actionHtml +
+            '</div>';
+
+        if (returnElement || container) {
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            var el = wrapper.firstElementChild;
+
+            if (actionHandler && el.querySelector('[data-empty-action]')) {
+                el.querySelector('[data-empty-action]').addEventListener('click', actionHandler);
+            }
+            if (secondaryActionHandler && el.querySelector('[data-empty-secondary]')) {
+                el.querySelector('[data-empty-secondary]').addEventListener('click', secondaryActionHandler);
+            }
+
+            if (container) {
+                var containerEl = typeof container === 'string' ? document.querySelector(container) : container;
+                if (containerEl) {
+                    containerEl.innerHTML = '';
+                    containerEl.appendChild(el);
+                }
+            }
+
+            if (returnElement) {
+                return el;
+            }
+            return html;
+        }
+
+        return html;
+    }
+
+    /**
+     * 创建骨架屏组件
+     * @param {string} type - 骨架屏类型: 'list' | 'card' | 'table' | 'text'
+     * @param {number} [count=1] - 数量
+     * @returns {string} - HTML 字符串
+     */
+    function createSkeleton(type, count) {
+        if (!count || count < 1) count = 1;
+        var html = '';
+
+        switch (type) {
+        case 'list':
+            for (var i = 0; i < count; i++) {
+                html +=
+                        '<div class="skeleton-list-item">' +
+                        '<div class="skeleton skeleton-avatar"></div>' +
+                        '<div class="skeleton-content">' +
+                        '<div class="skeleton skeleton-line medium"></div>' +
+                        '<div class="skeleton skeleton-line short"></div>' +
+                        '</div>' +
+                        '</div>';
+            }
+            break;
+
+        case 'card':
+            for (var j = 0; j < count; j++) {
+                html +=
+                        '<div class="skeleton-card">' +
+                        '<div class="skeleton skeleton-title"></div>' +
+                        '<div class="skeleton skeleton-text"></div>' +
+                        '<div class="skeleton skeleton-text"></div>' +
+                        '<div class="skeleton skeleton-text"></div>' +
+                        '</div>';
+            }
+            break;
+
+        case 'table':
+            html += '<div class="space-y-0">';
+            for (var k = 0; k < count; k++) {
+                html += '<div class="skeleton skeleton-table-row" style="margin-bottom: 0; border-radius: 0;"></div>';
+            }
+            html += '</div>';
+            break;
+
+        case 'text':
+            for (var l = 0; l < count; l++) {
+                var widthClass = l === count - 1 ? 'short' : 'medium';
+                html += '<div class="skeleton skeleton-line ' + widthClass + '"></div>';
+            }
+            break;
+
+        default:
+            for (var m = 0; m < count; m++) {
+                html += '<div class="skeleton skeleton-line"></div>';
+            }
+        }
+
+        return html;
+    }
+
+    /**
+     * 全局页面加载状态
+     */
+    var _pageLoadingEl = null;
+    var _pageLoadingTimer = null;
+
+    /**
+     * 显示全局加载状态
+     * @param {string} [text] - 加载文字
+     */
+    function showPageLoading(text) {
+        if (!_pageLoadingEl) {
+            _pageLoadingEl = document.createElement('div');
+            _pageLoadingEl.className = 'page-loading';
+            _pageLoadingEl.innerHTML =
+                '<div class="page-loading-spinner"></div>' +
+                '<div class="page-loading-text">加载中...</div>';
+            document.body.appendChild(_pageLoadingEl);
+        }
+
+        if (text !== undefined) {
+            var textEl = _pageLoadingEl.querySelector('.page-loading-text');
+            if (textEl) {
+                textEl.textContent = text;
+            }
+        }
+
+        if (_pageLoadingTimer) {
+            clearTimeout(_pageLoadingTimer);
+            _pageLoadingTimer = null;
+        }
+
+        requestAnimationFrame(function () {
+            if (_pageLoadingEl) {
+                _pageLoadingEl.classList.add('visible');
+            }
+        });
+    }
+
+    /**
+     * 隐藏全局加载状态
+     */
+    function hidePageLoading() {
+        if (!_pageLoadingEl) return;
+
+        _pageLoadingEl.classList.remove('visible');
+
+        if (_pageLoadingTimer) {
+            clearTimeout(_pageLoadingTimer);
+        }
+        _pageLoadingTimer = setTimeout(function () {
+            if (_pageLoadingEl && !_pageLoadingEl.classList.contains('visible')) {
+                if (_pageLoadingEl.parentNode) {
+                    _pageLoadingEl.remove();
+                }
+                _pageLoadingEl = null;
+            }
+            _pageLoadingTimer = null;
+        }, 300);
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -502,7 +733,11 @@
         closeAllModals: closeAllModals,
         showToast: showToast,
         showConfirm: showConfirm,
-        showPrompt: showPrompt
+        showPrompt: showPrompt,
+        createEmptyState: createEmptyState,
+        createSkeleton: createSkeleton,
+        showPageLoading: showPageLoading,
+        hidePageLoading: hidePageLoading
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

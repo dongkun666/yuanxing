@@ -27,26 +27,36 @@ function switchKnowledgeMainTab(name, el) {
     // 1. 切换 tab 样式
     var tabs = document.querySelectorAll('#view-knowledge [id^="kb-tab-"]');
     tabs.forEach(function (t) {
-        t.classList.remove('bg-[#F2F5FF]', 'text-[#165DFF]');
-        t.classList.add('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-        // 数字 badge 改灰
+        // 移除激活态样式
+        t.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+        t.classList.add('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:-translate-y-0.5');
+        // badge 样式重置
         var badge = t.querySelector('span:last-child');
         if (badge) {
-            badge.classList.remove('bg-white', 'text-[#165DFF]');
-            if (name === 'lint' && t.id === 'kb-tab-lint') {
-                badge.classList.add('bg-[#FFF3E0]', 'text-[#FAAD14]');
+            badge.classList.remove('bg-white/20', 'text-white');
+            // 根据 tab 类型恢复 badge 样式
+            if (t.id === 'kb-tab-lint') {
+                badge.classList.add('bg-urgent-tint', 'text-urgent');
+                badge.classList.remove('bg-bg', 'text-fg-secondary', 'bg-purple-100', 'text-purple-700');
+            } else if (t.id === 'kb-tab-judicial') {
+                badge.classList.add('bg-purple-100', 'text-purple-700');
+                badge.classList.remove('bg-bg', 'text-fg-secondary', 'bg-urgent-tint', 'text-urgent');
             } else {
-                badge.classList.add('bg-[#F2F3F5]', 'text-[#4E5969]');
+                badge.classList.add('bg-bg', 'text-fg-secondary');
+                badge.classList.remove('bg-urgent-tint', 'text-urgent', 'bg-purple-100', 'text-purple-700');
             }
         }
     });
-    el.classList.remove('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-    el.classList.add('bg-[#F2F5FF]', 'text-[#165DFF]');
-    // 当前 tab 的数字 badge 蓝底
+
+    // 设置当前 tab 激活态
+    el.classList.remove('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:-translate-y-0.5');
+    el.classList.add('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+
+    // 当前 tab 的 badge 样式
     var activeBadge = el.querySelector('span:last-child');
-    if (activeBadge && name === 'ingest') {
-        activeBadge.classList.remove('bg-[#F2F3F5]', 'text-[#4E5969]');
-        activeBadge.classList.add('bg-white', 'text-[#165DFF]');
+    if (activeBadge) {
+        activeBadge.classList.remove('bg-bg', 'text-fg-secondary', 'bg-urgent-tint', 'text-urgent', 'bg-purple-100', 'text-purple-700');
+        activeBadge.classList.add('bg-white/20', 'text-white');
     }
 
     // 2. 切换 panel
@@ -55,7 +65,13 @@ function switchKnowledgeMainTab(name, el) {
         p.classList.add('hidden');
     });
     var active = document.getElementById('kb-panel-' + name);
-    if (active) active.classList.remove('hidden');
+    if (active) {
+        active.classList.remove('hidden');
+        // 触发面板内的动画
+        if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+            Animations.initPageAnimations(active);
+        }
+    }
 }
 
 /**

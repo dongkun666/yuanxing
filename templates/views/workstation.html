@@ -126,6 +126,37 @@
             <!-- 三态过滤 -->
             <div id="today-schedule-filter" class="flex items-center gap-1 mb-3"></div>
             <div class="flex-1 space-y-0">
+                <!-- 
+                  骨架屏示例：
+                  加载数据前显示骨架屏，数据加载完成后替换为真实内容
+                  使用方式：
+                  1. 加载前: document.getElementById('today-schedule-skeleton').classList.remove('hidden');
+                  2. 加载完成: document.getElementById('today-schedule-skeleton').classList.add('hidden');
+                  3. 或者使用 Utils.createSkeleton('list', 5) 动态生成
+                -->
+                <div id="today-schedule-skeleton" class="hidden">
+                    <div class="skeleton-list-item">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-line medium"></div>
+                            <div class="skeleton skeleton-line short"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-line medium"></div>
+                            <div class="skeleton skeleton-line short"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton skeleton-line medium"></div>
+                            <div class="skeleton skeleton-line short"></div>
+                        </div>
+                    </div>
+                </div>
                 <div id="today-schedule-list" class="space-y-1.5"></div>
                 <div id="today-schedule-empty" class="hidden flex flex-col items-center justify-center py-8 text-fg-tertiary">
                     <div class="w-16 h-16 rounded-full bg-bg-subtle flex items-center justify-center mb-3">

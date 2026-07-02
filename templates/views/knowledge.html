@@ -1,92 +1,124 @@
 ﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-knowledge">
 <div class="max-w-6xl mx-auto w-full space-y-5">
 <!-- 顶部 4 概念卡 (LLM Wiki 视角) -->
-<div class="grid grid-cols-4 gap-4">
-<div class="bg-white rounded-xl border border-bg-border p-4">
-<div class="flex items-center justify-between mb-1">
-<p class="text-xs text-fg-tertiary">原始资料 (Raw)</p>
-<div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-base text-brand" icon="mdi:file-document-multiple-outline"></iconify-icon>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="kb-stat-card bg-white rounded-2xl border border-bg-border p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="kb-stats" data-stagger-index="0" data-delay="0.05">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs text-fg-tertiary font-medium">原始资料 (Raw)</p>
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-base text-white" icon="mdi:file-document-multiple-outline"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-fg-primary leading-tight">42</p>
-<div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-success whitespace-nowrap">↑ 7 天 +3</p>
-<svg class="overflow-visible w-14 h-5" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 20.4 L 11.6 22.8 L 17.5 18.0 L 23.3 15.6 L 29.1 16.8 L 34.9 12.0 L 40.7 13.2 L 46.5 8.4 L 52.4 3.6 L 58.2 6.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#165DFF" fill-opacity="0.12"/>
+<p class="text-2xl font-bold text-fg-primary leading-tight kb-tabular-nums">42</p>
+<div class="flex items-end justify-between mt-2">
+<p class="text-[10px] text-success whitespace-nowrap font-medium">↑ 7 天 +3</p>
+<div class="sparkline-container">
+<svg class="overflow-visible w-16 h-6" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" style="stop-color:#165DFF;stop-opacity:0.3" />
+<stop offset="100%" style="stop-color:#165DFF;stop-opacity:0.02" />
+</linearGradient>
+</defs>
+<path d="M 0.0 24.0 L 5.8 20.4 L 11.6 22.8 L 17.5 18.0 L 23.3 15.6 L 29.1 16.8 L 34.9 12.0 L 40.7 13.2 L 46.5 8.4 L 52.4 3.6 L 58.2 6.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="url(#grad1)"/>
 <path d="M 0.0 24.0 L 5.8 20.4 L 11.6 22.8 L 17.5 18.0 L 23.3 15.6 L 29.1 16.8 L 34.9 12.0 L 40.7 13.2 L 46.5 8.4 L 52.4 3.6 L 58.2 6.0 L 64.0 0.0" stroke="#165DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4">
-<div class="flex items-center justify-between mb-1">
-<p class="text-xs text-fg-tertiary">Wiki 页面</p>
-<div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-<iconify-icon class="text-base text-wiki" icon="mdi:graph-outline"></iconify-icon>
+</div>
+<div class="kb-stat-card bg-white rounded-2xl border border-bg-border p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="kb-stats" data-stagger-index="1" data-delay="0.05">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs text-fg-tertiary font-medium">Wiki 页面</p>
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-base text-white" icon="mdi:graph-outline"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-fg-primary leading-tight">186</p>
-<div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-wiki whitespace-nowrap">由 LLM 维护</p>
-<svg class="overflow-visible w-14 h-5" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 21.1 L 11.6 18.5 L 17.5 16.0 L 23.3 13.8 L 29.1 11.3 L 34.9 8.7 L 40.7 6.5 L 46.5 4.7 L 52.4 2.9 L 58.2 1.5 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#9333EA" fill-opacity="0.12"/>
+<p class="text-2xl font-bold text-fg-primary leading-tight kb-tabular-nums">186</p>
+<div class="flex items-end justify-between mt-2">
+<p class="text-[10px] text-wiki whitespace-nowrap font-medium">由 LLM 维护</p>
+<div class="sparkline-container">
+<svg class="overflow-visible w-16 h-6" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" style="stop-color:#9333EA;stop-opacity:0.3" />
+<stop offset="100%" style="stop-color:#9333EA;stop-opacity:0.02" />
+</linearGradient>
+</defs>
+<path d="M 0.0 24.0 L 5.8 21.1 L 11.6 18.5 L 17.5 16.0 L 23.3 13.8 L 29.1 11.3 L 34.9 8.7 L 40.7 6.5 L 46.5 4.7 L 52.4 2.9 L 58.2 1.5 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="url(#grad2)"/>
 <path d="M 0.0 24.0 L 5.8 21.1 L 11.6 18.5 L 17.5 16.0 L 23.3 13.8 L 29.1 11.3 L 34.9 8.7 L 40.7 6.5 L 46.5 4.7 L 52.4 2.9 L 58.2 1.5 L 64.0 0.0" stroke="#9333EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4">
-<div class="flex items-center justify-between mb-1">
-<p class="text-xs text-fg-tertiary">主题树</p>
-<div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-base text-success" icon="mdi:family-tree"></iconify-icon>
+</div>
+<div class="kb-stat-card bg-white rounded-2xl border border-bg-border p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="kb-stats" data-stagger-index="2" data-delay="0.05">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs text-fg-tertiary font-medium">主题树</p>
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-success flex items-center justify-center shadow-md shadow-success/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-base text-white" icon="mdi:family-tree"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-fg-primary leading-tight">13</p>
-<div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-urgent whitespace-nowrap">● 2 个待补</p>
-<svg class="overflow-visible w-14 h-5" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 16.0 L 23.3 16.0 L 29.1 8.0 L 34.9 8.0 L 40.7 8.0 L 46.5 8.0 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="#16A34A" fill-opacity="0.12"/>
+<p class="text-2xl font-bold text-fg-primary leading-tight kb-tabular-nums">13</p>
+<div class="flex items-end justify-between mt-2">
+<p class="text-[10px] text-urgent whitespace-nowrap font-medium">● 2 个待补</p>
+<div class="sparkline-container">
+<svg class="overflow-visible w-16 h-6" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" style="stop-color:#16A34A;stop-opacity:0.3" />
+<stop offset="100%" style="stop-color:#16A34A;stop-opacity:0.02" />
+</linearGradient>
+</defs>
+<path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 16.0 L 23.3 16.0 L 29.1 8.0 L 34.9 8.0 L 40.7 8.0 L 46.5 8.0 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0 L 64.0 24 L 0.0 24 Z" fill="url(#grad3)"/>
 <path d="M 0.0 24.0 L 5.8 24.0 L 11.6 24.0 L 17.5 16.0 L 23.3 16.0 L 29.1 8.0 L 34.9 8.0 L 40.7 8.0 L 46.5 8.0 L 52.4 0.0 L 58.2 0.0 L 64.0 0.0" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
-<div class="bg-white rounded-xl border border-bg-border p-4">
-<div class="flex items-center justify-between mb-1">
-<p class="text-xs text-fg-tertiary">巡检状态</p>
-<div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-<iconify-icon class="text-base text-urgent" icon="mdi:shield-check-outline"></iconify-icon>
+</div>
+<div class="kb-stat-card bg-white rounded-2xl border border-bg-border p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="kb-stats" data-stagger-index="3" data-delay="0.05">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs text-fg-tertiary font-medium">巡检状态</p>
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-urgent flex items-center justify-center shadow-md shadow-urgent/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-base text-white" icon="mdi:shield-check-outline"></iconify-icon>
 </div>
 </div>
-<p class="text-2xl font-bold text-fg-primary leading-tight">4 <span class="text-xs font-normal text-fg-tertiary">项待处理</span></p>
-<div class="flex items-end justify-between mt-1.5">
-<p class="text-[10px] text-red-500">● 1 项紧急</p>
-<svg class="overflow-visible w-14 h-5" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M 0.0 0.0 L 5.8 9.6 L 11.6 4.8 L 17.5 14.4 L 23.3 19.2 L 29.1 9.6 L 34.9 14.4 L 40.7 24.0 L 46.5 19.2 L 52.4 14.4 L 58.2 19.2 L 64.0 19.2 L 64.0 24 L 0.0 24 Z" fill="#FAAD14" fill-opacity="0.12"/>
+<p class="text-2xl font-bold text-fg-primary leading-tight kb-tabular-nums">4 <span class="text-xs font-normal text-fg-tertiary">项待处理</span></p>
+<div class="flex items-end justify-between mt-2">
+<p class="text-[10px] text-red-500 font-medium">● 1 项紧急</p>
+<div class="sparkline-container">
+<svg class="overflow-visible w-16 h-6" viewBox="0 0 64 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" style="stop-color:#FAAD14;stop-opacity:0.3" />
+<stop offset="100%" style="stop-color:#FAAD14;stop-opacity:0.02" />
+</linearGradient>
+</defs>
+<path d="M 0.0 0.0 L 5.8 9.6 L 11.6 4.8 L 17.5 14.4 L 23.3 19.2 L 29.1 9.6 L 34.9 14.4 L 40.7 24.0 L 46.5 19.2 L 52.4 14.4 L 58.2 19.2 L 64.0 19.2 L 64.0 24 L 0.0 24 Z" fill="url(#grad4)"/>
 <path d="M 0.0 0.0 L 5.8 9.6 L 11.6 4.8 L 17.5 14.4 L 23.3 19.2 L 29.1 9.6 L 34.9 14.4 L 40.7 24.0 L 46.5 19.2 L 52.4 14.4 L 58.2 19.2 L 64.0 19.2" stroke="#FAAD14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 </div>
 </div>
 </div>
+</div>
 
 <!-- LLM Wiki 三大操作 Tab 切换 -->
-<div class="bg-white rounded-xl border border-bg-border p-2">
+<div class="kb-tab-container bg-white rounded-2xl border border-bg-border p-1.5 shadow-sm" data-animate="fade-in-up" data-delay="0.2">
 <div class="flex items-center gap-1">
-<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg bg-brand-tint2 text-brand flex items-center justify-center gap-2 transition-colors" id="kb-tab-ingest" onclick="switchKnowledgeMainTab('ingest', this)">
+<button class="kb-tab-btn flex-1 px-4 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white flex items-center justify-center gap-2 transition-all duration-300 shadow-md shadow-brand/20" id="kb-tab-ingest" onclick="switchKnowledgeMainTab('ingest', this)">
 <iconify-icon class="text-lg" icon="mdi:upload-multiple"></iconify-icon>
 <span>摄入 (Ingest)</span>
-<span class="text-[10px] bg-white text-brand px-1.5 py-0.5 rounded font-medium">42 原始</span>
+<span class="text-[10px] bg-white/20 text-white px-1.5 py-0.5 rounded font-medium">42 原始</span>
 </button>
-<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-colors" id="kb-tab-wiki" onclick="switchKnowledgeMainTab('wiki', this)">
+<button class="kb-tab-btn flex-1 px-4 py-2.5 text-sm font-medium rounded-xl text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5" id="kb-tab-wiki" onclick="switchKnowledgeMainTab('wiki', this)">
 <iconify-icon class="text-lg" icon="mdi:graph"></iconify-icon>
 <span>Wiki 页面</span>
 <span class="text-[10px] bg-bg text-fg-secondary px-1.5 py-0.5 rounded font-medium">186 页</span>
 </button>
-<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-colors" id="kb-tab-lint" onclick="switchKnowledgeMainTab('lint', this)">
+<button class="kb-tab-btn flex-1 px-4 py-2.5 text-sm font-medium rounded-xl text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5" id="kb-tab-lint" onclick="switchKnowledgeMainTab('lint', this)">
 <iconify-icon class="text-lg" icon="mdi:shield-search"></iconify-icon>
 <span>巡检 (Lint)</span>
 <span class="text-[10px] bg-urgent-tint text-urgent px-1.5 py-0.5 rounded font-medium">4 待处理</span>
 </button>
-<button class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-colors" id="kb-tab-judicial" onclick="switchKnowledgeMainTab('judicial', this)">
+<button class="kb-tab-btn flex-1 px-4 py-2.5 text-sm font-medium rounded-xl text-fg-secondary hover:bg-bg-subtle flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-0.5" id="kb-tab-judicial" onclick="switchKnowledgeMainTab('judicial', this)">
 <iconify-icon class="text-lg" icon="mdi:bookshelf"></iconify-icon>
 <span>司法观点</span>
 <span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">12 条</span>
@@ -102,65 +134,67 @@
 <!-- ============== Tab 1: 摄入 (Ingest) ============== -->
 <div id="kb-panel-ingest" class="kb-panel space-y-4">
 <!-- 摄入状态汇总 -->
-<div class="grid grid-cols-4 gap-3">
-<div class="bg-white rounded-lg border border-bg-border p-3 flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-success" icon="mdi:check-circle"></iconify-icon>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-animate="fade-in-up" data-delay="0.25">
+<div class="kb-mini-card bg-white rounded-2xl border border-bg-border p-3 flex items-center gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-success flex items-center justify-center shadow-md shadow-success/20">
+<iconify-icon class="text-xl text-white" icon="mdi:check-circle"></iconify-icon>
 </div>
 <div>
 <p class="text-xs text-fg-tertiary">已编译</p>
-<p class="text-xl font-bold text-fg-primary">22</p>
+<p class="text-xl font-bold text-fg-primary kb-tabular-nums">22</p>
 </div>
 </div>
-<div class="bg-white rounded-lg border border-bg-border p-3 flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-brand" icon="mdi:loading"></iconify-icon>
+<div class="kb-mini-card bg-white rounded-2xl border border-bg-border p-3 flex items-center gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+<iconify-icon class="text-xl text-white" icon="mdi:loading"></iconify-icon>
 </div>
 <div>
 <p class="text-xs text-fg-tertiary">编译中</p>
-<p class="text-xl font-bold text-fg-primary">2</p>
+<p class="text-xl font-bold text-fg-primary kb-tabular-nums">2</p>
 </div>
 </div>
-<div class="bg-white rounded-lg border border-bg-border p-3 flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-urgent" icon="mdi:clock-outline"></iconify-icon>
+<div class="kb-mini-card bg-white rounded-2xl border border-bg-border p-3 flex items-center gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-urgent flex items-center justify-center shadow-md shadow-urgent/20">
+<iconify-icon class="text-xl text-white" icon="mdi:clock-outline"></iconify-icon>
 </div>
 <div>
 <p class="text-xs text-fg-tertiary">待编译</p>
-<p class="text-xl font-bold text-fg-primary">8</p>
+<p class="text-xl font-bold text-fg-primary kb-tabular-nums">8</p>
 </div>
 </div>
-<div class="bg-white rounded-lg border border-bg-border p-3 flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-red-500" icon="mdi:alert-circle"></iconify-icon>
+<div class="kb-mini-card bg-white rounded-2xl border border-bg-border p-3 flex items-center gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-md shadow-red-500/20">
+<iconify-icon class="text-xl text-white" icon="mdi:alert-circle"></iconify-icon>
 </div>
 <div>
 <p class="text-xs text-fg-tertiary">失败</p>
-<p class="text-xl font-bold text-fg-primary">0</p>
+<p class="text-xl font-bold text-fg-primary kb-tabular-nums">0</p>
 </div>
 </div>
 </div>
 
 <!-- 原始资料列表 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center justify-between">
+<div class="kb-content-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm" data-animate="fade-in-up" data-delay="0.3">
+<div class="p-4 border-b border-bg-border flex items-center justify-between">
 <div>
 <h4 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
-<iconify-icon class="text-base text-brand" icon="mdi:file-multiple"></iconify-icon>
+<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center">
+<iconify-icon class="text-sm text-white" icon="mdi:file-multiple"></iconify-icon>
+</div>
 原始资料 (Raw Sources)
 </h4>
 <p class="text-[10px] text-fg-tertiary mt-0.5">只读资料,AI 编译后生成结构化 Wiki 页面。点击「AI 编译」启动 LLM 提取与跨页面更新。</p>
 </div>
 <div class="flex items-center gap-2">
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors flex items-center gap-1">
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-200 hover:shadow-sm flex items-center gap-1">
 <iconify-icon class="text-sm" icon="mdi:filter-variant"></iconify-icon>
 筛选
 </button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors flex items-center gap-1">
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-200 hover:shadow-sm flex items-center gap-1">
 <iconify-icon class="text-sm" icon="mdi:sort-variant"></iconify-icon>
 时间
 </button>
-<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="simulateUpload()">
+<button class="px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-md hover:shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1" onclick="simulateUpload()">
 <iconify-icon class="text-sm" icon="mdi:upload-outline"></iconify-icon>
 上传资料
 </button>
@@ -168,13 +202,13 @@
 </div>
 <table class="w-full text-sm">
 <thead>
-<tr class="bg-bg-subtle border-b border-bg-border">
-<th scope="col" class="text-left py-2.5 px-4 text-xs font-semibold text-fg-secondary">资料名称</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-24">类型</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-28">状态</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-32">影响</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-28">上传时间</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-36">操作</th>
+<tr class="bg-bg-subtle/50 border-b border-bg-border">
+<th scope="col" class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">资料名称</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-24">类型</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-28">状态</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-32">影响</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-28">上传时间</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-36">操作</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-bg">
@@ -363,31 +397,48 @@ AI 编译
 </tr>
 </tbody>
 </table>
+<!-- 空状态 -->
+<div class="kb-empty-state hidden flex flex-col items-center justify-center py-16 px-4">
+<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-brand-tint flex items-center justify-center mb-4">
+<iconify-icon class="text-4xl text-brand/60" icon="mdi:file-document-outline"></iconify-icon>
+</div>
+<h4 class="text-base font-semibold text-fg-primary mb-1">暂无原始资料</h4>
+<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">上传您的法律文档、判决书、法条等资料，AI 会自动编译为结构化的 Wiki 知识页面。</p>
+<button class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-md hover:shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="simulateUpload()">
+<iconify-icon class="text-sm" icon="mdi:upload-outline"></iconify-icon>
+上传资料
+</button>
+</div>
 </div>
 </div>
 
 <!-- ============== Tab 2: Wiki 页面 ============== -->
 <div id="kb-panel-wiki" class="kb-panel hidden space-y-4">
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center justify-between">
+<div class="kb-content-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm" data-animate="fade-in-up" data-delay="0.25">
+<div class="p-4 border-b border-bg-border flex items-center justify-between">
 <div>
 <h4 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
-<iconify-icon class="text-base text-wiki" icon="mdi:graph"></iconify-icon>
+<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center">
+<iconify-icon class="text-sm text-white" icon="mdi:graph"></iconify-icon>
+</div>
 Wiki 知识页
-<span class="text-[10px] bg-purple-50 text-wiki px-1.5 py-0.5 rounded ml-1">由 LLM 维护</span>
+<span class="text-[10px] bg-purple-50 text-wiki px-1.5 py-0.5 rounded ml-1 font-medium">由 LLM 维护</span>
 </h4>
 <p class="text-[10px] text-fg-tertiary mt-0.5">每页基于原始资料自动生成,带交叉链接和反向引用。LLM 持续更新。</p>
 </div>
-<input id="kb-search-input" placeholder="搜索 Wiki 页面..." type="text" class="w-64 border border-bg-border rounded-lg pl-3 pr-3 py-1.5 text-xs text-fg-secondary focus:outline-none focus:border-brand transition-colors"/>
+<div class="relative">
+<input id="kb-search-input" placeholder="搜索 Wiki 页面..." type="text" class="w-64 border border-bg-border rounded-xl pl-9 pr-3 py-2 text-xs text-fg-secondary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all"/>
+<iconify-icon class="text-sm text-fg-tertiary absolute left-3 top-1/2 -translate-y-1/2" icon="mdi:magnify"></iconify-icon>
+</div>
 </div>
 <table class="w-full text-sm">
 <thead>
-<tr class="bg-bg-subtle border-b border-bg-border">
-<th scope="col" class="text-left py-2.5 px-4 text-xs font-semibold text-fg-secondary">Wiki 页面</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-24">主题</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-28">来源 Raw</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-24">反向链接</th>
-<th scope="col" class="text-center py-2.5 px-4 text-xs font-semibold text-fg-secondary w-28">更新</th>
+<tr class="bg-bg-subtle/50 border-b border-bg-border">
+<th scope="col" class="text-left py-3 px-4 text-xs font-semibold text-fg-secondary">Wiki 页面</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-24">主题</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-28">来源 Raw</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-24">反向链接</th>
+<th scope="col" class="text-center py-3 px-4 text-xs font-semibold text-fg-secondary w-28">更新</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-bg">
@@ -443,122 +494,134 @@ Wiki 知识页
 </tr>
 </tbody>
 </table>
+<!-- 空状态 -->
+<div class="kb-empty-state hidden flex flex-col items-center justify-center py-16 px-4">
+<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center mb-4">
+<iconify-icon class="text-4xl text-wiki/60" icon="mdi:graph-outline"></iconify-icon>
+</div>
+<h4 class="text-base font-semibold text-fg-primary mb-1">暂无 Wiki 页面</h4>
+<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">上传原始资料并启动 AI 编译后，系统会自动生成结构化的 Wiki 知识页面。</p>
+<button class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-purple-500 to-wiki text-white hover:shadow-md hover:shadow-wiki/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="switchKnowledgeMainTab('ingest', document.getElementById('kb-tab-ingest'))">
+<iconify-icon class="text-sm" icon="mdi:upload-outline"></iconify-icon>
+去上传资料
+</button>
+</div>
 </div>
 </div>
 
 <!-- ============== Tab 3: 巡检 (Lint) ============== -->
 <div id="kb-panel-lint" class="kb-panel hidden space-y-4">
 <!-- 巡检状态栏 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center justify-between">
+<div class="kb-content-card bg-white rounded-2xl border border-bg-border p-4 flex items-center justify-between shadow-sm" data-animate="fade-in-up" data-delay="0.25">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-urgent" icon="mdi:shield-search"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-urgent flex items-center justify-center shadow-md shadow-urgent/20">
+<iconify-icon class="text-xl text-white" icon="mdi:shield-search"></iconify-icon>
 </div>
 <div>
 <p class="text-sm font-semibold text-fg-primary">上次巡检:7 天前</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">下次自动巡检: 3 天后 · 配置: 每周一次</p>
 </div>
 </div>
-<button class="px-4 py-2 text-xs font-medium rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1.5" onclick="runLintNow()">
+<button class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-md hover:shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="runLintNow()">
 <iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>
 立即巡检
 </button>
 </div>
 
 <!-- 4 类巡检问题 -->
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-animate="fade-in-up" data-delay="0.3">
 <!-- 孤儿页面 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center gap-2">
-<div class="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
-<iconify-icon class="text-base text-urgent" icon="mdi:link-off"></iconify-icon>
+<div class="kb-lint-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="p-4 border-b border-bg-border flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-urgent flex items-center justify-center shadow-sm">
+<iconify-icon class="text-base text-white" icon="mdi:link-off"></iconify-icon>
 </div>
 <h5 class="text-sm font-semibold text-fg-primary">孤儿页面</h5>
-<span class="text-[10px] bg-orange-50 text-urgent px-1.5 py-0.5 rounded font-medium">3 项</span>
+<span class="text-[10px] bg-orange-50 text-urgent px-2 py-0.5 rounded-full font-medium ml-auto">3 项</span>
 </div>
 <div class="divide-y divide-bg">
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">新业态用工关系认定</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">新业态用工关系认定</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">无反向链接 · 建议: 在「劳动合同解除」加入引用</p>
 </div>
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">数据爬取合法性边界</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">数据爬取合法性边界</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">无反向链接 · 建议: 在「网络著作权」加入引用</p>
 </div>
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">破产债权申报实务</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">破产债权申报实务</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">无反向链接 · 建议: 创建主题索引页</p>
 </div>
 </div>
 </div>
 
 <!-- 过期知识 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center gap-2">
-<div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
-<iconify-icon class="text-base text-red-500" icon="mdi:clock-alert-outline"></iconify-icon>
+<div class="kb-lint-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="p-4 border-b border-bg-border flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-sm">
+<iconify-icon class="text-base text-white" icon="mdi:clock-alert-outline"></iconify-icon>
 </div>
 <h5 class="text-sm font-semibold text-fg-primary">过期知识</h5>
-<span class="text-[10px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded font-medium">2 项 (1 紧急)</span>
+<span class="text-[10px] bg-red-50 text-red-500 px-2 py-0.5 rounded-full font-medium ml-auto">2 项 (1 紧急)</span>
 </div>
 <div class="divide-y divide-bg">
-<div class="p-3 hover:bg-bg-subtle transition-colors bg-red-50/30">
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer bg-gradient-to-r from-red-50/50 to-orange-50/30">
 <div class="flex items-center gap-2">
-<p class="text-xs font-medium text-fg-primary">民间借贷利率上限</p>
-<span class="text-[10px] bg-red-500 text-white px-1 py-0.5 rounded font-medium">紧急</span>
+<p class="text-xs font-semibold text-fg-primary">民间借贷利率上限</p>
+<span class="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-medium">紧急</span>
 </div>
-<p class="text-[10px] text-red-500 mt-0.5">最后更新: 8 个月前 · LPR 已调整 3 次,数据可能已过时</p>
-<button class="text-[10px] text-brand hover:underline mt-1">立即重新编译 →</button>
+<p class="text-[10px] text-red-600 mt-0.5">最后更新: 8 个月前 · LPR 已调整 3 次,数据可能已过时</p>
+<button class="text-[10px] text-brand font-medium hover:underline mt-1">立即重新编译 →</button>
 </div>
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">劳动合同解除实务</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">劳动合同解除实务</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">最后更新: 2 月前 · 建议加入 2024 年新司法解释</p>
 </div>
 </div>
 </div>
 
 <!-- 内容矛盾 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center gap-2">
-<div class="w-7 h-7 rounded-lg bg-yellow-50 flex items-center justify-center">
-<iconify-icon class="text-base text-urgent" icon="mdi:alert-outline"></iconify-icon>
+<div class="kb-lint-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="p-4 border-b border-bg-border flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-sm">
+<iconify-icon class="text-base text-white" icon="mdi:alert-outline"></iconify-icon>
 </div>
 <h5 class="text-sm font-semibold text-fg-primary">内容矛盾</h5>
-<span class="text-[10px] bg-yellow-50 text-urgent px-1.5 py-0.5 rounded font-medium">1 项</span>
+<span class="text-[10px] bg-yellow-50 text-amber-600 px-2 py-0.5 rounded-full font-medium ml-auto">1 项</span>
 </div>
 <div class="divide-y divide-bg">
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">网络服务提供者责任</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">网络服务提供者责任</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">两个 Wiki 页面表述不一致:</p>
 <ul class="text-[10px] text-fg-secondary mt-1 ml-3 space-y-0.5">
 <li>• 「网络著作权侵权」: 需主观过错</li>
 <li>• 「避风港原则适用」: 通知后即负责</li>
 </ul>
-<button class="text-[10px] text-brand hover:underline mt-1.5">让 LLM 调和 →</button>
+<button class="text-[10px] text-brand font-medium hover:underline mt-1.5">让 LLM 调和 →</button>
 </div>
 </div>
 </div>
 
 <!-- 缺失引用 -->
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<div class="p-3 border-b border-bg-border flex items-center gap-2">
-<div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-<iconify-icon class="text-base text-brand" icon="mdi:link-plus"></iconify-icon>
+<div class="kb-lint-card bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+<div class="p-4 border-b border-bg-border flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-sm">
+<iconify-icon class="text-base text-white" icon="mdi:link-plus"></iconify-icon>
 </div>
 <h5 class="text-sm font-semibold text-fg-primary">缺失引用</h5>
-<span class="text-[10px] bg-blue-50 text-brand px-1.5 py-0.5 rounded font-medium">5 项</span>
+<span class="text-[10px] bg-blue-50 text-brand px-2 py-0.5 rounded-full font-medium ml-auto">5 项</span>
 </div>
 <div class="divide-y divide-bg">
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">合同纠纷处理要点</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">合同纠纷处理要点</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">引用了 [[违约金酌减规则]] 但该页面不存在 · 建议创建</p>
 </div>
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">故意伤害罪辩护要点</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">故意伤害罪辩护要点</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">引用了 [[伤情重新鉴定]] 但该页面不存在 · 建议创建</p>
 </div>
-<div class="p-3 hover:bg-bg-subtle transition-colors">
-<p class="text-xs font-medium text-fg-primary">网络著作权侵权认定</p>
+<div class="p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+<p class="text-xs font-medium text-fg-primary group-hover:text-brand transition-colors">网络著作权侵权认定</p>
 <p class="text-[10px] text-fg-tertiary mt-0.5">引用了 [[合理使用判断]] 但该页面不存在</p>
 </div>
 </div>
@@ -566,15 +629,23 @@ Wiki 知识页
 </div>
 
 <!-- Lint 健康度 -->
-<div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 p-4">
-<div class="flex items-center gap-2 mb-2">
-<iconify-icon class="text-base text-brand" icon="mdi:lightbulb-on-outline"></iconify-icon>
+<div class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl border border-blue-100 p-5 shadow-sm" data-animate="fade-in-up" data-delay="0.35">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md">
+<iconify-icon class="text-base text-white" icon="mdi:lightbulb-on-outline"></iconify-icon>
+</div>
 <h4 class="text-sm font-semibold text-fg-primary">LLM 巡检建议</h4>
 </div>
-<p class="text-[10px] text-fg-secondary">知识库整体健康度评分 <span class="font-semibold text-fg-primary">82</span> / 100。已识别 11 个潜在问题。建议优先处理 <span class="text-red-500 font-semibold">1 项紧急</span>(民间借贷利率),并补充 5 个缺失引用页,可让健康度提升至 95+。</p>
-<div class="flex gap-2 mt-3">
-<button class="px-3 py-1.5 text-[10px] font-medium rounded-md bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors">查看趋势</button>
-<button class="px-3 py-1.5 text-[10px] font-medium rounded-md bg-brand text-white hover:bg-brand-hover transition-colors">一键处理全部</button>
+<p class="text-xs text-fg-secondary leading-relaxed">知识库整体健康度评分 <span class="font-bold text-fg-primary text-lg kb-tabular-nums">82</span> / 100。已识别 11 个潜在问题。建议优先处理 <span class="text-red-500 font-semibold">1 项紧急</span>(民间借贷利率),并补充 5 个缺失引用页,可让健康度提升至 95+。</p>
+<div class="flex gap-2 mt-4">
+<button class="px-4 py-2 text-xs font-medium rounded-xl bg-white border border-bg-border text-fg-secondary hover:bg-bg-subtle hover:shadow-sm transition-all duration-200 flex items-center gap-1">
+<iconify-icon class="text-sm" icon="mdi:chart-line"></iconify-icon>
+查看趋势
+</button>
+<button class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-md hover:shadow-brand/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1">
+<iconify-icon class="text-sm" icon="mdi:magic-staff"></iconify-icon>
+一键处理全部
+</button>
 </div>
 </div>
 </div>
