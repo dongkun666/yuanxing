@@ -109,7 +109,7 @@
             }
 
             tbody.innerHTML = filtered.map(function(item) {
-                return '<tr class="hover:bg-bg-subtle transition-colors">' +
+                return '<tr class="hover:bg-bg-subtle transition-colors cursor-pointer" onclick="openZhixingDetail(\'' + escapeHtml(item.caseNum) + '\')">' +
                     '<td class="py-3 px-4 text-xs font-mono text-fg-primary">' + escapeHtml(item.caseNum) + '</td>' +
                     '<td class="py-3 px-4 text-xs text-fg-secondary">' + escapeHtml(item.name) + '</td>' +
                     '<td class="py-3 px-4 text-xs text-fg-secondary">' + escapeHtml(item.court) + '</td>' +
@@ -147,6 +147,90 @@
         toast('已重置查询条件');
     }
 
+    // ===== 执行案件详情弹窗 =====
+    function openZhixingDetail(caseNum) {
+        var item = mockData.find(function(x) { return x.caseNum === caseNum; });
+        if (!item) {
+            toast('未找到案件 ' + caseNum);
+            return;
+        }
+        var statusColor = getStatusColor(item.status);
+
+        var modal = document.getElementById('zhixing-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'zhixing-detail-modal';
+            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeZhixingDetail();
+            });
+            document.body.appendChild(modal);
+        }
+
+        var isCompany = item.idcard && item.idcard.length >= 18 && /^\d+$/.test(item.idcard.replace(/[A-Z]/g, '')) === false || (item.idcard && item.idcard.length === 18 && /^[0-9Xx]+$/.test(item.idcard) === false);
+        var idLabel = (item.name && item.name.indexOf('公司') >= 0 || item.name.indexOf('有限') >= 0) ? '统一社会信用代码' : '身份证号';
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="mdi:gavel" class="text-brand text-lg"></iconify-icon>' +
+            '执行案件详情' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeZhixingDetail()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+            '<div class="flex items-center gap-2 flex-wrap mb-2">' +
+            '<span class="text-sm font-semibold font-mono text-fg-primary">' + escapeHtml(item.caseNum) + '</span>' +
+            '<span class="text-[10px] ' + statusColor + ' font-medium px-2 py-0.5 rounded-full">' + escapeHtml(item.status) + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-fg-secondary">' + escapeHtml(item.court) + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">被执行人</p>' +
+            '<p class="text-sm font-semibold text-fg-primary">' + escapeHtml(item.name) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">' + idLabel + '</p>' +
+            '<p class="text-xs font-mono text-fg-primary">' + escapeHtml(item.idcard) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">执行法院</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.court) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">立案日期</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.date) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-4 bg-brand-tint rounded-xl">' +
+            '<p class="text-[11px] text-brand mb-1">执行标的</p>' +
+            '<p class="text-2xl font-bold text-brand">' + escapeHtml(item.amount) + '</p>' +
+            '</div>' +
+            '<div class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
+            '数据来源: 中国执行信息公开网 (最高人民法院)' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeZhixingDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeZhixingDetail()">返回列表</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeZhixingDetail() {
+        var modal = document.getElementById('zhixing-detail-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
     // ===== 初始化 (视图加载时绑定事件) =====
     function initZhixing() {
         var view = getEl('view-zhixing');
@@ -173,4 +257,6 @@
     globalThis.initZhixing = initZhixing;
     globalThis.searchZhixing = searchZhixing;
     globalThis.resetZhixing = resetZhixing;
+    globalThis.openZhixingDetail = openZhixingDetail;
+    globalThis.closeZhixingDetail = closeZhixingDetail;
 })();
