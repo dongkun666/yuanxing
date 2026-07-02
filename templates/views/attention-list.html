@@ -6,7 +6,7 @@
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
 <h2 class="text-lg font-bold text-fg-primary">需要关注</h2>
-<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 5 项</span>
+<span id="attention-count" class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 5 项</span>
 </div>
 </div>
 <!-- 筛选标签 -->
@@ -17,7 +17,7 @@
 <button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('提醒', this)">提醒</button>
 </div>
 <!-- 关注列表 - 网格卡片布局 -->
-<div class="flex-none">
+<div class="flex-none" id="attention-list-container">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 <!-- 卡片 1: 逾期 - 举证期限即将截止 -->
 <div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-red-500 min-h-[140px]">

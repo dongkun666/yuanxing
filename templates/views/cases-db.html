@@ -1,0 +1,127 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-cases-db">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200 p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <iconify-icon class="text-2xl text-blue-600" icon="mdi:library-books"></iconify-icon>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-lg font-bold text-fg-primary">案例数据库</h1>
+                <p class="text-xs text-fg-secondary mt-1">海量裁判文书案例库，支持按案由、法院、当事人、律师等多维度检索。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+            <h2 class="text-sm font-semibold text-fg-primary">案例检索</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">关键词</label>
+                <input type="text" placeholder="案由/当事人/关键词" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">案由</label>
+                <select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                    <option>全部案由</option>
+                    <option>合同纠纷</option>
+                    <option>侵权责任纠纷</option>
+                    <option>劳动争议</option>
+                    <option>知识产权纠纷</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">审理法院</label>
+                <select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                    <option>全部法院</option>
+                    <option>最高人民法院</option>
+                    <option>北京市高级人民法院</option>
+                    <option>上海市高级人民法院</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">裁判年份</label>
+                <select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                    <option>全部年份</option>
+                    <option>2026年</option>
+                    <option>2025年</option>
+                    <option>2024年</option>
+                    <option>2023年</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end">
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
+                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                检索案例
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
+            <span class="text-xs text-fg-tertiary">共 12,586 条结果</span>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-fg-tertiary">排序：</span>
+                <select class="text-[10px] border border-bg-border rounded px-2 py-1 text-fg-secondary focus:outline-none focus:border-brand bg-white">
+                    <option>相关度</option>
+                    <option>裁判日期</option>
+                    <option>法院层级</option>
+                </select>
+            </div>
+        </div>
+        <div class="divide-y divide-bg">
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <h3 class="text-sm font-medium text-brand hover:underline mb-2">张三与李四买卖合同纠纷一审民事判决书</h3>
+                <div class="flex items-center gap-4 text-[10px] text-fg-tertiary mb-2">
+                    <span><iconify-icon class="inline" icon="mdi:domain"></iconify-icon> 北京市朝阳区人民法院</span>
+                    <span><iconify-icon class="inline" icon="mdi:calendar"></iconify-icon> 2025-12-15</span>
+                    <span><iconify-icon class="inline" icon="mdi:tag-outline"></iconify-icon> 民事一审</span>
+                </div>
+                <p class="text-xs text-fg-secondary line-clamp-2">
+                    原告张三与被告李四买卖合同纠纷一案，本院于2025年10月20日立案后，依法适用普通程序，公开开庭进行了审理。原告张三及其委托诉讼代理人到庭参加诉讼，被告李四经本院合法传唤无正当理由拒不到庭参加诉讼，本院依法缺席审理。本案现已审理终结。
+                </p>
+            </div>
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <h3 class="text-sm font-medium text-brand hover:underline mb-2">王五与某科技公司劳动争议二审民事判决书</h3>
+                <div class="flex items-center gap-4 text-[10px] text-fg-tertiary mb-2">
+                    <span><iconify-icon class="inline" icon="mdi:domain"></iconify-icon> 北京市第三中级人民法院</span>
+                    <span><iconify-icon class="inline" icon="mdi:calendar"></iconify-icon> 2025-11-20</span>
+                    <span><iconify-icon class="inline" icon="mdi:tag-outline"></iconify-icon> 民事二审</span>
+                </div>
+                <p class="text-xs text-fg-secondary line-clamp-2">
+                    上诉人王五因与被上诉人某科技公司劳动争议一案，不服北京市朝阳区人民法院民事判决，向本院提起上诉。本院于2025年10月8日立案后，依法组成合议庭，开庭进行了审理。上诉人王五及其委托诉讼代理人、被上诉人某科技公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。
+                </p>
+            </div>
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <h3 class="text-sm font-medium text-brand hover:underline mb-2">某房地产公司与某建筑公司建设工程施工合同纠纷一审民事判决书</h3>
+                <div class="flex items-center gap-4 text-[10px] text-fg-tertiary mb-2">
+                    <span><iconify-icon class="inline" icon="mdi:domain"></iconify-icon> 上海市第一中级人民法院</span>
+                    <span><iconify-icon class="inline" icon="mdi:calendar"></iconify-icon> 2025-10-08</span>
+                    <span><iconify-icon class="inline" icon="mdi:tag-outline"></iconify-icon> 民事一审</span>
+                </div>
+                <p class="text-xs text-fg-secondary line-clamp-2">
+                    原告某房地产公司与被告某建筑公司建设工程施工合同纠纷一案，本院于2025年6月15日立案后，依法适用普通程序，公开开庭进行了审理。原告某房地产公司之委托诉讼代理人、被告某建筑公司之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center justify-center gap-1 px-5 py-4 border-t border-bg-border">
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary">
+                <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+            </button>
+            <button class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center text-xs font-medium">1</button>
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">2</button>
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">3</button>
+            <span class="text-xs text-fg-tertiary px-1">...</span>
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">1259</button>
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary">
+                <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+            </button>
+        </div>
+    </div>
+</div>
+</div>

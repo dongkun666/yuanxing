@@ -1,0 +1,169 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-marketplace-cases">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 text-white">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">协同办案</h1>
+                <p class="text-sm text-white/80 mt-1">发布案件需求，寻找合适的律师合作伙伴</p>
+            </div>
+            <button class="px-4 py-2 bg-white text-emerald-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm">
+                发布案件
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-4">
+        <div class="flex items-center gap-3">
+            <div class="relative flex-1 max-w-md">
+                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+                <input type="text" placeholder="搜索案件..." class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+            </div>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>案件类型</option>
+                <option>诉讼代理</option>
+                <option>非诉业务</option>
+                <option>法律顾问</option>
+                <option>专项服务</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>酬金范围</option>
+                <option>1万以下</option>
+                <option>1-5万</option>
+                <option>5-10万</option>
+                <option>10万以上</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>状态</option>
+                <option>招募中</option>
+                <option>进行中</option>
+                <option>已完成</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-bg-border p-5 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">招募中</span>
+                        <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">紧急</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-fg-primary hover:text-brand cursor-pointer">北京某科技公司专利侵权诉讼案</h3>
+                    <p class="text-xs text-fg-tertiary mt-1 line-clamp-2">
+                        我司为一家北京的科技公司，近期发现某公司侵犯了我们的核心发明专利。现需寻找有专利侵权诉讼经验的律师合作，要求熟悉知识产权法庭审理流程，有成功案例优先。
+                    </p>
+                    <div class="flex items-center gap-4 mt-3 text-[10px] text-fg-tertiary">
+                        <span><iconify-icon class="inline" icon="mdi:map-marker"></iconify-icon> 北京</span>
+                        <span><iconify-icon class="inline" icon="mdi:cash"></iconify-icon> 酬金：10-20万</span>
+                        <span><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 发布于 2天前</span>
+                        <span><iconify-icon class="inline" icon="mdi:eye-outline"></iconify-icon> 128次浏览</span>
+                    </div>
+                </div>
+                <button class="px-4 py-2 text-xs text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors flex-shrink-0">
+                    申请合作
+                </button>
+            </div>
+            <div class="flex items-center gap-3 mt-4 pt-3 border-t border-bg-border">
+                <div class="w-8 h-8 rounded-full bg-brand-tint3 flex items-center justify-center">
+                    <span class="text-xs font-medium text-brand">发</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-medium text-fg-primary">发布方：某律师事务所</p>
+                    <p class="text-[10px] text-fg-tertiary">已认证律所 · 合作12次</p>
+                </div>
+                <div class="flex items-center gap-1">
+                    <iconify-icon class="text-amber-400 text-sm" icon="mdi:star"></iconify-icon>
+                    <span class="text-xs font-medium text-fg-primary">4.9</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">招募中</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-fg-primary hover:text-brand cursor-pointer">上海某企业股权纠纷案</h3>
+                    <p class="text-xs text-fg-tertiary mt-1 line-clamp-2">
+                        客户为上海一家民营企业，涉及股东之间的股权纠纷，案件标的约500万。需要熟悉公司法及股权纠纷处理的律师协助处理，要求有上海地区办案经验。
+                    </p>
+                    <div class="flex items-center gap-4 mt-3 text-[10px] text-fg-tertiary">
+                        <span><iconify-icon class="inline" icon="mdi:map-marker"></iconify-icon> 上海</span>
+                        <span><iconify-icon class="inline" icon="mdi:cash"></iconify-icon> 酬金：5-10万</span>
+                        <span><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 发布于 5天前</span>
+                        <span><iconify-icon class="inline" icon="mdi:eye-outline"></iconify-icon> 256次浏览</span>
+                    </div>
+                </div>
+                <button class="px-4 py-2 text-xs text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors flex-shrink-0">
+                    申请合作
+                </button>
+            </div>
+            <div class="flex items-center gap-3 mt-4 pt-3 border-t border-bg-border">
+                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                    <span class="text-xs font-medium text-purple-600">王</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-medium text-fg-primary">发布方：王律师</p>
+                    <p class="text-[10px] text-fg-tertiary">认证律师 · 合作8次</p>
+                </div>
+                <div class="flex items-center gap-1">
+                    <iconify-icon class="text-amber-400 text-sm" icon="mdi:star"></iconify-icon>
+                    <span class="text-xs font-medium text-fg-primary">4.8</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">进行中</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-fg-primary hover:text-brand cursor-pointer">深圳某房地产公司建设工程合同纠纷案</h3>
+                    <p class="text-xs text-fg-tertiary mt-1 line-clamp-2">
+                        房地产公司与建筑公司之间的建设工程合同纠纷，涉及工程款结算、质量问题等争议。案件正在审理中，需要有建设工程领域经验的律师协助。
+                    </p>
+                    <div class="flex items-center gap-4 mt-3 text-[10px] text-fg-tertiary">
+                        <span><iconify-icon class="inline" icon="mdi:map-marker"></iconify-icon> 深圳</span>
+                        <span><iconify-icon class="inline" icon="mdi:cash"></iconify-icon> 酬金：20-30万</span>
+                        <span><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 发布于 2周前</span>
+                        <span><iconify-icon class="inline" icon="mdi:eye-outline"></iconify-icon> 512次浏览</span>
+                    </div>
+                </div>
+                <button class="px-4 py-2 text-xs text-fg-secondary bg-bg hover:bg-bg-border rounded-lg transition-colors flex-shrink-0" disabled>
+                    已截止
+                </button>
+            </div>
+            <div class="flex items-center gap-3 mt-4 pt-3 border-t border-bg-border">
+                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                    <span class="text-xs font-medium text-amber-600">张</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs font-medium text-fg-primary">发布方：张律师团队</p>
+                    <p class="text-[10px] text-fg-tertiary">认证律所 · 合作25次</p>
+                </div>
+                <div class="flex items-center gap-1">
+                    <iconify-icon class="text-amber-400 text-sm" icon="mdi:star"></iconify-icon>
+                    <span class="text-xs font-medium text-fg-primary">4.9</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-1 py-4">
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary">
+            <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+        </button>
+        <button class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center text-xs font-medium">1</button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">2</button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">3</button>
+        <span class="text-xs text-fg-tertiary px-1">...</span>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary">56</button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary">
+            <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+        </button>
+    </div>
+</div>
+</div>

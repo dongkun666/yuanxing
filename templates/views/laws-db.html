@@ -1,0 +1,152 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-laws-db">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <iconify-icon class="text-2xl text-emerald-600" icon="mdi:book-open-variant"></iconify-icon>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-lg font-bold text-fg-primary">法律法规库</h1>
+                <p class="text-xs text-fg-secondary mt-1">全面的法律法规数据库，涵盖法律、行政法规、司法解释、部门规章等。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+            <h2 class="text-sm font-semibold text-fg-primary">法规检索</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+            <div class="md:col-span-2">
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">关键词</label>
+                <input type="text" placeholder="请输入关键词检索法规" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">效力层级</label>
+                <select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                    <option>全部层级</option>
+                    <option>法律</option>
+                    <option>行政法规</option>
+                    <option>司法解释</option>
+                    <option>部门规章</option>
+                    <option>地方性法规</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">制定机关</label>
+                <select class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                    <option>全部机关</option>
+                    <option>全国人大常委会</option>
+                    <option>国务院</option>
+                    <option>最高人民法院</option>
+                    <option>最高人民检察院</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end">
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
+                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                检索法规
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                    <iconify-icon class="text-xl text-red-500" icon="mdi:scale-balance"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-fg-primary">2,156</p>
+                    <p class="text-[10px] text-fg-tertiary">法律</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                    <iconify-icon class="text-xl text-amber-500" icon="mdi:file-document-multiple"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-fg-primary">6,342</p>
+                    <p class="text-[10px] text-fg-tertiary">行政法规</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <iconify-icon class="text-xl text-blue-500" icon="mdi:gavel"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-fg-primary">1,897</p>
+                    <p class="text-[10px] text-fg-tertiary">司法解释</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+                    <iconify-icon class="text-xl text-green-500" icon="mdi:folder-multiple"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-fg-primary">12,458</p>
+                    <p class="text-[10px] text-fg-tertiary">部门规章</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
+            <span class="text-xs text-fg-tertiary">热门法规</span>
+        </div>
+        <div class="divide-y divide-bg">
+            <div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <span class="text-xs font-bold text-brand w-6">1</span>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors">中华人民共和国民法典</h3>
+                    <p class="text-[10px] text-fg-tertiary mt-0.5">2020年5月28日第十三届全国人民代表大会第三次会议通过 · 2021年1月1日施行</p>
+                </div>
+                <span class="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full flex-shrink-0">法律</span>
+            </div>
+            <div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <span class="text-xs font-bold text-brand w-6">2</span>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors">中华人民共和国民事诉讼法</h3>
+                    <p class="text-[10px] text-fg-tertiary mt-0.5">2023年修正 · 现行有效</p>
+                </div>
+                <span class="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full flex-shrink-0">法律</span>
+            </div>
+            <div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <span class="text-xs font-bold text-brand w-6">3</span>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors">最高人民法院关于审理民间借贷案件适用法律若干问题的规定</h3>
+                    <p class="text-[10px] text-fg-tertiary mt-0.5">法释〔2020〕17号 · 2021年1月1日施行</p>
+                </div>
+                <span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full flex-shrink-0">司法解释</span>
+            </div>
+            <div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <span class="text-xs font-bold text-brand w-6">4</span>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors">中华人民共和国劳动合同法</h3>
+                    <p class="text-[10px] text-fg-tertiary mt-0.5">2012年修正 · 现行有效</p>
+                </div>
+                <span class="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full flex-shrink-0">法律</span>
+            </div>
+            <div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <span class="text-xs font-bold text-brand w-6">5</span>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors">中华人民共和国公司法</h3>
+                    <p class="text-[10px] text-fg-tertiary mt-0.5">2023年修订 · 2024年7月1日施行</p>
+                </div>
+                <span class="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full flex-shrink-0">法律</span>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

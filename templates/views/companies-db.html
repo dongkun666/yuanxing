@@ -1,0 +1,149 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-companies-db">
+<div class="max-w-6xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200 p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <iconify-icon class="text-2xl text-sky-600" icon="mdi:domain"></iconify-icon>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-lg font-bold text-fg-primary">企业信息库</h1>
+                <p class="text-xs text-fg-secondary mt-1">企业工商信息查询，包括基本信息、股东信息、对外投资、法律风险等。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+            <h2 class="text-sm font-semibold text-fg-primary">企业查询</h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="relative flex-1 max-w-xl">
+                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+                <input type="text" placeholder="输入企业名称、统一社会信用代码或法定代表人查询" class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+            </div>
+            <button class="px-5 py-2.5 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
+                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                查询
+            </button>
+        </div>
+
+        <div class="flex items-center gap-2 mt-3">
+            <span class="text-[10px] text-fg-tertiary">热门搜索：</span>
+            <button class="text-[10px] text-brand hover:underline">腾讯科技</button>
+            <span class="text-[10px] text-fg-disabled">|</span>
+            <button class="text-[10px] text-brand hover:underline">阿里巴巴</button>
+            <span class="text-[10px] text-fg-disabled">|</span>
+            <button class="text-[10px] text-brand hover:underline">字节跳动</button>
+            <span class="text-[10px] text-fg-disabled">|</span>
+            <button class="text-[10px] text-brand hover:underline">百度在线</button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
+            <span class="text-xs text-fg-tertiary">我的关注企业</span>
+            <button class="text-[10px] text-brand hover:underline">管理关注</button>
+        </div>
+        <div class="divide-y divide-bg">
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+                        <iconify-icon class="text-2xl text-brand" icon="mdi:domain"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-sm font-semibold text-fg-primary truncate">北京某科技有限公司</h3>
+                            <span class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full flex-shrink-0">存续</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-[10px] text-fg-tertiary">
+                            <div>
+                                <span class="text-fg-disabled">法定代表人：</span>
+                                <span class="text-fg-secondary">张三</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">注册资本：</span>
+                                <span class="text-fg-secondary">1,000万人民币</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">成立日期：</span>
+                                <span class="text-fg-secondary">2020-05-18</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 mt-2 text-[10px]">
+                            <span class="text-red-500"><iconify-icon class="inline" icon="mdi:alert-circle-outline"></iconify-icon> 法律风险 12</span>
+                            <span class="text-amber-500"><iconify-icon class="inline" icon="mdi:alert-outline"></iconify-icon> 经营风险 3</span>
+                            <span class="text-blue-500"><iconify-icon class="inline" icon="mdi:information-outline"></iconify-icon> 知识产权 8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <iconify-icon class="text-2xl text-purple-600" icon="mdi:domain"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-sm font-semibold text-fg-primary truncate">上海某贸易有限公司</h3>
+                            <span class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full flex-shrink-0">存续</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-[10px] text-fg-tertiary">
+                            <div>
+                                <span class="text-fg-disabled">法定代表人：</span>
+                                <span class="text-fg-secondary">李四</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">注册资本：</span>
+                                <span class="text-fg-secondary">500万人民币</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">成立日期：</span>
+                                <span class="text-fg-secondary">2019-12-03</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 mt-2 text-[10px]">
+                            <span class="text-red-500"><iconify-icon class="inline" icon="mdi:alert-circle-outline"></iconify-icon> 法律风险 5</span>
+                            <span class="text-amber-500"><iconify-icon class="inline" icon="mdi:alert-outline"></iconify-icon> 经营风险 2</span>
+                            <span class="text-blue-500"><iconify-icon class="inline" icon="mdi:information-outline"></iconify-icon> 知识产权 3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <iconify-icon class="text-2xl text-amber-600" icon="mdi:domain"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-sm font-semibold text-fg-primary truncate">深圳某咨询有限公司</h3>
+                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full flex-shrink-0">注销</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-[10px] text-fg-tertiary">
+                            <div>
+                                <span class="text-fg-disabled">法定代表人：</span>
+                                <span class="text-fg-secondary">王五</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">注册资本：</span>
+                                <span class="text-fg-secondary">100万人民币</span>
+                            </div>
+                            <div>
+                                <span class="text-fg-disabled">成立日期：</span>
+                                <span class="text-fg-secondary">2018-08-22</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 mt-2 text-[10px]">
+                            <span class="text-red-500"><iconify-icon class="inline" icon="mdi:alert-circle-outline"></iconify-icon> 法律风险 2</span>
+                            <span class="text-amber-500"><iconify-icon class="inline" icon="mdi:alert-outline"></iconify-icon> 经营风险 1</span>
+                            <span class="text-blue-500"><iconify-icon class="inline" icon="mdi:information-outline"></iconify-icon> 知识产权 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -6,7 +6,7 @@
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
 <h2 class="text-lg font-bold text-fg-primary">案件动态</h2>
-<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 16 条</span>
+<span id="dynamics-count" class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 16 条</span>
 </div>
 <div class="flex items-center gap-2">
 <!-- 视图切换 -->
@@ -28,7 +28,7 @@
 <input class="w-44 h-8 text-xs pl-8 pr-3 border border-bg-border rounded-lg bg-white text-fg-secondary placeholder-gray-400 focus:outline-none focus:border-brand" id="dynamics-search-input" oninput="searchDynamics()" placeholder="搜索动态..." type="text"/>
 <iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
 </div>
-<select class="text-xs border border-bg-border rounded-lg px-2 py-1.5 focus:outline-none focus:border-brand bg-white">
+<select id="dynamics-type-filter" class="text-xs border border-bg-border rounded-lg px-2 py-1.5 focus:outline-none focus:border-brand bg-white">
 <option>全部类型</option>
 <option>文书</option>
 <option>开庭</option>

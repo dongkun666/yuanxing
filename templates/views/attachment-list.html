@@ -6,7 +6,7 @@
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
 <h2 class="text-lg font-bold text-fg-primary">附件列表</h2>
-<span class="text-[10px] bg-bg text-fg-tertiary px-2 py-0.5 rounded-full">共 24 个文件</span>
+<span id="attachment-count" class="text-[10px] bg-bg text-fg-tertiary px-2 py-0.5 rounded-full">共 24 个文件</span>
 </div>
 <div class="flex items-center gap-2">
 <button class="flex items-center gap-1 h-8 px-3 text-xs font-medium text-white bg-brand hover:bg-brand-tint30 rounded-lg transition-colors" onclick="openBatchUploadModal()">
@@ -17,33 +17,22 @@
 </div>
 <!-- 筛选/搜索栏 -->
 <div class="flex-none flex items-center gap-2">
-<select class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
-<option>全部分类</option>
-<option>文书文件</option>
-<option>证据材料</option>
-<option>合同文件</option>
-<option>图片</option>
-<option>其他</option>
+<select id="attachment-type-filter" class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
 </select>
-<select class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
-<option>全部案件</option>
-<option>张三合同纠纷</option>
-<option>李四借贷纠纷</option>
-<option>王五股权转让纠纷</option>
-<option>赵六劳动争议</option>
+<select id="attachment-case-filter" class="h-8 text-xs px-2.5 border border-bg-border rounded-lg bg-white text-fg-secondary focus:outline-none focus:border-brand">
 </select>
 <div class="relative flex-1 max-w-xs">
-<input class="w-full h-8 text-xs pl-8 pr-3 border border-bg-border rounded-lg bg-white text-fg-secondary placeholder-gray-400 focus:outline-none focus:border-brand" oninput="console.log('搜索附件：'+this.value)" placeholder="搜索文件名..." type="text"/>
+<input id="attachment-search" class="w-full h-8 text-xs pl-8 pr-3 border border-bg-border rounded-lg bg-white text-fg-secondary placeholder-gray-400 focus:outline-none focus:border-brand" placeholder="搜索文件名..." type="text"/>
 <iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
 </div>
 <div class="flex items-center border border-bg-border rounded-lg overflow-hidden">
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white"><iconify-icon icon="mdi:grid-view"></iconify-icon></button>
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50"><iconify-icon icon="mdi:format-list-bulleted"></iconify-icon></button>
+<button id="attachment-grid-view" class="flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white"><iconify-icon icon="mdi:grid-view"></iconify-icon></button>
+<button id="attachment-list-view" class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50"><iconify-icon icon="mdi:format-list-bulleted"></iconify-icon></button>
 </div>
 </div>
 <!-- 附件网格 -->
 <div class="flex-1 min-h-0 overflow-y-auto">
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+<div id="attachment-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
 <!-- 文件卡片 x 24 -->
 <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer group">
 <div class="flex items-start justify-between mb-3">
