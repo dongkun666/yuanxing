@@ -134,6 +134,11 @@
                 if (typeof window.initArchive === 'function') window.initArchive();
             }, 50);
         },
+        'member-center': function () {
+            setTimeout(function () {
+                if (typeof window.initMemberCenter === 'function') window.initMemberCenter();
+            }, 50);
+        },
         firm: function () {
             setTimeout(function () {
                 if (typeof window.initFirm === 'function') window.initFirm();

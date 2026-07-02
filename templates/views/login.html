@@ -1,95 +1,391 @@
-﻿<!-- 登录/注册视图 (Phase 3 P0) - fixed 全屏, 盖住 sidebar + 主内容 -->
-<div class="view-content hidden fixed inset-0 z-50 flex items-center justify-center bg-bg-subtle" id="view-login">
-    <div class="w-full max-w-md">
-        <!-- Logo + 品牌 -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand text-white text-3xl mb-4">⚖</div>
-            <h1 class="text-2xl font-bold">
-                <span class="text-fg-primary">LexPrime</span>
-                <span class="text-brand ml-1">元枢法智</span>
-            </h1>
-            <p class="text-sm text-fg-tertiary mt-2">律师的第二大脑 · LLM Wiki 持续维护</p>
+﻿<!-- 登录/注册视图 (视觉动画升级版) - fixed 全屏, 盖住 sidebar + 主内容 -->
+<div class="view-content hidden fixed inset-0 z-50 flex items-stretch bg-bg-subtle" id="view-login">
+    <!-- 左侧品牌展示区 -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-brand via-ai to-wiki items-center justify-center p-12">
+        <!-- 装饰光斑 -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl hero-orb"></div>
+        <div class="absolute bottom-0 left-1/4 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 blur-2xl hero-orb"></div>
+        <div class="absolute top-1/3 left-12 w-32 h-32 bg-white/10 rounded-full blur-2xl hero-orb" style="animation-delay: -2s;"></div>
+        
+        <div class="relative z-10 max-w-lg text-white" data-animate="fade-in-up" data-delay="0.1">
+            <!-- Logo -->
+            <div class="flex items-center gap-4 mb-10">
+                <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                    <span class="text-4xl">⚖</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold">LexPrime</h1>
+                    <p class="text-sm text-white/70">元枢法智</p>
+                </div>
+            </div>
+
+            <!-- 大标题 -->
+            <h2 class="text-4xl font-bold leading-tight mb-6">
+                律师的第二大脑
+            </h2>
+            <p class="text-lg text-white/80 mb-10 leading-relaxed">
+                数据完全本地化 · AI 辅助不替代律师 · LLM Wiki 持续维护
+            </p>
+
+            <!-- 特性列表 -->
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:brain" class="text-2xl"></iconify-icon>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-lg">AI 智能辅助</div>
+                        <div class="text-sm text-white/70 mt-1">类案检索、文书生成、合同审查，效率提升 10 倍</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:shield-lock-outline" class="text-2xl"></iconify-icon>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-lg">数据本地化</div>
+                        <div class="text-sm text-white/70 mt-1">所有案件数据存储在本地，隐私安全有保障</div>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 group">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:briefcase-clock-outline" class="text-2xl"></iconify-icon>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-lg">全流程管理</div>
+                        <div class="text-sm text-white/70 mt-1">案件、客户、日程、文档，一站式智能管理</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部信任标识 -->
+            <div class="mt-12 pt-8 border-t border-white/10">
+                <div class="flex items-center gap-6 text-sm text-white/60">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:check-decagram-outline"></iconify-icon>
+                        <span>30 天免费试用</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:credit-card-off-outline"></iconify-icon>
+                        <span>无需信用卡</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:refresh"></iconify-icon>
+                        <span>随时取消</span>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- 登录卡片 -->
-        <div class="bg-white rounded-2xl border border-bg-border p-8 shadow-xl shadow-fg-primary/5">
-            <!-- Tab 切换 -->
-            <div class="flex items-center gap-1 mb-6 bg-bg-subtle rounded-xl p-1">
-                <button id="login-tab-btn" class="flex-1 py-2 rounded-lg bg-white text-brand text-sm font-medium shadow-sm transition-all">
-                    登录
-                </button>
-                <button id="register-tab-btn" class="flex-1 py-2 rounded-lg text-fg-secondary text-sm hover:text-fg-primary transition-all">
-                    注册
-                </button>
+    <!-- 右侧登录表单区 -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+        <div class="w-full max-w-md" data-animate="fade-in-up" data-delay="0.2">
+            <!-- 移动端 Logo -->
+            <div class="lg:hidden text-center mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-wiki text-white text-3xl mb-4 shadow-lg">⚖</div>
+                <h1 class="text-2xl font-bold">
+                    <span class="text-fg-primary">LexPrime</span>
+                    <span class="text-brand ml-1">元枢法智</span>
+                </h1>
+                <p class="text-sm text-fg-tertiary mt-2">律师的第二大脑</p>
             </div>
 
-            <!-- 登录表单 -->
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs text-fg-secondary font-medium mb-1.5">邮箱</label>
-                    <input type="email" id="login-email" required
-                           class="w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors"
-                           placeholder="you@lawfirm.com">
+            <!-- 登录卡片 -->
+            <div class="bg-white rounded-2xl border border-bg-border p-8 shadow-xl shadow-fg-primary/5 relative overflow-hidden">
+                <!-- 卡片顶部装饰线 -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand via-ai to-wiki"></div>
+                
+                <!-- Tab 切换 -->
+                <div class="flex items-center gap-1 mb-8 bg-bg-subtle rounded-2xl p-1.5">
+                    <button id="login-tab-btn" class="flex-1 py-3 rounded-xl bg-white text-brand text-sm font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5">
+                        登录
+                    </button>
+                    <button id="register-tab-btn" class="flex-1 py-3 rounded-xl text-fg-secondary text-sm font-medium hover:text-fg-primary transition-all duration-300">
+                        注册
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-xs text-fg-secondary font-medium mb-1.5">密码</label>
-                    <input type="password" id="login-password" required
-                           class="w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors"
-                           placeholder="••••••••">
-                </div>
-                <div id="login-error" class="hidden text-xs text-danger"></div>
-                <button type="submit" class="w-full py-3 bg-brand text-white font-medium rounded-lg hover:bg-brand-hover transition-colors">
-                    登录
-                </button>
-            </form>
 
-            <!-- 注册表单 -->
-            <form id="register-form" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs text-fg-secondary font-medium mb-1.5">姓名</label>
-                    <input type="text" id="register-name" required
-                           class="w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors"
-                           placeholder="张律师">
-                </div>
-                <div>
-                    <label class="block text-xs text-fg-secondary font-medium mb-1.5">邮箱</label>
-                    <input type="email" id="register-email" required
-                           class="w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors"
-                           placeholder="you@lawfirm.com">
-                </div>
-                <div>
-                    <label class="block text-xs text-fg-secondary font-medium mb-1.5">密码</label>
-                    <input type="password" id="register-password" required minlength="6"
-                           class="w-full px-4 py-2.5 bg-bg-subtle border border-bg-border rounded-lg text-sm focus:outline-none focus:border-brand focus:bg-white transition-colors"
-                           placeholder="至少 6 位">
-                </div>
-                <div id="register-error" class="hidden text-xs text-danger"></div>
-                <button type="submit" class="w-full py-3 bg-brand text-white font-medium rounded-lg hover:bg-brand-hover transition-colors">
-                    注册并登录
-                </button>
-            </form>
+                <!-- 登录表单 -->
+                <form id="login-form" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-fg-secondary mb-2">邮箱地址</label>
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary group-focus-within:text-brand transition-colors">
+                                <iconify-icon icon="mdi:email-outline" class="text-lg"></iconify-icon>
+                            </div>
+                            <input type="email" id="login-email" required
+                                   class="w-full pl-11 pr-4 py-3.5 bg-bg-subtle border-2 border-bg-border rounded-xl text-sm focus:outline-none focus:border-brand focus:bg-white transition-all duration-300"
+                                   placeholder="you@lawfirm.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-fg-secondary mb-2">密码</label>
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary group-focus-within:text-brand transition-colors">
+                                <iconify-icon icon="mdi:lock-outline" class="text-lg"></iconify-icon>
+                            </div>
+                            <input type="password" id="login-password" required
+                                   class="w-full pl-11 pr-12 py-3.5 bg-bg-subtle border-2 border-bg-border rounded-xl text-sm focus:outline-none focus:border-brand focus:bg-white transition-all duration-300"
+                                   placeholder="••••••••">
+                            <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-fg-tertiary hover:text-brand transition-colors">
+                                <iconify-icon icon="mdi:eye-outline" class="text-lg"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 错误提示 -->
+                    <div id="login-error" class="hidden p-3 rounded-xl bg-danger-tint border border-danger/20 text-danger text-xs flex items-start gap-2">
+                        <iconify-icon icon="mdi:alert-circle-outline" class="text-base flex-shrink-0 mt-0.5"></iconify-icon>
+                        <span id="login-error-text">账号或密码错误</span>
+                    </div>
 
-            <!-- 分隔线 -->
-            <div class="flex items-center gap-3 my-6">
-                <div class="flex-1 h-px bg-bg-border"></div>
-                <span class="text-xs text-fg-tertiary">或</span>
-                <div class="flex-1 h-px bg-bg-border"></div>
+                    <!-- 记住我 + 忘记密码 -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2.5 cursor-pointer group">
+                            <input type="checkbox" class="sr-only peer" id="login-remember">
+                            <div class="w-5 h-5 rounded-md border-2 border-bg-border bg-white peer-checked:bg-brand peer-checked:border-brand transition-all duration-200 relative flex items-center justify-center group-hover:border-brand">
+                                <iconify-icon icon="mdi:check" class="text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></iconify-icon>
+                            </div>
+                            <span class="text-xs text-fg-secondary group-hover:text-fg-primary transition-colors">记住我</span>
+                        </label>
+                        <a href="#" onclick="alert('请联系管理员重置密码')" class="text-xs text-brand hover:text-brand-hover font-medium transition-colors">
+                            忘记密码?
+                        </a>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button type="submit" id="login-submit-btn" class="w-full py-3.5 bg-gradient-to-r from-brand to-brand-hover text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span>登录</span>
+                        <iconify-icon icon="mdi:arrow-right" class="text-base"></iconify-icon>
+                    </button>
+                </form>
+
+                <!-- 注册表单 -->
+                <form id="register-form" class="space-y-5 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold text-fg-secondary mb-2">姓名</label>
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary group-focus-within:text-brand transition-colors">
+                                <iconify-icon icon="mdi:account-outline" class="text-lg"></iconify-icon>
+                            </div>
+                            <input type="text" id="register-name" required
+                                   class="w-full pl-11 pr-4 py-3.5 bg-bg-subtle border-2 border-bg-border rounded-xl text-sm focus:outline-none focus:border-brand focus:bg-white transition-all duration-300"
+                                   placeholder="张律师">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-fg-secondary mb-2">邮箱地址</label>
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary group-focus-within:text-brand transition-colors">
+                                <iconify-icon icon="mdi:email-outline" class="text-lg"></iconify-icon>
+                            </div>
+                            <input type="email" id="register-email" required
+                                   class="w-full pl-11 pr-4 py-3.5 bg-bg-subtle border-2 border-bg-border rounded-xl text-sm focus:outline-none focus:border-brand focus:bg-white transition-all duration-300"
+                                   placeholder="you@lawfirm.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-fg-secondary mb-2">设置密码</label>
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary group-focus-within:text-brand transition-colors">
+                                <iconify-icon icon="mdi:lock-outline" class="text-lg"></iconify-icon>
+                            </div>
+                            <input type="password" id="register-password" required minlength="6"
+                                   class="w-full pl-11 pr-12 py-3.5 bg-bg-subtle border-2 border-bg-border rounded-xl text-sm focus:outline-none focus:border-brand focus:bg-white transition-all duration-300"
+                                   placeholder="至少 6 位">
+                            <button type="button" onclick="togglePasswordVisibility('register-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-fg-tertiary hover:text-brand transition-colors">
+                                <iconify-icon icon="mdi:eye-outline" class="text-lg"></iconify-icon>
+                            </button>
+                        </div>
+                        <!-- 密码强度提示 -->
+                        <div class="mt-2 flex gap-1">
+                            <div class="h-1 flex-1 rounded-full bg-bg" id="pwd-strength-1"></div>
+                            <div class="h-1 flex-1 rounded-full bg-bg" id="pwd-strength-2"></div>
+                            <div class="h-1 flex-1 rounded-full bg-bg" id="pwd-strength-3"></div>
+                        </div>
+                        <p class="mt-1 text-[10px] text-fg-tertiary">建议包含字母、数字和特殊字符</p>
+                    </div>
+                    
+                    <!-- 错误提示 -->
+                    <div id="register-error" class="hidden p-3 rounded-xl bg-danger-tint border border-danger/20 text-danger text-xs flex items-start gap-2">
+                        <iconify-icon icon="mdi:alert-circle-outline" class="text-base flex-shrink-0 mt-0.5"></iconify-icon>
+                        <span id="register-error-text">注册失败</span>
+                    </div>
+
+                    <!-- 服务条款 -->
+                    <label class="flex items-start gap-2.5 cursor-pointer group">
+                        <input type="checkbox" class="sr-only peer" id="register-agree" required>
+                        <div class="w-5 h-5 rounded-md border-2 border-bg-border bg-white peer-checked:bg-brand peer-checked:border-brand transition-all duration-200 relative flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:border-brand">
+                            <iconify-icon icon="mdi:check" class="text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-xs text-fg-secondary leading-relaxed">
+                            我已阅读并同意 <a href="#" class="text-brand hover:underline">服务条款</a> 和 <a href="#" class="text-brand hover:underline">隐私政策</a>
+                        </span>
+                    </label>
+
+                    <!-- 注册按钮 -->
+                    <button type="submit" id="register-submit-btn" class="w-full py-3.5 bg-gradient-to-r from-brand to-brand-hover text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span>注册并登录</span>
+                        <iconify-icon icon="mdi:rocket-launch-outline" class="text-base"></iconify-icon>
+                    </button>
+                </form>
+
+                <!-- 分隔线 -->
+                <div class="flex items-center gap-3 my-7">
+                    <div class="flex-1 h-px bg-bg-border"></div>
+                    <span class="text-xs text-fg-tertiary">或使用以下方式</span>
+                    <div class="flex-1 h-px bg-bg-border"></div>
+                </div>
+
+                <!-- 第三方登录 -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="alert('微信登录功能开发中')" class="flex items-center justify-center gap-2 py-3 border-2 border-bg-border rounded-xl text-fg-secondary hover:border-wechat hover:text-wechat hover:bg-success-tint/50 transition-all duration-300 group">
+                        <iconify-icon icon="mdi:wechat" class="text-xl group-hover:scale-110 transition-transform"></iconify-icon>
+                        <span class="text-xs font-medium">微信登录</span>
+                    </button>
+                    <button onclick="alert('手机号登录功能开发中')" class="flex items-center justify-center gap-2 py-3 border-2 border-bg-border rounded-xl text-fg-secondary hover:border-brand hover:text-brand hover:bg-brand-tint/50 transition-all duration-300 group">
+                        <iconify-icon icon="mdi:cellphone" class="text-xl group-hover:scale-110 transition-transform"></iconify-icon>
+                        <span class="text-xs font-medium">手机验证码</span>
+                    </button>
+                </div>
+
+                <!-- Demo 模式 -->
+                <div class="mt-6 pt-6 border-t border-bg-border">
+                    <button id="demoLoginBtn" class="w-full py-3 border-2 border-dashed border-bg-border text-fg-secondary font-medium rounded-xl hover:border-brand hover:text-brand hover:bg-brand-tint/30 transition-all duration-300 text-sm flex items-center justify-center gap-2 group">
+                        <iconify-icon icon="mdi:rocket-launch-outline" class="text-base group-hover:rotate-12 transition-transform"></iconify-icon>
+                        <span>以 Demo 模式进入 (免登录)</span>
+                    </button>
+                    <p class="text-[11px] text-fg-tertiary text-center mt-2 leading-relaxed">
+                        Demo 模式使用模拟用户 (MVP_USER_ID=u-1), 无需后端 auth。
+                    </p>
+                </div>
             </div>
 
-            <!-- Demo 模式 -->
-            <button id="demoLoginBtn" class="w-full py-3 border border-bg-border text-fg-secondary font-medium rounded-lg hover:bg-bg-subtle transition-colors text-sm">
-                🚀 以 Demo 模式进入 (免登录)
-            </button>
-            <p class="text-xs text-fg-tertiary text-center mt-3">
-                Demo 模式使用模拟用户 (MVP_USER_ID=u-1), 无需后端 auth。
+            <!-- 底部版权 -->
+            <p class="text-xs text-fg-tertiary text-center mt-6">
+                © 2026 LexPrime 元枢法智 · AI 辅助, 不替代律师
             </p>
         </div>
-
-        <!-- 底部 -->
-        <p class="text-xs text-fg-tertiary text-center mt-6">
-            © 2026 LexPrime 元枢法智 · AI 辅助, 不替代律师
-        </p>
     </div>
 </div>
 
+<script>
+// Tab 切换
+function switchAuthTab(tab) {
+    const loginTabBtn = document.getElementById('login-tab-btn');
+    const registerTabBtn = document.getElementById('register-tab-btn');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
 
+    if (tab === 'login') {
+        loginTabBtn.className = 'flex-1 py-3 rounded-xl bg-white text-brand text-sm font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5';
+        registerTabBtn.className = 'flex-1 py-3 rounded-xl text-fg-secondary text-sm font-medium hover:text-fg-primary transition-all duration-300';
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+    } else {
+        registerTabBtn.className = 'flex-1 py-3 rounded-xl bg-white text-brand text-sm font-semibold shadow-sm transition-all duration-300 hover:-translate-y-0.5';
+        loginTabBtn.className = 'flex-1 py-3 rounded-xl text-fg-secondary text-sm font-medium hover:text-fg-primary transition-all duration-300';
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    }
+}
+
+document.getElementById('login-tab-btn').addEventListener('click', () => switchAuthTab('login'));
+document.getElementById('register-tab-btn').addEventListener('click', () => switchAuthTab('register'));
+
+// 密码显示切换
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('iconify-icon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('icon', 'mdi:eye-off-outline');
+    } else {
+        input.type = 'password';
+        icon.setAttribute('icon', 'mdi:eye-outline');
+    }
+}
+
+// 密码强度检测
+document.addEventListener('DOMContentLoaded', function() {
+    const registerPwd = document.getElementById('register-password');
+    if (registerPwd) {
+        registerPwd.addEventListener('input', function() {
+            const pwd = this.value;
+            let strength = 0;
+            if (pwd.length >= 6) strength++;
+            if (/[a-zA-Z]/.test(pwd) && /[0-9]/.test(pwd)) strength++;
+            if (/[^a-zA-Z0-9]/.test(pwd) && pwd.length >= 8) strength++;
+
+            const bars = [
+                document.getElementById('pwd-strength-1'),
+                document.getElementById('pwd-strength-2'),
+                document.getElementById('pwd-strength-3')
+            ];
+            const colors = ['bg-danger', 'bg-warning', 'bg-success'];
+
+            bars.forEach((bar, i) => {
+                bar.className = 'h-1 flex-1 rounded-full ' + (i < strength ? colors[strength - 1] : 'bg-bg');
+            });
+        });
+    }
+});
+
+// 登录表单提交
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-submit-btn');
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('login-error');
+    
+    errorEl.classList.add('hidden');
+    Utils.setButtonLoading(btn, '登录中...');
+    
+    setTimeout(() => {
+        Utils.setButtonNormal(btn);
+        if (email && password.length >= 6) {
+            if (typeof window.authLogin === 'function') {
+                window.authLogin(email, password);
+            } else {
+                Utils.showToast({
+                    type: 'success',
+                    message: '登录成功！',
+                    duration: 2000
+                });
+            }
+        } else {
+            errorEl.classList.remove('hidden');
+            document.getElementById('login-error-text').textContent = '请输入正确的邮箱和密码（至少6位）';
+        }
+    }, 800);
+});
+
+// 注册表单提交
+document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('register-submit-btn');
+    const agree = document.getElementById('register-agree').checked;
+    const errorEl = document.getElementById('register-error');
+    
+    errorEl.classList.add('hidden');
+    
+    if (!agree) {
+        errorEl.classList.remove('hidden');
+        document.getElementById('register-error-text').textContent = '请先同意服务条款和隐私政策';
+        return;
+    }
+    
+    Utils.setButtonLoading(btn, '注册中...');
+    
+    setTimeout(() => {
+        Utils.setButtonNormal(btn);
+        Utils.showToast({
+            type: 'success',
+            message: '注册成功！欢迎使用 LexPrime',
+            duration: 2000
+        });
+    }, 1000);
+});
+</script>

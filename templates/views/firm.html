@@ -1,155 +1,341 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-firm">
-<div class="max-w-6xl mx-auto w-full space-y-5">
-    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-5">
-        <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                <iconify-icon class="text-2xl text-indigo-600" icon="mdi:office-building"></iconify-icon>
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto bg-bg" id="view-firm">
+<div class="max-w-6xl mx-auto w-full p-4 md:p-6 space-y-4 md:space-y-5">
+
+<!-- 页面标题 -->
+<div class="flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
+    <div>
+        <h2 class="text-xl font-bold text-fg-primary">律所信息</h2>
+        <p class="text-xs text-fg-tertiary mt-1">管理律所基本信息、团队成员和资质认证</p>
+    </div>
+    <div class="hidden md:flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-purple-200">
+            <iconify-icon icon="mdi:office-building" class="text-white text-lg"></iconify-icon>
+        </div>
+    </div>
+</div>
+
+<!-- 顶部律所信息头部 -->
+<div class="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-wiki rounded-2xl p-5 md:p-6 text-white" data-animate="fade-in-up" data-delay="0.1">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 blur-2xl"></div>
+    <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white/30 shadow-lg">
+                    <iconify-icon class="text-4xl text-white" icon="mdi:office-building"></iconify-icon>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h2 class="text-xl font-bold">北京宏达律师事务所</h2>
+                        <span class="text-[10px] bg-white/20 backdrop-blur-sm text-white font-semibold px-2.5 py-0.5 rounded-full">合伙制律所</span>
+                        <span class="text-[10px] bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold px-2.5 py-0.5 rounded-full shadow-sm">认证律所</span>
+                    </div>
+                    <p class="text-sm text-white/80 mt-1">成立于 2010 年 · 执业许可证：31110000MD0123456X</p>
+                    <p class="text-xs text-white/60 mt-0.5">北京市朝阳区建国路88号SOHO现代城A座18层</p>
+                </div>
             </div>
-            <div class="flex-1">
-                <h1 class="text-lg font-bold text-fg-primary">律所管理</h1>
-                <p class="text-xs text-fg-secondary mt-1">管理律所基本信息、团队成员、部门设置、收费标准等。</p>
+            <div class="flex flex-wrap gap-2">
+                <button class="flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-600 hover:bg-white/90 rounded-xl text-xs font-semibold transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-indigo-500/20" onclick="openFirmSetting('basic')">
+                    <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                    <span>编辑信息</span>
+                </button>
+                <button class="flex items-center gap-1.5 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-white text-xs font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="openFirmSetting('members')">
+                    <iconify-icon icon="mdi:account-multiple-plus" class="text-sm"></iconify-icon>
+                    <span>添加成员</span>
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="firm-stats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-bg-border p-5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
-                    <iconify-icon class="text-xl text-brand" icon="mdi:account-group"></iconify-icon>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-fg-primary">12</p>
-                    <p class="text-[10px] text-fg-tertiary">团队成员</p>
-                </div>
+<!-- 统计数据卡片 -->
+<div id="firm-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3" data-animate="fade-in-up" data-delay="0.2">
+    <div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-stagger-group="firm-stats" data-stagger-index="0">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary">团队成员</span>
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <iconify-icon icon="mdi:account-group" class="text-brand text-sm"></iconify-icon>
             </div>
         </div>
-        <div class="bg-white rounded-xl border border-bg-border p-5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-                    <iconify-icon class="text-xl text-green-500" icon="mdi:briefcase-check"></iconify-icon>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-fg-primary">86</p>
-                    <p class="text-[10px] text-fg-tertiary">在办案件</p>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-bg-border p-5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                    <iconify-icon class="text-xl text-amber-500" icon="mdi:cash-multiple"></iconify-icon>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-fg-primary">¥58万</p>
-                    <p class="text-[10px] text-fg-tertiary">本月收费</p>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl border border-bg-border p-5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <iconify-icon class="text-xl text-purple-500" icon="mdi:file-document-multiple"></iconify-icon>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-fg-primary">342</p>
-                    <p class="text-[10px] text-fg-tertiary">合同模板</p>
-                </div>
-            </div>
-        </div>
+        <p class="text-2xl font-bold text-fg-primary">12</p>
+        <p class="text-[10px] text-success flex items-center mt-1">
+            <iconify-icon icon="mdi:arrow-up" class="mr-0.5 text-[10px]"></iconify-icon>
+            较上月 +2
+        </p>
     </div>
+    <div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-stagger-group="firm-stats" data-stagger-index="1">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary">在办案件</span>
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                <iconify-icon icon="mdi:briefcase-check" class="text-success text-sm"></iconify-icon>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">86</p>
+        <p class="text-[10px] text-success flex items-center mt-1">
+            <iconify-icon icon="mdi:arrow-up" class="mr-0.5 text-[10px]"></iconify-icon>
+            较上月 +8
+        </p>
+    </div>
+    <div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-stagger-group="firm-stats" data-stagger-index="2">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary">本月收费</span>
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-50 to-warning-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                <iconify-icon icon="mdi:cash-multiple" class="text-warning text-sm"></iconify-icon>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">¥58万</p>
+        <p class="text-[10px] text-success flex items-center mt-1">
+            <iconify-icon icon="mdi:arrow-up" class="mr-0.5 text-[10px]"></iconify-icon>
+            较上月 +12%
+        </p>
+    </div>
+    <div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-stagger-group="firm-stats" data-stagger-index="3">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] text-fg-tertiary">成立时间</span>
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                <iconify-icon icon="mdi:calendar-star" class="text-wiki text-sm"></iconify-icon>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">16<span class="text-sm font-normal text-fg-tertiary">年</span></p>
+        <p class="text-[10px] text-fg-tertiary mt-1">2010年成立</p>
+    </div>
+</div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2 bg-white rounded-xl border border-bg-border p-5">
+<!-- 主体内容：左栏律师团队 + 右栏信息卡片 -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5">
+
+    <!-- 左栏：律师团队 + 基本信息 -->
+    <div class="lg:col-span-8 space-y-4 md:space-y-5">
+
+        <!-- 律师团队列表 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.3">
             <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                        <iconify-icon icon="mdi:account-group" class="text-white text-lg"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-fg-primary">律师团队</h3>
+                        <p class="text-[11px] text-fg-tertiary">共 12 名成员 · 8 人在线</p>
+                    </div>
+                </div>
                 <div class="flex items-center gap-2">
-                    <iconify-icon class="text-base text-fg-tertiary" icon="mdi:account-group"></iconify-icon>
-                    <h2 class="text-sm font-semibold text-fg-primary">团队成员</h2>
+                    <button class="text-xs text-brand hover:underline" onclick="viewAllMembers()">查看全部</button>
+                    <button class="flex items-center gap-1 text-[10px] font-medium text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-all hover:shadow-md hover:shadow-brand/20" onclick="openFirmSetting('members')">
+                        <iconify-icon class="text-[10px]" icon="mdi:plus"></iconify-icon>
+                        <span>添加</span>
+                    </button>
                 </div>
-                <button class="text-xs text-brand hover:underline" onclick="viewAllMembers()">查看全部</button>
             </div>
-            <div id="firm-member-list" class="space-y-3">
-                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors">
-                    <div class="w-10 h-10 rounded-full bg-brand-tint3 flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-semibold text-brand">张</span>
+
+            <div id="firm-member-list" class="space-y-2">
+                <!-- 律师成员将由 JS 渲染 -->
+            </div>
+
+            <!-- 空状态（默认隐藏） -->
+            <div id="firm-members-empty" class="hidden py-8">
+            </div>
+        </div>
+
+        <!-- 基本信息卡片 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.4">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-brand flex items-center justify-center shadow-md shadow-brand/20">
+                        <iconify-icon icon="mdi:office-building-outline" class="text-white text-lg"></iconify-icon>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-fg-primary">张伟律师</p>
-                        <p class="text-[10px] text-fg-tertiary">高级合伙人 · 民商事诉讼</p>
+                    <div>
+                        <h3 class="text-base font-bold text-fg-primary">基本信息</h3>
+                        <p class="text-[11px] text-fg-tertiary">律所的基本资料和联系方式</p>
                     </div>
-                    <span class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full">在线</span>
                 </div>
-                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-semibold text-purple-600">李</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-fg-primary">李娜律师</p>
-                        <p class="text-[10px] text-fg-tertiary">合伙人 · 知识产权</p>
-                    </div>
-                    <span class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full">在线</span>
+                <button class="px-4 py-2 text-xs font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand/10 flex items-center gap-1.5" onclick="openFirmSetting('basic')">
+                    <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                    <span>编辑</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:badge-account-outline" class="text-xs"></iconify-icon>
+                        律所名称
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">北京宏达律师事务所</p>
                 </div>
-                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-semibold text-amber-600">王</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-fg-primary">王强律师</p>
-                        <p class="text-[10px] text-fg-tertiary">执业律师 · 刑事辩护</p>
-                    </div>
-                    <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">离线</span>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:card-account-details-outline" class="text-xs"></iconify-icon>
+                        统一社会信用代码
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary font-mono">31110000MD0123456X</p>
                 </div>
-                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-semibold text-blue-600">刘</span>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:calendar-outline" class="text-xs"></iconify-icon>
+                        成立日期
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">2010-05-18</p>
+                </div>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:account-group-outline" class="text-xs"></iconify-icon>
+                        律师人数
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">12 人</p>
+                </div>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors md:col-span-2">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon>
+                        联系地址
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">北京市朝阳区建国路88号SOHO现代城A座18层</p>
+                </div>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:phone-outline" class="text-xs"></iconify-icon>
+                        联系电话
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">010-88888888</p>
+                </div>
+                <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                    <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                        <iconify-icon icon="mdi:email-outline" class="text-xs"></iconify-icon>
+                        官方邮箱
+                    </p>
+                    <p class="text-sm font-semibold text-fg-primary">contact@hongda-law.com</p>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-bg-border">
+                <p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">
+                    <iconify-icon icon="mdi:text-box-outline" class="text-xs"></iconify-icon>
+                    律所简介
+                </p>
+                <p class="text-sm text-fg-secondary leading-relaxed">北京宏达律师事务所成立于2010年，专注于民商事诉讼、知识产权、公司并购等领域，拥有资深律师团队。始终秉承"专业、高效、诚信"的服务理念，为客户提供全方位的法律服务。</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 右栏：资质认证 + 律所设置 -->
+    <div class="lg:col-span-4 space-y-4 md:space-y-5">
+
+        <!-- 资质认证卡片 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.35">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-orange-200">
+                    <iconify-icon icon="mdi:certificate-outline" class="text-white text-lg"></iconify-icon>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-fg-primary">资质认证</h3>
+                    <p class="text-[11px] text-fg-tertiary">已认证 4 项</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-50 to-success-tint border border-green-100 hover:shadow-md transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-success flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:check-decagram" class="text-white text-lg"></iconify-icon>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-fg-primary">刘芳律师</p>
-                        <p class="text-[10px] text-fg-tertiary">执业律师 · 劳动争议</p>
+                        <p class="text-sm font-semibold text-fg-primary">执业许可证</p>
+                        <p class="text-[10px] text-fg-tertiary">北京市司法局颁发</p>
                     </div>
-                    <span class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full">在线</span>
+                    <span class="text-[10px] bg-success text-white font-medium px-2 py-0.5 rounded-full flex-shrink-0">已认证</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-brand-tint3 to-brand-tint border border-brand-tint2 hover:shadow-md transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:shield-check" class="text-white text-lg"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-fg-primary">平台实名认证</p>
+                        <p class="text-[10px] text-fg-tertiary">LexPrime 官方认证</p>
+                    </div>
+                    <span class="text-[10px] bg-brand text-white font-medium px-2 py-0.5 rounded-full flex-shrink-0">已认证</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-wiki-tint border border-purple-100 hover:shadow-md transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:award-outline" class="text-white text-lg"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-fg-primary">优秀律所</p>
+                        <p class="text-[10px] text-fg-tertiary">2025年度评选</p>
+                    </div>
+                    <span class="text-[10px] bg-wiki text-white font-medium px-2 py-0.5 rounded-full flex-shrink-0">已认证</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-warning-tint border border-amber-100 hover:shadow-md transition-all duration-300 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-warning flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:star-four-points" class="text-white text-lg"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-fg-primary">AAA信用等级</p>
+                        <p class="text-[10px] text-fg-tertiary">企业信用评价</p>
+                    </div>
+                    <span class="text-[10px] bg-warning text-white font-medium px-2 py-0.5 rounded-full flex-shrink-0">已认证</span>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-bg-border p-5">
-            <div class="flex items-center gap-2 mb-4">
-                <iconify-icon class="text-base text-fg-tertiary" icon="mdi:cog"></iconify-icon>
-                <h2 class="text-sm font-semibold text-fg-primary">律所设置</h2>
+        <!-- 律所设置 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.45">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center shadow-md shadow-gray-200">
+                    <iconify-icon icon="mdi:cog-outline" class="text-white text-lg"></iconify-icon>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-fg-primary">律所设置</h3>
+                    <p class="text-[11px] text-fg-tertiary">管理律所各项配置</p>
+                </div>
             </div>
-            <div class="space-y-2">
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('basic')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:office-building-outline"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">基本信息</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+
+            <div class="space-y-1">
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('basic')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-brand" icon="mdi:office-building-outline"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">基本信息</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('members')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:account-multiple-plus"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">成员管理</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('members')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-wiki" icon="mdi:account-multiple-plus"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">成员管理</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('departments')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:domain"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">部门设置</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('departments')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-success" icon="mdi:domain"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">部门设置</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('fees')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:cash"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">收费标准</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('fees')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-50 to-warning-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-warning" icon="mdi:cash"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">收费标准</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('contracts')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:file-document-edit"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">合同模板</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('contracts')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-50 to-brand-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-brand" icon="mdi:file-document-edit"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">合同模板</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('permissions')">
-                    <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:shield-check"></iconify-icon>
-                    <span class="text-sm text-fg-secondary">权限管理</span>
-                    <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
+                <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-all duration-300 text-left group" onclick="openFirmSetting('permissions')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-red-50 to-danger-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon class="text-base text-danger" icon="mdi:shield-check"></iconify-icon>
+                    </div>
+                    <span class="text-sm text-fg-secondary group-hover:text-fg-primary transition-colors">权限管理</span>
+                    <iconify-icon class="text-fg-tertiary ml-auto group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
                 </button>
             </div>
         </div>
+
     </div>
+</div>
 </div>
 </div>

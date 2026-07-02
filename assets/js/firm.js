@@ -88,28 +88,31 @@
         var container = document.getElementById('firm-stats');
         if (!container) return;
         container.innerHTML = _statsData
-            .map(function (item) {
+            .map(function (item, idx) {
+                var bgGradient = '';
+                var iconGradient = '';
+                if (item.iconColor === 'text-brand') {
+                    bgGradient = 'from-brand-tint3 to-brand-tint border-brand-tint2';
+                    iconGradient = 'from-brand to-brand-hover';
+                } else if (item.iconColor === 'text-green-500') {
+                    bgGradient = 'from-green-50 to-success-tint border-green-100';
+                    iconGradient = 'from-green-500 to-success';
+                } else if (item.iconColor === 'text-amber-500') {
+                    bgGradient = 'from-amber-50 to-warning-tint border-amber-100';
+                    iconGradient = 'from-amber-400 to-warning';
+                } else if (item.iconColor === 'text-purple-500') {
+                    bgGradient = 'from-purple-50 to-wiki-tint border-purple-100';
+                    iconGradient = 'from-purple-500 to-wiki';
+                }
                 return (
-                    '<div class="bg-white rounded-xl border border-bg-border p-5">' +
-                    '<div class="flex items-center gap-3">' +
-                    '<div class="w-10 h-10 rounded-lg ' +
-                    item.iconBg +
-                    ' flex items-center justify-center">' +
-                    '<iconify-icon class="text-xl ' +
-                    item.iconColor +
-                    '" icon="' +
-                    item.icon +
-                    '"></iconify-icon>' +
-                    '</div>' +
-                    '<div>' +
-                    '<p class="text-2xl font-bold text-fg-primary">' +
-                    escapeHtml(item.value) +
-                    '</p>' +
-                    '<p class="text-[10px] text-fg-tertiary">' +
-                    escapeHtml(item.label) +
-                    '</p>' +
+                    '<div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="firm-stats" data-stagger-index="' + idx + '" data-delay="0.2">' +
+                    '<div class="flex items-center justify-between mb-2">' +
+                    '<span class="text-[11px] text-fg-tertiary">' + escapeHtml(item.label) + '</span>' +
+                    '<div class="w-7 h-7 rounded-lg bg-gradient-to-br ' + iconGradient + ' flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">' +
+                    '<iconify-icon class="text-white text-sm" icon="' + item.icon + '"></iconify-icon>' +
                     '</div>' +
                     '</div>' +
+                    '<p class="text-2xl font-bold text-fg-primary">' + escapeHtml(item.value) + '</p>' +
                     '</div>'
                 );
             })
@@ -121,42 +124,78 @@
         var container = document.getElementById('firm-member-list');
         if (!container) return;
         var list = _showAllMembers ? _membersData : _membersData.slice(0, _defaultMemberCount);
+
+        var emptyContainer = document.getElementById('firm-members-empty');
+        if (list.length === 0) {
+            container.classList.add('hidden');
+            if (emptyContainer) {
+                emptyContainer.classList.remove('hidden');
+                if (typeof Utils !== 'undefined' && Utils.createEmptyState) {
+                    emptyContainer.innerHTML = Utils.createEmptyState({
+                        preset: 'members',
+                        icon: 'mdi:account-group-outline',
+                        title: '暂无团队成员',
+                        description: '添加团队成员，开始协作办公',
+                        actionText: '添加成员',
+                        actionHandler: function() { openFirmSetting('members'); }
+                    });
+                }
+            }
+            return;
+        }
+
+        container.classList.remove('hidden');
+        if (emptyContainer) emptyContainer.classList.add('hidden');
+
         container.innerHTML = list
             .map(function (member, idx) {
                 var color = _avatarColors[idx % _avatarColors.length];
                 var firstChar = member.name.charAt(0);
-                var badgeClass = member.online ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500';
+                var badgeClass = member.online
+                    ? 'bg-success-tint text-success'
+                    : 'bg-bg text-fg-disabled';
+                var badgeDotClass = member.online
+                    ? 'bg-success'
+                    : 'bg-fg-disabled';
                 var badgeText = member.online ? '在线' : '离线';
                 return (
-                    '<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors cursor-pointer" onclick="openMemberDetail(' +
+                    '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle/70 transition-all duration-300 cursor-pointer group hover:-translate-y-0.5 hover:shadow-sm" onclick="openMemberDetail(' +
                     member.id +
-                    ')">' +
-                    '<div class="w-10 h-10 rounded-full ' +
+                    ')" data-animate="fade-in-up" data-delay="' + (0.1 + idx * 0.05) + '">' +
+                    '<div class="relative flex-shrink-0">' +
+                    '<div class="w-12 h-12 rounded-xl ' +
                     color.bg +
-                    ' flex items-center justify-center flex-shrink-0">' +
-                    '<span class="text-sm font-semibold ' +
+                    ' flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">' +
+                    '<span class="text-base font-bold ' +
                     color.text +
                     '">' +
                     escapeHtml(firstChar) +
                     '</span>' +
                     '</div>' +
+                    '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 ' +
+                    badgeDotClass +
+                    ' border-2 border-white rounded-full"></span>' +
+                    '</div>' +
                     '<div class="flex-1 min-w-0">' +
-                    '<p class="text-sm font-medium text-fg-primary">' +
+                    '<p class="text-sm font-semibold text-fg-primary group-hover:text-brand transition-colors">' +
                     escapeHtml(member.name) +
                     '</p>' +
-                    '<p class="text-[10px] text-fg-tertiary">' +
+                    '<p class="text-[11px] text-fg-tertiary mt-0.5">' +
                     escapeHtml(member.position) +
                     ' · ' +
                     escapeHtml(member.field) +
                     '</p>' +
                     '</div>' +
+                    '<div class="flex items-center gap-2 flex-shrink-0">' +
                     '<span class="text-[10px] ' +
                     badgeClass +
-                    ' px-2 py-0.5 rounded-full cursor-pointer" onclick="toggleMemberStatus(' +
+                    ' font-medium px-2.5 py-1 rounded-full cursor-pointer" onclick="event.stopPropagation(); toggleMemberStatus(' +
                     member.id +
                     ')">' +
                     badgeText +
                     '</span>' +
+                    '<iconify-icon icon="mdi:chevron-right" class="text-fg-disabled text-base opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0"></iconify-icon>' +
+                    '</div>' +
                     '</div>'
                 );
             })
@@ -571,6 +610,13 @@
     function initFirm() {
         renderStats();
         renderMemberList();
+
+        if (typeof Animations !== 'undefined' && typeof Animations.initPageAnimations === 'function') {
+            var view = document.getElementById('view-firm');
+            if (view) {
+                Animations.initPageAnimations(view);
+            }
+        }
     }
 
     globalThis.initFirm = initFirm;

@@ -130,6 +130,100 @@
             v.classList.add('hidden');
         });
         document.getElementById('view-payment').classList.remove('hidden');
+
+        setTimeout(function() {
+            if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+                Animations.initPageAnimations(document.getElementById('view-payment'));
+            }
+        }, 50);
+    }
+
+    // 处理支付
+    function handlePayment() {
+        var agreeTerms = document.getElementById('agree-terms');
+        if (agreeTerms && !agreeTerms.checked) {
+            Utils.showToast('warning', '请先阅读并同意服务协议');
+            return;
+        }
+
+        var payBtn = document.getElementById('pay-button');
+        Utils.setButtonLoading(payBtn, '支付处理中...');
+
+        var overlay = document.getElementById('payment-loading-overlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
+
+        setTimeout(function() {
+            if (overlay) {
+                overlay.classList.add('hidden');
+            }
+            Utils.setButtonNormal(payBtn);
+            paySuccess();
+        }, 2000);
+    }
+
+    // 应用优惠券
+    function applyCoupon() {
+        var input = document.getElementById('coupon-input');
+        var message = document.getElementById('coupon-message');
+        var code = input ? input.value.trim() : '';
+
+        if (!code) {
+            if (message) {
+                message.textContent = '请输入优惠码';
+                message.className = 'mt-2 text-xs text-warning';
+                message.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (message) {
+            message.textContent = '验证中...';
+            message.className = 'mt-2 text-xs text-fg-tertiary';
+            message.classList.remove('hidden');
+        }
+
+        setTimeout(function() {
+            if (code.toUpperCase() === 'NEWUSER' || code.toUpperCase() === 'LEXPRIME') {
+                var discount = 50;
+                var totalEl = document.getElementById('payment-total');
+                var subtotalEl = document.getElementById('payment-subtotal');
+                var discountEl = document.getElementById('payment-discount');
+                var btnAmountEl = document.getElementById('pay-button-amount');
+
+                if (totalEl && subtotalEl && discountEl) {
+                    var subtotalText = subtotalEl.textContent.replace(/[¥,]/g, '');
+                    var subtotal = parseFloat(subtotalText) || 299;
+                    var newTotal = Math.max(0, subtotal - discount);
+                    discountEl.textContent = '-¥' + discount;
+                    totalEl.textContent = '¥' + newTotal;
+                    if (btnAmountEl) {
+                        btnAmountEl.textContent = '¥' + newTotal;
+                    }
+                }
+
+                if (message) {
+                    message.textContent = '🎉 优惠码已应用，立减 ¥' + discount;
+                    message.className = 'mt-2 text-xs text-success font-medium';
+                }
+            } else {
+                if (message) {
+                    message.textContent = '优惠码无效，请检查后重试';
+                    message.className = 'mt-2 text-xs text-danger';
+                }
+            }
+        }, 800);
+    }
+
+    // 继续浏览
+    function continueBrowsing() {
+        switchView('workstation');
+    }
+
+    // 升级到年度版
+    function upgradeToYearly() {
+        Utils.showToast('info', '升级功能即将上线，敬请期待~');
     }
 
     // 返回订阅页
@@ -143,26 +237,23 @@
     // 支付方式选择
     function selectPaymentMethod(el, method) {
         AppState.selectedPayment = method;
-        document.querySelectorAll('.payment-method').forEach(function (btn) {
-            btn.classList.remove('border-[#165DFF]', 'bg-[#F2F7FF]');
-            btn.classList.add('border-[#E5E6EB]');
-            var dot = btn.querySelector('.w-5.h-5');
+        document.querySelectorAll('.payment-method-card').forEach(function (card) {
+            card.classList.remove('border-brand', 'bg-gradient-to-r', 'from-brand-tint3/50', 'to-brand-tint/30');
+            card.classList.add('border-bg-border');
+            var dot = card.querySelector('.w-5');
             if (dot) {
-                dot.classList.remove('border-[#165DFF]');
-                dot.classList.add('border-[#E5E6EB]');
-                var inner = dot.querySelector('.w-2\\.5');
-                if (inner) inner.remove();
+                dot.classList.remove('border-brand');
+                dot.classList.add('border-bg-border');
+                dot.innerHTML = '';
             }
         });
-        el.classList.remove('border-[#E5E6EB]');
-        el.classList.add('border-[#165DFF]', 'bg-[#F2F7FF]');
-        var dot = el.querySelector('.w-5.h-5');
+        el.classList.remove('border-bg-border');
+        el.classList.add('border-brand', 'bg-gradient-to-r', 'from-brand-tint3/50', 'to-brand-tint/30');
+        var dot = el.querySelector('.w-5');
         if (dot) {
-            dot.classList.remove('border-[#E5E6EB]');
-            dot.classList.add('border-[#165DFF]');
-            var inner = document.createElement('div');
-            inner.className = 'w-2.5 h-2.5 rounded-full bg-[#165DFF]';
-            dot.appendChild(inner);
+            dot.classList.remove('border-bg-border');
+            dot.classList.add('border-brand');
+            dot.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-brand to-brand-hover"></div>';
         }
     }
 
@@ -203,6 +294,12 @@
             v.classList.add('hidden');
         });
         document.getElementById('view-payment-success').classList.remove('hidden');
+
+        setTimeout(function() {
+            if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+                Animations.initPageAnimations(document.getElementById('view-payment-success'));
+            }
+        }, 50);
     }
 
     function goToSubscription() {
@@ -243,6 +340,10 @@
     globalThis.backToSubscription = backToSubscription;
     globalThis.selectPaymentMethod = selectPaymentMethod;
     globalThis.paySuccess = paySuccess;
+    globalThis.handlePayment = handlePayment;
+    globalThis.applyCoupon = applyCoupon;
+    globalThis.continueBrowsing = continueBrowsing;
+    globalThis.upgradeToYearly = upgradeToYearly;
     globalThis.goToSubscription = goToSubscription;
     globalThis.goToWorkstation = goToWorkstation;
     globalThis.switchToOrders = switchToOrders;
