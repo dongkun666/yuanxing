@@ -2,9 +2,9 @@
     'use strict';
 
     function escapeHtml(s) {
-        if (s == null) return '';
+        if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function(c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -34,10 +34,10 @@
 
     function getStatusClass(statusType) {
         switch (statusType) {
-            case 'success': return 'bg-green-50 text-success';
-            case 'pending': return 'bg-yellow-50 text-yellow-700';
-            case 'cancelled': return 'bg-bg text-fg-tertiary';
-            default: return 'bg-bg text-fg-tertiary';
+        case 'success': return 'bg-green-50 text-success';
+        case 'pending': return 'bg-yellow-50 text-yellow-700';
+        case 'cancelled': return 'bg-bg text-fg-tertiary';
+        default: return 'bg-bg text-fg-tertiary';
         }
     }
 

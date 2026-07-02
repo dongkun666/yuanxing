@@ -344,7 +344,7 @@
             var diffDays = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
             var diffText = diffDays === 0 ? '今天到期' :
                 diffDays > 0 ? '还有 ' + diffDays + ' 天' :
-                '已过 ' + (-diffDays) + ' 天';
+                    '已过 ' + (-diffDays) + ' 天';
 
             var unitText = rule.unit === 'day' ? '天' : (rule.unit === 'month' ? '个月' : '年');
             var periodText = rule.days === 0 ? '即时' : (rule.days + ' ' + unitText);

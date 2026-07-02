@@ -105,7 +105,7 @@
     function esc(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function(c) {
-            return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+            return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', '\'':'&#39;'}[c];
         });
     }
 
@@ -119,9 +119,9 @@
         var el = document.createElement('div');
         el.className = 'fixed top-4 left-1/2 -translate-x-1/2 z-[9999] px-4 py-2 rounded-lg shadow-lg text-sm flex items-center gap-1.5 ' +
             (type === 'success' ? 'bg-success text-white' :
-             type === 'warning' ? 'bg-warning text-white' :
-             type === 'error' ? 'bg-danger text-white' :
-             'bg-brand text-white');
+                type === 'warning' ? 'bg-warning text-white' :
+                    type === 'error' ? 'bg-danger text-white' :
+                        'bg-brand text-white');
         el.textContent = msg;
         document.body.appendChild(el);
         setTimeout(function() { el.remove(); }, 2500);
@@ -371,44 +371,44 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(payload)
         })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.detail) throw new Error(data.detail);
-            showStatus('success', '已提交评分 (score_id=' + (data.score_id || '—') + ')');
-            toast('已提交 ✓', 'success');
-            // 记录到历史 (前端)
-            SA.history.push({
-                lawyer_id: SA.currentLawyerId,
-                contract_id: SA.currentContract.contract_id,
-                contract_type: SA.currentContract.contract_type,
-                contract_title: SA.currentContract.contract_title,
-                aggregate_score: parseFloat(document.getElementById('score-aggregate-display').textContent || 0),
-                submitted_at: payload.submitted_at,
-                score_id: data.score_id
-            });
-            saveHistory();
-            updateProgress();
-        })
-        .catch(function(err) {
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.detail) throw new Error(data.detail);
+                showStatus('success', '已提交评分 (score_id=' + (data.score_id || '—') + ')');
+                toast('已提交 ✓', 'success');
+                // 记录到历史 (前端)
+                SA.history.push({
+                    lawyer_id: SA.currentLawyerId,
+                    contract_id: SA.currentContract.contract_id,
+                    contract_type: SA.currentContract.contract_type,
+                    contract_title: SA.currentContract.contract_title,
+                    aggregate_score: parseFloat(document.getElementById('score-aggregate-display').textContent || 0),
+                    submitted_at: payload.submitted_at,
+                    score_id: data.score_id
+                });
+                saveHistory();
+                updateProgress();
+            })
+            .catch(function(err) {
             // 断网 fallback: 暂存 localStorage
-            console.warn('提交失败, 触发 localStorage fallback:', err);
-            SA.submittedCache.push(payload);
-            saveCache();
-            SA.history.push({
-                lawyer_id: SA.currentLawyerId,
-                contract_id: SA.currentContract.contract_id,
-                contract_type: SA.currentContract.contract_type,
-                contract_title: SA.currentContract.contract_title,
-                aggregate_score: parseFloat(document.getElementById('score-aggregate-display').textContent || 0),
-                submitted_at: payload.submitted_at,
-                score_id: null,
-                cached: true
+                console.warn('提交失败, 触发 localStorage fallback:', err);
+                SA.submittedCache.push(payload);
+                saveCache();
+                SA.history.push({
+                    lawyer_id: SA.currentLawyerId,
+                    contract_id: SA.currentContract.contract_id,
+                    contract_type: SA.currentContract.contract_type,
+                    contract_title: SA.currentContract.contract_title,
+                    aggregate_score: parseFloat(document.getElementById('score-aggregate-display').textContent || 0),
+                    submitted_at: payload.submitted_at,
+                    score_id: null,
+                    cached: true
+                });
+                saveHistory();
+                updateProgress();
+                showStatus('warning', '已暂存 localStorage (网络异常, 重连后自动补传)');
+                toast('已暂存 (离线)', 'warning');
             });
-            saveHistory();
-            updateProgress();
-            showStatus('warning', '已暂存 localStorage (网络异常, 重连后自动补传)');
-            toast('已暂存 (离线)', 'warning');
-        });
     }
 
     function showStatus(type, msg) {
@@ -472,23 +472,23 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)
             })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data.score_id) {
-                    completed++;
-                    console.log('[ScoreApp] 补传成功:', payload.contract_id);
-                }
-            })
-            .catch(function() {
-                failed.push(payload);
-            })
-            .finally(function() {
-                SA.submittedCache = failed;
-                saveCache();
-                if (completed > 0) {
-                    toast('已自动补传 ' + completed + ' 条评分 (断网前暂存)', 'success');
-                }
-            });
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.score_id) {
+                        completed++;
+                        console.log('[ScoreApp] 补传成功:', payload.contract_id);
+                    }
+                })
+                .catch(function() {
+                    failed.push(payload);
+                })
+                .finally(function() {
+                    SA.submittedCache = failed;
+                    saveCache();
+                    if (completed > 0) {
+                        toast('已自动补传 ' + completed + ' 条评分 (断网前暂存)', 'success');
+                    }
+                });
         });
     }
 

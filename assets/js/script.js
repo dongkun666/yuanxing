@@ -958,8 +958,8 @@
             size < 1024
                 ? size + 'B'
                 : size < 1048576
-                  ? (size / 1024).toFixed(1) + 'KB'
-                  : (size / 1048576).toFixed(1) + 'MB';
+                    ? (size / 1024).toFixed(1) + 'KB'
+                    : (size / 1048576).toFixed(1) + 'MB';
         AppState.batchFiles.push({
             id: 'batch_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
             name: file.name,

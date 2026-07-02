@@ -42,15 +42,15 @@
             el.innerText = value;
             el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
                 (value === '进行中' ? 'bg-blue-100 text-blue-700' :
-                 value === '已结案' ? 'bg-green-100 text-green-700' :
-                 value === '已归档' ? 'bg-gray-100 text-gray-700' :
-                 'bg-orange-100 text-orange-700');
+                    value === '已结案' ? 'bg-green-100 text-green-700' :
+                        value === '已归档' ? 'bg-gray-100 text-gray-700' :
+                            'bg-orange-100 text-orange-700');
         } else if (key === 'preservation') {
             el.innerText = value;
             el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
                 (value === '已保全' ? 'bg-green-100 text-green-700' :
-                 value === '未保全' ? 'bg-gray-100 text-gray-700' :
-                 'bg-orange-100 text-orange-700');
+                    value === '未保全' ? 'bg-gray-100 text-gray-700' :
+                        'bg-orange-100 text-orange-700');
         } else if (section === 'opponent' && key === 'legalRep') {
             el.innerText = value;
             if (!value || value === '未提供 · 请补充') {

@@ -69,7 +69,7 @@
                 '</td></tr>';
         } else {
             tbody.innerHTML = pageData.map(function(item) {
-            return '<tr class="hover:bg-bg-subtle transition-colors" data-year="' + item.year + '">' +
+                return '<tr class="hover:bg-bg-subtle transition-colors" data-year="' + item.year + '">' +
                 '<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>' +
                 '<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(' + item.id + ')">' + escapeHtml(item.caseNum) + '</span></td>' +
                 '<td class="py-3 px-4 text-xs text-fg-secondary">' + escapeHtml(item.cause) + '</td>' +
@@ -86,7 +86,7 @@
                 '</div>' +
                 '</td>' +
                 '</tr>';
-        }).join('');
+            }).join('');
         }
 
         if (resultCount) resultCount.textContent = '共 ' + filtered.length + ' 条';

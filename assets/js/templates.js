@@ -5,157 +5,157 @@
  */
 
 
-    function switchTemplateTab(tabName, btn) {
-        document.getElementById('template-tab-personal').classList.add('hidden');
-        document.getElementById('template-tab-official').classList.add('hidden');
-        document.getElementById('template-tab-' + tabName).classList.remove('hidden');
-        document.querySelectorAll('.template-tab').forEach(function(tab) {
-            tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
-            tab.classList.add('text-gray-500', 'border-transparent');
-            tab.removeAttribute('data-active');
-        });
-        if (btn) {
-            btn.classList.remove('text-gray-500', 'border-transparent');
-            btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
-            btn.setAttribute('data-active', 'true');
-        }
-        // 官方 tab 仅列表视图: 切到 official 时强制把视图切换按钮对齐到 list
-        if (tabName === 'official') {
-            var listBtn = document.querySelector('.template-view-btn[data-view="list"]');
-            if (listBtn) switchTemplateView('list', listBtn);
-        }
-        // 切到个人 tab: 渲染个人模板 (从 AppState.personalTemplates 数据驱动, 含持久化)
-        if (tabName === 'personal') {
-            if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+function switchTemplateTab(tabName, btn) {
+    document.getElementById('template-tab-personal').classList.add('hidden');
+    document.getElementById('template-tab-official').classList.add('hidden');
+    document.getElementById('template-tab-' + tabName).classList.remove('hidden');
+    document.querySelectorAll('.template-tab').forEach(function(tab) {
+        tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
+        tab.classList.add('text-gray-500', 'border-transparent');
+        tab.removeAttribute('data-active');
+    });
+    if (btn) {
+        btn.classList.remove('text-gray-500', 'border-transparent');
+        btn.classList.add('text-[#165DFF]', 'border-[#165DFF]');
+        btn.setAttribute('data-active', 'true');
+    }
+    // 官方 tab 仅列表视图: 切到 official 时强制把视图切换按钮对齐到 list
+    if (tabName === 'official') {
+        var listBtn = document.querySelector('.template-view-btn[data-view="list"]');
+        if (listBtn) switchTemplateView('list', listBtn);
+    }
+    // 切到个人 tab: 渲染个人模板 (从 AppState.personalTemplates 数据驱动, 含持久化)
+    if (tabName === 'personal') {
+        if (typeof renderPersonalTemplates === 'function') renderPersonalTemplates();
+    }
+}
+
+function fixTemplateViewDOM() {
+    var main = document.querySelector('.max-w-7xl.mx-auto.space-y-4');
+    if (!main) return;
+    var personal = document.getElementById('template-tab-personal');
+    var official = document.getElementById('template-tab-official');
+    if (!personal || !official) return;
+    var personalCardView = personal.querySelector('.template-view-card');
+    var officialCardView = official.querySelector('.template-view-card');
+    // 备用: official tab 内 template-view-card 飘出时, 找 main 中第一个非 personal 的 template-view-card
+    if (!officialCardView) {
+        var allCards = document.querySelectorAll('.template-view-card');
+        for (var j = 0; j < allCards.length; j++) {
+            if (allCards[j] !== personalCardView) {
+                officialCardView = allCards[j];
+                break;
+            }
         }
     }
-
-    function fixTemplateViewDOM() {
-        var main = document.querySelector('.max-w-7xl.mx-auto.space-y-4');
-        if (!main) return;
-        var personal = document.getElementById('template-tab-personal');
-        var official = document.getElementById('template-tab-official');
-        if (!personal || !official) return;
-        var personalCardView = personal.querySelector('.template-view-card');
-        var officialCardView = official.querySelector('.template-view-card');
-        // 备用: official tab 内 template-view-card 飘出时, 找 main 中第一个非 personal 的 template-view-card
-        if (!officialCardView) {
-            var allCards = document.querySelectorAll('.template-view-card');
-            for (var j = 0; j < allCards.length; j++) {
-                if (allCards[j] !== personalCardView) {
-                    officialCardView = allCards[j];
-                    break;
+    var orphans = [];
+    for (var i = 0; i < main.children.length; i++) {
+        var c = main.children[i];
+        if (c === personal || c === official) continue;
+        if (c.classList && c.classList.contains('fixed')) continue;
+        if (c.className && (c.className.indexOf('rounded-xl') !== -1 || c.className.indexOf('template-view-card') !== -1)) {
+            orphans.push(c);
+        }
+    }
+    if (!orphans.length) return;
+    orphans.forEach(function(el) {
+        if (el.classList.contains('template-view-card')) {
+            var cards = el.querySelectorAll('[data-template-category]');
+            var firstCat = cards[0] ? cards[0].getAttribute('data-template-category') : '';
+            if (firstCat === '诉状类' || firstCat === '答辩类' || firstCat === '合同类') {
+                if (personalCardView && el !== personalCardView) {
+                    while (el.firstChild) personalCardView.appendChild(el.firstChild);
+                    el.parentNode.removeChild(el);
+                }
+            } else {
+                if (officialCardView && el !== officialCardView) {
+                    while (el.firstChild) officialCardView.appendChild(el.firstChild);
+                    el.parentNode.removeChild(el);
                 }
             }
+            return;
         }
-        var orphans = [];
-        for (var i = 0; i < main.children.length; i++) {
-            var c = main.children[i];
-            if (c === personal || c === official) continue;
-            if (c.classList && c.classList.contains('fixed')) continue;
-            if (c.className && (c.className.indexOf('rounded-xl') !== -1 || c.className.indexOf('template-view-card') !== -1)) {
-                orphans.push(c);
-            }
+        var cat = el.getAttribute('data-template-category');
+        if (!cat) return;
+        if (cat === '诉状类' || cat === '答辩类' || cat === '合同类') {
+            if (personalCardView) personalCardView.appendChild(el);
+        } else {
+            if (officialCardView) officialCardView.appendChild(el);
         }
-        if (!orphans.length) return;
-        orphans.forEach(function(el) {
-            if (el.classList.contains('template-view-card')) {
-                var cards = el.querySelectorAll('[data-template-category]');
-                var firstCat = cards[0] ? cards[0].getAttribute('data-template-category') : '';
-                if (firstCat === '诉状类' || firstCat === '答辩类' || firstCat === '合同类') {
-                    if (personalCardView && el !== personalCardView) {
-                        while (el.firstChild) personalCardView.appendChild(el.firstChild);
-                        el.parentNode.removeChild(el);
-                    }
-                } else {
-                    if (officialCardView && el !== officialCardView) {
-                        while (el.firstChild) officialCardView.appendChild(el.firstChild);
-                        el.parentNode.removeChild(el);
-                    }
-                }
-                return;
-            }
-            var cat = el.getAttribute('data-template-category');
-            if (!cat) return;
-            if (cat === '诉状类' || cat === '答辩类' || cat === '合同类') {
-                if (personalCardView) personalCardView.appendChild(el);
-            } else {
-                if (officialCardView) officialCardView.appendChild(el);
-            }
-        });
-    }
+    });
+}
 
-    function switchTemplateView(viewName, btn) {
-        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效)
-        // 检查当前激活的 tab: 官方 tab 时强制 list + 把按钮高亮对齐到 list 按钮
-        // 通过 data-active 属性追踪当前 tab (由 switchTemplateTab 设置)
-        var activeTabBtn = document.querySelector('.template-tab[data-active="true"]');
-        var activeTab = activeTabBtn ? (activeTabBtn.textContent.indexOf('个人') >= 0 ? 'personal' : 'official') : 'personal';
-        if (activeTab === 'official') {
-            viewName = 'list';
-            btn = document.querySelector('.template-view-btn[data-view="list"]');
+function switchTemplateView(viewName, btn) {
+    // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效)
+    // 检查当前激活的 tab: 官方 tab 时强制 list + 把按钮高亮对齐到 list 按钮
+    // 通过 data-active 属性追踪当前 tab (由 switchTemplateTab 设置)
+    var activeTabBtn = document.querySelector('.template-tab[data-active="true"]');
+    var activeTab = activeTabBtn ? (activeTabBtn.textContent.indexOf('个人') >= 0 ? 'personal' : 'official') : 'personal';
+    if (activeTab === 'official') {
+        viewName = 'list';
+        btn = document.querySelector('.template-view-btn[data-view="list"]');
+    }
+    document.querySelectorAll('.template-view-btn').forEach(function(b) {
+        b.classList.remove('bg-blue-50', 'text-[#165DFF]');
+        b.classList.add('text-gray-500', 'hover:text-gray-700');
+    });
+    if (btn) {
+        btn.classList.add('bg-blue-50', 'text-[#165DFF]');
+        btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+    }
+    // 切换 personal + official 两个 tab 内的视图
+    // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效), 强制 list
+    ['personal', 'official'].forEach(function(tab) {
+        var effectiveView = (tab === 'official') ? 'list' : viewName;
+        var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
+        var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
+        if (effectiveView === 'list') {
+            if (listView) listView.classList.remove('hidden');
+            if (cardView) cardView.classList.add('hidden');
+        } else {
+            if (listView) listView.classList.add('hidden');
+            if (cardView) cardView.classList.remove('hidden');
         }
-        document.querySelectorAll('.template-view-btn').forEach(function(b) {
-            b.classList.remove('bg-blue-50', 'text-[#165DFF]');
-            b.classList.add('text-gray-500', 'hover:text-gray-700');
-        });
-        if (btn) {
-            btn.classList.add('bg-blue-50', 'text-[#165DFF]');
-            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
-        }
-        // 切换 personal + official 两个 tab 内的视图
-        // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效), 强制 list
-        ['personal', 'official'].forEach(function(tab) {
-            var effectiveView = (tab === 'official') ? 'list' : viewName;
-            var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
-            var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
-            if (effectiveView === 'list') {
-                if (listView) listView.classList.remove('hidden');
-                if (cardView) cardView.classList.add('hidden');
-            } else {
-                if (listView) listView.classList.add('hidden');
-                if (cardView) cardView.classList.remove('hidden');
-            }
-        });
-        // 切到卡片视图时同步调用官方模板 filter, 让 grid 列数按可见卡片数适配
-        if (viewName === 'card' && typeof applyOfficialFilter === 'function') {
-            applyOfficialFilter();
-        }
+    });
+    // 切到卡片视图时同步调用官方模板 filter, 让 grid 列数按可见卡片数适配
+    if (viewName === 'card' && typeof applyOfficialFilter === 'function') {
+        applyOfficialFilter();
     }
+}
 
-    function persistPersonalTemplates() {
-        if (typeof AppState === 'undefined') return;
-        try { localStorage.setItem('lexprime_personal_templates', JSON.stringify(AppState.personalTemplates)); } catch (e) { console.warn('持久化个人模板失败:', e); }
-    }
+function persistPersonalTemplates() {
+    if (typeof AppState === 'undefined') return;
+    try { localStorage.setItem('lexprime_personal_templates', JSON.stringify(AppState.personalTemplates)); } catch (e) { console.warn('持久化个人模板失败:', e); }
+}
 
-    // 简单 HTML 转义 (防止 name 含 <> 时 XSS)
-    function escapeHtml(str) {
-        if (str == null) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
+// 简单 HTML 转义 (防止 name 含 <> 时 XSS)
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
-    // 分类标签颜色映射 (复用 submitUploadTemplate 已有 colorCls)
-    function personalCategoryColor(c) {
-        var colorCls = {
-            '诉状类': 'bg-brand-tint text-brand',
-            '答辩类': 'bg-wiki-tint text-wiki',
-            '合同类': 'bg-warning-tint text-warning',
-            '申请类': 'bg-success-tint text-success'
-        };
-        return colorCls[c] || 'bg-bg-subtle text-fg-secondary';
-    }
+// 分类标签颜色映射 (复用 submitUploadTemplate 已有 colorCls)
+function personalCategoryColor(c) {
+    var colorCls = {
+        '诉状类': 'bg-brand-tint text-brand',
+        '答辩类': 'bg-wiki-tint text-wiki',
+        '合同类': 'bg-warning-tint text-warning',
+        '申请类': 'bg-success-tint text-success'
+    };
+    return colorCls[c] || 'bg-bg-subtle text-fg-secondary';
+}
 
-    // 渲染个人模板列表 (列表视图 + 卡片视图) - 数据驱动
-    function renderPersonalTemplates() {
-        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
-        var tbody = document.querySelector('#template-tab-personal tbody');
-        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
-        if (!tbody) return;
-        var htmlStr = '';
-        AppState.personalTemplates.forEach(function(t) {
-            var cls = personalCategoryColor(t.category);
-            var sizeHtml = t.size ? '<span class="text-[10px] text-fg-tertiary ml-1">(' + escapeHtml(t.size) + ')</span>' : '';
-            htmlStr += '<tr class="hover:bg-bg-subtle group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
+// 渲染个人模板列表 (列表视图 + 卡片视图) - 数据驱动
+function renderPersonalTemplates() {
+    if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
+    var tbody = document.querySelector('#template-tab-personal tbody');
+    var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
+    if (!tbody) return;
+    var htmlStr = '';
+    AppState.personalTemplates.forEach(function(t) {
+        var cls = personalCategoryColor(t.category);
+        var sizeHtml = t.size ? '<span class="text-[10px] text-fg-tertiary ml-1">(' + escapeHtml(t.size) + ')</span>' : '';
+        htmlStr += '<tr class="hover:bg-bg-subtle group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
                 '<td class="py-3 px-5">' +
                     '<div class="flex items-center gap-2">' +
                         '<iconify-icon class="text-base text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
@@ -174,14 +174,14 @@
                     '</div>' +
                 '</td>' +
             '</tr>';
-        });
-        tbody.innerHTML = htmlStr;
-        // 卡片视图 (同步)
-        if (cardContainer) {
-            var cardHtml = '';
-            AppState.personalTemplates.forEach(function(t) {
-                var cls = personalCategoryColor(t.category);
-                cardHtml += '<div class="bg-white border border-bg-border rounded-xl p-4 hover:shadow-md hover:border-brand transition-all cursor-pointer group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
+    });
+    tbody.innerHTML = htmlStr;
+    // 卡片视图 (同步)
+    if (cardContainer) {
+        var cardHtml = '';
+        AppState.personalTemplates.forEach(function(t) {
+            var cls = personalCategoryColor(t.category);
+            cardHtml += '<div class="bg-white border border-bg-border rounded-xl p-4 hover:shadow-md hover:border-brand transition-all cursor-pointer group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
                     '<div class="flex items-start justify-between mb-3">' +
                         '<iconify-icon class="text-2xl text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
                         '<span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(t.category) + '</span>' +
@@ -197,393 +197,393 @@
                         '</button>' +
                     '</div>' +
                 '</div>';
-            });
-            cardContainer.innerHTML = cardHtml;
-        }
-        // 头部计数
-        var headerCount = document.querySelector('.template-view-header-count');
-        if (headerCount) headerCount.textContent = '共 ' + AppState.personalTemplates.length + ' 个';
-    }
-
-    function openUploadTemplateModal() {
-        var modal = document.getElementById('upload-template-modal');
-        if (!modal) return;
-        // 同步分类下拉
-        var sel = document.getElementById('upload-template-category');
-        if (sel) {
-            sel.innerHTML = '<option value="">请选择分类</option>';
-            var cats = document.querySelectorAll('.category-item');
-            cats.forEach(function(item) {
-                var name = item.getAttribute('data-category');
-                var opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                sel.appendChild(opt);
-            });
-        }
-        // 重置表单
-        var nameInput = document.getElementById('upload-template-name');
-        if (nameInput) nameInput.value = '';
-        var fileInput = document.getElementById('upload-template-file');
-        if (fileInput) fileInput.value = '';
-        var filename = document.getElementById('upload-template-filename');
-        if (filename) filename.textContent = '点击或拖拽文件到此处';
-        modal.classList.remove('hidden');
-    }
-
-
-    function closeUploadTemplateModal() {
-        var modal = document.getElementById('upload-template-modal');
-        if (modal) modal.classList.add('hidden');
-    }
-
-
-    function submitUploadTemplate() {
-        var name = (document.getElementById('upload-template-name').value || '').trim();
-        var category = document.getElementById('upload-template-category').value;
-        var fileInput = document.getElementById('upload-template-file');
-        var file = fileInput.files[0];
-        if (!name) { showToast('请输入模板名称'); return; }
-        if (!category) { showToast('请选择分类'); return; }
-        if (!file) { showToast('请选择文件'); return; }
-        // 格式校验
-        var ext = file.name.split('.').pop().toLowerCase();
-        if (['docx', 'pdf', 'txt'].indexOf(ext) < 0) {
-            showToast('仅支持 .docx / .pdf / .txt 格式');
-            return;
-        }
-        if (file.size > 10 * 1024 * 1024) {
-            showToast('文件大小不能超过 10MB');
-            return;
-        }
-        // 取文件大小
-        var sizeKb = Math.round(file.size / 1024);
-        var sizeText = sizeKb < 1024 ? sizeKb + ' KB' : (sizeKb / 1024).toFixed(1) + ' MB';
-        // 选中的格式 radio
-        var fmtRadio = document.querySelector('input[name="upload-template-format"]:checked');
-        var fmt = fmtRadio ? fmtRadio.value : ext;
-        // 当前用户 (mock 张律师)
-        var creator = '张律师';
-        var now = new Date();
-        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
-        var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-        // 数据驱动: push 到 AppState.personalTemplates + 持久化
-        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
-        var newId = 'p_' + Date.now();
-        AppState.personalTemplates.unshift({
-            id: newId,
-            name: name,
-            category: category,
-            creator: creator,
-            updatedAt: timeStr,
-            size: sizeText,
-            fmt: '.' + fmt
         });
+        cardContainer.innerHTML = cardHtml;
+    }
+    // 头部计数
+    var headerCount = document.querySelector('.template-view-header-count');
+    if (headerCount) headerCount.textContent = '共 ' + AppState.personalTemplates.length + ' 个';
+}
+
+function openUploadTemplateModal() {
+    var modal = document.getElementById('upload-template-modal');
+    if (!modal) return;
+    // 同步分类下拉
+    var sel = document.getElementById('upload-template-category');
+    if (sel) {
+        sel.innerHTML = '<option value="">请选择分类</option>';
+        var cats = document.querySelectorAll('.category-item');
+        cats.forEach(function(item) {
+            var name = item.getAttribute('data-category');
+            var opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            sel.appendChild(opt);
+        });
+    }
+    // 重置表单
+    var nameInput = document.getElementById('upload-template-name');
+    if (nameInput) nameInput.value = '';
+    var fileInput = document.getElementById('upload-template-file');
+    if (fileInput) fileInput.value = '';
+    var filename = document.getElementById('upload-template-filename');
+    if (filename) filename.textContent = '点击或拖拽文件到此处';
+    modal.classList.remove('hidden');
+}
+
+
+function closeUploadTemplateModal() {
+    var modal = document.getElementById('upload-template-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+
+function submitUploadTemplate() {
+    var name = (document.getElementById('upload-template-name').value || '').trim();
+    var category = document.getElementById('upload-template-category').value;
+    var fileInput = document.getElementById('upload-template-file');
+    var file = fileInput.files[0];
+    if (!name) { showToast('请输入模板名称'); return; }
+    if (!category) { showToast('请选择分类'); return; }
+    if (!file) { showToast('请选择文件'); return; }
+    // 格式校验
+    var ext = file.name.split('.').pop().toLowerCase();
+    if (['docx', 'pdf', 'txt'].indexOf(ext) < 0) {
+        showToast('仅支持 .docx / .pdf / .txt 格式');
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('文件大小不能超过 10MB');
+        return;
+    }
+    // 取文件大小
+    var sizeKb = Math.round(file.size / 1024);
+    var sizeText = sizeKb < 1024 ? sizeKb + ' KB' : (sizeKb / 1024).toFixed(1) + ' MB';
+    // 选中的格式 radio
+    var fmtRadio = document.querySelector('input[name="upload-template-format"]:checked');
+    var fmt = fmtRadio ? fmtRadio.value : ext;
+    // 当前用户 (mock 张律师)
+    var creator = '张律师';
+    var now = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+    var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    // 数据驱动: push 到 AppState.personalTemplates + 持久化
+    if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
+    var newId = 'p_' + Date.now();
+    AppState.personalTemplates.unshift({
+        id: newId,
+        name: name,
+        category: category,
+        creator: creator,
+        updatedAt: timeStr,
+        size: sizeText,
+        fmt: '.' + fmt
+    });
+    persistPersonalTemplates();
+    // 重渲染整个个人模板列表 (列表 + 卡片视图同步)
+    renderPersonalTemplates();
+    closeUploadTemplateModal();
+    showToast('模板「' + name + '」已上传');
+}
+
+function deletePersonalTemplate(btn) {
+    if (!confirm('确定删除该模板?')) return;
+    // 数据驱动: 从 AppState.personalTemplates 按 id 删 + 持久化 + 重渲染
+    if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
+    var tr = btn.closest('tr');
+    var card = btn.closest('.bg-white.border.rounded-xl');
+    var templateId = (tr && tr.getAttribute('data-template-id')) || (card && card.getAttribute('data-template-id'));
+    if (!templateId) {
+        // fallback: 按名字找
+        var rowName = tr ? (tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '') : '';
+        var idx = AppState.personalTemplates.findIndex(function(t) { return t.name === rowName; });
+        if (idx >= 0) templateId = AppState.personalTemplates[idx].id;
+    }
+    if (templateId) {
+        var idx2 = AppState.personalTemplates.findIndex(function(t) { return t.id === templateId; });
+        if (idx2 >= 0) AppState.personalTemplates.splice(idx2, 1);
         persistPersonalTemplates();
-        // 重渲染整个个人模板列表 (列表 + 卡片视图同步)
         renderPersonalTemplates();
-        closeUploadTemplateModal();
-        showToast('模板「' + name + '」已上传');
+        showToast('已删除');
+    } else {
+        showToast('找不到模板');
     }
+}
 
-    function deletePersonalTemplate(btn) {
-        if (!confirm('确定删除该模板?')) return;
-        // 数据驱动: 从 AppState.personalTemplates 按 id 删 + 持久化 + 重渲染
-        if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
-        var tr = btn.closest('tr');
-        var card = btn.closest('.bg-white.border.rounded-xl');
-        var templateId = (tr && tr.getAttribute('data-template-id')) || (card && card.getAttribute('data-template-id'));
-        if (!templateId) {
-            // fallback: 按名字找
-            var rowName = tr ? (tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '') : '';
-            var idx = AppState.personalTemplates.findIndex(function(t) { return t.name === rowName; });
-            if (idx >= 0) templateId = AppState.personalTemplates[idx].id;
-        }
-        if (templateId) {
-            var idx2 = AppState.personalTemplates.findIndex(function(t) { return t.id === templateId; });
-            if (idx2 >= 0) AppState.personalTemplates.splice(idx2, 1);
-            persistPersonalTemplates();
-            renderPersonalTemplates();
-            showToast('已删除');
-        } else {
-            showToast('找不到模板');
-        }
+function openCategoryManageModal() {
+    var modal = document.getElementById('category-manage-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeCategoryManageModal() {
+    var modal = document.getElementById('category-manage-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function addCategory() {
+    var input = document.getElementById('new-category-input');
+    var name = (input.value || '').trim();
+    if (!name) {
+        showToast('请输入分类名称');
+        return;
     }
-
-    function openCategoryManageModal() {
-        var modal = document.getElementById('category-manage-modal');
-        if (modal) modal.classList.remove('hidden');
+    if (name.length > 20) {
+        showToast('分类名称不能超过 20 个字符');
+        return;
     }
-
-    function closeCategoryManageModal() {
-        var modal = document.getElementById('category-manage-modal');
-        if (modal) modal.classList.add('hidden');
+    // 检查重名
+    var exists = Array.from(document.querySelectorAll('.category-item')).some(function(el) {
+        return el.getAttribute('data-category') === name;
+    });
+    if (exists) {
+        showToast('该分类已存在');
+        return;
     }
-
-    function addCategory() {
-        var input = document.getElementById('new-category-input');
-        var name = (input.value || '').trim();
-        if (!name) {
-            showToast('请输入分类名称');
-            return;
-        }
-        if (name.length > 20) {
-            showToast('分类名称不能超过 20 个字符');
-            return;
-        }
-        // 检查重名
-        var exists = Array.from(document.querySelectorAll('.category-item')).some(function(el) {
-            return el.getAttribute('data-category') === name;
-        });
-        if (exists) {
-            showToast('该分类已存在');
-            return;
-        }
-        // 创建新分类项 (弹窗内)
-        var list = document.getElementById('category-list');
-        var countEl = document.getElementById('category-list-count');
-        var div = document.createElement('div');
-        div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
-        div.setAttribute('data-category', name);
-        div.innerHTML = '<div class="flex items-center gap-3">' +
+    // 创建新分类项 (弹窗内)
+    var list = document.getElementById('category-list');
+    var countEl = document.getElementById('category-list-count');
+    var div = document.createElement('div');
+    div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
+    div.setAttribute('data-category', name);
+    div.innerHTML = '<div class="flex items-center gap-3">' +
             '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>' +
             '<span class="text-sm text-gray-800 font-medium">' + name + '</span>' +
             '<span class="text-[10px] text-gray-400">(0 个模板)</span>' +
             '</div>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, "\\'") + '\')">' +
+            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, '\\\'') + '\')">' +
             '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
-        list.appendChild(div);
-        // 同步添加到个人模板标签栏
-        var tabs = document.getElementById('personal-category-tabs');
-        if (tabs) {
-            var tabBtn = document.createElement('button');
-            tabBtn.className = 'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
-            tabBtn.setAttribute('data-category', name);
-            tabBtn.setAttribute('onclick', "filterPersonalByCategory('" + name.replace(/'/g, "\\'") + "', this)");
-            tabBtn.textContent = name + ' (0)';
-            tabs.appendChild(tabBtn);
-        }
-        // 同步更新"全部"标签的数字
-        updateAllCategoryCount();
-        input.value = '';
-        // 更新计数
-        var total = list.querySelectorAll('.category-item').length;
-        if (countEl) countEl.textContent = '共 ' + total + ' 个分类';
-        showToast('分类「' + name + '」已添加');
+    list.appendChild(div);
+    // 同步添加到个人模板标签栏
+    var tabs = document.getElementById('personal-category-tabs');
+    if (tabs) {
+        var tabBtn = document.createElement('button');
+        tabBtn.className = 'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
+        tabBtn.setAttribute('data-category', name);
+        tabBtn.setAttribute('onclick', 'filterPersonalByCategory(\'' + name.replace(/'/g, '\\\'') + '\', this)');
+        tabBtn.textContent = name + ' (0)';
+        tabs.appendChild(tabBtn);
     }
+    // 同步更新"全部"标签的数字
+    updateAllCategoryCount();
+    input.value = '';
+    // 更新计数
+    var total = list.querySelectorAll('.category-item').length;
+    if (countEl) countEl.textContent = '共 ' + total + ' 个分类';
+    showToast('分类「' + name + '」已添加');
+}
 
-    function sortPersonalTemplates(btn) {
-        // 切换顺序
-        if (_personalSortOrder === 'desc') {
-            _personalSortOrder = 'asc';
+function sortPersonalTemplates(btn) {
+    // 切换顺序
+    if (_personalSortOrder === 'desc') {
+        _personalSortOrder = 'asc';
+    } else {
+        _personalSortOrder = 'desc';
+    }
+    var order = _personalSortOrder;
+    // 解析行的时间字符串 (第 4 列 td)
+    function parseTime(tr) {
+        var tds = tr.querySelectorAll('td');
+        var timeStr = tds.length >= 4 ? (tds[3].textContent || '').trim() : '';
+        var d = new Date(timeStr.replace(/-/g, '/'));
+        return isNaN(d.getTime()) ? 0 : d.getTime();
+    }
+    // 排序 tbody
+    var tbody = document.querySelector('#template-tab-personal tbody');
+    if (tbody) {
+        var rows = Array.from(tbody.querySelectorAll('tr[data-template-category]'));
+        rows.sort(function(a, b) {
+            var ta = parseTime(a), tb = parseTime(b);
+            return order === 'desc' ? (tb - ta) : (ta - tb);
+        });
+        rows.forEach(function(r) { tbody.appendChild(r); });
+    }
+    // 同步排序卡片视图 (按卡片底部时间排序)
+    var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
+    if (cardContainer) {
+        var cards = Array.from(cardContainer.querySelectorAll('div[data-template-category]'));
+        cards.sort(function(a, b) {
+            var ta = 0, tb = 0;
+            var timeSpans = a.querySelectorAll('span');
+            var taStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
+            var dA = new Date(taStr.replace(/-/g, '/'));
+            ta = isNaN(dA.getTime()) ? 0 : dA.getTime();
+            timeSpans = b.querySelectorAll('span');
+            var tbStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
+            var dB = new Date(tbStr.replace(/-/g, '/'));
+            tb = isNaN(dB.getTime()) ? 0 : dB.getTime();
+            return order === 'desc' ? (tb - ta) : (ta - tb);
+        });
+        cards.forEach(function(c) { cardContainer.appendChild(c); });
+    }
+    // 按钮视觉反馈
+    if (btn) {
+        document.querySelectorAll('.sort-btn').forEach(function(b) {
+            b.classList.remove('bg-[#165DFF]', 'text-white');
+            b.classList.add('text-[#165DFF]', 'bg-[#EEF3FF]');
+        });
+        btn.classList.add('bg-[#165DFF]', 'text-white');
+        btn.classList.remove('text-[#165DFF]', 'bg-[#EEF3FF]');
+        // 更新图标方向
+        var icon = btn.querySelector('iconify-icon');
+        if (icon) {
+            icon.setAttribute('icon', order === 'desc' ? 'mdi:sort-variant' : 'mdi:sort-reverse-variant');
+        }
+    }
+    // 重新应用当前分类筛选 (排序后保持筛选)
+    var activeTab = document.querySelector('.personal-category-tab.bg-\\[\\#165DFF\\]');
+    if (activeTab) {
+        var cat = activeTab.getAttribute('data-category');
+        filterPersonalByCategory(cat, activeTab);
+    }
+    showToast(order === 'desc' ? '已按时间降序排列' : '已按时间升序排列');
+}
+
+function parseTime(tr) {
+    var tds = tr.querySelectorAll('td');
+    var timeStr = tds.length >= 4 ? (tds[3].textContent || '').trim() : '';
+    var d = new Date(timeStr.replace(/-/g, '/'));
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+
+function updateAllCategoryCount() {
+    var allTab = document.querySelector('.personal-category-tab[data-category="all"]');
+    if (allTab) {
+        var total = document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').length;
+        allTab.textContent = '全部 (' + total + ')';
+    }
+}
+
+function filterPersonalByCategory(category, btn) {
+    // 更新 active 样式
+    document.querySelectorAll('.personal-category-tab').forEach(function(b) {
+        b.classList.remove('bg-[#165DFF]', 'text-white', 'font-medium');
+        b.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
+    });
+    if (btn) {
+        btn.classList.add('bg-[#165DFF]', 'text-white', 'font-medium');
+        btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
+    }
+    // 筛选列表行
+    document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').forEach(function(tr) {
+        if (category === 'all' || tr.getAttribute('data-template-category') === category) {
+            tr.style.display = '';
         } else {
-            _personalSortOrder = 'desc';
+            tr.style.display = 'none';
         }
-        var order = _personalSortOrder;
-        // 解析行的时间字符串 (第 4 列 td)
-        function parseTime(tr) {
-            var tds = tr.querySelectorAll('td');
-            var timeStr = tds.length >= 4 ? (tds[3].textContent || '').trim() : '';
-            var d = new Date(timeStr.replace(/-/g, '/'));
-            return isNaN(d.getTime()) ? 0 : d.getTime();
+    });
+    // 筛选卡片
+    document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
+        if (category === 'all' || card.getAttribute('data-template-category') === category) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
         }
-        // 排序 tbody
-        var tbody = document.querySelector('#template-tab-personal tbody');
-        if (tbody) {
-            var rows = Array.from(tbody.querySelectorAll('tr[data-template-category]'));
-            rows.sort(function(a, b) {
-                var ta = parseTime(a), tb = parseTime(b);
-                return order === 'desc' ? (tb - ta) : (ta - tb);
-            });
-            rows.forEach(function(r) { tbody.appendChild(r); });
-        }
-        // 同步排序卡片视图 (按卡片底部时间排序)
-        var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
-        if (cardContainer) {
-            var cards = Array.from(cardContainer.querySelectorAll('div[data-template-category]'));
-            cards.sort(function(a, b) {
-                var ta = 0, tb = 0;
-                var timeSpans = a.querySelectorAll('span');
-                var taStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
-                var dA = new Date(taStr.replace(/-/g, '/'));
-                ta = isNaN(dA.getTime()) ? 0 : dA.getTime();
-                timeSpans = b.querySelectorAll('span');
-                var tbStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
-                var dB = new Date(tbStr.replace(/-/g, '/'));
-                tb = isNaN(dB.getTime()) ? 0 : dB.getTime();
-                return order === 'desc' ? (tb - ta) : (ta - tb);
-            });
-            cards.forEach(function(c) { cardContainer.appendChild(c); });
-        }
-        // 按钮视觉反馈
-        if (btn) {
-            document.querySelectorAll('.sort-btn').forEach(function(b) {
-                b.classList.remove('bg-[#165DFF]', 'text-white');
-                b.classList.add('text-[#165DFF]', 'bg-[#EEF3FF]');
-            });
-            btn.classList.add('bg-[#165DFF]', 'text-white');
-            btn.classList.remove('text-[#165DFF]', 'bg-[#EEF3FF]');
-            // 更新图标方向
-            var icon = btn.querySelector('iconify-icon');
-            if (icon) {
-                icon.setAttribute('icon', order === 'desc' ? 'mdi:sort-variant' : 'mdi:sort-reverse-variant');
-            }
-        }
-        // 重新应用当前分类筛选 (排序后保持筛选)
-        var activeTab = document.querySelector('.personal-category-tab.bg-\\[\\#165DFF\\]');
-        if (activeTab) {
-            var cat = activeTab.getAttribute('data-category');
-            filterPersonalByCategory(cat, activeTab);
-        }
-        showToast(order === 'desc' ? '已按时间降序排列' : '已按时间升序排列');
+    });
+}
+
+
+function filterOfficialByCategory(category, btn) {
+    _officialCategory = category;
+    // 更新一级 active 样式
+    var officialTabs = document.querySelectorAll('.official-category-tab');
+    officialTabs.forEach(function(b) {
+        b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
+        b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+    });
+    if (btn) {
+        btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
+        btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
     }
-
-        function parseTime(tr) {
-            var tds = tr.querySelectorAll('td');
-            var timeStr = tds.length >= 4 ? (tds[3].textContent || '').trim() : '';
-            var d = new Date(timeStr.replace(/-/g, '/'));
-            return isNaN(d.getTime()) ? 0 : d.getTime();
-        }
-
-    function updateAllCategoryCount() {
-        var allTab = document.querySelector('.personal-category-tab[data-category="all"]');
-        if (allTab) {
-            var total = document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').length;
-            allTab.textContent = '全部 (' + total + ')';
-        }
-    }
-
-    function filterPersonalByCategory(category, btn) {
-        // 更新 active 样式
-        document.querySelectorAll('.personal-category-tab').forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'font-medium');
-            b.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'font-medium');
-            btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
-        }
-        // 筛选列表行
-        document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').forEach(function(tr) {
-            if (category === 'all' || tr.getAttribute('data-template-category') === category) {
-                tr.style.display = '';
-            } else {
-                tr.style.display = 'none';
-            }
-        });
-        // 筛选卡片
-        document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
-            if (category === 'all' || card.getAttribute('data-template-category') === category) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-
-    function filterOfficialByCategory(category, btn) {
-        _officialCategory = category;
-        // 更新一级 active 样式
-        var officialTabs = document.querySelectorAll('.official-category-tab');
-        officialTabs.forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        }
-        // 二级筛选: 执行/其他 不显示起诉/答辩类型
-        var typeFilter = document.getElementById('official-type-filter');
-        if (typeFilter) {
-            if (category === '执行' || category === '其他') {
-                typeFilter.classList.add('hidden');
-            } else {
-                typeFilter.classList.remove('hidden');
-            }
-        }
-        // 切到「执行/其他」时强制 type 回到 all
+    // 二级筛选: 执行/其他 不显示起诉/答辩类型
+    var typeFilter = document.getElementById('official-type-filter');
+    if (typeFilter) {
         if (category === '执行' || category === '其他') {
-            _officialType = 'all';
-            filterOfficialByType('all', document.querySelector('.official-type-tab[data-type="all"]'));
-            return;
+            typeFilter.classList.add('hidden');
+        } else {
+            typeFilter.classList.remove('hidden');
         }
-        applyOfficialFilter();
     }
-
-
-    function filterOfficialByType(type, btn) {
-        _officialType = type;
-        // 更新二级 active 样式
-        document.querySelectorAll('.official-type-tab').forEach(function(b) {
-            b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        });
-        if (btn) {
-            btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
-            btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
-        }
-        applyOfficialFilter();
+    // 切到「执行/其他」时强制 type 回到 all
+    if (category === '执行' || category === '其他') {
+        _officialType = 'all';
+        filterOfficialByType('all', document.querySelector('.official-type-tab[data-type="all"]'));
+        return;
     }
+    applyOfficialFilter();
+}
 
 
-    function applyOfficialFilter() {
-        // 双重过滤: cat + type
-        var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
-        rows.forEach(function(tr) {
-            var cat = tr.getAttribute('data-template-category');
-            var typ = tr.getAttribute('data-template-type');
-            var catMatch = _officialCategory === 'all' || cat === _officialCategory;
-            var typeMatch = _officialType === 'all' || typ === _officialType;
-            tr.style.display = (catMatch && typeMatch) ? '' : 'none';
-        });
-        var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
-        var visibleCount = 0;
-        cards.forEach(function(card) {
-            var cat = card.getAttribute('data-template-category');
-            var typ = card.getAttribute('data-template-type');
-            var catMatch = _officialCategory === 'all' || cat === _officialCategory;
-            var typeMatch = _officialType === 'all' || typ === _officialType;
-            var visible = catMatch && typeMatch;
-            card.style.display = visible ? '' : 'none';
-            if (visible) visibleCount++;
-        });
-        // 动态调整 grid 列数: 1-2 张用 2 列, 3-4 张用 3 列, 5+ 张用 4 列
-        var grid = document.getElementById('official-card-grid');
-        if (grid) {
-            var cols = visibleCount === 0 ? 4 : visibleCount <= 2 ? 2 : visibleCount <= 4 ? 3 : 4;
-            grid.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
-        }
-        // 0 张时显示空状态
-        var emptyEl = document.getElementById('official-card-empty');
-        if (emptyEl) {
-            if (visibleCount === 0) {
-                emptyEl.classList.remove('hidden');
-                emptyEl.style.display = 'block';
-            } else {
-                emptyEl.classList.add('hidden');
-                emptyEl.style.display = 'none';
-            }
-        }
-        // 底部统计: 当前命中数
-        var countEl = document.getElementById('official-card-count');
-        if (countEl) countEl.textContent = visibleCount;
-        var totalEl = document.getElementById('official-card-total');
-        if (totalEl) totalEl.textContent = cards.length;
+function filterOfficialByType(type, btn) {
+    _officialType = type;
+    // 更新二级 active 样式
+    document.querySelectorAll('.official-type-tab').forEach(function(b) {
+        b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
+        b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+    });
+    if (btn) {
+        btn.classList.add('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
+        btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
     }
+    applyOfficialFilter();
+}
 
-    var _closeOfficialTemplatePreview = null;
 
-    function previewOfficialTemplate(cardEl) {
-        var titleEl = cardEl.querySelector('h4');
-        var title = titleEl ? titleEl.textContent.trim() : '未命名模板';
-        var cat = cardEl.dataset.templateCategory || '';
-        var typ = cardEl.dataset.templateType || '';
-        var descEl = cardEl.querySelector('p');
-        var desc = descEl ? descEl.textContent.trim() : '';
+function applyOfficialFilter() {
+    // 双重过滤: cat + type
+    var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
+    rows.forEach(function(tr) {
+        var cat = tr.getAttribute('data-template-category');
+        var typ = tr.getAttribute('data-template-type');
+        var catMatch = _officialCategory === 'all' || cat === _officialCategory;
+        var typeMatch = _officialType === 'all' || typ === _officialType;
+        tr.style.display = (catMatch && typeMatch) ? '' : 'none';
+    });
+    var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
+    var visibleCount = 0;
+    cards.forEach(function(card) {
+        var cat = card.getAttribute('data-template-category');
+        var typ = card.getAttribute('data-template-type');
+        var catMatch = _officialCategory === 'all' || cat === _officialCategory;
+        var typeMatch = _officialType === 'all' || typ === _officialType;
+        var visible = catMatch && typeMatch;
+        card.style.display = visible ? '' : 'none';
+        if (visible) visibleCount++;
+    });
+    // 动态调整 grid 列数: 1-2 张用 2 列, 3-4 张用 3 列, 5+ 张用 4 列
+    var grid = document.getElementById('official-card-grid');
+    if (grid) {
+        var cols = visibleCount === 0 ? 4 : visibleCount <= 2 ? 2 : visibleCount <= 4 ? 3 : 4;
+        grid.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
+    }
+    // 0 张时显示空状态
+    var emptyEl = document.getElementById('official-card-empty');
+    if (emptyEl) {
+        if (visibleCount === 0) {
+            emptyEl.classList.remove('hidden');
+            emptyEl.style.display = 'block';
+        } else {
+            emptyEl.classList.add('hidden');
+            emptyEl.style.display = 'none';
+        }
+    }
+    // 底部统计: 当前命中数
+    var countEl = document.getElementById('official-card-count');
+    if (countEl) countEl.textContent = visibleCount;
+    var totalEl = document.getElementById('official-card-total');
+    if (totalEl) totalEl.textContent = cards.length;
+}
 
-        var content = '<div class="space-y-4">' +
+var _closeOfficialTemplatePreview = null;
+
+function previewOfficialTemplate(cardEl) {
+    var titleEl = cardEl.querySelector('h4');
+    var title = titleEl ? titleEl.textContent.trim() : '未命名模板';
+    var cat = cardEl.dataset.templateCategory || '';
+    var typ = cardEl.dataset.templateType || '';
+    var descEl = cardEl.querySelector('p');
+    var desc = descEl ? descEl.textContent.trim() : '';
+
+    var content = '<div class="space-y-4">' +
             '<div class="p-4 bg-bg-subtle rounded-xl">' +
             '<div class="flex items-start gap-3">' +
             '<div class="w-12 h-12 rounded-lg bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">' +
@@ -618,55 +618,55 @@
             '</div>' +
             '</div>';
 
-        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' + escapeHtml(title).replace(/'/g, "\\'") + '\')">保存到个人</button>' +
+    var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' + escapeHtml(title).replace(/'/g, '\\\'') + '\')">保存到个人</button>' +
             '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeOfficialTemplatePreview(); if(typeof showToast===\'function\')showToast(\'正在下载模板...\', \'info\')">下载模板</button>';
 
-        if (_closeOfficialTemplatePreview) _closeOfficialTemplatePreview();
-        _closeOfficialTemplatePreview = Utils.showModal({
-            id: 'official-template-preview-modal',
-            title: '模板预览',
-            icon: 'mdi:file-document-outline',
-            content: content,
-            footer: footer,
-            size: 'md'
-        });
-    }
+    if (_closeOfficialTemplatePreview) _closeOfficialTemplatePreview();
+    _closeOfficialTemplatePreview = Utils.showModal({
+        id: 'official-template-preview-modal',
+        title: '模板预览',
+        icon: 'mdi:file-document-outline',
+        content: content,
+        footer: footer,
+        size: 'md'
+    });
+}
 
-    function closeOfficialTemplatePreview() {
-        if (_closeOfficialTemplatePreview) {
-            _closeOfficialTemplatePreview();
-            _closeOfficialTemplatePreview = null;
-        }
+function closeOfficialTemplatePreview() {
+    if (_closeOfficialTemplatePreview) {
+        _closeOfficialTemplatePreview();
+        _closeOfficialTemplatePreview = null;
     }
+}
 
-    function saveTemplateToPersonal(name) {
-        if (typeof showToast === 'function') showToast('模板「' + name + '」已保存到个人模板库', 'success');
+function saveTemplateToPersonal(name) {
+    if (typeof showToast === 'function') showToast('模板「' + name + '」已保存到个人模板库', 'success');
+}
+
+
+function deleteCategory(name) {
+    // 检查该分类下是否还有模板 (在个人模板表格中)
+    var rows = document.querySelectorAll('#template-tab-personal tbody tr');
+    var hasTemplate = Array.from(rows).some(function(tr) {
+        var badge = tr.querySelector('td:nth-child(2) span');
+        return badge && badge.textContent.trim() === name;
+    });
+    if (hasTemplate) {
+        showToast('该分类下还有模板, 请先删除模板');
+        return;
     }
-
-
-    function deleteCategory(name) {
-        // 检查该分类下是否还有模板 (在个人模板表格中)
-        var rows = document.querySelectorAll('#template-tab-personal tbody tr');
-        var hasTemplate = Array.from(rows).some(function(tr) {
-            var badge = tr.querySelector('td:nth-child(2) span');
-            return badge && badge.textContent.trim() === name;
-        });
-        if (hasTemplate) {
-            showToast('该分类下还有模板, 请先删除模板');
-            return;
-        }
-        if (!confirm('确定删除分类「' + name + '」?')) return;
-        var item = document.querySelector('.category-item[data-category="' + name + '"]');
-        if (item) item.remove();
-        // 同步移除个人模板标签栏按钮
-        var tabBtn = document.querySelector('.personal-category-tab[data-category="' + name + '"]');
-        if (tabBtn) tabBtn.remove();
-        var countEl = document.getElementById('category-list-count');
-        var list = document.getElementById('category-list');
-        if (countEl && list) {
-            var total = list.querySelectorAll('.category-item').length;
-            countEl.textContent = '共 ' + total + ' 个分类';
-        }
-        showToast('分类「' + name + '」已删除');
+    if (!confirm('确定删除分类「' + name + '」?')) return;
+    var item = document.querySelector('.category-item[data-category="' + name + '"]');
+    if (item) item.remove();
+    // 同步移除个人模板标签栏按钮
+    var tabBtn = document.querySelector('.personal-category-tab[data-category="' + name + '"]');
+    if (tabBtn) tabBtn.remove();
+    var countEl = document.getElementById('category-list-count');
+    var list = document.getElementById('category-list');
+    if (countEl && list) {
+        var total = list.querySelectorAll('.category-item').length;
+        countEl.textContent = '共 ' + total + ' 个分类';
     }
+    showToast('分类「' + name + '」已删除');
+}

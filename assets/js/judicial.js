@@ -35,9 +35,9 @@
 
     // ===== 工具 =====
     function escapeHtml(s) {
-        if (s == null) return '';
+        if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function(c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -118,8 +118,8 @@
                 ((p.tags || []).length > 0
                     ? '<span class="text-fg-disabled">·</span>' +
                       '<span class="inline-flex items-center gap-0.5">' + p.tags.slice(0, 3).map(function(t) {
-                          return '<span class="px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">#' + escapeHtml(t) + '</span>';
-                      }).join('') + '</span>'
+                        return '<span class="px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">#' + escapeHtml(t) + '</span>';
+                    }).join('') + '</span>'
                     : '') +
             '</div>' +
         '</div>';

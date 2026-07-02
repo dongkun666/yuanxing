@@ -272,7 +272,7 @@
     function esc(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function(c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -338,8 +338,8 @@
         var el = document.createElement('div');
         el.className = 'fixed top-4 right-4 z-[9999] px-4 py-2 rounded shadow-lg text-sm text-white ' +
             (type === 'success' ? 'bg-success' :
-             type === 'warning' ? 'bg-warning' :
-             type === 'error' ? 'bg-danger' : 'bg-brand');
+                type === 'warning' ? 'bg-warning' :
+                    type === 'error' ? 'bg-danger' : 'bg-brand');
         el.textContent = msg;
         document.body.appendChild(el);
         setTimeout(function() { el.remove(); }, 3000);
@@ -565,8 +565,8 @@
                             (score.total >= 0.8
                                 ? '<span class="mp-badge-strong text-[10px] px-1.5 py-0.5 rounded block mb-1">强推荐</span>'
                                 : score.total >= 0.6
-                                ? '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded block mb-1">推荐</span>'
-                                : '<span class="text-[10px] text-fg-tertiary block mb-1">候选</span>') +
+                                    ? '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded block mb-1">推荐</span>'
+                                    : '<span class="text-[10px] text-fg-tertiary block mb-1">候选</span>') +
                             '<button class="mp-btn mp-btn-primary mp-btn-sm w-full" data-mp-action="create-referral" data-lawyer-id="' + esc(l.lawyer_id) + '">' +
                                 '<iconify-icon icon="mdi:share-variant" class="text-xs"></iconify-icon> 转介绍' +
                             '</button>' +

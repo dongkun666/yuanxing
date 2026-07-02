@@ -41,9 +41,9 @@
         var el = document.createElement('div');
         el.className = 'fixed top-4 right-4 z-[9999] px-4 py-2 rounded shadow-lg text-sm ' +
             (type === 'success' ? 'bg-success text-white' :
-             type === 'warning' ? 'bg-warning text-white' :
-             type === 'error' ? 'bg-danger text-white' :
-             'bg-brand text-white');
+                type === 'warning' ? 'bg-warning text-white' :
+                    type === 'error' ? 'bg-danger text-white' :
+                        'bg-brand text-white');
         el.textContent = msg;
         document.body.appendChild(el);
         setTimeout(function() { el.remove(); }, 3000);
@@ -53,7 +53,7 @@
     function esc(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function(c) {
-            return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+            return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', '\'':'&#39;'}[c];
         });
     }
 
@@ -226,15 +226,15 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({review_id: CR.reviewId, stance: stance})
                 })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    toast('立场已切换为 ' + stance + ' (谈判建议已更新)', 'success');
-                    appendAudit('切换立场 → ' + stance);
-                })
-                .catch(function(err) {
-                    console.error('立场切换失败:', err);
-                    toast('立场切换失败: ' + err.message, 'error');
-                });
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        toast('立场已切换为 ' + stance + ' (谈判建议已更新)', 'success');
+                        appendAudit('切换立场 → ' + stance);
+                    })
+                    .catch(function(err) {
+                        console.error('立场切换失败:', err);
+                        toast('立场切换失败: ' + err.message, 'error');
+                    });
             });
         });
     }
@@ -378,7 +378,7 @@
             if (!el.hasAttribute('role')) el.setAttribute('role', 'region');
             var level = el.classList.contains('clause-fatal') ? '致命风险'
                 : el.classList.contains('clause-major') ? '重大风险'
-                : el.classList.contains('clause-advisory') ? '建议风险' : '合规';
+                    : el.classList.contains('clause-advisory') ? '建议风险' : '合规';
             var title = el.querySelector('h5');
             var label = level + ' - ' + (title ? title.textContent.trim() : '条款');
             if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', label);
@@ -414,15 +414,15 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({review_id: CR.reviewId})
                 })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    renderNegotiationModal(data);
-                    modal.classList.remove('hidden');
-                })
-                .catch(function(err) {
-                    console.error('拉取谈判策略失败:', err);
-                    toast('谈判策略加载失败: ' + err.message, 'error');
-                });
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        renderNegotiationModal(data);
+                        modal.classList.remove('hidden');
+                    })
+                    .catch(function(err) {
+                        console.error('拉取谈判策略失败:', err);
+                        toast('谈判策略加载失败: ' + err.message, 'error');
+                    });
             });
         });
         closeBtn.forEach(function(btn) {
@@ -492,22 +492,22 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)
             })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data.detail) throw new Error(data.detail);
-                CR.reviewId = data.review_id;
-                toast('审查完成! (耗时 ' + data.latency_ms + 'ms), 跳转结果页', 'success');
-                appendAudit('完成审查 review_id=' + data.review_id + ', demo=' + data.demo_mode);
-                setTimeout(function() {
-                    if (typeof window.switchView === 'function') {
-                        window.switchView('contract-review-result');
-                    }
-                }, 500);
-            })
-            .catch(function(err) {
-                console.error('上传失败:', err);
-                toast('审查失败: ' + err.message, 'error');
-            });
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.detail) throw new Error(data.detail);
+                    CR.reviewId = data.review_id;
+                    toast('审查完成! (耗时 ' + data.latency_ms + 'ms), 跳转结果页', 'success');
+                    appendAudit('完成审查 review_id=' + data.review_id + ', demo=' + data.demo_mode);
+                    setTimeout(function() {
+                        if (typeof window.switchView === 'function') {
+                            window.switchView('contract-review-result');
+                        }
+                    }, 500);
+                })
+                .catch(function(err) {
+                    console.error('上传失败:', err);
+                    toast('审查失败: ' + err.message, 'error');
+                });
         });
     }
 
@@ -548,26 +548,26 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({review_id: CR.reviewId, format: fmt})
                 })
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    if (data.detail) throw new Error(data.detail);
-                    // 触发下载
-                    var blob = new Blob([data.content], {type: data.media_type});
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = data.filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    toast('已导出 ' + fmt.toUpperCase() + ' (' + data.size_bytes + ' 字节)', 'success');
-                    appendAudit('导出报告 ' + fmt + ' (' + data.filename + ')');
-                })
-                .catch(function(err) {
-                    console.error('导出失败:', err);
-                    toast('导出失败: ' + err.message, 'error');
-                });
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.detail) throw new Error(data.detail);
+                        // 触发下载
+                        var blob = new Blob([data.content], {type: data.media_type});
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = data.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        toast('已导出 ' + fmt.toUpperCase() + ' (' + data.size_bytes + ' 字节)', 'success');
+                        appendAudit('导出报告 ' + fmt + ' (' + data.filename + ')');
+                    })
+                    .catch(function(err) {
+                        console.error('导出失败:', err);
+                        toast('导出失败: ' + err.message, 'error');
+                    });
             });
         });
     }
