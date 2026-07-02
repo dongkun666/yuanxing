@@ -19,6 +19,8 @@
     if (typeof globalThis.currentCaseIndex === 'undefined') globalThis.currentCaseIndex = -1;
 
     // ===== 字段编辑 =====
+    var _closeEditSectionModal = null;
+
     function getFieldValue(section, key) {
         var el = document.getElementById('field-' + section + '-' + key);
         if (!el) return '';
@@ -65,15 +67,12 @@
 
     function renderEditForm(section) {
         var config = sectionConfigs[section];
-        if (!config) return;
-        document.getElementById('edit-modal-title').innerText = config.title;
-        var formBody = document.getElementById('edit-form-body');
+        if (!config) return '';
         var html = '';
         var fields = config.fields;
         for (var i = 0; i < fields.length; i += 2) {
             var field1 = fields[i];
             var field2 = fields[i + 1];
-            var rowColSpan = (field1.colSpan || 1) + (field2 ? (field2.colSpan || 1) : 0);
             if (field1.colSpan === 2 || (field1.colSpan === 3 && !field2)) {
                 html += '<div class="space-y-1">';
                 html += '<label class="block text-xs font-medium text-gray-700">' + field1.label + '</label>';
@@ -94,7 +93,7 @@
                 html += '</div>';
             }
         }
-        formBody.innerHTML = html;
+        return html;
     }
 
     function renderFieldInput(section, field) {
@@ -118,21 +117,39 @@
 
     function editSection(section) {
         currentEditSection = section;
-        renderEditForm(section);
-        document.getElementById('edit-section-modal').classList.remove('hidden');
+        var config = sectionConfigs[section];
+        if (!config) return;
+        var content = renderEditForm(section);
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeEditSectionModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="saveEditSection()">保存</button>';
+        if (_closeEditSectionModal) _closeEditSectionModal();
+        _closeEditSectionModal = Utils.showModal({
+            id: 'edit-section-modal',
+            title: config.title,
+            content: content,
+            footer: footer,
+            size: 'lg',
+            onClose: function() {
+                currentEditSection = null;
+                _closeEditSectionModal = null;
+            }
+        });
     }
 
     function closeEditSectionModal() {
-        document.getElementById('edit-section-modal').classList.add('hidden');
-        currentEditSection = null;
+        if (_closeEditSectionModal) {
+            _closeEditSectionModal();
+            _closeEditSectionModal = null;
+        }
     }
 
     function saveEditSection() {
         if (!currentEditSection) return;
         var config = sectionConfigs[currentEditSection];
         if (!config) return;
-        var formBody = document.getElementById('edit-form-body');
-        var inputs = formBody.querySelectorAll('[data-field]');
+        var modalElement = document.getElementById('edit-section-modal');
+        if (!modalElement) return;
+        var inputs = modalElement.querySelectorAll('[data-field]');
         for (var i = 0; i < inputs.length; i++) {
             var input = inputs[i];
             var fieldKey = input.getAttribute('data-field');

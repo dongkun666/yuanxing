@@ -467,13 +467,6 @@
     var originalCloseAddEvidenceCatalogModal = closeAddEvidenceCatalogModal;
     closeAddEvidenceCatalogModal = function () {
         editingCatalogRow = null;
-        var modal = document.getElementById('add-evidence-catalog-modal');
-        if (modal) {
-            var modalTitle = modal.querySelector('h3');
-            if (modalTitle) modalTitle.textContent = '手动创建证据目录';
-            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
-            if (submitBtn) submitBtn.textContent = '添加';
-        }
         originalCloseAddEvidenceCatalogModal();
     };
 

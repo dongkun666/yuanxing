@@ -33,26 +33,106 @@
     var currentDocumentType = globalThis.currentDocumentType;
     var documentTypeMap = globalThis.documentTypeMap;
 
-    // ===== 证据目录 =====
+    var _closeAddEvidenceCatalogModal = null;
+
+    function buildEvidenceCatalogFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div class="flex items-center gap-4">' +
+                    '<div class="w-32">' +
+                        '<label class="block text-xs font-medium text-fg-secondary mb-1.5">编号 <span class="text-red-400">*</span></label>' +
+                        '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="catalog-number" type="number" min="1" placeholder="1"/>' +
+                    '</div>' +
+                    '<div class="flex-1">' +
+                        '<label class="block text-xs font-medium text-fg-secondary mb-1.5">页数范围</label>' +
+                        '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="catalog-pages" placeholder="如：1-5 或 见光盘"/>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">证据材料名称 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="catalog-name" placeholder="请输入证据材料名称，如：《XX合同》"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">证据种类 <span class="text-red-400">*</span></label>' +
+                    '<div class="flex flex-wrap gap-2">' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input checked class="accent-[#165DFF]" name="catalog-type" type="radio" value="书证"/>' +
+                            '书证' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="电子数据"/>' +
+                            '电子数据' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="视听资料"/>' +
+                            '视听资料' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="证人证言"/>' +
+                            '证人证言' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="当事人陈述"/>' +
+                            '当事人陈述' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="鉴定意见"/>' +
+                            '鉴定意见' +
+                        '</label>' +
+                        '<label class="flex items-center gap-1.5 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50 transition-colors">' +
+                            '<input class="accent-[#165DFF]" name="catalog-type" type="radio" value="勘验笔录"/>' +
+                            '勘验笔录' +
+                        '</label>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">证明对象 / 证据材料内容的说明</label>' +
+                    '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none" id="catalog-description" placeholder="请输入证明对象或证据材料内容的详细说明..." rows="4"></textarea>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">关联证据文件</label>' +
+                    '<div class="border border-bg-border rounded-lg overflow-hidden">' +
+                        '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-bg-border">' +
+                            '<span class="text-[10px] text-fg-tertiary">从已有证据材料中选择</span>' +
+                            '<span class="text-[10px] text-fg-tertiary" id="catalog-selected-count">已选 0 个</span>' +
+                        '</div>' +
+                        '<div class="max-h-40 overflow-y-auto" id="catalog-file-select-list">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="mt-2 text-xs text-fg-tertiary" id="catalog-selected-files"></div>' +
+                '</div>' +
+            '</div>';
+    }
+
     function addEvidenceCatalogItem() {
-        var modal = document.getElementById('add-evidence-catalog-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.getElementById('catalog-number').value = '';
-            document.getElementById('catalog-name').value = '';
-            document.getElementById('catalog-pages').value = '';
-            document.getElementById('catalog-description').value = '';
+        var content = buildEvidenceCatalogFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAddEvidenceCatalogModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitEvidenceCatalog()">添加</button>';
+
+        if (_closeAddEvidenceCatalogModal) _closeAddEvidenceCatalogModal();
+        _closeAddEvidenceCatalogModal = Utils.showModal({
+            id: 'add-evidence-catalog-modal',
+            title: '新建证据目录',
+            icon: 'mdi:folder-plus-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
+
+        setTimeout(function() {
             var radios = document.getElementsByName('catalog-type');
             if (radios.length > 0) radios[0].checked = true;
             var tbody = document.getElementById('evidence-catalog-list');
             if (tbody) {
                 var rows = tbody.querySelectorAll('tr');
-                document.getElementById('catalog-number').value = rows.length + 1;
+                var numInput = document.getElementById('catalog-number');
+                if (numInput) numInput.value = rows.length + 1;
             }
             loadCatalogFileList();
-            catalogSelectedFiles.length = 0;  // 清空数组内容 (保留引用)
+            catalogSelectedFiles.length = 0;
             updateCatalogSelectedCount();
-        }
+        }, 50);
     }
 
     function loadCatalogFileList() {
@@ -120,9 +200,9 @@
     }
 
     function closeAddEvidenceCatalogModal() {
-        var modal = document.getElementById('add-evidence-catalog-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeAddEvidenceCatalogModal) {
+            _closeAddEvidenceCatalogModal();
+            _closeAddEvidenceCatalogModal = null;
         }
     }
 
@@ -214,23 +294,35 @@
             catalogSelectedFiles.length = 0;
         }
 
-        var modal = document.getElementById('add-evidence-catalog-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.getElementById('catalog-number').value = number;
-            document.getElementById('catalog-name').value = name;
-            document.getElementById('catalog-pages').value = pages === '-' ? '' : pages;
-            document.getElementById('catalog-description').value = description === '-' ? '' : description;
+        var content = buildEvidenceCatalogFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAddEvidenceCatalogModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitEvidenceCatalog()">保存</button>';
+
+        if (_closeAddEvidenceCatalogModal) _closeAddEvidenceCatalogModal();
+        _closeAddEvidenceCatalogModal = Utils.showModal({
+            id: 'add-evidence-catalog-modal',
+            title: '编辑证据目录',
+            icon: 'mdi:pencil-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
+
+        setTimeout(function() {
+            var numEl = document.getElementById('catalog-number');
+            if (numEl) numEl.value = number;
+            var nameEl = document.getElementById('catalog-name');
+            if (nameEl) nameEl.value = name;
+            var pagesEl = document.getElementById('catalog-pages');
+            if (pagesEl) pagesEl.value = pages === '-' ? '' : pages;
+            var descEl = document.getElementById('catalog-description');
+            if (descEl) descEl.value = description === '-' ? '' : description;
 
             var typeRadios = document.getElementsByName('catalog-type');
             for (var i = 0; i < typeRadios.length; i++) {
                 typeRadios[i].checked = (typeRadios[i].value === type);
             }
-
-            var modalTitle = modal.querySelector('h3');
-            if (modalTitle) modalTitle.textContent = '编辑证据目录';
-            var submitBtn = modal.querySelector('[onclick="submitEvidenceCatalog()"]');
-            if (submitBtn) submitBtn.textContent = '保存';
 
             loadCatalogFileList();
             setTimeout(function() {
@@ -242,7 +334,7 @@
                 });
                 updateCatalogSelectedCount();
             }, 50);
-        }
+        }, 50);
     }
 
     function deleteCatalogItem(btn) {
