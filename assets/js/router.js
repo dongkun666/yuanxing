@@ -301,6 +301,22 @@
     }
 
     /**
+     * 初始化视图动画
+     * 调用 Animations.initPageAnimations 扫描 [data-animate] 元素
+     */
+    function initViewAnimations(scope) {
+        if (typeof Animations !== 'undefined' && typeof Animations.initPageAnimations === 'function') {
+            setTimeout(function () {
+                try {
+                    Animations.initPageAnimations(scope);
+                } catch (e) {
+                    console.warn('[initViewAnimations] 初始化动画失败:', e);
+                }
+            }, 30);
+        }
+    }
+
+    /**
      * 切换视图: 已加载直接显示, 未加载动态 fetch 后插入
      */
     function switchView(viewId, el) {
@@ -318,6 +334,7 @@
                 target.classList.add('flex-col');
             }
             initView(viewId);
+            initViewAnimations(target);
         } else {
             loadView(viewId, function () {
                 var newTarget = document.getElementById('view-' + viewId);
@@ -330,6 +347,7 @@
                         newTarget.classList.add('flex-col');
                     }
                     initView(viewId);
+                    initViewAnimations(newTarget);
                 }
             });
         }

@@ -38,18 +38,78 @@ yuanxing/
 └── AGENTS.md             # 本文件
 ```
 
-## 项目专属 Skills
+## 项目技能体系（基于 obra/superpowers 方法论）
+
+基于 [obra/superpowers](https://github.com/obra/superpowers) 方法论，适配 LexPrime 技术栈（原生 JS + Tailwind + FastAPI）。
+
+### 核心技能矩阵
+
+| 阶段 | 技能 | 触发时机 | 产出 |
+|------|------|----------|------|
+| **设计** | `brainstorming` | 新功能/新模块/3+文件改动前 | 设计文档 + 用户确认 |
+| **计划** | `writing-plans` | 设计确认后，写代码前 | 任务拆解 plan（精确到文件/代码/验证） |
+| **开发** | — | 按 plan 执行，TDD 优先 | 可运行的代码 |
+| **审查** | `requesting-code-review` | 单 task 完成后，commit 前 | Review 意见（Critical/Important/Minor） |
+| **调试** | `systematic-debugging` | 任何 bug / 测试失败 / 异常 | 根因 + 修复 + 验证 |
+| **收尾** | `finishing-a-development-branch` | 所有任务完成后 | merge / PR / cleanup |
+
+### 标准工作流（强制）
+
+```
+brainstorming → writing-plans → 开发（TDD） → code-review → verification
+     ↓              ↓              ↓              ↓              ↓
+  设计文档      实施计划     代码+测试     Review 通过     验证通过
+```
+
+**各阶段要点：**
+
+1. **Brainstorming（设计构思）**
+   - 一问一答澄清需求，一次只问一个
+   - 2-3 个方案 + 推荐，YAGNI 砍冗余
+   - 分段呈现设计，逐段获确认
+   - 输出设计文档到 `docs/plans/`
+   - **硬门：用户没确认，绝不写代码**
+
+2. **Writing Plans（详细计划）**
+   - 假设执行者零上下文，全写死
+   - 每个任务 2-5 分钟，精确文件路径 + 完整代码
+   - TDD 流程：失败测试 → 最小实现 → 通过
+   - 自检：占位符扫描 + 类型一致性 + 跨服务契约
+   - 选执行方式：subagent 驱动 / 内联执行
+
+3. **开发执行**
+   - 用 `using-git-worktrees` 做物理隔离
+   - 用 `dispatching-parallel-agents` 并行多 track
+   - 严格按 plan 走，不跑偏
+   - 每个 task 跑完触发 code review
+
+4. **Code Review（代码审查）**
+   - 单 task 级别的快速审查
+   - Reviewer 只读，不得改 working tree
+   - Critical 立即修，Important 修完再继续
+   - 见 "Code Review 纪律" 章节
+
+5. **调试**
+   - 任何 bug 先激活 `systematic-debugging`
+   - 4 阶段：根因调查 → 模式分析 → 假设验证 → 实施修复
+   - 铁律：没找到根因，绝对不写 fix
+   - 3 次失败 → 停，质疑架构
+
+### 项目专属 Skills 清单
 
 放在 `.harness/skills/` 下。
 
-| Skill | 用途 |
-|---|---|
-| `using-git-worktrees` | Plan track / 跨服务改动 / 多文件功能开发前先建 worktree 隔离（避免并行 subagent 冲突） |
-| `dispatching-parallel-agents` | Plan 多 track 并行 / 多 service 体检（frontend ↔ backend:3847 ↔ ai-service:8088 ↔ OCR:8089）/ 多视角代码考古 时,**单 message 发多个 task tool 调用**,每个 subagent 独立上下文（配合 `using-git-worktrees` 做物理隔离） |
-| `receiving-code-review` | 接 review 反馈时的思考纪律（验证 → 复述 → push back） |
-| `finishing-a-development-branch` | 任务完成后 merge / PR / cleanup 的选项编排 |
-| `requesting-code-review` | 提交前 dispatch reviewer 做单 task 级别的快速审查 |
-| `contract_review` | W3-W6 产品级合同审查 skill（在 `backend/cases-crawler/skills/`，非 .harness 下） |
+| Skill | 来源 | 用途 |
+|---|---|---|
+| `brainstorming` | superpowers 适配 | 设计构思/需求拆解，新功能开发前必须用 |
+| `writing-plans` | superpowers 适配 | 详细实施计划，设计确认后必须用 |
+| `systematic-debugging` | superpowers 适配 | 系统化调试，任何 bug/测试失败必须用 |
+| `requesting-code-review` | superpowers 适配 | 提交前 dispatch reviewer 做单 task 级别的快速审查 |
+| `using-git-worktrees` | 项目适配 | Plan track / 跨服务改动 / 多文件功能开发前先建 worktree 隔离 |
+| `dispatching-parallel-agents` | 项目适配 | Plan 多 track 并行 / 多 service 体检时，单 message 发多个 task tool 调用 |
+| `receiving-code-review` | 项目适配 | 接 review 反馈时的思考纪律（验证 → 复述 → push back） |
+| `finishing-a-development-branch` | 项目适配 | 任务完成后 merge / PR / cleanup 的选项编排 |
+| `contract_review` | 产品级 | W3-W6 产品级合同审查 skill（在 `backend/cases-crawler/skills/`） |
 
 需要新增项目专属技能时：建 `.harness/skills/<name>/SKILL.md`，frontmatter 写 `name` + `description`。
 
