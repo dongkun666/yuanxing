@@ -112,6 +112,84 @@
         return cloned;
     }
 
+    /**
+     * 统一模态框工具函数
+     * @param {Object} options - 模态框配置
+     * @param {string} options.id - 模态框唯一ID
+     * @param {string} options.title - 标题
+     * @param {string} options.content - 内容HTML
+     * @param {string} [options.footer] - 底部按钮HTML
+     * @param {string} [options.size] - 尺寸 'sm'|'md'(默认)|'lg'|'xl'
+     * @param {string} [options.icon] - 标题图标（iconify icon name）
+     * @param {Function} [options.onClose] - 关闭回调
+     * @param {boolean} [options.escClose=true] - ESC键关闭
+     * @returns {Function} - 关闭函数
+     */
+    function showModal(options) {
+        var id = options.id;
+        var title = options.title || '';
+        var content = options.content || '';
+        var footer = options.footer || '';
+        var size = options.size || 'md';
+        var icon = options.icon || '';
+        var onClose = options.onClose || function() {};
+        var escClose = options.escClose !== false;
+
+        var sizeClasses = {
+            'sm': 'max-w-sm',
+            'md': 'max-w-lg',
+            'lg': 'max-w-xl',
+            'xl': 'max-w-2xl'
+        };
+
+        var modal = document.getElementById(id);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = id;
+            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) close();
+            });
+            document.body.appendChild(modal);
+        }
+
+        var iconHtml = icon ? '<iconify-icon icon="' + icon + '" class="text-brand text-lg"></iconify-icon>' : '';
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full ' + sizeClasses[size] + ' overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            iconHtml + title +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="close()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 max-h-[70vh] overflow-y-auto">' + content + '</div>' +
+            (footer ? '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' + footer + '</div>' : '') +
+            '</div>';
+
+        function close() {
+            modal.classList.add('hidden');
+            if (escClose) {
+                document.removeEventListener('keydown', onKeyDown);
+            }
+            onClose();
+        }
+
+        function onKeyDown(e) {
+            if (e.key === 'Escape') close();
+        }
+
+        modal.classList.remove('hidden');
+        if (escClose) {
+            document.addEventListener('keydown', onKeyDown);
+        }
+
+        return close;
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -119,7 +197,8 @@
         throttle: throttle,
         formatDate: formatDate,
         formatNumber: formatNumber,
-        deepClone: deepClone
+        deepClone: deepClone,
+        showModal: showModal
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）
