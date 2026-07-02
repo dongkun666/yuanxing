@@ -547,23 +547,53 @@
         }).join('');
     }
 
-    // ====== 帮助 Modal ======
+    // ====== 帮助 Modal (Utils.showModal 统一管理) ======
+    var _closeScoreHelpModal = null;
     function initHelpModal() {
         var open = document.getElementById('score-help-btn');
-        var close = document.getElementById('score-help-close');
-        var modal = document.getElementById('score-help-modal');
-        if (!open || !modal) return;
-        open.addEventListener('click', function() { modal.classList.remove('hidden'); });
-        if (close) close.addEventListener('click', function() { modal.classList.add('hidden'); });
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) modal.classList.add('hidden');
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                modal.classList.add('hidden');
-            }
+        if (!open) return;
+        open.addEventListener('click', function() {
+            var content =
+                '<div class="space-y-3 text-sm text-fg-secondary">' +
+                '<div>' +
+                '<p class="font-medium text-fg-primary mb-1">Step 1 · 选择律师身份</p>' +
+                '<p class="text-xs text-fg-tertiary">选择你的评审编号 (L1-L5) + 姓名 (下拉可选). 评审后端按律师维度聚合.</p>' +
+                '</div>' +
+                '<div>' +
+                '<p class="font-medium text-fg-primary mb-1">Step 2 · 切换 5 份测试合同</p>' +
+                '<p class="text-xs text-fg-tertiary">5 合同覆盖 PRD § 3.12.2 必备 5 大类 (房屋租赁/借款/劳动/服务/销售). 每份合同需独立评分一次.</p>' +
+                '</div>' +
+                '<div>' +
+                '<p class="font-medium text-fg-primary mb-1">Step 3 · 5 维度 0-10 分评分</p>' +
+                '<p class="text-xs text-fg-tertiary">D1 致命准确 / D2 建议实用 / D3 策略可执行 / D4 中立性 / D5 UI 流程. 每维度 100 字以内文字评论.</p>' +
+                '</div>' +
+                '<div>' +
+                '<p class="font-medium text-fg-primary mb-1">Step 4 · 提交 (自动断网 fallback)</p>' +
+                '<p class="text-xs text-fg-tertiary">提交后立即落库 review_scores. 断网时自动暂存 localStorage, 顶部出现 "离线" 角标, 重连后自动补传.</p>' +
+                '</div>' +
+                '<div class="bg-warning-tint border-l-4 border-warning rounded-md p-3">' +
+                '<p class="text-xs text-fg-secondary"><strong>提示</strong>: 5 律师 × 5 合同 = 25 条评分. 评审结束后, 团队汇总视图将自动生成 prd-feedback v1.0.</p>' +
+                '</div>' +
+                '</div>';
+            if (_closeScoreHelpModal) _closeScoreHelpModal();
+            _closeScoreHelpModal = Utils.showModal({
+                id: 'score-help-modal',
+                title: '使用说明',
+                icon: 'mdi:help-circle-outline',
+                content: content,
+                footer: '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="closeScoreHelpModal()">知道了</button>',
+                size: 'md'
+            });
         });
     }
+
+    // 暴露给 onclick 调用
+    globalThis.closeScoreHelpModal = function() {
+        if (_closeScoreHelpModal) {
+            _closeScoreHelpModal();
+            _closeScoreHelpModal = null;
+        }
+    };
 
     // ====== 视图切换: 切换到 score-app 时重新初始化 ======
     function initViewHook() {

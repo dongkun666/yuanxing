@@ -245,41 +245,5 @@
 
   </main>
 
-  <!-- ============ 帮助 Modal (使用说明) ============ -->
-  <div id="score-help-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-labelledby="score-help-title">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
-      <div class="px-5 py-4 border-b border-bg-border flex items-center justify-between">
-        <h3 class="font-semibold flex items-center gap-2" id="score-help-title">
-          <iconify-icon icon="mdi:help-circle-outline" class="text-brand"></iconify-icon>
-          使用说明
-        </h3>
-        <button id="score-help-close" class="w-7 h-7 rounded text-fg-tertiary hover:bg-bg-subtle hover:text-fg-primary flex items-center justify-center">
-          <iconify-icon icon="mdi:close"></iconify-icon>
-        </button>
-      </div>
-      <div class="px-5 py-4 text-sm space-y-3 text-fg-secondary">
-        <div>
-          <p class="font-medium text-fg-primary mb-1">Step 1 · 选择律师身份</p>
-          <p class="text-xs text-fg-tertiary">选择你的评审编号 (L1-L5) + 姓名 (下拉可选). 评审后端按律师维度聚合.</p>
-        </div>
-        <div>
-          <p class="font-medium text-fg-primary mb-1">Step 2 · 切换 5 份测试合同</p>
-          <p class="text-xs text-fg-tertiary">5 合同覆盖 PRD § 3.12.2 必备 5 大类 (房屋租赁/借款/劳动/服务/销售). 每份合同需独立评分一次.</p>
-        </div>
-        <div>
-          <p class="font-medium text-fg-primary mb-1">Step 3 · 5 维度 0-10 分评分</p>
-          <p class="text-xs text-fg-tertiary">D1 致命准确 / D2 建议实用 / D3 策略可执行 / D4 中立性 / D5 UI 流程. 每维度 100 字以内文字评论.</p>
-        </div>
-        <div>
-          <p class="font-medium text-fg-primary mb-1">Step 4 · 提交 (自动断网 fallback)</p>
-          <p class="text-xs text-fg-tertiary">提交后立即落库 review_scores. 断网时自动暂存 localStorage, 顶部出现 "离线" 角标, 重连后自动补传.</p>
-        </div>
-        <div class="bg-warning-tint border-l-4 border-warning rounded-md p-3">
-          <p class="text-xs text-fg-secondary"><strong>提示</strong>: 5 律师 × 5 合同 = 25 条评分. 评审结束后, 团队汇总视图将自动生成 prd-feedback v1.0.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 </div>
