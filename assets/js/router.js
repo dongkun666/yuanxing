@@ -236,6 +236,16 @@
                     if (typeof window.initLawsDb === 'function') window.initLawsDb();
                 }, 50);
             }
+            if (viewId === 'deadline') {
+                setTimeout(function() {
+                    if (typeof window.initDeadlineView === 'function') window.initDeadlineView();
+                }, 50);
+            }
+            if (viewId === 'ai-doc') {
+                setTimeout(function() {
+                    if (typeof window.initAIDocView === 'function') window.initAIDocView();
+                }, 50);
+            }
             if (viewId === 'dashboard') {
                 // W13 C1 dashboard: chart 已在 view 内部初始化 (DOMContentLoaded), 重新可见时重建 chart
                 setTimeout(function() {
@@ -359,6 +369,16 @@
                     if (viewId === 'laws-db') {
                         setTimeout(function() {
                             if (typeof window.initLawsDb === 'function') window.initLawsDb();
+                        }, 50);
+                    }
+                    if (viewId === 'deadline') {
+                        setTimeout(function() {
+                            if (typeof window.initDeadlineView === 'function') window.initDeadlineView();
+                        }, 50);
+                    }
+                    if (viewId === 'ai-doc') {
+                        setTimeout(function() {
+                            if (typeof window.initAIDocView === 'function') window.initAIDocView();
                         }, 50);
                     }
             if (viewId === 'dashboard') {
