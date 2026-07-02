@@ -1,36 +1,87 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const CleanCSS = require('clean-css');
 const { minify: terserMinify } = require('terser');
 
-const ASSETS_CSS_DIR = path.join(__dirname, '..', 'assets', 'css');
-const ASSETS_JS_DIR = path.join(__dirname, '..', 'assets', 'js');
+const ROOT_DIR = path.join(__dirname, '..');
+const ASSETS_CSS_DIR = path.join(ROOT_DIR, 'assets', 'css');
+const ASSETS_JS_DIR = path.join(ROOT_DIR, 'assets', 'js');
 const JS_DIST_DIR = path.join(ASSETS_JS_DIR, 'dist');
+const CSS_DIST_DIR = path.join(ASSETS_CSS_DIR, 'dist');
 
 function formatBytes(bytes) {
   return (bytes / 1024).toFixed(2) + ' KB';
 }
 
-async function buildCSS() {
-  const inputFile = path.join(ASSETS_CSS_DIR, 'tailwind.css');
-  const outputFile = path.join(ASSETS_CSS_DIR, 'tailwind.min.css');
+async function buildTailwind() {
+  const { execSync } = require('child_process');
 
-  const input = fs.readFileSync(inputFile, 'utf8');
-  const originalSize = Buffer.byteLength(input, 'utf8');
+  const inputFile = path.join(ASSETS_CSS_DIR, 'tailwind-input.css');
+  const outputFile = path.join(CSS_DIST_DIR, 'tailwind.min.css');
 
-  const result = new CleanCSS().minify(input);
-  const output = result.styles;
+  if (!fs.existsSync(CSS_DIST_DIR)) {
+    fs.mkdirSync(CSS_DIST_DIR, { recursive: true });
+  }
+
+  const inputSize = fs.existsSync(path.join(ASSETS_CSS_DIR, 'tailwind.css'))
+    ? Buffer.byteLength(fs.readFileSync(path.join(ASSETS_CSS_DIR, 'tailwind.css'), 'utf8'), 'utf8')
+    : 0;
+
+  execSync(
+    `npx tailwindcss -i "${inputFile}" -o "${outputFile}" --minify`,
+    { cwd: ROOT_DIR, stdio: 'pipe' }
+  );
+
+  const output = fs.readFileSync(outputFile, 'utf8');
   const minifiedSize = Buffer.byteLength(output, 'utf8');
 
-  fs.writeFileSync(outputFile, output);
+  const reduction = inputSize > 0
+    ? ((1 - minifiedSize / inputSize) * 100).toFixed(1)
+    : 'N/A';
 
-  const reduction = ((1 - minifiedSize / originalSize) * 100).toFixed(1);
+  console.log('=== Tailwind CSS ===');
+  console.log(`  tailwind-input.css -> dist/tailwind.min.css (JIT + purge + minify)`);
+  console.log(`  原 tailwind.css:  ${formatBytes(inputSize)}`);
+  console.log(`  编译压缩后:       ${formatBytes(minifiedSize)}`);
+  console.log(`  减少:             ${reduction}%`);
+  console.log();
+}
 
-  console.log('=== CSS ===');
-  console.log(`  tailwind.css -> tailwind.min.css`);
-  console.log(`  原始大小: ${formatBytes(originalSize)}`);
-  console.log(`  压缩后:   ${formatBytes(minifiedSize)}`);
-  console.log(`  减少:     ${reduction}%`);
+async function buildCustomCSS() {
+  const files = ['styles.css', 'marketplace.css'];
+  const results = [];
+
+  if (!fs.existsSync(CSS_DIST_DIR)) {
+    fs.mkdirSync(CSS_DIST_DIR, { recursive: true });
+  }
+
+  for (const file of files) {
+    const inputPath = path.join(ASSETS_CSS_DIR, file);
+    if (!fs.existsSync(inputPath)) continue;
+
+    const outputPath = path.join(CSS_DIST_DIR, file.replace('.css', '.min.css'));
+    const input = fs.readFileSync(inputPath, 'utf8');
+    const originalSize = Buffer.byteLength(input, 'utf8');
+
+    const result = new CleanCSS().minify(input);
+    const output = result.styles;
+    const minifiedSize = Buffer.byteLength(output, 'utf8');
+
+    fs.writeFileSync(outputPath, output);
+
+    const reduction = ((1 - minifiedSize / originalSize) * 100).toFixed(1);
+    results.push({ file, originalSize, minifiedSize, reduction });
+  }
+
+  console.log('=== 自定义 CSS ===');
+  for (const r of results) {
+    const outName = r.file.replace('.css', '.min.css');
+    console.log(`  ${r.file} -> dist/${outName}`);
+    console.log(`    原始大小: ${formatBytes(r.originalSize)}`);
+    console.log(`    压缩后:   ${formatBytes(r.minifiedSize)}`);
+    console.log(`    减少:     ${r.reduction}%`);
+  }
   console.log();
 }
 
@@ -67,38 +118,55 @@ async function buildJS() {
   }
 }
 
-// 生成生产版 index.html: 把 ./assets/js/XXX.js?v=N 替换为 ./assets/js/dist/XXX.js?v=<hash>
+function getFileHash(filePath) {
+  const content = fs.readFileSync(filePath);
+  return crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
+}
+
+// 生成生产版 index.html: 把 JS/CSS 引用切换到 dist 压缩产物 + 内容哈希
 // 保留 index.html 作为开发版, 输出 index.prod.html 供部署使用
 function buildProdHtml() {
-  const crypto = require('crypto');
-  const rootDir = path.join(__dirname, '..');
-  const srcFile = path.join(rootDir, 'index.html');
-  const outFile = path.join(rootDir, 'index.prod.html');
+  const srcFile = path.join(ROOT_DIR, 'index.html');
+  const outFile = path.join(ROOT_DIR, 'index.prod.html');
 
   let html = fs.readFileSync(srcFile, 'utf8');
 
-  // 替换 ./assets/js/XXX.js?v=N -> ./assets/js/dist/XXX.js?v=<hash>
+  // 替换 JS 引用: ./assets/js/XXX.js?v=N -> ./assets/js/dist/XXX.js?v=<hash>
   // 不动 iconify-icon.min.js (第三方已压缩, 不在 dist 内)
-  html = html.replace(/\.\/assets\/js\/([a-z0-9-]+\.js)\?v=\d+/g, function (match, fileName) {
+  html = html.replace(/\.\/assets\/js\/([a-z0-9-]+\.js)(\?v=\d+)?/g, function (match, fileName) {
     if (fileName === 'iconify-icon.min.js') return match;
     const distPath = path.join(JS_DIST_DIR, fileName);
     if (!fs.existsSync(distPath)) return match;
-    const content = fs.readFileSync(distPath);
-    const hash = crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
+    const hash = getFileHash(distPath);
     return './assets/js/dist/' + fileName + '?v=' + hash;
   });
 
-  // 替换 CSS 引用 (tailwind.css -> tailwind.min.css), 兼容有无 ?v=
+  // 替换 Tailwind CSS: tailwind.css -> dist/tailwind.min.css
   html = html.replace(/\.\/assets\/css\/tailwind\.css(\?v=\d+)?/g, function () {
-    const cssPath = path.join(ASSETS_CSS_DIR, 'tailwind.min.css');
-    const content = fs.readFileSync(cssPath);
-    const hash = crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
-    return './assets/css/tailwind.min.css?v=' + hash;
+    const cssPath = path.join(CSS_DIST_DIR, 'tailwind.min.css');
+    if (!fs.existsSync(cssPath)) return match;
+    const hash = getFileHash(cssPath);
+    return './assets/css/dist/tailwind.min.css?v=' + hash;
   });
+
+  // 替换自定义 CSS: styles.css / marketplace.css -> dist/*.min.css
+  const customCssFiles = ['styles.css', 'marketplace.css'];
+  for (const file of customCssFiles) {
+    const minName = file.replace('.css', '.min.css');
+    const distPath = path.join(CSS_DIST_DIR, minName);
+    if (!fs.existsSync(distPath)) continue;
+    const hash = getFileHash(distPath);
+    const regex = new RegExp(
+      '\\.\\/assets\\/css\\/' + file.replace('.', '\\.') + '(\\?v=\\d+)?',
+      'g'
+    );
+    html = html.replace(regex, './assets/css/dist/' + minName + '?v=' + hash);
+  }
 
   fs.writeFileSync(outFile, html);
   console.log('=== 生产 HTML ===');
-  console.log('  index.html -> index.prod.html (引用 dist 压缩产物 + 内容哈希)');
+  console.log('  index.html -> index.prod.html');
+  console.log('  切换: JS/CSS 全部指向 dist/ 压缩产物 + 内容哈希');
   console.log('  部署时: 用 index.prod.html 替换 index.html');
   console.log();
 }
@@ -107,7 +175,8 @@ async function main() {
   console.log('开始构建...\n');
 
   try {
-    await buildCSS();
+    await buildTailwind();
+    await buildCustomCSS();
     await buildJS();
     buildProdHtml();
     console.log('构建完成！');
