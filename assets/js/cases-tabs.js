@@ -34,6 +34,11 @@
     var documentTypeMap = globalThis.documentTypeMap;
 
     var _closeAddEvidenceCatalogModal = null;
+    var _closeAddTimelineModal = null;
+    var _closeUploadEvidenceModal = null;
+    var _closeUploadContractModal = null;
+    var _closeUploadMaterialModal = null;
+    var _closeUploadDocumentModal = null;
 
     function buildEvidenceCatalogFormHtml() {
         return '' +
@@ -390,22 +395,70 @@
     }
 
     // ===== 时间线 =====
+    function buildTimelineFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">事件标题 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="timeline-title" placeholder="请输入事件标题" type="text"/>' +
+                '</div>' +
+                '<div class="grid grid-cols-2 gap-4">' +
+                    '<div>' +
+                        '<label class="block text-xs font-medium text-fg-secondary mb-1.5">事件日期 <span class="text-red-400">*</span></label>' +
+                        '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="timeline-date" type="date"/>' +
+                    '</div>' +
+                    '<div>' +
+                        '<label class="block text-xs font-medium text-fg-secondary mb-1.5">图标颜色</label>' +
+                        '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="timeline-color">' +
+                            '<option value="#165DFF">蓝色</option>' +
+                            '<option value="orange-500">橙色</option>' +
+                            '<option value="green-500">绿色</option>' +
+                            '<option value="purple-500">紫色</option>' +
+                            '<option value="red-500">红色</option>' +
+                            '<option value="gray-500">灰色</option>' +
+                        '</select>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">事件描述</label>' +
+                    '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none" id="timeline-desc" placeholder="请输入事件描述" rows="3"></textarea>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">标签</label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="timeline-tag" placeholder="可选，如：当前阶段、距开庭 X 天" type="text"/>' +
+                '</div>' +
+            '</div>';
+    }
+
     function openAddTimelineModal() {
-        var modal = document.getElementById('add-timeline-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
+        var content = buildTimelineFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAddTimelineModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitTimeline()">添加</button>';
+
+        if (_closeAddTimelineModal) _closeAddTimelineModal();
+        _closeAddTimelineModal = Utils.showModal({
+            id: 'add-timeline-modal',
+            title: '添加时间节点',
+            icon: 'mdi:calendar-plus',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
+
+        setTimeout(function() {
             document.getElementById('timeline-title').value = '';
             document.getElementById('timeline-date').value = '';
             document.getElementById('timeline-color').value = '#165DFF';
             document.getElementById('timeline-desc').value = '';
             document.getElementById('timeline-tag').value = '';
-        }
+        }, 50);
     }
 
     function closeAddTimelineModal() {
-        var modal = document.getElementById('add-timeline-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeAddTimelineModal) {
+            _closeAddTimelineModal();
+            _closeAddTimelineModal = null;
         }
     }
 
@@ -479,19 +532,61 @@
     }
 
     // ===== 证件 =====
+    function buildUploadEvidenceFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">证件名称 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="evidence-name" placeholder="请输入证件名称" type="text"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">证件类型</label>' +
+                    '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="evidence-type">' +
+                        '<option value="企业证件">企业证件</option>' +
+                        '<option value="身份证件">身份证件</option>' +
+                        '<option value="营业执照">营业执照</option>' +
+                        '<option value="组织机构代码证">组织机构代码证</option>' +
+                        '<option value="其他">其他</option>' +
+                    '</select>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">上传文件</label>' +
+                    '<div class="border-2 border-dashed border-bg-border rounded-lg p-4 text-center hover:border-brand transition-colors cursor-pointer" onclick="document.getElementById(\'evidence-file\').click()">' +
+                        '<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>' +
+                        '<p class="text-xs text-fg-tertiary mt-1">点击选择文件</p>' +
+                        '<p class="text-[10px] text-fg-tertiary mt-0.5">支持 PDF / 图片格式</p>' +
+                        '<input class="hidden" id="evidence-file" type="file" accept=".pdf,.jpg,.jpeg,.png"/>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+    }
+
     function openUploadEvidenceModal() {
-        var modal = document.getElementById('upload-evidence-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
+        var content = buildUploadEvidenceFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeUploadEvidenceModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitEvidence()">上传</button>';
+
+        if (_closeUploadEvidenceModal) _closeUploadEvidenceModal();
+        _closeUploadEvidenceModal = Utils.showModal({
+            id: 'upload-evidence-modal',
+            title: '上传证件',
+            icon: 'mdi:card-account-details-outline',
+            content: content,
+            footer: footer,
+            size: 'sm'
+        });
+
+        setTimeout(function() {
             document.getElementById('evidence-name').value = '';
             document.getElementById('evidence-type').value = '企业证件';
-        }
+        }, 50);
     }
 
     function closeUploadEvidenceModal() {
-        var modal = document.getElementById('upload-evidence-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeUploadEvidenceModal) {
+            _closeUploadEvidenceModal();
+            _closeUploadEvidenceModal = null;
         }
     }
 
@@ -543,18 +638,50 @@
     }
 
     // ===== 委托合同 =====
+    function buildUploadContractFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">合同名称 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="contract-name" placeholder="请输入合同名称" type="text"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">上传文件</label>' +
+                    '<div class="border-2 border-dashed border-bg-border rounded-lg p-4 text-center hover:border-brand transition-colors cursor-pointer" onclick="document.getElementById(\'contract-file\').click()">' +
+                        '<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>' +
+                        '<p class="text-xs text-fg-tertiary mt-1">点击选择文件</p>' +
+                        '<p class="text-[10px] text-fg-tertiary mt-0.5">支持 PDF 格式</p>' +
+                        '<input class="hidden" id="contract-file" type="file" accept=".pdf"/>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+    }
+
     function openUploadContractModal() {
-        var modal = document.getElementById('upload-contract-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
+        var content = buildUploadContractFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeUploadContractModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitContract()">上传</button>';
+
+        if (_closeUploadContractModal) _closeUploadContractModal();
+        _closeUploadContractModal = Utils.showModal({
+            id: 'upload-contract-modal',
+            title: '上传委托合同',
+            icon: 'mdi:file-document-outline',
+            content: content,
+            footer: footer,
+            size: 'sm'
+        });
+
+        setTimeout(function() {
             document.getElementById('contract-name').value = '';
-        }
+        }, 50);
     }
 
     function closeUploadContractModal() {
-        var modal = document.getElementById('upload-contract-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeUploadContractModal) {
+            _closeUploadContractModal();
+            _closeUploadContractModal = null;
         }
     }
 
@@ -607,19 +734,62 @@
     }
 
     // ===== 证据材料 =====
+    function buildUploadMaterialFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">文件名称 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="material-name" placeholder="请输入文件名称" type="text"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">文件类型</label>' +
+                    '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="material-type">' +
+                        '<option value="合同">合同</option>' +
+                        '<option value="证据">证据</option>' +
+                        '<option value="通讯">通讯</option>' +
+                        '<option value="函件">函件</option>' +
+                        '<option value="文书">文书</option>' +
+                        '<option value="其他">其他</option>' +
+                    '</select>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">上传文件</label>' +
+                    '<div class="border-2 border-dashed border-bg-border rounded-lg p-4 text-center hover:border-brand transition-colors cursor-pointer" onclick="document.getElementById(\'material-file\').click()">' +
+                        '<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>' +
+                        '<p class="text-xs text-fg-tertiary mt-1">点击选择文件</p>' +
+                        '<p class="text-[10px] text-fg-tertiary mt-0.5">支持 PDF / Word / 图片 / 音频 / 视频</p>' +
+                        '<input class="hidden" id="material-file" type="file"/>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+    }
+
     function openUploadMaterialModal() {
-        var modal = document.getElementById('upload-material-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
+        var content = buildUploadMaterialFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeUploadMaterialModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitMaterial()">上传</button>';
+
+        if (_closeUploadMaterialModal) _closeUploadMaterialModal();
+        _closeUploadMaterialModal = Utils.showModal({
+            id: 'upload-material-modal',
+            title: '上传证据材料',
+            icon: 'mdi:folder-multiple-outline',
+            content: content,
+            footer: footer,
+            size: 'sm'
+        });
+
+        setTimeout(function() {
             document.getElementById('material-name').value = '';
             document.getElementById('material-type').value = '合同';
-        }
+        }, 50);
     }
 
     function closeUploadMaterialModal() {
-        var modal = document.getElementById('upload-material-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeUploadMaterialModal) {
+            _closeUploadMaterialModal();
+            _closeUploadMaterialModal = null;
         }
     }
 
@@ -671,21 +841,54 @@
     }
 
     // ===== 文书 (授权委托书/判决书/其他) =====
+    function buildUploadDocumentFormHtml() {
+        return '' +
+            '<div class="space-y-4">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">文件名称 <span class="text-red-400">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="document-name" placeholder="请输入文件名称" type="text"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">上传文件</label>' +
+                    '<div class="border-2 border-dashed border-bg-border rounded-lg p-4 text-center hover:border-brand transition-colors cursor-pointer" onclick="document.getElementById(\'document-file\').click()">' +
+                        '<iconify-icon class="text-2xl text-gray-300" icon="mdi:cloud-upload-outline"></iconify-icon>' +
+                        '<p class="text-xs text-fg-tertiary mt-1">点击选择文件</p>' +
+                        '<p class="text-[10px] text-fg-tertiary mt-0.5">支持 PDF / Word / 图片格式</p>' +
+                        '<input class="hidden" id="document-file" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"/>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+    }
+
     function openUploadDocumentModal(type) {
         currentDocumentType = type;
-        var modal = document.getElementById('upload-document-modal');
         var config = documentTypeMap[type];
-        if (modal && config) {
-            document.getElementById('upload-document-title').textContent = config.title;
+        if (!config) return;
+
+        var content = buildUploadDocumentFormHtml();
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeUploadDocumentModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg" onclick="submitDocument()">上传</button>';
+
+        if (_closeUploadDocumentModal) _closeUploadDocumentModal();
+        _closeUploadDocumentModal = Utils.showModal({
+            id: 'upload-document-modal',
+            title: config.title,
+            icon: 'mdi:file-pdf-box',
+            content: content,
+            footer: footer,
+            size: 'sm'
+        });
+
+        setTimeout(function() {
             document.getElementById('document-name').value = '';
-            modal.classList.remove('hidden');
-        }
+        }, 50);
     }
 
     function closeUploadDocumentModal() {
-        var modal = document.getElementById('upload-document-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeUploadDocumentModal) {
+            _closeUploadDocumentModal();
+            _closeUploadDocumentModal = null;
         }
     }
 

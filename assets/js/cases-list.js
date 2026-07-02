@@ -195,17 +195,180 @@
         }
     }
 
+    var _closeNewCaseModal = null;
+
     function openNewCaseModal() {
-        var modal = document.getElementById('new-case-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-        }
+        var content = '' +
+            '<div class="space-y-5">' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
+                        '案件基本信息' +
+                    '</h5>' +
+                    '<div class="grid grid-cols-3 gap-4">' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">案件名 <span class="text-red-400">*</span></label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-name" placeholder="请输入案件名" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">案号</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-number" placeholder="请输入案号" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">案由</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-type" placeholder="请输入案由" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">案件状态</label>' +
+                            '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="new-case-status">' +
+                                '<option value="进行中">进行中</option>' +
+                                '<option value="待开庭">待开庭</option>' +
+                                '<option value="已结案">已结案</option>' +
+                                '<option value="已归档">已归档</option>' +
+                                '<option value="中止审理">中止审理</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">标的金额</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-claim" placeholder="请输入标的金额" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">合同金额</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-contract" placeholder="请输入合同金额" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">签约日期</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-signDate" type="date"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">代理阶段</label>' +
+                            '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="new-case-stage">' +
+                                '<option value="一审">一审</option>' +
+                                '<option value="二审">二审</option>' +
+                                '<option value="再审">再审</option>' +
+                                '<option value="执行">执行</option>' +
+                                '<option value="仲裁">仲裁</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">是否保全</label>' +
+                            '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="new-case-preservation">' +
+                                '<option value="未保全">未保全</option>' +
+                                '<option value="已保全">已保全</option>' +
+                                '<option value="保全中">保全中</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">缴费情况</label>' +
+                            '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand appearance-none bg-white" id="new-case-payment">' +
+                                '<option value="已缴费">已缴费</option>' +
+                                '<option value="未缴费">未缴费</option>' +
+                                '<option value="部分缴费">部分缴费</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="col-span-2">' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">特殊约定</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-case-special" placeholder="请输入特殊约定" type="text"/>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-green-500" icon="mdi:account"></iconify-icon>' +
+                        '客户信息' +
+                    '</h5>' +
+                    '<div class="grid grid-cols-2 gap-4">' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">客户姓名</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-client-name" placeholder="请输入客户姓名" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">客户电话</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-client-phone" placeholder="请输入客户电话" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">客户证件号</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-client-id" placeholder="请输入客户证件号" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">法定代表人</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-client-legalRep" placeholder="请输入法定代表人" type="text"/>' +
+                        '</div>' +
+                        '<div class="col-span-2">' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">客户地址</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-client-address" placeholder="请输入客户地址" type="text"/>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-red-500" icon="mdi:account"></iconify-icon>' +
+                        '对方信息' +
+                    '</h5>' +
+                    '<div class="grid grid-cols-2 gap-4">' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">对方姓名</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-opponent-name" placeholder="请输入对方姓名" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">对方电话</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-opponent-phone" placeholder="请输入对方电话" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">对方证件号</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-opponent-id" placeholder="请输入对方证件号" type="text"/>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">法定代表人</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-opponent-legalRep" placeholder="请输入法定代表人" type="text"/>' +
+                        '</div>' +
+                        '<div class="col-span-2">' +
+                            '<label class="block text-xs font-medium text-fg-secondary mb-1.5">对方地址</label>' +
+                            '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand" id="new-opponent-address" placeholder="请输入对方地址" type="text"/>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-brand" icon="mdi:format-list-checks"></iconify-icon>' +
+                        '客户诉求' +
+                    '</h5>' +
+                    '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none" id="new-case-claims" placeholder="请输入客户诉求，每行一项" rows="4"></textarea>' +
+                '</div>' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-brand" icon="mdi:lightbulb-outline"></iconify-icon>' +
+                        '办案思路' +
+                    '</h5>' +
+                    '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none" id="new-case-strategy" placeholder="请输入办案思路" rows="4"></textarea>' +
+                '</div>' +
+                '<div>' +
+                    '<h5 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-2">' +
+                        '<iconify-icon class="text-brand" icon="mdi:text-subject"></iconify-icon>' +
+                        '案情简述' +
+                    '</h5>' +
+                    '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none" id="new-case-summary" placeholder="请输入案情简述" rows="4"></textarea>' +
+                '</div>' +
+            '</div>';
+
+        var footer = '' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg transition-colors" onclick="closeNewCaseModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors" onclick="submitNewCase()">立即创建</button>';
+
+        if (_closeNewCaseModal) _closeNewCaseModal();
+        _closeNewCaseModal = Utils.showModal({
+            id: 'new-case-modal',
+            title: '新建案件',
+            content: content,
+            footer: footer,
+            size: 'xl'
+        });
     }
 
     function closeNewCaseModal() {
-        var modal = document.getElementById('new-case-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (_closeNewCaseModal) {
+            _closeNewCaseModal();
+            _closeNewCaseModal = null;
         }
     }
 

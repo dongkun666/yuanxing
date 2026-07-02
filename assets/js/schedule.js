@@ -353,15 +353,127 @@ function bindScheduleConflictCheck() {
     if (timeInput) timeInput.addEventListener('change', checkAndShowConflict);
 }
 
+// 当前正在编辑的日程 id (null = 新建模式)
+var _editingScheduleId = null;
+var _closeScheduleModalFn = null;
+var _closeConflictResolve = null;
+var pendingSchedule = null;
+
+function buildScheduleModalContent() {
+    return '' +
+        '<div class="space-y-4">' +
+            '<div>' +
+                '<label class="block text-xs font-medium text-fg-secondary mb-1.5">日程标题 <span class="text-red-500">*</span></label>' +
+                '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20" id="sched-title" placeholder="请输入日程标题" type="text"/>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3">' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">日期 <span class="text-red-500">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20" id="sched-date" type="date"/>' +
+                '</div>' +
+                '<div>' +
+                    '<label class="block text-xs font-medium text-fg-secondary mb-1.5">时间 <span class="text-red-500">*</span></label>' +
+                    '<input class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20" id="sched-time" type="time"/>' +
+                '</div>' +
+            '</div>' +
+            '<div>' +
+                '<label class="block text-xs font-medium text-fg-secondary mb-1.5">日程类型</label>' +
+                '<div class="grid grid-cols-4 gap-2">' +
+                    '<label class="flex items-center gap-2 border border-bg-border rounded-lg px-3 py-2 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-type" type="radio" value="开庭"/>' +
+                        '<span class="text-xs text-fg-primary">开庭</span>' +
+                    '</label>' +
+                    '<label class="flex items-center gap-2 border border-bg-border rounded-lg px-3 py-2 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-type" type="radio" value="会议"/>' +
+                        '<span class="text-xs text-fg-primary">会议</span>' +
+                    '</label>' +
+                    '<label class="flex items-center gap-2 border border-bg-border rounded-lg px-3 py-2 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-type" type="radio" value="待办"/>' +
+                        '<span class="text-xs text-fg-primary">待办</span>' +
+                    '</label>' +
+                    '<label class="flex items-center gap-2 border border-bg-border rounded-lg px-3 py-2 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-type" type="radio" value="其他"/>' +
+                        '<span class="text-xs text-fg-primary">其他</span>' +
+                    '</label>' +
+                '</div>' +
+            '</div>' +
+            '<div>' +
+                '<label class="block text-xs font-medium text-fg-secondary mb-1.5">关联案件</label>' +
+                '<select class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20" id="sched-case">' +
+                    '<option value="">不关联案件</option>' +
+                    '<option value="case1">李明诉XX公司买卖合同纠纷</option>' +
+                    '<option value="case2">王华借贷纠纷</option>' +
+                    '<option value="case3">张三合同纠纷</option>' +
+                    '<option value="case4">某科技公司股权纠纷</option>' +
+                    '<option value="case5">赵六劳动争议仲裁</option>' +
+                '</select>' +
+            '</div>' +
+            '<div>' +
+                '<label class="block text-xs font-medium text-fg-secondary mb-1.5">备注</label>' +
+                '<textarea class="w-full border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 resize-none" id="sched-note" placeholder="可选备注信息" rows="2"></textarea>' +
+            '</div>' +
+            '<div>' +
+                '<label class="block text-xs font-medium text-fg-secondary mb-1.5">提醒设置</label>' +
+                '<div class="grid grid-cols-4 gap-2">' +
+                    '<label class="flex flex-col items-center gap-1 border border-bg-border rounded-lg py-3 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="0"/>' +
+                        '<iconify-icon class="text-fg-tertiary text-lg" icon="mdi:bell-off-outline"></iconify-icon>' +
+                        '<span class="text-[10px] text-fg-tertiary">不提醒</span>' +
+                    '</label>' +
+                    '<label class="flex flex-col items-center gap-1 border border-bg-border rounded-lg py-3 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="15"/>' +
+                        '<iconify-icon class="text-fg-tertiary text-lg" icon="mdi:bell-outline"></iconify-icon>' +
+                        '<span class="text-[10px] text-fg-tertiary">15分钟</span>' +
+                    '</label>' +
+                    '<label class="flex flex-col items-center gap-1 border border-bg-border rounded-lg py-3 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="60"/>' +
+                        '<iconify-icon class="text-fg-tertiary text-lg" icon="mdi:bell-ring-outline"></iconify-icon>' +
+                        '<span class="text-[10px] text-fg-tertiary">1小时</span>' +
+                    '</label>' +
+                    '<label class="flex flex-col items-center gap-1 border border-bg-border rounded-lg py-3 cursor-pointer hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-tint3">' +
+                        '<input class="accent-[#165DFF]" name="sched-remind" type="radio" value="1440"/>' +
+                        '<iconify-icon class="text-fg-tertiary text-lg" icon="mdi:bell-alert-outline"></iconify-icon>' +
+                        '<span class="text-[10px] text-fg-tertiary">1天</span>' +
+                    '</label>' +
+                '</div>' +
+            '</div>' +
+            '<div class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800" id="schedule-conflict-warning">' +
+                '<div class="flex items-start gap-2">' +
+                    '<iconify-icon class="text-urgent text-base flex-shrink-0 mt-0.5" icon="mdi:alert-outline"></iconify-icon>' +
+                    '<div>' +
+                        '<div class="font-medium mb-1">⚠️ 时间冲突提醒</div>' +
+                        '<div class="text-amber-700" id="schedule-conflict-detail"></div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+}
+
 function openScheduleModal(scheduleId) {
     _editingScheduleId = scheduleId || null;
-    const today = new Date().toISOString().split('T')[0];
-    const titleEl = document.getElementById('schedule-modal-title');
-    // 标题动态切换
-    if (titleEl) titleEl.textContent = _editingScheduleId ? '修改日程' : '新建日程';
+    var today = new Date().toISOString().split('T')[0];
+    var modalTitle = _editingScheduleId ? '编辑日程' : '新建日程';
+
+    var content = buildScheduleModalContent();
+    var footer = '' +
+        '<button class="px-4 py-2 text-sm text-fg-secondary hover:bg-gray-50 rounded-lg transition-colors" onclick="closeScheduleModal()">取消</button>' +
+        '<button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="saveSchedule()">保存</button>';
+
+    if (_closeScheduleModalFn) _closeScheduleModalFn();
+
+    _closeScheduleModalFn = Utils.showModal({
+        id: 'schedule-modal',
+        title: modalTitle,
+        content: content,
+        footer: footer,
+        size: 'lg',
+        onClose: function() {
+            _editingScheduleId = null;
+            _closeScheduleModalFn = null;
+        }
+    });
 
     if (_editingScheduleId) {
-        // 编辑模式: 预填表单
         var item = AppState.scheduleData.find(function(s) { return s.id === _editingScheduleId; });
         if (item) {
             document.getElementById('sched-title').value = item.title || '';
@@ -370,39 +482,33 @@ function openScheduleModal(scheduleId) {
             document.getElementById('sched-note').value = item.location || '';
             var caseSel = document.getElementById('sched-case');
             if (caseSel) caseSel.value = item.caseId || '';
-            // 单选 type
             var typeRadios = document.querySelectorAll('input[name="sched-type"]');
             typeRadios.forEach(function(r) { r.checked = (r.value === (item.type || '其他')); });
-            // 单选 remind
             var remindRadios = document.querySelectorAll('input[name="sched-remind"]');
             remindRadios.forEach(function(r) { r.checked = (r.value === String(item.remind || '60')); });
         }
     } else {
-        // 新建模式: 默认今天 + 09:00 + 清空
         document.getElementById('sched-date').value = today;
         document.getElementById('sched-time').value = '09:00';
         document.getElementById('sched-title').value = '';
         document.getElementById('sched-note').value = '';
-        // 默认单选
         var defaultType = document.querySelector('input[name="sched-type"][value="开庭"]');
         if (defaultType) defaultType.checked = true;
         var defaultRemind = document.querySelector('input[name="sched-remind"][value="60"]');
         if (defaultRemind) defaultRemind.checked = true;
     }
 
-    document.getElementById('schedule-modal').classList.remove('hidden');
-    // 检查当天冲突并绑定监听
     setTimeout(function() {
         checkAndShowConflict();
         bindScheduleConflictCheck();
     }, 100);
 }
 
-// 当前正在编辑的日程 id (null = 新建模式)
-var _editingScheduleId = null;
-
 function closeScheduleModal() {
-    document.getElementById('schedule-modal').classList.add('hidden');
+    if (_closeScheduleModalFn) {
+        _closeScheduleModalFn();
+        _closeScheduleModalFn = null;
+    }
     _editingScheduleId = null;
 }
 
@@ -1297,33 +1403,66 @@ function deleteScheduleFromDetail() {
 }
 
 
-function showConflictResolve(conflicts) {
-    const listEl = document.getElementById('conflict-list');
-    listEl.innerHTML = conflicts.map(c =>
-        '<div class="flex items-center gap-3 bg-red-50 rounded-lg p-3">' +
+function buildConflictResolveContent(conflicts) {
+    var listHtml = conflicts.map(function(c) {
+        return '<div class="flex items-center gap-3 bg-red-50 rounded-lg p-3">' +
                 '<iconify-icon icon="mdi:calendar-remove-outline" class="text-red-400 text-lg"></iconify-icon>' +
                 '<div class="flex-1">' +
                     '<div class="text-sm font-medium text-red-700">' + c.title + '</div>' +
-                    '<div class="text-xs text-red-500">' + c.time + ' - ' + (c.endTime||'') + '</div>' +
+                    '<div class="text-xs text-red-500">' + c.time + ' - ' + (c.endTime || '') + '</div>' +
                 '</div>' +
-            '</div>'
-    ).join('');
+            '</div>';
+    }).join('');
 
-    // 推荐空闲时段
-    const slotsEl = document.getElementById('suggested-slots');
-    const date = pendingSchedule.date;
-    const busyPeriods = conflicts.map(c => ({ start: c.time, end: c.endTime }));
-    const suggestions = suggestFreeSlots(date, busyPeriods);
-    slotsEl.innerHTML = suggestions.map(s =>
-        '<button onclick="selectSuggestedSlot(\'' + s.start + '\',\'' + s.end + '\')" class="text-xs px-3 py-1.5 rounded-full border border-[#165DFF] text-[#165DFF] hover:bg-blue-50 transition-colors">' + s.start + ' - ' + s.end + '</button>'
-    ).join('');
+    var date = pendingSchedule.date;
+    var busyPeriods = conflicts.map(function(c) { return { start: c.time, end: c.endTime }; });
+    var suggestions = suggestFreeSlots(date, busyPeriods);
+    var slotsHtml = suggestions.map(function(s) {
+        return '<button onclick="selectSuggestedSlot(\'' + s.start + '\',\'' + s.end + '\')" class="text-xs px-3 py-1.5 rounded-full border border-[#165DFF] text-[#165DFF] hover:bg-blue-50 transition-colors">' + s.start + ' - ' + s.end + '</button>';
+    }).join('');
 
-    document.getElementById('conflict-resolve-modal').classList.remove('hidden');
+    return '<div class="space-y-4">' +
+        '<p class="text-sm text-fg-secondary">以下日程与新建日程时间重叠：</p>' +
+        '<div class="space-y-2" id="conflict-list">' + listHtml + '</div>' +
+        '<div class="bg-brand-tint3 rounded-lg p-3">' +
+            '<div class="flex items-center gap-2">' +
+                '<iconify-icon class="text-brand text-sm" icon="mdi:lightbulb-outline"></iconify-icon>' +
+                '<span class="text-xs text-brand">建议：以下时段当前无冲突安排</span>' +
+            '</div>' +
+            '<div class="mt-2 flex flex-wrap gap-2" id="suggested-slots">' + slotsHtml + '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function showConflictResolve(conflicts) {
+    var content = buildConflictResolveContent(conflicts);
+    var footer = '' +
+        '<button class="px-4 py-2 text-sm text-fg-secondary hover:bg-bg rounded-lg transition-colors" onclick="conflictResolveAction(\'cancel\')">返回修改</button>' +
+        '<button class="px-4 py-2 text-sm text-urgent bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors" onclick="conflictResolveAction(\'ignore\')">忽略冲突，仍保存</button>' +
+        '<button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="conflictResolveAction(\'reschedule\')">采纳建议时段</button>';
+
+    if (_closeConflictResolve) _closeConflictResolve();
+
+    _closeConflictResolve = Utils.showModal({
+        id: 'conflict-resolve-modal',
+        title: '检测到时间冲突',
+        icon: 'mdi:alert-circle-outline',
+        content: content,
+        footer: footer,
+        size: 'md',
+        onClose: function() {
+            pendingSchedule = null;
+            _closeConflictResolve = null;
+        }
+    });
 }
 
 
 function closeConflictResolve() {
-    document.getElementById('conflict-resolve-modal').classList.add('hidden');
+    if (_closeConflictResolve) {
+        _closeConflictResolve();
+        _closeConflictResolve = null;
+    }
     pendingSchedule = null;
 }
 

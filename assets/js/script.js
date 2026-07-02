@@ -906,14 +906,6 @@
         }
     ];
 
-    // ===== AI一键提取要点 =====
-    // var selectedExtractSource = 'case';
-    function openAIExtractModal() {
-        document.getElementById('extract-result-area').classList.add('hidden');
-        document.getElementById('extract-loading').classList.add('hidden');
-        document.getElementById('ai-extract-modal').classList.remove('hidden');
-    }
-
     // ===== 批量上传 =====
     // var batchFiles = []; // → AppState.batchFiles
     function openBatchUploadModal() {
