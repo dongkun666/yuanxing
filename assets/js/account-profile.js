@@ -8,7 +8,7 @@
  * 加载顺序: 在 account-notifications.js / account-subscription.js 之后 (无外部依赖)
  */
 
-(function() {
+(function () {
     'use strict';
 
     // ===== 个人资料编辑 =====
@@ -38,7 +38,8 @@
             display.classList.remove('hidden');
             btn.classList.remove('hidden');
             btn.textContent = '修改';
-            btn.className = 'px-5 py-2 text-xs font-semibold rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors';
+            btn.className =
+                'px-5 py-2 text-xs font-semibold rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors';
         }
     }
 
@@ -94,11 +95,12 @@
                 var displayTagsContainer = displayItems[5].querySelector('.flex.flex-wrap');
                 if (displayTagsContainer && editTags.length > 0) {
                     displayTagsContainer.innerHTML = '';
-                    editTags.forEach(function(tag) {
+                    editTags.forEach(function (tag) {
                         var tagText = tag.textContent.replace('×', '').replace('+ 添加', '').trim();
                         if (tagText) {
                             var span = document.createElement('span');
-                            span.className = 'inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
+                            span.className =
+                                'inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
                             span.textContent = tagText;
                             displayTagsContainer.appendChild(span);
                         }
@@ -128,15 +130,21 @@
 
         var toast = document.createElement('div');
         toast.id = 'save-toast';
-        toast.className = 'fixed top-4 right-4 z-[999] bg-green-50 border border-green-200 text-green-700 text-sm px-5 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in';
-        toast.innerHTML = '<iconify-icon icon="mdi:check-circle" class="text-green-600 text-lg"></iconify-icon><span>' + msg + '</span><button onclick="this.parentElement.remove()" class="ml-2 text-green-400 hover:text-green-600"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>';
+        toast.className =
+            'fixed top-4 right-4 z-[999] bg-green-50 border border-green-200 text-green-700 text-sm px-5 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in';
+        toast.innerHTML =
+            '<iconify-icon icon="mdi:check-circle" class="text-green-600 text-lg"></iconify-icon><span>' +
+            msg +
+            '</span><button onclick="this.parentElement.remove()" class="ml-2 text-green-400 hover:text-green-600"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>';
         document.body.appendChild(toast);
 
-        setTimeout(function() {
+        setTimeout(function () {
             if (toast.parentElement) {
                 toast.style.opacity = '0';
                 toast.style.transition = 'opacity 0.3s';
-                setTimeout(function() { if (toast.parentElement) toast.remove(); }, 300);
+                setTimeout(function () {
+                    if (toast.parentElement) toast.remove();
+                }, 300);
             }
         }, 3000);
     }
@@ -146,8 +154,11 @@
         var tag = prompt('请输入专业领域名称：');
         if (tag && tag.trim()) {
             var span = document.createElement('span');
-            span.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
-            span.innerHTML = tag.trim() + ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
+            span.className =
+                'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
+            span.innerHTML =
+                tag.trim() +
+                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
             el.parentNode.insertBefore(span, el);
         }
     }
@@ -172,9 +183,9 @@
         if (progress) progress.classList.remove('hidden');
         if (success) success.classList.add('hidden');
 
-        setTimeout(function() {
+        setTimeout(function () {
             var reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 var img = document.getElementById('avatar-image-display');
                 var icon = document.getElementById('avatar-icon-display');
                 var preview = document.getElementById('avatar-preview-display');
@@ -191,7 +202,7 @@
 
                 showSaveSuccess('头像上传成功');
 
-                setTimeout(function() {
+                setTimeout(function () {
                     if (success) success.classList.add('hidden');
                 }, 3000);
             };
@@ -210,8 +221,11 @@
         var tag = prompt('请输入专业领域名称：\n（如：知识产权、刑事辩护、婚姻家事等）');
         if (tag && tag.trim()) {
             var span = document.createElement('span');
-            span.className = 'inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#E8F3FF] text-[#165DFF] text-xs font-medium';
-            span.innerHTML = tag.trim() + ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500 transition-colors"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
+            span.className =
+                'inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#E8F3FF] text-[#165DFF] text-xs font-medium';
+            span.innerHTML =
+                tag.trim() +
+                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500 transition-colors"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
             el.parentNode.insertBefore(span, el);
         }
     }
@@ -226,7 +240,11 @@
     function toggle2FA(checkbox) {
         var status = document.getElementById('2fa-status');
         if (checkbox.checked) {
-            if (confirm('开启双因素认证将提高账号安全性。\n\n建议使用 Authenticator App（如 Google Authenticator、Microsoft Authenticator）或短信验证码。\n\n是否继续开启？')) {
+            if (
+                confirm(
+                    '开启双因素认证将提高账号安全性。\n\n建议使用 Authenticator App（如 Google Authenticator、Microsoft Authenticator）或短信验证码。\n\n是否继续开启？'
+                )
+            ) {
                 status.textContent = '已开启';
                 status.className = 'text-[10px] text-green-600 font-medium';
             } else {
@@ -260,7 +278,9 @@
     }
 
     function confirmAccountDeletion() {
-        var step1 = confirm('⚠️ 确认要注销账号吗？\n\n注销后：\n· 所有案件数据将被永久清除\n· 所有文书和材料将无法恢复\n· 您的会员权益将立即终止\n\n此操作不可撤销！');
+        var step1 = confirm(
+            '⚠️ 确认要注销账号吗？\n\n注销后：\n· 所有案件数据将被永久清除\n· 所有文书和材料将无法恢复\n· 您的会员权益将立即终止\n\n此操作不可撤销！'
+        );
         if (step1) {
             var step2 = prompt('请输入「确认注销」以继续操作：');
             if (step2 === '确认注销') {
@@ -326,7 +346,7 @@
         if (saveText) saveText.textContent = '保存中...';
         if (saveSpinner) saveSpinner.classList.remove('hidden');
 
-        AppState.autoSaveTimer = setTimeout(function() {
+        AppState.autoSaveTimer = setTimeout(function () {
             if (saveBtn) {
                 saveBtn.classList.remove('bg-[#4080FF]', 'cursor-default', 'opacity-80');
                 saveBtn.classList.add('bg-[#165DFF]');
@@ -334,7 +354,7 @@
             if (saveText) saveText.textContent = '已保存';
             if (saveSpinner) saveSpinner.classList.add('hidden');
 
-            setTimeout(function() {
+            setTimeout(function () {
                 if (saveText && saveText.textContent === '已保存') {
                     saveText.textContent = '保存';
                 }
@@ -346,7 +366,7 @@
         var toggles = document.querySelectorAll('.notif-toggle');
         var enabled = [];
         var disabled = [];
-        toggles.forEach(function(t, i) {
+        toggles.forEach(function (t, i) {
             if (t.checked) enabled.push(i);
             else disabled.push(i);
         });

@@ -9,7 +9,7 @@
  * 加载顺序: 在 account-notifications.js 之后, account-profile.js 之前
  */
 
-(function() {
+(function () {
     'use strict';
 
     // 右上角用户菜单 toggle
@@ -19,7 +19,7 @@
         if (!menu) return;
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
-            setTimeout(function() {
+            setTimeout(function () {
                 setupOutsideClickClose('userMenu', '[onclick*="toggleUserMenu"]');
             }, 0);
         } else {
@@ -34,22 +34,22 @@
 
         switchSidebarTab('work');
 
-        document.querySelectorAll('.sidebar-item').forEach(function(item) {
+        document.querySelectorAll('.sidebar-item').forEach(function (item) {
             item.classList.remove('active');
         });
 
         var target = document.getElementById('view-subscription');
         if (target) {
-            document.querySelectorAll('.view-content').forEach(function(v) {
+            document.querySelectorAll('.view-content').forEach(function (v) {
                 v.classList.add('hidden');
             });
             target.classList.remove('hidden');
         } else {
-            loadView('subscription', function(html) {
+            loadView('subscription', function (html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
                 var newTarget = document.getElementById('view-subscription');
                 if (newTarget) {
-                    document.querySelectorAll('.view-content').forEach(function(v) {
+                    document.querySelectorAll('.view-content').forEach(function (v) {
                         v.classList.add('hidden');
                     });
                     newTarget.classList.remove('hidden');
@@ -98,19 +98,19 @@
     // 跳到支付页
     function showPayment(plan) {
         var planNames = {
-            'free': '免费版',
-            'professional': '专业版',
-            'enterprise': '企业版'
+            free: '免费版',
+            professional: '专业版',
+            enterprise: '企业版'
         };
         var planDesc = {
-            'free': '基础功能体验',
-            'professional': '最适合个人律师',
-            'enterprise': '适合律所及团队'
+            free: '基础功能体验',
+            professional: '最适合个人律师',
+            enterprise: '适合律所及团队'
         };
         var planPrice = {
-            'free': '¥0',
-            'professional': AppState.isYearly ? '¥2,399' : '¥299',
-            'enterprise': AppState.isYearly ? '¥7,199' : '¥899'
+            free: '¥0',
+            professional: AppState.isYearly ? '¥2,399' : '¥299',
+            enterprise: AppState.isYearly ? '¥7,199' : '¥899'
         };
 
         if (plan === 'free') {
@@ -126,7 +126,7 @@
         document.getElementById('payment-total').textContent = planPrice[plan];
         document.getElementById('pay-button-amount').textContent = planPrice[plan];
 
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-payment').classList.remove('hidden');
@@ -134,7 +134,7 @@
 
     // 返回订阅页
     function backToSubscription() {
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-subscription').classList.remove('hidden');
@@ -143,7 +143,7 @@
     // 支付方式选择
     function selectPaymentMethod(el, method) {
         AppState.selectedPayment = method;
-        document.querySelectorAll('.payment-method').forEach(function(btn) {
+        document.querySelectorAll('.payment-method').forEach(function (btn) {
             btn.classList.remove('border-[#165DFF]', 'bg-[#F2F7FF]');
             btn.classList.add('border-[#E5E6EB]');
             var dot = btn.querySelector('.w-5.h-5');
@@ -173,7 +173,7 @@
         var planName = planEl ? planEl.textContent : '专业版 · 月付';
         var amount = amountEl ? amountEl.textContent : '¥299';
 
-        var methodNames = {'alipay': '支付宝', 'wechat': '微信支付', 'unionpay': '银联支付'};
+        var methodNames = { alipay: '支付宝', wechat: '微信支付', unionpay: '银联支付' };
         var methodName = methodNames[AppState.selectedPayment] || '支付宝';
 
         document.getElementById('success-plan-info').textContent = planName + ' 已生效';
@@ -182,19 +182,24 @@
         document.getElementById('success-payment-method').textContent = methodName;
 
         var now = new Date();
-        var orderNo = 'LP' + now.getFullYear() +
-            String(now.getMonth()+1).padStart(2, '0') +
-            String(now.getDate()).padStart(2, '0') + '001';
+        var orderNo =
+            'LP' +
+            now.getFullYear() +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            String(now.getDate()).padStart(2, '0') +
+            '001';
         document.getElementById('success-order-no').textContent = orderNo;
 
         var expiry = new Date(now);
         expiry.setMonth(expiry.getMonth() + 1);
         document.getElementById('success-expiry').textContent =
-            expiry.getFullYear() + '-' +
-            String(expiry.getMonth()+1).padStart(2, '0') + '-' +
+            expiry.getFullYear() +
+            '-' +
+            String(expiry.getMonth() + 1).padStart(2, '0') +
+            '-' +
             String(expiry.getDate()).padStart(2, '0');
 
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-payment-success').classList.remove('hidden');

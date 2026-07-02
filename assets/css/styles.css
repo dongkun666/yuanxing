@@ -1,22 +1,22 @@
 @import '../fonts/fonts.css';
 
 :root {
-    --arco-blue-6: #165DFF;
-    --arco-blue-5: #4080FF;
-    --arco-blue-1: #E8F3FF;
-    --arco-gray-1: #F2F3F5;
-    --arco-gray-2: #F7F8FA;
-    --arco-gray-3: #E5E6EB;
-    --arco-gray-10: #1D2129;
-    --arco-gray-8: #4E5969;
-    --arco-gray-6: #86909C;
-    --arco-success: #00B42A;
-    --arco-warning: #FF7D00;
-    --arco-danger: #F5222D;
+    --arco-blue-6: #165dff;
+    --arco-blue-5: #4080ff;
+    --arco-blue-1: #e8f3ff;
+    --arco-gray-1: #f2f3f5;
+    --arco-gray-2: #f7f8fa;
+    --arco-gray-3: #e5e6eb;
+    --arco-gray-10: #1d2129;
+    --arco-gray-8: #4e5969;
+    --arco-gray-6: #86909c;
+    --arco-success: #00b42a;
+    --arco-warning: #ff7d00;
+    --arco-danger: #f5222d;
 }
 
 body {
-    font-family: "PingFang SC", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'PingFang SC', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: var(--arco-gray-1);
     color: var(--arco-gray-10);
     overflow: hidden;
@@ -40,7 +40,7 @@ textarea:focus-visible,
 
 /* ===== 卡片 ===== */
 .arco-card {
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 12px;
     border: 1px solid var(--arco-gray-3);
     transition: all 0.2s;
@@ -132,7 +132,7 @@ textarea:focus-visible,
 
 .conflict-card {
     border: 1px solid var(--arco-danger);
-    background-color: #FFF7F8;
+    background-color: #fff7f8;
 }
 
 .step-item.active .step-icon {
@@ -159,7 +159,7 @@ textarea:focus-visible,
     border-radius: 6px;
     transition: all 0.2s;
     cursor: pointer;
-    color: #86909C;
+    color: #86909c;
     background: transparent;
     border: none;
     position: relative;
@@ -167,7 +167,7 @@ textarea:focus-visible,
 }
 
 .sidebar-tab-btn.active {
-    color: #165DFF;
+    color: #165dff;
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
@@ -189,17 +189,17 @@ textarea:focus-visible,
 }
 
 .chat-bubble-ai {
-    background-color: #F7F8FA;
+    background-color: #f7f8fa;
     border-radius: 8px;
     padding: 10px 14px;
     max-width: 85%;
     font-size: 13px;
     line-height: 1.6;
-    color: #1D2129;
+    color: #1d2129;
 }
 
 .chat-bubble-user {
-    background-color: #165DFF;
+    background-color: #165dff;
     border-radius: 8px;
     padding: 10px 14px;
     max-width: 85%;
@@ -220,12 +220,12 @@ textarea:focus-visible,
 }
 
 .chat-avatar-ai {
-    background-color: #E8F3FF;
-    color: #165DFF;
+    background-color: #e8f3ff;
+    color: #165dff;
 }
 
 .chat-avatar-user {
-    background-color: #165DFF;
+    background-color: #165dff;
     color: #ffffff;
 }
 
@@ -235,8 +235,14 @@ textarea:focus-visible,
 
 /* ===== 保存成功提示动画 ===== */
 @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .animate-slide-in {
@@ -252,7 +258,7 @@ textarea:focus-visible,
     border-radius: 6px;
     transition: all 0.2s;
     cursor: pointer;
-    color: #86909C;
+    color: #86909c;
     background: transparent;
     border: none;
     position: relative;
@@ -260,14 +266,14 @@ textarea:focus-visible,
 }
 
 .ai-subtab-btn.active {
-    color: #165DFF;
+    color: #165dff;
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 /* ===== 技能卡片 ===== */
 .skill-card {
-    background: #FFFFFF;
+    background: #ffffff;
     border: 1px solid var(--arco-gray-3);
     border-radius: 12px;
     padding: 12px;
@@ -341,11 +347,18 @@ textarea:focus-visible,
 }
 
 /* ===== 更多菜单弹出动画 ===== */
-#moreMenuWork, #moreMenuAI {
+#moreMenuWork,
+#moreMenuAI {
     animation: menuSlideUp 0.15s ease-out;
 }
 
 @keyframes menuSlideUp {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

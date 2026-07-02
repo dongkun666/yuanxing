@@ -172,7 +172,9 @@
             sizeClasses[size] +
             ' overflow-hidden" role="document">' +
             '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 id="' + id + '-title" class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<h3 id="' +
+            id +
+            '-title" class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
             iconHtml +
             title +
             '</h3>' +
@@ -219,7 +221,9 @@
             document.removeEventListener('keydown', trapFocus);
             delete _modalRegistry[id];
             if (previousFocus && typeof previousFocus.focus === 'function') {
-                try { previousFocus.focus(); } catch (ignore) {}
+                try {
+                    previousFocus.focus();
+                } catch (ignore) {}
             }
             onClose();
         }

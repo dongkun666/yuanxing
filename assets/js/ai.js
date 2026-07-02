@@ -213,94 +213,97 @@
     var _closeAIExtractModal = null;
 
     function buildAIExtractContent() {
-        return '<div class="space-y-5">' +
+        return (
+            '<div class="space-y-5">' +
             '<div>' +
-                '<label class="block text-xs font-medium text-fg-primary mb-2">提取来源</label>' +
-                '<div class="flex gap-2 flex-wrap">' +
-                    '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" data-source="case" onclick="selectExtractSource(this, \'case\')" type="button">案件材料</button>' +
-                    '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="document" onclick="selectExtractSource(this, \'document\')" type="button">当前文书</button>' +
-                    '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="evidence" onclick="selectExtractSource(this, \'evidence\')" type="button">证据材料</button>' +
-                    '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="timeline" onclick="selectExtractSource(this, \'timeline\')" type="button">时间线记录</button>' +
-                '</div>' +
+            '<label class="block text-xs font-medium text-fg-primary mb-2">提取来源</label>' +
+            '<div class="flex gap-2 flex-wrap">' +
+            '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" data-source="case" onclick="selectExtractSource(this, \'case\')" type="button">案件材料</button>' +
+            '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="document" onclick="selectExtractSource(this, \'document\')" type="button">当前文书</button>' +
+            '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="evidence" onclick="selectExtractSource(this, \'evidence\')" type="button">证据材料</button>' +
+            '<button class="extract-source-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" data-source="timeline" onclick="selectExtractSource(this, \'timeline\')" type="button">时间线记录</button>' +
+            '</div>' +
             '</div>' +
             '<div>' +
-                '<label class="block text-xs font-medium text-fg-primary mb-2">提取维度</label>' +
-                '<div class="grid grid-cols-2 gap-2">' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 关键事实' +
-                    '</label>' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 争议焦点' +
-                    '</label>' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 法律依据' +
-                    '</label>' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 风险提示' +
-                    '</label>' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 时间节点' +
-                    '</label>' +
-                    '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
-                        '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 证据摘要' +
-                    '</label>' +
-                '</div>' +
+            '<label class="block text-xs font-medium text-fg-primary mb-2">提取维度</label>' +
+            '<div class="grid grid-cols-2 gap-2">' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 关键事实' +
+            '</label>' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 争议焦点' +
+            '</label>' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input checked class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 法律依据' +
+            '</label>' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 风险提示' +
+            '</label>' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 时间节点' +
+            '</label>' +
+            '<label class="flex items-center gap-2 text-xs text-fg-secondary bg-gray-50 rounded-lg px-3 py-2 cursor-pointer hover:bg-brand-tint3/50">' +
+            '<input class="rounded border-bg-border text-brand focus:ring-brand" type="checkbox"/> 证据摘要' +
+            '</label>' +
+            '</div>' +
             '</div>' +
             '<div class="hidden space-y-3" id="extract-result-area">' +
-                '<div class="flex items-center justify-between">' +
-                    '<h4 class="text-xs font-semibold text-fg-secondary">提取结果</h4>' +
-                    '<div class="flex items-center gap-2">' +
-                        '<button class="text-[10px] text-brand hover:underline" onclick="copyExtractResult()">复制结果</button>' +
-                        '<button class="text-[10px] text-brand hover:underline" onclick="exportExtractResult()">导出报告</button>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="bg-brand-tint3/50 rounded-lg border border-blue-100 p-3">' +
-                    '<div class="flex items-center gap-1.5 mb-2">' +
-                        '<iconify-icon class="text-brand text-sm" icon="mdi:lightbulb-outline"></iconify-icon>' +
-                        '<span class="text-xs font-semibold text-brand">关键事实</span>' +
-                    '</div>' +
-                    '<ul class="space-y-1">' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>张三于2025年3月与李四签订《借款合同》，约定借款金额50万元</li>' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>借款期限12个月，年利率12%，按月付息</li>' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>张三已支付利息至2026年2月，本金未归还</li>' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>李四于2026年4月发出催收函，张三未回应</li>' +
-                    '</ul>' +
-                '</div>' +
-                '<div class="bg-purple-50/50 rounded-lg border border-purple-100 p-3">' +
-                    '<div class="flex items-center gap-1.5 mb-2">' +
-                        '<iconify-icon class="text-purple-500 text-sm" icon="mdi:scale-balance"></iconify-icon>' +
-                        '<span class="text-xs font-semibold text-wiki">争议焦点</span>' +
-                    '</div>' +
-                    '<ul class="space-y-1">' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>借款利率是否超过法定上限（LPR的4倍）</li>' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>张三主张已通过现金方式部分还款是否成立</li>' +
-                    '</ul>' +
-                '</div>' +
-                '<div class="bg-green-50/50 rounded-lg border border-green-100 p-3">' +
-                    '<div class="flex items-center gap-1.5 mb-2">' +
-                        '<iconify-icon class="text-green-500 text-sm" icon="mdi:book-open-page-variant-outline"></iconify-icon>' +
-                        '<span class="text-xs font-semibold text-success">法律依据</span>' +
-                    '</div>' +
-                    '<ul class="space-y-1">' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《中华人民共和国民法典》第六百六十七条：借款合同定义</li>' +
-                        '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条</li>' +
-                    '</ul>' +
-                '</div>' +
-                '<div class="text-[10px] text-fg-tertiary italic border-t border-gray-100 pt-2">AI辅助生成，仅供参考。建议律师结合案件实际核查。</div>' +
+            '<div class="flex items-center justify-between">' +
+            '<h4 class="text-xs font-semibold text-fg-secondary">提取结果</h4>' +
+            '<div class="flex items-center gap-2">' +
+            '<button class="text-[10px] text-brand hover:underline" onclick="copyExtractResult()">复制结果</button>' +
+            '<button class="text-[10px] text-brand hover:underline" onclick="exportExtractResult()">导出报告</button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="bg-brand-tint3/50 rounded-lg border border-blue-100 p-3">' +
+            '<div class="flex items-center gap-1.5 mb-2">' +
+            '<iconify-icon class="text-brand text-sm" icon="mdi:lightbulb-outline"></iconify-icon>' +
+            '<span class="text-xs font-semibold text-brand">关键事实</span>' +
+            '</div>' +
+            '<ul class="space-y-1">' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>张三于2025年3月与李四签订《借款合同》，约定借款金额50万元</li>' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>借款期限12个月，年利率12%，按月付息</li>' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>张三已支付利息至2026年2月，本金未归还</li>' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-brand mt-0.5">•</span>李四于2026年4月发出催收函，张三未回应</li>' +
+            '</ul>' +
+            '</div>' +
+            '<div class="bg-purple-50/50 rounded-lg border border-purple-100 p-3">' +
+            '<div class="flex items-center gap-1.5 mb-2">' +
+            '<iconify-icon class="text-purple-500 text-sm" icon="mdi:scale-balance"></iconify-icon>' +
+            '<span class="text-xs font-semibold text-wiki">争议焦点</span>' +
+            '</div>' +
+            '<ul class="space-y-1">' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>借款利率是否超过法定上限（LPR的4倍）</li>' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-purple-500 mt-0.5">•</span>张三主张已通过现金方式部分还款是否成立</li>' +
+            '</ul>' +
+            '</div>' +
+            '<div class="bg-green-50/50 rounded-lg border border-green-100 p-3">' +
+            '<div class="flex items-center gap-1.5 mb-2">' +
+            '<iconify-icon class="text-green-500 text-sm" icon="mdi:book-open-page-variant-outline"></iconify-icon>' +
+            '<span class="text-xs font-semibold text-success">法律依据</span>' +
+            '</div>' +
+            '<ul class="space-y-1">' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《中华人民共和国民法典》第六百六十七条：借款合同定义</li>' +
+            '<li class="text-xs text-fg-primary flex items-start gap-1.5"><span class="text-green-500 mt-0.5">•</span>《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条</li>' +
+            '</ul>' +
+            '</div>' +
+            '<div class="text-[10px] text-fg-tertiary italic border-t border-gray-100 pt-2">AI辅助生成，仅供参考。建议律师结合案件实际核查。</div>' +
             '</div>' +
             '<div class="hidden flex items-center justify-center gap-2 py-8" id="extract-loading">' +
-                '<div class="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>' +
-                '<span class="text-xs text-fg-tertiary">AI 正在分析案件材料...</span>' +
+            '<div class="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>' +
+            '<span class="text-xs text-fg-tertiary">AI 正在分析案件材料...</span>' +
             '</div>' +
-        '</div>';
+            '</div>'
+        );
     }
 
     function openAIExtractModal() {
         var content = buildAIExtractContent();
-        var footer = '' +
+        var footer =
+            '' +
             '<button class="px-4 py-2 text-sm text-fg-secondary hover:bg-bg rounded-lg transition-colors" onclick="closeAIExtractModal()">关闭</button>' +
             '<button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors flex items-center gap-1.5" onclick="startAIExtract()">' +
-                '<iconify-icon class="text-sm" icon="mdi:robot-outline"></iconify-icon> 开始提取' +
+            '<iconify-icon class="text-sm" icon="mdi:robot-outline"></iconify-icon> 开始提取' +
             '</button>';
 
         if (_closeAIExtractModal) _closeAIExtractModal();
@@ -312,12 +315,12 @@
             content: content,
             footer: footer,
             size: 'lg',
-            onClose: function() {
+            onClose: function () {
                 _closeAIExtractModal = null;
             }
         });
 
-        setTimeout(function() {
+        setTimeout(function () {
             var extractResultArea = document.getElementById('extract-result-area');
             var extractLoading = document.getElementById('extract-loading');
             if (extractResultArea) extractResultArea.classList.add('hidden');

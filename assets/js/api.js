@@ -5,14 +5,14 @@
  * 依赖: Auth (auth.js) - token 存储
  */
 
-(function() {
+(function () {
     'use strict';
 
     // 后端服务地址 (dev 模式)
     const CONFIG = {
-        backend: 'http://127.0.0.1:3847',     // Rust Actix-web
-        aiService: 'http://127.0.0.1:8088',   // Python FastAPI
-        timeoutMs: 30000,                        // 30s 超时
+        backend: 'http://127.0.0.1:3847', // Rust Actix-web
+        aiService: 'http://127.0.0.1:8088', // Python FastAPI
+        timeoutMs: 30000 // 30s 超时
     };
 
     /**
@@ -44,14 +44,16 @@
 
         // 超时
         const controller = new AbortController();
-        const timeoutId = setTimeout(function() { controller.abort(); }, CONFIG.timeoutMs);
+        const timeoutId = setTimeout(function () {
+            controller.abort();
+        }, CONFIG.timeoutMs);
 
         try {
             const res = await fetch(url, {
                 method: method,
                 headers: headers,
                 body: body,
-                signal: controller.signal,
+                signal: controller.signal
             });
             clearTimeout(timeoutId);
 
@@ -71,15 +73,19 @@
             let data = null;
             const ct = res.headers.get('content-type') || '';
             if (ct.indexOf('application/json') >= 0) {
-                data = await res.json().catch(function() { return null; });
+                data = await res.json().catch(function () {
+                    return null;
+                });
             } else {
-                data = await res.text().catch(function() { return null; });
+                data = await res.text().catch(function () {
+                    return null;
+                });
             }
 
             return {
                 ok: res.ok,
                 status: res.status,
-                data: data,
+                data: data
             };
         } catch (err) {
             clearTimeout(timeoutId);
@@ -87,7 +93,7 @@
                 ok: false,
                 status: 0,
                 data: null,
-                error: err.name === 'AbortError' ? 'timeout' : err.message,
+                error: err.name === 'AbortError' ? 'timeout' : err.message
             };
         }
     }
@@ -105,7 +111,10 @@
      */
     function post(path, body, opts) {
         opts = opts || {};
-        return request(CONFIG[opts.service || 'backend'] + path, Object.assign({}, opts, { method: 'POST', body: body }));
+        return request(
+            CONFIG[opts.service || 'backend'] + path,
+            Object.assign({}, opts, { method: 'POST', body: body })
+        );
     }
 
     /**
@@ -113,7 +122,10 @@
      */
     function put(path, body, opts) {
         opts = opts || {};
-        return request(CONFIG[opts.service || 'backend'] + path, Object.assign({}, opts, { method: 'PUT', body: body }));
+        return request(
+            CONFIG[opts.service || 'backend'] + path,
+            Object.assign({}, opts, { method: 'PUT', body: body })
+        );
     }
 
     /**
@@ -135,21 +147,25 @@
             if (token) headers['Authorization'] = 'Bearer ' + token;
         }
         const controller = new AbortController();
-        const timeoutId = setTimeout(function() { controller.abort(); }, 60000); // 上传 60s
+        const timeoutId = setTimeout(function () {
+            controller.abort();
+        }, 60000); // 上传 60s
 
         try {
             const res = await fetch(url, {
                 method: 'POST',
                 headers: headers,
                 body: formData,
-                signal: controller.signal,
+                signal: controller.signal
             });
             clearTimeout(timeoutId);
             if (res.status === 401 && typeof Auth !== 'undefined') {
                 Auth.logout();
                 return { ok: false, status: 401, data: null };
             }
-            const data = await res.json().catch(function() { return null; });
+            const data = await res.json().catch(function () {
+                return null;
+            });
             return { ok: res.ok, status: res.status, data: data };
         } catch (err) {
             clearTimeout(timeoutId);
@@ -166,8 +182,12 @@
 
         // ===== 健康检查 =====
         health: {
-            backend: function() { return get('/health'); },
-            ai: function() { return get('/health', { service: 'aiService' }); },
+            backend: function () {
+                return get('/health');
+            },
+            ai: function () {
+                return get('/health', { service: 'aiService' });
+            }
         },
 
         // ===== Auth (Phase 3 后端待补, 暂走 demo 模式) =====
@@ -175,7 +195,7 @@
             /**
              * 登录 - 暂走 demo (后端 Phase 2 hardcode u-1)
              */
-            login: function(email, password) {
+            login: function (email, password) {
                 // TODO: 替换为 POST /api/v1/auth/login
                 return Promise.resolve({
                     ok: true,
@@ -185,12 +205,12 @@
                         user: {
                             id: 'u-1',
                             email: email || 'demo@lexprime.cn',
-                            displayName: email ? email.split('@')[0] : '演示律师',
-                        },
-                    },
+                            displayName: email ? email.split('@')[0] : '演示律师'
+                        }
+                    }
                 });
             },
-            register: function(email, password, displayName) {
+            register: function (email, password, displayName) {
                 return Promise.resolve({
                     ok: true,
                     status: 200,
@@ -199,27 +219,33 @@
                         user: {
                             id: 'u-1',
                             email: email,
-                            displayName: displayName || email.split('@')[0],
-                        },
-                    },
+                            displayName: displayName || email.split('@')[0]
+                        }
+                    }
                 });
             },
-            me: function() {
+            me: function () {
                 return Promise.resolve({ ok: true, status: 200, data: Auth.currentUser() });
             },
             /**
              * Demo 模式登录 (无需邮箱密码)
              */
-            demo: function() {
+            demo: function () {
                 return this.login('demo@lexprime.cn', '');
-            },
+            }
         },
 
         // ===== 案件 (Rust backend) =====
         cases: {
-            list: function() { return get('/api/v1/cases'); },
-            create: function(body) { return post('/api/v1/cases', body); },
-            get: function(id) { return get('/api/v1/cases/' + id); },
+            list: function () {
+                return get('/api/v1/cases');
+            },
+            create: function (body) {
+                return post('/api/v1/cases', body);
+            },
+            get: function (id) {
+                return get('/api/v1/cases/' + id);
+            }
         },
 
         // ===== OCR (Python ai-service) =====
@@ -228,11 +254,11 @@
              * 提取文件文本
              * @param {File} file - 用户上传的文件
              */
-            extract: function(file) {
+            extract: function (file) {
                 var fd = new FormData();
                 fd.append('file', file);
                 return upload('aiService', '/api/ocr', fd);
-            },
+            }
         },
 
         // ===== Knowledge / LLM 编译 (Python ai-service) =====
@@ -242,17 +268,17 @@
              * @param {string} rawText - OCR 提取的文本
              * @param {object} opts - { source: string, metadata: object }
              */
-            compile: function(rawText, opts) {
+            compile: function (rawText, opts) {
                 opts = opts || {};
                 var body = {
                     template: 'knowledge_compile',
                     variables: {
                         raw_text: rawText.slice(0, 8000), // 限制长度
                         source_type: opts.source || 'document',
-                        source_meta: opts.metadata || {},
+                        source_meta: opts.metadata || {}
                     },
                     temperature: 0.2,
-                    max_tokens: 2048,
+                    max_tokens: 2048
                 };
                 return post('/v1/generate', body, { service: 'aiService' });
             },
@@ -261,19 +287,19 @@
              * LLM 巡检 Wiki
              * @param {array} pages - Wiki 页面列表
              */
-            lint: function(pages) {
+            lint: function (pages) {
                 var body = {
                     template: 'knowledge_lint',
                     variables: {
-                        pages: pages.slice(0, 20),
+                        pages: pages.slice(0, 20)
                     },
                     temperature: 0.1,
                     max_tokens: 2048,
-                    response_format_json: true,
+                    response_format_json: true
                 };
                 return post('/v1/generate', body, { service: 'aiService' });
-            },
-        },
+            }
+        }
     };
 
     // 暴露到全局

@@ -4,12 +4,11 @@
  * 加载: 在 script.js 之前同步加载
  */
 
-
 function switchTemplateTab(tabName, btn) {
     document.getElementById('template-tab-personal').classList.add('hidden');
     document.getElementById('template-tab-official').classList.add('hidden');
     document.getElementById('template-tab-' + tabName).classList.remove('hidden');
-    document.querySelectorAll('.template-tab').forEach(function(tab) {
+    document.querySelectorAll('.template-tab').forEach(function (tab) {
         tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
         tab.classList.add('text-gray-500', 'border-transparent');
         tab.removeAttribute('data-active');
@@ -53,12 +52,15 @@ function fixTemplateViewDOM() {
         var c = main.children[i];
         if (c === personal || c === official) continue;
         if (c.classList && c.classList.contains('fixed')) continue;
-        if (c.className && (c.className.indexOf('rounded-xl') !== -1 || c.className.indexOf('template-view-card') !== -1)) {
+        if (
+            c.className &&
+            (c.className.indexOf('rounded-xl') !== -1 || c.className.indexOf('template-view-card') !== -1)
+        ) {
             orphans.push(c);
         }
     }
     if (!orphans.length) return;
-    orphans.forEach(function(el) {
+    orphans.forEach(function (el) {
         if (el.classList.contains('template-view-card')) {
             var cards = el.querySelectorAll('[data-template-category]');
             var firstCat = cards[0] ? cards[0].getAttribute('data-template-category') : '';
@@ -90,12 +92,16 @@ function switchTemplateView(viewName, btn) {
     // 检查当前激活的 tab: 官方 tab 时强制 list + 把按钮高亮对齐到 list 按钮
     // 通过 data-active 属性追踪当前 tab (由 switchTemplateTab 设置)
     var activeTabBtn = document.querySelector('.template-tab[data-active="true"]');
-    var activeTab = activeTabBtn ? (activeTabBtn.textContent.indexOf('个人') >= 0 ? 'personal' : 'official') : 'personal';
+    var activeTab = activeTabBtn
+        ? activeTabBtn.textContent.indexOf('个人') >= 0
+            ? 'personal'
+            : 'official'
+        : 'personal';
     if (activeTab === 'official') {
         viewName = 'list';
         btn = document.querySelector('.template-view-btn[data-view="list"]');
     }
-    document.querySelectorAll('.template-view-btn').forEach(function(b) {
+    document.querySelectorAll('.template-view-btn').forEach(function (b) {
         b.classList.remove('bg-blue-50', 'text-[#165DFF]');
         b.classList.add('text-gray-500', 'hover:text-gray-700');
     });
@@ -105,8 +111,8 @@ function switchTemplateView(viewName, btn) {
     }
     // 切换 personal + official 两个 tab 内的视图
     // 官方模板仅保留列表视图 (产品决定: 官方模板统一用列表展示更高效), 强制 list
-    ['personal', 'official'].forEach(function(tab) {
-        var effectiveView = (tab === 'official') ? 'list' : viewName;
+    ['personal', 'official'].forEach(function (tab) {
+        var effectiveView = tab === 'official' ? 'list' : viewName;
         var listView = document.querySelector('#template-tab-' + tab + ' .template-view-list');
         var cardView = document.querySelector('#template-tab-' + tab + ' .template-view-card');
         if (effectiveView === 'list') {
@@ -125,22 +131,31 @@ function switchTemplateView(viewName, btn) {
 
 function persistPersonalTemplates() {
     if (typeof AppState === 'undefined') return;
-    try { localStorage.setItem('lexprime_personal_templates', JSON.stringify(AppState.personalTemplates)); } catch (e) { console.warn('持久化个人模板失败:', e); }
+    try {
+        localStorage.setItem('lexprime_personal_templates', JSON.stringify(AppState.personalTemplates));
+    } catch (e) {
+        console.warn('持久化个人模板失败:', e);
+    }
 }
 
 // 简单 HTML 转义 (防止 name 含 <> 时 XSS)
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // 分类标签颜色映射 (复用 submitUploadTemplate 已有 colorCls)
 function personalCategoryColor(c) {
     var colorCls = {
-        '诉状类': 'bg-brand-tint text-brand',
-        '答辩类': 'bg-wiki-tint text-wiki',
-        '合同类': 'bg-warning-tint text-warning',
-        '申请类': 'bg-success-tint text-success'
+        诉状类: 'bg-brand-tint text-brand',
+        答辩类: 'bg-wiki-tint text-wiki',
+        合同类: 'bg-warning-tint text-warning',
+        申请类: 'bg-success-tint text-success'
     };
     return colorCls[c] || 'bg-bg-subtle text-fg-secondary';
 }
@@ -152,50 +167,84 @@ function renderPersonalTemplates() {
     var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
     if (!tbody) return;
     var htmlStr = '';
-    AppState.personalTemplates.forEach(function(t) {
+    AppState.personalTemplates.forEach(function (t) {
         var cls = personalCategoryColor(t.category);
-        var sizeHtml = t.size ? '<span class="text-[10px] text-fg-tertiary ml-1">(' + escapeHtml(t.size) + ')</span>' : '';
-        htmlStr += '<tr class="hover:bg-bg-subtle group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
-                '<td class="py-3 px-5">' +
-                    '<div class="flex items-center gap-2">' +
-                        '<iconify-icon class="text-base text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
-                        '<span class="text-sm text-fg-primary font-medium">' + escapeHtml(t.name) + '</span>' +
-                        sizeHtml +
-                    '</div>' +
-                '</td>' +
-                '<td class="py-3 px-5"><span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(t.category) + '</span></td>' +
-                '<td class="py-3 px-5 text-xs text-fg-secondary">' + escapeHtml(t.creator || '') + '</td>' +
-                '<td class="py-3 px-5 text-xs text-fg-tertiary">' + escapeHtml(t.updatedAt || '') + '</td>' +
-                '<td class="py-3 px-5 text-center">' +
-                    '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">使用</button>' +
-                        '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">编辑</button>' +
-                        '<button class="text-xs text-danger hover:bg-danger-tint px-2 py-1 rounded" onclick="deletePersonalTemplate(this)">删除</button>' +
-                    '</div>' +
-                '</td>' +
+        var sizeHtml = t.size
+            ? '<span class="text-[10px] text-fg-tertiary ml-1">(' + escapeHtml(t.size) + ')</span>'
+            : '';
+        htmlStr +=
+            '<tr class="hover:bg-bg-subtle group" data-template-id="' +
+            escapeHtml(t.id) +
+            '" data-template-category="' +
+            escapeHtml(t.category) +
+            '">' +
+            '<td class="py-3 px-5">' +
+            '<div class="flex items-center gap-2">' +
+            '<iconify-icon class="text-base text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
+            '<span class="text-sm text-fg-primary font-medium">' +
+            escapeHtml(t.name) +
+            '</span>' +
+            sizeHtml +
+            '</div>' +
+            '</td>' +
+            '<td class="py-3 px-5"><span class="text-[10px] ' +
+            cls +
+            ' px-1.5 py-0.5 rounded font-medium">' +
+            escapeHtml(t.category) +
+            '</span></td>' +
+            '<td class="py-3 px-5 text-xs text-fg-secondary">' +
+            escapeHtml(t.creator || '') +
+            '</td>' +
+            '<td class="py-3 px-5 text-xs text-fg-tertiary">' +
+            escapeHtml(t.updatedAt || '') +
+            '</td>' +
+            '<td class="py-3 px-5 text-center">' +
+            '<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">使用</button>' +
+            '<button class="text-xs text-brand hover:bg-brand-tint3 px-2 py-1 rounded">编辑</button>' +
+            '<button class="text-xs text-danger hover:bg-danger-tint px-2 py-1 rounded" onclick="deletePersonalTemplate(this)">删除</button>' +
+            '</div>' +
+            '</td>' +
             '</tr>';
     });
     tbody.innerHTML = htmlStr;
     // 卡片视图 (同步)
     if (cardContainer) {
         var cardHtml = '';
-        AppState.personalTemplates.forEach(function(t) {
+        AppState.personalTemplates.forEach(function (t) {
             var cls = personalCategoryColor(t.category);
-            cardHtml += '<div class="bg-white border border-bg-border rounded-xl p-4 hover:shadow-md hover:border-brand transition-all cursor-pointer group" data-template-id="' + escapeHtml(t.id) + '" data-template-category="' + escapeHtml(t.category) + '">' +
-                    '<div class="flex items-start justify-between mb-3">' +
-                        '<iconify-icon class="text-2xl text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
-                        '<span class="text-[10px] ' + cls + ' px-1.5 py-0.5 rounded font-medium">' + escapeHtml(t.category) + '</span>' +
-                    '</div>' +
-                    '<h4 class="text-sm font-bold text-fg-primary mb-2 group-hover:text-brand">' + escapeHtml(t.name) + '</h4>' +
-                    '<p class="text-[10px] text-fg-tertiary mb-3">' + (t.size || '') + ' · ' + escapeHtml(t.creator || '') + ' · ' + escapeHtml(t.updatedAt || '') + '</p>' +
-                    '<div class="flex items-center justify-end gap-2 text-[10px] pt-3 border-t border-bg-border">' +
-                        '<button class="text-brand hover:bg-brand-tint3 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); showToast(\'已使用该模板\')">' +
-                            '<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用' +
-                        '</button>' +
-                        '<button class="text-danger hover:bg-danger-tint px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); deletePersonalTemplate(this)">' +
-                            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除' +
-                        '</button>' +
-                    '</div>' +
+            cardHtml +=
+                '<div class="bg-white border border-bg-border rounded-xl p-4 hover:shadow-md hover:border-brand transition-all cursor-pointer group" data-template-id="' +
+                escapeHtml(t.id) +
+                '" data-template-category="' +
+                escapeHtml(t.category) +
+                '">' +
+                '<div class="flex items-start justify-between mb-3">' +
+                '<iconify-icon class="text-2xl text-brand" icon="mdi:file-document-outline"></iconify-icon>' +
+                '<span class="text-[10px] ' +
+                cls +
+                ' px-1.5 py-0.5 rounded font-medium">' +
+                escapeHtml(t.category) +
+                '</span>' +
+                '</div>' +
+                '<h4 class="text-sm font-bold text-fg-primary mb-2 group-hover:text-brand">' +
+                escapeHtml(t.name) +
+                '</h4>' +
+                '<p class="text-[10px] text-fg-tertiary mb-3">' +
+                (t.size || '') +
+                ' · ' +
+                escapeHtml(t.creator || '') +
+                ' · ' +
+                escapeHtml(t.updatedAt || '') +
+                '</p>' +
+                '<div class="flex items-center justify-end gap-2 text-[10px] pt-3 border-t border-bg-border">' +
+                '<button class="text-brand hover:bg-brand-tint3 px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); showToast(\'已使用该模板\')">' +
+                '<iconify-icon icon="mdi:check-circle-outline"></iconify-icon>使用' +
+                '</button>' +
+                '<button class="text-danger hover:bg-danger-tint px-2 py-0.5 rounded flex items-center gap-1" onclick="event.stopPropagation(); deletePersonalTemplate(this)">' +
+                '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除' +
+                '</button>' +
+                '</div>' +
                 '</div>';
         });
         cardContainer.innerHTML = cardHtml;
@@ -281,15 +330,23 @@ function closeUploadTemplateModal() {
     }
 }
 
-
 function submitUploadTemplate() {
     var name = (document.getElementById('upload-template-name').value || '').trim();
     var category = document.getElementById('upload-template-category').value;
     var fileInput = document.getElementById('upload-template-file');
     var file = fileInput.files[0];
-    if (!name) { showToast('请输入模板名称'); return; }
-    if (!category) { showToast('请选择分类'); return; }
-    if (!file) { showToast('请选择文件'); return; }
+    if (!name) {
+        showToast('请输入模板名称');
+        return;
+    }
+    if (!category) {
+        showToast('请选择分类');
+        return;
+    }
+    if (!file) {
+        showToast('请选择文件');
+        return;
+    }
     // 格式校验
     var ext = file.name.split('.').pop().toLowerCase();
     if (['docx', 'pdf', 'txt'].indexOf(ext) < 0) {
@@ -309,8 +366,19 @@ function submitUploadTemplate() {
     // 当前用户 (mock 张律师)
     var creator = '张律师';
     var now = new Date();
-    var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
-    var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    var pad = function (n) {
+        return n < 10 ? '0' + n : '' + n;
+    };
+    var timeStr =
+        now.getFullYear() +
+        '-' +
+        pad(now.getMonth() + 1) +
+        '-' +
+        pad(now.getDate()) +
+        ' ' +
+        pad(now.getHours()) +
+        ':' +
+        pad(now.getMinutes());
     // 数据驱动: push 到 AppState.personalTemplates + 持久化
     if (typeof AppState === 'undefined' || !AppState.personalTemplates) return;
     var newId = 'p_' + Date.now();
@@ -339,12 +407,20 @@ function deletePersonalTemplate(btn) {
     var templateId = (tr && tr.getAttribute('data-template-id')) || (card && card.getAttribute('data-template-id'));
     if (!templateId) {
         // fallback: 按名字找
-        var rowName = tr ? (tr.querySelector('td:first-child span') ? tr.querySelector('td:first-child span').textContent.trim() : '') : '';
-        var idx = AppState.personalTemplates.findIndex(function(t) { return t.name === rowName; });
+        var rowName = tr
+            ? tr.querySelector('td:first-child span')
+                ? tr.querySelector('td:first-child span').textContent.trim()
+                : ''
+            : '';
+        var idx = AppState.personalTemplates.findIndex(function (t) {
+            return t.name === rowName;
+        });
         if (idx >= 0) templateId = AppState.personalTemplates[idx].id;
     }
     if (templateId) {
-        var idx2 = AppState.personalTemplates.findIndex(function(t) { return t.id === templateId; });
+        var idx2 = AppState.personalTemplates.findIndex(function (t) {
+            return t.id === templateId;
+        });
         if (idx2 >= 0) AppState.personalTemplates.splice(idx2, 1);
         persistPersonalTemplates();
         renderPersonalTemplates();
@@ -406,15 +482,22 @@ function syncCategoryListToModal() {
             if (tr.getAttribute('data-template-category') === name) count++;
         });
         var div = document.createElement('div');
-        div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
+        div.className =
+            'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
         div.setAttribute('data-category', name);
         div.innerHTML =
             '<div class="flex items-center gap-3">' +
             '<iconify-icon class="text-base text-brand" icon="mdi:folder-outline"></iconify-icon>' +
-            '<span class="text-sm text-fg-primary font-medium">' + escapeHtml(name) + '</span>' +
-            '<span class="text-[10px] text-fg-tertiary">(' + count + ' 个模板)</span>' +
+            '<span class="text-sm text-fg-primary font-medium">' +
+            escapeHtml(name) +
+            '</span>' +
+            '<span class="text-[10px] text-fg-tertiary">(' +
+            count +
+            ' 个模板)</span>' +
             '</div>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, '\\\'') + '\')">' +
+            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' +
+            name.replace(/'/g, "\\'") +
+            '\')">' +
             '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
         list.appendChild(div);
     });
@@ -440,7 +523,7 @@ function addCategory() {
         return;
     }
     // 检查重名
-    var exists = Array.from(document.querySelectorAll('.category-item')).some(function(el) {
+    var exists = Array.from(document.querySelectorAll('.category-item')).some(function (el) {
         return el.getAttribute('data-category') === name;
     });
     if (exists) {
@@ -453,21 +536,27 @@ function addCategory() {
     var div = document.createElement('div');
     div.className = 'category-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
     div.setAttribute('data-category', name);
-    div.innerHTML = '<div class="flex items-center gap-3">' +
-            '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>' +
-            '<span class="text-sm text-gray-800 font-medium">' + name + '</span>' +
-            '<span class="text-[10px] text-gray-400">(0 个模板)</span>' +
-            '</div>' +
-            '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' + name.replace(/'/g, '\\\'') + '\')">' +
-            '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
+    div.innerHTML =
+        '<div class="flex items-center gap-3">' +
+        '<iconify-icon class="text-base text-[#165DFF]" icon="mdi:folder-outline"></iconify-icon>' +
+        '<span class="text-sm text-gray-800 font-medium">' +
+        name +
+        '</span>' +
+        '<span class="text-[10px] text-gray-400">(0 个模板)</span>' +
+        '</div>' +
+        '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' +
+        name.replace(/'/g, "\\'") +
+        '\')">' +
+        '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
     list.appendChild(div);
     // 同步添加到个人模板标签栏
     var tabs = document.getElementById('personal-category-tabs');
     if (tabs) {
         var tabBtn = document.createElement('button');
-        tabBtn.className = 'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
+        tabBtn.className =
+            'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
         tabBtn.setAttribute('data-category', name);
-        tabBtn.setAttribute('onclick', 'filterPersonalByCategory(\'' + name.replace(/'/g, '\\\'') + '\', this)');
+        tabBtn.setAttribute('onclick', "filterPersonalByCategory('" + name.replace(/'/g, "\\'") + "', this)");
         tabBtn.textContent = name + ' (0)';
         tabs.appendChild(tabBtn);
     }
@@ -499,18 +588,22 @@ function sortPersonalTemplates(btn) {
     var tbody = document.querySelector('#template-tab-personal tbody');
     if (tbody) {
         var rows = Array.from(tbody.querySelectorAll('tr[data-template-category]'));
-        rows.sort(function(a, b) {
-            var ta = parseTime(a), tb = parseTime(b);
-            return order === 'desc' ? (tb - ta) : (ta - tb);
+        rows.sort(function (a, b) {
+            var ta = parseTime(a),
+                tb = parseTime(b);
+            return order === 'desc' ? tb - ta : ta - tb;
         });
-        rows.forEach(function(r) { tbody.appendChild(r); });
+        rows.forEach(function (r) {
+            tbody.appendChild(r);
+        });
     }
     // 同步排序卡片视图 (按卡片底部时间排序)
     var cardContainer = document.querySelector('#template-tab-personal .template-view-card');
     if (cardContainer) {
         var cards = Array.from(cardContainer.querySelectorAll('div[data-template-category]'));
-        cards.sort(function(a, b) {
-            var ta = 0, tb = 0;
+        cards.sort(function (a, b) {
+            var ta = 0,
+                tb = 0;
             var timeSpans = a.querySelectorAll('span');
             var taStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
             var dA = new Date(taStr.replace(/-/g, '/'));
@@ -519,13 +612,15 @@ function sortPersonalTemplates(btn) {
             var tbStr = timeSpans.length ? timeSpans[timeSpans.length - 1].textContent.trim() : '';
             var dB = new Date(tbStr.replace(/-/g, '/'));
             tb = isNaN(dB.getTime()) ? 0 : dB.getTime();
-            return order === 'desc' ? (tb - ta) : (ta - tb);
+            return order === 'desc' ? tb - ta : ta - tb;
         });
-        cards.forEach(function(c) { cardContainer.appendChild(c); });
+        cards.forEach(function (c) {
+            cardContainer.appendChild(c);
+        });
     }
     // 按钮视觉反馈
     if (btn) {
-        document.querySelectorAll('.sort-btn').forEach(function(b) {
+        document.querySelectorAll('.sort-btn').forEach(function (b) {
             b.classList.remove('bg-[#165DFF]', 'text-white');
             b.classList.add('text-[#165DFF]', 'bg-[#EEF3FF]');
         });
@@ -563,7 +658,7 @@ function updateAllCategoryCount() {
 
 function filterPersonalByCategory(category, btn) {
     // 更新 active 样式
-    document.querySelectorAll('.personal-category-tab').forEach(function(b) {
+    document.querySelectorAll('.personal-category-tab').forEach(function (b) {
         b.classList.remove('bg-[#165DFF]', 'text-white', 'font-medium');
         b.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
     });
@@ -572,7 +667,7 @@ function filterPersonalByCategory(category, btn) {
         btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
     }
     // 筛选列表行
-    document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').forEach(function(tr) {
+    document.querySelectorAll('#template-tab-personal tbody tr[data-template-category]').forEach(function (tr) {
         if (category === 'all' || tr.getAttribute('data-template-category') === category) {
             tr.style.display = '';
         } else {
@@ -580,21 +675,22 @@ function filterPersonalByCategory(category, btn) {
         }
     });
     // 筛选卡片
-    document.querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]').forEach(function(card) {
-        if (category === 'all' || card.getAttribute('data-template-category') === category) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+    document
+        .querySelectorAll('#template-tab-personal .template-view-card > div[data-template-category]')
+        .forEach(function (card) {
+            if (category === 'all' || card.getAttribute('data-template-category') === category) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
 }
-
 
 function filterOfficialByCategory(category, btn) {
     _officialCategory = category;
     // 更新一级 active 样式
     var officialTabs = document.querySelectorAll('.official-category-tab');
-    officialTabs.forEach(function(b) {
+    officialTabs.forEach(function (b) {
         b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
         b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
     });
@@ -620,11 +716,10 @@ function filterOfficialByCategory(category, btn) {
     applyOfficialFilter();
 }
 
-
 function filterOfficialByType(type, btn) {
     _officialType = type;
     // 更新二级 active 样式
-    document.querySelectorAll('.official-type-tab').forEach(function(b) {
+    document.querySelectorAll('.official-type-tab').forEach(function (b) {
         b.classList.remove('bg-[#165DFF]', 'text-white', 'border-[#165DFF]', 'hover:bg-[#0E4AD8]');
         b.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
     });
@@ -635,20 +730,19 @@ function filterOfficialByType(type, btn) {
     applyOfficialFilter();
 }
 
-
 function applyOfficialFilter() {
     // 双重过滤: cat + type
     var rows = document.querySelectorAll('#template-tab-official tbody tr[data-template-category]');
-    rows.forEach(function(tr) {
+    rows.forEach(function (tr) {
         var cat = tr.getAttribute('data-template-category');
         var typ = tr.getAttribute('data-template-type');
         var catMatch = _officialCategory === 'all' || cat === _officialCategory;
         var typeMatch = _officialType === 'all' || typ === _officialType;
-        tr.style.display = (catMatch && typeMatch) ? '' : 'none';
+        tr.style.display = catMatch && typeMatch ? '' : 'none';
     });
     var cards = document.querySelectorAll('#template-tab-official .template-view-card > div[data-template-category]');
     var visibleCount = 0;
-    cards.forEach(function(card) {
+    cards.forEach(function (card) {
         var cat = card.getAttribute('data-template-category');
         var typ = card.getAttribute('data-template-type');
         var catMatch = _officialCategory === 'all' || cat === _officialCategory;
@@ -691,44 +785,59 @@ function previewOfficialTemplate(cardEl) {
     var descEl = cardEl.querySelector('p');
     var desc = descEl ? descEl.textContent.trim() : '';
 
-    var content = '<div class="space-y-4">' +
-            '<div class="p-4 bg-bg-subtle rounded-xl">' +
-            '<div class="flex items-start gap-3">' +
-            '<div class="w-12 h-12 rounded-lg bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">' +
-            '<iconify-icon icon="mdi:file-document-outline" class="text-xl"></iconify-icon>' +
-            '</div>' +
-            '<div class="flex-1 min-w-0">' +
-            '<h4 class="text-sm font-semibold text-fg-primary mb-1">' + escapeHtml(title) + '</h4>' +
-            '<div class="flex items-center gap-2 flex-wrap">' +
-            '<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(cat) + '</span>' +
-            '<span class="text-[10px] bg-bg text-fg-tertiary font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(typ) + '</span>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="p-4 bg-white border border-bg-border rounded-xl">' +
-            '<p class="text-[11px] text-fg-tertiary mb-2">模板说明</p>' +
-            '<p class="text-xs text-fg-secondary leading-relaxed">' + escapeHtml(desc || '官方标准模板，由 LexPrime 法务团队审核发布，符合最新法律法规要求。可直接下载使用，或保存为个人模板后编辑。') + '</p>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-3 text-sm">' +
-            '<div class="p-3 bg-bg-subtle rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">模板格式</p>' +
-            '<p class="text-sm text-fg-primary">.docx</p>' +
-            '</div>' +
-            '<div class="p-3 bg-bg-subtle rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">文件大小</p>' +
-            '<p class="text-sm text-fg-primary">约 45 KB</p>' +
-            '</div>' +
-            '</div>' +
-            '<div class="p-4 bg-brand-tint/50 rounded-xl">' +
-            '<p class="text-[11px] text-brand mb-2">使用提示</p>' +
-            '<p class="text-xs text-fg-secondary leading-relaxed">点击「使用模板」可直接创建新文档并自动填充案件信息；点击「保存到个人」可将模板加入个人模板库以便后续编辑。</p>' +
-            '</div>' +
-            '</div>';
+    var content =
+        '<div class="space-y-4">' +
+        '<div class="p-4 bg-bg-subtle rounded-xl">' +
+        '<div class="flex items-start gap-3">' +
+        '<div class="w-12 h-12 rounded-lg bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">' +
+        '<iconify-icon icon="mdi:file-document-outline" class="text-xl"></iconify-icon>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+        '<h4 class="text-sm font-semibold text-fg-primary mb-1">' +
+        escapeHtml(title) +
+        '</h4>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+        '<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">' +
+        escapeHtml(cat) +
+        '</span>' +
+        '<span class="text-[10px] bg-bg text-fg-tertiary font-medium px-1.5 py-0.5 rounded-full">' +
+        escapeHtml(typ) +
+        '</span>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="p-4 bg-white border border-bg-border rounded-xl">' +
+        '<p class="text-[11px] text-fg-tertiary mb-2">模板说明</p>' +
+        '<p class="text-xs text-fg-secondary leading-relaxed">' +
+        escapeHtml(
+            desc ||
+                '官方标准模板，由 LexPrime 法务团队审核发布，符合最新法律法规要求。可直接下载使用，或保存为个人模板后编辑。'
+        ) +
+        '</p>' +
+        '</div>' +
+        '<div class="grid grid-cols-2 gap-3 text-sm">' +
+        '<div class="p-3 bg-bg-subtle rounded-lg">' +
+        '<p class="text-[11px] text-fg-tertiary mb-1">模板格式</p>' +
+        '<p class="text-sm text-fg-primary">.docx</p>' +
+        '</div>' +
+        '<div class="p-3 bg-bg-subtle rounded-lg">' +
+        '<p class="text-[11px] text-fg-tertiary mb-1">文件大小</p>' +
+        '<p class="text-sm text-fg-primary">约 45 KB</p>' +
+        '</div>' +
+        '</div>' +
+        '<div class="p-4 bg-brand-tint/50 rounded-xl">' +
+        '<p class="text-[11px] text-brand mb-2">使用提示</p>' +
+        '<p class="text-xs text-fg-secondary leading-relaxed">点击「使用模板」可直接创建新文档并自动填充案件信息；点击「保存到个人」可将模板加入个人模板库以便后续编辑。</p>' +
+        '</div>' +
+        '</div>';
 
-    var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' + escapeHtml(title).replace(/'/g, '\\\'') + '\')">保存到个人</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeOfficialTemplatePreview(); if(typeof showToast===\'function\')showToast(\'正在下载模板...\', \'info\')">下载模板</button>';
+    var footer =
+        '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
+        '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' +
+        escapeHtml(title).replace(/'/g, "\\'") +
+        '\')">保存到个人</button>' +
+        "<button class=\"h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg\" onclick=\"closeOfficialTemplatePreview(); if(typeof showToast==='function')showToast('正在下载模板...', 'info')\">下载模板</button>";
 
     if (_closeOfficialTemplatePreview) _closeOfficialTemplatePreview();
     _closeOfficialTemplatePreview = Utils.showModal({
@@ -752,11 +861,10 @@ function saveTemplateToPersonal(name) {
     if (typeof showToast === 'function') showToast('模板「' + name + '」已保存到个人模板库', 'success');
 }
 
-
 function deleteCategory(name) {
     // 检查该分类下是否还有模板 (在个人模板表格中)
     var rows = document.querySelectorAll('#template-tab-personal tbody tr');
-    var hasTemplate = Array.from(rows).some(function(tr) {
+    var hasTemplate = Array.from(rows).some(function (tr) {
         var badge = tr.querySelector('td:nth-child(2) span');
         return badge && badge.textContent.trim() === name;
     });

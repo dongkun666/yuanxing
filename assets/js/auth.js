@@ -8,7 +8,7 @@
  * 评估过 ES module 化, ROI 不高 (见 docs/es-module-roi.md), 暂保留 IIFE
  */
 
-(function() {
+(function () {
     'use strict';
 
     var STORAGE_KEY = 'lexprime.auth';
@@ -53,7 +53,9 @@
             var userRaw = localStorage.getItem(STORAGE_KEY);
             if (token && userRaw) {
                 var user;
-                try { user = JSON.parse(userRaw); } catch (e) {
+                try {
+                    user = JSON.parse(userRaw);
+                } catch (e) {
                     // corrupted storage, clear and force re-login
                     localStorage.removeItem(TOKEN_KEY);
                     localStorage.removeItem(STORAGE_KEY);
@@ -75,17 +77,21 @@
         /**
          * 当前 token
          */
-        getToken: function() {
+        getToken: function () {
             if (typeof AppState !== 'undefined' && AppState.token) {
                 return AppState.token;
             }
-            try { return localStorage.getItem(TOKEN_KEY); } catch (e) { return null; }
+            try {
+                return localStorage.getItem(TOKEN_KEY);
+            } catch (e) {
+                return null;
+            }
         },
 
         /**
          * 当前用户
          */
-        currentUser: function() {
+        currentUser: function () {
             if (typeof AppState !== 'undefined' && AppState.user) {
                 return AppState.user;
             }
@@ -93,14 +99,16 @@
                 var raw = localStorage.getItem(STORAGE_KEY);
                 if (!raw) return null;
                 var u = JSON.parse(raw);
-                return (u && typeof u === 'object') ? u : null;
-            } catch (e) { return null; }
+                return u && typeof u === 'object' ? u : null;
+            } catch (e) {
+                return null;
+            }
         },
 
         /**
          * 是否已登录
          */
-        isLoggedIn: function() {
+        isLoggedIn: function () {
             return !!this.getToken();
         },
 
@@ -108,7 +116,7 @@
          * 登录
          * @returns {Promise<{ok, user, error?}>}
          */
-        login: async function(email, password) {
+        login: async function (email, password) {
             if (!email || !password) {
                 return { ok: false, error: '请输入邮箱和密码' };
             }
@@ -123,7 +131,7 @@
         /**
          * 注册
          */
-        register: async function(email, password, displayName) {
+        register: async function (email, password, displayName) {
             if (!email || !password) {
                 return { ok: false, error: '请输入邮箱和密码' };
             }
@@ -138,7 +146,7 @@
         /**
          * Demo 模式登录 (跳过邮箱密码, 使用 MVP_USER_ID=u-1)
          */
-        demoLogin: async function() {
+        demoLogin: async function () {
             var res = await API.auth.demo();
             if (res.ok && res.data && res.data.token) {
                 saveSession(res.data.token, res.data.user);
@@ -150,7 +158,7 @@
         /**
          * 登出
          */
-        logout: function() {
+        logout: function () {
             clearSession();
             if (typeof switchView === 'function') {
                 switchView('login');
@@ -166,9 +174,9 @@
          * 拦截器: 401 时自动清 session 并跳登录
          * (api.js 内已调用)
          */
-        onUnauthorized: function() {
+        onUnauthorized: function () {
             this.logout();
-        },
+        }
     };
 
     globalThis.Auth = Auth;

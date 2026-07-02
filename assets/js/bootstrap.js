@@ -10,7 +10,7 @@
  *       recordError, initLoginView
  */
 
-(function() {
+(function () {
     'use strict';
 
     /**
@@ -46,7 +46,7 @@
     function renderAppVersion() {
         var el = document.getElementById('footer-version');
         if (!el) return;
-        var version = (typeof window.APP_VERSION === 'string') ? window.APP_VERSION : 'dev';
+        var version = typeof window.APP_VERSION === 'string' ? window.APP_VERSION : 'dev';
         var build = window.APP_BUILD || '';
         var sha = window.APP_GIT_SHA || '';
         el.innerHTML = '<iconify-icon class="text-fg-tertiary" icon="mdi:tag-outline"></iconify-icon> ' + version;
@@ -65,7 +65,9 @@
         // AppState.notifications 来自 account.js 初始化, 首次访问可能为空数组
         var unread = 0;
         if (Array.isArray(AppState.notifications)) {
-            unread = AppState.notifications.filter(function(n) { return n.unread; }).length;
+            unread = AppState.notifications.filter(function (n) {
+                return n.unread;
+            }).length;
         }
         var badge = btn.querySelector('[data-notif-badge]') || btn.querySelector('.bg-red-500');
         if (unread > 0) {
@@ -104,11 +106,11 @@
 
     // ===== 全局错误处理 =====
     if (typeof window !== 'undefined') {
-        window.addEventListener('error', function(e) {
-            var stack = (e.error && e.error.stack) ? e.error.stack : '';
+        window.addEventListener('error', function (e) {
+            var stack = e.error && e.error.stack ? e.error.stack : '';
             recordError('GlobalError', e.message || 'unknown', e.filename, e.lineno, stack);
         });
-        window.addEventListener('unhandledrejection', function(e) {
+        window.addEventListener('unhandledrejection', function (e) {
             var reason = e.reason;
             var msg = reason && reason.message ? reason.message : String(reason);
             var stack = reason && reason.stack ? reason.stack : '';
@@ -127,7 +129,7 @@
         var loginForm = document.getElementById('loginForm');
         if (loginForm && !loginForm.dataset.bound) {
             loginForm.dataset.bound = '1';
-            loginForm.addEventListener('submit', async function(e) {
+            loginForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 var email = document.getElementById('loginEmail')?.value;
                 var password = document.getElementById('loginPassword')?.value;
@@ -143,7 +145,7 @@
         var demoBtn = document.getElementById('demoLoginBtn');
         if (demoBtn && !demoBtn.dataset.bound) {
             demoBtn.dataset.bound = '1';
-            demoBtn.addEventListener('click', async function() {
+            demoBtn.addEventListener('click', async function () {
                 var res = await Auth.demoLogin();
                 if (res.ok) {
                     showToast('进入 Demo 模式');
@@ -158,8 +160,11 @@
 
     // ===== MutationObserver 监听 view-login 出现 =====
     if (document.body) {
-        var observer = new MutationObserver(function() {
-            if (document.getElementById('view-login') && !document.getElementById('view-login').classList.contains('hidden')) {
+        var observer = new MutationObserver(function () {
+            if (
+                document.getElementById('view-login') &&
+                !document.getElementById('view-login').classList.contains('hidden')
+            ) {
                 initLoginView();
                 observer.disconnect();
             }
@@ -169,7 +174,9 @@
 
     // ===== 启动: 等 DOM ready 后调 bootstrapApp =====
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { bootstrapApp(); });
+        document.addEventListener('DOMContentLoaded', function () {
+            bootstrapApp();
+        });
     } else {
         bootstrapApp();
     }

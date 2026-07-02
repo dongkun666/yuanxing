@@ -12,7 +12,7 @@
  * 加载顺序: 在 cases-list.js 之后, cases-tabs.js 之前
  */
 
-(function() {
+(function () {
     'use strict';
 
     // ===== 跨模块共享状态 (script.js 在 IIFE 内 var, 不挂 globalThis, 需显式桥接) =====
@@ -34,25 +34,36 @@
         var el = document.getElementById('field-' + section + '-' + key);
         if (!el) return;
         if (section === 'claims') {
-            var lines = value.split('\n').filter(function(l) { return l.trim(); });
-            el.innerHTML = lines.map(function(line, i) {
-                return '<p>' + (i + 1) + '. ' + line.replace(/^\d+\.\s*/, '') + '</p>';
-            }).join('');
+            var lines = value.split('\n').filter(function (l) {
+                return l.trim();
+            });
+            el.innerHTML = lines
+                .map(function (line, i) {
+                    return '<p>' + (i + 1) + '. ' + line.replace(/^\d+\.\s*/, '') + '</p>';
+                })
+                .join('');
         } else if (section === 'strategy' || section === 'summary') {
             el.innerText = value;
         } else if (key === 'status') {
             el.innerText = value;
-            el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
-                (value === '进行中' ? 'bg-blue-100 text-blue-700' :
-                    value === '已结案' ? 'bg-green-100 text-green-700' :
-                        value === '已归档' ? 'bg-gray-100 text-gray-700' :
-                            'bg-orange-100 text-orange-700');
+            el.className =
+                'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
+                (value === '进行中'
+                    ? 'bg-blue-100 text-blue-700'
+                    : value === '已结案'
+                      ? 'bg-green-100 text-green-700'
+                      : value === '已归档'
+                        ? 'bg-gray-100 text-gray-700'
+                        : 'bg-orange-100 text-orange-700');
         } else if (key === 'preservation') {
             el.innerText = value;
-            el.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
-                (value === '已保全' ? 'bg-green-100 text-green-700' :
-                    value === '未保全' ? 'bg-gray-100 text-gray-700' :
-                        'bg-orange-100 text-orange-700');
+            el.className =
+                'text-[11px] font-medium px-2 py-0.5 rounded-full ' +
+                (value === '已保全'
+                    ? 'bg-green-100 text-green-700'
+                    : value === '未保全'
+                      ? 'bg-gray-100 text-gray-700'
+                      : 'bg-orange-100 text-orange-700');
         } else if (section === 'opponent' && key === 'legalRep') {
             el.innerText = value;
             if (!value || value === '未提供 · 请补充') {
@@ -98,20 +109,45 @@
 
     function renderFieldInput(section, field) {
         var value = getFieldValue(section, field.key);
-        var inputClass = 'w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors';
+        var inputClass =
+            'w-full border border-[#E5E6EB] rounded-lg px-3 py-2 text-sm text-[#1D2129] focus:outline-none focus:border-[#165DFF] transition-colors';
         if (field.type === 'textarea') {
             var rows = field.rows || 4;
-            return '<textarea class="' + inputClass + ' resize-none" data-field="' + field.key + '" rows="' + rows + '">' + value + '</textarea>';
+            return (
+                '<textarea class="' +
+                inputClass +
+                ' resize-none" data-field="' +
+                field.key +
+                '" rows="' +
+                rows +
+                '">' +
+                value +
+                '</textarea>'
+            );
         } else if (field.type === 'select') {
             var options = field.options || [];
-            var optionsHtml = options.map(function(opt) {
-                return '<option value="' + opt + '"' + (opt === value ? ' selected' : '') + '>' + opt + '</option>';
-            }).join('');
-            return '<select class="' + inputClass + ' appearance-none bg-white" data-field="' + field.key + '">' + optionsHtml + '</select>';
+            var optionsHtml = options
+                .map(function (opt) {
+                    return '<option value="' + opt + '"' + (opt === value ? ' selected' : '') + '>' + opt + '</option>';
+                })
+                .join('');
+            return (
+                '<select class="' +
+                inputClass +
+                ' appearance-none bg-white" data-field="' +
+                field.key +
+                '">' +
+                optionsHtml +
+                '</select>'
+            );
         } else if (field.type === 'date') {
-            return '<input type="date" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            return (
+                '<input type="date" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>'
+            );
         } else {
-            return '<input type="text" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>';
+            return (
+                '<input type="text" class="' + inputClass + '" data-field="' + field.key + '" value="' + value + '"/>'
+            );
         }
     }
 
@@ -120,7 +156,8 @@
         var config = sectionConfigs[section];
         if (!config) return;
         var content = renderEditForm(section);
-        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeEditSectionModal()">取消</button>' +
+        var footer =
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeEditSectionModal()">取消</button>' +
             '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="saveEditSection()">保存</button>';
         if (_closeEditSectionModal) _closeEditSectionModal();
         _closeEditSectionModal = Utils.showModal({
@@ -129,7 +166,7 @@
             content: content,
             footer: footer,
             size: 'lg',
-            onClose: function() {
+            onClose: function () {
                 currentEditSection = null;
                 _closeEditSectionModal = null;
             }
@@ -163,16 +200,31 @@
     // ===== 案件详情入口 =====
     function openCaseDetail(index) {
         var caseMeta = [
-            { caseName: '李明诉XX公司买卖合同纠纷', caseNumber: '(2026)京01民初128号', type: '民间借贷纠纷', status: '进行中' },
-            { caseName: '赵六劳动争议仲裁案', caseNumber: '(2026)京02民初256号', type: '劳动争议仲裁', status: '进行中' },
+            {
+                caseName: '李明诉XX公司买卖合同纠纷',
+                caseNumber: '(2026)京01民初128号',
+                type: '民间借贷纠纷',
+                status: '进行中'
+            },
+            {
+                caseName: '赵六劳动争议仲裁案',
+                caseNumber: '(2026)京02民初256号',
+                type: '劳动争议仲裁',
+                status: '进行中'
+            },
             { caseName: '张三合同纠纷案', caseNumber: '(2026)京03民初789号', type: '合同纠纷', status: '待开庭' },
-            { caseName: '某科技公司股权纠纷案', caseNumber: '(2026)京04民初345号', type: '知识产权侵权', status: '已立案' },
+            {
+                caseName: '某科技公司股权纠纷案',
+                caseNumber: '(2026)京04民初345号',
+                type: '知识产权侵权',
+                status: '已立案'
+            },
             { caseName: '王华借贷纠纷案', caseNumber: '(2026)京05民初567号', type: '离婚纠纷', status: '进行中' }
         ];
 
         globalThis.currentCaseIndex = index;
 
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
 
@@ -187,7 +239,7 @@
             var tab = document.querySelector('.case-tab[data-tab="overview"]');
             if (tab) switchCaseTab('overview', tab);
         } else {
-            loadView('case', function(html) {
+            loadView('case', function (html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
                 var newCaseView = document.getElementById('view-case');
                 if (newCaseView) {
@@ -205,7 +257,7 @@
     }
 
     function switchCaseTab(tabName, btn) {
-        document.querySelectorAll('[id^="case-tab-"]').forEach(function(el) {
+        document.querySelectorAll('[id^="case-tab-"]').forEach(function (el) {
             el.classList.add('hidden');
             el.classList.remove('flex', 'flex-row', 'flex-col');
         });
@@ -219,7 +271,7 @@
                 target.classList.add('flex-col');
             }
         }
-        document.querySelectorAll('.case-tab').forEach(function(b) {
+        document.querySelectorAll('.case-tab').forEach(function (b) {
             b.classList.remove('border-[#165DFF]', 'text-[#165DFF]');
             b.classList.add('border-transparent', 'text-gray-500');
         });
@@ -233,7 +285,7 @@
         document.getElementById('materials-tab-overview').classList.add('hidden');
         document.getElementById('materials-tab-catalog').classList.add('hidden');
         document.getElementById('materials-tab-' + tabName).classList.remove('hidden');
-        document.querySelectorAll('.materials-tab').forEach(function(tab) {
+        document.querySelectorAll('.materials-tab').forEach(function (tab) {
             tab.classList.remove('text-[#165DFF]', 'border-[#165DFF]');
             tab.classList.add('text-gray-500', 'border-transparent');
         });

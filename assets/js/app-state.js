@@ -9,7 +9,7 @@
  * 写入应通过模块的 setter 函数, 避免散落赋值
  */
 
-(function() {
+(function () {
     'use strict';
 
     var AppState = {
@@ -29,7 +29,7 @@
         token: null,
 
         // ===== 全局错误日志 (上限 50, 防 localStorage 爆炸) =====
-        errorLog: [],
+        errorLog: []
     };
 
     globalThis.AppState = AppState;

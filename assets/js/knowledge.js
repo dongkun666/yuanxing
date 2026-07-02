@@ -4,18 +4,16 @@
  * 加载: 在 script.js 之前同步加载 (使用其 AppState)
  */
 
-
-
 function applyKnowledgeFilter() {
     var rows = document.querySelectorAll('#view-knowledge tbody tr[data-knowledge-type]');
     var visible = 0;
     var kw = (_knowledgeSearch || '').toLowerCase().trim();
-    rows.forEach(function(tr) {
+    rows.forEach(function (tr) {
         var t = tr.getAttribute('data-knowledge-type');
         var title = (tr.getAttribute('data-title') || '').toLowerCase();
-        var matchType = (_knowledgeType === 'all') || (t === _knowledgeType);
+        var matchType = _knowledgeType === 'all' || t === _knowledgeType;
         var matchKw = !kw || title.indexOf(kw) >= 0;
-        tr.style.display = (matchType && matchKw) ? '' : 'none';
+        tr.style.display = matchType && matchKw ? '' : 'none';
         if (matchType && matchKw) visible++;
     });
     // 更新底部「共 X 篇」
@@ -28,7 +26,7 @@ function applyKnowledgeFilter() {
 function switchKnowledgeMainTab(name, el) {
     // 1. 切换 tab 样式
     var tabs = document.querySelectorAll('#view-knowledge [id^="kb-tab-"]');
-    tabs.forEach(function(t) {
+    tabs.forEach(function (t) {
         t.classList.remove('bg-[#F2F5FF]', 'text-[#165DFF]');
         t.classList.add('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
         // 数字 badge 改灰
@@ -53,19 +51,21 @@ function switchKnowledgeMainTab(name, el) {
 
     // 2. 切换 panel
     var panels = document.querySelectorAll('#view-knowledge .kb-panel');
-    panels.forEach(function(p) { p.classList.add('hidden'); });
+    panels.forEach(function (p) {
+        p.classList.add('hidden');
+    });
     var active = document.getElementById('kb-panel-' + name);
     if (active) active.classList.remove('hidden');
 }
 
 /**
-     * AI 编译 - 接真后端 (ai-service):
-     *   1) POST /api/ocr   (如果用户选择了文件, 提取文本)
-     *   2) POST /v1/generate (LLM 编译为 Wiki 页)
-     * 后端不可达时回退到本地模拟状态 (原 5% → 100% 进度条)
-     *
-     * Phase 3 P0: 接 ai-service (Python FastAPI :8088)
-     */
+ * AI 编译 - 接真后端 (ai-service):
+ *   1) POST /api/ocr   (如果用户选择了文件, 提取文本)
+ *   2) POST /v1/generate (LLM 编译为 Wiki 页)
+ * 后端不可达时回退到本地模拟状态 (原 5% → 100% 进度条)
+ *
+ * Phase 3 P0: 接 ai-service (Python FastAPI :8088)
+ */
 function startCompile(btn) {
     var row = btn.closest('tr');
     if (!row) return;
@@ -75,13 +75,15 @@ function startCompile(btn) {
     var actionCell = cells[5];
 
     // 找原始资料名称 (1st td)
-    var rawName = (cells[0] ? cells[0].textContent.trim() : '');
-    var rawType = (cells[1] ? cells[1].textContent.trim() : 'document');
+    var rawName = cells[0] ? cells[0].textContent.trim() : '';
+    var rawType = cells[1] ? cells[1].textContent.trim() : 'document';
 
     // 状态: 待编译 → 编译中
-    statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-tint text-brand"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">编译中 5%</span></div><div class="w-full bg-bg-subtle rounded-full h-1 mt-1.5"><div class="bg-brand h-1 rounded-full" style="width: 5%"></div></div>';
+    statusCell.innerHTML =
+        '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-tint text-brand"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">编译中 5%</span></div><div class="w-full bg-bg-subtle rounded-full h-1 mt-1.5"><div class="bg-brand h-1 rounded-full" style="width: 5%"></div></div>';
     impactCell.innerHTML = '<span class="text-[10px] text-fg-tertiary">OCR 提取中...</span>';
-    actionCell.innerHTML = '<button class="text-brand hover:underline" onclick="viewCompileProgress(this)">查看进度</button><span class="text-fg-disabled mx-1">|</span><button class="text-fg-tertiary hover:underline" onclick="cancelCompile(this)">取消</button>';
+    actionCell.innerHTML =
+        '<button class="text-brand hover:underline" onclick="viewCompileProgress(this)">查看进度</button><span class="text-fg-disabled mx-1">|</span><button class="text-fg-tertiary hover:underline" onclick="cancelCompile(this)">取消</button>';
 
     // 内部模拟定时器 (fallback 时用)
     var pct = 5;
@@ -92,14 +94,19 @@ function startCompile(btn) {
         var fill = statusCell.querySelector('div div div');
         if (fill) fill.style.width = p + '%';
         var txt = statusCell.querySelector('span.font-medium');
-        if (txt) txt.textContent = label || ('编译中 ' + p + '%');
+        if (txt) txt.textContent = label || '编译中 ' + p + '%';
     }
 
     function completeSuccess(wikiPageCount) {
         if (timer) clearInterval(timer);
-        statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-tint text-success"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
-        impactCell.innerHTML = '<span class="text-[10px] text-fg-secondary"><span class="font-medium text-wiki">' + (wikiPageCount || 6) + '</span> Wiki 页<br><span class="text-fg-tertiary">刚刚</span></span>';
-        actionCell.innerHTML = '<button class="text-brand hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-fg-disabled mx-1">|</span><button class="text-brand hover:underline" onclick="recompile(this)">重新编译</button>';
+        statusCell.innerHTML =
+            '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-tint text-success"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
+        impactCell.innerHTML =
+            '<span class="text-[10px] text-fg-secondary"><span class="font-medium text-wiki">' +
+            (wikiPageCount || 6) +
+            '</span> Wiki 页<br><span class="text-fg-tertiary">刚刚</span></span>';
+        actionCell.innerHTML =
+            '<button class="text-brand hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-fg-disabled mx-1">|</span><button class="text-brand hover:underline" onclick="recompile(this)">重新编译</button>';
     }
 
     function fallbackToMock() {
@@ -109,7 +116,7 @@ function startCompile(btn) {
         if (timer) clearInterval(timer);
         pct = 5;
         impactCell.innerHTML = '<span class="text-[10px] text-fg-tertiary">本地模拟 (后端未启动)</span>';
-        timer = setInterval(function() {
+        timer = setInterval(function () {
             pct += 7;
             if (pct >= 100) {
                 completeSuccess(6);
@@ -127,8 +134,9 @@ function startCompile(btn) {
         var mockText = rawName + ' - 模拟原始资料文本内容...';
         updateProgress(15, 'OCR 提取中...');
 
-        API.ocr.extract(new Blob([mockText], { type: 'text/plain' }))
-            .then(function(ocrRes) {
+        API.ocr
+            .extract(new Blob([mockText], { type: 'text/plain' }))
+            .then(function (ocrRes) {
                 updateProgress(40, 'LLM 编译中...');
                 if (!ocrRes.ok) {
                     console.warn('[knowledge] OCR 后端不可达, 回退 mock:', ocrRes.error);
@@ -137,10 +145,10 @@ function startCompile(btn) {
                 var rawText = (ocrRes.data && ocrRes.data.text) || mockText;
                 return API.knowledge.compile(rawText, {
                     source: rawType,
-                    metadata: { name: rawName },
+                    metadata: { name: rawName }
                 });
             })
-            .then(function(llmRes) {
+            .then(function (llmRes) {
                 if (!llmRes.ok) {
                     console.warn('[knowledge] LLM 后端不可达, 回退 mock:', llmRes.error);
                     throw new Error('LLM fail');
@@ -151,17 +159,19 @@ function startCompile(btn) {
                 var completion = (llmRes.data && llmRes.data.completion) || '';
                 var wikiCount = Math.max(1, Math.min(12, Math.ceil(completion.length / 300)));
                 if (typeof showToast === 'function') {
-                    showToast('LLM 编译完成 (用时 ' + ((llmRes.data && llmRes.data.latency_ms) || 0).toFixed(0) + 'ms)');
+                    showToast(
+                        'LLM 编译完成 (用时 ' + ((llmRes.data && llmRes.data.latency_ms) || 0).toFixed(0) + 'ms)'
+                    );
                 }
                 completeSuccess(wikiCount);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.warn('[knowledge] 后端链路失败, 回退 mock:', err.message);
                 fallbackToMock();
             });
 
         // 超时保护: 5s 后端没响应 → fallback
-        setTimeout(function() {
+        setTimeout(function () {
             if (!backendOk && pct < 100) {
                 // 检查进度条还在动没
                 var fill = statusCell.querySelector('div div div');
@@ -177,7 +187,6 @@ function startCompile(btn) {
     }
 }
 
-
 function cancelCompile(btn) {
     if (!confirm('确定取消本次 AI 编译？已完成的中间结果会保留。')) return;
     var row = btn.closest('tr');
@@ -185,10 +194,11 @@ function cancelCompile(btn) {
     var cells = row.querySelectorAll('td');
     var statusCell = cells[2];
     var actionCell = cells[5];
-    statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]"><iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon><span class="text-[10px] font-medium">待编译</span></span>';
-    actionCell.innerHTML = '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
+    statusCell.innerHTML =
+        '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]"><iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon><span class="text-[10px] font-medium">待编译</span></span>';
+    actionCell.innerHTML =
+        '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
 }
-
 
 function recompile(btn) {
     if (!confirm('确定重新编译？LLM 会重新阅读原始资料并更新相关 Wiki 页面。')) return;
@@ -197,22 +207,27 @@ function recompile(btn) {
     var cells = row.querySelectorAll('td');
     var statusCell = cells[2];
     var actionCell = cells[5];
-    statusCell.innerHTML = '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">重新编译 10%</span></div><div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5"><div class="bg-[#165DFF] h-1 rounded-full" style="width: 10%"></div></div>';
+    statusCell.innerHTML =
+        '<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#165DFF]"><iconify-icon class="text-xs animate-spin" icon="mdi:loading"></iconify-icon><span class="text-[10px] font-medium">重新编译 10%</span></div><div class="w-full bg-[#F2F3F5] rounded-full h-1 mt-1.5"><div class="bg-[#165DFF] h-1 rounded-full" style="width: 10%"></div></div>';
     actionCell.innerHTML = '<button class="text-[#86909C] cursor-not-allowed">编译中...</button>';
     // 自动完成
-    setTimeout(function() {
-        statusCell.innerHTML = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
-        actionCell.innerHTML = '<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>';
+    setTimeout(function () {
+        statusCell.innerHTML =
+            '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600"><iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon><span class="text-[10px] font-medium">已编译</span></span>';
+        actionCell.innerHTML =
+            '<button class="text-[#165DFF] hover:underline" onclick="viewWikiPages(this)">查看 Wiki</button><span class="text-[#C9CDD4] mx-1">|</span><button class="text-[#165DFF] hover:underline" onclick="recompile(this)">重新编译</button>';
     }, 3000);
 }
-
 
 function viewCompileProgress(btn) {
     var row = btn.closest('tr');
     var name = row ? row.querySelector('.text-xs.font-medium')?.textContent : '资料';
-    alert('AI 编译进度:\n\n资料: ' + name + '\n阶段: 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接\n\n预估剩余: 2 分钟');
+    alert(
+        'AI 编译进度:\n\n资料: ' +
+            name +
+            '\n阶段: 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接\n\n预估剩余: 2 分钟'
+    );
 }
-
 
 function viewWikiPages(btn) {
     // 跳到 Wiki 页面
@@ -224,22 +239,22 @@ function viewWikiPages(btn) {
     }
 }
 
-
 function runLintNow() {
     var btn = event.currentTarget;
     var orig = btn.innerHTML;
     btn.innerHTML = '<iconify-icon class="text-sm animate-spin" icon="mdi:loading"></iconify-icon>巡检中...';
     btn.disabled = true;
-    setTimeout(function() {
+    setTimeout(function () {
         btn.innerHTML = '<iconify-icon class="text-sm" icon="mdi:check-circle"></iconify-icon>巡检完成';
-        setTimeout(function() {
+        setTimeout(function () {
             btn.innerHTML = orig;
             btn.disabled = false;
         }, 1500);
     }, 2500);
 }
 
-
 function simulateUpload() {
-    alert('上传资料:\n\n支持 PDF / Word / 扫描件 / 网页 URL\n上传后状态为「待编译」,可手动触发「AI 编译」,或开启自动编译。');
+    alert(
+        '上传资料:\n\n支持 PDF / Word / 扫描件 / 网页 URL\n上传后状态为「待编译」,可手动触发「AI 编译」,或开启自动编译。'
+    );
 }
