@@ -1,131 +1,444 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-schedule-calendar">
-<div class="max-w-5xl mx-auto w-full space-y-5">
-<!-- 标题 + 返回 -->
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-3">
-<button class="flex items-center gap-1 text-xs text-fg-secondary hover:text-brand transition-colors" onclick="backToCaseList()">
-<iconify-icon icon="mdi:arrow-left"></iconify-icon>
-<span>返回</span>
-</button>
-<span class="text-bg-border">|</span>
-<h3 class="text-base font-semibold text-fg-primary">日程管理</h3>
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-schedule-calendar">
+<div class="max-w-6xl mx-auto w-full space-y-3 md:space-y-4 flex flex-col flex-1 min-h-0">
+<!-- 头部 Hero 区域 -->
+<div class="relative overflow-hidden bg-gradient-to-br from-brand via-brand to-wiki px-5 py-5 md:px-6 md:py-6 rounded-2xl" data-animate="fade-in-up" data-delay="0">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 blur-2xl"></div>
+    <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white transition-all duration-300 hover:-translate-y-0.5" onclick="switchView('workstation')">
+                    <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
+                </button>
+                <div>
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-white/70 text-xs" id="calendar-current-month-year">2026年7月</span>
+                        <span class="px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] text-white font-medium">本月</span>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold text-white">日程日历</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="flex items-center gap-1.5 px-3 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="switchView('schedule-list')">
+                    <iconify-icon icon="mdi:view-list-outline" class="text-sm"></iconify-icon>
+                    <span>列表视图</span>
+                </button>
+                <button class="flex items-center gap-1.5 px-4 py-2 bg-white text-brand hover:bg-white/90 rounded-lg text-xs font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-brand/20" onclick="openScheduleModal()">
+                    <iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+                    <span>新建日程</span>
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+            <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cal-stats" data-stagger-index="0" data-delay="0.1">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-white/70 text-[11px]">本月日程</span>
+                    <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:calendar-text-outline" class="text-white text-sm"></iconify-icon>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold text-white">12</p>
+                <p class="text-[10px] text-white/60 mt-0.5">已安排</p>
+            </div>
+            <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cal-stats" data-stagger-index="1" data-delay="0.1">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-white/70 text-[11px]">开庭日程</span>
+                    <div class="w-7 h-7 rounded-lg bg-red-400/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:gavel" class="text-white text-sm"></iconify-icon>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold text-white">3</p>
+                <p class="text-[10px] text-white/60 mt-0.5">本月开庭</p>
+            </div>
+            <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cal-stats" data-stagger-index="2" data-delay="0.1">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-white/70 text-[11px]">已完成</span>
+                    <div class="w-7 h-7 rounded-lg bg-green-400/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold text-white">7</p>
+                <p class="text-[10px] text-white/60 mt-0.5">本月完成</p>
+            </div>
+            <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cal-stats" data-stagger-index="3" data-delay="0.1">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-white/70 text-[11px]">待处理</span>
+                    <div class="w-7 h-7 rounded-lg bg-orange-400/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:clock-outline" class="text-white text-sm"></iconify-icon>
+                    </div>
+                </div>
+                <p class="text-2xl font-bold text-white">5</p>
+                <p class="text-[10px] text-white/60 mt-0.5">需要跟进</p>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="flex items-center gap-2">
-        <button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="openScheduleModal()">
-            <iconify-icon icon="mdi:plus"></iconify-icon>
-            <span>新增</span>
+
+<!-- 日历主体 -->
+<div class="ws-card overflow-hidden flex-1 flex flex-col" data-animate="fade-in-up" data-delay="0.2">
+    <!-- 日历头部：月份切换 + 今日 + 视图切换 -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border/60 bg-gradient-to-r from-bg-subtle to-bg-subtle/50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center text-white shadow-md shadow-brand/20">
+                <iconify-icon icon="mdi:calendar-month-outline" class="text-base"></iconify-icon>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-fg-primary" id="calendar-month-title">2026年7月</h4>
+                <p class="text-[10px] text-fg-tertiary">点击日期查看当日日程</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-0.5 bg-bg-subtle rounded-lg p-0.5 border border-bg-border">
+                <button onclick="prevMonth()" class="w-8 h-8 rounded-md hover:bg-white text-fg-secondary hover:text-brand flex items-center justify-center transition-all" title="上一月">
+                    <iconify-icon icon="mdi:chevron-left" class="text-base"></iconify-icon>
+                </button>
+                <button onclick="nextMonth()" class="w-8 h-8 rounded-md hover:bg-white text-fg-secondary hover:text-brand flex items-center justify-center transition-all" title="下一月">
+                    <iconify-icon icon="mdi:chevron-right" class="text-base"></iconify-icon>
+                </button>
+            </div>
+            <button onclick="jumpToToday()" class="ml-1 px-3 py-1.5 text-xs font-medium text-brand bg-brand-tint3 hover:bg-brand-tint rounded-lg transition-all flex items-center gap-1" title="回到今天">
+                <iconify-icon class="text-xs" icon="mdi:calendar-today"></iconify-icon>
+                <span>今天</span>
+            </button>
+            <div class="w-px h-6 bg-bg-border mx-2"></div>
+            <div class="flex items-center gap-0.5 bg-bg-subtle rounded-lg p-0.5 border border-bg-border">
+                <button class="px-3 py-1 text-xs font-medium rounded-md bg-white text-brand shadow-sm" title="月视图">
+                    <iconify-icon icon="mdi:calendar-month" class="text-sm"></iconify-icon>
+                </button>
+                <button class="px-3 py-1 text-xs font-medium rounded-md text-fg-tertiary hover:text-fg-secondary hover:bg-white transition-colors" title="周视图" onclick="alert('周视图开发中')">
+                    <iconify-icon icon="mdi:calendar-week" class="text-sm"></iconify-icon>
+                </button>
+                <button class="px-3 py-1 text-xs font-medium rounded-md text-fg-tertiary hover:text-fg-secondary hover:bg-white transition-colors" title="日视图" onclick="alert('日视图开发中')">
+                    <iconify-icon icon="mdi:calendar-day" class="text-sm"></iconify-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日历网格 -->
+    <div class="flex-1 flex flex-col p-4 md:p-5 min-h-0">
+        <!-- 星期标题 -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">日</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">一</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">二</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">三</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">四</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">五</div>
+            <div class="text-center text-xs font-semibold text-fg-tertiary py-2">六</div>
+        </div>
+        <!-- 日历格子 -->
+        <div class="grid grid-cols-7 gap-1 flex-1 content-start" id="calendar-grid">
+            <!-- 第一周 -->
+            <div class="calendar-day relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-transparent text-fg-disabled/30 cursor-not-allowed opacity-40">
+                <div class="text-xs font-medium">28</div>
+            </div>
+            <div class="calendar-day relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-transparent text-fg-disabled/30 cursor-not-allowed opacity-40">
+                <div class="text-xs font-medium">29</div>
+            </div>
+            <div class="calendar-day relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-transparent text-fg-disabled/30 cursor-not-allowed opacity-40">
+                <div class="text-xs font-medium">30</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">1</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">2</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">策略会议</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">3</div>
+                <div class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger animate-pulse"></div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-50 text-danger text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-danger flex-shrink-0"></span>
+                        <span class="truncate">证据提交</span>
+                    </div>
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">4</div>
+            </div>
+            <!-- 第二周 -->
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">5</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-success-tint text-success text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-success flex-shrink-0"></span>
+                        <span class="truncate">待办事项</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">6</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">7</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-warning-tint text-warning text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-warning flex-shrink-0"></span>
+                        <span class="truncate">合伙人会议</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">8</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">9</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">案件讨论</span>
+                    </div>
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-success-tint text-success text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-success flex-shrink-0"></span>
+                        <span class="truncate">合同审查</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">10</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">11</div>
+            </div>
+            <!-- 第三周 -->
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">12</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">13</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">14</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">客户会议</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 今日高亮 -->
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border-2 border-brand bg-gradient-to-br from-brand/5 to-brand-tint3/50 hover:shadow-lg hover:shadow-brand/20 cursor-pointer transition-all duration-200 hover:-translate-y-0.5" id="today-cell">
+                <div class="flex items-center justify-between">
+                    <div class="text-xs font-bold text-brand bg-brand text-white px-1.5 py-0.5 rounded-md">今天</div>
+                </div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">策略讨论</span>
+                    </div>
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-50 text-danger text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-danger flex-shrink-0"></span>
+                        <span class="truncate">证据提交</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">16</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-success-tint text-success text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-success flex-shrink-0"></span>
+                        <span class="truncate">文书撰写</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">17</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">18</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-warning-tint text-warning text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-warning flex-shrink-0"></span>
+                        <span class="truncate">培训</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 第四周 -->
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">19</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">20</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">调解</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">21</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">22</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-success-tint text-success text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-success flex-shrink-0"></span>
+                        <span class="truncate">归档</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">23</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">24</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">客户拜访</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">25</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-wiki-tint text-wiki text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-wiki flex-shrink-0"></span>
+                        <span class="truncate">开庭</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 第五周 -->
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">26</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">27</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-success-tint text-success text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-success flex-shrink-0"></span>
+                        <span class="truncate">案件总结</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">28</div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">29</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-warning-tint text-warning text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-warning flex-shrink-0"></span>
+                        <span class="truncate">月度总结会</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day group relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-bg-border hover:border-brand/30 hover:bg-brand-tint3/30 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                <div class="text-xs font-semibold text-fg-primary">30</div>
+                <div class="mt-1 space-y-0.5">
+                    <div class="calendar-event flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[10px] truncate">
+                        <span class="w-1 h-1 rounded-full bg-brand flex-shrink-0"></span>
+                        <span class="truncate">新案准备</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-day relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-transparent text-fg-disabled/30 cursor-not-allowed opacity-40">
+                <div class="text-xs font-medium">1</div>
+            </div>
+            <div class="calendar-day relative p-1 md:p-2 min-h-[80px] md:min-h-[100px] rounded-xl border border-transparent text-fg-disabled/30 cursor-not-allowed opacity-40">
+                <div class="text-xs font-medium">2</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 庭审冲突预警条 -->
+    <div class="hidden bg-gradient-to-r from-red-50 to-danger-tint/30 border-t border-red-100 px-5 py-3 flex items-start gap-3" id="court-conflict-bar">
+        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+            <iconify-icon class="text-danger text-lg" icon="mdi:gavel"></iconify-icon>
+        </div>
+        <div class="flex-1">
+            <div class="text-sm font-semibold text-red-800">庭审时间冲突预警</div>
+            <div class="text-xs text-red-600 mt-0.5" id="court-conflict-detail"></div>
+        </div>
+        <button class="text-red-400 hover:text-red-600 transition-colors" onclick="dismissCourtConflict()">
+            <iconify-icon icon="mdi:close"></iconify-icon>
         </button>
     </div>
-</div>
-<!-- 年月日筛选 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
-    <iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
-    <span class="text-xs text-fg-secondary font-medium">日期筛选</span>
-    <select id="schedule-filter-year" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
-        <option value="">全部年份</option>
-        <option value="2026">2026 年</option>
-    </select>
-    <select id="schedule-filter-month" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
-        <option value="">全部月份</option>
-        <option value="01">1 月</option>
-        <option value="02">2 月</option>
-        <option value="03">3 月</option>
-        <option value="04">4 月</option>
-        <option value="05">5 月</option>
-        <option value="06">6 月</option>
-        <option value="07">7 月</option>
-        <option value="08">8 月</option>
-        <option value="09">9 月</option>
-        <option value="10">10 月</option>
-        <option value="11">11 月</option>
-        <option value="12">12 月</option>
-    </select>
-    <select id="schedule-filter-day" onchange="filterScheduleByDate()" class="text-xs px-3 py-1.5 rounded-lg border border-bg-border bg-bg-subtle focus:bg-white focus:border-brand outline-none transition-colors">
-        <option value="">全部日期</option>
-        <option value="01">1 日</option>
-        <option value="02">2 日</option>
-        <option value="03">3 日</option>
-        <option value="04">4 日</option>
-        <option value="05">5 日</option>
-        <option value="06">6 日</option>
-        <option value="07">7 日</option>
-        <option value="08">8 日</option>
-        <option value="09">9 日</option>
-        <option value="10">10 日</option>
-        <option value="11">11 日</option>
-        <option value="12">12 日</option>
-        <option value="13">13 日</option>
-        <option value="14">14 日</option>
-        <option value="15">15 日</option>
-        <option value="16">16 日</option>
-        <option value="17">17 日</option>
-        <option value="18">18 日</option>
-        <option value="19">19 日</option>
-        <option value="20">20 日</option>
-        <option value="21">21 日</option>
-        <option value="22">22 日</option>
-        <option value="23">23 日</option>
-        <option value="24">24 日</option>
-        <option value="25">25 日</option>
-        <option value="26">26 日</option>
-        <option value="27">27 日</option>
-        <option value="28">28 日</option>
-        <option value="29">29 日</option>
-        <option value="30">30 日</option>
-        <option value="31">31 日</option>
-    </select>
-    <button onclick="jumpToToday()" class="ml-2 px-3 py-1.5 text-xs rounded-lg border border-bg-border text-brand bg-brand-tint hover:bg-brand hover:text-white transition-colors flex items-center gap-1">
-        <iconify-icon class="text-xs" icon="mdi:calendar-today"></iconify-icon>
-        <span>今天</span>
-    </button>
-    <button onclick="clearScheduleFilter()" class="ml-auto px-3 py-1.5 text-xs text-fg-tertiary hover:text-danger transition-colors flex items-center gap-1">
-        <iconify-icon class="text-xs" icon="mdi:close-circle-outline"></iconify-icon>
-        <span>清除筛选</span>
-    </button>
-    <span class="text-[10px] text-fg-tertiary ml-1" id="schedule-filter-count"></span>
-</div>
-<!-- 庭审冲突预警条 -->
-<div class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mb-3 flex items-start gap-3" id="court-conflict-bar">
-<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-red-500 text-lg" icon="mdi:gavel"></iconify-icon>
-</div>
-<div class="flex-1">
-<div class="text-sm font-medium text-red-700">庭审时间冲突预警</div>
-<div class="text-xs text-red-600 mt-1" id="court-conflict-detail"></div>
-</div>
-<button class="text-red-400 hover:text-red-600" onclick="dismissCourtConflict()">
-<iconify-icon icon="mdi:close"></iconify-icon>
-</button>
-</div>
-<!-- 庭审日程列表 -->
-<div class="bg-white rounded-xl border border-bg-border p-5">
-<div class="flex items-center justify-between mb-4">
-    <h4 class="text-sm font-semibold text-fg-primary">本月庭审安排</h4>
-    <div class="flex items-center gap-3">
-        <!-- 三态过滤: 全部 / 待办 / 已完成 (默认全部) -->
-        <div id="schedule-filter-tabs" class="flex items-center gap-1"></div>
-        <span class="text-xs text-fg-tertiary" id="schedule-count"></span>
+
+    <!-- 今日日程详情 -->
+    <div class="border-t border-bg-border/60 p-4 md:p-5 bg-bg-subtle/30">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center text-white shadow-sm shadow-brand/20">
+                    <iconify-icon icon="mdi:calendar-today" class="text-sm"></iconify-icon>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-sm text-fg-primary">今日日程</h5>
+                    <p class="text-[10px] text-fg-tertiary" id="selected-date-info">2026年7月15日 星期三</p>
+                </div>
+                <span class="bg-brand text-white text-[10px] font-bold min-w-[20px] h-[20px] flex items-center justify-center rounded-full px-1.5 ml-1">3</span>
+            </div>
+            <button class="text-[10px] text-brand hover:underline font-medium" onclick="switchView('schedule-list')">查看全部</button>
+        </div>
+        <div class="space-y-2" id="selected-day-schedule">
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-bg-border/60 hover:border-brand/30 hover:shadow-sm transition-all cursor-pointer group" onclick="alert('查看详情')">
+                <div class="w-1 h-10 rounded-full bg-wiki"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-fg-primary">09:00 - 11:00</span>
+                        <span class="text-[10px] bg-wiki-tint text-wiki px-1.5 py-0.5 rounded-full">开庭</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary truncate mt-0.5">李明诉XX公司买卖合同纠纷 - 一审开庭</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-bg-border/60 hover:border-brand/30 hover:shadow-sm transition-all cursor-pointer group" onclick="alert('查看详情')">
+                <div class="w-1 h-10 rounded-full bg-brand"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-fg-primary">14:00 - 15:30</span>
+                        <span class="text-[10px] bg-brand-tint text-brand px-1.5 py-0.5 rounded-full">会议</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary truncate mt-0.5">王华借贷纠纷 - 诉讼策略讨论会</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-white border border-red-100 hover:border-red-200 hover:shadow-sm transition-all cursor-pointer group" onclick="alert('查看详情')">
+                <div class="w-1 h-10 rounded-full bg-danger"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-medium text-fg-primary">16:00 - 16:30</span>
+                        <span class="text-[10px] bg-red-50 text-danger px-1.5 py-0.5 rounded-full">紧急</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary truncate mt-0.5">提交张三合同纠纷补充证据</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+        </div>
     </div>
 </div>
-<div class="space-y-3" id="schedule-list"></div>
-<!-- 完全空态: 没有任何日程 -->
-<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-empty">
-    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-plus-outline"></iconify-icon>
-    <p class="text-sm">还没有日程安排</p>
-    <button onclick="openScheduleModal()" class="mt-3 px-4 py-1.5 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1 mx-auto">
-        <iconify-icon icon="mdi:plus"></iconify-icon>
-        <span>新建第一个日程</span>
-    </button>
-</div>
-<!-- 筛选空态: 有日程但被筛掉 -->
-<div class="hidden text-center py-10 text-fg-tertiary" id="schedule-no-result">
-    <iconify-icon class="text-4xl mb-2" icon="mdi:calendar-search-outline"></iconify-icon>
-    <p class="text-sm">当前筛选条件下没有庭审安排</p>
-    <button onclick="clearScheduleFilter()" class="mt-3 px-4 py-1.5 text-xs text-brand hover:bg-brand-tint rounded-lg transition-colors">清除筛选</button>
 </div>
 </div>
-</div>
-</div>
-<!-- 案件动态列表 -->
-
-

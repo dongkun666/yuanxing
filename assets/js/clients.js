@@ -5,19 +5,63 @@
  */
 
 function switchClientTab(el, tab) {
-    document
-        .querySelectorAll(
-            '#view-client .bg-white.rounded-xl.border.border-\\[\\#E5E6EB\\] .flex.items-center.gap-1 button'
-        )
-        .forEach(function (btn) {
-            if (btn.closest('.flex.items-center.gap-1')) {
-                btn.classList.remove('bg-[#165DFF]', 'text-white');
-                btn.classList.add('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-            }
-        });
-    el.classList.remove('text-[#4E5969]', 'hover:bg-[#F7F8FA]');
-    el.classList.add('bg-[#165DFF]', 'text-white');
-    // 显示对应客户（实际项目中筛选数据）
+    document.querySelectorAll('#view-client .client-tab-btn').forEach(function (btn) {
+        btn.classList.remove('bg-brand', 'text-white');
+        btn.classList.add('text-fg-secondary', 'hover:bg-bg-subtle');
+    });
+    el.classList.remove('text-fg-secondary', 'hover:bg-bg-subtle');
+    el.classList.add('bg-brand', 'text-white');
+}
+
+function filterClientList() {
+    var searchInput = document.getElementById('clientSearchInput');
+    var gradeFilter = document.getElementById('clientGradeFilter');
+    var typeFilter = document.getElementById('clientTypeFilter');
+    var rows = document.querySelectorAll('#clientTableBody .client-table-row');
+    var visibleCount = 0;
+
+    var searchText = searchInput ? searchInput.value.toLowerCase() : '';
+    var gradeValue = gradeFilter ? gradeFilter.value : '';
+    var typeValue = typeFilter ? typeFilter.value : '';
+
+    rows.forEach(function (row) {
+        var clientName = row.querySelector('td:first-child .text-fg-primary')?.textContent.toLowerCase() || '';
+        var grade = row.getAttribute('data-grade') || '';
+        var type = row.getAttribute('data-type') || '';
+
+        var matchSearch = !searchText || clientName.indexOf(searchText) !== -1;
+        var matchGrade = !gradeValue || grade === gradeValue.toLowerCase();
+        var matchType = !typeValue || type === typeValue;
+
+        if (matchSearch && matchGrade && matchType) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    var countEl = document.getElementById('clientResultCount');
+    if (countEl) {
+        countEl.textContent = visibleCount + ' 位';
+    }
+}
+
+function switchClientDetailTab(el, tab) {
+    document.querySelectorAll('#view-client-detail .client-detail-tab-btn').forEach(function (btn) {
+        btn.classList.remove('bg-white', 'text-brand', 'shadow-sm', 'border-bg-border');
+        btn.classList.add('text-fg-secondary', 'hover:bg-white', 'hover:border-bg-border', 'border-transparent');
+    });
+    el.classList.remove('text-fg-secondary', 'hover:bg-white', 'hover:border-bg-border', 'border-transparent');
+    el.classList.add('bg-white', 'text-brand', 'shadow-sm', 'border-bg-border');
+
+    document.querySelectorAll('#view-client-detail .client-detail-tab-content').forEach(function (content) {
+        content.classList.add('hidden');
+    });
+    var targetTab = document.getElementById('client-tab-' + tab);
+    if (targetTab) {
+        targetTab.classList.remove('hidden');
+    }
 }
 
 function openClientDetail(index) {
@@ -82,11 +126,15 @@ function openClientDetail(index) {
     document.getElementById('client-detail-name-text').textContent = c.name;
     document.getElementById('client-detail-avatar').textContent = c.avatar;
     document.getElementById('client-detail-grade').textContent = c.grade;
-    document.getElementById('client-detail-grade').className = 'text-[10px] font-medium px-2 py-0.5 rounded';
-    var gradeParts = c.gradeClass.split(' ');
-    gradeParts.forEach(function (cls) {
-        if (cls) document.getElementById('client-detail-grade').classList.add(cls);
-    });
+    var gradeBadge = document.getElementById('client-detail-grade');
+    gradeBadge.className = 'client-grade-badge inline-flex items-center gap-1';
+    if (c.grade === 'A 级') {
+        gradeBadge.classList.add('grade-a');
+    } else if (c.grade === 'B 级') {
+        gradeBadge.classList.add('grade-b');
+    } else {
+        gradeBadge.classList.add('grade-c');
+    }
     document.getElementById('client-detail-status').textContent = c.status;
     document.getElementById('client-detail-phone').textContent = c.phone;
     document.getElementById('client-detail-cases').textContent = c.cases;

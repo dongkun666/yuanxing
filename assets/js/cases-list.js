@@ -16,6 +16,50 @@
     // ===== 跨模块共享状态 (script.js 在 IIFE 内 var, 需显式桥接 globalThis) =====
     if (typeof globalThis.caseCurrentPage === 'undefined') globalThis.caseCurrentPage = 1;
 
+    var _caseListInitialized = false;
+    var _caseListLoading = false;
+
+    function showCaseSkeleton() {
+        var skeleton = document.getElementById('caseSkeletonContainer');
+        var table = document.getElementById('caseTable');
+        var emptyState = document.getElementById('caseEmptyState');
+        if (skeleton) skeleton.classList.remove('hidden');
+        if (table) table.classList.add('hidden');
+        if (emptyState) {
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+        }
+        _caseListLoading = true;
+    }
+
+    function hideCaseSkeleton() {
+        var skeleton = document.getElementById('caseSkeletonContainer');
+        var table = document.getElementById('caseTable');
+        if (skeleton) skeleton.classList.add('hidden');
+        if (table) table.classList.remove('hidden');
+        _caseListLoading = false;
+    }
+
+    function initCaseListWithSkeleton() {
+        if (_caseListInitialized) return;
+        _caseListInitialized = true;
+
+        showCaseSkeleton();
+
+        var startTime = Date.now();
+        var minDuration = 500;
+
+        setTimeout(function () {
+            var elapsed = Date.now() - startTime;
+            var remaining = Math.max(0, minDuration - elapsed);
+
+            setTimeout(function () {
+                hideCaseSkeleton();
+                filterCaseList();
+            }, remaining);
+        }, 100);
+    }
+
     // 案件列表筛选 + 分页
     function filterCaseList() {
         // 隐藏已归档的 row
@@ -138,7 +182,7 @@
         filterCaseList();
     }
 
-    async function archiveCase(idx) {
+    async function archiveCase(idx, btn) {
         if (idx === undefined || idx === null) {
             // 兼容无参调用: 从 currentCaseIndex 读
             idx = globalThis.currentCaseIndex;
@@ -147,13 +191,26 @@
             showToast('请先点击案件"详情"再归档', 'warning');
             return;
         }
-        var confirmed = await Utils.showConfirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。');
-        if (!confirmed) return;
-        var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
-        if (archived.indexOf(idx) === -1) archived.push(idx);
-        localStorage.setItem('lexprime_archived', JSON.stringify(archived));
-        showToast('案件已归档', 'success');
-        if (typeof filterCaseList === 'function') filterCaseList();
+
+        var targetBtn = btn || event?.currentTarget;
+        if (targetBtn) Utils.setButtonLoading(targetBtn, '归档中...');
+
+        try {
+            var confirmed = await Utils.showConfirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。');
+            if (!confirmed) {
+                if (targetBtn) Utils.setButtonNormal(targetBtn);
+                return;
+            }
+
+            var archived = JSON.parse(localStorage.getItem('lexprime_archived') || '[]');
+            if (archived.indexOf(idx) === -1) archived.push(idx);
+            localStorage.setItem('lexprime_archived', JSON.stringify(archived));
+            showToast('案件已归档', 'success');
+            if (typeof filterCaseList === 'function') filterCaseList();
+        } catch (e) {
+            Utils.showError(e);
+            if (targetBtn) Utils.setButtonNormal(targetBtn);
+        }
     }
 
     function editCaseTitle() {
@@ -208,16 +265,33 @@
         input.select();
     }
 
-    async function deleteCase(index) {
-        var confirmed = await Utils.showConfirm('确定要删除该案件吗？删除后不可恢复。');
-        if (!confirmed) return;
-        var tbody = document.getElementById('caseTableBody');
-        if (!tbody) return;
-        var rows = tbody.querySelectorAll('tr');
-        if (rows[index]) {
-            rows[index].remove();
-            showToast('案件已删除');
-            filterCaseList();
+    async function deleteCase(index, btn) {
+        var targetBtn = btn || event?.currentTarget;
+        if (targetBtn) Utils.setButtonLoading(targetBtn, '删除中...');
+
+        try {
+            var confirmed = await Utils.showConfirm('确定要删除该案件吗？删除后不可恢复。');
+            if (!confirmed) {
+                if (targetBtn) Utils.setButtonNormal(targetBtn);
+                return;
+            }
+
+            var tbody = document.getElementById('caseTableBody');
+            if (!tbody) {
+                if (targetBtn) Utils.setButtonNormal(targetBtn);
+                return;
+            }
+            var rows = tbody.querySelectorAll('tr');
+            if (rows[index]) {
+                rows[index].remove();
+                showToast('案件已删除', 'success');
+                filterCaseList();
+            } else {
+                if (targetBtn) Utils.setButtonNormal(targetBtn);
+            }
+        } catch (e) {
+            Utils.showError(e);
+            if (targetBtn) Utils.setButtonNormal(targetBtn);
         }
     }
 
@@ -400,50 +474,59 @@
         }
     }
 
-    function submitNewCase() {
+    async function submitNewCase() {
         var caseName = document.getElementById('new-case-name').value.trim();
         if (!caseName) {
-            showToast('请输入案件名');
+            showToast('请输入案件名', 'warning');
             return;
         }
 
-        var caseNumber = document.getElementById('new-case-number').value.trim() || '待分配案号';
-        var caseType = document.getElementById('new-case-type').value.trim() || '暂无';
-        var status = document.getElementById('new-case-status').value;
-        var claim = document.getElementById('new-case-claim').value.trim() || '-';
-        var clientName = document.getElementById('new-client-name').value.trim() || '待补充';
-        var opponentName = document.getElementById('new-opponent-name').value.trim() || '待补充';
+        var modal = document.getElementById('new-case-modal');
+        var submitBtn = modal ? modal.querySelector('[onclick="submitNewCase()"]') : null;
+        if (submitBtn) Utils.setButtonLoading(submitBtn, '创建中...');
 
-        var statusBadgeClass = '';
-        var statusIconColor = '';
-        if (status === '进行中') {
-            statusBadgeClass = 'status-badge status-progress';
-            statusIconColor = 'text-brand';
-        } else if (status === '待开庭') {
-            statusBadgeClass = 'status-badge status-pending';
-            statusIconColor = 'text-warning';
-        } else if (status === '已结案') {
-            statusBadgeClass = 'status-badge status-done';
-            statusIconColor = 'text-success';
-        } else if (status === '已归档') {
-            statusBadgeClass = 'status-badge status-done';
-            statusIconColor = 'text-fg-tertiary';
-        } else {
-            statusBadgeClass = 'status-badge status-progress';
-            statusIconColor = 'text-brand';
-        }
+        try {
+            await new Promise(function (resolve) {
+                setTimeout(resolve, 600);
+            });
 
-        var tbody = document.getElementById('caseTableBody');
-        if (tbody) {
-            var index = tbody.querySelectorAll('tr').length;
-            var tr = document.createElement('tr');
-            tr.className = 'case-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group';
-            tr.setAttribute('data-status', status);
-            tr.setAttribute('data-type', caseType);
-            tr.setAttribute('data-row-idx', index);
-            tr.style.opacity = '1';
-            tr.style.animation = 'none';
-            tr.innerHTML = `
+            var caseNumber = document.getElementById('new-case-number').value.trim() || '待分配案号';
+            var caseType = document.getElementById('new-case-type').value.trim() || '暂无';
+            var status = document.getElementById('new-case-status').value;
+            var claim = document.getElementById('new-case-claim').value.trim() || '-';
+            var clientName = document.getElementById('new-client-name').value.trim() || '待补充';
+            var opponentName = document.getElementById('new-opponent-name').value.trim() || '待补充';
+
+            var statusBadgeClass = '';
+            var statusIconColor = '';
+            if (status === '进行中') {
+                statusBadgeClass = 'status-badge status-progress';
+                statusIconColor = 'text-brand';
+            } else if (status === '待开庭') {
+                statusBadgeClass = 'status-badge status-pending';
+                statusIconColor = 'text-warning';
+            } else if (status === '已结案') {
+                statusBadgeClass = 'status-badge status-done';
+                statusIconColor = 'text-success';
+            } else if (status === '已归档') {
+                statusBadgeClass = 'status-badge status-done';
+                statusIconColor = 'text-fg-tertiary';
+            } else {
+                statusBadgeClass = 'status-badge status-progress';
+                statusIconColor = 'text-brand';
+            }
+
+            var tbody = document.getElementById('caseTableBody');
+            if (tbody) {
+                var index = tbody.querySelectorAll('tr').length;
+                var tr = document.createElement('tr');
+                tr.className = 'case-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group';
+                tr.setAttribute('data-status', status);
+                tr.setAttribute('data-type', caseType);
+                tr.setAttribute('data-row-idx', index);
+                tr.style.opacity = '1';
+                tr.style.animation = 'none';
+                tr.innerHTML = `
                     <td class="py-4 px-5">
                         <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -480,12 +563,17 @@
                         </div>
                     </td>
                 `;
-            tbody.appendChild(tr);
-            filterCaseList();
-        }
+                tbody.appendChild(tr);
+                filterCaseList();
+            }
 
-        closeNewCaseModal();
-        showToast('案件创建成功');
+            closeNewCaseModal();
+            showToast('案件创建成功', 'success');
+
+        } catch (e) {
+            Utils.showError(e);
+            if (submitBtn) Utils.setButtonNormal(submitBtn);
+        }
     }
 
     function openArchiveDetail(id) {
@@ -575,4 +663,5 @@
     globalThis.deleteArchive = deleteArchive;
     globalThis.filterArchiveList = filterArchiveList;
     globalThis.toggleAllArchive = toggleAllArchive;
+    globalThis.initCaseListWithSkeleton = initCaseListWithSkeleton;
 })();

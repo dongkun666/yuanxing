@@ -50,7 +50,62 @@ AI新建案件
 <!-- 案件列表 -->
 <div class="ws-card overflow-hidden flex-1 flex flex-col" data-animate="fade-in-up" data-delay="0.1">
 <div class="overflow-x-auto flex-1">
-<table class="w-full text-sm table-fixed min-w-[880px]">
+<!-- 骨架屏容器 -->
+<div id="caseSkeletonContainer" class="hidden py-4 px-5">
+<div class="space-y-4">
+<div class="skeleton skeleton-line w-1/3 h-5 rounded"></div>
+<div class="grid grid-cols-7 gap-4">
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/3"></div>
+</div>
+<div class="h-px bg-bg-border"></div>
+<div class="grid grid-cols-7 gap-4">
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/3"></div>
+</div>
+<div class="h-px bg-bg-border"></div>
+<div class="grid grid-cols-7 gap-4">
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/3"></div>
+</div>
+<div class="h-px bg-bg-border"></div>
+<div class="grid grid-cols-7 gap-4">
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/3"></div>
+</div>
+<div class="h-px bg-bg-border"></div>
+<div class="grid grid-cols-7 gap-4">
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-2/3"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/2"></div>
+<div class="skeleton skeleton-line h-4 rounded w-1/3"></div>
+</div>
+</div>
+</div>
+<table class="w-full text-sm table-fixed min-w-[880px]" id="caseTable">
 <thead>
 <tr class="bg-gradient-to-r from-bg-subtle to-bg-subtle/50 border-b border-bg-border">
 <th scope="col" class="text-left py-3.5 px-5 text-xs font-semibold text-fg-tertiary uppercase tracking-wider w-[160px]">案件名</th>
@@ -122,11 +177,11 @@ AI新建案件
 <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
 详情
 </button>
-<button class="table-action-btn table-action-btn-default" onclick="archiveCase(0)">
+<button class="table-action-btn table-action-btn-default" onclick="archiveCase(0, this)">
 <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
 归档
 </button>
-<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(0)">
+<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(0, this)">
 <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
 删除
 </button>
@@ -164,11 +219,11 @@ AI新建案件
 <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
 详情
 </button>
-<button class="table-action-btn table-action-btn-default" onclick="archiveCase(1)">
+<button class="table-action-btn table-action-btn-default" onclick="archiveCase(1, this)">
 <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
 归档
 </button>
-<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(1)">
+<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(1, this)">
 <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
 删除
 </button>
@@ -206,11 +261,11 @@ AI新建案件
 <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
 详情
 </button>
-<button class="table-action-btn table-action-btn-default" onclick="archiveCase(2)">
+<button class="table-action-btn table-action-btn-default" onclick="archiveCase(2, this)">
 <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
 归档
 </button>
-<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(2)">
+<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(2, this)">
 <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
 删除
 </button>
@@ -248,11 +303,11 @@ AI新建案件
 <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
 详情
 </button>
-<button class="table-action-btn table-action-btn-default" onclick="archiveCase(3)">
+<button class="table-action-btn table-action-btn-default" onclick="archiveCase(3, this)">
 <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
 归档
 </button>
-<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(3)">
+<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(3, this)">
 <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
 删除
 </button>
@@ -290,11 +345,11 @@ AI新建案件
 <iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>
 详情
 </button>
-<button class="table-action-btn table-action-btn-default" onclick="archiveCase(4)">
+<button class="table-action-btn table-action-btn-default" onclick="archiveCase(4, this)">
 <iconify-icon icon="mdi:archive-outline" class="text-xs"></iconify-icon>
 归档
 </button>
-<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(4)">
+<button class="table-action-btn table-action-btn-danger" onclick="deleteCase(4, this)">
 <iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>
 删除
 </button>

@@ -266,20 +266,52 @@
         _modalRegistry = {};
     }
 
-    var _toastTimer = null;
+    var _toastQueue = [];
+    var _activeToasts = [];
+    var _toastContainers = {};
+    var MAX_ACTIVE_TOASTS = 3;
 
-    /**
-     * 轻量 Toast 提示
-     * @param {string} type - 类型 'success'|'error'|'info'|'warning'
-     * @param {string} message - 提示内容
-     * @param {number} [duration=3000] - 显示时长（毫秒）
-     */
-    function showToast(type, message, duration) {
-        if (!message) {
-            message = type;
-            type = 'info';
+    function _getToastContainer(position) {
+        var containerId = 'toast-container-' + position;
+        if (_toastContainers[position]) return _toastContainers[position];
+
+        var container = document.getElementById(containerId);
+        if (!container) {
+            container = document.createElement('div');
+            container.id = containerId;
+            container.className = 'fixed z-[9999] flex flex-col gap-2 pointer-events-none';
+
+            if (position === 'top-right') {
+                container.className += ' top-4 right-4 items-end';
+            } else if (position === 'top-center') {
+                container.className += ' top-4 left-1/2 -translate-x-1/2 items-center';
+            } else if (position === 'bottom-right') {
+                container.className += ' bottom-4 right-4 items-end';
+            } else {
+                container.className += ' top-4 left-1/2 -translate-x-1/2 items-center';
+            }
+
+            document.body.appendChild(container);
         }
-        if (!duration) duration = 3000;
+
+        _toastContainers[position] = container;
+        return container;
+    }
+
+    function _processToastQueue() {
+        while (_activeToasts.length < MAX_ACTIVE_TOASTS && _toastQueue.length > 0) {
+            var options = _toastQueue.shift();
+            _showToastInternal(options);
+        }
+    }
+
+    function _showToastInternal(options) {
+        var type = options.type;
+        var message = options.message;
+        var duration = options.duration;
+        var position = options.position;
+        var closable = options.closable;
+        var progress = options.progress;
 
         var typeConfig = {
             success: {
@@ -287,71 +319,460 @@
                 border: 'border-green-200',
                 text: 'text-green-700',
                 icon: 'mdi:check-circle-outline',
-                iconColor: 'text-green-500'
+                iconColor: 'text-green-500',
+                progressColor: 'bg-green-500'
             },
             error: {
                 bg: 'bg-red-50',
                 border: 'border-red-200',
                 text: 'text-red-700',
                 icon: 'mdi:alert-circle-outline',
-                iconColor: 'text-red-500'
+                iconColor: 'text-red-500',
+                progressColor: 'bg-red-500'
             },
             info: {
                 bg: 'bg-blue-50',
                 border: 'border-blue-200',
                 text: 'text-blue-700',
                 icon: 'mdi:information-outline',
-                iconColor: 'text-blue-500'
+                iconColor: 'text-blue-500',
+                progressColor: 'bg-blue-500'
             },
             warning: {
                 bg: 'bg-amber-50',
                 border: 'border-amber-200',
                 text: 'text-amber-700',
                 icon: 'mdi:alert-outline',
-                iconColor: 'text-amber-500'
+                iconColor: 'text-amber-500',
+                progressColor: 'bg-amber-500'
             }
         };
 
         var config = typeConfig[type] || typeConfig.info;
-
-        var existing = document.querySelector('.utils-toast');
-        if (existing) existing.remove();
-        if (_toastTimer) {
-            clearTimeout(_toastTimer);
-            _toastTimer = null;
-        }
+        var container = _getToastContainer(position);
 
         var toast = document.createElement('div');
         toast.className =
-            'utils-toast fixed top-4 left-1/2 -translate-x-1/2 z-[9999] ' +
+            'utils-toast pointer-events-auto ' +
             config.bg +
             ' border ' +
             config.border +
             ' ' +
             config.text +
-            ' text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transform transition-all duration-300 opacity-0 -translate-y-4';
-        toast.innerHTML =
+            ' text-xs px-4 py-3 rounded-lg shadow-xl flex items-start gap-3 transform transition-all duration-300 ease-out opacity-0 w-72 relative overflow-hidden';
+
+        var slideClass = '';
+        if (position === 'top-right' || position === 'bottom-right') {
+            toast.style.transform = 'translateX(100%)';
+            slideClass = 'slide-in-right';
+        } else {
+            toast.style.transform = 'translateY(-100%)';
+            slideClass = 'slide-in-top';
+        }
+
+        var contentHtml =
             '<iconify-icon icon="' +
             config.icon +
             '" class="' +
             config.iconColor +
-            '"></iconify-icon><span>' +
+            ' text-base flex-shrink-0 mt-0.5"></iconify-icon>' +
+            '<span class="flex-1 leading-relaxed">' +
             escapeHtml(message) +
             '</span>';
-        document.body.appendChild(toast);
+
+        var closeHtml = closable
+            ? '<button class="toast-close-btn flex-shrink-0 -mr-1 -mt-1 w-5 h-5 flex items-center justify-center rounded hover:bg-black/5 transition-colors" aria-label="关闭">' +
+              '<iconify-icon icon="mdi:close" class="text-sm ' + config.text + '"></iconify-icon>' +
+              '</button>'
+            : '';
+
+        var progressHtml = progress
+            ? '<div class="toast-progress-bar absolute bottom-0 left-0 h-0.5 ' +
+              config.progressColor +
+              ' transition-all ease-linear" style="width: 100%; transition-duration: ' +
+              duration +
+              'ms"></div>'
+            : '';
+
+        toast.innerHTML = contentHtml + closeHtml + progressHtml;
+        container.appendChild(toast);
+
+        var toastId = Date.now() + Math.random();
+        toast.setAttribute('data-toast-id', toastId);
+        _activeToasts.push({ id: toastId, element: toast, position: position });
 
         requestAnimationFrame(function () {
-            toast.classList.remove('opacity-0', '-translate-y-4');
-            toast.classList.add('opacity-100', 'translate-y-0');
+            requestAnimationFrame(function () {
+                if (position === 'top-right' || position === 'bottom-right') {
+                    toast.style.transform = 'translateX(0)';
+                    toast.style.opacity = '1';
+                } else {
+                    toast.style.transform = 'translateY(0)';
+                    toast.style.opacity = '1';
+                }
+
+                if (progress) {
+                    setTimeout(function () {
+                        var progressBar = toast.querySelector('.toast-progress-bar');
+                        if (progressBar) {
+                            progressBar.style.width = '0%';
+                        }
+                    }, 10);
+                }
+            });
         });
 
-        _toastTimer = setTimeout(function () {
-            toast.classList.add('opacity-0', '-translate-y-4');
+        function removeToast() {
+            if (!toast.parentNode) return;
+
+            if (position === 'top-right' || position === 'bottom-right') {
+                toast.style.transform = 'translateX(100%)';
+            } else {
+                toast.style.transform = 'translateY(-100%)';
+            }
+            toast.style.opacity = '0';
+
             setTimeout(function () {
-                if (toast.parentNode) toast.remove();
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+                _activeToasts = _activeToasts.filter(function (t) {
+                    return t.id !== toastId;
+                });
+                _processToastQueue();
             }, 300);
-            _toastTimer = null;
-        }, duration);
+        }
+
+        var closeBtn = toast.querySelector('.toast-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', removeToast);
+        }
+
+        if (duration > 0) {
+            setTimeout(removeToast, duration);
+        }
+    }
+
+    /**
+     * 增强版 Toast 提示
+     * @param {string|Object} typeOrOptions - 类型 'success'|'error'|'info'|'warning' 或配置对象
+     * @param {string} [message] - 提示内容
+     * @param {Object} [options] - 配置选项
+     * @param {number} [options.duration=3000] - 显示时长（毫秒），0 表示不自动关闭
+     * @param {string} [options.position='top-right'] - 位置: 'top-right' | 'top-center' | 'bottom-right'
+     * @param {boolean} [options.closable=true] - 是否显示关闭按钮
+     * @param {boolean} [options.progress=true] - 是否显示进度条
+     * @returns {Function} - 手动关闭函数
+     */
+    function showToast(typeOrOptions, message, options) {
+        var type = 'info';
+        var msg = '';
+        var opts = options || {};
+
+        if (typeof typeOrOptions === 'object' && typeOrOptions !== null) {
+            type = typeOrOptions.type || 'info';
+            msg = typeOrOptions.message || '';
+            opts = typeOrOptions;
+        } else {
+            type = typeOrOptions;
+            msg = message || '';
+            if (!message) {
+                msg = typeOrOptions;
+                type = 'info';
+            }
+        }
+
+        var duration = opts.duration !== undefined ? opts.duration : 3000;
+        var position = opts.position || 'top-right';
+        var closable = opts.closable !== false;
+        var progress = opts.progress !== false && duration > 0;
+
+        var toastOptions = {
+            type: type,
+            message: msg,
+            duration: duration,
+            position: position,
+            closable: closable,
+            progress: progress
+        };
+
+        _toastQueue.push(toastOptions);
+        _processToastQueue();
+
+        return function () {
+            var found = _activeToasts.find(function (t) {
+                return t.element.textContent.includes(msg);
+            });
+            if (found) {
+                if (position === 'top-right' || position === 'bottom-right') {
+                    found.element.style.transform = 'translateX(100%)';
+                } else {
+                    found.element.style.transform = 'translateY(-100%)';
+                }
+                found.element.style.opacity = '0';
+                setTimeout(function () {
+                    if (found.element.parentNode) found.element.remove();
+                    _activeToasts = _activeToasts.filter(function (t) {
+                        return t.id !== found.id;
+                    });
+                    _processToastQueue();
+                }, 300);
+            }
+        };
+    }
+
+    /**
+     * 设置按钮 loading 状态
+     * @param {HTMLElement|string} button - 按钮元素或选择器
+     * @param {string} [loadingText] - 加载时显示的文字，默认"加载中..."
+     */
+    function setButtonLoading(button, loadingText) {
+        var btn = typeof button === 'string' ? document.querySelector(button) : button;
+        if (!btn || btn.tagName !== 'BUTTON') return;
+
+        if (btn.getAttribute('data-loading') === 'true') return;
+
+        var originalText = btn.textContent;
+        var originalHtml = btn.innerHTML;
+        btn.setAttribute('data-loading', 'true');
+        btn.setAttribute('data-original-html', originalHtml);
+        btn.setAttribute('data-original-text', originalText);
+        btn.disabled = true;
+
+        var text = loadingText || '加载中...';
+        var spinnerHtml =
+            '<iconify-icon icon="mdi:loading" class="animate-spin text-sm"></iconify-icon>';
+
+        var originalIcon = btn.querySelector('iconify-icon');
+        var originalIconHtml = originalIcon ? originalIcon.outerHTML : '';
+
+        if (originalIcon) {
+            btn.innerHTML = btn.innerHTML.replace(originalIcon.outerHTML, spinnerHtml);
+            var textNode = btn.querySelector('span, .text');
+            if (textNode) {
+                textNode.textContent = text;
+            } else {
+                var lastChild = btn.lastChild;
+                if (lastChild && lastChild.nodeType === Node.TEXT_NODE) {
+                    lastChild.textContent = ' ' + text;
+                } else {
+                    btn.innerHTML = spinnerHtml + ' ' + text;
+                }
+            }
+        } else {
+            btn.innerHTML = spinnerHtml + ' ' + text;
+        }
+
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'not-allowed';
+    }
+
+    /**
+     * 恢复按钮正常状态
+     * @param {HTMLElement|string} button - 按钮元素或选择器
+     * @param {string} [originalText] - 恢复后显示的文字，默认恢复原始内容
+     */
+    function setButtonNormal(button, originalText) {
+        var btn = typeof button === 'string' ? document.querySelector(button) : button;
+        if (!btn || btn.tagName !== 'BUTTON') return;
+
+        if (btn.getAttribute('data-loading') !== 'true') return;
+
+        var savedHtml = btn.getAttribute('data-original-html');
+        var savedText = btn.getAttribute('data-original-text');
+
+        btn.removeAttribute('data-loading');
+        btn.removeAttribute('data-original-html');
+        btn.removeAttribute('data-original-text');
+        btn.disabled = false;
+        btn.style.opacity = '';
+        btn.style.cursor = '';
+
+        if (originalText !== undefined) {
+            if (savedHtml) {
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = savedHtml;
+                var icon = tempDiv.querySelector('iconify-icon');
+                if (icon) {
+                    btn.innerHTML = icon.outerHTML + ' ' + originalText;
+                } else {
+                    btn.textContent = originalText;
+                }
+            } else {
+                btn.textContent = originalText;
+            }
+        } else if (savedHtml) {
+            btn.innerHTML = savedHtml;
+        }
+    }
+
+    /**
+     * 统一错误处理
+     * @param {Error|string|Object} error - 错误对象、错误消息或错误配置
+     * @param {Object} [options] - 配置选项
+     * @param {boolean} [options.retry=false] - 是否显示重试按钮
+     * @param {Function} [options.onRetry] - 重试回调函数
+     * @param {string} [options.position='top-right'] - Toast 位置
+     * @returns {Function} - 关闭函数
+     */
+    function showError(error, options) {
+        options = options || {};
+        var errorType = 'unknown';
+        var errorMessage = '操作失败，请稍后重试';
+        var errorDetail = '';
+
+        if (typeof error === 'string') {
+            errorMessage = error;
+            errorType = 'business';
+        } else if (error instanceof Error) {
+            errorMessage = error.message || '操作失败';
+            errorDetail = error.stack || '';
+            if (error.name === 'NetworkError' || error.message.includes('network') || error.message.includes('fetch')) {
+                errorType = 'network';
+            } else {
+                errorType = 'business';
+            }
+        } else if (error && typeof error === 'object') {
+            errorMessage = error.message || error.msg || error.detail || '操作失败';
+            errorType = error.type || 'business';
+
+            if (error.code === 'NETWORK_ERROR' || error.status === 0 || error.isNetworkError) {
+                errorType = 'network';
+            }
+        }
+
+        var typeConfig = {
+            network: {
+                title: '网络连接失败',
+                description: errorMessage || '请检查您的网络连接后重试',
+                icon: 'mdi:wifi-off',
+                iconBg: 'bg-red-50',
+                iconColor: 'text-red-500'
+            },
+            business: {
+                title: '操作失败',
+                description: errorMessage,
+                icon: 'mdi:alert-circle-outline',
+                iconBg: 'bg-amber-50',
+                iconColor: 'text-amber-500'
+            },
+            unknown: {
+                title: '发生未知错误',
+                description: errorMessage || '请稍后重试，如问题持续请联系技术支持',
+                icon: 'mdi:help-circle-outline',
+                iconBg: 'bg-gray-50',
+                iconColor: 'text-gray-500'
+            }
+        };
+
+        var config = typeConfig[errorType] || typeConfig.unknown;
+        var position = options.position || 'top-right';
+
+        if (!options.retry || !options.onRetry) {
+            return showToast({
+                type: 'error',
+                message: config.description,
+                position: position,
+                duration: 4000,
+                closable: true,
+                progress: true
+            });
+        }
+
+        var container = _getToastContainer(position);
+        var toast = document.createElement('div');
+        toast.className =
+            'utils-toast pointer-events-auto bg-white border border-red-100 text-fg-primary text-xs rounded-lg shadow-xl p-4 transform transition-all duration-300 ease-out opacity-0 w-80';
+
+        if (position === 'top-right' || position === 'bottom-right') {
+            toast.style.transform = 'translateX(100%)';
+        } else {
+            toast.style.transform = 'translateY(-100%)';
+        }
+
+        toast.innerHTML =
+            '<div class="flex items-start gap-3">' +
+            '<div class="w-8 h-8 rounded-lg ' +
+            config.iconBg +
+            ' flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon icon="' +
+            config.icon +
+            '" class="' +
+            config.iconColor +
+            ' text-base"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<p class="text-sm font-semibold text-fg-primary mb-1">' +
+            config.title +
+            '</p>' +
+            '<p class="text-xs text-fg-secondary leading-relaxed">' +
+            escapeHtml(config.description) +
+            '</p>' +
+            '<div class="flex items-center gap-2 mt-3">' +
+            '<button class="error-retry-btn px-3 py-1.5 text-xs font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:refresh" class="text-xs"></iconify-icon>重试' +
+            '</button>' +
+            '<button class="error-close-btn px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors">' +
+            '知道了' +
+            '</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        container.appendChild(toast);
+
+        var toastId = Date.now() + Math.random();
+        toast.setAttribute('data-toast-id', toastId);
+        _activeToasts.push({ id: toastId, element: toast, position: position });
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                if (position === 'top-right' || position === 'bottom-right') {
+                    toast.style.transform = 'translateX(0)';
+                } else {
+                    toast.style.transform = 'translateY(0)';
+                }
+                toast.style.opacity = '1';
+            });
+        });
+
+        function removeToast() {
+            if (!toast.parentNode) return;
+            if (position === 'top-right' || position === 'bottom-right') {
+                toast.style.transform = 'translateX(100%)';
+            } else {
+                toast.style.transform = 'translateY(-100%)';
+            }
+            toast.style.opacity = '0';
+            setTimeout(function () {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+                _activeToasts = _activeToasts.filter(function (t) {
+                    return t.id !== toastId;
+                });
+                _processToastQueue();
+            }, 300);
+        }
+
+        var retryBtn = toast.querySelector('.error-retry-btn');
+        if (retryBtn && options.onRetry) {
+            retryBtn.addEventListener('click', function () {
+                removeToast();
+                try {
+                    options.onRetry();
+                } catch (e) {
+                    console.error('[showError] 重试回调执行失败:', e);
+                }
+            });
+        }
+
+        var closeBtn = toast.querySelector('.error-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', removeToast);
+        }
+
+        return removeToast;
     }
 
     /**
@@ -737,7 +1158,10 @@
         createEmptyState: createEmptyState,
         createSkeleton: createSkeleton,
         showPageLoading: showPageLoading,
-        hidePageLoading: hidePageLoading
+        hidePageLoading: hidePageLoading,
+        setButtonLoading: setButtonLoading,
+        setButtonNormal: setButtonNormal,
+        showError: showError
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

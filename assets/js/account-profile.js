@@ -37,9 +37,9 @@
             edit.classList.add('hidden');
             display.classList.remove('hidden');
             btn.classList.remove('hidden');
-            btn.textContent = '修改';
+            btn.innerHTML = '<iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon><span>修改</span>';
             btn.className =
-                'px-5 py-2 text-xs font-semibold rounded-lg border border-[#165DFF] text-[#165DFF] hover:bg-[#E8F3FF] transition-colors';
+                'px-4 py-2 text-xs font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand/10 flex items-center gap-1.5';
         }
     }
 
@@ -102,7 +102,7 @@
                         if (tagText) {
                             var span = document.createElement('span');
                             span.className =
-                                'inline-flex px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
+                                'inline-flex px-2 py-0.5 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium';
                             span.textContent = tagText;
                             displayTagsContainer.appendChild(span);
                         }
@@ -157,10 +157,10 @@
         if (tag && tag.trim()) {
             var span = document.createElement('span');
             span.className =
-                'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
+                'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium';
             span.innerHTML =
                 tag.trim() +
-                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500" aria-label="移除标签"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
+                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-danger transition-colors" aria-label="移除标签"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
             el.parentNode.insertBefore(span, el);
         }
     }
@@ -348,16 +348,16 @@
         var saveText = document.getElementById('save-btn-text');
         var saveSpinner = document.getElementById('save-btn-spinner');
         if (saveBtn) {
-            saveBtn.classList.remove('bg-[#165DFF]');
-            saveBtn.classList.add('bg-[#4080FF]', 'cursor-default', 'opacity-80');
+            saveBtn.style.opacity = '0.8';
+            saveBtn.style.cursor = 'default';
         }
         if (saveText) saveText.textContent = '保存中...';
         if (saveSpinner) saveSpinner.classList.remove('hidden');
 
         AppState.autoSaveTimer = setTimeout(function () {
             if (saveBtn) {
-                saveBtn.classList.remove('bg-[#4080FF]', 'cursor-default', 'opacity-80');
-                saveBtn.classList.add('bg-[#165DFF]');
+                saveBtn.style.opacity = '1';
+                saveBtn.style.cursor = 'pointer';
             }
             if (saveText) saveText.textContent = '已保存';
             if (saveSpinner) saveSpinner.classList.add('hidden');
@@ -393,6 +393,61 @@
         }
     }
 
+    // ===== 设置页面导航切换 =====
+    function switchSettingsSection(sectionName, navBtn) {
+        var sections = document.querySelectorAll('.settings-section');
+        sections.forEach(function (section) {
+            section.classList.add('hidden');
+        });
+
+        var targetSection = document.getElementById('section-' + sectionName);
+        if (targetSection) {
+            targetSection.classList.remove('hidden');
+            targetSection.style.animation = 'none';
+            targetSection.offsetHeight;
+            targetSection.style.animation = '';
+        }
+
+        var navItems = document.querySelectorAll('.settings-nav-item');
+        navItems.forEach(function (item) {
+            item.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            item.classList.add('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
+            var icon = item.querySelector('iconify-icon');
+            if (icon) {
+                icon.classList.remove('text-white');
+                icon.classList.add('group-hover:text-brand', 'transition-colors');
+            }
+        });
+
+        if (navBtn) {
+            navBtn.classList.remove('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
+            navBtn.classList.add('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            var activeIcon = navBtn.querySelector('iconify-icon');
+            if (activeIcon) {
+                activeIcon.classList.remove('group-hover:text-brand', 'transition-colors');
+                activeIcon.classList.add('text-white');
+            }
+        }
+
+        if (typeof Animations !== 'undefined' && typeof Animations.initPageAnimations === 'function') {
+            if (targetSection) {
+                Animations.initPageAnimations(targetSection);
+            }
+        }
+    }
+
+    // ===== 账户设置页面初始化 =====
+    function initAccountSettings() {
+        var view = document.getElementById('view-account-settings');
+        if (!view || view.classList.contains('initialized')) return;
+
+        view.classList.add('initialized');
+
+        if (typeof Animations !== 'undefined' && typeof Animations.initPageAnimations === 'function') {
+            Animations.initPageAnimations(view);
+        }
+    }
+
     // ===== 双绑定 =====
     globalThis.toggleProfileEdit = toggleProfileEdit;
     globalThis.cancelProfileEdit = cancelProfileEdit;
@@ -412,4 +467,6 @@
     globalThis.saveNotificationSettings = saveNotificationSettings;
     globalThis.bindAccount = bindAccount;
     globalThis.unbindAccount = unbindAccount;
+    globalThis.switchSettingsSection = switchSettingsSection;
+    globalThis.initAccountSettings = initAccountSettings;
 })();

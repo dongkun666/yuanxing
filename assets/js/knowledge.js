@@ -4,6 +4,44 @@
  * 加载: 在 script.js 之前同步加载 (使用其 AppState)
  */
 
+var _kbInitialized = false;
+
+function showKbIngestSkeleton() {
+    var skeleton = document.getElementById('kbIngestSkeleton');
+    var table = document.getElementById('kbIngestTable');
+    if (skeleton) skeleton.classList.remove('hidden');
+    if (table) table.classList.add('hidden');
+}
+
+function hideKbIngestSkeleton() {
+    var skeleton = document.getElementById('kbIngestSkeleton');
+    var table = document.getElementById('kbIngestTable');
+    if (skeleton) skeleton.classList.add('hidden');
+    if (table) table.classList.remove('hidden');
+}
+
+function initKnowledgeWithSkeleton() {
+    if (_kbInitialized) return;
+    _kbInitialized = true;
+
+    showKbIngestSkeleton();
+
+    var startTime = Date.now();
+    var minDuration = 500;
+
+    setTimeout(function () {
+        var elapsed = Date.now() - startTime;
+        var remaining = Math.max(0, minDuration - elapsed);
+
+        setTimeout(function () {
+            hideKbIngestSkeleton();
+            if (typeof applyKnowledgeFilter === 'function') {
+                applyKnowledgeFilter();
+            }
+        }, remaining);
+    }, 100);
+}
+
 function applyKnowledgeFilter() {
     var rows = document.querySelectorAll('#view-knowledge tbody tr[data-knowledge-type]');
     var visible = 0;
@@ -204,17 +242,27 @@ function startCompile(btn) {
 }
 
 async function cancelCompile(btn) {
-    var confirmed = await Utils.showConfirm('确定取消本次 AI 编译？已完成的中间结果会保留。');
-    if (!confirmed) return;
-    var row = btn.closest('tr');
-    if (!row) return;
-    var cells = row.querySelectorAll('td');
-    var statusCell = cells[2];
-    var actionCell = cells[5];
-    statusCell.innerHTML =
-        '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]"><iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon><span class="text-[10px] font-medium">待编译</span></span>';
-    actionCell.innerHTML =
-        '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
+    try {
+        var confirmed = await Utils.showConfirm('确定取消本次 AI 编译？已完成的中间结果会保留。');
+        if (!confirmed) return;
+
+        Utils.setButtonLoading(btn, '取消中...');
+
+        setTimeout(function () {
+            var row = btn.closest('tr');
+            if (!row) return;
+            var cells = row.querySelectorAll('td');
+            var statusCell = cells[2];
+            var actionCell = cells[5];
+            statusCell.innerHTML =
+                '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-[#FAAD14]"><iconify-icon class="text-xs" icon="mdi:clock-outline"></iconify-icon><span class="text-[10px] font-medium">待编译</span></span>';
+            actionCell.innerHTML =
+                '<button class="px-2.5 py-1 text-[10px] font-medium rounded-md bg-[#165DFF] text-white hover:bg-[#4080FF] transition-colors flex items-center gap-1 mx-auto" onclick="startCompile(this)"><iconify-icon class="text-xs" icon="mdi:robot"></iconify-icon>AI 编译</button>';
+            showToast('编译已取消', 'info');
+        }, 400);
+    } catch (e) {
+        Utils.showError(e);
+    }
 }
 
 async function recompile(btn) {
@@ -266,18 +314,28 @@ function viewWikiPages(btn) {
     }
 }
 
-function runLintNow() {
+async function runLintNow() {
     var btn = event.currentTarget;
-    var orig = btn.innerHTML;
-    btn.innerHTML = '<iconify-icon class="text-sm animate-spin" icon="mdi:loading"></iconify-icon>巡检中...';
-    btn.disabled = true;
-    setTimeout(function () {
+    var originalText = btn.innerHTML;
+    Utils.setButtonLoading(btn, '巡检中...');
+
+    try {
+        await new Promise(function (resolve) {
+            setTimeout(resolve, 2500);
+        });
+
         btn.innerHTML = '<iconify-icon class="text-sm" icon="mdi:check-circle"></iconify-icon>巡检完成';
+        btn.disabled = false;
+
         setTimeout(function () {
-            btn.innerHTML = orig;
-            btn.disabled = false;
+            Utils.setButtonNormal(btn, originalText);
         }, 1500);
-    }, 2500);
+
+        showToast('法律审查完成，发现 3 个风险点', 'info');
+    } catch (e) {
+        Utils.showError(e);
+        Utils.setButtonNormal(btn, originalText);
+    }
 }
 
 function simulateUpload() {

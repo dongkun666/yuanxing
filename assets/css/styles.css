@@ -1105,3 +1105,566 @@ textarea:focus-visible,
     font-size: 13px;
     color: var(--arco-gray-8);
 }
+
+/* ===== 账户设置页面样式 ===== */
+
+/* 主按钮渐变样式 */
+.btn-primary {
+    background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(22, 93, 255, 0.3);
+}
+
+/* ===== 客户管理页面升级样式 ===== */
+
+/* 客户分级标签样式 */
+.client-grade-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+}
+
+.client-grade-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+.client-grade-badge.grade-a {
+    background: linear-gradient(135deg, #FFF1F0 0%, #FFECEB 100%);
+    color: #F5222D;
+    box-shadow: 0 1px 2px rgba(245, 34, 45, 0.1);
+}
+
+.client-grade-badge.grade-b {
+    background: linear-gradient(135deg, #FFF7E6 0%, #FFEED9 100%);
+    color: #FF7D00;
+    box-shadow: 0 1px 2px rgba(255, 125, 0, 0.1);
+}
+
+.client-grade-badge.grade-c {
+    background: linear-gradient(135deg, #F7F8FA 0%, #F2F3F5 100%);
+    color: #86909C;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 客户状态标签样式 */
+.client-status-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+}
+
+.client-status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+.client-status-badge.status-active {
+    background: linear-gradient(135deg, #E8FFEA 0%, #D9FFDF 100%);
+    color: #00B42A;
+    box-shadow: 0 1px 2px rgba(0, 180, 42, 0.1);
+}
+
+.client-status-badge.status-pending {
+    background: linear-gradient(135deg, #FFF7E6 0%, #FFEED9 100%);
+    color: #FF7D00;
+    box-shadow: 0 1px 2px rgba(255, 125, 0, 0.1);
+}
+
+.client-status-badge.status-inactive {
+    background: linear-gradient(135deg, #F7F8FA 0%, #F2F3F5 100%);
+    color: #86909C;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 客户列表滚动条美化 */
+#view-client::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#view-client::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-client::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-client::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* 客户详情页滚动条美化 */
+#view-client-detail::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#view-client-detail::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-client-detail::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-client-detail::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* 客户表格行动画（降级方案，无 GSAP 时使用） */
+.client-table-row {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.client-table-row:nth-child(1) { animation-delay: 0.3s; }
+.client-table-row:nth-child(2) { animation-delay: 0.38s; }
+.client-table-row:nth-child(3) { animation-delay: 0.46s; }
+.client-table-row:nth-child(4) { animation-delay: 0.54s; }
+.client-table-row:nth-child(5) { animation-delay: 0.62s; }
+
+/* 客户空状态动画 */
+#clientEmptyState {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 客户详情页 Tab 按钮样式 */
+.client-detail-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+/* 移动端适配 - 客户列表 */
+@media (max-width: 768px) {
+    #view-client .ws-card {
+        border-radius: 12px;
+    }
+
+    #view-client-detail .ws-card {
+        border-radius: 12px;
+    }
+
+    .client-grade-badge,
+    .client-status-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+/* 次级按钮 */
+.btn-outline {
+    background: white;
+    color: #165DFF;
+    border: 1px solid #165DFF;
+    border-radius: 10px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-outline:hover {
+    background: #E8F3FF;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.1);
+}
+
+/* 精致表单输入框 */
+.form-input {
+    border: 1px solid #E5E6EB;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #1D2129;
+    background: white;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-input:hover {
+    border-color: #BFC8D1;
+}
+
+.form-input:focus {
+    border-color: #165DFF;
+    box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+    background: #FAFCFF;
+}
+
+.form-input::placeholder {
+    color: #C9CDD4;
+}
+
+textarea.form-input {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* 精致开关样式 */
+.toggle-switch {
+    width: 44px;
+    height: 24px;
+    background: #C9CDD4;
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.peer:checked + .toggle-switch {
+    background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.3);
+}
+
+.peer:checked + .toggle-switch::before {
+    left: 22px;
+    box-shadow: 0 2px 6px rgba(22, 93, 255, 0.3);
+}
+
+/* 设置页面左侧导航 */
+.settings-nav-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 3px;
+    height: 20px;
+    background: linear-gradient(180deg, #165DFF, #4080FF);
+    border-radius: 0 2px 2px 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-nav-item.bg-gradient-to-r::before {
+    transform: translateY(-50%) scaleY(1);
+}
+
+/* 设置区域切换动画 */
+.settings-section {
+    animation: settingsFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes settingsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 账户设置页面滚动条美化 */
+#view-account-settings::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-account-settings::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-account-settings::-webkit-scrollbar-thumb {
+    background: #D0D7DE;
+    border-radius: 4px;
+}
+
+#view-account-settings::-webkit-scrollbar-thumb:hover {
+    background: #86909C;
+}
+
+/* 按钮点击效果 */
+#view-account-settings button:active {
+    transform: scale(0.97);
+}
+
+/* 套餐卡片光效 */
+.settings-section .relative.rounded-2xl {
+    position: relative;
+    overflow: hidden;
+}
+
+.settings-section .relative.rounded-2xl::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.settings-section .relative.rounded-2xl:hover::before {
+    left: 100%;
+}
+
+/* ===== 日程页面升级样式 ===== */
+
+/* 日程卡片样式 */
+.schedule-card {
+    position: relative;
+}
+
+/* 日程状态标签扩展样式 */
+.status-court {
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+    color: #9333EA;
+    box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+}
+
+.status-todo {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    color: #059669;
+    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
+}
+
+.status-other {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    color: #D97706;
+    box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);
+}
+
+.status-danger {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%);
+    color: #DC2626;
+    box-shadow: 0 1px 2px rgba(220, 38, 38, 0.1);
+}
+
+/* 日程筛选标签样式 */
+.schedule-filter-tag {
+    display: inline-flex;
+    align-items: center;
+}
+
+.schedule-filter-tag.active {
+    background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+/* 日历格子样式 */
+.calendar-day {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calendar-day:hover {
+    z-index: 10;
+}
+
+/* 日历事件标签样式 */
+.calendar-event {
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover .calendar-event {
+    transform: scale(1.02);
+}
+
+/* 今日日历格子特殊样式 */
+#today-cell .calendar-event {
+    font-weight: 500;
+}
+
+/* 日程空状态动画 */
+#schedule-empty-state {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 日程卡片入场动画（降级方案，无 GSAP 时使用） */
+.schedule-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.schedule-card:nth-child(1) { animation-delay: 0.4s; }
+.schedule-card:nth-child(2) { animation-delay: 0.48s; }
+.schedule-card:nth-child(3) { animation-delay: 0.56s; }
+.schedule-card:nth-child(4) { animation-delay: 0.64s; }
+.schedule-card:nth-child(5) { animation-delay: 0.72s; }
+
+/* 日历格子入场动画 */
+.calendar-day.group {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.calendar-day.group:nth-child(1) { animation-delay: 0.25s; }
+.calendar-day.group:nth-child(2) { animation-delay: 0.27s; }
+.calendar-day.group:nth-child(3) { animation-delay: 0.29s; }
+.calendar-day.group:nth-child(4) { animation-delay: 0.31s; }
+.calendar-day.group:nth-child(5) { animation-delay: 0.33s; }
+.calendar-day.group:nth-child(6) { animation-delay: 0.35s; }
+.calendar-day.group:nth-child(7) { animation-delay: 0.37s; }
+.calendar-day.group:nth-child(8) { animation-delay: 0.39s; }
+.calendar-day.group:nth-child(9) { animation-delay: 0.41s; }
+.calendar-day.group:nth-child(10) { animation-delay: 0.43s; }
+.calendar-day.group:nth-child(11) { animation-delay: 0.45s; }
+.calendar-day.group:nth-child(12) { animation-delay: 0.47s; }
+.calendar-day.group:nth-child(13) { animation-delay: 0.49s; }
+.calendar-day.group:nth-child(14) { animation-delay: 0.51s; }
+.calendar-day.group:nth-child(15) { animation-delay: 0.53s; }
+.calendar-day.group:nth-child(16) { animation-delay: 0.55s; }
+.calendar-day.group:nth-child(17) { animation-delay: 0.57s; }
+.calendar-day.group:nth-child(18) { animation-delay: 0.59s; }
+.calendar-day.group:nth-child(19) { animation-delay: 0.61s; }
+.calendar-day.group:nth-child(20) { animation-delay: 0.63s; }
+.calendar-day.group:nth-child(21) { animation-delay: 0.65s; }
+.calendar-day.group:nth-child(22) { animation-delay: 0.67s; }
+.calendar-day.group:nth-child(23) { animation-delay: 0.69s; }
+.calendar-day.group:nth-child(24) { animation-delay: 0.71s; }
+.calendar-day.group:nth-child(25) { animation-delay: 0.73s; }
+.calendar-day.group:nth-child(26) { animation-delay: 0.75s; }
+.calendar-day.group:nth-child(27) { animation-delay: 0.77s; }
+.calendar-day.group:nth-child(28) { animation-delay: 0.79s; }
+.calendar-day.group:nth-child(29) { animation-delay: 0.81s; }
+.calendar-day.group:nth-child(30) { animation-delay: 0.83s; }
+.calendar-day.group:nth-child(31) { animation-delay: 0.85s; }
+.calendar-day.group:nth-child(32) { animation-delay: 0.87s; }
+.calendar-day.group:nth-child(33) { animation-delay: 0.89s; }
+.calendar-day.group:nth-child(34) { animation-delay: 0.91s; }
+.calendar-day.group:nth-child(35) { animation-delay: 0.93s; }
+
+/* 日程列表滚动条美化 */
+#view-schedule-list::-webkit-scrollbar,
+#view-schedule-calendar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#view-schedule-list::-webkit-scrollbar-track,
+#view-schedule-calendar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-schedule-list::-webkit-scrollbar-thumb,
+#view-schedule-calendar::-webkit-scrollbar-thumb {
+    background: #E5E6EB;
+    border-radius: 4px;
+}
+
+#view-schedule-list::-webkit-scrollbar-thumb:hover,
+#view-schedule-calendar::-webkit-scrollbar-thumb:hover {
+    background: #C9CDD4;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    #view-account-settings {
+        padding-bottom: 80px;
+    }
+
+    .ws-card {
+        border-radius: 12px;
+    }
+
+    .btn-primary {
+        padding: 8px 16px;
+        font-size: 11px;
+        border-radius: 10px;
+    }
+
+    .toggle-switch {
+        width: 40px;
+        height: 22px;
+    }
+
+    .toggle-switch::before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .peer:checked + .toggle-switch::before {
+        left: 20px;
+    }
+
+    /* 日程页面移动端适配 */
+    .schedule-card .p-4 {
+        padding: 12px;
+    }
+
+    .schedule-card .pl-5 {
+        padding-left: 16px;
+    }
+
+    .calendar-day {
+        min-height: 60px !important;
+    }
+
+    .calendar-event span:last-child {
+        display: none;
+    }
+
+    .calendar-event {
+        justify-content: center;
+    }
+}

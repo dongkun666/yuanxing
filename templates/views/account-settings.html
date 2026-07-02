@@ -1,385 +1,742 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-account-settings">
-<div class="w-full space-y-5">
-<!-- 个人资料 -->
-<div class="bg-white rounded-xl border border-bg-border p-6">
-<div class="flex items-center justify-between mb-5">
-<h3 class="text-base font-semibold text-fg-primary">个人资料</h3>
-<button class="px-5 py-2 text-xs font-semibold rounded-lg border border-brand text-brand hover:bg-brand-tint transition-colors" id="edit-profile-btn" onclick="toggleProfileEdit()">修改</button>
-</div>
-<div class="flex gap-8">
-<!-- 左侧：头像（可点击上传） -->
-<div class="flex-shrink-0 flex flex-col items-center gap-3">
-<div class="relative group cursor-pointer" onclick="document.getElementById('avatar-upload-input').click()">
-<div class="w-24 h-24 rounded-full bg-gradient-to-br from-[#E8F3FF] to-[#D6E4FF] flex items-center justify-center overflow-hidden border-2 border-bg-border" id="avatar-preview-display">
-<iconify-icon class="text-4xl text-brand" icon="mdi:account-circle" id="avatar-icon-display"></iconify-icon>
-<img class="hidden w-full h-full object-cover" id="avatar-image-display"/>
-</div>
-<div class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-<iconify-icon class="text-2xl text-white" icon="mdi:camera"></iconify-icon>
-</div>
-<div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border-2 border-brand flex items-center justify-center" id="avatar-progress-display">
-<iconify-icon class="text-sm text-brand animate-spin" icon="mdi:loading"></iconify-icon>
-</div>
-<div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-500 border-2 border-white flex items-center justify-center" id="avatar-success-display">
-<iconify-icon class="text-xs text-white" icon="mdi:check"></iconify-icon>
-</div>
-</div>
-<input accept="image/png,image/jpeg,image/jpg,image/webp" class="hidden" id="avatar-upload-input" onchange="handleAvatarUpload(event)" type="file"/>
-<p class="text-xs text-fg-tertiary">点击更换头像</p>
-<p class="text-[10px] text-fg-disabled">支持 JPG / PNG / WebP，建议 200×200</p>
-</div>
-<!-- 右侧：只读显示 -->
-<div class="flex-1" id="profile-display">
-<div class="grid grid-cols-2 gap-6">
-<div>
-<p class="text-xs text-fg-tertiary mb-1">姓名</p>
-<p class="text-sm font-medium text-fg-primary">张律师</p>
-</div>
-<div>
-<p class="text-xs text-fg-tertiary mb-1">手机号</p>
-<p class="text-sm font-medium text-fg-primary">138****6688</p>
-</div>
-<div>
-<p class="text-xs text-fg-tertiary mb-1">邮箱</p>
-<p class="text-sm font-medium text-fg-primary">zhanglvshi@lexprime.cn</p>
-</div>
-<div>
-<p class="text-xs text-fg-tertiary mb-1">律所/机构</p>
-<p class="text-sm font-medium text-fg-primary">元枢律师事务所</p>
-</div>
-<div>
-<p class="text-xs text-fg-tertiary mb-1">执业证号</p>
-<p class="text-sm font-medium text-fg-primary">京1234567890</p>
-</div>
-<div>
-<p class="text-xs text-fg-tertiary mb-1">专业领域</p>
-<div class="flex flex-wrap gap-1.5">
-<span class="inline-flex px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">民商事诉讼</span>
-<span class="inline-flex px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">劳动争议</span>
-<span class="inline-flex px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">合同纠纷</span>
-</div>
-</div>
-</div>
-<div class="mt-4 pt-4 border-t border-bg-border">
-<p class="text-xs text-fg-tertiary mb-1">个人简介</p>
-<p class="text-sm text-fg-secondary">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</p>
-</div>
-</div>
-<!-- 编辑表单（默认隐藏） -->
-<div class="flex-1 hidden" id="profile-edit">
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">姓名 <span class="text-red-400">*</span></label>
-<input class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" id="profile-name" type="text" value="张律师"/>
-</div>
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">手机号 <span class="text-red-400">*</span></label>
-<input class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" id="profile-phone" onblur="validateField(this, '请输入手机号')" oninput="autoSaveProfile()" required="" type="text" value="138****6688"/>
-</div>
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">邮箱</label>
-<input class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" id="profile-email" type="email" value="zhanglvshi@lexprime.cn"/>
-</div>
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">律所/机构</label>
-<input class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" id="profile-firm" type="text" value="元枢律师事务所"/>
-</div>
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">执业证号</label>
-<input class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" id="profile-license" type="text" value="京1234567890"/>
-</div>
-<div>
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">专业领域</label>
-<div class="flex flex-wrap gap-1.5" id="edit-skill-tags">
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">民商事诉讼 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">劳动争议 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-tint text-brand text-[10px] font-medium">合同纠纷 <button class="hover:text-red-500" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
-<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-bg text-fg-tertiary text-[10px] cursor-pointer hover:bg-brand-tint hover:text-brand" onclick="addTagInput(this); autoSaveProfile()">+ 添加</span>
-</div>
-</div>
-</div>
-<div class="mt-4">
-<label class="text-xs font-medium text-fg-secondary block mb-1.5">个人简介</label>
-<textarea class="w-full border border-bg-border rounded-lg px-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors resize-none" id="profile-bio" rows="3">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</textarea>
-</div>
-<div class="mt-4 flex justify-end gap-3">
-<button class="px-4 py-2.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="cancelProfileEdit()">取消</button>
-<button class="px-6 py-2.5 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-2" id="profile-save-btn" onclick="saveProfile()">
-<span id="save-btn-text">保存</span>
-<span class="hidden" id="save-btn-spinner"><iconify-icon class="animate-spin text-sm" icon="mdi:loading"></iconify-icon></span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- 安全设置 -->
-<div class="bg-white rounded-xl border border-bg-border p-6">
-<div class="flex items-center justify-between mb-5">
-<h3 class="text-base font-semibold text-fg-primary">安全设置</h3>
-<span class="text-[10px] bg-green-50 text-success font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
-<iconify-icon class="text-xs" icon="mdi:shield-check"></iconify-icon>
-                    安全等级：中
-                </span>
-</div>
-<div class="space-y-0 divide-y divide-bg">
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-bg-subtle flex items-center justify-center">
-<iconify-icon class="text-base text-fg-secondary" icon="mdi:lock-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">登录密码</p>
-<p class="text-xs text-fg-tertiary mt-0.5">上次修改：2026-06-01 · 强度：<span class="text-success font-medium">强</span></p>
-</div>
-</div>
-<button class="text-xs text-brand hover:underline font-medium" onclick="alert('修改密码\n\n请输入当前密码\n请输入新密码（至少8位，包含字母和数字）\n请确认新密码')">修改</button>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-bg-subtle flex items-center justify-center">
-<iconify-icon class="text-base text-fg-secondary" icon="mdi:shield-key-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">双因素认证 (2FA)</p>
-<p class="text-xs text-fg-tertiary mt-0.5">增加账号安全性，推荐开启</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="text-[10px] text-fg-disabled" id="2fa-status">未开启</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer" onchange="toggle2FA(this)" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-bg-subtle flex items-center justify-center">
-<iconify-icon class="text-base text-fg-secondary" icon="mdi:devices"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">登录设备管理</p>
-<p class="text-xs text-fg-tertiary mt-0.5">当前 2 台设备在线：Windows PC · iPhone 15</p>
-</div>
-</div>
-<button class="text-xs text-brand hover:underline font-medium" onclick="showDeviceManager()">管理</button>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-bg-subtle flex items-center justify-center">
-<iconify-icon class="text-base text-fg-secondary" icon="mdi:history"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">登录历史</p>
-<p class="text-xs text-fg-tertiary mt-0.5">上次登录：2026-08-21 14:30 · 北京市</p>
-</div>
-</div>
-<button class="text-xs text-brand hover:underline font-medium" onclick="alert('登录历史记录')">查看</button>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-danger-tint flex items-center justify-center">
-<iconify-icon class="text-base text-danger" icon="mdi:delete-alert-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">账号注销</p>
-<p class="text-xs text-fg-tertiary mt-0.5">注销后将永久清除所有数据，不可恢复</p>
-</div>
-</div>
-<button class="text-xs text-danger hover:underline font-medium" onclick="confirmAccountDeletion()">注销账号</button>
-</div>
-</div>
-</div>
-<!-- 消息通知设置 -->
-<div class="bg-white rounded-xl border border-bg-border p-6">
-<div class="flex items-center justify-between mb-5">
-<h3 class="text-base font-semibold text-fg-primary">消息通知设置</h3>
-<button class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors" onclick="saveNotificationSettings()">保存设置</button>
-</div>
-<div class="space-y-0 divide-y divide-bg">
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-base text-brand" icon="mdi:bell-ring-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">案件进展通知</p>
-<p class="text-xs text-fg-tertiary mt-0.5">开庭提醒、期限预警、文书审核结果等</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-base text-brand" icon="mdi:message-text-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">AI 对话消息</p>
-<p class="text-xs text-fg-tertiary mt-0.5">AI 分析完成、生成结果推送</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-warning-tint flex items-center justify-center">
-<iconify-icon class="text-base text-urgent" icon="mdi:calendar-alert-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">日程提醒</p>
-<p class="text-xs text-fg-tertiary mt-0.5">开庭前提醒、日程变更通知</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-base text-success" icon="mdi:bullhorn-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">系统公告</p>
-<p class="text-xs text-fg-tertiary mt-0.5">版本更新、功能上线、产品通知</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center">
-<iconify-icon class="text-base text-ai" icon="mdi:email-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">邮件通知</p>
-<p class="text-xs text-fg-tertiary mt-0.5">重要通知同步发送至绑定邮箱</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
-<iconify-icon class="text-base text-danger" icon="mdi:cellphone"></iconify-icon>
-</div>
-<div>
-<p class="text-sm text-fg-primary">短信通知</p>
-<p class="text-xs text-fg-tertiary mt-0.5">法定红线预警、紧急通知短信推送</p>
-</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
-<div class="w-9 h-5 bg-fg-disabled rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-4"></div>
-</label>
-</div>
-</div>
-</div>
-<!-- 第三方账号绑定 -->
-<div class="bg-white rounded-xl border border-bg-border p-6">
-<h3 class="text-base font-semibold text-fg-primary">第三方账号绑定</h3>
-<div class="mt-4 space-y-0 divide-y divide-bg">
-<!-- 微信 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-[#07C160]" icon="mdi:wechat"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">微信</p>
-<p class="text-xs text-fg-tertiary mt-0.5">可用于扫码登录、消息推送</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<span class="flex items-center gap-1 text-[10px] text-success bg-green-50 px-2 py-0.5 rounded font-medium">
-<iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon>
-                            已绑定
-                        </span>
-<button class="text-xs text-fg-tertiary hover:text-danger transition-colors" onclick="unbindAccount('微信')">解绑</button>
-</div>
-</div>
-<!-- 支付宝 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-xl text-[#1677FF]" icon="mdi:alipay"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">支付宝</p>
-<p class="text-xs text-fg-tertiary mt-0.5">可用于支付订阅费用</p>
-</div>
-</div>
-<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-brand text-brand hover:bg-brand-tint transition-colors" onclick="bindAccount('支付宝')">绑定</button>
-</div>
-<!-- 手机号 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-xl text-brand" icon="mdi:phone"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">手机号</p>
-<p class="text-xs text-fg-tertiary mt-0.5">138****6688 · 用于登录验证</p>
-</div>
-</div>
-<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="alert('更换手机号')">更换</button>
-</div>
-<!-- 邮箱 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-fg-tertiary" icon="mdi:email-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">邮箱</p>
-<p class="text-xs text-fg-tertiary mt-0.5">zhanglvshi@lexprime.cn · 接收通知</p>
-</div>
-</div>
-<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="alert('更换邮箱')">更换</button>
-</div>
-<!-- 飞书 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
-<iconify-icon class="text-xl text-[#3370FF]" icon="mdi:book-open-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">飞书</p>
-<p class="text-xs text-fg-tertiary mt-0.5">律所内部协作通知同步</p>
-</div>
-</div>
-<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-brand text-brand hover:bg-brand-tint transition-colors" onclick="bindAccount('飞书')">绑定</button>
-</div>
-<!-- 企业微信 -->
-<div class="flex items-center justify-between py-3.5">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-<iconify-icon class="text-xl text-[#07C160]" icon="mdi:briefcase-outline"></iconify-icon>
-</div>
-<div>
-<p class="text-sm font-medium text-fg-primary">企业微信</p>
-<p class="text-xs text-fg-tertiary mt-0.5">团队协作消息同步</p>
-</div>
-</div>
-<button class="px-4 py-1.5 text-xs font-medium rounded-lg border border-brand text-brand hover:bg-brand-tint transition-colors" onclick="bindAccount('企业微信')">绑定</button>
-</div>
-</div>
-</div>
-</div>
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto bg-bg" id="view-account-settings">
+<div class="max-w-6xl mx-auto w-full p-4 md:p-6 space-y-4 md:space-y-5">
+
+<!-- 页面标题 -->
+<div class="flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
+    <div>
+        <h2 class="text-xl font-bold text-fg-primary">账户设置</h2>
+        <p class="text-xs text-fg-tertiary mt-1">管理您的个人信息、安全设置和偏好配置</p>
+    </div>
+    <div class="hidden md:flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+            <iconify-icon icon="mdi:cog-outline" class="text-white text-lg"></iconify-icon>
+        </div>
+    </div>
 </div>
 
+<!-- 主体：左侧导航 + 右侧内容 -->
+<div class="flex flex-col lg:flex-row gap-4 md:gap-5">
 
+    <!-- 左侧导航菜单 -->
+    <div class="lg:w-56 flex-shrink-0" data-animate="slide-in-left" data-delay="0.05">
+        <div class="ws-card p-2 sticky top-4">
+            <nav class="space-y-1" id="settings-nav">
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 bg-gradient-to-r from-brand to-brand-hover text-white shadow-md shadow-brand/20" data-section="profile" onclick="switchSettingsSection('profile', this)">
+                    <iconify-icon icon="mdi:account-outline" class="text-lg"></iconify-icon>
+                    <span>个人资料</span>
+                </button>
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 text-fg-secondary hover:bg-bg-subtle hover:text-fg-primary group" data-section="security" onclick="switchSettingsSection('security', this)">
+                    <iconify-icon icon="mdi:shield-outline" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
+                    <span>安全设置</span>
+                </button>
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 text-fg-secondary hover:bg-bg-subtle hover:text-fg-primary group" data-section="notifications" onclick="switchSettingsSection('notifications', this)">
+                    <iconify-icon icon="mdi:bell-ring-outline" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
+                    <span>消息通知</span>
+                </button>
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 text-fg-secondary hover:bg-bg-subtle hover:text-fg-primary group" data-section="subscription" onclick="switchSettingsSection('subscription', this)">
+                    <iconify-icon icon="mdi:credit-card-multiple-outline" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
+                    <span>订阅管理</span>
+                </button>
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 text-fg-secondary hover:bg-bg-subtle hover:text-fg-primary group" data-section="third-party" onclick="switchSettingsSection('third-party', this)">
+                    <iconify-icon icon="mdi:link-variant" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
+                    <span>账号绑定</span>
+                </button>
+            </nav>
+
+            <!-- 当前套餐快捷信息 -->
+            <div class="mt-4 p-3 rounded-xl bg-gradient-to-br from-brand-tint3 to-brand-tint border border-brand-tint2 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-brand/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-sm">
+                            <iconify-icon icon="mdi:crown" class="text-white text-xs"></iconify-icon>
+                        </div>
+                        <span class="text-sm font-bold text-brand">专业版</span>
+                    </div>
+                    <p class="text-[10px] text-fg-tertiary mb-2">有效期至 2027-06-30</p>
+                    <button class="w-full py-1.5 text-[10px] font-semibold bg-white text-brand rounded-lg hover:bg-brand-tint2 transition-colors shadow-sm" onclick="switchSettingsSection('subscription', document.querySelector('[data-section=subscription]'))">
+                        管理订阅
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧内容区 -->
+    <div class="flex-1 min-w-0">
+
+        <!-- ====== 个人资料 Section ====== -->
+        <div class="settings-section space-y-4" id="section-profile">
+            <!-- 个人资料卡片 -->
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                            <iconify-icon icon="mdi:account-outline" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">个人资料</h3>
+                            <p class="text-[11px] text-fg-tertiary">完善您的个人信息，获得更好的服务体验</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 text-xs font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand/10 flex items-center gap-1.5" id="edit-profile-btn" onclick="toggleProfileEdit()">
+                        <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                        <span>修改</span>
+                    </button>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+                    <!-- 左侧：头像（可点击上传） -->
+                    <div class="flex-shrink-0 flex flex-col items-center gap-3">
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-upload-input').click()">
+                            <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center overflow-hidden border-2 border-white shadow-lg shadow-brand/10 group-hover:shadow-xl group-hover:shadow-brand/15 transition-all duration-300 group-hover:-translate-y-1" id="avatar-preview-display">
+                                <iconify-icon class="text-5xl text-brand" icon="mdi:account-circle" id="avatar-icon-display"></iconify-icon>
+                                <img class="hidden w-full h-full object-cover" id="avatar-image-display"/>
+                            </div>
+                            <div class="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                                <div class="text-center">
+                                    <iconify-icon class="text-2xl text-white mx-auto" icon="mdi:camera"></iconify-icon>
+                                    <p class="text-[10px] text-white mt-1">更换头像</p>
+                                </div>
+                            </div>
+                            <div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border-2 border-brand flex items-center justify-center shadow-md" id="avatar-progress-display">
+                                <iconify-icon class="text-sm text-brand animate-spin" icon="mdi:loading"></iconify-icon>
+                            </div>
+                            <div class="hidden absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-success border-2 border-white flex items-center justify-center shadow-md" id="avatar-success-display">
+                                <iconify-icon class="text-xs text-white" icon="mdi:check"></iconify-icon>
+                            </div>
+                        </div>
+                        <input accept="image/png,image/jpeg,image/jpg,image/webp" class="hidden" id="avatar-upload-input" onchange="handleAvatarUpload(event)" type="file"/>
+                        <p class="text-xs text-fg-tertiary">点击更换头像</p>
+                        <p class="text-[10px] text-fg-disabled">支持 JPG / PNG / WebP</p>
+                    </div>
+
+                    <!-- 右侧：只读显示 -->
+                    <div class="flex-1" id="profile-display">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:badge-account-outline" class="text-xs"></iconify-icon>
+                                    姓名
+                                </p>
+                                <p class="text-sm font-semibold text-fg-primary">张律师</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:phone-outline" class="text-xs"></iconify-icon>
+                                    手机号
+                                </p>
+                                <p class="text-sm font-semibold text-fg-primary">138****6688</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:email-outline" class="text-xs"></iconify-icon>
+                                    邮箱
+                                </p>
+                                <p class="text-sm font-semibold text-fg-primary">zhanglvshi@lexprime.cn</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:office-building-outline" class="text-xs"></iconify-icon>
+                                    律所/机构
+                                </p>
+                                <p class="text-sm font-semibold text-fg-primary">元枢律师事务所</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:card-account-details-outline" class="text-xs"></iconify-icon>
+                                    执业证号
+                                </p>
+                                <p class="text-sm font-semibold text-fg-primary">京1234567890</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                                <p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">
+                                    <iconify-icon icon="mdi:tag-multiple-outline" class="text-xs"></iconify-icon>
+                                    专业领域
+                                </p>
+                                <div class="flex flex-wrap gap-1.5 mt-0.5">
+                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">民商事诉讼</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">劳动争议</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">合同纠纷</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-bg-border">
+                            <p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">
+                                <iconify-icon icon="mdi:text-box-outline" class="text-xs"></iconify-icon>
+                                个人简介
+                            </p>
+                            <p class="text-sm text-fg-secondary leading-relaxed">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</p>
+                        </div>
+                    </div>
+
+                    <!-- 编辑表单（默认隐藏） -->
+                    <div class="flex-1 hidden" id="profile-edit">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">姓名 <span class="text-danger">*</span></label>
+                                <div class="relative">
+                                    <iconify-icon icon="mdi:badge-account-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                                    <input class="form-input w-full pl-9 pr-3" id="profile-name" type="text" value="张律师"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">手机号 <span class="text-danger">*</span></label>
+                                <div class="relative">
+                                    <iconify-icon icon="mdi:phone-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                                    <input class="form-input w-full pl-9 pr-3" id="profile-phone" onblur="validateField(this, '请输入手机号')" oninput="autoSaveProfile()" required="" type="text" value="138****6688"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">邮箱</label>
+                                <div class="relative">
+                                    <iconify-icon icon="mdi:email-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                                    <input class="form-input w-full pl-9 pr-3" id="profile-email" type="email" value="zhanglvshi@lexprime.cn"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">律所/机构</label>
+                                <div class="relative">
+                                    <iconify-icon icon="mdi:office-building-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                                    <input class="form-input w-full pl-9 pr-3" id="profile-firm" type="text" value="元枢律师事务所"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">执业证号</label>
+                                <div class="relative">
+                                    <iconify-icon icon="mdi:card-account-details-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                                    <input class="form-input w-full pl-9 pr-3" id="profile-license" type="text" value="京1234567890"/>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-fg-secondary block mb-1.5">专业领域</label>
+                                <div class="flex flex-wrap gap-1.5 min-h-[38px] p-2 border border-bg-border rounded-xl bg-white" id="edit-skill-tags">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">民商事诉讼 <button class="hover:text-danger transition-colors" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">劳动争议 <button class="hover:text-danger transition-colors" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand text-[10px] font-medium">合同纠纷 <button class="hover:text-danger transition-colors" onclick="removeTag(this); autoSaveProfile()"><iconify-icon class="text-xs" icon="mdi:close"></iconify-icon></button></span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-bg text-fg-tertiary text-[10px] cursor-pointer hover:bg-brand-tint hover:text-brand transition-colors" onclick="addTagInput(this); autoSaveProfile()">+ 添加</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs font-medium text-fg-secondary block mb-1.5">个人简介</label>
+                            <textarea class="form-input w-full resize-none" id="profile-bio" rows="3">专注民商事诉讼、劳动争议领域，从业10年，累计代理案件200+件。</textarea>
+                        </div>
+                        <div class="mt-5 flex justify-end gap-3">
+                            <button class="px-4 py-2.5 text-xs font-medium rounded-xl border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-300 hover:-translate-y-0.5" onclick="cancelProfileEdit()">取消</button>
+                            <button class="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2" id="profile-save-btn" onclick="saveProfile()">
+                                <span id="save-btn-text">保存</span>
+                                <span class="hidden" id="save-btn-spinner"><iconify-icon class="animate-spin text-sm" icon="mdi:loading"></iconify-icon></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 安全设置 Section ====== -->
+        <div class="settings-section space-y-4 hidden" id="section-security">
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-success flex items-center justify-center shadow-md shadow-success/20">
+                            <iconify-icon icon="mdi:shield-outline" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">安全设置</h3>
+                            <p class="text-[11px] text-fg-tertiary">保护您的账号安全，建议定期更新密码</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-gradient-to-r from-warning-tint to-orange-50 text-urgent font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 border border-warning-tint">
+                        <iconify-icon class="text-xs" icon="mdi:shield-half-full"></iconify-icon>
+                        安全等级：中
+                    </span>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- 登录密码 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-brand" icon="mdi:lock-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">登录密码</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">上次修改：2026-06-01 · 强度：<span class="text-success font-semibold">强</span></p>
+                            </div>
+                        </div>
+                        <button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors group-hover:-translate-x-0.5" onclick="alert('修改密码\n\n请输入当前密码\n请输入新密码（至少8位，包含字母和数字）\n请确认新密码')">
+                            修改
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+
+                    <!-- 双因素认证 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-wiki" icon="mdi:shield-key-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">双因素认证 (2FA)</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">增加账号安全性，推荐开启</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] text-fg-disabled" id="2fa-status">未开启</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input class="sr-only peer" onchange="toggle2FA(this)" type="checkbox"/>
+                                <div class="toggle-switch"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 登录设备管理 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-brand-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-brand" icon="mdi:devices"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">登录设备管理</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">当前 <span class="text-brand font-semibold">2</span> 台设备在线：Windows PC · iPhone 15</p>
+                            </div>
+                        </div>
+                        <button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors group-hover:-translate-x-0.5" onclick="showDeviceManager()">
+                            管理
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+
+                    <!-- 登录历史 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-50 to-bg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-fg-secondary" icon="mdi:history"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">登录历史</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">上次登录：2026-08-21 14:30 · 北京市</p>
+                            </div>
+                        </div>
+                        <button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors group-hover:-translate-x-0.5" onclick="alert('登录历史记录')">
+                            查看
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+
+                    <!-- 账号注销 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-danger-tint/30 transition-all duration-300 group border border-transparent hover:border-danger-tint">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-danger-tint to-red-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-danger" icon="mdi:delete-alert-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">账号注销</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">注销后将永久清除所有数据，不可恢复</p>
+                            </div>
+                        </div>
+                        <button class="text-xs text-danger hover:text-red-600 font-medium flex items-center gap-1 transition-colors group-hover:-translate-x-0.5" onclick="confirmAccountDeletion()">
+                            注销账号
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 消息通知 Section ====== -->
+        <div class="settings-section space-y-4 hidden" id="section-notifications">
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                            <iconify-icon icon="mdi:bell-ring-outline" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">消息通知设置</h3>
+                            <p class="text-[11px] text-fg-tertiary">自定义您的通知偏好，不错过重要信息</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary px-4 py-2 text-xs font-semibold flex items-center gap-1.5" onclick="saveNotificationSettings()">
+                        <iconify-icon icon="mdi:content-save-outline" class="text-sm"></iconify-icon>
+                        保存设置
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- 案件进展通知 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-brand" icon="mdi:briefcase-clock-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">案件进展通知</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">开庭提醒、期限预警、文书审核结果等</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+
+                    <!-- AI 对话消息 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-wiki" icon="mdi:message-text-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">AI 对话消息</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">AI 分析完成、生成结果推送</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+
+                    <!-- 日程提醒 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-warning-tint to-orange-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-urgent" icon="mdi:calendar-alert-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">日程提醒</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">开庭前提醒、日程变更通知</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+
+                    <!-- 系统公告 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-success" icon="mdi:bullhorn-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">系统公告</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">版本更新、功能上线、产品通知</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+
+                    <!-- 邮件通知 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ai-tint to-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-ai" icon="mdi:email-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">邮件通知</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">重要通知同步发送至绑定邮箱</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+
+                    <!-- 短信通知 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-danger-tint to-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-base text-danger" icon="mdi:cellphone-text"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">短信通知</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">法定红线预警、紧急通知短信推送</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input checked="" class="sr-only peer notif-toggle" type="checkbox"/>
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 订阅管理 Section ====== -->
+        <div class="settings-section space-y-4 hidden" id="section-subscription">
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-orange-200">
+                            <iconify-icon icon="mdi:crown" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">订阅管理</h3>
+                            <p class="text-[11px] text-fg-tertiary">选择适合您的套餐，解锁全部功能</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 月/年付切换 -->
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <span class="text-xs font-medium" id="monthly-label">月付</span>
+                    <div class="relative cursor-pointer" id="billing-toggle" onclick="toggleBilling()">
+                        <div class="w-12 h-6 bg-brand rounded-full transition-colors"></div>
+                        <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform" id="billing-knob"></div>
+                    </div>
+                    <span class="text-xs font-medium text-fg-tertiary" id="yearly-label">年付</span>
+                    <span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full font-medium">省 ¥1,189</span>
+                </div>
+
+                <!-- 套餐卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- 免费版 -->
+                    <div class="relative p-5 rounded-2xl border border-bg-border bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="text-center mb-4">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-gray-100 to-bg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="mdi:seed-outline" class="text-2xl text-fg-tertiary"></iconify-icon>
+                            </div>
+                            <h4 class="text-base font-bold text-fg-primary">免费版</h4>
+                            <p class="text-[11px] text-fg-tertiary mt-1">基础功能体验</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="text-2xl font-bold text-fg-primary">¥0</span>
+                            <span class="text-xs text-fg-tertiary">/月</span>
+                        </div>
+                        <ul class="space-y-2 mb-5">
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                每日 3 次 AI 对话
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                基础案件管理
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                5 个客户档案
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-disabled">
+                                <iconify-icon icon="mdi:close" class="text-sm"></iconify-icon>
+                                类案检索
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-disabled">
+                                <iconify-icon icon="mdi:close" class="text-sm"></iconify-icon>
+                                文书生成
+                            </li>
+                        </ul>
+                        <button class="w-full py-2.5 text-xs font-semibold rounded-xl border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-300" onclick="showPayment('free')">
+                            当前使用
+                        </button>
+                    </div>
+
+                    <!-- 专业版（当前套餐） -->
+                    <div class="relative p-5 rounded-2xl bg-gradient-to-br from-brand to-brand-hover text-white shadow-xl shadow-brand/30 hover:shadow-2xl hover:shadow-brand/40 hover:-translate-y-1.5 transition-all duration-300 group transform md:-translate-y-2">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-bold rounded-full shadow-lg">
+                            当前套餐
+                        </div>
+                        <div class="text-center mb-4 pt-2">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <iconify-icon icon="mdi:crown" class="text-2xl text-white"></iconify-icon>
+                            </div>
+                            <h4 class="text-base font-bold text-white">专业版</h4>
+                            <p class="text-[11px] text-white/70 mt-1">最适合个人律师</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="text-2xl font-bold text-white" id="pro-price">¥299</span>
+                            <span class="text-xs text-white/70" id="pro-period">/月</span>
+                            <p class="text-[10px] text-white/80 mt-1" id="pro-tip">最适合个人律师</p>
+                        </div>
+                        <ul class="space-y-2 mb-5">
+                            <li class="flex items-center gap-2 text-xs text-white/90">
+                                <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                                无限 AI 对话
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-white/90">
+                                <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                                无限案件管理
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-white/90">
+                                <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                                智能类案检索
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-white/90">
+                                <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                                AI 文书生成
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-white/90">
+                                <iconify-icon icon="mdi:check-circle" class="text-white text-sm"></iconify-icon>
+                                合同审查
+                            </li>
+                        </ul>
+                        <button class="w-full py-2.5 text-xs font-bold rounded-xl bg-white text-brand hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl" onclick="showPayment('professional')">
+                            立即续费
+                        </button>
+                    </div>
+
+                    <!-- 企业版 -->
+                    <div class="relative p-5 rounded-2xl border border-bg-border bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="text-center mb-4">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md shadow-wiki/20">
+                                <iconify-icon icon="mdi:domain" class="text-2xl text-white"></iconify-icon>
+                            </div>
+                            <h4 class="text-base font-bold text-fg-primary">企业版</h4>
+                            <p class="text-[11px] text-fg-tertiary mt-1">适合律所及团队</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="text-2xl font-bold text-fg-primary" id="enterprise-price">¥899</span>
+                            <span class="text-xs text-fg-tertiary" id="enterprise-period">/月</span>
+                            <p class="text-[10px] text-fg-tertiary mt-1" id="enterprise-tip">适合律所及团队</p>
+                        </div>
+                        <ul class="space-y-2 mb-5">
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                专业版全部功能
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                多人协作 (10人)
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                团队知识库
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                数据统计分析
+                            </li>
+                            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                                <iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon>
+                                专属客服支持
+                            </li>
+                        </ul>
+                        <button class="w-full py-2.5 text-xs font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300" onclick="showPayment('enterprise')">
+                            升级企业版
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 账号绑定 Section ====== -->
+        <div class="settings-section space-y-4 hidden" id="section-third-party">
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-brand flex items-center justify-center shadow-md shadow-brand/20">
+                            <iconify-icon icon="mdi:link-variant" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">第三方账号绑定</h3>
+                            <p class="text-[11px] text-fg-tertiary">绑定第三方账号，享受更便捷的登录和服务</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- 微信 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-wechat" icon="mdi:wechat"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">微信</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">可用于扫码登录、消息推送</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center gap-1 text-[10px] text-success bg-success-tint px-2.5 py-1 rounded-full font-semibold">
+                                <iconify-icon class="text-xs" icon="mdi:check-circle"></iconify-icon>
+                                已绑定
+                            </span>
+                            <button class="text-xs text-fg-tertiary hover:text-danger transition-colors" onclick="unbindAccount('微信')">解绑</button>
+                        </div>
+                    </div>
+
+                    <!-- 支付宝 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-tint to-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-brand" icon="mdi:alipay"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">支付宝</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">可用于支付订阅费用</p>
+                            </div>
+                        </div>
+                        <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="bindAccount('支付宝')">绑定</button>
+                    </div>
+
+                    <!-- 手机号 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-brand" icon="mdi:phone"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">手机号</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">138****6688 · 用于登录验证</p>
+                            </div>
+                        </div>
+                        <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="alert('更换手机号')">更换</button>
+                    </div>
+
+                    <!-- 邮箱 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-50 to-bg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-fg-tertiary" icon="mdi:email-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">邮箱</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">zhanglvshi@lexprime.cn · 接收通知</p>
+                            </div>
+                        </div>
+                        <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="alert('更换邮箱')">更换</button>
+                    </div>
+
+                    <!-- 飞书 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-[#3370FF]" icon="mdi:book-open-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">飞书</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">律所内部协作通知同步</p>
+                            </div>
+                        </div>
+                        <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="bindAccount('飞书')">绑定</button>
+                    </div>
+
+                    <!-- 企业微信 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <iconify-icon class="text-2xl text-wechat" icon="mdi:briefcase-outline"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-fg-primary">企业微信</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">团队协作消息同步</p>
+                            </div>
+                        </div>
+                        <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="bindAccount('企业微信')">绑定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</div>
+</div>
