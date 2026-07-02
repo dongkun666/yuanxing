@@ -1,0 +1,42 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-var": "off",
+    "strict": ["error", "function"],
+    "no-unused-vars": ["warn", { "varsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-alert": "warn",
+    "eqeqeq": ["error", "always"],
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-extra-semi": "error",
+    "semi": ["error", "always"],
+    "no-trailing-spaces": "error",
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "space-before-function-paren": ["error", "always"],
+    "indent": ["error", 4],
+    "max-len": ["warn", { "code": 120 }],
+    "no-duplicate-imports": "warn",
+    "no-redeclare": ["error", { "builtinGlobals": true }],
+    "no-self-assign": "error",
+    "no-self-compare": "error",
+    "no-unreachable": "error",
+    "no-unsafe-negation": "error",
+    "valid-typeof": "error",
+    "curly": ["error", "all"],
+    "no-eq-null": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-global-assign": "error"
+  }
+}

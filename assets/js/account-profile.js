@@ -286,28 +286,29 @@
         } else {
             el.classList.remove('border-red-400', 'bg-[#FFF0F0]');
             el.classList.add('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (errorEl) errorEl.remove();
+            var phoneErrorEl = el.parentNode.querySelector('.field-error');
+            if (phoneErrorEl) phoneErrorEl.remove();
         }
     }
 
     function validateEmail(el) {
         var val = el.value.trim();
+        var emailErrorEl;
         if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
             el.classList.add('border-[#FAAD14]', 'bg-[#FFF7E6]');
             el.classList.remove('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (!errorEl) {
-                errorEl = document.createElement('p');
-                errorEl.className = 'field-error text-[10px] text-[#FAAD14] mt-1';
-                errorEl.textContent = '邮箱格式不正确';
-                el.parentNode.appendChild(errorEl);
+            emailErrorEl = el.parentNode.querySelector('.field-error');
+            if (!emailErrorEl) {
+                emailErrorEl = document.createElement('p');
+                emailErrorEl.className = 'field-error text-[10px] text-[#FAAD14] mt-1';
+                emailErrorEl.textContent = '邮箱格式不正确';
+                el.parentNode.appendChild(emailErrorEl);
             }
         } else {
             el.classList.remove('border-[#FAAD14]', 'bg-[#FFF7E6]');
             el.classList.add('border-[#E5E6EB]');
-            var errorEl = el.parentNode.querySelector('.field-error');
-            if (errorEl) errorEl.remove();
+            emailErrorEl = el.parentNode.querySelector('.field-error');
+            if (emailErrorEl) emailErrorEl.remove();
         }
     }
 

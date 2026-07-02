@@ -183,16 +183,16 @@
 
         var now = new Date();
         var orderNo = 'LP' + now.getFullYear() +
-            String(now.getMonth()+1).padStart(2,'0') +
-            String(now.getDate()).padStart(2,'0') + '001';
+            String(now.getMonth()+1).padStart(2, '0') +
+            String(now.getDate()).padStart(2, '0') + '001';
         document.getElementById('success-order-no').textContent = orderNo;
 
         var expiry = new Date(now);
         expiry.setMonth(expiry.getMonth() + 1);
         document.getElementById('success-expiry').textContent =
             expiry.getFullYear() + '-' +
-            String(expiry.getMonth()+1).padStart(2,'0') + '-' +
-            String(expiry.getDate()).padStart(2,'0');
+            String(expiry.getMonth()+1).padStart(2, '0') + '-' +
+            String(expiry.getDate()).padStart(2, '0');
 
         document.querySelectorAll('.view-content').forEach(function(v) {
             v.classList.add('hidden');

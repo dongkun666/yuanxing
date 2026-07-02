@@ -1,227 +1,219 @@
-/**
- * AI 对话模块 - AI 助手 + 历史 + AI 一键提取
- * 包含: AI 标签切换 + 新建对话 + 历史搜索 + 提取要素
- * 加载: 在 script.js 之前同步加载
- */
+(function () {
+    'use strict';
 
+    function switchAITab(tab) {
+        document.querySelectorAll('.ai-subtab-btn').forEach(function (btn) {
+            btn.classList.remove('active');
+        });
+        var activeBtn = document.querySelector('.ai-subtab-btn[data-ai-tab="' + tab + '"]');
+        if (activeBtn) activeBtn.classList.add('active');
 
-        function switchAITab(tab) {
-            // 切换按钮高亮
-            document.querySelectorAll('.ai-subtab-btn').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            var activeBtn = document.querySelector('.ai-subtab-btn[data-ai-tab="' + tab + '"]');
-            if (activeBtn) activeBtn.classList.add('active');
+        document.getElementById('aiTabNew').classList.add('hidden');
+        document.getElementById('aiTabSkills').classList.add('hidden');
+        document.getElementById('aiTabHistory').classList.add('hidden');
 
-            // 切换内容区
-            document.getElementById('aiTabNew').classList.add('hidden');
-            document.getElementById('aiTabSkills').classList.add('hidden');
-            document.getElementById('aiTabHistory').classList.add('hidden');
-
-            if (tab === 'new') {
-                document.getElementById('aiTabNew').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.remove('hidden');
-            } else if (tab === 'skills') {
-                document.getElementById('aiTabSkills').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.add('hidden');
-            } else if (tab === 'history') {
-                document.getElementById('aiTabHistory').classList.remove('hidden');
-                document.getElementById('aiChatInput').classList.add('hidden');
-            }
-
-            // 重置滚动
-            document.getElementById('aiSubContent').scrollTop = 0;
+        if (tab === 'new') {
+            document.getElementById('aiTabNew').classList.remove('hidden');
+            document.getElementById('aiChatInput').classList.remove('hidden');
+        } else if (tab === 'skills') {
+            document.getElementById('aiTabSkills').classList.remove('hidden');
+            document.getElementById('aiChatInput').classList.add('hidden');
+        } else if (tab === 'history') {
+            document.getElementById('aiTabHistory').classList.remove('hidden');
+            document.getElementById('aiChatInput').classList.add('hidden');
         }
 
-        function startNewChat() {
-            // 清空侧边栏聊天消息
-            var chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) {
-                chatMessages.innerHTML = '';
-            }
-            // 清空右侧主视图聊天消息
-            var aiViewMessages = document.getElementById('aiViewMessages');
-            if (aiViewMessages) {
-                aiViewMessages.innerHTML = '';
-            }
-            // 添加系统欢迎消息到侧边栏
-            var welcomeHtml = '<div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0"><iconify-icon icon="mdi:robot" class="text-white text-sm"></iconify-icon></div><div class="bg-[#F2F3F5] rounded-xl px-3 py-2 text-xs text-gray-700"><p>您好！我是 LexPrime AI 助手，可以帮您：</p><ul class="list-disc pl-4 mt-1 space-y-0.5"><li>起草法律文书</li><li>检索类案与法条</li><li>分析案件策略</li><li>审查合同风险</li></ul><p class="mt-1">请问有什么可以帮您的？</p></div></div>';
-            
-            var chatArea = document.querySelector('#chatPanel .flex-1.overflow-y-auto');
-            if (chatArea) chatArea.innerHTML = welcomeHtml;
-            
-            if (aiViewMessages) {
-                aiViewMessages.innerHTML = '<div class="flex items-start gap-2.5 px-4 py-3">' +
-                    '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0 shadow-sm">' +
-                        '<iconify-icon icon="mdi:robot" class="text-white text-base"></iconify-icon>' +
-                    '</div>' +
-                    '<div class="bg-white rounded-xl px-3.5 py-2.5 text-xs text-gray-700 shadow-sm max-w-[80%]">' +
-                        '<p>您好！我是 LexPrime AI 助手，可以帮您起草文书、检索类案、分析策略、审查合同。请问有什么可以帮您的？</p>' +
-                    '</div>' +
+        document.getElementById('aiSubContent').scrollTop = 0;
+    }
+
+    function startNewChat() {
+        var chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.innerHTML = '';
+        }
+        var aiViewMessages = document.getElementById('aiViewMessages');
+        if (aiViewMessages) {
+            aiViewMessages.innerHTML = '';
+        }
+        var welcomeHtml =
+            '<div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0"><iconify-icon icon="mdi:robot" class="text-white text-sm"></iconify-icon></div><div class="bg-[#F2F3F5] rounded-xl px-3 py-2 text-xs text-gray-700"><p>您好！我是 LexPrime AI 助手，可以帮您：</p><ul class="list-disc pl-4 mt-1 space-y-0.5"><li>起草法律文书</li><li>检索类案与法条</li><li>分析案件策略</li><li>审查合同风险</li></ul><p class="mt-1">请问有什么可以帮您的？</p></div></div>';
+
+        var chatArea = document.querySelector('#chatPanel .flex-1.overflow-y-auto');
+        if (chatArea) chatArea.innerHTML = welcomeHtml;
+
+        if (aiViewMessages) {
+            aiViewMessages.innerHTML =
+                '<div class="flex items-start gap-2.5 px-4 py-3">' +
+                '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#165DFF] to-[#5B8FF9] flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                '<iconify-icon icon="mdi:robot" class="text-white text-base"></iconify-icon>' +
+                '</div>' +
+                '<div class="bg-white rounded-xl px-3.5 py-2.5 text-xs text-gray-700 shadow-sm max-w-[80%]">' +
+                '<p>您好！我是 LexPrime AI 助手，可以帮您起草文书、检索类案、分析策略、审查合同。请问有什么可以帮您的？</p>' +
+                '</div>' +
                 '</div>';
+        }
+    }
+
+    function selectHistory(el) {
+        var title = el.getAttribute('data-title') || '历史对话';
+        switchAITab('new');
+
+        var msgList = document.getElementById('chatMessages');
+        msgList.innerHTML =
+            '' +
+            '<div class="flex gap-2.5 chat-message-ai">' +
+            '<div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0 mt-0.5">' +
+            '<iconify-icon class="text-[10px]" icon="mdi:robot"></iconify-icon>' +
+            '</div>' +
+            '<div class="chat-bubble-ai max-w-[85%]">' +
+            '<p class="text-xs leading-relaxed text-[#4E5969]">已切换到对话：「<span class="font-medium text-[#165DFF]">' +
+            title +
+            '</span>」</p>' +
+            '<div class="flex items-center gap-2 mt-1.5">' +
+            '<span class="text-[10px] text-[#86909C]">刚刚</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        document.getElementById('aiSubContent').scrollTop = 0;
+    }
+
+    function filterHistory() {
+        var keyword = document.getElementById('historySearch').value.toLowerCase().trim();
+        var items = document.querySelectorAll('#historyList .history-item');
+        items.forEach(function (item) {
+            var title = item.getAttribute('data-title') || '';
+            if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
             }
+        });
+    }
+
+    function switchAIView(viewId, el) {
+        document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(function (item) {
+            item.classList.remove('active');
+        });
+        if (el) el.classList.add('active');
+
+        var aiViewChat = document.getElementById('aiViewChat');
+        var aiViewSkills = document.getElementById('aiViewSkills');
+        var aiViewHistory = document.getElementById('aiViewHistory');
+
+        var viewAI = document.getElementById('view-ai');
+        if (!viewAI) {
+            loadView('ai', function (html) {
+                document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
+                switchAIViewSubView(viewId);
+            });
+            return;
         }
 
-        function selectHistory(el) {
-            var title = el.getAttribute('data-title') || '历史对话';
-            // 切换到新对话标签页
-            switchAITab('new');
+        if (aiViewChat) aiViewChat.classList.add('hidden');
+        if (aiViewSkills) aiViewSkills.classList.add('hidden');
+        if (aiViewHistory) aiViewHistory.classList.add('hidden');
 
-            // 清空消息列表，显示新欢迎语+用户模拟消息
-            var msgList = document.getElementById('chatMessages');
-            msgList.innerHTML = '' +
-                '<div class="flex gap-2.5 chat-message-ai">' +
-                  '<div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0 mt-0.5">' +
-                    '<iconify-icon class="text-[10px]" icon="mdi:robot"></iconify-icon>' +
-                  '</div>' +
-                  '<div class="chat-bubble-ai max-w-[85%]">' +
-                    '<p class="text-xs leading-relaxed text-[#4E5969]">已切换到对话：「<span class="font-medium text-[#165DFF]">' + title + '</span>」</p>' +
-                    '<div class="flex items-center gap-2 mt-1.5">' +
-                      '<span class="text-[10px] text-[#86909C]">刚刚</span>' +
-                    '</div>' +
-                  '</div>' +
+        switchAIViewSubView(viewId);
+    }
+
+    function switchAIViewSubView(viewId) {
+        var aiViewChat = document.getElementById('aiViewChat');
+        var aiViewSkills = document.getElementById('aiViewSkills');
+        var aiViewHistory = document.getElementById('aiViewHistory');
+
+        if (viewId === 'chat' && aiViewChat) {
+            aiViewChat.classList.remove('hidden');
+        } else if (viewId === 'skills' && aiViewSkills) {
+            aiViewSkills.classList.remove('hidden');
+        } else if (viewId === 'history' && aiViewHistory) {
+            aiViewHistory.classList.remove('hidden');
+        }
+    }
+
+    function selectAIHistory(el) {
+        var title = el.getAttribute('data-title') || '历史对话';
+        var aiTabs = document.querySelectorAll('#sidebarTabAI .sidebar-item');
+        aiTabs.forEach(function (item) {
+            item.classList.remove('active');
+        });
+        if (aiTabs[0]) aiTabs[0].classList.add('active');
+
+        document.getElementById('aiViewChat').classList.remove('hidden');
+        document.getElementById('aiViewSkills').classList.add('hidden');
+        document.getElementById('aiViewHistory').classList.add('hidden');
+
+        var msgList = document.getElementById('aiViewMessages');
+        if (msgList) {
+            msgList.innerHTML =
+                '' +
+                '<div class="flex gap-3">' +
+                '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">' +
+                '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
+                '</div>' +
+                '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-[#E5E6EB]">' +
+                '<p class="text-sm leading-relaxed text-[#4E5969]">已切换到对话：<span class="font-semibold text-[#165DFF]">' +
+                title +
+                '</span></p>' +
+                '<span class="text-[11px] text-[#86909C] mt-2 block">刚刚</span>' +
+                '</div>' +
                 '</div>';
-
-            document.getElementById('aiSubContent').scrollTop = 0;
         }
+    }
 
-        function filterHistory() {
-            var keyword = document.getElementById('historySearch').value.toLowerCase().trim();
-            var items = document.querySelectorAll('#historyList .history-item');
-            items.forEach(function(item) {
-                var title = item.getAttribute('data-title') || '';
-                if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function switchAIView(viewId, el) {
-            // 更新侧边栏菜单高亮
-            document.querySelectorAll('#sidebarTabAI .sidebar-item').forEach(function(item) { item.classList.remove('active'); });
-            if (el) el.classList.add('active');
-            
-            // 获取AI子视图元素
-            var aiViewChat = document.getElementById('aiViewChat');
-            var aiViewSkills = document.getElementById('aiViewSkills');
-            var aiViewHistory = document.getElementById('aiViewHistory');
-            
-            // 如果AI视图尚未加载，先加载它
-            var viewAI = document.getElementById('view-ai');
-            if (!viewAI) {
-                loadView('ai', function(html) {
-                    document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
-                    // 加载完成后切换子视图
-                    switchAIViewSubView(viewId);
-                });
-                return;
+    function filterAIHistory(input) {
+        var keyword = input.value.toLowerCase().trim();
+        var items = document.querySelectorAll('#aiHistoryList > div');
+        items.forEach(function (item) {
+            var title = item.getAttribute('data-title') || '';
+            if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
             }
-            
-            // 隐藏所有AI子视图
-            if (aiViewChat) aiViewChat.classList.add('hidden');
-            if (aiViewSkills) aiViewSkills.classList.add('hidden');
-            if (aiViewHistory) aiViewHistory.classList.add('hidden');
-            
-            // 显示目标视图
-            switchAIViewSubView(viewId);
-        }
+        });
+    }
 
-        function switchAIViewSubView(viewId) {
-            var aiViewChat = document.getElementById('aiViewChat');
-            var aiViewSkills = document.getElementById('aiViewSkills');
-            var aiViewHistory = document.getElementById('aiViewHistory');
-            
-            if (viewId === 'chat' && aiViewChat) {
-                aiViewChat.classList.remove('hidden');
-            } else if (viewId === 'skills' && aiViewSkills) {
-                aiViewSkills.classList.remove('hidden');
-            } else if (viewId === 'history' && aiViewHistory) {
-                aiViewHistory.classList.remove('hidden');
+    function toggleMoreMenu(tab) {
+        var menuId = tab === 'work' ? 'moreMenuWork' : 'moreMenuAI';
+        var menu = document.getElementById(menuId);
+        var otherId = tab === 'work' ? 'moreMenuAI' : 'moreMenuWork';
+        var otherMenu = document.getElementById(otherId);
+        if (otherMenu) otherMenu.classList.add('hidden');
+        menu.classList.toggle('hidden');
+    }
+
+    function handleMoreAction(action) {
+        document.getElementById('moreMenuWork').classList.add('hidden');
+        document.getElementById('moreMenuAI').classList.add('hidden');
+        if (action === 'settings') {
+            switchSidebarTab('work');
+            switchView('account-settings');
+        } else if (action === 'check-update') {
+            var current = window.APP_VERSION || '0.7.0';
+            if (typeof showToast === 'function') {
+                showToast('当前版本: v' + current + ' · 已是最新版本');
+            }
+        } else if (action === 'feedback') {
+            openFeedbackModal();
+        } else if (action === 'guide') {
+            openUserGuideModal();
+        } else if (action === 'contact') {
+            openContactModal();
+        } else if (action === 'logout') {
+            if (confirm('确认退出登录？')) {
+                if (typeof Auth !== 'undefined' && Auth.logout) {
+                    Auth.logout();
+                }
+                showToast('已退出登录');
             }
         }
-
-        function selectAIHistory(el) {
-            var title = el.getAttribute('data-title') || '历史对话';
-            // 切换到新对话视图
-            var aiTabs = document.querySelectorAll('#sidebarTabAI .sidebar-item');
-            aiTabs.forEach(item => item.classList.remove('active'));
-            if (aiTabs[0]) aiTabs[0].classList.add('active');
-            
-            document.getElementById('aiViewChat').classList.remove('hidden');
-            document.getElementById('aiViewSkills').classList.add('hidden');
-            document.getElementById('aiViewHistory').classList.add('hidden');
-            
-            var msgList = document.getElementById('aiViewMessages');
-            if (msgList) {
-                msgList.innerHTML = '' +
-                    '<div class="flex gap-3">' +
-                      '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">' +
-                        '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
-                      '</div>' +
-                      '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-[#E5E6EB]">' +
-                        '<p class="text-sm leading-relaxed text-[#4E5969]">已切换到对话：<span class="font-semibold text-[#165DFF]">' + title + '</span></p>' +
-                        '<span class="text-[11px] text-[#86909C] mt-2 block">刚刚</span>' +
-                      '</div>' +
-                    '</div>';
-            }
-        }
-
-        function filterAIHistory(input) {
-            var keyword = input.value.toLowerCase().trim();
-            var items = document.querySelectorAll('#aiHistoryList > div');
-            items.forEach(function(item) {
-                var title = item.getAttribute('data-title') || '';
-                if (!keyword || title.toLowerCase().indexOf(keyword) !== -1) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function toggleMoreMenu(tab) {
-            var menuId = tab === 'work' ? 'moreMenuWork' : 'moreMenuAI';
-            var menu = document.getElementById(menuId);
-            // 关闭另一个菜单（如果有打开的）
-            var otherId = tab === 'work' ? 'moreMenuAI' : 'moreMenuWork';
-            var otherMenu = document.getElementById(otherId);
-            if (otherMenu) otherMenu.classList.add('hidden');
-            // 切换当前菜单
-            menu.classList.toggle('hidden');
-        }
-
-        function handleMoreAction(action) {
-            document.getElementById('moreMenuWork').classList.add('hidden');
-            document.getElementById('moreMenuAI').classList.add('hidden');
-            if (action === 'settings') {
-                switchSidebarTab('work');
-                switchView('account-settings');
-            } else if (action === 'check-update') {
-                var current = (window.APP_VERSION || '0.7.0');
-                if (typeof showToast === 'function') {
-                    showToast('当前版本: v' + current + ' · 已是最新版本');
-                }
-            } else if (action === 'feedback') {
-                openFeedbackModal();
-            } else if (action === 'guide') {
-                openUserGuideModal();
-            } else if (action === 'contact') {
-                openContactModal();
-            } else if (action === 'logout') {
-                if (confirm('确认退出登录？')) {
-                    if (typeof Auth !== 'undefined' && Auth.logout) {
-                        Auth.logout();
-                    }
-                    showToast('已退出登录');
-                }
-            }
-        }
+    }
 
     function selectExtractSource(btn, source) {
-        document.querySelectorAll('.extract-source-btn').forEach(function(b) {
-            b.className = 'extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
+        document.querySelectorAll('.extract-source-btn').forEach(function (b) {
+            b.className =
+                'extract-source-btn text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200';
         });
         btn.className = 'extract-source-btn text-xs px-3 py-1.5 rounded-full bg-[#165DFF] text-white';
         AppState.selectedExtractSource = source;
@@ -234,7 +226,7 @@
     function startAIExtract() {
         document.getElementById('extract-loading').classList.remove('hidden');
         document.getElementById('extract-result-area').classList.add('hidden');
-        setTimeout(function() {
+        setTimeout(function () {
             document.getElementById('extract-loading').classList.add('hidden');
             document.getElementById('extract-result-area').classList.remove('hidden');
         }, 2000);
@@ -248,9 +240,6 @@
         alert('报告已导出为Markdown格式（演示功能）');
     }
 
-    // ===== AI 对话流式输出 =====
-
-    // Enter 发送 / Shift+Enter 换行
     function handleAIInputKeydown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -258,11 +247,9 @@
         }
     }
 
-    // Mock AI 回复生成器 (按用户输入关键词分支)
     function generateMockAIReply(userInput) {
         var input = (userInput || '').trim().toLowerCase();
         if (!input) return '您好！请问有什么可以帮您的？';
-        // 关键词路由
         if (input.indexOf('起诉状') >= 0 || input.indexOf('起诉') >= 0 || input.indexOf('诉状') >= 0) {
             return '好的！我来帮您起草起诉状。\n\n为了确保起诉状内容准确, 我需要了解以下信息:\n\n1. **原被告基本信息**: 姓名/名称、住所地、统一社会信用代码 (法人)\n2. **诉讼请求**: 例如要求被告支付货款 XX 元及利息\n3. **事实与理由**: 合同签订时间、主要条款、履行情况、违约事实\n4. **证据清单**: 合同、付款凭证、对账单、催款函等\n\n您可以分条告诉我, 也可以直接描述案件情况, 我会按《民事诉讼法》第 122 条规定的起诉条件为您起草。';
         }
@@ -281,11 +268,13 @@
         if (input.indexOf('你好') >= 0 || input.indexOf('您好') >= 0 || input.indexOf('hi') >= 0) {
             return '您好！我是 LexPrime AI 助手, 可以帮您:\n\n- 起草法律文书 (起诉状 / 答辩状 / 合同 / 律师函等)\n- 审查合同风险\n- 检索类案与法条\n- 整理证据清单\n- 分析案件策略\n\n请问今天想处理什么法律事务?';
         }
-        // 通用回复
-        return '我已收到您的问题:「' + userInput + '」\n\n针对您的提问, 我建议按以下思路处理:\n\n1. **明确问题核心**: 先把争议焦点拆成 1-2 个核心法律问题\n2. **查找法律依据**: 检索相关法条 + 类案裁判口径\n3. **整理事实与证据**: 按时间线梳理, 区分主张与反驳\n4. **形成方案**: 文书 / 谈判 / 调解 / 诉讼 多种路径组合\n\n您可以补充更多案件细节, 例如:\n- 案件类型 (合同 / 侵权 / 婚姻 / 劳动 / 知识产权 等)\n- 当事人诉求\n- 当前所处阶段 (协商 / 起诉前 / 已立案 / 审理中)\n\n我可以进一步帮您出具针对性的方案。';
+        return (
+            '我已收到您的问题:「' +
+            userInput +
+            '」\n\n针对您的提问, 我建议按以下思路处理:\n\n1. **明确问题核心**: 先把争议焦点拆成 1-2 个核心法律问题\n2. **查找法律依据**: 检索相关法条 + 类案裁判口径\n3. **整理事实与证据**: 按时间线梳理, 区分主张与反驳\n4. **形成方案**: 文书 / 谈判 / 调解 / 诉讼 多种路径组合\n\n您可以补充更多案件细节, 例如:\n- 案件类型 (合同 / 侵权 / 婚姻 / 劳动 / 知识产权 等)\n- 当事人诉求\n- 当前所处阶段 (协商 / 起诉前 / 已立案 / 审理中)\n\n我可以进一步帮您出具针对性的方案。'
+        );
     }
 
-    // 发送 AI 消息: 用户消息立即 append, AI 消息流式 chunk by chunk 输出
     var aiStreamingTimer = null;
     function sendAIMessage() {
         var input = document.getElementById('aiChatInput');
@@ -294,64 +283,75 @@
         var sendIcon = document.getElementById('aiSendIcon');
         if (!input || !msgList) return;
         var text = (input.value || '').trim();
-        if (!text) { input.focus(); return; }
-        if (aiStreamingTimer) {
-            // 已有流在跑: 忽略, 等流完
+        if (!text) {
+            input.focus();
             return;
         }
-        // 1. 追加用户消息
-        var userHtml = '<div class="flex gap-3 justify-end chat-message-user">' +
+        if (aiStreamingTimer) {
+            return;
+        }
+        var userHtml =
+            '<div class="flex gap-3 justify-end chat-message-user">' +
             '<div class="max-w-[70%] bg-brand rounded-xl p-4 shadow-sm">' +
-                '<p class="text-sm leading-relaxed text-white whitespace-pre-wrap">' + escapeHtml(text) + '</p>' +
-                '<span class="text-[10px] text-white/70 mt-2 block text-right">刚刚</span>' +
+            '<p class="text-sm leading-relaxed text-white whitespace-pre-wrap">' +
+            escapeHtml(text) +
+            '</p>' +
+            '<span class="text-[10px] text-white/70 mt-2 block text-right">刚刚</span>' +
             '</div>' +
             '<div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white flex-shrink-0">' +
-                '<iconify-icon class="text-sm" icon="mdi:account"></iconify-icon>' +
+            '<iconify-icon class="text-sm" icon="mdi:account"></iconify-icon>' +
             '</div>' +
-        '</div>';
+            '</div>';
         msgList.insertAdjacentHTML('beforeend', userHtml);
-        // 2. 清空输入框 + 禁用发送按钮
         input.value = '';
         input.style.height = 'auto';
-        if (sendBtn) { sendBtn.disabled = true; sendBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
         if (sendIcon) sendIcon.setAttribute('icon', 'mdi:loading');
-        // 3. 创建 AI 消息占位 (思考中...)
         var aiMsgId = 'ai-msg-' + Date.now();
-        var aiHtml = '<div class="flex gap-3 chat-message-ai" id="' + aiMsgId + '">' +
+        var aiHtml =
+            '<div class="flex gap-3 chat-message-ai" id="' +
+            aiMsgId +
+            '">' +
             '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">' +
-                '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
+            '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
             '</div>' +
             '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-bg-border">' +
-                '<p class="text-sm leading-relaxed text-fg-secondary whitespace-pre-wrap ai-msg-content">思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></p>' +
-                '<span class="text-[10px] text-fg-tertiary mt-2 block ai-msg-time">刚刚</span>' +
+            '<p class="text-sm leading-relaxed text-fg-secondary whitespace-pre-wrap ai-msg-content">思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></p>' +
+            '<span class="text-[10px] text-fg-tertiary mt-2 block ai-msg-time">刚刚</span>' +
             '</div>' +
-        '</div>';
+            '</div>';
         msgList.insertAdjacentHTML('beforeend', aiHtml);
-        // 4. 滚动到底部
         msgList.scrollTop = msgList.scrollHeight;
-        // 5. 生成回复 + 流式输出
         var fullReply = generateMockAIReply(text);
-        streamAIMessage(aiMsgId, fullReply, function() {
-            // 流完恢复发送按钮
-            if (sendBtn) { sendBtn.disabled = false; sendBtn.classList.remove('opacity-50', 'cursor-not-allowed'); }
+        streamAIMessage(aiMsgId, fullReply, function () {
+            if (sendBtn) {
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
             if (sendIcon) sendIcon.setAttribute('icon', 'mdi:send');
         });
     }
 
-    // 流式输出: 把 fullReply 按字符/词 chunk-by-chunk append 到 ai-msg-content
     function streamAIMessage(msgId, fullText, onComplete) {
         var msgEl = document.getElementById(msgId);
-        if (!msgEl) { if (onComplete) onComplete(); return; }
+        if (!msgEl) {
+            if (onComplete) onComplete();
+            return;
+        }
         var contentEl = msgEl.querySelector('.ai-msg-content');
         var msgList = document.getElementById('aiViewMessages');
-        if (!contentEl) { if (onComplete) onComplete(); return; }
-        contentEl.textContent = ''; // 清掉 "思考中..."
-        // 拆 chunk (中文按字, 英文按词, 标点独立)
+        if (!contentEl) {
+            if (onComplete) onComplete();
+            return;
+        }
+        contentEl.textContent = '';
         var chunks = tokenizeForStream(fullText);
         var idx = 0;
-        // chunk 输出节奏: 25-45ms 一个 chunk (模拟真实流速)
         var intervalMs = 30;
-        aiStreamingTimer = setInterval(function() {
+        aiStreamingTimer = setInterval(function () {
             if (idx >= chunks.length) {
                 clearInterval(aiStreamingTimer);
                 aiStreamingTimer = null;
@@ -360,18 +360,15 @@
             }
             contentEl.textContent += chunks[idx];
             idx++;
-            // 滚动到底
             if (msgList) msgList.scrollTop = msgList.scrollHeight;
         }, intervalMs);
     }
 
-    // 简易分词器: 中文按字 (含标点独立), 英文按空格分词
     function tokenizeForStream(text) {
         var tokens = [];
         var i = 0;
         while (i < text.length) {
             var c = text[i];
-            // 中文字符 (含 CJK 标点)
             if (/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/.test(c)) {
                 tokens.push(c);
                 i++;
@@ -382,7 +379,6 @@
                 tokens.push(c);
                 i++;
             } else {
-                // 连续 ASCII 字符作为整体
                 var j = i;
                 while (j < text.length && !/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\s]/.test(text[j])) {
                     j++;
@@ -394,33 +390,38 @@
         return tokens;
     }
 
-    // 简易 escapeHtml (避免 AI 回复里 < > 破坏 DOM)
     function escapeHtml(str) {
-        if (str == null) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        if (str === null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
-    // ============================================================
-    // "更多" 菜单 3 个 modal: 问题反馈 / 用户指南 / 联系我们
-    // ============================================================
     function ensureMoreModal() {
         var existing = document.getElementById('more-action-modal');
         if (existing) return existing;
         var wrapper = document.createElement('div');
         wrapper.id = 'more-action-modal';
         wrapper.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
-        wrapper.onclick = function(e) { if (e.target === wrapper) wrapper.classList.add('hidden'); };
-        wrapper.innerHTML = '<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">' +
+        wrapper.onclick = function (e) {
+            if (e.target === wrapper) wrapper.classList.add('hidden');
+        };
+        wrapper.innerHTML =
+            '<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">' +
             '<div class="flex items-center justify-between p-4 border-b border-bg-border">' +
-                '<h3 class="text-base font-semibold text-fg-primary" id="more-action-title">标题</h3>' +
-                '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
+            '<h3 class="text-base font-semibold text-fg-primary" id="more-action-title">标题</h3>' +
+            '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
             '</div>' +
             '<div class="p-5 overflow-y-auto" id="more-action-body"></div>' +
             '<div class="p-4 border-t border-bg-border flex justify-end gap-2" id="more-action-footer"></div>' +
-        '</div>';
+            '</div>';
         document.body.appendChild(wrapper);
         return wrapper;
     }
+
     function showMoreModal(title, bodyHtml, footerHtml) {
         var m = ensureMoreModal();
         document.getElementById('more-action-title').textContent = title;
@@ -430,19 +431,22 @@
     }
 
     function openFeedbackModal() {
-        showMoreModal('问题反馈', '<p class="text-sm text-fg-secondary mb-3">感谢您的反馈, 我们会尽快查看并改进。</p>' +
-            '<label class="block text-xs text-fg-tertiary mb-1">问题类型</label>' +
-            '<select id="feedback-type" class="w-full mb-3 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white">' +
+        showMoreModal(
+            '问题反馈',
+            '<p class="text-sm text-fg-secondary mb-3">感谢您的反馈, 我们会尽快查看并改进。</p>' +
+                '<label class="block text-xs text-fg-tertiary mb-1">问题类型</label>' +
+                '<select id="feedback-type" class="w-full mb-3 bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white">' +
                 '<option>功能建议</option><option>界面问题</option><option>性能问题</option><option>数据错误</option><option>其他</option>' +
-            '</select>' +
-            '<label class="block text-xs text-fg-tertiary mb-1">详细描述</label>' +
-            '<textarea id="feedback-content" rows="5" placeholder="请描述问题或建议..." class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white resize-none"></textarea>' +
-            '<label class="block text-xs text-fg-tertiary mb-1 mt-3">联系邮箱 (可选)</label>' +
-            '<input id="feedback-email" type="email" placeholder="your@email.com" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white"/>',
+                '</select>' +
+                '<label class="block text-xs text-fg-tertiary mb-1">详细描述</label>' +
+                '<textarea id="feedback-content" rows="5" placeholder="请描述问题或建议..." class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white resize-none"></textarea>' +
+                '<label class="block text-xs text-fg-tertiary mb-1 mt-3">联系邮箱 (可选)</label>' +
+                '<input id="feedback-email" type="email" placeholder="your@email.com" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand focus:bg-white"/>',
             '<button class="px-3 py-1.5 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">取消</button>' +
-            '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="submitFeedback()">提交反馈</button>'
+                '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="submitFeedback()">提交反馈</button>'
         );
     }
+
     function submitFeedback() {
         var type = (document.getElementById('feedback-type') || {}).value || '';
         var content = (document.getElementById('feedback-content') || {}).value || '';
@@ -457,45 +461,70 @@
         document.getElementById('more-action-modal').classList.add('hidden');
         showToast('反馈已提交, 感谢您的支持!', 'success');
     }
-    globalThis.submitFeedback = submitFeedback;
 
     function openUserGuideModal() {
-        showMoreModal('用户指南', '<div class="text-sm text-fg-secondary space-y-3">' +
-            '<div class="bg-brand-tint3 p-3 rounded-lg"><p class="font-semibold text-fg-primary mb-1">快速开始</p><p>登录后进入工作台, 点击左侧菜单选择功能 (案件管理 / 日程 / 客户 / 模板 / 智库等)。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">案件管理</p><p>在"案件管理"列表新建/编辑/归档案件, 详情页可编辑当事人、证据目录、时间线、案件分析。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">日程管理</p><p>工作台"今日日程"或左侧"日程管理"查看, 支持新增/编辑/冲突检测。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">AI 助手 (智库问答)</p><p>切换到 "AI 对话" 标签, 选择对话或新开会话, 提问法律问题 (基于判例库 / 法规库 / 客户档案 RAG 检索)。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">模板管理</p><p>左侧"模板管理": 官方模板 (内置 8 大类) / 个人模板 (自建分类)。点击"+"上传本地模板 (.docx / .md)。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">快捷键</p><p>Ctrl+K (智库搜索) / Ctrl+/ (AI 助手) / Esc (关闭弹窗)。</p></div>' +
-            '<div><p class="font-semibold text-fg-primary mb-1">常见问题</p><p>遇到问题: 点击"更多 → 问题反馈", 24h 内回复。</p></div>' +
-            '</div>',
+        showMoreModal(
+            '用户指南',
+            '<div class="text-sm text-fg-secondary space-y-3">' +
+                '<div class="bg-brand-tint3 p-3 rounded-lg"><p class="font-semibold text-fg-primary mb-1">快速开始</p><p>登录后进入工作台, 点击左侧菜单选择功能 (案件管理 / 日程 / 客户 / 模板 / 智库等)。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">案件管理</p><p>在"案件管理"列表新建/编辑/归档案件, 详情页可编辑当事人、证据目录、时间线、案件分析。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">日程管理</p><p>工作台"今日日程"或左侧"日程管理"查看, 支持新增/编辑/冲突检测。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">AI 助手 (智库问答)</p><p>切换到 "AI 对话" 标签, 选择对话或新开会话, 提问法律问题 (基于判例库 / 法规库 / 客户档案 RAG 检索)。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">模板管理</p><p>左侧"模板管理": 官方模板 (内置 8 大类) / 个人模板 (自建分类)。点击"+"上传本地模板 (.docx / .md)。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">快捷键</p><p>Ctrl+K (智库搜索) / Ctrl+/ (AI 助手) / Esc (关闭弹窗)。</p></div>' +
+                '<div><p class="font-semibold text-fg-primary mb-1">常见问题</p><p>遇到问题: 点击"更多 → 问题反馈", 24h 内回复。</p></div>' +
+                '</div>',
             '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">我知道了</button>'
         );
     }
 
     function openContactModal() {
-        showMoreModal('联系我们', '<div class="text-sm text-fg-secondary space-y-3">' +
-            '<div class="flex items-start gap-3 p-3 bg-brand-tint3 rounded-lg">' +
+        showMoreModal(
+            '联系我们',
+            '<div class="text-sm text-fg-secondary space-y-3">' +
+                '<div class="flex items-start gap-3 p-3 bg-brand-tint3 rounded-lg">' +
                 '<iconify-icon class="text-xl text-brand flex-shrink-0" icon="mdi:email-outline"></iconify-icon>' +
                 '<div><p class="font-semibold text-fg-primary">商务合作</p><p class="mt-0.5">contact@lexprime.cn</p></div>' +
-            '</div>' +
-            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '</div>' +
+                '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
                 '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:shield-account-outline"></iconify-icon>' +
                 '<div><p class="font-semibold text-fg-primary">技术/账号支持</p><p class="mt-0.5">support@lexprime.cn</p></div>' +
-            '</div>' +
-            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '</div>' +
+                '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
                 '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:cellphone"></iconify-icon>' +
                 '<div><p class="font-semibold text-fg-primary">紧急热线 (工作日 9:00-18:00)</p><p class="mt-0.5">400-LEX-PRIME (400-539-774)</p></div>' +
-            '</div>' +
-            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '</div>' +
+                '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
                 '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:map-marker-outline"></iconify-icon>' +
                 '<div><p class="font-semibold text-fg-primary">公司地址</p><p class="mt-0.5">北京市朝阳区建国路 88 号 SOHO 现代城 B 座 18 层</p></div>' +
-            '</div>' +
-            '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
+                '</div>' +
+                '<div class="flex items-start gap-3 p-3 bg-bg-subtle rounded-lg">' +
                 '<iconify-icon class="text-xl text-fg-tertiary flex-shrink-0" icon="mdi:wechat"></iconify-icon>' +
                 '<div><p class="font-semibold text-fg-primary">微信公众号</p><p class="mt-0.5">LexPrime元枢法智 (lawyer-assistant)</p></div>' +
-            '</div>' +
-            '</div>',
+                '</div>' +
+                '</div>',
             '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')">关闭</button>'
         );
     }
+
+    globalThis.switchAITab = switchAITab;
+    globalThis.startNewChat = startNewChat;
+    globalThis.selectHistory = selectHistory;
+    globalThis.filterHistory = filterHistory;
+    globalThis.switchAIView = switchAIView;
+    globalThis.selectAIHistory = selectAIHistory;
+    globalThis.filterAIHistory = filterAIHistory;
+    globalThis.toggleMoreMenu = toggleMoreMenu;
+    globalThis.handleMoreAction = handleMoreAction;
+    globalThis.selectExtractSource = selectExtractSource;
+    globalThis.closeAIExtractModal = closeAIExtractModal;
+    globalThis.startAIExtract = startAIExtract;
+    globalThis.copyExtractResult = copyExtractResult;
+    globalThis.exportExtractResult = exportExtractResult;
+    globalThis.handleAIInputKeydown = handleAIInputKeydown;
+    globalThis.sendAIMessage = sendAIMessage;
+    globalThis.submitFeedback = submitFeedback;
+    globalThis.openFeedbackModal = openFeedbackModal;
+    globalThis.openUserGuideModal = openUserGuideModal;
+    globalThis.openContactModal = openContactModal;
+})();
