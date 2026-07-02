@@ -176,9 +176,106 @@
 
     function openCompanyDetail(id) {
         var company = _companiesData.find(function(c) { return c.id === id; });
-        if (company) {
-            showToastMsg('查看企业详情：' + company.name);
+        if (!company) {
+            showToastMsg('未找到企业 #' + id);
+            return;
         }
+
+        var modal = document.getElementById('company-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'company-detail-modal';
+            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeCompanyDetail();
+            });
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="mdi:domain" class="text-brand text-lg"></iconify-icon>' +
+            '企业详情' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeCompanyDetail()">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+            '<div class="flex items-center gap-4 p-4 bg-bg-subtle rounded-xl">' +
+            '<div class="w-16 h-16 rounded-xl ' + company.iconBg + ' flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon class="text-3xl ' + company.iconColor + '" icon="mdi:domain"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 mb-1">' +
+            '<h4 class="text-base font-semibold text-fg-primary">' + escapeHtml(company.name) + '</h4>' +
+            getStatusBadge(company.status) +
+            '</div>' +
+            '<p class="text-xs text-fg-tertiary font-mono">' + escapeHtml(company.creditCode) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">法定代表人</p>' +
+            '<p class="text-sm text-fg-primary font-medium">' + escapeHtml(company.legalRep) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">注册资本</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(company.registeredCapital) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">成立日期</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(company.establishDate) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">经营状态</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(company.status) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-4 bg-bg-subtle rounded-xl">' +
+            '<p class="text-[11px] text-fg-tertiary mb-3">风险概览</p>' +
+            '<div class="grid grid-cols-3 gap-4">' +
+            '<div class="text-center">' +
+            '<div class="w-12 h-12 mx-auto rounded-full bg-red-50 flex items-center justify-center">' +
+            '<iconify-icon class="text-red-500" icon="mdi:alert-circle-outline"></iconify-icon>' +
+            '</div>' +
+            '<p class="text-lg font-bold text-red-500 mt-2">' + company.legalRisk + '</p>' +
+            '<p class="text-[10px] text-fg-tertiary">法律风险</p>' +
+            '</div>' +
+            '<div class="text-center">' +
+            '<div class="w-12 h-12 mx-auto rounded-full bg-amber-50 flex items-center justify-center">' +
+            '<iconify-icon class="text-amber-500" icon="mdi:alert-outline"></iconify-icon>' +
+            '</div>' +
+            '<p class="text-lg font-bold text-amber-500 mt-2">' + company.operatingRisk + '</p>' +
+            '<p class="text-[10px] text-fg-tertiary">经营风险</p>' +
+            '</div>' +
+            '<div class="text-center">' +
+            '<div class="w-12 h-12 mx-auto rounded-full bg-blue-50 flex items-center justify-center">' +
+            '<iconify-icon class="text-blue-500" icon="mdi:information-outline"></iconify-icon>' +
+            '</div>' +
+            '<p class="text-lg font-bold text-blue-500 mt-2">' + company.ipCount.toLocaleString() + '</p>' +
+            '<p class="text-[10px] text-fg-tertiary">知识产权</p>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCompanyDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCompanyDetail()">关联案件</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeCompanyDetail() {
+        var modal = document.getElementById('company-detail-modal');
+        if (modal) modal.classList.add('hidden');
     }
 
     function unfollowCompany(id) {
@@ -204,5 +301,6 @@
     globalThis.hotSearch = hotSearch;
     globalThis.toggleManageMode = toggleManageMode;
     globalThis.openCompanyDetail = openCompanyDetail;
+    globalThis.closeCompanyDetail = closeCompanyDetail;
     globalThis.unfollowCompany = unfollowCompany;
 })();
