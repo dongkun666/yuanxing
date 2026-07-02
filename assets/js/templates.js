@@ -573,16 +573,75 @@
         if (totalEl) totalEl.textContent = cards.length;
     }
 
+    var _closeOfficialTemplatePreview = null;
+
     function previewOfficialTemplate(cardEl) {
         var titleEl = cardEl.querySelector('h4');
         var title = titleEl ? titleEl.textContent.trim() : '未命名模板';
         var cat = cardEl.dataset.templateCategory || '';
         var typ = cardEl.dataset.templateType || '';
-        if (typeof showToast === 'function') {
-            showToast('预览「' + title + '」(分类: ' + cat + ' · 类型: ' + typ + ')');
-        } else {
-            alert('预览「' + title + '」(分类: ' + cat + ' · 类型: ' + typ + ')');
+        var descEl = cardEl.querySelector('p');
+        var desc = descEl ? descEl.textContent.trim() : '';
+
+        var content = '<div class="space-y-4">' +
+            '<div class="p-4 bg-bg-subtle rounded-xl">' +
+            '<div class="flex items-start gap-3">' +
+            '<div class="w-12 h-12 rounded-lg bg-brand-tint text-brand flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon icon="mdi:file-document-outline" class="text-xl"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<h4 class="text-sm font-semibold text-fg-primary mb-1">' + escapeHtml(title) + '</h4>' +
+            '<div class="flex items-center gap-2 flex-wrap">' +
+            '<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(cat) + '</span>' +
+            '<span class="text-[10px] bg-bg text-fg-tertiary font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(typ) + '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-4 bg-white border border-bg-border rounded-xl">' +
+            '<p class="text-[11px] text-fg-tertiary mb-2">模板说明</p>' +
+            '<p class="text-xs text-fg-secondary leading-relaxed">' + escapeHtml(desc || '官方标准模板，由 LexPrime 法务团队审核发布，符合最新法律法规要求。可直接下载使用，或保存为个人模板后编辑。') + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-bg-subtle rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">模板格式</p>' +
+            '<p class="text-sm text-fg-primary">.docx</p>' +
+            '</div>' +
+            '<div class="p-3 bg-bg-subtle rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">文件大小</p>' +
+            '<p class="text-sm text-fg-primary">约 45 KB</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-4 bg-brand-tint/50 rounded-xl">' +
+            '<p class="text-[11px] text-brand mb-2">使用提示</p>' +
+            '<p class="text-xs text-fg-secondary leading-relaxed">点击「使用模板」可直接创建新文档并自动填充案件信息；点击「保存到个人」可将模板加入个人模板库以便后续编辑。</p>' +
+            '</div>' +
+            '</div>';
+
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' + escapeHtml(title).replace(/'/g, "\\'") + '\')">保存到个人</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeOfficialTemplatePreview(); if(typeof showToast===\'function\')showToast(\'正在下载模板...\', \'info\')">下载模板</button>';
+
+        if (_closeOfficialTemplatePreview) _closeOfficialTemplatePreview();
+        _closeOfficialTemplatePreview = Utils.showModal({
+            id: 'official-template-preview-modal',
+            title: '模板预览',
+            icon: 'mdi:file-document-outline',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
+    }
+
+    function closeOfficialTemplatePreview() {
+        if (_closeOfficialTemplatePreview) {
+            _closeOfficialTemplatePreview();
+            _closeOfficialTemplatePreview = null;
         }
+    }
+
+    function saveTemplateToPersonal(name) {
+        if (typeof showToast === 'function') showToast('模板「' + name + '」已保存到个人模板库', 'success');
     }
 
 

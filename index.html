@@ -71,6 +71,9 @@ window.Iconify.disableRemoteAPI = true;
 </div>
 </div>
 <div class="flex items-center gap-4">
+<button class="text-fg-secondary hover:bg-bg-subtle p-2 rounded-full relative" onclick="switchView('onboarding');" title="使用帮助">
+<iconify-icon class="text-xl" icon="mdi:help-circle-outline"></iconify-icon>
+</button>
 <button class="text-fg-secondary hover:bg-bg-subtle p-2 rounded-full relative" onclick="toggleNotifications(event)">
 <iconify-icon class="text-xl" icon="mdi:bell-outline"></iconify-icon>
 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger-tint0 rounded-full border-2 border-white hidden"></span>
@@ -113,6 +116,10 @@ window.Iconify.disableRemoteAPI = true;
 <button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchToOrders()">
 <iconify-icon class="text-base text-fg-tertiary" icon="mdi:receipt-text-outline"></iconify-icon>
 <span>订单记录</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="event.stopPropagation(); switchView('onboarding');">
+<iconify-icon class="text-base text-fg-tertiary" icon="mdi:school-outline"></iconify-icon>
+<span>使用引导</span>
 </button>
 <div class="h-px bg-bg mx-4"></div>
 <button class="w-full flex items-center gap-3 px-4 py-2 text-xs text-danger hover:bg-danger-tint transition-colors" onclick="event.stopPropagation(); Auth.logout(); showToast('已退出登录');">
@@ -300,7 +307,7 @@ window.Iconify.disableRemoteAPI = true;
 </main>
 </div>
 <!-- 全局底部状态栏 -->
-<footer class="h-7 bg-white border-t border-bg-border flex items-center justify-between px-4 text-[11px] text-fg-secondary flex-none">
+<footer class="hidden md:flex h-7 bg-white border-t border-bg-border items-center justify-between px-4 text-[11px] text-fg-secondary flex-none">
 <div class="flex items-center gap-4">
 <span class="flex items-center gap-1">
 <iconify-icon class="text-success" icon="mdi:sync"></iconify-icon>
@@ -313,7 +320,7 @@ window.Iconify.disableRemoteAPI = true;
             </span>
 </div>
 <div class="flex items-center gap-4">
-<span class="cursor-pointer hover:text-brand">帮助中心</span>
+<span class="cursor-pointer hover:text-brand" onclick="switchView('onboarding')">帮助中心</span>
 <span class="cursor-pointer hover:text-brand">意见反馈</span>
 <div class="h-3 w-px bg-bg-border"></div>
 <span class="font-medium text-brand flex items-center gap-1 cursor-pointer">
@@ -322,6 +329,31 @@ window.Iconify.disableRemoteAPI = true;
             </span>
 </div>
 </footer>
+<!-- 移动端底部导航栏 -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-bg-border z-[90] pb-[env(safe-area-inset-bottom)]" id="mobile-tab-bar">
+<div class="flex items-center justify-around h-14">
+<button class="flex flex-col items-center justify-center flex-1 h-full text-brand" onclick="switchView('workstation', this); setMobileTabActive(this);" data-mobile-tab="workstation">
+<iconify-icon class="text-xl mb-0.5" icon="mdi:view-dashboard-outline"></iconify-icon>
+<span class="text-[10px]">工作台</span>
+</button>
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToList('case-list', this); setMobileTabActive(this);" data-mobile-tab="cases">
+<iconify-icon class="text-xl mb-0.5" icon="mdi:briefcase-outline"></iconify-icon>
+<span class="text-[10px]">案件</span>
+</button>
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('knowledge', this); setMobileTabActive(this);" data-mobile-tab="knowledge">
+<iconify-icon class="text-xl mb-0.5" icon="mdi:book-open-page-variant"></iconify-icon>
+<span class="text-[10px]">知识</span>
+</button>
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchView('marketplace-lawyers', this); setMobileTabActive(this);" data-mobile-tab="market">
+<iconify-icon class="text-xl mb-0.5" icon="mdi:storefront-outline"></iconify-icon>
+<span class="text-[10px]">市场</span>
+</button>
+<button class="flex flex-col items-center justify-center flex-1 h-full text-fg-tertiary" onclick="switchToMemberCenter(); setMobileTabActive(this);" data-mobile-tab="profile">
+<iconify-icon class="text-xl mb-0.5" icon="mdi:account-circle-outline"></iconify-icon>
+<span class="text-[10px]">我的</span>
+</button>
+</div>
+</nav>
 <!-- Phase 3 P0: API 客户端 + Auth - 在所有模块之前 -->
 <script src="./assets/js/api.js?v=1"></script>
 <script src="./assets/js/auth.js?v=1"></script>

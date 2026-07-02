@@ -142,6 +142,8 @@
         renderLaws(getFilteredLaws());
     }
 
+    var _closeLawDetail = null;
+
     // ===== 法规详情 (toast 提示) =====
     function openLawDetail(id) {
         var law = LAWS.find(function(x) { return x.id === id; });
@@ -153,30 +155,7 @@
         var levelBadge = LEVEL_STYLES[law.level] || 'bg-gray-50 text-gray-600';
         var statusCls = law.status === '已废止' ? 'bg-gray-50 text-gray-500' : 'bg-green-50 text-success';
 
-        var modal = document.getElementById('law-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'law-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeLawDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:book-open-outline" class="text-brand text-lg"></iconify-icon>' +
-            '法规详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeLawDetail()">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+        var content = '<div class="space-y-4">' +
             '<div class="p-4 bg-bg-subtle rounded-xl">' +
             '<h4 class="text-base font-semibold text-fg-primary mb-2">' + escapeHtml(law.name) + '</h4>' +
             '<div class="flex items-center gap-2 flex-wrap">' +
@@ -202,19 +181,27 @@
             '<p class="text-[11px] text-fg-tertiary mb-2">法规内容摘要</p>' +
             '<p class="text-xs text-fg-secondary leading-relaxed">本法规涵盖' + escapeHtml(law.level) + '层面的相关规定，由' + escapeHtml(law.organ) + '制定发布，目前状态为' + escapeHtml(law.status) + '。具体条款内容请查阅全文。</p>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeLawDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeLawDetail()">引用到文书</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeLawDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeLawDetail()">引用到文书</button>';
+
+        if (_closeLawDetail) _closeLawDetail();
+        _closeLawDetail = Utils.showModal({
+            id: 'law-detail-modal',
+            title: '法规详情',
+            icon: 'mdi:book-open-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
     }
 
     function closeLawDetail() {
-        var modal = document.getElementById('law-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeLawDetail) {
+            _closeLawDetail();
+            _closeLawDetail = null;
+        }
     }
 
     // ===== 初始化 =====

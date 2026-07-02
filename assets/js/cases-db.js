@@ -34,6 +34,7 @@
 
     // ===== 状态 =====
     var PAGE_SIZE = 10;
+    var _closeCaseDetail = null;
     var state = {
         filtered: [],   // 当前筛选结果
         results: [],    // 当前筛选 + 排序结果
@@ -286,7 +287,7 @@
         }
     }
 
-    // 查看案例详情 (mock: toast 提示)
+    // 查看案例详情
     function openCaseDetail(id) {
         var c = null;
         for (var i = 0; i < CASES_DB.length; i++) {
@@ -299,30 +300,7 @@
 
         var levelMap = { 1: '最高人民法院', 2: '高级人民法院', 3: '中级人民法院', 4: '基层人民法院' };
 
-        var modal = document.getElementById('case-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'case-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeCaseDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:file-search-outline" class="text-brand text-lg"></iconify-icon>' +
-            '案例详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeCaseDetail()">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+        var content = '<div class="space-y-4">' +
             '<div class="p-4 bg-bg-subtle rounded-xl">' +
             '<p class="text-sm font-medium text-fg-primary leading-relaxed">' + escapeHtml(c.title) + '</p>' +
             '</div>' +
@@ -354,19 +332,27 @@
             '<p class="text-[11px] text-fg-tertiary mb-2">案件摘要</p>' +
             '<p class="text-xs text-fg-secondary leading-relaxed whitespace-pre-wrap">' + escapeHtml(c.summary) + '</p>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCaseDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCaseDetail()">引用到文书</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCaseDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCaseDetail()">引用到文书</button>';
+
+        if (_closeCaseDetail) _closeCaseDetail();
+        _closeCaseDetail = Utils.showModal({
+            id: 'case-detail-modal',
+            title: '案例详情',
+            icon: 'mdi:file-search-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
     }
 
     function closeCaseDetail() {
-        var modal = document.getElementById('case-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeCaseDetail) {
+            _closeCaseDetail();
+            _closeCaseDetail = null;
+        }
     }
 
     // 初始化: 重置筛选/排序, 渲染全部案例 (首次进入视图时调用)

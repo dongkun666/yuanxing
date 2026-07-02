@@ -56,6 +56,8 @@
 
     var _showAllMembers = false;
     var _defaultMemberCount = 4;
+    var _closeFirmSetting = null;
+    var _closeMemberDetail = null;
 
     // ===== 渲染统计卡片 =====
     function renderStats() {
@@ -125,19 +127,6 @@
     function openFirmSetting(key) {
         var label = _settingLabels[key] || key;
 
-        var modal = document.getElementById('firm-setting-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'firm-setting-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeFirmSetting();
-            });
-            document.body.appendChild(modal);
-        }
-
         var tabs = Object.keys(_settingLabels);
         var tabsHtml = '<div class="flex flex-wrap gap-1 p-1 bg-bg-subtle rounded-lg">';
         tabs.forEach(function(t) {
@@ -150,27 +139,24 @@
 
         var contentHtml = renderFirmSettingContent(key);
 
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:cog-outline" class="text-brand text-lg"></iconify-icon>' +
-            '律所设置 - ' + escapeHtml(label) +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeFirmSetting()" aria-label="关闭">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+        var content = '<div class="space-y-4">' +
             tabsHtml +
             '<div id="firm-setting-content">' + contentHtml + '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeFirmSetting()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="saveFirmSetting()">保存设置</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeFirmSetting()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="saveFirmSetting()">保存设置</button>';
+
+        if (_closeFirmSetting) _closeFirmSetting();
+        _closeFirmSetting = Utils.showModal({
+            id: 'firm-setting-modal',
+            title: '律所设置 - ' + escapeHtml(label),
+            icon: 'mdi:cog-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
+
         _currentSettingTab = key;
     }
 
@@ -331,8 +317,10 @@
     }
 
     function closeFirmSetting() {
-        var modal = document.getElementById('firm-setting-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeFirmSetting) {
+            _closeFirmSetting();
+            _closeFirmSetting = null;
+        }
     }
 
     // ===== 成员详情弹窗 =====
@@ -345,28 +333,7 @@
         var idx = _membersData.indexOf(member);
         var color = _avatarColors[idx % _avatarColors.length];
 
-        var modal = document.getElementById('member-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'member-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeMemberDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:account-circle-outline" class="text-brand text-lg"></iconify-icon>' +
-            '成员详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeMemberDetail()">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4">' +
+        var content = '<div class="space-y-4">' +
             '<div class="flex items-center gap-4 p-3 bg-bg-subtle rounded-xl">' +
             '<div class="w-16 h-16 rounded-full ' + color.bg + ' flex items-center justify-center flex-shrink-0">' +
             '<span class="text-2xl font-bold ' + color.text + '">' + escapeHtml(member.name.charAt(0)) + '</span>' +
@@ -401,19 +368,27 @@
             '<span class="text-fg-primary text-xs">lawyer' + id + '@hongda-law.com</span>' +
             '</div>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeMemberDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeMemberDetail()">发送消息</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeMemberDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeMemberDetail()">发送消息</button>';
+
+        if (_closeMemberDetail) _closeMemberDetail();
+        _closeMemberDetail = Utils.showModal({
+            id: 'member-detail-modal',
+            title: '成员详情',
+            icon: 'mdi:account-circle-outline',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeMemberDetail() {
-        var modal = document.getElementById('member-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeMemberDetail) {
+            _closeMemberDetail();
+            _closeMemberDetail = null;
+        }
     }
 
     // ===== 初始化（视图加载时调用） =====

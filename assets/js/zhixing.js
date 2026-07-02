@@ -77,11 +77,9 @@
 
         if (!results || !tbody) return;
 
-        // 隐藏空态, 显示结果区
         if (empty) empty.classList.add('hidden');
         results.classList.remove('hidden');
 
-        // loading 状态 (1秒延迟模拟查询)
         tbody.innerHTML =
             '<tr><td colspan="6" class="py-10 text-center text-fg-tertiary">' +
                 '<iconify-icon class="text-base animate-spin align-middle" icon="mdi:loading"></iconify-icon>' +
@@ -90,7 +88,6 @@
         if (countEl) countEl.textContent = '';
 
         setTimeout(function() {
-            // 三条件 AND 关系: 任一为空则不过滤该字段
             var filtered = mockData.filter(function(item) {
                 if (name && item.name.indexOf(name) < 0) return false;
                 if (idcard && item.idcard.indexOf(idcard) < 0) return false;
@@ -147,6 +144,8 @@
         toast('已重置查询条件');
     }
 
+    var _closeZhixingDetail = null;
+
     // ===== 执行案件详情弹窗 =====
     function openZhixingDetail(caseNum) {
         var item = mockData.find(function(x) { return x.caseNum === caseNum; });
@@ -156,33 +155,9 @@
         }
         var statusColor = getStatusColor(item.status);
 
-        var modal = document.getElementById('zhixing-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'zhixing-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeZhixingDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        var isCompany = item.idcard && item.idcard.length >= 18 && /^\d+$/.test(item.idcard.replace(/[A-Z]/g, '')) === false || (item.idcard && item.idcard.length === 18 && /^[0-9Xx]+$/.test(item.idcard) === false);
         var idLabel = (item.name && item.name.indexOf('公司') >= 0 || item.name.indexOf('有限') >= 0) ? '统一社会信用代码' : '身份证号';
 
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:gavel" class="text-brand text-lg"></iconify-icon>' +
-            '执行案件详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeZhixingDetail()" aria-label="关闭">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+        var content = '<div class="space-y-4">' +
             '<div class="p-3 bg-bg-subtle rounded-xl">' +
             '<div class="flex items-center gap-2 flex-wrap mb-2">' +
             '<span class="text-sm font-semibold font-mono text-fg-primary">' + escapeHtml(item.caseNum) + '</span>' +
@@ -216,29 +191,36 @@
             '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
             '数据来源: 中国执行信息公开网 (最高人民法院)' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeZhixingDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeZhixingDetail()">返回列表</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeZhixingDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeZhixingDetail()">返回列表</button>';
+
+        if (_closeZhixingDetail) _closeZhixingDetail();
+        _closeZhixingDetail = Utils.showModal({
+            id: 'zhixing-detail-modal',
+            title: '执行案件详情',
+            icon: 'mdi:gavel',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeZhixingDetail() {
-        var modal = document.getElementById('zhixing-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeZhixingDetail) {
+            _closeZhixingDetail();
+            _closeZhixingDetail = null;
+        }
     }
 
     // ===== 初始化 (视图加载时绑定事件) =====
     function initZhixing() {
         var view = getEl('view-zhixing');
         if (!view) return;
-        if (view.dataset.zhixingInit) return;  // 避免重复绑定
+        if (view.dataset.zhixingInit) return;
         view.dataset.zhixingInit = '1';
 
-        // 三个输入框回车触发查询
         var inputIds = ['zhixing-name', 'zhixing-idcard', 'zhixing-court'];
         inputIds.forEach(function(id) {
             var el = getEl(id);

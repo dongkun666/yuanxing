@@ -25,6 +25,7 @@
     var _followedIds = [1, 2, 3, 4, 5, 6, 7, 8];
     var _manageMode = false;
     var _isLoading = false;
+    var _closeCompanyDetail = null;
 
     function showToastMsg(msg) {
         if (typeof showToast === 'function') {
@@ -181,30 +182,7 @@
             return;
         }
 
-        var modal = document.getElementById('company-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'company-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4 hidden';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeCompanyDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:domain" class="text-brand text-lg"></iconify-icon>' +
-            '企业详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeCompanyDetail()">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">' +
+        var content = '<div class="space-y-4">' +
             '<div class="flex items-center gap-4 p-4 bg-bg-subtle rounded-xl">' +
             '<div class="w-16 h-16 rounded-xl ' + company.iconBg + ' flex items-center justify-center flex-shrink-0">' +
             '<iconify-icon class="text-3xl ' + company.iconColor + '" icon="mdi:domain"></iconify-icon>' +
@@ -263,19 +241,27 @@
             '</div>' +
             '</div>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCompanyDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCompanyDetail()">关联案件</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCompanyDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCompanyDetail()">关联案件</button>';
+
+        if (_closeCompanyDetail) _closeCompanyDetail();
+        _closeCompanyDetail = Utils.showModal({
+            id: 'company-detail-modal',
+            title: '企业详情',
+            icon: 'mdi:domain',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeCompanyDetail() {
-        var modal = document.getElementById('company-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeCompanyDetail) {
+            _closeCompanyDetail();
+            _closeCompanyDetail = null;
+        }
     }
 
     function unfollowCompany(id) {

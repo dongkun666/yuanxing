@@ -16,6 +16,8 @@
     var _searchKeyword = '';
     var _currentView = 'list';
     var _searchTimer = null;
+    var _closeDynamicDetail = null;
+    var _closeNewDynamicModal = null;
 
     function getFilteredDynamics() {
         return _dynamics.filter(function(item) {
@@ -167,30 +169,7 @@
             return;
         }
 
-        var modal = document.getElementById('dynamic-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'dynamic-detail-modal';
-            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeDynamicDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="' + item.icon + '" class="' + item.iconColor + ' text-lg"></iconify-icon>' +
-            '动态详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeDynamicDetail()" aria-label="关闭">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4">' +
+        var content = '<div class="space-y-4">' +
             '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
             '<div class="w-12 h-12 rounded-lg ' + item.iconBg + ' flex items-center justify-center flex-shrink-0">' +
             '<iconify-icon class="' + item.iconColor + ' text-xl" icon="' + item.icon + '"></iconify-icon>' +
@@ -217,46 +196,31 @@
             '<p class="text-[11px] text-fg-tertiary mb-1">关联案件</p>' +
             '<p class="text-sm text-fg-primary">' + escapeHtml(item.desc.split('·')[0] || '未关联案件') + '</p>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeDynamicDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeDynamicDetail(); openNewDynamicModal()">发布新动态</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeDynamicDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeDynamicDetail(); openNewDynamicModal()">发布新动态</button>';
+
+        if (_closeDynamicDetail) _closeDynamicDetail();
+        _closeDynamicDetail = Utils.showModal({
+            id: 'dynamic-detail-modal',
+            title: '动态详情',
+            icon: item.icon,
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeDynamicDetail() {
-        var modal = document.getElementById('dynamic-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeDynamicDetail) {
+            _closeDynamicDetail();
+            _closeDynamicDetail = null;
+        }
     }
 
     function openNewDynamicModal() {
-        var modal = document.getElementById('new-dynamic-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'new-dynamic-modal';
-            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeNewDynamicModal();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="mdi:plus-circle-outline" class="text-brand text-lg"></iconify-icon>' +
-            '发布动态' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeNewDynamicModal()" aria-label="关闭">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4">' +
+        var content = '<div class="space-y-4">' +
             '<div>' +
             '<label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5">动态类型 <span class="text-danger">*</span></label>' +
             '<div class="flex flex-wrap gap-2" id="new-dynamic-type-group">' +
@@ -283,36 +247,47 @@
             '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
             '动态发布后将显示在案件动态列表顶部' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeNewDynamicModal()">取消</button>' +
+            '</div>';
+
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeNewDynamicModal()">取消</button>' +
             '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg flex items-center gap-1" onclick="submitNewDynamic()">' +
             '<iconify-icon icon="mdi:check"></iconify-icon>' +
             '发布动态' +
-            '</button>' +
-            '</div>' +
-            '</div>';
+            '</button>';
 
-        modal.classList.remove('hidden');
-
-        var typeBtns = modal.querySelectorAll('.new-dyn-type-btn');
-        typeBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                typeBtns.forEach(function(b) {
-                    b.dataset.selected = 'false';
-                    b.style.outline = 'none';
-                    b.style.outlineOffset = '0';
-                });
-                btn.dataset.selected = 'true';
-                btn.style.outline = '2px solid currentColor';
-                btn.style.outlineOffset = '1px';
-            });
+        if (_closeNewDynamicModal) _closeNewDynamicModal();
+        _closeNewDynamicModal = Utils.showModal({
+            id: 'new-dynamic-modal',
+            title: '发布动态',
+            icon: 'mdi:plus-circle-outline',
+            content: content,
+            footer: footer,
+            size: 'md'
         });
+
+        var modal = document.getElementById('new-dynamic-modal');
+        if (modal) {
+            var typeBtns = modal.querySelectorAll('.new-dyn-type-btn');
+            typeBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    typeBtns.forEach(function(b) {
+                        b.dataset.selected = 'false';
+                        b.style.outline = 'none';
+                        b.style.outlineOffset = '0';
+                    });
+                    btn.dataset.selected = 'true';
+                    btn.style.outline = '2px solid currentColor';
+                    btn.style.outlineOffset = '1px';
+                });
+            });
+        }
     }
 
     function closeNewDynamicModal() {
-        var modal = document.getElementById('new-dynamic-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeNewDynamicModal) {
+            _closeNewDynamicModal();
+            _closeNewDynamicModal = null;
+        }
     }
 
     function submitNewDynamic() {

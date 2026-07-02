@@ -702,9 +702,23 @@
         setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
+    // ===== 移动端底部导航 =====
+    function setMobileTabActive(btn) {
+        var tabs = document.querySelectorAll('[data-mobile-tab]');
+        tabs.forEach(function(t) {
+            t.classList.remove('text-brand');
+            t.classList.add('text-fg-tertiary');
+        });
+        if (btn) {
+            btn.classList.remove('text-fg-tertiary');
+            btn.classList.add('text-brand');
+        }
+    }
+
     // ===== globalThis 桥接 (IIFE 内导出, 让其他模块可见) =====
     globalThis.showToast = showToast;
     globalThis.shareCase = shareCase;
+    globalThis.setMobileTabActive = setMobileTabActive;
 
         // login view 加载后绑定事件
     })();

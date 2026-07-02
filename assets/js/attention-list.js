@@ -12,6 +12,7 @@
     var _currentFilter = 'all';
     var _searchKeyword = '';
     var _searchTimer = null;
+    var _closeAttentionDetail = null;
 
     function getFilteredData() {
         return _attentionData.filter(function(item) {
@@ -53,9 +54,16 @@
         var filtered = getFilteredData();
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="col-span-2 text-center py-12">' +
-                '<iconify-icon class="text-5xl text-fg-disabled" icon="mdi:check-circle-outline"></iconify-icon>' +
-                '<p class="text-sm text-fg-tertiary mt-3">暂无需要关注的事项</p>' +
+            container.innerHTML = '<div class="col-span-2 text-center py-16">' +
+                '<div class="w-20 h-20 mx-auto bg-bg-subtle rounded-full flex items-center justify-center mb-4">' +
+                '<iconify-icon class="text-4xl text-fg-disabled" icon="mdi:check-circle-outline"></iconify-icon>' +
+                '</div>' +
+                '<p class="text-sm font-medium text-fg-primary mb-1">所有事项已处理完毕</p>' +
+                '<p class="text-xs text-fg-tertiary mb-4">太棒了！你已完成全部待办事项</p>' +
+                '<div class="flex items-center justify-center gap-2">' +
+                '<button class="h-8 px-3 text-xs text-brand bg-brand-tint rounded-lg hover:bg-brand-tint/70" onclick="switchView(\'deadline\')">期限计算</button>' +
+                '<button class="h-8 px-3 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="switchView(\'schedule\')">查看日程</button>' +
+                '</div>' +
                 '</div>';
         } else {
             container.innerHTML = '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">' +
@@ -87,30 +95,7 @@
             return;
         }
 
-        var modal = document.getElementById('attention-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'attention-detail-modal';
-            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeAttentionDetail();
-            });
-            document.body.appendChild(modal);
-        }
-
-        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
-            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
-            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
-            '<iconify-icon icon="' + item.icon + '" class="' + item.iconColor + ' text-lg"></iconify-icon>' +
-            '事项详情' +
-            '</h3>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeAttentionDetail()" aria-label="关闭">' +
-            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-            '</button>' +
-            '</div>' +
-            '<div class="px-5 py-4 space-y-4">' +
+        var content = '<div class="space-y-4">' +
             '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
             '<div class="w-12 h-12 rounded-lg ' + item.iconBg + ' flex items-center justify-center flex-shrink-0">' +
             '<iconify-icon class="' + item.iconColor + ' text-xl" icon="' + item.icon + '"></iconify-icon>' +
@@ -127,19 +112,27 @@
             '<p class="text-[11px] text-fg-tertiary mb-1">状态信息</p>' +
             '<p class="text-sm ' + item.actionColor + ' font-medium">' + escapeHtml(item.extra) + '</p>' +
             '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAttentionDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="handleAttentionComplete(' + item.id + ')">标记已完成</button>' +
-            '</div>' +
             '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAttentionDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="handleAttentionComplete(' + item.id + ')">标记已完成</button>';
+
+        if (_closeAttentionDetail) _closeAttentionDetail();
+        _closeAttentionDetail = Utils.showModal({
+            id: 'attention-detail-modal',
+            title: '事项详情',
+            icon: item.icon,
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeAttentionDetail() {
-        var modal = document.getElementById('attention-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeAttentionDetail) {
+            _closeAttentionDetail();
+            _closeAttentionDetail = null;
+        }
     }
 
     function handleAttentionComplete(id) {

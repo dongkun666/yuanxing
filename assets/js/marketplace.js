@@ -1060,6 +1060,11 @@
     // 14.5. 弹窗: 律师详情
     // ========================================================================
 
+    var _closeLawyerDetail = null;
+    var _closeCaseDetail = null;
+    var _closeReferralDetail = null;
+    var _closeCrossBorderDetail = null;
+
     function openLawyerDetail(lawyerId) {
         var lawyer = null;
         var pool = MarketplaceState.lawyerPool.length > 0 ? MarketplaceState.lawyerPool : DEMO_LAWYERS;
@@ -1073,102 +1078,90 @@
         var score = computeMatchScore(lawyer, [], '');
         var availability = AVAILABILITY.find(function(a) { return a.value === lawyer.availability; }) || AVAILABILITY[0];
 
-        var modal = document.getElementById('mp-lawyer-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'mp-lawyer-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 hidden p-4';
-            modal.addEventListener('click', function(e) { if (e.target === modal) closeLawyerDetail(); });
-            document.body.appendChild(modal);
-        }
+        var content = '<div class="space-y-4">' +
+            '<div class="flex items-start gap-4 p-3 bg-bg-subtle rounded-xl">' +
+                '<div class="w-16 h-16 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-xl font-bold flex-shrink-0">' +
+                    esc(lawyer.name ? lawyer.name.substring(0, 1) : '?') +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<div class="flex items-center gap-2 flex-wrap mb-1">' +
+                        '<h3 class="text-base font-semibold text-fg-primary">' + esc(lawyer.name) + '</h3>' +
+                        (lawyer.cross_border_capable ? '<span class="mp-badge-strong text-[10px] px-1.5 py-0.5 rounded">跨境</span>' : '') +
+                    '</div>' +
+                    '<p class="text-xs text-fg-tertiary mb-1">' + esc(lawyer.firm_id || '独立律师') + '</p>' +
+                    '<div class="flex items-center gap-3 text-[11px] text-fg-tertiary flex-wrap">' +
+                        '<span class="flex items-center gap-1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + availability.dot + '"></span>' + esc(availability.label) + '</span>' +
+                        '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' + esc(lawyer.region || '-') + '</span>' +
+                        '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' + (lawyer.experience_years || 0) + ' 年</span>' +
+                        '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' + (lawyer.rating || 0).toFixed(1) + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="text-right flex-shrink-0">' +
+                    '<div class="text-2xl font-bold text-brand">' + (score.total * 100).toFixed(0) + '</div>' +
+                    '<div class="text-[10px] text-fg-tertiary">综合分</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="space-y-2">' +
+                '<p class="text-xs font-medium text-fg-secondary">专业领域</p>' +
+                '<div class="flex flex-wrap gap-1">' +
+                    (lawyer.specialties || []).map(function(s) {
+                        var t = CASE_TYPES.find(function(c) { return c.value === s; });
+                        return '<span class="text-[11px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary">' + esc(t ? t.label : s) + '</span>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+            '<div class="space-y-2">' +
+                '<p class="text-xs font-medium text-fg-secondary">5 维评分</p>' +
+                renderDimBars(score) +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">累计办案</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + (lawyer.completed_cases || 0) + ' 件</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">司法辖区</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + (lawyer.jurisdictions || []).length + ' 个</p>' +
+                '</div>' +
+            '</div>' +
+            (lawyer.languages && lawyer.languages.length > 0
+                ? '<div class="space-y-2"><p class="text-xs font-medium text-fg-secondary">语言能力</p><div class="flex flex-wrap gap-1">' +
+                    lawyer.languages.map(function(lg) {
+                        var lang = LANGUAGES.find(function(x) { return x.value === lg; });
+                        return '<span class="text-[11px] px-2 py-1 rounded ' + (lang ? lang.cls : 'bg-bg-subtle text-fg-secondary') + '">' + esc(lang ? lang.label : lg) + '</span>';
+                    }).join('') +
+                  '</div></div>'
+                : '') +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+                '<p class="text-[11px] text-fg-tertiary mb-1">个人简介</p>' +
+                '<p class="text-sm text-fg-primary leading-relaxed">' + esc(lawyer.bio || '暂无简介') + '</p>' +
+            '</div>' +
+        '</div>';
 
-        modal.innerHTML = '' +
-            '<div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">' +
-                '<div class="p-5 border-b border-bg-border flex items-center justify-between">' +
-                    '<h3 class="text-base font-semibold flex items-center gap-2">' +
-                        '<iconify-icon icon="mdi:account-tie" class="text-brand"></iconify-icon>' +
-                        '律师详情' +
-                    '</h3>' +
-                    '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="MarketplaceFn.closeLawyerDetail()">' +
-                        '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-                    '</button>' +
-                '</div>' +
-                '<div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">' +
-                    '<div class="flex items-start gap-4 p-3 bg-bg-subtle rounded-xl">' +
-                        '<div class="w-16 h-16 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-xl font-bold flex-shrink-0">' +
-                            esc(lawyer.name ? lawyer.name.substring(0, 1) : '?') +
-                        '</div>' +
-                        '<div class="flex-1 min-w-0">' +
-                            '<div class="flex items-center gap-2 flex-wrap mb-1">' +
-                                '<h3 class="text-base font-semibold text-fg-primary">' + esc(lawyer.name) + '</h3>' +
-                                (lawyer.cross_border_capable ? '<span class="mp-badge-strong text-[10px] px-1.5 py-0.5 rounded">跨境</span>' : '') +
-                            '</div>' +
-                            '<p class="text-xs text-fg-tertiary mb-1">' + esc(lawyer.firm_id || '独立律师') + '</p>' +
-                            '<div class="flex items-center gap-3 text-[11px] text-fg-tertiary flex-wrap">' +
-                                '<span class="flex items-center gap-1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + availability.dot + '"></span>' + esc(availability.label) + '</span>' +
-                                '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' + esc(lawyer.region || '-') + '</span>' +
-                                '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' + (lawyer.experience_years || 0) + ' 年</span>' +
-                                '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' + (lawyer.rating || 0).toFixed(1) + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="text-right flex-shrink-0">' +
-                            '<div class="text-2xl font-bold text-brand">' + (score.total * 100).toFixed(0) + '</div>' +
-                            '<div class="text-[10px] text-fg-tertiary">综合分</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="space-y-2">' +
-                        '<p class="text-xs font-medium text-fg-secondary">专业领域</p>' +
-                        '<div class="flex flex-wrap gap-1">' +
-                            (lawyer.specialties || []).map(function(s) {
-                                var t = CASE_TYPES.find(function(c) { return c.value === s; });
-                                return '<span class="text-[11px] px-2 py-1 rounded bg-bg-subtle text-fg-secondary">' + esc(t ? t.label : s) + '</span>';
-                            }).join('') +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="space-y-2">' +
-                        '<p class="text-xs font-medium text-fg-secondary">5 维评分</p>' +
-                        renderDimBars(score) +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3 text-sm">' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">累计办案</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + (lawyer.completed_cases || 0) + ' 件</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">司法辖区</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + (lawyer.jurisdictions || []).length + ' 个</p>' +
-                        '</div>' +
-                    '</div>' +
-                    (lawyer.languages && lawyer.languages.length > 0
-                        ? '<div class="space-y-2"><p class="text-xs font-medium text-fg-secondary">语言能力</p><div class="flex flex-wrap gap-1">' +
-                            lawyer.languages.map(function(lg) {
-                                var lang = LANGUAGES.find(function(x) { return x.value === lg; });
-                                return '<span class="text-[11px] px-2 py-1 rounded ' + (lang ? lang.cls : 'bg-bg-subtle text-fg-secondary') + '">' + esc(lang ? lang.label : lg) + '</span>';
-                            }).join('') +
-                          '</div></div>'
-                        : '') +
-                    '<div class="p-3 bg-bg-subtle rounded-xl">' +
-                        '<p class="text-[11px] text-fg-tertiary mb-1">个人简介</p>' +
-                        '<p class="text-sm text-fg-primary leading-relaxed">' + esc(lawyer.bio || '暂无简介') + '</p>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="p-4 border-t border-bg-border flex items-center justify-end gap-2 bg-bg-subtle">' +
-                    '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeLawyerDetail()">关闭</button>' +
-                    '<button class="mp-btn mp-btn-secondary" onclick="MarketplaceFn.closeLawyerDetail(); openCreateReferralModal(\'' + esc(lawyer.lawyer_id) + '\')">' +
-                        '<iconify-icon icon="mdi:share-variant" class="text-xs"></iconify-icon> 转介绍' +
-                    '</button>' +
-                    '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeLawyerDetail(); openCreateCaseModal(\'' + esc(lawyer.lawyer_id) + '\')">' +
-                        '<iconify-icon icon="mdi:account-multiple-plus-outline" class="text-xs"></iconify-icon> 协同办案' +
-                    '</button>' +
-                '</div>' +
-            '</div>';
+        var footer = '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeLawyerDetail()">关闭</button>' +
+            '<button class="mp-btn mp-btn-secondary" onclick="MarketplaceFn.closeLawyerDetail(); openCreateReferralModal(\'' + esc(lawyer.lawyer_id) + '\')">' +
+                '<iconify-icon icon="mdi:share-variant" class="text-xs"></iconify-icon> 转介绍' +
+            '</button>' +
+            '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeLawyerDetail(); openCreateCaseModal(\'' + esc(lawyer.lawyer_id) + '\')">' +
+                '<iconify-icon icon="mdi:account-multiple-plus-outline" class="text-xs"></iconify-icon> 协同办案' +
+            '</button>';
 
-        modal.classList.remove('hidden');
+        if (_closeLawyerDetail) _closeLawyerDetail();
+        _closeLawyerDetail = Utils.showModal({
+            id: 'mp-lawyer-detail-modal',
+            title: '律师详情',
+            icon: 'mdi:account-tie',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeLawyerDetail() {
-        var modal = document.getElementById('mp-lawyer-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeLawyerDetail) {
+            _closeLawyerDetail();
+            _closeLawyerDetail = null;
+        }
     }
 
     // ========================================================================
@@ -1187,90 +1180,78 @@
         var state = findState(c.state);
         var type = CASE_TYPES.find(function(t) { return t.value === c.case_type; });
 
-        var modal = document.getElementById('mp-case-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'mp-case-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 hidden p-4';
-            modal.addEventListener('click', function(e) { if (e.target === modal) closeCaseDetail(); });
-            document.body.appendChild(modal);
-        }
+        var content = '<div class="space-y-4">' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+                '<div class="flex items-center gap-2 flex-wrap mb-2">' +
+                    '<h3 class="text-sm font-semibold font-mono text-fg-primary">' + esc(c.case_id) + '</h3>' +
+                    '<span class="mp-state-pill ' + state.color + '">' + state.label + '</span>' +
+                    (type ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(type.label) + '</span>' : '') +
+                '</div>' +
+                '<p class="text-[12px] text-fg-secondary">' + esc(c.case_description || '') + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">律师 A</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + esc(c.lawyer_a_id) + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">律师 B</p>' +
+                    '<p class="text-sm font-semibold ' + (c.lawyer_b_id ? 'text-fg-primary' : 'text-warning') + '">' + esc(c.lawyer_b_id || '待接') + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">律师费</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + fmtMoney(c.fee) + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">分账比例</p>' +
+                    '<p class="text-sm font-semibold text-urgent">A ' + ((c.split_ratio || 0) * 100).toFixed(0) + '% / B ' + ((1 - (c.split_ratio || 0)) * 100).toFixed(0) + '%</p>' +
+                '</div>' +
+            '</div>' +
+            (c.deadline
+                ? '<div class="p-3 bg-wiki-tint rounded-xl"><p class="text-[11px] text-wiki mb-1">截止日期</p><p class="text-sm font-semibold text-wiki">' + esc(c.deadline) + '</p></div>'
+                : '') +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                '<p class="text-[11px] text-fg-tertiary mb-2">Marketplace 抽成</p>' +
+                '<div class="flex items-center justify-between">' +
+                    '<span class="text-sm font-semibold text-brand">' + ((c.marketplace_commission_rate || 0) * 100).toFixed(0) + '%</span>' +
+                    '<span class="text-xs text-fg-tertiary">约 ' + fmtMoney((c.fee || 0) * (c.marketplace_commission_rate || 0)) + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="bg-bg-subtle rounded-md p-3">' +
+                renderStateStepBar(c.state) +
+            '</div>' +
+            (c.history && c.history.length > 0
+                ? '<div class="space-y-2"><p class="text-xs font-medium text-fg-secondary">流程历史 (' + c.history.length + ' 条)</p><div class="mp-timeline">' +
+                    c.history.map(function(h) {
+                        return '<div class="mp-timeline-item">' +
+                            '<span class="mp-timeline-dot completed"></span>' +
+                            '<div class="mp-timeline-title">' + esc(h.from) + ' → ' + esc(h.to) + '</div>' +
+                            '<div class="mp-timeline-meta">' + esc(h.actor) + ' · ' + esc(h.reason) + ' · ' + fmtDate(h.ts) + '</div>' +
+                        '</div>';
+                    }).join('') +
+                  '</div></div>'
+                : '') +
+        '</div>';
 
-        modal.innerHTML = '' +
-            '<div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">' +
-                '<div class="p-5 border-b border-bg-border flex items-center justify-between">' +
-                    '<h3 class="text-base font-semibold flex items-center gap-2">' +
-                        '<iconify-icon icon="mdi:briefcase" class="text-success"></iconify-icon>' +
-                        '协同办案详情' +
-                    '</h3>' +
-                    '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="MarketplaceFn.closeCaseDetail()">' +
-                        '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-                    '</button>' +
-                '</div>' +
-                '<div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">' +
-                    '<div class="p-3 bg-bg-subtle rounded-xl">' +
-                        '<div class="flex items-center gap-2 flex-wrap mb-2">' +
-                            '<h3 class="text-sm font-semibold font-mono text-fg-primary">' + esc(c.case_id) + '</h3>' +
-                            '<span class="mp-state-pill ' + state.color + '">' + state.label + '</span>' +
-                            (type ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(type.label) + '</span>' : '') +
-                        '</div>' +
-                        '<p class="text-[12px] text-fg-secondary">' + esc(c.case_description || '') + '</p>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3 text-sm">' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">律师 A</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + esc(c.lawyer_a_id) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">律师 B</p>' +
-                            '<p class="text-sm font-semibold ' + (c.lawyer_b_id ? 'text-fg-primary' : 'text-warning') + '">' + esc(c.lawyer_b_id || '待接') + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">律师费</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + fmtMoney(c.fee) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">分账比例</p>' +
-                            '<p class="text-sm font-semibold text-urgent">A ' + ((c.split_ratio || 0) * 100).toFixed(0) + '% / B ' + ((1 - (c.split_ratio || 0)) * 100).toFixed(0) + '%</p>' +
-                        '</div>' +
-                    '</div>' +
-                    (c.deadline
-                        ? '<div class="p-3 bg-wiki-tint rounded-xl"><p class="text-[11px] text-wiki mb-1">截止日期</p><p class="text-sm font-semibold text-wiki">' + esc(c.deadline) + '</p></div>'
-                        : '') +
-                    '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                        '<p class="text-[11px] text-fg-tertiary mb-2">Marketplace 抽成</p>' +
-                        '<div class="flex items-center justify-between">' +
-                            '<span class="text-sm font-semibold text-brand">' + ((c.marketplace_commission_rate || 0) * 100).toFixed(0) + '%</span>' +
-                            '<span class="text-xs text-fg-tertiary">约 ' + fmtMoney((c.fee || 0) * (c.marketplace_commission_rate || 0)) + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="bg-bg-subtle rounded-md p-3">' +
-                        renderStateStepBar(c.state) +
-                    '</div>' +
-                    (c.history && c.history.length > 0
-                        ? '<div class="space-y-2"><p class="text-xs font-medium text-fg-secondary">流程历史 (' + c.history.length + ' 条)</p><div class="mp-timeline">' +
-                            c.history.map(function(h) {
-                                return '<div class="mp-timeline-item">' +
-                                    '<span class="mp-timeline-dot completed"></span>' +
-                                    '<div class="mp-timeline-title">' + esc(h.from) + ' → ' + esc(h.to) + '</div>' +
-                                    '<div class="mp-timeline-meta">' + esc(h.actor) + ' · ' + esc(h.reason) + ' · ' + fmtDate(h.ts) + '</div>' +
-                                '</div>';
-                            }).join('') +
-                          '</div></div>'
-                        : '') +
-                '</div>' +
-                '<div class="p-4 border-t border-bg-border flex items-center justify-end gap-2 bg-bg-subtle">' +
-                    '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeCaseDetail()">关闭</button>' +
-                    '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeCaseDetail(); openCreateCaseModal()">发布新协同</button>' +
-                '</div>' +
-            '</div>';
+        var footer = '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeCaseDetail()">关闭</button>' +
+            '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeCaseDetail(); openCreateCaseModal()">发布新协同</button>';
 
-        modal.classList.remove('hidden');
+        if (_closeCaseDetail) _closeCaseDetail();
+        _closeCaseDetail = Utils.showModal({
+            id: 'mp-case-detail-modal',
+            title: '协同办案详情',
+            icon: 'mdi:briefcase',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeCaseDetail() {
-        var modal = document.getElementById('mp-case-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeCaseDetail) {
+            _closeCaseDetail();
+            _closeCaseDetail = null;
+        }
     }
 
     // ========================================================================
@@ -1289,84 +1270,72 @@
         var status = findReferralStatus(r.status);
         var type = CASE_TYPES.find(function(t) { return t.value === r.case_type; });
 
-        var modal = document.getElementById('mp-referral-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'mp-referral-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 hidden p-4';
-            modal.addEventListener('click', function(e) { if (e.target === modal) closeReferralDetail(); });
-            document.body.appendChild(modal);
-        }
+        var content = '<div class="space-y-4">' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+                '<div class="flex items-center gap-2 flex-wrap mb-2">' +
+                    '<span class="text-sm font-semibold font-mono text-fg-primary">' + esc(r.referral_id) + '</span>' +
+                    '<span class="text-[11px] ' + status.color + ' font-medium">● ' + status.label + '</span>' +
+                    (type ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(type.label) + '</span>' : '') +
+                '</div>' +
+                '<p class="text-[12px] text-fg-secondary">' + esc(r.case_description || '') + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">推荐人</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + esc(r.referrer_id) + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">被推荐律师</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + esc(r.target_lawyer_id) + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">预期律师费</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + fmtMoney(r.expected_fee) + '</p>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">实际律师费</p>' +
+                    '<p class="text-sm font-semibold ' + (r.actual_fee ? 'text-success' : 'text-fg-tertiary') + '">' + (r.actual_fee ? fmtMoney(r.actual_fee) : '待结算') + '</p>' +
+                '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+                '<div class="p-3 bg-brand-tint rounded-lg">' +
+                    '<p class="text-[11px] text-brand mb-1">推荐人抽成</p>' +
+                    '<p class="text-sm font-semibold text-brand">' + (r.referrer_commission ? fmtMoney(r.referrer_commission) : '-') + '</p>' +
+                    '<p class="text-[10px] text-brand/70">费率 ' + ((r.commission_rate || 0) * 100).toFixed(0) + '%</p>' +
+                '</div>' +
+                '<div class="p-3 bg-wiki-tint rounded-lg">' +
+                    '<p class="text-[11px] text-wiki mb-1">Marketplace 抽成</p>' +
+                    '<p class="text-sm font-semibold text-wiki">' + fmtMoney(r.marketplace_commission || 0) + '</p>' +
+                    '<p class="text-[10px] text-wiki/70">平台不抽</p>' +
+                '</div>' +
+            '</div>' +
+            (r.match_score
+                ? '<div class="p-3 bg-white border border-bg-border rounded-lg"><div class="flex items-center justify-between"><span class="text-[11px] text-fg-tertiary">匹配评分</span><span class="text-lg font-bold text-brand">' + (r.match_score * 100).toFixed(0) + ' 分</span></div></div>'
+                : '') +
+            '<div class="text-[11px] text-fg-tertiary flex items-center justify-between">' +
+                '<span>创建时间: ' + fmtDate(r.created_at) + '</span>' +
+            '</div>' +
+        '</div>';
 
-        modal.innerHTML = '' +
-            '<div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">' +
-                '<div class="p-5 border-b border-bg-border flex items-center justify-between">' +
-                    '<h3 class="text-base font-semibold flex items-center gap-2">' +
-                        '<iconify-icon icon="mdi:share-variant" class="text-brand"></iconify-icon>' +
-                        '转介绍详情' +
-                    '</h3>' +
-                    '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="MarketplaceFn.closeReferralDetail()">' +
-                        '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-                    '</button>' +
-                '</div>' +
-                '<div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">' +
-                    '<div class="p-3 bg-bg-subtle rounded-xl">' +
-                        '<div class="flex items-center gap-2 flex-wrap mb-2">' +
-                            '<span class="text-sm font-semibold font-mono text-fg-primary">' + esc(r.referral_id) + '</span>' +
-                            '<span class="text-[11px] ' + status.color + ' font-medium">● ' + status.label + '</span>' +
-                            (type ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(type.label) + '</span>' : '') +
-                        '</div>' +
-                        '<p class="text-[12px] text-fg-secondary">' + esc(r.case_description || '') + '</p>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3 text-sm">' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">推荐人</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + esc(r.referrer_id) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">被推荐律师</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + esc(r.target_lawyer_id) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">预期律师费</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + fmtMoney(r.expected_fee) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">实际律师费</p>' +
-                            '<p class="text-sm font-semibold ' + (r.actual_fee ? 'text-success' : 'text-fg-tertiary') + '">' + (r.actual_fee ? fmtMoney(r.actual_fee) : '待结算') + '</p>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3 text-sm">' +
-                        '<div class="p-3 bg-brand-tint rounded-lg">' +
-                            '<p class="text-[11px] text-brand mb-1">推荐人抽成</p>' +
-                            '<p class="text-sm font-semibold text-brand">' + (r.referrer_commission ? fmtMoney(r.referrer_commission) : '-') + '</p>' +
-                            '<p class="text-[10px] text-brand/70">费率 ' + ((r.commission_rate || 0) * 100).toFixed(0) + '%</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-wiki-tint rounded-lg">' +
-                            '<p class="text-[11px] text-wiki mb-1">Marketplace 抽成</p>' +
-                            '<p class="text-sm font-semibold text-wiki">' + fmtMoney(r.marketplace_commission || 0) + '</p>' +
-                            '<p class="text-[10px] text-wiki/70">平台不抽</p>' +
-                        '</div>' +
-                    '</div>' +
-                    (r.match_score
-                        ? '<div class="p-3 bg-white border border-bg-border rounded-lg"><div class="flex items-center justify-between"><span class="text-[11px] text-fg-tertiary">匹配评分</span><span class="text-lg font-bold text-brand">' + (r.match_score * 100).toFixed(0) + ' 分</span></div></div>'
-                        : '') +
-                    '<div class="text-[11px] text-fg-tertiary flex items-center justify-between">' +
-                        '<span>创建时间: ' + fmtDate(r.created_at) + '</span>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="p-4 border-t border-bg-border flex items-center justify-end gap-2 bg-bg-subtle">' +
-                    '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeReferralDetail()">关闭</button>' +
-                    '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeReferralDetail(); openCreateReferralModal()">新建转介绍</button>' +
-                '</div>' +
-            '</div>';
+        var footer = '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeReferralDetail()">关闭</button>' +
+            '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeReferralDetail(); openCreateReferralModal()">新建转介绍</button>';
 
-        modal.classList.remove('hidden');
+        if (_closeReferralDetail) _closeReferralDetail();
+        _closeReferralDetail = Utils.showModal({
+            id: 'mp-referral-detail-modal',
+            title: '转介绍详情',
+            icon: 'mdi:share-variant',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeReferralDetail() {
-        var modal = document.getElementById('mp-referral-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeReferralDetail) {
+            _closeReferralDetail();
+            _closeReferralDetail = null;
+        }
     }
 
     // ========================================================================
@@ -1386,15 +1355,6 @@
         var lang = findLanguage(j.language);
         var lawyerFee = (j.price || 0) - (j.marketplace_commission || 0);
 
-        var modal = document.getElementById('mp-cb-detail-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'mp-cb-detail-modal';
-            modal.className = 'fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 hidden p-4';
-            modal.addEventListener('click', function(e) { if (e.target === modal) closeCrossBorderDetail(); });
-            document.body.appendChild(modal);
-        }
-
         var statusBadge = '';
         if (j.status === 'completed') statusBadge = '<span class="text-[11px] text-success font-medium">● 已完成</span>';
         else if (j.status === 'in_progress') statusBadge = '<span class="text-[11px] text-brand font-medium">● 进行中</span>';
@@ -1409,81 +1369,78 @@
             fieldsHtml += '</div></div>';
         }
 
-        modal.innerHTML = '' +
-            '<div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">' +
-                '<div class="p-5 border-b border-bg-border flex items-center justify-between">' +
-                    '<h3 class="text-base font-semibold flex items-center gap-2">' +
-                        '<iconify-icon icon="mdi:earth" class="text-wiki"></iconify-icon>' +
-                        '跨境文件订单详情' +
-                    '</h3>' +
-                    '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="MarketplaceFn.closeCrossBorderDetail()">' +
-                        '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
-                    '</button>' +
+        var content = '<div class="space-y-4">' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+                '<div class="flex items-center gap-2 flex-wrap mb-2">' +
+                    '<span class="text-sm font-semibold font-mono text-fg-primary">' + esc(j.job_id) + '</span>' +
+                    statusBadge +
+                    '<span class="text-[10px] px-1.5 py-0.5 rounded ' + lang.cls + '">' + esc(lang.label) + '</span>' +
+                    '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(docType.label) + '</span>' +
                 '</div>' +
-                '<div class="p-5 space-y-4 max-h-[70vh] overflow-y-auto">' +
-                    '<div class="p-3 bg-bg-subtle rounded-xl">' +
-                        '<div class="flex items-center gap-2 flex-wrap mb-2">' +
-                            '<span class="text-sm font-semibold font-mono text-fg-primary">' + esc(j.job_id) + '</span>' +
-                            statusBadge +
-                            '<span class="text-[10px] px-1.5 py-0.5 rounded ' + lang.cls + '">' + esc(lang.label) + '</span>' +
-                            '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(docType.label) + '</span>' +
-                        '</div>' +
-                        '<p class="text-[12px] text-fg-secondary">律师 ' + esc(j.lawyer_id) + ' → 客户 ' + esc(j.client_id) + '</p>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-2 gap-3 text-sm">' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">司法辖区</p>' +
-                            '<p class="text-sm font-semibold text-fg-primary">' + esc(j.jurisdiction) + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">仲裁机构</p>' +
-                            '<p class="text-sm font-semibold text-urgent">' + esc(j.arbitration_institution || '-') + '</p>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">订单价格</p>' +
-                            '<div class="text-lg font-bold text-wiki">¥' + (j.price || 0) + '</div>' +
-                        '</div>' +
-                        '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-                            '<p class="text-[11px] text-fg-tertiary mb-1">律师所得</p>' +
-                            '<div class="text-lg font-bold text-success">¥' + lawyerFee.toFixed(1) + '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="p-3 bg-wiki-tint rounded-xl">' +
-                        '<div class="flex items-center justify-between mb-1">' +
-                            '<span class="text-[11px] text-wiki">Marketplace 抽成 (30%)</span>' +
-                            '<span class="text-sm font-semibold text-wiki">¥' + (j.marketplace_commission || 0).toFixed(1) + '</span>' +
-                        '</div>' +
-                        '<div class="flex items-center justify-between">' +
-                            '<span class="text-[11px] text-wiki/70">Skill 3 v3.0 模板</span>' +
-                            '<span class="text-xs font-mono text-wiki">' + esc(j.template_id || '-') + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                    fieldsHtml +
-                    (j.document_url
-                        ? '<a class="flex items-center justify-between p-3 bg-brand-tint rounded-xl hover:bg-brand/10 transition-colors" href="' + esc(j.document_url) + '">' +
-                            '<div class="flex items-center gap-2">' +
-                                '<iconify-icon icon="mdi:file-document-outline" class="text-brand text-lg"></iconify-icon>' +
-                                '<span class="text-sm font-medium text-brand">下载生成文件</span>' +
-                            '</div>' +
-                            '<iconify-icon icon="mdi:download" class="text-brand"></iconify-icon>' +
-                          '</a>'
-                        : '<div class="p-3 bg-bg-subtle rounded-xl text-center"><iconify-icon icon="mdi:clock-outline" class="text-fg-tertiary text-lg mb-1"></iconify-icon><p class="text-[11px] text-fg-tertiary">文件生成中, 请稍候...</p></div>') +
-                    '<div class="text-[11px] text-fg-tertiary">' +
-                        '创建时间: ' + fmtDate(j.created_at) +
-                    '</div>' +
+                '<p class="text-[12px] text-fg-secondary">律师 ' + esc(j.lawyer_id) + ' → 客户 ' + esc(j.client_id) + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">司法辖区</p>' +
+                    '<p class="text-sm font-semibold text-fg-primary">' + esc(j.jurisdiction) + '</p>' +
                 '</div>' +
-                '<div class="p-4 border-t border-bg-border flex items-center justify-end gap-2 bg-bg-subtle">' +
-                    '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeCrossBorderDetail()">关闭</button>' +
-                    '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeCrossBorderDetail(); openCreateCrossBorderModal()">新建订单</button>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">仲裁机构</p>' +
+                    '<p class="text-sm font-semibold text-urgent">' + esc(j.arbitration_institution || '-') + '</p>' +
                 '</div>' +
-            '</div>';
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">订单价格</p>' +
+                    '<div class="text-lg font-bold text-wiki">¥' + (j.price || 0) + '</div>' +
+                '</div>' +
+                '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">律师所得</p>' +
+                    '<div class="text-lg font-bold text-success">¥' + lawyerFee.toFixed(1) + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="p-3 bg-wiki-tint rounded-xl">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                    '<span class="text-[11px] text-wiki">Marketplace 抽成 (30%)</span>' +
+                    '<span class="text-sm font-semibold text-wiki">¥' + (j.marketplace_commission || 0).toFixed(1) + '</span>' +
+                '</div>' +
+                '<div class="flex items-center justify-between">' +
+                    '<span class="text-[11px] text-wiki/70">Skill 3 v3.0 模板</span>' +
+                    '<span class="text-xs font-mono text-wiki">' + esc(j.template_id || '-') + '</span>' +
+                '</div>' +
+            '</div>' +
+            fieldsHtml +
+            (j.document_url
+                ? '<a class="flex items-center justify-between p-3 bg-brand-tint rounded-xl hover:bg-brand/10 transition-colors" href="' + esc(j.document_url) + '">' +
+                    '<div class="flex items-center gap-2">' +
+                        '<iconify-icon icon="mdi:file-document-outline" class="text-brand text-lg"></iconify-icon>' +
+                        '<span class="text-sm font-medium text-brand">下载生成文件</span>' +
+                    '</div>' +
+                    '<iconify-icon icon="mdi:download" class="text-brand"></iconify-icon>' +
+                  '</a>'
+                : '<div class="p-3 bg-bg-subtle rounded-xl text-center"><iconify-icon icon="mdi:clock-outline" class="text-fg-tertiary text-lg mb-1"></iconify-icon><p class="text-[11px] text-fg-tertiary">文件生成中, 请稍候...</p></div>') +
+            '<div class="text-[11px] text-fg-tertiary">' +
+                '创建时间: ' + fmtDate(j.created_at) +
+            '</div>' +
+        '</div>';
 
-        modal.classList.remove('hidden');
+        var footer = '<button class="mp-btn mp-btn-ghost" onclick="MarketplaceFn.closeCrossBorderDetail()">关闭</button>' +
+            '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeCrossBorderDetail(); openCreateCrossBorderModal()">新建订单</button>';
+
+        if (_closeCrossBorderDetail) _closeCrossBorderDetail();
+        _closeCrossBorderDetail = Utils.showModal({
+            id: 'mp-cb-detail-modal',
+            title: '跨境文件订单详情',
+            icon: 'mdi:earth',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
 
     function closeCrossBorderDetail() {
-        var modal = document.getElementById('mp-cb-detail-modal');
-        if (modal) modal.classList.add('hidden');
+        if (_closeCrossBorderDetail) {
+            _closeCrossBorderDetail();
+            _closeCrossBorderDetail = null;
+        }
     }
 
     // ========================================================================
