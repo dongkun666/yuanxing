@@ -608,7 +608,7 @@
         });
 
         var html = '';
-        matched.forEach(function (rule) {
+        matched.forEach(function (rule, idx) {
             var deadline = calculateDeadline(rule, baseDate);
             var status = getDeadlineStatus(deadline, today);
             var statusCfg = getStatusConfig(status);
@@ -619,46 +619,88 @@
             var unitText = rule.unit === 'day' ? '天' : rule.unit === 'month' ? '个月' : '年';
             var periodText = rule.days === 0 ? '即时' : rule.days + ' ' + unitText;
 
+            var urgencyBadge = '';
+            var urgencyClass = '';
+            if (status === 'overdue' || status === 'today') {
+                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-red-500 to-danger shadow-sm shadow-red-200/50"><iconify-icon icon="mdi:fire" class="text-[10px]"></iconify-icon>高危</span>';
+                urgencyClass = 'deadline-card-high';
+            } else if (status === 'urgent' || status === 'critical') {
+                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-orange-500 to-urgent shadow-sm shadow-orange-200/50"><iconify-icon icon="mdi:alert-circle" class="text-[10px]"></iconify-icon>中危</span>';
+                urgencyClass = 'deadline-card-medium';
+            } else if (status === 'warning') {
+                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm shadow-blue-200/50"><iconify-icon icon="mdi:clock-outline" class="text-[10px]"></iconify-icon>低危</span>';
+                urgencyClass = 'deadline-card-low';
+            } else {
+                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-green-500 to-success shadow-sm shadow-green-200/50"><iconify-icon icon="mdi:check-circle" class="text-[10px]"></iconify-icon>远期</span>';
+                urgencyClass = 'deadline-card-normal';
+            }
+
+            var leftBarColor = '';
+            if (status === 'overdue' || status === 'today') {
+                leftBarColor = 'bg-gradient-to-b from-red-500 to-danger';
+            } else if (status === 'urgent' || status === 'critical') {
+                leftBarColor = 'bg-gradient-to-b from-orange-500 to-urgent';
+            } else if (status === 'warning') {
+                leftBarColor = 'bg-gradient-to-b from-blue-500 to-blue-600';
+            } else {
+                leftBarColor = 'bg-gradient-to-b from-green-500 to-success';
+            }
+
+            var cardBgClass = '';
+            if (status === 'overdue' || status === 'today') {
+                cardBgClass = 'bg-gradient-to-r from-red-50/80 to-white border-red-100';
+            } else if (status === 'urgent' || status === 'critical') {
+                cardBgClass = 'bg-gradient-to-r from-orange-50/60 to-white border-orange-100';
+            } else if (status === 'warning') {
+                cardBgClass = 'bg-gradient-to-r from-blue-50/40 to-white border-blue-100';
+            } else {
+                cardBgClass = 'bg-gradient-to-r from-green-50/30 to-white border-green-100';
+            }
+
             html +=
-                '<div class="border rounded-lg p-3.5 ' +
-                statusCfg.cls +
-                ' transition-all hover:shadow-sm">' +
+                '<div class="relative overflow-hidden rounded-xl border ' +
+                cardBgClass +
+                ' p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group deadline-card ' +
+                urgencyClass +
+                '" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ' +
+                (idx * 0.06) +
+                's">' +
+                '<div class="absolute left-0 top-0 bottom-0 w-1.5 ' +
+                leftBarColor +
+                ' rounded-l-xl"></div>' +
+                '<div class="pl-2">' +
                 '<div class="flex items-start justify-between gap-3">' +
                 '<div class="flex-1 min-w-0">' +
-                '<div class="flex items-center gap-2 mb-1.5 flex-wrap">' +
-                '<iconify-icon class="text-base ' +
-                statusCfg.cls +
-                '" style="color: currentColor;" icon="' +
-                statusCfg.icon +
-                '"></iconify-icon>' +
-                '<span class="text-sm font-semibold">' +
+                '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
+                '<h3 class="text-sm font-bold text-fg-primary truncate">' +
                 escapeHtml(rule.name) +
-                '</span>' +
-                '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-white/60 font-medium">' +
+                '</h3>' +
+                urgencyBadge +
+                '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-medium rounded-full bg-bg text-fg-tertiary border border-bg-border">' +
                 periodText +
                 '</span>' +
                 '</div>' +
-                '<p class="text-xs leading-relaxed">' +
+                '<p class="text-xs text-fg-secondary leading-relaxed">' +
                 escapeHtml(rule.desc) +
                 '</p>' +
-                '<div class="flex items-center gap-2 mt-2 text-[10px] flex-wrap">' +
-                '<span class="inline-flex items-center gap-0.5"><iconify-icon class="text-xs" icon="mdi:scale-balance"></iconify-icon> ' +
+                '<div class="flex items-center gap-2 mt-2.5 text-[10px] flex-wrap">' +
+                '<span class="inline-flex items-center gap-1 text-fg-tertiary"><iconify-icon class="text-xs" icon="mdi:scale-balance"></iconify-icon>' +
                 escapeHtml(rule.legalBasis) +
                 '</span>' +
-                '<span class="text-fg-tertiary">·</span>' +
-                '<span class="font-mono">' +
+                '<span class="text-fg-disabled">·</span>' +
+                '<span class="inline-flex items-center gap-1 text-fg-tertiary font-mono"><iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon>' +
                 formatDate(deadline) +
                 '</span>' +
                 '</div>' +
                 '</div>' +
-                '<div class="text-right flex-shrink-0">' +
-                '<div class="text-base font-bold leading-none">' +
-                diffText +
+                '<div class="text-right flex-shrink-0 flex flex-col items-end gap-1.5">' +
+                '<div class="text-xl font-bold text-fg-primary leading-none kb-tabular-nums">' +
+                (diffDays >= 0 ? diffDays : -diffDays) +
+                '<span class="text-xs font-normal text-fg-tertiary ml-0.5">天</span></div>' +
+                '<div class="text-[10px] text-fg-tertiary">' +
+                (diffDays >= 0 ? '剩余时间' : '已逾期') +
                 '</div>' +
-                '<div class="text-[10px] mt-0.5">' +
-                statusCfg.label +
-                '</div>' +
-                '<button class="text-[10px] mt-1.5 inline-flex items-center gap-0.5 px-2 py-1 rounded bg-white/80 hover:bg-white border border-current/20 transition-colors" onclick="copyDeadlineDate(\'' +
+                '<button class="text-[10px] mt-1 inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg bg-white hover:bg-bg-subtle border border-bg-border text-fg-secondary hover:text-brand hover:border-brand/30 transition-all group-hover:shadow-sm" onclick="copyDeadlineDate(\'' +
                 formatDate(deadline) +
                 '\', \'' +
                 escapeHtml(rule.name) +
@@ -666,6 +708,7 @@
                 '<iconify-icon class="text-xs" icon="mdi:content-copy"></iconify-icon>' +
                 '复制日期' +
                 '</button>' +
+                '</div>' +
                 '</div>' +
                 '</div>' +
                 '</div>';
@@ -698,20 +741,32 @@
         });
 
         var html = '';
+        var idx = 0;
         lawSet.forEach(function (law) {
             var count = DEADLINE_RULES.filter(function (r) {
                 return r.legalBasis.indexOf(law) === 0;
             }).length;
             html +=
-                '<div class="flex items-center gap-2 p-2.5 rounded-lg bg-bg-subtle/50">' +
-                '<iconify-icon class="text-base text-brand flex-shrink-0" icon="mdi:book-open-variant"></iconify-icon>' +
-                '<span class="flex-1 truncate">' +
+                '<div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-purple-50/60 to-white border border-purple-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ' +
+                (idx * 0.08) +
+                's">' +
+                '<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center flex-shrink-0 shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">' +
+                '<iconify-icon class="text-white text-base" icon="mdi:book-open-variant"></iconify-icon>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                '<div class="text-xs font-semibold text-fg-primary truncate">' +
                 escapeHtml(law) +
-                '</span>' +
-                '<span class="text-[10px] text-fg-tertiary whitespace-nowrap">' +
+                '</div>' +
+                '<div class="text-[10px] text-fg-tertiary mt-0.5 flex items-center gap-1">' +
+                '<iconify-icon icon="mdi:file-document-outline" class="text-xs"></iconify-icon>' +
+                count + ' 项相关期限' +
+                '</div>' +
+                '</div>' +
+                '<div class="flex-shrink-0 px-2 py-1 rounded-md bg-wiki/10 text-wiki text-[10px] font-bold">' +
                 count +
-                ' 项</span>' +
+                '</div>' +
                 '</div>';
+            idx++;
         });
 
         container.innerHTML = html;

@@ -57,6 +57,7 @@
     var _currentPage = 1;
     var _pageSize = 10;
     var _searchTimer = null;
+    var _currentYearFilter = '';
 
     function getFilteredData() {
         var searchInput = document.getElementById('archiveSearchInput');
@@ -64,7 +65,7 @@
         var typeFilter = document.getElementById('archiveTypeFilter');
 
         var searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
-        var yearValue = yearFilter ? yearFilter.value : '';
+        var yearValue = yearFilter ? yearFilter.value : (_currentYearFilter === 'all' ? '' : _currentYearFilter);
         var typeValue = typeFilter ? typeFilter.value : '';
 
         return _archiveData.filter(function (item) {
@@ -80,12 +81,99 @@
         });
     }
 
+    function getTypeBadgeClass(type) {
+        if (type === '民事') return 'archive-type-civil';
+        if (type === '商事') return 'archive-type-commercial';
+        if (type === '劳动争议') return 'archive-type-labor';
+        return 'archive-type-other';
+    }
+
+    function renderTableRow(item, index) {
+        var staggerIndex = index !== undefined ? index : 0;
+        return (
+            '<tr class="archive-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group" data-year="' +
+            item.year +
+            '" data-animate="fade-in-up" data-stagger-group="archive-rows" data-stagger-index="' + staggerIndex + '" data-delay="0.05">' +
+            '<td class="py-4 px-5">' +
+            '<input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/>' +
+            '</td>' +
+            '<td class="py-4 px-5">' +
+            '<div class="flex items-center gap-3">' +
+            '<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-wiki-tint to-purple-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
+            '<iconify-icon icon="mdi:archive-outline" class="text-wiki text-base"></iconify-icon>' +
+            '</div>' +
+            '<span class="text-sm font-medium text-brand truncate font-mono cursor-pointer hover:underline" title="' + escapeHtml(item.caseNum) + '" onclick="openArchiveDetail(' +
+            item.id +
+            ')">' +
+            escapeHtml(item.caseNum) +
+            '</span>' +
+            '</div>' +
+            '</td>' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.cause) + '">' +
+            escapeHtml(item.cause) +
+            '</td>' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.plaintiff) + '">' +
+            escapeHtml(item.plaintiff) +
+            '</td>' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.defendant) + '">' +
+            escapeHtml(item.defendant) +
+            '</td>' +
+            '<td class="text-center py-4 px-5 whitespace-nowrap">' +
+            '<div class="inline-flex items-center gap-1.5 text-xs text-fg-tertiary">' +
+            '<iconify-icon icon="mdi:calendar-check-outline" class="text-base text-success"></iconify-icon>' +
+            '<span>' + item.archiveDate + '</span>' +
+            '</div>' +
+            '</td>' +
+            '<td class="text-center py-4 px-5 whitespace-nowrap">' +
+            '<div class="flex items-center justify-center gap-1">' +
+            '<button class="table-action-btn table-action-btn-primary" onclick="openArchiveDetail(' + item.id + ')">' +
+            '<iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>查看' +
+            '</button>' +
+            '<button class="table-action-btn table-action-btn-default" onclick="restoreArchive(' + item.id + ')">' +
+            '<iconify-icon icon="mdi:restore" class="text-xs"></iconify-icon>还原' +
+            '</button>' +
+            '<button class="table-action-btn table-action-btn-danger" onclick="deleteArchive(' + item.id + ')">' +
+            '<iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>删除' +
+            '</button>' +
+            '</div>' +
+            '</td>' +
+            '</tr>'
+        );
+    }
+
+    function updateStatsCards() {
+        var statsContainer = document.getElementById('archive-stats-cards');
+        if (!statsContainer) return;
+
+        var yearCounts = { all: _archiveData.length, '2026': 0, '2025': 0, '2024': 0 };
+        _archiveData.forEach(function (item) {
+            if (yearCounts[item.year] !== undefined) {
+                yearCounts[item.year]++;
+            }
+        });
+
+        var cards = statsContainer.querySelectorAll('.archive-stat-card');
+        cards.forEach(function (card) {
+            var onClickAttr = card.getAttribute('onclick') || '';
+            var match = onClickAttr.match(/filterByArchiveYear\('([^']+)'\)/);
+            if (match) {
+                var year = match[1];
+                var countEl = card.querySelector('.text-2xl');
+                if (countEl && yearCounts[year] !== undefined) {
+                    countEl.textContent = yearCounts[year];
+                }
+            }
+        });
+    }
+
     function renderArchiveTable() {
         var tbody = document.getElementById('archiveTableBody');
         var resultCount = document.getElementById('archiveResultCount');
         var pageSizeSelect = document.getElementById('archivePageSize');
         var paginationInfo = document.getElementById('archivePaginationInfo');
         var paginationBtns = document.getElementById('archivePaginationBtns');
+        var emptyState = document.getElementById('archiveEmptyState');
+        var table = document.getElementById('archiveTable');
 
         if (!tbody) return;
 
@@ -100,64 +188,39 @@
         var pageData = filtered.slice(startIdx, endIdx);
 
         if (filtered.length === 0) {
-            tbody.innerHTML =
-                '<tr><td colspan="7" class="py-16 text-center">' +
-                '<div class="flex flex-col items-center">' +
-                '<div class="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mb-3">' +
-                '<iconify-icon class="text-3xl text-fg-disabled" icon="mdi:archive-search-outline"></iconify-icon>' +
-                '</div>' +
-                '<p class="text-sm font-medium text-fg-primary mb-1">暂无归档案件</p>' +
-                '<p class="text-xs text-fg-tertiary mb-4">归档已完成或关闭的案件，方便以后查阅</p>' +
-                '<div class="flex items-center justify-center gap-2">' +
-                '<button class="h-8 px-3 text-xs text-brand bg-brand-tint rounded-lg hover:bg-brand-tint/70" onclick="switchToList(\'case-list\')">查看案件列表</button>' +
-                '<button class="h-8 px-3 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="switchView(\'deadline\')">期限计算</button>' +
-                '</div>' +
-                '</div>' +
-                '</td></tr>';
+            if (table) table.classList.add('hidden');
+            if (emptyState) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                var searchInput = document.getElementById('archiveSearchInput');
+                var hasSearch = searchInput && searchInput.value.trim() !== '';
+                Utils.createEmptyState({
+                    preset: hasSearch ? 'no-result' : 'empty-list',
+                    icon: 'mdi:archive-search-outline',
+                    title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
+                    description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
+                    actionText: hasSearch ? '重置筛选' : '查看案件列表',
+                    actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); },
+                    container: emptyState
+                });
+            }
         } else {
+            if (table) table.classList.remove('hidden');
+            if (emptyState) {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
             tbody.innerHTML = pageData
-                .map(function (item) {
-                    return (
-                        '<tr class="hover:bg-bg-subtle transition-colors" data-year="' +
-                        item.year +
-                        '">' +
-                        '<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>' +
-                        '<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(' +
-                        item.id +
-                        ')">' +
-                        escapeHtml(item.caseNum) +
-                        '</span></td>' +
-                        '<td class="py-3 px-4 text-xs text-fg-secondary">' +
-                        escapeHtml(item.cause) +
-                        '</td>' +
-                        '<td class="py-3 px-4 text-xs text-fg-secondary">' +
-                        escapeHtml(item.plaintiff) +
-                        '</td>' +
-                        '<td class="py-3 px-4 text-xs text-fg-secondary">' +
-                        escapeHtml(item.defendant) +
-                        '</td>' +
-                        '<td class="text-center py-3 px-4 text-xs text-fg-tertiary">' +
-                        item.archiveDate +
-                        '</td>' +
-                        '<td class="text-center py-3 px-4">' +
-                        '<div class="flex items-center justify-center gap-2">' +
-                        '<button class="text-xs text-brand hover:underline" onclick="openArchiveDetail(' +
-                        item.id +
-                        ')">查看</button>' +
-                        '<span class="text-bg-border">|</span>' +
-                        '<button class="text-xs text-brand hover:underline" onclick="restoreArchive(' +
-                        item.id +
-                        ')">还原</button>' +
-                        '<span class="text-bg-border">|</span>' +
-                        '<button class="text-xs text-danger hover:underline" onclick="deleteArchive(' +
-                        item.id +
-                        ')">删除</button>' +
-                        '</div>' +
-                        '</td>' +
-                        '</tr>'
-                    );
+                .map(function (item, idx) {
+                    return renderTableRow(item, idx);
                 })
                 .join('');
+
+            setTimeout(function () {
+                if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+                    Animations.initPageAnimations(tbody);
+                }
+            }, 50);
         }
 
         if (resultCount) resultCount.textContent = '共 ' + filtered.length + ' 条';
@@ -166,13 +229,23 @@
 
         if (paginationBtns) {
             paginationBtns.innerHTML = '';
+            if (_currentPage > 1) {
+                var prevBtn = document.createElement('button');
+                prevBtn.className = 'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
+                prevBtn.innerHTML = '<iconify-icon icon="mdi:chevron-left"></iconify-icon>';
+                prevBtn.onclick = function () {
+                    _currentPage--;
+                    renderArchiveTable();
+                };
+                paginationBtns.appendChild(prevBtn);
+            }
             for (var i = 1; i <= totalPages; i++) {
                 var btn = document.createElement('button');
                 btn.className =
-                    'w-7 h-7 rounded text-xs flex items-center justify-center ' +
+                    'min-w-[32px] h-8 rounded-xl text-xs font-medium flex items-center justify-center transition-all ' +
                     (i === _currentPage
-                        ? 'bg-brand text-white'
-                        : 'bg-white hover:bg-bg-subtle text-fg-secondary border border-bg-border');
+                        ? 'bg-gradient-to-r from-brand to-brand-hover text-white shadow-md shadow-brand/20'
+                        : 'bg-white hover:bg-bg-subtle text-fg-secondary border border-bg-border hover:border-brand hover:text-brand hover:-translate-y-0.5');
                 btn.textContent = i;
                 btn.onclick = (function (page) {
                     return function () {
@@ -181,6 +254,16 @@
                     };
                 })(i);
                 paginationBtns.appendChild(btn);
+            }
+            if (_currentPage < totalPages) {
+                var nextBtn = document.createElement('button');
+                nextBtn.className = 'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
+                nextBtn.innerHTML = '<iconify-icon icon="mdi:chevron-right"></iconify-icon>';
+                nextBtn.onclick = function () {
+                    _currentPage++;
+                    renderArchiveTable();
+                };
+                paginationBtns.appendChild(nextBtn);
             }
         }
     }
@@ -191,6 +274,30 @@
             _currentPage = 1;
             renderArchiveTable();
         }, 300);
+    }
+
+    function filterByArchiveYear(year) {
+        _currentYearFilter = year;
+        var yearFilter = document.getElementById('archiveYearFilter');
+        if (yearFilter) {
+            yearFilter.value = year === 'all' ? '' : year;
+        }
+        _currentPage = 1;
+        renderArchiveTable();
+    }
+
+    function resetArchiveFilters() {
+        var searchInput = document.getElementById('archiveSearchInput');
+        var yearFilter = document.getElementById('archiveYearFilter');
+        var typeFilter = document.getElementById('archiveTypeFilter');
+
+        if (searchInput) searchInput.value = '';
+        if (yearFilter) yearFilter.value = '';
+        if (typeFilter) typeFilter.value = '';
+
+        _currentYearFilter = '';
+        _currentPage = 1;
+        renderArchiveTable();
     }
 
     function toggleAllArchive(checkbox) {
@@ -213,65 +320,83 @@
 
         var content =
             '<div class="space-y-4">' +
-            '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
-            '<div class="w-12 h-12 rounded-lg bg-wiki-tint text-wiki flex items-center justify-center flex-shrink-0">' +
-            '<iconify-icon icon="mdi:archive" class="text-xl"></iconify-icon>' +
+            '<div class="flex items-center gap-3 p-4 bg-gradient-to-r from-wiki-tint to-purple-50 rounded-2xl border border-purple-100">' +
+            '<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-wiki to-purple-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-wiki/20">' +
+            '<iconify-icon icon="mdi:archive" class="text-2xl"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
-            '<p class="font-medium text-sm text-fg-primary font-mono">' +
+            '<p class="font-semibold text-sm text-fg-primary font-mono">' +
             escapeHtml(item.caseNum) +
             '</p>' +
-            '<p class="text-xs text-fg-tertiary">' +
+            '<p class="text-xs text-fg-tertiary mt-0.5">' +
             escapeHtml(item.cause) +
             '</p>' +
+            '<span class="inline-block mt-1.5 archive-type-badge ' + getTypeBadgeClass(item.type) + '">' +
+            escapeHtml(item.type) +
+            '</span>' +
             '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-3 text-sm">' +
-            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">案件类型</p>' +
-            '<p class="text-sm text-fg-primary">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 transition-colors">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:gavel" class="text-[10px]"></iconify-icon>案件类型' +
+            '</p>' +
+            '<p class="text-sm font-medium text-fg-primary">' +
             escapeHtml(item.type) +
             '</p>' +
             '</div>' +
-            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">归档年份</p>' +
-            '<p class="text-sm text-fg-primary">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 transition-colors">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:calendar-outline" class="text-[10px]"></iconify-icon>归档年份' +
+            '</p>' +
+            '<p class="text-sm font-medium text-fg-primary">' +
             escapeHtml(item.year) +
             ' 年</p>' +
             '</div>' +
-            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">原告</p>' +
-            '<p class="text-sm text-fg-primary">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 transition-colors">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:account-outline" class="text-[10px]"></iconify-icon>原告' +
+            '</p>' +
+            '<p class="text-sm font-medium text-fg-primary">' +
             escapeHtml(item.plaintiff) +
             '</p>' +
             '</div>' +
-            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">被告</p>' +
-            '<p class="text-sm text-fg-primary">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 transition-colors">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1 flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:account-outline" class="text-[10px]"></iconify-icon>被告' +
+            '</p>' +
+            '<p class="text-sm font-medium text-fg-primary">' +
             escapeHtml(item.defendant) +
             '</p>' +
             '</div>' +
             '</div>' +
-            '<div class="p-3 bg-bg-subtle rounded-xl">' +
-            '<p class="text-[11px] text-fg-tertiary mb-1">归档日期</p>' +
-            '<p class="text-sm text-fg-primary">' +
+            '<div class="p-4 bg-gradient-to-r from-success-tint/50 to-green-50 rounded-2xl border border-green-100">' +
+            '<div class="flex items-center gap-2 mb-1">' +
+            '<iconify-icon icon="mdi:calendar-check-outline" class="text-success text-base"></iconify-icon>' +
+            '<p class="text-[11px] text-success font-semibold">归档日期</p>' +
+            '</div>' +
+            '<p class="text-base font-bold text-fg-primary">' +
             escapeHtml(item.archiveDate) +
             '</p>' +
             '</div>' +
-            '<div class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
-            '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
-            '案件已归档, 如需恢复可点击下方按钮' +
+            '<div class="text-[11px] text-fg-tertiary flex items-center gap-1 p-3 bg-bg-subtle rounded-xl">' +
+            '<iconify-icon icon="mdi:information-outline" class="text-brand"></iconify-icon>' +
+            '<span>案件已归档，如需恢复可点击下方"还原案件"按钮</span>' +
             '</div>' +
             '</div>';
 
         var footer =
-            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeArchiveDetail()">关闭</button>' +
-            '<button class="h-9 px-4 text-xs text-brand hover:text-brand-hover bg-brand-tint border border-brand/20 rounded-lg" onclick="closeArchiveDetail(); restoreArchive(' +
+            '<button class="h-9 px-4 text-xs font-medium text-fg-secondary bg-white border border-bg-border rounded-xl hover:bg-bg transition-all" onclick="closeArchiveDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-brand hover:text-brand-hover bg-brand-tint border border-brand/20 rounded-xl hover:bg-brand-tint2 transition-all flex items-center gap-1.5" onclick="closeArchiveDetail(); restoreArchive(' +
             item.id +
-            ')">还原案件</button>' +
-            '<button class="h-9 px-4 text-xs text-danger hover:text-danger/80 bg-danger-tint border border-danger/20 rounded-lg" onclick="closeArchiveDetail(); deleteArchive(' +
+            ')">' +
+            '<iconify-icon icon="mdi:restore" class="text-sm"></iconify-icon>还原案件' +
+            '</button>' +
+            '<button class="h-9 px-4 text-xs font-medium text-danger hover:text-danger/80 bg-danger-tint border border-danger/20 rounded-xl hover:bg-red-100 transition-all flex items-center gap-1.5" onclick="closeArchiveDetail(); deleteArchive(' +
             item.id +
-            ')">删除归档</button>';
+            ')">' +
+            '<iconify-icon icon="mdi:trash-outline" class="text-sm"></iconify-icon>删除归档' +
+            '</button>';
 
         if (_closeArchiveDetail) _closeArchiveDetail();
         _closeArchiveDetail = Utils.showModal({
@@ -302,6 +427,7 @@
                 return x.id !== id;
             });
             renderArchiveTable();
+            updateStatsCards();
             Utils.showToast('success', '案件已还原');
         }
     }
@@ -317,7 +443,14 @@
                 return x.id !== id;
             });
             renderArchiveTable();
+            updateStatsCards();
             Utils.showToast('success', '案件已删除');
+        }
+    }
+
+    function batchExportArchive() {
+        if (typeof showToast === 'function') {
+            showToast('批量导出功能开发中...');
         }
     }
 
@@ -326,6 +459,7 @@
         if (pageSizeSelect) {
             pageSizeSelect.addEventListener('change', filterArchiveList);
         }
+        updateStatsCards();
         renderArchiveTable();
     }
 
@@ -336,4 +470,7 @@
     globalThis.restoreArchive = restoreArchive;
     globalThis.deleteArchive = deleteArchive;
     globalThis.initArchive = initArchive;
+    globalThis.filterByArchiveYear = filterByArchiveYear;
+    globalThis.resetArchiveFilters = resetArchiveFilters;
+    globalThis.batchExportArchive = batchExportArchive;
 })();

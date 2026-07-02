@@ -27,6 +27,10 @@
         renderAppVersion();
         switchView(getStartView());
         updateNotificationBadgeState();
+
+        if (typeof Utils !== 'undefined' && typeof Utils.initShortcuts === 'function') {
+            Utils.initShortcuts();
+        }
     }
 
     /**

@@ -1142,6 +1142,575 @@
         }, 300);
     }
 
+    // ===== 全局快捷键系统 =====
+    var _shortcutRegistry = {};
+    var _currentScope = 'global';
+    var _isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+    function _normalizeKey(key) {
+        if (!key) return '';
+        return key
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .replace(/cmd|command|⌘/g, 'meta')
+            .replace(/ctrl|control|^/g, 'ctrl')
+            .replace(/alt|option|⌥/g, 'alt')
+            .replace(/shift|⇧/g, 'shift')
+            .replace(/esc|escape/g, 'escape')
+            .replace(/enter|return/g, 'enter')
+            .replace(/\++/g, '+');
+    }
+
+    function _formatKeyDisplay(key) {
+        if (!key) return '';
+        var normalized = _normalizeKey(key);
+        var parts = normalized.split('+');
+        var formatted = parts.map(function (part) {
+            if (_isMac) {
+                if (part === 'ctrl') return '⌃';
+                if (part === 'meta') return '⌘';
+                if (part === 'alt') return '⌥';
+                if (part === 'shift') return '⇧';
+                if (part === 'escape') return '⎋';
+                if (part === 'enter') return '↵';
+                if (part === 'backspace') return '⌫';
+            } else {
+                if (part === 'ctrl') return 'Ctrl';
+                if (part === 'meta') return 'Win';
+                if (part === 'alt') return 'Alt';
+                if (part === 'shift') return 'Shift';
+                if (part === 'escape') return 'Esc';
+                if (part === 'enter') return 'Enter';
+                if (part === 'backspace') return 'Backspace';
+            }
+            if (part.length === 1) return part.toUpperCase();
+            return part.charAt(0).toUpperCase() + part.slice(1);
+        });
+        return formatted.join(_isMac ? '' : '+');
+    }
+
+    function _getKeyFromEvent(e) {
+        var key = e.key.toLowerCase();
+        if (key === ' ') key = 'space';
+        var parts = [];
+        if (e.ctrlKey) parts.push('ctrl');
+        if (e.metaKey) parts.push('meta');
+        if (e.altKey) parts.push('alt');
+        if (e.shiftKey) parts.push('shift');
+        if (key !== 'control' && key !== 'meta' && key !== 'alt' && key !== 'shift') {
+            parts.push(key);
+        }
+        return parts.join('+');
+    }
+
+    function _isInputElement(el) {
+        if (!el) return false;
+        var tag = el.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+        if (el.isContentEditable) return true;
+        return false;
+    }
+
+    function _handleKeyDown(e) {
+        var eventKey = _getKeyFromEvent(e);
+        if (!eventKey) return;
+
+        var isInput = _isInputElement(e.target);
+        var scopes = ['global'];
+        if (_currentScope && _currentScope !== 'global') {
+            scopes.unshift(_currentScope);
+        }
+
+        for (var i = 0; i < scopes.length; i++) {
+            var scope = scopes[i];
+            var scopeShortcuts = _shortcutRegistry[scope];
+            if (!scopeShortcuts) continue;
+
+            var shortcut = scopeShortcuts[eventKey];
+            if (!shortcut) continue;
+
+            if (isInput && !shortcut.allowInInput) {
+                if (eventKey !== 'escape') continue;
+            }
+
+            if (shortcut.preventDefault !== false) {
+                e.preventDefault();
+            }
+            if (shortcut.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            try {
+                shortcut.callback(e);
+            } catch (err) {
+                console.error('[Shortcut] 执行快捷键回调失败:', eventKey, err);
+            }
+            return;
+        }
+    }
+
+    function registerShortcut(key, callback, options) {
+        if (!key || !callback) return false;
+        options = options || {};
+        var normalizedKey = _normalizeKey(key);
+        var scope = options.scope || 'global';
+
+        if (!_shortcutRegistry[scope]) {
+            _shortcutRegistry[scope] = {};
+        }
+
+        _shortcutRegistry[scope][normalizedKey] = {
+            key: normalizedKey,
+            displayKey: _formatKeyDisplay(key),
+            callback: callback,
+            scope: scope,
+            description: options.description || '',
+            category: options.category || 'other',
+            allowInInput: options.allowInInput === true,
+            preventDefault: options.preventDefault !== false,
+            stopPropagation: options.stopPropagation === true
+        };
+
+        return true;
+    }
+
+    function unregisterShortcut(key, scope) {
+        var normalizedKey = _normalizeKey(key);
+        scope = scope || 'global';
+        if (_shortcutRegistry[scope] && _shortcutRegistry[scope][normalizedKey]) {
+            delete _shortcutRegistry[scope][normalizedKey];
+            return true;
+        }
+        return false;
+    }
+
+    function setShortcutScope(scope) {
+        _currentScope = scope || 'global';
+    }
+
+    function getShortcuts() {
+        var result = {};
+        for (var scope in _shortcutRegistry) {
+            result[scope] = {};
+            for (var key in _shortcutRegistry[scope]) {
+                var s = _shortcutRegistry[scope][key];
+                result[scope][key] = {
+                    key: s.key,
+                    displayKey: s.displayKey,
+                    description: s.description,
+                    category: s.category,
+                    scope: s.scope
+                };
+            }
+        }
+        return result;
+    }
+
+    function showShortcutHelp() {
+        var allShortcuts = getShortcuts();
+        var categories = {
+            navigation: { label: '页面导航', icon: 'mdi:compass-outline', items: [] },
+            action: { label: '快速操作', icon: 'mdi:lightning-bolt', items: [] },
+            setting: { label: '设置与帮助', icon: 'mdi:cog-outline', items: [] },
+            other: { label: '其他', icon: 'mdi:dots-horizontal', items: [] }
+        };
+
+        var globalShortcuts = allShortcuts['global'] || {};
+        for (var key in globalShortcuts) {
+            var s = globalShortcuts[key];
+            var cat = categories[s.category] || categories.other;
+            cat.items.push(s);
+        }
+
+        var contentHtml = '<div class="shortcut-help-content">';
+        for (var catKey in categories) {
+            var cat = categories[catKey];
+            if (cat.items.length === 0) continue;
+            contentHtml +=
+                '<div class="shortcut-category mb-4">' +
+                '<div class="flex items-center gap-2 mb-2">' +
+                '<iconify-icon icon="' + cat.icon + '" class="text-brand"></iconify-icon>' +
+                '<span class="text-sm font-semibold text-fg-primary">' + cat.label + '</span>' +
+                '</div>' +
+                '<div class="space-y-1 pl-6">';
+            cat.items.forEach(function (item) {
+                contentHtml +=
+                    '<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-bg-subtle">' +
+                    '<span class="text-xs text-fg-secondary">' + escapeHtml(item.description) + '</span>' +
+                    '<kbd class="shortcut-kbd">' + item.displayKey + '</kbd>' +
+                    '</div>';
+            });
+            contentHtml += '</div></div>';
+        }
+        contentHtml += '</div>';
+
+        showModal({
+            id: 'shortcut-help-modal',
+            title: '键盘快捷键',
+            content: contentHtml,
+            size: 'md',
+            icon: 'mdi:keyboard-variant',
+            escClose: true
+        });
+    }
+
+    // ===== 命令面板 =====
+    var _commandPaletteEl = null;
+    var _commandPaletteInput = null;
+    var _commandListEl = null;
+    var _commands = [];
+    var _filteredCommands = [];
+    var _selectedIndex = 0;
+    var _isPaletteOpen = false;
+
+    function _registerDefaultCommands() {
+        _commands = [
+            { id: 'nav-workstation', name: '工作台', description: '返回工作台首页', icon: 'mdi:view-dashboard-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('workstation'); } },
+            { id: 'nav-cases', name: '案件管理', description: '查看和管理所有案件', icon: 'mdi:briefcase-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchToList === 'function') switchToList('case-list'); } },
+            { id: 'nav-schedule', name: '日程管理', description: '查看和管理日程安排', icon: 'mdi:calendar-month-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('schedule-calendar'); } },
+            { id: 'nav-clients', name: '客户管理', description: '管理客户信息', icon: 'mdi:account-group-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('client'); } },
+            { id: 'nav-templates', name: '模板管理', description: '管理文书模板', icon: 'mdi:file-document-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('template'); } },
+            { id: 'nav-knowledge', name: '知识库', description: '法律知识库检索', icon: 'mdi:bookshelf', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('knowledge'); } },
+            { id: 'nav-archive', name: '归档管理', description: '已归档案件', icon: 'mdi:archive-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('archive'); } },
+            { id: 'nav-ai-chat', name: 'AI 对话', description: '打开 LexPrime 助手', icon: 'mdi:chat-processing-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchSidebarTab === 'function') switchSidebarTab('ai'); } },
+            { id: 'nav-settings', name: '账号设置', description: '个人设置与偏好', icon: 'mdi:cog-outline', category: 'navigation', shortcut: '', action: function () { if (typeof window.switchToAccountSettings === 'function') window.switchToAccountSettings(); } },
+            { id: 'action-new-case', name: '新建案件', description: '创建一个新的案件', icon: 'mdi:plus-circle-outline', category: 'action', shortcut: 'Ctrl+N', action: function () { if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal(); else showToast('新建案件功能开发中'); } },
+            { id: 'action-new-schedule', name: '新建日程', description: '添加新的日程安排', icon: 'mdi:calendar-plus', category: 'action', shortcut: '', action: function () { if (typeof window.openScheduleModal === 'function') window.openScheduleModal(); else showToast('新建日程功能开发中'); } },
+            { id: 'action-upload-file', name: '上传文件', description: '上传文件到附件库', icon: 'mdi:upload', category: 'action', shortcut: '', action: function () { showToast('上传文件功能开发中'); } },
+            { id: 'action-search', name: '全局搜索', description: '搜索案件、文书、证据', icon: 'mdi:magnify', category: 'action', shortcut: 'Ctrl+/', action: function () { var input = document.querySelector('header input[type="text"]'); if (input) { input.focus(); input.select(); } } },
+            { id: 'setting-shortcuts', name: '快捷键帮助', description: '查看所有键盘快捷键', icon: 'mdi:keyboard-variant', category: 'setting', shortcut: '?', action: function () { closeCommandPalette(); setTimeout(showShortcutHelp, 100); } },
+            { id: 'setting-theme', name: '切换主题', description: '切换浅色/深色主题（开发中）', icon: 'mdi:theme-light-dark', category: 'setting', shortcut: '', action: function () { showToast('主题切换功能开发中'); } }
+        ];
+    }
+
+    function _fuzzyMatch(query, text) {
+        if (!query) return true;
+        query = query.toLowerCase();
+        text = text.toLowerCase();
+        if (text.indexOf(query) !== -1) return true;
+        var qIndex = 0;
+        for (var i = 0; i < text.length && qIndex < query.length; i++) {
+            if (text[i] === query[qIndex]) qIndex++;
+        }
+        return qIndex === query.length;
+    }
+
+    function _filterCommands(query) {
+        if (!query) {
+            _filteredCommands = _commands.slice();
+            return;
+        }
+        _filteredCommands = _commands.filter(function (cmd) {
+            return _fuzzyMatch(query, cmd.name) || _fuzzyMatch(query, cmd.description) || _fuzzyMatch(query, cmd.category);
+        });
+    }
+
+    function _getCategoryLabel(cat) {
+        var map = { navigation: '页面导航', action: '快速操作', setting: '设置' };
+        return map[cat] || cat;
+    }
+
+    function _renderCommandList() {
+        if (!_commandListEl) return;
+
+        var html = '';
+        var currentCategory = '';
+        var displayIndex = 0;
+
+        if (_filteredCommands.length === 0) {
+            html = '<div class="p-8 text-center text-fg-tertiary text-sm">' +
+                '<iconify-icon icon="mdi:magnify-scan" class="text-3xl mb-2 block mx-auto"></iconify-icon>' +
+                '没有找到匹配的命令' +
+                '</div>';
+            _commandListEl.innerHTML = html;
+            return;
+        }
+
+        _filteredCommands.forEach(function (cmd, idx) {
+            if (cmd.category !== currentCategory) {
+                currentCategory = cmd.category;
+                html += '<div class="command-category px-3 py-1.5 text-[11px] font-medium text-fg-tertiary bg-bg-subtle/50 sticky top-0 backdrop-blur-sm z-10">' + _getCategoryLabel(cmd.category) + '</div>';
+            }
+            var isSelected = idx === _selectedIndex;
+            var shortcutHtml = cmd.shortcut ? '<kbd class="shortcut-kbd text-[10px]">' + _formatKeyDisplay(cmd.shortcut) + '</kbd>' : '';
+            html +=
+                '<div class="command-item flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors ' + (isSelected ? 'bg-brand/10' : 'hover:bg-bg-subtle') + '" data-index="' + idx + '" role="option" aria-selected="' + (isSelected ? 'true' : 'false') + '">' +
+                '<div class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center flex-shrink-0 ' + (isSelected ? 'bg-brand/20' : '') + '">' +
+                '<iconify-icon icon="' + cmd.icon + '" class="' + (isSelected ? 'text-brand' : 'text-fg-tertiary') + '"></iconify-icon>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                '<div class="text-sm font-medium text-fg-primary truncate">' + escapeHtml(cmd.name) + '</div>' +
+                '<div class="text-[11px] text-fg-tertiary truncate">' + escapeHtml(cmd.description) + '</div>' +
+                '</div>' +
+                shortcutHtml +
+                '</div>';
+            displayIndex++;
+        });
+
+        _commandListEl.innerHTML = html;
+
+        var selectedEl = _commandListEl.querySelector('.command-item[aria-selected="true"]');
+        if (selectedEl) {
+            selectedEl.scrollIntoView({ block: 'nearest' });
+        }
+
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo(_commandListEl.querySelectorAll('.command-item'),
+                { opacity: 0, y: 4 },
+                { opacity: 1, y: 0, duration: 0.15, stagger: 0.02, ease: 'power2.out' }
+            );
+        }
+    }
+
+    function _onCommandInput() {
+        var query = _commandPaletteInput ? _commandPaletteInput.value : '';
+        _filterCommands(query);
+        _selectedIndex = 0;
+        _renderCommandList();
+    }
+
+    function _onCommandKeyDown(e) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (_filteredCommands.length > 0) {
+                _selectedIndex = (_selectedIndex + 1) % _filteredCommands.length;
+                _renderCommandList();
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (_filteredCommands.length > 0) {
+                _selectedIndex = (_selectedIndex - 1 + _filteredCommands.length) % _filteredCommands.length;
+                _renderCommandList();
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            _executeSelectedCommand();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            closeCommandPalette();
+        }
+    }
+
+    function _executeSelectedCommand() {
+        var cmd = _filteredCommands[_selectedIndex];
+        if (cmd && cmd.action) {
+            closeCommandPalette();
+            setTimeout(function () {
+                try {
+                    cmd.action();
+                } catch (err) {
+                    console.error('[CommandPalette] 执行命令失败:', cmd.id, err);
+                }
+            }, 150);
+        }
+    }
+
+    function _createCommandPalette() {
+        if (_commandPaletteEl) return;
+
+        var overlay = document.createElement('div');
+        overlay.id = 'command-palette';
+        overlay.className = 'command-palette-overlay fixed inset-0 z-[2000] bg-black/40 backdrop-blur-sm hidden';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-label', '命令面板');
+
+        overlay.innerHTML =
+            '<div class="command-palette-container mx-auto mt-[15vh] w-full max-w-lg px-4">' +
+            '<div class="command-palette-modal bg-white rounded-2xl shadow-2xl overflow-hidden">' +
+            '<div class="flex items-center gap-3 px-4 py-3 border-b border-bg-border">' +
+            '<iconify-icon icon="mdi:magnify" class="text-fg-tertiary text-lg"></iconify-icon>' +
+            '<input type="text" class="command-palette-input flex-1 text-sm bg-transparent outline-none placeholder-fg-tertiary" placeholder="输入命令或搜索... (Ctrl+K)" autocomplete="off" spellcheck="false">' +
+            '<kbd class="shortcut-kbd text-[10px]">Esc</kbd>' +
+            '</div>' +
+            '<div class="command-list max-h-[60vh] overflow-y-auto py-1" role="listbox"></div>' +
+            '<div class="px-3 py-2 border-t border-bg-border bg-bg-subtle/50 flex items-center justify-between text-[11px] text-fg-tertiary">' +
+            '<div class="flex items-center gap-3">' +
+            '<span><kbd class="shortcut-kbd text-[9px]">↑↓</kbd> 选择</span>' +
+            '<span><kbd class="shortcut-kbd text-[9px]">↵</kbd> 执行</span>' +
+            '<span><kbd class="shortcut-kbd text-[9px]">Esc</kbd> 关闭</span>' +
+            '</div>' +
+            '<span class="text-fg-tertiary">' + _commands.length + ' 个命令</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        _commandPaletteEl = overlay;
+        _commandPaletteInput = overlay.querySelector('.command-palette-input');
+        _commandListEl = overlay.querySelector('.command-list');
+
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeCommandPalette();
+        });
+
+        _commandPaletteInput.addEventListener('input', debounce(_onCommandInput, 50));
+        _commandPaletteInput.addEventListener('keydown', _onCommandKeyDown);
+
+        _commandListEl.addEventListener('click', function (e) {
+            var item = e.target.closest('.command-item');
+            if (item) {
+                var idx = parseInt(item.getAttribute('data-index'));
+                if (!isNaN(idx)) {
+                    _selectedIndex = idx;
+                    _executeSelectedCommand();
+                }
+            }
+        });
+
+        _commandListEl.addEventListener('mouseover', function (e) {
+            var item = e.target.closest('.command-item');
+            if (item) {
+                var idx = parseInt(item.getAttribute('data-index'));
+                if (!isNaN(idx)) {
+                    _selectedIndex = idx;
+                    _renderCommandList();
+                }
+            }
+        });
+    }
+
+    function openCommandPalette() {
+        if (_isPaletteOpen) return;
+
+        if (!_commandPaletteEl) {
+            _registerDefaultCommands();
+            _createCommandPalette();
+        }
+
+        _filterCommands('');
+        _selectedIndex = 0;
+        _renderCommandList();
+
+        _commandPaletteEl.classList.remove('hidden');
+        _isPaletteOpen = true;
+
+        setTimeout(function () {
+            if (_commandPaletteInput) {
+                _commandPaletteInput.value = '';
+                _commandPaletteInput.focus();
+            }
+        }, 50);
+
+        if (typeof gsap !== 'undefined') {
+            var modal = _commandPaletteEl.querySelector('.command-palette-modal');
+            gsap.fromTo(modal,
+                { opacity: 0, y: -20, scale: 0.96 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: 'power3.out' }
+            );
+            gsap.fromTo(_commandPaletteEl,
+                { opacity: 0 },
+                { opacity: 1, duration: 0.15, ease: 'power2.out' }
+            );
+        }
+    }
+
+    function closeCommandPalette() {
+        if (!_isPaletteOpen || !_commandPaletteEl) return;
+
+        if (typeof gsap !== 'undefined') {
+            var modal = _commandPaletteEl.querySelector('.command-palette-modal');
+            gsap.to(modal, {
+                opacity: 0, y: -10, scale: 0.98, duration: 0.15, ease: 'power2.in',
+                onComplete: function () {
+                    if (_commandPaletteEl) _commandPaletteEl.classList.add('hidden');
+                }
+            });
+            gsap.to(_commandPaletteEl, { opacity: 0, duration: 0.1, ease: 'power2.in' });
+        } else {
+            _commandPaletteEl.classList.add('hidden');
+        }
+
+        _isPaletteOpen = false;
+
+        if (_commandPaletteInput) {
+            _commandPaletteInput.blur();
+        }
+    }
+
+    function registerCommand(cmd) {
+        if (!cmd || !cmd.id || !cmd.name) return false;
+        _commands.push({
+            id: cmd.id,
+            name: cmd.name,
+            description: cmd.description || '',
+            icon: cmd.icon || 'mdi:circle-outline',
+            category: cmd.category || 'other',
+            shortcut: cmd.shortcut || '',
+            action: cmd.action || function () {}
+        });
+        return true;
+    }
+
+    function initShortcuts() {
+        document.addEventListener('keydown', _handleKeyDown);
+
+        registerShortcut('Ctrl+K', openCommandPalette, {
+            description: '打开命令面板',
+            category: 'setting',
+            allowInInput: true
+        });
+
+        registerShortcut('Meta+K', openCommandPalette, {
+            description: '打开命令面板',
+            category: 'setting',
+            allowInInput: true
+        });
+
+        registerShortcut('Ctrl+/', function () {
+            var input = document.querySelector('header input[type="text"]');
+            if (input) {
+                input.focus();
+                input.select();
+            }
+        }, {
+            description: '聚焦搜索框',
+            category: 'action',
+            allowInInput: false
+        });
+
+        registerShortcut('Ctrl+N', function () {
+            var view = _currentScope;
+            if (view === 'case-list' || view === 'cases') {
+                if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal();
+            } else if (view === 'schedule' || view === 'schedule-calendar') {
+                if (typeof window.openScheduleModal === 'function') window.openScheduleModal();
+            } else {
+                openCommandPalette();
+            }
+        }, {
+            description: '新建（智能判断）',
+            category: 'action',
+            allowInInput: false
+        });
+
+        registerShortcut('Escape', function () {
+            if (_isPaletteOpen) {
+                closeCommandPalette();
+                return;
+            }
+            var modals = document.querySelectorAll('[role="dialog"]:not(.hidden)');
+            for (var i = modals.length - 1; i >= 0; i--) {
+                var closeBtn = modals[i].querySelector('[data-modal-close]');
+                if (closeBtn) {
+                    closeBtn.click();
+                    return;
+                }
+            }
+        }, {
+            description: '关闭弹窗/取消',
+            category: 'other',
+            allowInInput: true
+        });
+
+        registerShortcut('?', showShortcutHelp, {
+            description: '显示快捷键帮助',
+            category: 'setting',
+            allowInInput: false
+        });
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -1161,7 +1730,17 @@
         hidePageLoading: hidePageLoading,
         setButtonLoading: setButtonLoading,
         setButtonNormal: setButtonNormal,
-        showError: showError
+        showError: showError,
+        registerShortcut: registerShortcut,
+        unregisterShortcut: unregisterShortcut,
+        setShortcutScope: setShortcutScope,
+        getShortcuts: getShortcuts,
+        showShortcutHelp: showShortcutHelp,
+        openCommandPalette: openCommandPalette,
+        closeCommandPalette: closeCommandPalette,
+        registerCommand: registerCommand,
+        initShortcuts: initShortcuts,
+        formatShortcutKey: _formatKeyDisplay
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

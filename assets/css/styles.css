@@ -1668,3 +1668,1170 @@ textarea.form-input {
         justify-content: center;
     }
 }
+
+/* ===== 快捷键 KBD 样式 ===== */
+.shortcut-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 22px;
+    padding: 0 6px;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    color: #4e5969;
+    background: #f7f8fa;
+    border: 1px solid #e5e6eb;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02), 0 -1px 0 rgba(0, 0, 0, 0.02) inset;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ===== 命令面板样式 ===== */
+.command-palette-overlay {
+    animation: paletteFadeIn 0.15s ease-out;
+}
+
+.command-palette-modal {
+    animation: paletteSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes paletteFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes paletteSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.command-palette-input {
+    font-size: 14px;
+}
+
+.command-palette-input::placeholder {
+    color: #c9cdd4;
+}
+
+.command-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.command-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.command-list::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 3px;
+}
+
+.command-list::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+.command-category {
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+
+.command-item {
+    font-size: 13px;
+}
+
+.command-item[aria-selected="true"] iconify-icon {
+    color: var(--arco-blue-6);
+}
+
+/* ===== 快捷键帮助弹窗样式 ===== */
+.shortcut-help-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.shortcut-category {
+    margin-bottom: 16px;
+}
+
+.shortcut-category:last-child {
+    margin-bottom: 0;
+}
+
+/* ===== 底部状态栏快捷键入口 ===== */
+.footer-shortcut-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.footer-shortcut-hint:hover {
+    color: var(--arco-blue-6);
+}
+
+/* ===== 响应式调整 ===== */
+@media (max-width: 768px) {
+    .command-palette-container {
+        margin-top: 5vh !important;
+        max-width: 100% !important;
+        padding: 0 12px !important;
+    }
+
+    .command-palette-modal {
+        border-radius: 16px !important;
+    }
+
+    .command-list {
+        max-height: 50vh !important;
+    }
+
+    .shortcut-help-content {
+        max-height: 300px;
+    }
+}
+
+/* ===== AI 对话页面升级样式 ===== */
+
+/* 历史记录侧边栏激活状态 */
+.ai-history-item.active {
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.08) 0%, rgba(147, 51, 234, 0.06) 100%);
+    border-color: rgba(22, 93, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(22, 93, 255, 0.1);
+}
+
+.ai-history-item.active .text-fg-primary {
+    color: #165DFF;
+}
+
+/* AI 对话消息气泡升级 */
+#view-ai .chat-message-ai,
+#view-ai .chat-message-user {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* 思考中点点动画 */
+.dot-flash {
+    animation: dotFlash 1.4s infinite ease-in-out;
+}
+
+.dot-flash:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot-flash:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotFlash {
+    0%, 80%, 100% {
+        opacity: 0.3;
+    }
+    40% {
+        opacity: 1;
+    }
+}
+
+/* AI 对话输入框聚焦效果 */
+#view-ai textarea:focus {
+    outline: none;
+}
+
+/* 快捷问题卡片悬停箭头动画 */
+#view-ai .group:hover .text-base {
+    animation: arrowBounce 0.6s ease-in-out;
+}
+
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
+}
+
+/* AI 技能卡片顶部装饰线 */
+#view-ai .group.rounded-2xl {
+    position: relative;
+    overflow: hidden;
+}
+
+#view-ai .group.rounded-2xl::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(22, 93, 255, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#view-ai .group.rounded-2xl:hover::before {
+    opacity: 1;
+}
+
+/* AI 对话滚动条美化 */
+#aiViewMessages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#aiViewMessages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#aiViewMessages::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 3px;
+}
+
+#aiViewMessages::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* AI 对话侧边栏滚动条美化 */
+#view-ai .hidden.lg\\:flex .flex-1.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+#view-ai .hidden.lg\\:flex .flex-1.overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-ai .hidden.lg\\:flex .flex-1.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #e5e6eb;
+    border-radius: 3px;
+}
+
+#view-ai .hidden.lg\\:flex .flex-1.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #c9cdd4;
+}
+
+/* AI 对话按钮点击反馈 */
+#view-ai button:active {
+    transform: scale(0.97);
+}
+
+/* AI 对话欢迎状态头像呼吸效果 */
+#aiWelcomeState > div:first-child {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* ===== AI 文书生成页面升级样式 ===== */
+
+/* 文书类型选择卡片 */
+.ai-doc-type-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    border-radius: 16px;
+    border: 2px solid #e5e6eb;
+    background: #f7f8fa;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #4e5969;
+}
+
+.ai-doc-type-chip:hover {
+    border-color: #165DFF;
+    background: #f2f7ff;
+    color: #165DFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.15);
+}
+
+.ai-doc-type-chip.active {
+    border-color: #165DFF;
+    background: linear-gradient(135deg, #e8f3ff 0%, #eef3ff 100%);
+    color: #165DFF;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.2);
+}
+
+.ai-doc-type-chip.active span {
+    font-weight: 600;
+}
+
+/* AI 文档页 Hero 区域光效动画 */
+#view-ai-doc .relative.overflow-hidden.rounded-2xl::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: heroGlow 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes heroGlow {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(10%, 10%) scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* AI 文档页统计卡片 */
+#view-ai-doc .grid.grid-cols-2 > div {
+    position: relative;
+    overflow: hidden;
+}
+
+#view-ai-doc .grid.grid-cols-2 > div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(22, 93, 255, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#view-ai-doc .grid.grid-cols-2 > div:hover::before {
+    opacity: 1;
+}
+
+/* AI 文档页滚动条美化 */
+#view-ai-doc::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-ai-doc::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-ai-doc::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-ai-doc::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* AI 文档页内容区域滚动条美化 */
+#ai-doc-output-wrap::-webkit-scrollbar {
+    width: 6px;
+}
+
+#ai-doc-output-wrap::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#ai-doc-output-wrap::-webkit-scrollbar-thumb {
+    background: #e5e6eb;
+    border-radius: 3px;
+}
+
+#ai-doc-output-wrap::-webkit-scrollbar-thumb:hover {
+    background: #c9cdd4;
+}
+
+/* AI 文档页按钮点击反馈 */
+#view-ai-doc button:active {
+    transform: scale(0.97);
+}
+
+/* AI 文档页表单输入框聚焦效果 */
+#view-ai-doc input:focus,
+#view-ai-doc select:focus,
+#view-ai-doc textarea:focus {
+    outline: none;
+}
+
+/* AI 建议卡片悬停效果 */
+#ai-doc-suggestions button:hover p {
+    transition: color 0.3s ease;
+}
+
+/* 移动端适配 - AI 页面 */
+@media (max-width: 768px) {
+    #view-ai .text-xl {
+        font-size: 1.125rem;
+    }
+    
+    #view-ai .w-20.h-20 {
+        width: 4rem;
+        height: 4rem;
+    }
+    
+    #view-ai-doc .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    #view-ai-doc .w-14.h-14 {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+/* ===== 期限管理页面 ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.deadline-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.deadline-card-high::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent 70%);
+    pointer-events: none;
+}
+
+.deadline-card-medium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 70%);
+    pointer-events: none;
+}
+
+.deadline-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: var(--arco-gray-1);
+    border: 1px solid var(--arco-gray-3);
+    color: var(--arco-gray-7);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.deadline-chip:hover {
+    background: #f0f5ff;
+    border-color: #b8ccff;
+    color: var(--color-brand);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.1);
+}
+
+.deadline-chip.active {
+    background: linear-gradient(135deg, var(--color-brand), #4d7fff);
+    border-color: var(--color-brand);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.deadline-chip.active iconify-icon {
+    color: #fff;
+}
+
+/* ===== 案件分析页面 ===== */
+.analysis-chart-bar {
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.analysis-chart-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent);
+    border-radius: inherit;
+}
+
+.pie-chart-segment {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.pie-chart-segment:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* 表格悬停行高亮 */
+.analysis-table tr:hover td {
+    background-color: #f7f8fa;
+}
+
+.analysis-table td {
+    transition: background-color 0.2s ease;
+}
+
+/* 进度条微光动画 */
+.progress-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: progress-shimmer 2s infinite;
+}
+
+@keyframes progress-shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+/* AI 卡片脉冲效果 */
+.ai-card-pulse {
+    position: relative;
+}
+
+.ai-card-pulse::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, rgba(22, 93, 255, 0.3), rgba(163, 83, 255, 0.3));
+    border-radius: inherit;
+    z-index: -1;
+    filter: blur(8px);
+    opacity: 0.6;
+    animation: ai-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ai-pulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.02);
+    }
+}
+
+/* 知识库样式复用 - 案件分析页 */
+.kb-tabular-nums {
+    font-variant-numeric: tabular-nums;
+    -webkit-font-variant-numeric: tabular-nums;
+}
+
+/* 响应式 - 期限管理页 */
+@media (max-width: 768px) {
+    #view-deadline .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    #view-deadline .w-12.h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    #view-deadline .w-14.h-14 {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .deadline-chip {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+
+/* 响应式 - 案件分析页 */
+@media (max-width: 768px) {
+    #view-case-analysis .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    #view-case-analysis .text-3xl {
+        font-size: 1.5rem;
+    }
+    
+    #view-case-analysis .w-12.h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    #view-case-analysis .w-16.h-16 {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+/* ===== 附件列表页面升级样式 ===== */
+
+/* 文件类型筛选标签 */
+.file-type-tag {
+    background: #F7F8FA;
+    color: #4E5969;
+    border: 1px solid #E5E6EB;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-type-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.file-type-tag:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+    background: #F2F7FF;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.12);
+}
+
+.file-type-tag:hover::before {
+    opacity: 1;
+}
+
+.file-type-tag.active {
+    background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(22, 93, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.file-type-tag.active::before {
+    opacity: 1;
+}
+
+.file-type-tag .file-type-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1px 6px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.file-type-tag:not(.active) .file-type-count {
+    background: #E5E6EB;
+    color: #86909C;
+}
+
+/* 文件类型徽章 */
+.file-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 6px;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-type-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+.file-type-tag-pdf {
+    background: linear-gradient(135deg, #FFF1F0 0%, #FFECEB 100%);
+    color: #F5222D;
+}
+
+.file-type-tag-word {
+    background: linear-gradient(135deg, #E8F3FF 0%, #EEF3FF 100%);
+    color: #165DFF;
+}
+
+.file-type-tag-excel {
+    background: linear-gradient(135deg, #E8FFEA 0%, #D9FFDF 100%);
+    color: #00B42A;
+}
+
+.file-type-tag-image {
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+    color: #9333EA;
+}
+
+.file-type-tag-other {
+    background: linear-gradient(135deg, #F7F8FA 0%, #F2F3F5 100%);
+    color: #86909C;
+}
+
+/* 附件卡片悬停效果增强 */
+.attachment-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.attachment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #165DFF, #9333EA);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.attachment-card:hover::before {
+    opacity: 1;
+}
+
+/* 附件列表项样式 */
+.attachment-list-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.attachment-list-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, #165DFF, #9333EA);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.attachment-list-item:hover::before {
+    opacity: 1;
+}
+
+/* 附件空状态动画 */
+#attachmentEmptyState {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 附件卡片入场动画（降级方案） */
+.attachment-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.attachment-card:nth-child(1) { animation-delay: 0.1s; }
+.attachment-card:nth-child(2) { animation-delay: 0.15s; }
+.attachment-card:nth-child(3) { animation-delay: 0.2s; }
+.attachment-card:nth-child(4) { animation-delay: 0.25s; }
+.attachment-card:nth-child(5) { animation-delay: 0.3s; }
+.attachment-card:nth-child(6) { animation-delay: 0.35s; }
+.attachment-card:nth-child(7) { animation-delay: 0.4s; }
+.attachment-card:nth-child(8) { animation-delay: 0.45s; }
+
+/* 附件列表滚动条美化 */
+#view-attachment-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-attachment-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-attachment-list::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-attachment-list::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* ===== 档案管理页面升级样式 ===== */
+
+/* 档案类型徽章 */
+.archive-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9999px;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+}
+
+.archive-type-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+.archive-type-civil {
+    background: linear-gradient(135deg, #E8F3FF 0%, #EEF3FF 100%);
+    color: #165DFF;
+    box-shadow: 0 1px 2px rgba(22, 93, 255, 0.1);
+}
+
+.archive-type-commercial {
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+    color: #9333EA;
+    box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+}
+
+.archive-type-labor {
+    background: linear-gradient(135deg, #FFF7E6 0%, #FFEED9 100%);
+    color: #FF7D00;
+    box-shadow: 0 1px 2px rgba(255, 125, 0, 0.1);
+}
+
+.archive-type-other {
+    background: linear-gradient(135deg, #F7F8FA 0%, #F2F3F5 100%);
+    color: #86909C;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 档案统计卡片 */
+.archive-stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.archive-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.archive-stat-card:hover::before {
+    opacity: 1;
+}
+
+/* 档案表格行动画（降级方案） */
+.archive-table-row {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.archive-table-row:nth-child(1) { animation-delay: 0.2s; }
+.archive-table-row:nth-child(2) { animation-delay: 0.26s; }
+.archive-table-row:nth-child(3) { animation-delay: 0.32s; }
+.archive-table-row:nth-child(4) { animation-delay: 0.38s; }
+.archive-table-row:nth-child(5) { animation-delay: 0.44s; }
+
+/* 档案空状态动画 */
+#archiveEmptyState {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 档案列表滚动条美化 */
+#view-archive::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-archive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-archive::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-archive::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* 移动端适配 - 附件列表 */
+@media (max-width: 768px) {
+    #view-attachment-list .ws-card {
+        border-radius: 12px;
+    }
+    
+    .file-type-tag {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    
+    .attachment-card .p-4 {
+        padding: 12px;
+    }
+    
+    .attachment-card .w-12.h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* 移动端适配 - 档案管理 */
+@media (max-width: 768px) {
+    #view-archive .ws-card {
+        border-radius: 12px;
+    }
+    
+    .archive-stat-card {
+        padding: 0.75rem;
+    }
+    
+    .archive-stat-card .text-2xl {
+        font-size: 1.25rem;
+    }
+}
+
+/* ===== 案件动态页面升级样式 ===== */
+
+/* 动态卡片左侧边框渐变效果 */
+#view-case-dynamics .ws-card[class*="border-l-"] {
+    position: relative;
+}
+
+/* 时间轴节点动画 */
+#dynamics-timeline-view .absolute[class*="rounded-full"] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 动态卡片入场动画（降级方案） */
+#view-case-dynamics .ws-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+#view-case-dynamics .ws-card:nth-child(1) { animation-delay: 0.1s; }
+#view-case-dynamics .ws-card:nth-child(2) { animation-delay: 0.15s; }
+#view-case-dynamics .ws-card:nth-child(3) { animation-delay: 0.2s; }
+#view-case-dynamics .ws-card:nth-child(4) { animation-delay: 0.25s; }
+#view-case-dynamics .ws-card:nth-child(5) { animation-delay: 0.3s; }
+#view-case-dynamics .ws-card:nth-child(6) { animation-delay: 0.35s; }
+#view-case-dynamics .ws-card:nth-child(7) { animation-delay: 0.4s; }
+#view-case-dynamics .ws-card:nth-child(8) { animation-delay: 0.45s; }
+
+/* 案件动态滚动条美化 */
+#view-case-dynamics::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-case-dynamics::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-case-dynamics::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-case-dynamics::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* ===== 通知中心页面升级样式 ===== */
+
+/* 通知卡片未读状态脉冲效果 */
+#view-notifications .animate-pulse {
+    animation-duration: 2s;
+}
+
+/* 通知卡片入场动画（降级方案） */
+#notifications-list .ws-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+#notifications-list .ws-card:nth-child(1) { animation-delay: 0.1s; }
+#notifications-list .ws-card:nth-child(2) { animation-delay: 0.15s; }
+#notifications-list .ws-card:nth-child(3) { animation-delay: 0.2s; }
+#notifications-list .ws-card:nth-child(4) { animation-delay: 0.25s; }
+#notifications-list .ws-card:nth-child(5) { animation-delay: 0.3s; }
+
+/* 通知中心滚动条美化 */
+#view-notifications::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-notifications::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-notifications::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-notifications::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* 通知类型 Tab 激活状态指示器 */
+.notif-type-tab,
+.notif-filter-tab {
+    position: relative;
+    overflow: hidden;
+}
+
+.notif-type-tab::before,
+.notif-filter-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+/* ===== 关注列表页面升级样式 ===== */
+
+/* 关注卡片入场动画（降级方案） */
+#attention-list-container .ws-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+#attention-list-container .ws-card:nth-child(1) { animation-delay: 0.1s; }
+#attention-list-container .ws-card:nth-child(2) { animation-delay: 0.15s; }
+#attention-list-container .ws-card:nth-child(3) { animation-delay: 0.2s; }
+#attention-list-container .ws-card:nth-child(4) { animation-delay: 0.25s; }
+#attention-list-container .ws-card:nth-child(5) { animation-delay: 0.3s; }
+#attention-list-container .ws-card:nth-child(6) { animation-delay: 0.35s; }
+
+/* 关注列表滚动条美化 */
+#view-attention-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#view-attention-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#view-attention-list::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+#view-attention-list::-webkit-scrollbar-thumb:hover {
+    background: #86909c;
+}
+
+/* 关注筛选按钮激活状态 */
+.att-filter-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.att-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+    pointer-events: none;
+}
+
+/* 空状态动画 */
+#dynamics-empty-state,
+#notifications-empty,
+#attention-empty {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* 按钮点击反馈 */
+#view-case-dynamics button:active,
+#view-notifications button:active,
+#view-attention-list button:active {
+    transform: scale(0.97);
+}
+
+/* 移动端适配 - 案件动态/通知中心/关注列表 */
+@media (max-width: 768px) {
+    #view-case-dynamics .ws-card,
+    #view-notifications .ws-card,
+    #view-attention-list .ws-card {
+        border-radius: 12px;
+    }
+    
+    #view-case-dynamics .p-4,
+    #view-notifications .p-4,
+    #view-attention-list .p-4 {
+        padding: 0.75rem;
+    }
+    
+    #view-case-dynamics .md\:p-5,
+    #view-notifications .md\:p-5,
+    #view-attention-list .md\:p-5 {
+        padding: 1rem;
+    }
+    
+    #view-case-dynamics .w-11.h-11,
+    #view-notifications .w-11.h-11,
+    #view-attention-list .w-11.h-11 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}

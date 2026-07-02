@@ -325,8 +325,13 @@ window.Iconify.disableRemoteAPI = true;
 <div class="flex items-center gap-4">
 <span class="cursor-pointer hover:text-brand" onclick="switchView('onboarding')">帮助中心</span>
 <span class="cursor-pointer hover:text-brand">意见反馈</span>
+<span class="footer-shortcut-hint" onclick="Utils.showShortcutHelp()" title="查看键盘快捷键">
+<iconify-icon icon="mdi:keyboard-variant"></iconify-icon>
+<span>快捷键</span>
+<kbd class="shortcut-kbd text-[9px]">?</kbd>
+</span>
 <div class="h-3 w-px bg-bg-border"></div>
-<span class="font-medium text-brand flex items-center gap-1 cursor-pointer">
+<span class="font-medium text-brand flex items-center gap-1 cursor-pointer" onclick="Utils.openCommandPalette()" title="打开命令面板 (Ctrl+K)">
 <iconify-icon icon="mdi:robot"></iconify-icon>
                 LexPrime 助手在线
             </span>

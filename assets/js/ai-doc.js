@@ -573,6 +573,14 @@
         showToast('已下载: ' + filename);
     }
 
+    function regenerateAIDocument() {
+        generateAIDocument();
+    }
+
+    function openAIDocTemplates() {
+        Utils.showToast('info', '模板库功能即将上线，敬请期待！');
+    }
+
     // ===== 初始化 =====
     function initAIDocView() {
         var el = document.getElementById('view-ai-doc');
@@ -601,5 +609,7 @@
     globalThis.generateAIDocument = generateAIDocument;
     globalThis.copyAIDocument = copyAIDocument;
     globalThis.downloadAIDocument = downloadAIDocument;
+    globalThis.regenerateAIDocument = regenerateAIDocument;
+    globalThis.openAIDocTemplates = openAIDocTemplates;
     globalThis.initAIDocView = initAIDocView;
 })();

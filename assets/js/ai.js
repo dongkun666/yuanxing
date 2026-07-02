@@ -361,6 +361,27 @@
         Utils.showToast('success', '报告已导出为Markdown格式（演示功能）');
     }
 
+    function toggleAISidebar() {
+        var sidebar = document.querySelector('#view-ai > div > div:first-child');
+        if (sidebar) {
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('lg:flex');
+            sidebar.classList.toggle('fixed');
+            sidebar.classList.toggle('inset-y-0');
+            sidebar.classList.toggle('left-0');
+            sidebar.classList.toggle('z-50');
+        }
+    }
+
+    function quickAsk(question) {
+        var input = document.getElementById('aiChatInput');
+        if (input) {
+            input.value = question;
+            input.focus();
+        }
+        sendAIMessage();
+    }
+
     function handleAIInputKeydown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -635,6 +656,7 @@
     globalThis.switchAIView = switchAIView;
     globalThis.selectAIHistory = selectAIHistory;
     globalThis.filterAIHistory = filterAIHistory;
+    globalThis.toggleAISidebar = toggleAISidebar;
     globalThis.toggleMoreMenu = toggleMoreMenu;
     globalThis.handleMoreAction = handleMoreAction;
     globalThis.openAIExtractModal = openAIExtractModal;
@@ -644,6 +666,7 @@
     globalThis.copyExtractResult = copyExtractResult;
     globalThis.exportExtractResult = exportExtractResult;
     globalThis.handleAIInputKeydown = handleAIInputKeydown;
+    globalThis.quickAsk = quickAsk;
     globalThis.sendAIMessage = sendAIMessage;
     globalThis.submitFeedback = submitFeedback;
     globalThis.openFeedbackModal = openFeedbackModal;
