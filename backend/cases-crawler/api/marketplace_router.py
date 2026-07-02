@@ -70,26 +70,36 @@ from core.marketplace_engine import (
     LANGUAGES,
     REFERRAL_STATUSES,
     ReferralStatus,
+    SortField,
+    SortOrder,
+    LawyerFilters,
     # 数据类 (使用 as 别名避免与 ORM class 同名冲突)
     CoCounselCase,
     CommissionRecord,
     CrossBorderJob as CBJobDTO,
     LawyerProfile,
     Referral,
+    MatchExplanation,
     # 业务逻辑
     MARKETPLACE_DISCLAIMER,
     MARKETPLACE_DISCLAIMER_SHORT,
     compute_marketplace_metrics,
+    compute_match_score,
     create_co_counsel_case,
     create_cross_border_job,
     create_referral,
+    filter_lawyers,
+    get_match_explanation,
     get_state_transitionable_targets,
     lawyer_match_score,
     measure_latency_ms,
     parse_legal_basis,
+    rank_lawyers,
     recommend_lawyers,
+    sort_lawyers,
     validate_lawyer_profile,
 )
+from core.marketplace_fixtures import get_mock_lawyers, get_mock_lawyer_by_id
 
 
 # ============================================================================
@@ -509,6 +519,142 @@ class MarketplaceMetricsResponse(BaseModel):
     commission_pending: float
     commission_settled: float
     trajectory: Dict[str, Any] = Field(default_factory=dict)
+    disclaimer: str = MARKETPLACE_DISCLAIMER
+
+
+# ============================================================================
+# 匹配 2.0 - 请求/响应模型
+# ============================================================================
+
+class MatchLawyerRequest(BaseModel):
+    """律师匹配请求"""
+    required_specialties: List[str] = Field(default_factory=list, description="必需专业领域")
+    required_region: str = Field("", description="省份/地区")
+    required_city: str = Field("", description="城市")
+    sort_by: str = Field("match_score", description="排序字段: match_score/price/experience/rating/response_speed")
+    sort_order: str = Field("desc", description="排序方向: asc/desc")
+    filters: Dict[str, Any] = Field(default_factory=dict, description="过滤条件")
+    page: int = Field(1, ge=1, description="页码")
+    page_size: int = Field(10, ge=1, le=100, description="每页数量")
+    cross_border: bool = Field(False, description="是否跨境案件")
+    required_jurisdictions: Optional[List[str]] = Field(None, description="必需司法管辖区")
+    required_languages: Optional[List[str]] = Field(None, description="必需语言")
+    min_score: float = Field(0.3, ge=0, le=1, description="最低匹配分阈值")
+
+
+class LawyerMatchItem(BaseModel):
+    """匹配结果项 (律师 + 评分)"""
+    lawyer_id: str
+    name: str
+    firm_id: Optional[str] = None
+    specialties: List[str]
+    jurisdictions: List[str]
+    languages: List[str]
+    region: str
+    city: str = ""
+    experience_years: int
+    rating: float
+    client_review_count: int = 0
+    completed_cases: int
+    win_rate: float = 0.0
+    response_speed_hours: float = 24.0
+    price_per_hour: float = 0.0
+    price_min: float = 0.0
+    marketplace_active: bool
+    cross_border_capable: bool
+    availability: str
+    bio: Optional[str] = None
+    match_score: Dict[str, Any] = Field(default_factory=dict)
+    match_reasons: List[str] = Field(default_factory=list)
+
+
+class MatchLawyerResponse(BaseModel):
+    """律师匹配响应"""
+    lawyers: List[LawyerMatchItem]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+    disclaimer: str = MARKETPLACE_DISCLAIMER
+
+
+class MatchExplainRequest(BaseModel):
+    """匹配解释请求"""
+    lawyer_id: str = Field(..., description="律师 ID")
+    required_specialties: List[str] = Field(default_factory=list, description="必需专业领域")
+    required_region: str = Field("", description="省份/地区")
+    required_city: str = Field("", description="城市")
+    cross_border: bool = Field(False, description="是否跨境案件")
+    required_jurisdictions: Optional[List[str]] = Field(None, description="必需司法管辖区")
+    required_languages: Optional[List[str]] = Field(None, description="必需语言")
+
+
+class MatchDimensionItem(BaseModel):
+    """匹配维度详情"""
+    name: str
+    score: float
+    weight: float
+    weighted_score: float
+    description: str
+    is_strength: bool
+    is_weakness: bool
+
+
+class MatchExplainResponse(BaseModel):
+    """匹配解释响应"""
+    lawyer_id: str
+    lawyer_name: str
+    total_score: float
+    dimensions: List[MatchDimensionItem]
+    strengths: List[str]
+    weaknesses: List[str]
+    suggestions: List[str]
+    disclaimer: str = MARKETPLACE_DISCLAIMER
+
+
+class LawyerListRequest(BaseModel):
+    """律师列表请求 (支持排序、过滤、分页)"""
+    specialties: Optional[List[str]] = Field(None, description="专业领域过滤")
+    regions: Optional[List[str]] = Field(None, description="地区过滤")
+    cities: Optional[List[str]] = Field(None, description="城市过滤")
+    min_experience_years: Optional[int] = Field(None, description="最低经验年限")
+    max_experience_years: Optional[int] = Field(None, description="最高经验年限")
+    min_price: Optional[float] = Field(None, description="最低价格")
+    max_price: Optional[float] = Field(None, description="最高价格")
+    min_rating: Optional[float] = Field(None, description="最低评分")
+    cross_border_only: bool = Field(False, description="仅跨境律师")
+    availability: Optional[List[str]] = Field(None, description="可接案状态过滤")
+    sort_by: str = Field("rating", description="排序字段")
+    sort_order: str = Field("desc", description="排序方向")
+    page: int = Field(1, ge=1, description="页码")
+    page_size: int = Field(20, ge=1, le=100, description="每页数量")
+    keyword: Optional[str] = Field(None, description="搜索关键词")
+
+
+class LawyerListItem(BaseModel):
+    """律师列表项"""
+    lawyer_id: str
+    name: str
+    firm_id: Optional[str] = None
+    specialties: List[str]
+    region: str
+    city: str = ""
+    experience_years: int
+    rating: float
+    completed_cases: int
+    price_per_hour: float = 0.0
+    cross_border_capable: bool
+    availability: str
+    bio: Optional[str] = None
+
+
+class LawyerListResponse(BaseModel):
+    """律师列表响应"""
+    lawyers: List[LawyerListItem]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
     disclaimer: str = MARKETPLACE_DISCLAIMER
 
 
@@ -1115,6 +1261,338 @@ async def get_marketplace_metrics(
             "commission_count": len(commissions),
         },
     )
+
+
+# ============================================================================
+# 匹配 2.0 端点
+# ============================================================================
+
+def _get_lawyer_pool_from_db_or_mock():
+    """获取律师池: 优先从 DB, 无数据时使用 mock"""
+    try:
+        from core.db import Database
+        from sqlalchemy import select
+
+        async def _fetch():
+            async with Database.session() as session:
+                stmt = select(MarketplaceLawyer)
+                result = await session.execute(stmt)
+                rows = list(result.scalars().all())
+                if rows:
+                    return [
+                        LawyerProfile(
+                            lawyer_id=p.lawyer_id, name=p.name, firm_id=p.firm_id,
+                            specialties=p.specialties or [], jurisdictions=p.jurisdictions or [],
+                            languages=p.languages or [], region=p.region,
+                            experience_years=p.experience_years, rating=p.rating,
+                            completed_cases=p.completed_cases,
+                            marketplace_active=p.marketplace_active,
+                            cross_border_capable=p.cross_border_capable,
+                            availability=p.availability, bio=p.bio,
+                        )
+                        for p in rows
+                    ]
+                return None
+
+        import asyncio
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                return get_mock_lawyers()
+            else:
+                result = loop.run_until_complete(_fetch())
+                return result if result else get_mock_lawyers()
+        except RuntimeError:
+            return get_mock_lawyers()
+    except Exception:
+        return get_mock_lawyers()
+
+
+@router.post("/match", response_model=MatchLawyerResponse)
+async def match_lawyers_endpoint(req: MatchLawyerRequest):
+    """律师匹配 2.0 - 多维度智能匹配 + 排序 + 过滤 + 分页
+
+    入参: required_specialties, region, city, sort_by, filters, page, page_size
+    返回: 律师列表（带评分）、总数、分页信息
+    """
+    t0 = time.time()
+
+    lawyer_pool = _get_lawyer_pool_from_db_or_mock()
+
+    filters = LawyerFilters(
+        specialties=req.filters.get("specialties"),
+        min_experience_years=req.filters.get("min_experience_years"),
+        max_experience_years=req.filters.get("max_experience_years"),
+        regions=req.filters.get("regions"),
+        cities=req.filters.get("cities"),
+        min_price=req.filters.get("min_price"),
+        max_price=req.filters.get("max_price"),
+        min_rating=req.filters.get("min_rating"),
+        cross_border_only=req.filters.get("cross_border_only", False),
+        availability=req.filters.get("availability"),
+    )
+
+    filtered = filter_lawyers(lawyer_pool, filters)
+
+    scored = rank_lawyers(
+        filtered,
+        required_specialties=req.required_specialties,
+        top_k=len(filtered),
+        min_score=req.min_score,
+        required_jurisdictions=req.required_jurisdictions,
+        required_languages=req.required_languages,
+        required_region=req.required_region,
+        cross_border=req.cross_border,
+    )
+
+    lawyer_profiles_dict = {lp.lawyer_id: lp for lp in filtered}
+
+    try:
+        sort_field = SortField(req.sort_by)
+    except ValueError:
+        sort_field = SortField.MATCH_SCORE
+
+    try:
+        sort_order = SortOrder(req.sort_order)
+    except ValueError:
+        sort_order = SortOrder.DESC
+
+    sorted_scored = sort_lawyers(scored, lawyer_profiles_dict, sort_field, sort_order)
+
+    total = len(sorted_scored)
+    start = (req.page - 1) * req.page_size
+    end = start + req.page_size
+    paged = sorted_scored[start:end]
+
+    lawyer_items = []
+    for score in paged:
+        profile = lawyer_profiles_dict.get(score.lawyer_id)
+        if profile is None:
+            continue
+        lawyer_items.append(LawyerMatchItem(
+            lawyer_id=profile.lawyer_id,
+            name=profile.name,
+            firm_id=profile.firm_id,
+            specialties=profile.specialties,
+            jurisdictions=profile.jurisdictions,
+            languages=profile.languages,
+            region=profile.region,
+            city=profile.city,
+            experience_years=profile.experience_years,
+            rating=profile.rating,
+            client_review_count=profile.client_review_count,
+            completed_cases=profile.completed_cases,
+            win_rate=profile.win_rate,
+            response_speed_hours=profile.response_speed_hours,
+            price_per_hour=profile.price_per_hour,
+            price_min=profile.price_min,
+            marketplace_active=profile.marketplace_active,
+            cross_border_capable=profile.cross_border_capable,
+            availability=profile.availability,
+            bio=profile.bio,
+            match_score=score.to_dict(),
+            match_reasons=score.match_reasons,
+        ))
+
+    total_pages = (total + req.page_size - 1) // req.page_size
+
+    latency_ms = int((time.time() - t0) * 1000)
+    logger.info(
+        f"[marketplace] match_lawyers specialties={req.required_specialties} "
+        f"region={req.required_region} total={total} page={req.page} latency={latency_ms}ms"
+    )
+
+    return MatchLawyerResponse(
+        lawyers=lawyer_items,
+        total=total,
+        page=req.page,
+        page_size=req.page_size,
+        total_pages=total_pages,
+    )
+
+
+@router.post("/match-explain", response_model=MatchExplainResponse)
+async def match_explain_endpoint(req: MatchExplainRequest):
+    """匹配解释 - 展示各维度得分、强项、弱项、改进建议
+
+    入参: lawyer_id + 匹配条件
+    返回: 维度详情、强项、弱项、改进建议
+    """
+    t0 = time.time()
+
+    lawyer = get_mock_lawyer_by_id(req.lawyer_id)
+    if lawyer is None:
+        lawyer_pool = _get_lawyer_pool_from_db_or_mock()
+        for lp in lawyer_pool:
+            if lp.lawyer_id == req.lawyer_id:
+                lawyer = lp
+                break
+
+    if lawyer is None:
+        raise HTTPException(404, f"lawyer_id={req.lawyer_id} 不存在")
+
+    score = compute_match_score(
+        lawyer=lawyer,
+        required_specialties=req.required_specialties,
+        required_jurisdictions=req.required_jurisdictions,
+        required_languages=req.required_languages,
+        required_region=req.required_region,
+        required_city=req.required_city,
+        cross_border=req.cross_border,
+        include_explanation=True,
+    )
+
+    explanation = score.explanation
+    if explanation is None:
+        explanation = get_match_explanation(score, lawyer, req.required_specialties)
+
+    dim_items = [
+        MatchDimensionItem(
+            name=d.name,
+            score=d.score,
+            weight=d.weight,
+            weighted_score=d.weighted_score,
+            description=d.description,
+            is_strength=d.is_strength,
+            is_weakness=d.is_weakness,
+        )
+        for d in explanation.dimensions
+    ]
+
+    latency_ms = int((time.time() - t0) * 1000)
+    logger.info(
+        f"[marketplace] match_explain lawyer_id={req.lawyer_id} "
+        f"score={score.total_score:.2f} latency={latency_ms}ms"
+    )
+
+    return MatchExplainResponse(
+        lawyer_id=lawyer.lawyer_id,
+        lawyer_name=lawyer.name,
+        total_score=explanation.total_score,
+        dimensions=dim_items,
+        strengths=explanation.strengths,
+        weaknesses=explanation.weaknesses,
+        suggestions=explanation.suggestions,
+    )
+
+
+@router.post("/lawyers/list", response_model=LawyerListResponse)
+async def list_lawyers_endpoint(req: LawyerListRequest):
+    """律师列表 - 支持排序、过滤、分页
+
+    入参: 专业领域、地区、价格区间、最低评分、排序方式、分页参数
+    返回: 律师列表、总数、分页信息
+    """
+    t0 = time.time()
+
+    lawyer_pool = _get_lawyer_pool_from_db_or_mock()
+
+    filters = LawyerFilters(
+        specialties=req.specialties,
+        min_experience_years=req.min_experience_years,
+        max_experience_years=req.max_experience_years,
+        regions=req.regions,
+        cities=req.cities,
+        min_price=req.min_price,
+        max_price=req.max_price,
+        min_rating=req.min_rating,
+        cross_border_only=req.cross_border_only,
+        availability=req.availability,
+    )
+
+    filtered = filter_lawyers(lawyer_pool, filters)
+
+    if req.keyword:
+        kw = req.keyword.lower()
+        filtered = [
+            lp for lp in filtered
+            if kw in (lp.name or "").lower()
+            or kw in (lp.firm_id or "").lower()
+            or kw in (lp.bio or "").lower()
+        ]
+
+    lawyer_profiles_dict = {lp.lawyer_id: lp for lp in filtered}
+    dummy_scores = [
+        compute_match_score(lp, [], include_explanation=False)
+        for lp in filtered
+    ]
+
+    try:
+        sort_field = SortField(req.sort_by)
+    except ValueError:
+        sort_field = SortField.RATING
+
+    try:
+        sort_order = SortOrder(req.sort_order)
+    except ValueError:
+        sort_order = SortOrder.DESC
+
+    sorted_lawyers = sort_lawyers(dummy_scores, lawyer_profiles_dict, sort_field, sort_order)
+
+    total = len(sorted_lawyers)
+    start = (req.page - 1) * req.page_size
+    end = start + req.page_size
+    paged = sorted_lawyers[start:end]
+
+    lawyer_items = []
+    for score in paged:
+        profile = lawyer_profiles_dict.get(score.lawyer_id)
+        if profile is None:
+            continue
+        lawyer_items.append(LawyerListItem(
+            lawyer_id=profile.lawyer_id,
+            name=profile.name,
+            firm_id=profile.firm_id,
+            specialties=profile.specialties,
+            region=profile.region,
+            city=profile.city,
+            experience_years=profile.experience_years,
+            rating=profile.rating,
+            completed_cases=profile.completed_cases,
+            price_per_hour=profile.price_per_hour,
+            cross_border_capable=profile.cross_border_capable,
+            availability=profile.availability,
+            bio=profile.bio,
+        ))
+
+    total_pages = (total + req.page_size - 1) // req.page_size
+
+    latency_ms = int((time.time() - t0) * 1000)
+    logger.info(
+        f"[marketplace] list_lawyers total={total} page={req.page} "
+        f"sort_by={req.sort_by} latency={latency_ms}ms"
+    )
+
+    return LawyerListResponse(
+        lawyers=lawyer_items,
+        total=total,
+        page=req.page,
+        page_size=req.page_size,
+        total_pages=total_pages,
+    )
+
+
+@router.get("/lawyers", response_model=LawyerListResponse)
+async def get_lawyers_list(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    sort_by: str = Query("rating"),
+    sort_order: str = Query("desc"),
+    keyword: Optional[str] = Query(None),
+    min_rating: Optional[float] = Query(None),
+    cross_border_only: bool = Query(False),
+):
+    """律师列表 GET 接口 (向后兼容)"""
+    req = LawyerListRequest(
+        page=page,
+        page_size=page_size,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        keyword=keyword,
+        min_rating=min_rating,
+        cross_border_only=cross_border_only,
+    )
+    return await list_lawyers_endpoint(req)
 
 
 # ============================================================================

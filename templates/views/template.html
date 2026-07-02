@@ -598,6 +598,60 @@
 <div id="official-list-empty" class="hidden py-12"></div>
 </div>
 <div id="official-card-empty" class="hidden"></div>
+<!-- 推荐律师区域 -->
+<div class="bg-white rounded-2xl border border-bg-border overflow-hidden shadow-sm" id="template-lawyer-recommend" data-animate="fade-in-up" data-delay="0.35">
+<div class="px-5 py-4 border-b border-bg-border flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md shadow-brand/20">
+<iconify-icon class="text-xl text-white" icon="mdi:account-group"></iconify-icon>
+</div>
+<div>
+<span class="text-sm font-bold text-fg-primary">推荐律师</span>
+<span class="text-xs text-fg-tertiary ml-2">根据模板类型智能匹配专业律师</span>
+</div>
+</div>
+<button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1" onclick="switchView('marketplace-lawyers')">
+查看全部 <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+</button>
+</div>
+<div class="p-4">
+<div id="template-lawyer-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+<div class="bg-bg-subtle/50 rounded-lg p-4 animate-pulse">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-bg-border"></div>
+<div class="flex-1">
+<div class="h-4 bg-bg-border rounded w-1/2 mb-1"></div>
+<div class="h-3 bg-bg-border rounded w-1/3"></div>
+</div>
+</div>
+<div class="h-3 bg-bg-border rounded w-full mb-2"></div>
+<div class="h-3 bg-bg-border rounded w-2/3"></div>
+</div>
+<div class="bg-bg-subtle/50 rounded-lg p-4 animate-pulse">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-bg-border"></div>
+<div class="flex-1">
+<div class="h-4 bg-bg-border rounded w-1/2 mb-1"></div>
+<div class="h-3 bg-bg-border rounded w-1/3"></div>
+</div>
+</div>
+<div class="h-3 bg-bg-border rounded w-full mb-2"></div>
+<div class="h-3 bg-bg-border rounded w-2/3"></div>
+</div>
+<div class="bg-bg-subtle/50 rounded-lg p-4 animate-pulse">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-bg-border"></div>
+<div class="flex-1">
+<div class="h-4 bg-bg-border rounded w-1/2 mb-1"></div>
+<div class="h-3 bg-bg-border rounded w-1/3"></div>
+</div>
+</div>
+<div class="h-3 bg-bg-border rounded w-full mb-2"></div>
+<div class="h-3 bg-bg-border rounded w-2/3"></div>
+</div>
+</div>
+</div>
+</div>
 <!-- 分类管理弹窗已移至两个 tab 同级 (修复: 点个人模板时 modal 在 hidden 父元素内看不到) -->
 <!-- 上传模板弹窗已移至两个 tab 同级 -->
 </div>

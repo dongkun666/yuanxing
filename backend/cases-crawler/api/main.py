@@ -227,6 +227,17 @@ try:
 except Exception as e:
     logger.warning(f"W29 phase6-1-backend Marketplace API router 加载失败 (非致命): {e}")
 
+# W30 phase6-ai-backend (lex-ai · 2026-07-03) AI 服务统一 API
+# 4 核心端点 + 1 health + 1 disclaimer = 6 endpoints
+# 端点: POST /api/ai/chat, POST /api/ai/case-summary,
+#       POST /api/ai/polish, POST /api/ai/auto-fill
+try:
+    from api.ai_router import router as ai_router
+    app.include_router(ai_router)
+    logger.info("W30 phase6-ai-backend AI 服务统一 API router registered")
+except Exception as e:
+    logger.warning(f"W30 phase6-ai-backend AI 服务 API router 加载失败 (非致命): {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")

@@ -42,6 +42,18 @@ from skills.contract_review.demo import (
     FixtureError,
 )
 
+# 规则引擎
+from skills.contract_review.rule_engine import (
+    review_contract,
+    get_default_manager,
+    generate_visualization_data,
+    generate_priority_list,
+    group_suggestions_by_severity,
+    apply_one_click_fix,
+    RuleSeverity,
+    RuleCategory,
+)
+
 # W5 Track B (lex-ai): OCR + PII 基础设施
 from core.ocr import (
     OcrResult as EngineOcrResult,
@@ -561,4 +573,233 @@ async def contract_review_ocr_upload(
         latency_ms=latency_ms,
         disclaimer=DISCLAIMER_FULL,
         ui_hints=review_output.ui_hints,
+    )
+
+
+# ============================================================
+# 规则引擎 API (Rule Engine)
+# ============================================================
+# 端点:
+# - POST /api/contract-review/review-text     文本审查（走规则引擎）
+# - GET  /api/contract-review/rules           获取规则列表（按分类分组）
+# - PUT  /api/contract-review/rules/{rule_id} 修改规则配置（启用/禁用/权重）
+# - POST /api/contract-review/apply-fix       应用一键修复
+# ============================================================
+
+
+class ReviewTextRequest(BaseModel):
+    """文本审查请求"""
+    contract_text: str = Field(..., min_length=10, max_length=100000, description="合同文本")
+    contract_type: str = Field("其他", description="合同类型")
+    stance: Optional[str] = Field("审查方", description="立场 (甲方/乙方/丙方/审查方)")
+
+
+class ReviewTextResponse(BaseModel):
+    """文本审查响应"""
+    matches: list
+    risk_summary: dict
+    visualization: dict
+    priority_list: list
+    suggestions_by_severity: list
+    review_time_ms: int
+    match_count: int
+    disclaimer: str
+
+
+@router.post("/review-text", response_model=ReviewTextResponse)
+async def review_text_endpoint(req: ReviewTextRequest):
+    """基于规则引擎的文本审查
+
+    直接使用规则引擎对合同文本进行审查，返回结构化的审查结果。
+    不依赖 LLM，纯规则匹配，速度快。
+    """
+    t0 = time.time()
+
+    try:
+        result = review_contract(
+            contract_text=req.contract_text,
+            contract_type=req.contract_type,
+        )
+    except Exception as e:
+        logger.exception(f"规则引擎审查失败: {e}")
+        raise HTTPException(500, f"审查失败: {str(e)}")
+
+    visualization = generate_visualization_data(result.matches)
+    priority_list = generate_priority_list(result.matches, top_n=20)
+    suggestions_by_severity = [
+        g.to_dict() for g in group_suggestions_by_severity(result.matches)
+    ]
+
+    latency_ms = int((time.time() - t0) * 1000)
+
+    return ReviewTextResponse(
+        matches=[m.to_dict() for m in result.matches],
+        risk_summary=result.risk_summary.to_dict(),
+        visualization=visualization,
+        priority_list=priority_list,
+        suggestions_by_severity=suggestions_by_severity,
+        review_time_ms=latency_ms,
+        match_count=len(result.matches),
+        disclaimer=DISCLAIMER_FULL,
+    )
+
+
+class RuleListResponse(BaseModel):
+    """规则列表响应"""
+    rules: list
+    categories: list
+    stats: dict
+
+
+@router.get("/rules", response_model=RuleListResponse)
+async def get_rules_endpoint():
+    """获取所有内置规则（按分类分组）
+
+    用于前端规则引擎可视化展示。
+    """
+    manager = get_default_manager()
+    all_rules = manager.get_all_rules()
+
+    # 按分类分组
+    rules_by_category = {}
+    for rule in all_rules:
+        cat_name = rule.category.display_name
+        if cat_name not in rules_by_category:
+            rules_by_category[cat_name] = []
+        rules_by_category[cat_name].append(rule.to_dict())
+
+    # 分类列表
+    categories = []
+    for cat in RuleCategory:
+        count = len([r for r in all_rules if r.category == cat])
+        if count > 0:
+            categories.append({
+                "value": cat.value,
+                "label": cat.display_name,
+                "count": count,
+                "enabled_count": len([r for r in all_rules if r.category == cat and r.enabled]),
+            })
+
+    stats = manager.rule_count()
+    stats["by_severity"] = manager.severity_stats()
+    stats["by_category"] = manager.category_stats()
+
+    return RuleListResponse(
+        rules=[r.to_dict() for r in all_rules],
+        categories=categories,
+        stats=stats,
+    )
+
+
+class UpdateRuleRequest(BaseModel):
+    """修改规则配置请求"""
+    enabled: Optional[bool] = Field(None, description="是否启用")
+    weight: Optional[float] = Field(None, ge=0.1, le=10.0, description="权重 (0.1-10.0)")
+
+
+class UpdateRuleResponse(BaseModel):
+    """修改规则配置响应"""
+    rule_id: str
+    enabled: bool
+    weight: float
+    success: bool
+
+
+@router.put("/rules/{rule_id}", response_model=UpdateRuleResponse)
+async def update_rule_endpoint(rule_id: str, req: UpdateRuleRequest):
+    """修改规则配置（启用/禁用/权重）
+
+    用于演示规则管理功能。生产环境应增加权限校验。
+    """
+    manager = get_default_manager()
+    rule = manager.get_rule(rule_id)
+
+    if not rule:
+        raise HTTPException(404, f"规则不存在: {rule_id}")
+
+    if req.enabled is not None:
+        if req.enabled:
+            manager.enable_rule(rule_id)
+        else:
+            manager.disable_rule(rule_id)
+
+    if req.weight is not None:
+        manager.set_rule_weight(rule_id, req.weight)
+
+    # 重新获取更新后的规则
+    rule = manager.get_rule(rule_id)
+
+    return UpdateRuleResponse(
+        rule_id=rule_id,
+        enabled=rule.enabled,
+        weight=rule.weight,
+        success=True,
+    )
+
+
+class ApplyFixRequest(BaseModel):
+    """一键修复请求"""
+    contract_text: str = Field(..., description="原始合同文本")
+    matches: list = Field(default_factory=list, description="要修复的匹配结果")
+    severity_filter: Optional[str] = Field(None, description="只修复指定严重程度 (high/medium/low/info)")
+
+
+class ApplyFixResponse(BaseModel):
+    """一键修复响应"""
+    original_text: str
+    fixed_text: str
+    applied_count: int
+    skipped_count: int
+    skipped_reasons: list
+
+
+@router.post("/apply-fix", response_model=ApplyFixResponse)
+async def apply_fix_endpoint(req: ApplyFixRequest):
+    """应用一键修复
+
+    对可自动修复的问题应用修改建议。
+    """
+    from skills.contract_review.rule_engine.models import RuleMatch
+
+    # 构造 RuleMatch 列表（简化版，只取必要字段）
+    matches = []
+    for m in req.matches:
+        try:
+            sev = RuleSeverity.from_string(m.get("severity", "info"))
+            cat = RuleCategory(m.get("category", "wording"))
+            match = RuleMatch(
+                rule_id=m.get("rule_id", ""),
+                rule_name=m.get("rule_name", ""),
+                category=cat,
+                severity=sev,
+                position=m.get("position", 0),
+                length=m.get("length", 0),
+                original_text=m.get("original_text", ""),
+                problem_description=m.get("problem_description", ""),
+                modification_suggestion=m.get("modification_suggestion", ""),
+                one_click_fix=m.get("one_click_fix", ""),
+                legal_basis=m.get("legal_basis", []),
+                confidence=m.get("confidence", 0.8),
+            )
+            matches.append(match)
+        except Exception as e:
+            logger.warning(f"解析 match 失败: {e}")
+            continue
+
+    severity_filter = None
+    if req.severity_filter:
+        severity_filter = RuleSeverity.from_string(req.severity_filter)
+
+    result = apply_one_click_fix(
+        contract_text=req.contract_text,
+        matches=matches,
+        severity_filter=severity_filter,
+    )
+
+    return ApplyFixResponse(
+        original_text=result.original_text,
+        fixed_text=result.fixed_text,
+        applied_count=result.applied_count,
+        skipped_count=result.skipped_count,
+        skipped_reasons=result.skipped_reasons,
     )

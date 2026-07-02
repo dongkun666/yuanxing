@@ -945,12 +945,90 @@ var _searchKeyword = '';
 
 function initTemplatePage() {
     initTemplateEmptyStates();
+    initTemplateLawyerRecommend();
     if (typeof Animations !== 'undefined' && typeof Animations.initPageAnimations === 'function') {
         var viewEl = document.getElementById('view-template');
         if (viewEl) {
             Animations.initPageAnimations(viewEl);
         }
     }
+}
+
+function initTemplateLawyerRecommend() {
+    var container = document.getElementById('template-lawyer-list');
+    if (!container) return;
+
+    var criteria = {
+        required_specialties: ['contract_dispute'],
+        sort_by: 'match_score',
+        page: 1,
+        page_size: 3,
+        filters: {}
+    };
+
+    if (typeof window.MarketplaceFn !== 'undefined' && typeof window.MarketplaceFn.matchLawyersV2 === 'function') {
+        window.MarketplaceFn.matchLawyersV2(criteria).then(function (result) {
+            if (result.ok && result.data && result.data.lawyers && result.data.lawyers.length > 0) {
+                renderTemplateLawyerList(container, result.data.lawyers);
+            } else {
+                renderTemplateLawyerEmpty(container);
+            }
+        });
+    } else {
+        renderTemplateLawyerEmpty(container);
+    }
+}
+
+function renderTemplateLawyerList(container, lawyers) {
+    var html = lawyers.slice(0, 3).map(function (l) {
+        var score = l.match_score || {};
+        var totalScore = score.total_score !== undefined ? score.total_score : 0;
+        var scorePct = Math.round(totalScore * 100);
+        var specialtyLabels = (l.specialties || []).slice(0, 2).map(function (s) {
+            if (typeof window.MarketplaceData !== 'undefined' && window.MarketplaceData.CASE_TYPES) {
+                var t = window.MarketplaceData.CASE_TYPES.find(function (c) { return c.value === s; });
+                return t ? t.label : s;
+            }
+            return s;
+        }).join(' · ');
+
+        return (
+            '<div class="bg-bg-subtle/30 rounded-lg p-4 hover:bg-brand-tint/20 transition-colors cursor-pointer border border-transparent hover:border-brand/30" onclick="MarketplaceFn.openMatchDetail(\'' + escapeHtml(l.lawyer_id) + '\')">' +
+            '<div class="flex items-center gap-3 mb-3">' +
+            '<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white font-semibold flex-shrink-0">' +
+            escapeHtml(l.name ? l.name.substring(0, 1) : '?') +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="text-sm font-semibold text-fg-primary truncate">' + escapeHtml(l.name) + '</div>' +
+            '<div class="text-[10px] text-fg-tertiary truncate">' + escapeHtml(l.firm_id || '独立律师') + '</div>' +
+            '</div>' +
+            '<div class="text-right flex-shrink-0">' +
+            '<div class="text-lg font-bold text-brand">' + scorePct + '</div>' +
+            '<div class="text-[9px] text-fg-tertiary">匹配度</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="text-[11px] text-fg-secondary mb-2">' + escapeHtml(specialtyLabels || '多领域') + '</div>' +
+            '<div class="flex items-center gap-2 text-[10px] text-fg-tertiary flex-wrap">' +
+            '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' + escapeHtml(l.region || '未填') + '</span>' +
+            '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' + (l.experience_years || 0) + '年</span>' +
+            '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' + (l.rating || 0).toFixed(1) + '</span>' +
+            '</div>' +
+            '<button class="mt-3 w-full text-xs py-1.5 rounded-lg bg-brand/10 text-brand hover:bg-brand hover:text-white transition-colors font-medium" onclick="event.stopPropagation();MarketplaceFn.openMatchDetail(\'' + escapeHtml(l.lawyer_id) + '\')">' +
+            '查看匹配详情' +
+            '</button>' +
+            '</div>'
+        );
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+function renderTemplateLawyerEmpty(container) {
+    container.innerHTML =
+        '<div class="col-span-full text-center py-6 text-fg-tertiary text-xs">' +
+        '<iconify-icon icon="mdi:account-search-outline" class="text-2xl mb-2 block mx-auto"></iconify-icon>' +
+        '暂无推荐律师' +
+        '</div>';
 }
 
 function initTemplateEmptyStates() {

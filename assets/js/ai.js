@@ -418,7 +418,9 @@
     }
 
     var aiStreamingTimer = null;
-    function sendAIMessage() {
+    var _aiConversationId = null;
+
+    async function sendAIMessage() {
         var input = document.getElementById('aiChatInput');
         var msgList = document.getElementById('aiViewMessages');
         var sendBtn = document.getElementById('aiSendBtn');
@@ -432,6 +434,7 @@
         if (aiStreamingTimer) {
             return;
         }
+
         var userHtml =
             '<div class="flex gap-3 justify-end chat-message-user">' +
             '<div class="max-w-[70%] bg-brand rounded-xl p-4 shadow-sm">' +
@@ -452,6 +455,7 @@
             sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
         }
         if (sendIcon) sendIcon.setAttribute('icon', 'mdi:loading');
+
         var aiMsgId = 'ai-msg-' + Date.now();
         var aiHtml =
             '<div class="flex gap-3 chat-message-ai" id="' +
@@ -461,19 +465,93 @@
             '<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>' +
             '</div>' +
             '<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-bg-border">' +
-            '<p class="text-sm leading-relaxed text-fg-secondary whitespace-pre-wrap ai-msg-content">思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></p>' +
+            '<p class="text-sm leading-relaxed text-fg-secondary whitespace-pre-wrap ai-msg-content"><span class="ai-thinking-text">AI 思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></span></p>' +
             '<span class="text-[10px] text-fg-tertiary mt-2 block ai-msg-time">刚刚</span>' +
+            '<div class="ai-error-area hidden mt-2 text-xs text-danger bg-danger-tint/30 rounded-lg p-2 border border-danger/20"></div>' +
+            '<div class="ai-retry-area hidden mt-2">' +
+            '<button class="text-xs text-brand hover:underline" onclick="retryAIMessage(\'' + aiMsgId + '\', \'' + escapeHtml(text).replace(/'/g, '\\\'') + '\')">重试</button>' +
+            '</div>' +
             '</div>' +
             '</div>';
         msgList.insertAdjacentHTML('beforeend', aiHtml);
         msgList.scrollTop = msgList.scrollHeight;
-        var fullReply = generateMockAIReply(text);
-        streamAIMessage(aiMsgId, fullReply, function () {
+
+        try {
+            var result = await callAIChat(text);
+            streamAIMessage(aiMsgId, result.reply, function () {
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+                if (sendIcon) sendIcon.setAttribute('icon', 'mdi:send');
+            });
+            if (result.conversation_id) {
+                _aiConversationId = result.conversation_id;
+            }
+        } catch (err) {
+            showAIError(aiMsgId, err.message || 'AI 服务暂时不可用，请稍后重试');
             if (sendBtn) {
                 sendBtn.disabled = false;
                 sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
             if (sendIcon) sendIcon.setAttribute('icon', 'mdi:send');
+        }
+    }
+
+    async function callAIChat(message) {
+        if (typeof API !== 'undefined' && API.ai && API.ai.chat) {
+            try {
+                var res = await API.ai.chat(message, {
+                    conversationId: _aiConversationId
+                });
+                if (res && res.ok && res.data) {
+                    return res.data;
+                }
+                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+            } catch (apiErr) {
+                console.warn('AI API 调用失败，降级到本地 mock:', apiErr);
+            }
+        }
+        return {
+            reply: generateMockAIReply(message),
+            conversation_id: _aiConversationId || ('mock-conv-' + Date.now())
+        };
+    }
+
+    function showAIError(msgId, errorMsg) {
+        var msgEl = document.getElementById(msgId);
+        if (!msgEl) return;
+        var contentEl = msgEl.querySelector('.ai-msg-content');
+        var errorEl = msgEl.querySelector('.ai-error-area');
+        var retryEl = msgEl.querySelector('.ai-retry-area');
+        var thinkingEl = msgEl.querySelector('.ai-thinking-text');
+        if (thinkingEl) thinkingEl.style.display = 'none';
+        if (contentEl) contentEl.textContent = '抱歉，AI 服务暂时不可用';
+        if (errorEl) {
+            errorEl.textContent = errorMsg;
+            errorEl.classList.remove('hidden');
+        }
+        if (retryEl) retryEl.classList.remove('hidden');
+    }
+
+    function retryAIMessage(msgId, message) {
+        var msgEl = document.getElementById(msgId);
+        if (!msgEl) return;
+        var contentEl = msgEl.querySelector('.ai-msg-content');
+        var errorEl = msgEl.querySelector('.ai-error-area');
+        var retryEl = msgEl.querySelector('.ai-retry-area');
+        var thinkingEl = msgEl.querySelector('.ai-thinking-text');
+        if (contentEl) contentEl.innerHTML = '<span class="ai-thinking-text">AI 思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></span>';
+        if (errorEl) errorEl.classList.add('hidden');
+        if (retryEl) retryEl.classList.add('hidden');
+
+        callAIChat(message).then(function (result) {
+            streamAIMessage(msgId, result.reply);
+            if (result.conversation_id) {
+                _aiConversationId = result.conversation_id;
+            }
+        }).catch(function (err) {
+            showAIError(msgId, err.message || '重试失败，请稍后再试');
         });
     }
 
@@ -804,6 +882,16 @@
                 '</div>';
         });
 
+        html +=
+            '<div class="mt-6 pt-4 border-t border-bg-border">' +
+            '<div class="flex items-start gap-2 p-3 bg-bg-subtle rounded-lg">' +
+            '<iconify-icon icon="mdi:information-outline" class="text-fg-tertiary text-base flex-shrink-0 mt-0.5"></iconify-icon>' +
+            '<p class="text-[11px] text-fg-tertiary leading-relaxed">' +
+            'AI 生成内容仅供参考，不构成法律意见。具体案件请结合实际情况，由专业律师审核判断。' +
+            '</p>' +
+            '</div>' +
+            '</div>';
+
         return html;
     }
 
@@ -886,28 +974,76 @@
 
     var _closeCaseSummaryModal = null;
 
-    function startCaseSummary() {
+    async function startCaseSummary() {
         var caseData = {
             caseName: (document.getElementById('case-detail-title') || {}).textContent || '',
             caseNumber: (document.getElementById('field-basic-caseNumber-header') || {}).textContent || '',
             caseType: (document.getElementById('field-basic-caseType') || {}).textContent || '',
             amount: (document.getElementById('field-basic-claimAmount') || {}).textContent || '',
             court: (document.querySelector('.case-detail-court') || {}).textContent || '北京市第一中级人民法院',
-            signDate: (document.getElementById('field-basic-signDate') || {}).textContent || ''
+            signDate: (document.getElementById('field-basic-signDate') || {}).textContent || '',
+            plaintiff: (document.getElementById('field-client-name') || {}).textContent || '',
+            defendant: (document.getElementById('field-opponent-name') || {}).textContent || ''
         };
 
-        var summary = generateCaseSummary(caseData);
-        var html = generateCaseSummaryHtml(summary);
+        var loadingEl = document.getElementById('case-summary-loading');
+        var contentEl = document.getElementById('case-summary-content');
+        if (!loadingEl || !contentEl) return;
 
+        try {
+            var summary = await callAICaseSummary(caseData);
+            var html = generateCaseSummaryHtml(summary);
+
+            loadingEl.classList.add('hidden');
+            contentEl.classList.remove('hidden');
+            contentEl.innerHTML = html;
+
+            streamCaseSummarySections(summary);
+        } catch (err) {
+            showCaseSummaryError(err.message || '生成案件摘要失败，请重试');
+        }
+    }
+
+    async function callAICaseSummary(caseData) {
+        if (typeof API !== 'undefined' && API.ai && API.ai.caseSummary) {
+            try {
+                var res = await API.ai.caseSummary(caseData);
+                if (res && res.ok && res.data) {
+                    var data = res.data;
+                    return {
+                        overview: data.overview || '',
+                        disputes: data.disputes || '',
+                        evidence: data.evidence || '',
+                        risk: data.risk || '',
+                        nextSteps: data.next_steps || ''
+                    };
+                }
+                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+            } catch (apiErr) {
+                console.warn('AI 案件摘要 API 调用失败，降级到本地 mock:', apiErr);
+            }
+        }
+        return generateCaseSummary(caseData);
+    }
+
+    function showCaseSummaryError(errorMsg) {
         var loadingEl = document.getElementById('case-summary-loading');
         var contentEl = document.getElementById('case-summary-content');
         if (!loadingEl || !contentEl) return;
 
         loadingEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
-        contentEl.innerHTML = html;
-
-        streamCaseSummarySections(summary);
+        contentEl.innerHTML =
+            '<div class="flex flex-col items-center justify-center py-12">' +
+            '<div class="w-16 h-16 rounded-2xl bg-danger-tint/50 flex items-center justify-center mb-4">' +
+            '<iconify-icon icon="mdi:alert-circle-outline" class="text-3xl text-danger"></iconify-icon>' +
+            '</div>' +
+            '<p class="text-sm font-medium text-fg-primary mb-1">生成失败</p>' +
+            '<p class="text-xs text-fg-tertiary mb-4">' + escapeHtml(errorMsg) + '</p>' +
+            '<button class="px-4 py-2 text-xs text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="regenerateCaseSummary()">' +
+            '重新生成' +
+            '</button>' +
+            '</div>';
     }
 
     function streamCaseSummarySections(summary) {
@@ -1133,21 +1269,28 @@
             '<iconify-icon icon="mdi:close" class="text-xs"></iconify-icon>全部放弃' +
             '</button>' +
             '</div>' +
-            '</div>' +
+            '<div class="mb-3" id="polish-stats"></div>' +
             '<div class="grid grid-cols-2 gap-3">' +
             '<div class="border border-bg-border rounded-xl overflow-hidden">' +
             '<div class="px-3 py-2 bg-bg-subtle border-b border-bg-border flex items-center gap-2">' +
             '<span class="text-[11px] font-medium text-fg-secondary">原文</span>' +
             '</div>' +
-            '<div class="p-3 max-h-[40vh] overflow-y-auto text-xs leading-relaxed font-mono bg-white" id="polish-original-text"></div>' +
+            '<div class="p-3 max-h-[30vh] overflow-y-auto text-xs leading-relaxed font-mono bg-white" id="polish-original-text"></div>' +
             '</div>' +
             '<div class="border border-success/20 rounded-xl overflow-hidden">' +
             '<div class="px-3 py-2 bg-success-tint/30 border-b border-success/20 flex items-center gap-2">' +
             '<iconify-icon icon="mdi:auto-fix" class="text-success text-xs"></iconify-icon>' +
             '<span class="text-[11px] font-medium text-success">润色后</span>' +
             '</div>' +
-            '<div class="p-3 max-h-[40vh] overflow-y-auto text-xs leading-relaxed font-mono bg-white" id="polish-polished-text"></div>' +
+            '<div class="p-3 max-h-[30vh] overflow-y-auto text-xs leading-relaxed font-mono bg-white" id="polish-polished-text"></div>' +
             '</div>' +
+            '</div>' +
+            '<div class="mt-4" id="polish-modifications">' +
+            '<div class="flex items-center gap-2 mb-2">' +
+            '<iconify-icon icon="mdi:format-list-checks" class="text-brand text-sm"></iconify-icon>' +
+            '<span class="text-xs font-semibold text-fg-primary">修改详情</span>' +
+            '</div>' +
+            '<div class="space-y-2 max-h-[20vh] overflow-y-auto" id="polish-modification-list"></div>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -1224,7 +1367,7 @@
         return opts;
     }
 
-    function startPolish() {
+    async function startPolish() {
         var opts = getSelectedPolishOptions();
         var hasAny = Object.values(opts).some(function (v) { return v; });
         if (!hasAny) {
@@ -1236,14 +1379,84 @@
         var resultEl = document.getElementById('polish-result');
         if (!loadingEl || !resultEl) return;
 
-        _polishResult = polishDocument(_polishOriginal, opts);
-        _polishDiff = buildDiff(_polishOriginal, _polishResult);
+        try {
+            var result = await callAIPolish(_polishOriginal, opts);
+            _polishResult = result.polished_content || _polishOriginal;
+            _polishDiff = result.modifications || [];
+            _polishStats = result.stats || {};
 
-        setTimeout(function () {
             loadingEl.classList.add('hidden');
             resultEl.classList.remove('hidden');
+            updatePolishStats(_polishStats);
             streamPolishResult();
-        }, 1000);
+        } catch (err) {
+            showPolishError(err.message || '润色失败，请重试');
+        }
+    }
+
+    var _polishStats = {};
+
+    async function callAIPolish(content, options) {
+        if (typeof API !== 'undefined' && API.ai && API.ai.polishDocument) {
+            try {
+                var res = await API.ai.polishDocument(content, options);
+                if (res && res.ok && res.data) {
+                    return res.data;
+                }
+                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+            } catch (apiErr) {
+                console.warn('AI 文书润色 API 调用失败，降级到本地 mock:', apiErr);
+            }
+        }
+        var polished = polishDocument(content, options);
+        var mods = buildDiff(content, polished);
+        return {
+            polished_content: polished,
+            modifications: mods,
+            stats: {
+                total_modifications: mods.filter(function (m) { return m.type === 'modified'; }).length
+            }
+        };
+    }
+
+    function updatePolishStats(stats) {
+        var statsEl = document.getElementById('polish-stats');
+        if (!statsEl || !stats) return;
+        var total = stats.total_modifications || 0;
+        var legalTerms = stats.legal_terms || 0;
+        var typos = stats.typos || 0;
+        var logic = stats.logic || 0;
+        var tone = stats.tone || 0;
+
+        statsEl.innerHTML =
+            '<div class="flex items-center gap-3 flex-wrap">' +
+            '<span class="text-xs text-fg-tertiary">修改统计:</span>' +
+            '<span class="text-xs px-2 py-0.5 bg-brand-tint text-brand rounded-full">共 ' + total + ' 处</span>' +
+            (legalTerms > 0 ? '<span class="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full">法律用语 ' + legalTerms + '</span>' : '') +
+            (typos > 0 ? '<span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">错别字 ' + typos + '</span>' : '') +
+            (logic > 0 ? '<span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">逻辑优化 ' + logic + '</span>' : '') +
+            (tone > 0 ? '<span class="text-xs px-2 py-0.5 bg-amber-50 text-amber-600 rounded-full">语气调整 ' + tone + '</span>' : '') +
+            '</div>';
+    }
+
+    function showPolishError(errorMsg) {
+        var loadingEl = document.getElementById('polish-loading');
+        var resultEl = document.getElementById('polish-result');
+        if (!loadingEl || !resultEl) return;
+
+        loadingEl.classList.add('hidden');
+        resultEl.classList.remove('hidden');
+        resultEl.innerHTML =
+            '<div class="flex flex-col items-center justify-center py-12">' +
+            '<div class="w-16 h-16 rounded-2xl bg-danger-tint/50 flex items-center justify-center mb-4">' +
+            '<iconify-icon icon="mdi:alert-circle-outline" class="text-3xl text-danger"></iconify-icon>' +
+            '</div>' +
+            '<p class="text-sm font-medium text-fg-primary mb-1">润色失败</p>' +
+            '<p class="text-xs text-fg-tertiary mb-4">' + escapeHtml(errorMsg) + '</p>' +
+            '<button class="px-4 py-2 text-xs text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="retryPolish()">' +
+            '重新润色' +
+            '</button>' +
+            '</div>';
     }
 
     function streamPolishResult() {
@@ -1281,6 +1494,63 @@
 
         streamOrig();
         setTimeout(streamPol, 300);
+        setTimeout(renderPolishModifications, 500);
+    }
+
+    function renderPolishModifications() {
+        var listEl = document.getElementById('polish-modification-list');
+        if (!listEl || !_polishDiff || _polishDiff.length === 0) return;
+
+        var typeLabelMap = {
+            legal_terms: { label: '法律用语', color: 'purple' },
+            typo: { label: '错别字', color: 'green' },
+            logic: { label: '逻辑优化', color: 'blue' },
+            tone: { label: '语气调整', color: 'amber' },
+            modified: { label: '修改', color: 'brand' }
+        };
+
+        var html = '';
+        var count = 0;
+        _polishDiff.forEach(function (item) {
+            if (item.type === 'same') return;
+            count++;
+            if (count > 20) return;
+            var typeInfo = typeLabelMap[item.type] || typeLabelMap.modified;
+            html +=
+                '<div class="flex items-start gap-2 p-2 bg-bg-subtle rounded-lg">' +
+                '<span class="text-[10px] px-1.5 py-0.5 bg-' + typeInfo.color + '-tint text-' + typeInfo.color + ' rounded flex-shrink-0 mt-0.5">' +
+                typeInfo.label +
+                '</span>' +
+                '<div class="flex-1 min-w-0 space-y-1">' +
+                '<div class="flex items-start gap-1.5">' +
+                '<iconify-icon icon="mdi:minus" class="text-danger text-xs flex-shrink-0 mt-0.5"></iconify-icon>' +
+                '<span class="text-xs text-fg-secondary line-through decoration-danger/50 break-all">' +
+                escapeHtml(item.original || '') +
+                '</span>' +
+                '</div>' +
+                '<div class="flex items-start gap-1.5">' +
+                '<iconify-icon icon="mdi:plus" class="text-success text-xs flex-shrink-0 mt-0.5"></iconify-icon>' +
+                '<span class="text-xs text-fg-primary break-all">' +
+                escapeHtml(item.polished || '') +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        });
+
+        if (count === 0) {
+            html =
+                '<div class="text-center py-4 text-xs text-fg-tertiary">' +
+                '未检测到明显修改' +
+                '</div>';
+        } else if (count > 20) {
+            html +=
+                '<div class="text-center text-xs text-fg-tertiary pt-2">' +
+                '仅显示前 20 条修改' +
+                '</div>';
+        }
+
+        listEl.innerHTML = html;
     }
 
     function retryPolish() {
@@ -1331,11 +1601,38 @@
     }
 
     // ===== AI 智能填空功能 =====
-    function autoFillTemplate(templateId) {
-        var fillData = collectCaseInfoForFill();
-        var filledCount = applyAutoFill(fillData);
-        Utils.showToast('success', 'AI 智能填空完成，已填充 ' + filledCount + ' 个字段');
-        return fillData;
+    async function autoFillTemplate(templateId) {
+        var caseInfo = collectCaseInfoForFill();
+        try {
+            var result = await callAIAutoFill(templateId || '', caseInfo);
+            var filledData = result.filled_fields || {};
+            var filledCount = applyAutoFill(filledData);
+            Utils.showToast('success', 'AI 智能填空完成，已填充 ' + filledCount + ' 个字段');
+            return filledData;
+        } catch (err) {
+            Utils.showToast('error', '智能填空失败: ' + (err.message || '请稍后重试'));
+            var filledCount = applyAutoFill(caseInfo);
+            Utils.showToast('success', '已使用本地数据填充 ' + filledCount + ' 个字段');
+            return caseInfo;
+        }
+    }
+
+    async function callAIAutoFill(templateId, caseInfo) {
+        if (typeof API !== 'undefined' && API.ai && API.ai.autoFill) {
+            try {
+                var res = await API.ai.autoFill(templateId, caseInfo);
+                if (res && res.ok && res.data) {
+                    return res.data;
+                }
+                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+            } catch (apiErr) {
+                console.warn('AI 智能填空 API 调用失败，降级到本地 mock:', apiErr);
+            }
+        }
+        return {
+            filled_fields: caseInfo,
+            filled_count: Object.keys(caseInfo).filter(function (k) { return caseInfo[k]; }).length
+        };
     }
 
     function collectCaseInfoForFill() {
@@ -1711,7 +2008,7 @@
         _floatingAIIsOpen = false;
     }
 
-    function sendFloatingAIMessage() {
+    async function sendFloatingAIMessage() {
         var input = document.getElementById('floating-ai-input');
         var responseEl = document.getElementById('floating-ai-response');
         var responseText = document.getElementById('floating-ai-response-text');
@@ -1721,14 +2018,23 @@
         if (!text) return;
 
         responseEl.classList.remove('hidden');
-        responseText.textContent = '思考中...';
-
-        setTimeout(function () {
-            var reply = generateMockAIReply(text);
-            streamTextToElement('floating-ai-response-text', reply);
-        }, 500);
+        responseText.textContent = 'AI 思考中...';
 
         input.value = '';
+
+        try {
+            var result = await callAIChat(text);
+            streamTextToElement('floating-ai-response-text', result.reply);
+            if (result.conversation_id) {
+                _aiConversationId = result.conversation_id;
+            }
+        } catch (err) {
+            responseText.textContent = '抱歉，AI 服务暂时不可用，请稍后重试';
+            setTimeout(function () {
+                var reply = generateMockAIReply(text);
+                streamTextToElement('floating-ai-response-text', reply);
+            }, 500);
+        }
     }
 
     // ===== AI 可用性检测 =====
@@ -1776,6 +2082,7 @@
     globalThis.handleAIInputKeydown = handleAIInputKeydown;
     globalThis.quickAsk = quickAsk;
     globalThis.sendAIMessage = sendAIMessage;
+    globalThis.retryAIMessage = retryAIMessage;
     globalThis.submitFeedback = submitFeedback;
     globalThis.openFeedbackModal = openFeedbackModal;
     globalThis.openUserGuideModal = openUserGuideModal;

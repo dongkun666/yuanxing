@@ -730,6 +730,918 @@
     };
 
     // ========================================================================
+    // 9.5 匹配 2.0 - 后端 API 匹配 + 降级方案 + 解释可视化
+    // ========================================================================
+
+    var MatchV2State = {
+        currentCriteria: {
+            required_specialties: [],
+            required_region: '',
+            required_city: '',
+            sort_by: 'match_score',
+            sort_order: 'desc',
+            filters: {},
+            page: 1,
+            page_size: 10
+        },
+        lastResults: null,
+        lastExplanation: null,
+        isLoading: false,
+        useBackend: true,
+        backoffCount: 0
+    };
+
+    var MatchAPI = {
+        matchLawyers: function (criteria) {
+            criteria = criteria || MatchV2State.currentCriteria;
+            return API.marketplace.matchLawyers(criteria);
+        },
+
+        getMatchExplanation: function (lawyerId, criteria) {
+            criteria = criteria || MatchV2State.currentCriteria;
+            return API.marketplace.getMatchExplanation(lawyerId, criteria);
+        },
+
+        listLawyers: function (params) {
+            return API.marketplace.listLawyers(params);
+        }
+    };
+
+    function matchLawyersV2(criteria, opts) {
+        opts = opts || {};
+        var useBackend = opts.useBackend !== false && MatchV2State.useBackend;
+
+        if (useBackend) {
+            return MatchAPI.matchLawyers(criteria)
+                .then(function (res) {
+                    if (res.ok && res.data) {
+                        MatchV2State.backoffCount = 0;
+                        return { ok: true, data: res.data, source: 'backend' };
+                    }
+                    console.warn('[MatchV2] 后端匹配失败, 降级到前端:', res);
+                    if (opts.fallback !== false) {
+                        return matchLawyersFrontend(criteria);
+                    }
+                    return { ok: false, error: res.error || '匹配失败', status: res.status };
+                })
+                .catch(function (err) {
+                    console.warn('[MatchV2] 后端匹配异常, 降级到前端:', err);
+                    if (opts.fallback !== false) {
+                        return matchLawyersFrontend(criteria);
+                    }
+                    return { ok: false, error: err.message || '网络错误' };
+                });
+        } else {
+            return matchLawyersFrontend(criteria);
+        }
+    }
+
+    function matchLawyersFrontend(criteria) {
+        criteria = criteria || {};
+        var requiredSpecialties = criteria.required_specialties || [];
+        var requiredRegion = criteria.required_region || '';
+        var sortBy = criteria.sort_by || 'match_score';
+        var sortOrder = criteria.sort_order || 'desc';
+        var filters = criteria.filters || {};
+        var page = criteria.page || 1;
+        var pageSize = criteria.page_size || 10;
+
+        return new Promise(function (resolve) {
+            loadLawyerPool(function (err, pool) {
+                if (err) pool = DEMO_LAWYERS;
+
+                var filtered = pool.slice();
+
+                if (filters.specialties && filters.specialties.length > 0) {
+                    filtered = filtered.filter(function (l) {
+                        return l.specialties && filters.specialties.some(function (s) {
+                            return l.specialties.indexOf(s) >= 0;
+                        });
+                    });
+                }
+                if (filters.min_experience_years !== undefined) {
+                    filtered = filtered.filter(function (l) {
+                        return (l.experience_years || 0) >= filters.min_experience_years;
+                    });
+                }
+                if (filters.max_experience_years !== undefined) {
+                    filtered = filtered.filter(function (l) {
+                        return (l.experience_years || 0) <= filters.max_experience_years;
+                    });
+                }
+                if (filters.regions && filters.regions.length > 0) {
+                    filtered = filtered.filter(function (l) {
+                        return l.region && filters.regions.indexOf(l.region) >= 0;
+                    });
+                }
+                if (filters.cities && filters.cities.length > 0) {
+                    filtered = filtered.filter(function (l) {
+                        return l.city && filters.cities.indexOf(l.city) >= 0;
+                    });
+                }
+                if (filters.min_price !== undefined) {
+                    filtered = filtered.filter(function (l) {
+                        return (l.price_per_hour || 0) >= filters.min_price;
+                    });
+                }
+                if (filters.max_price !== undefined) {
+                    filtered = filtered.filter(function (l) {
+                        return (l.price_per_hour || 0) <= filters.max_price;
+                    });
+                }
+                if (filters.min_rating !== undefined) {
+                    filtered = filtered.filter(function (l) {
+                        return (l.rating || 0) >= filters.min_rating;
+                    });
+                }
+                if (filters.cross_border_only) {
+                    filtered = filtered.filter(function (l) {
+                        return l.cross_border_capable;
+                    });
+                }
+                if (filters.availability && filters.availability.length > 0) {
+                    filtered = filtered.filter(function (l) {
+                        return l.availability && filters.availability.indexOf(l.availability) >= 0;
+                    });
+                }
+
+                var scored = rankLawyers(filtered, requiredSpecialties, requiredRegion, filtered.length);
+
+                scored.sort(function (a, b) {
+                    var av, bv;
+                    switch (sortBy) {
+                    case 'price':
+                        av = a.lawyer.price_per_hour || 0;
+                        bv = b.lawyer.price_per_hour || 0;
+                        break;
+                    case 'experience':
+                        av = a.lawyer.experience_years || 0;
+                        bv = b.lawyer.experience_years || 0;
+                        break;
+                    case 'rating':
+                        av = a.lawyer.rating || 0;
+                        bv = b.lawyer.rating || 0;
+                        break;
+                    case 'response_speed':
+                        av = -(a.lawyer.response_speed_hours || 24);
+                        bv = -(b.lawyer.response_speed_hours || 24);
+                        break;
+                    case 'match_score':
+                    default:
+                        av = a.score.total;
+                        bv = b.score.total;
+                    }
+                    return sortOrder === 'asc' ? av - bv : bv - av;
+                });
+
+                var total = scored.length;
+                var start = (page - 1) * pageSize;
+                var end = start + pageSize;
+                var paged = scored.slice(start, end);
+
+                var lawyers = paged.map(function (item) {
+                    var l = item.lawyer;
+                    var s = item.score;
+                    return {
+                        lawyer_id: l.lawyer_id,
+                        name: l.name,
+                        firm_id: l.firm_id,
+                        specialties: l.specialties || [],
+                        jurisdictions: l.jurisdictions || [],
+                        languages: l.languages || [],
+                        region: l.region || '',
+                        city: l.city || '',
+                        experience_years: l.experience_years || 0,
+                        rating: l.rating || 0,
+                        client_review_count: l.client_review_count || 0,
+                        completed_cases: l.completed_cases || 0,
+                        win_rate: l.win_rate || 0,
+                        response_speed_hours: l.response_speed_hours || 24,
+                        price_per_hour: l.price_per_hour || 0,
+                        price_min: l.price_min || 0,
+                        marketplace_active: l.marketplace_active !== false,
+                        cross_border_capable: l.cross_border_capable || false,
+                        availability: l.availability || 'available',
+                        bio: l.bio || '',
+                        match_score: {
+                            total_score: s.total,
+                            specialty: s.specialty,
+                            experience: s.experience,
+                            geography: s.geography,
+                            availability: s.availability,
+                            rating: s.rating,
+                            cross_border_bonus: s.cross_border_bonus || 0
+                        },
+                        match_reasons: buildMatchReasons(l, s, requiredSpecialties, requiredRegion)
+                    };
+                });
+
+                resolve({
+                    ok: true,
+                    source: 'frontend',
+                    data: {
+                        lawyers: lawyers,
+                        total: total,
+                        page: page,
+                        page_size: pageSize,
+                        total_pages: Math.ceil(total / pageSize)
+                    }
+                });
+            });
+        });
+    }
+
+    function buildMatchReasons(lawyer, score, requiredSpecialties, requiredRegion) {
+        var reasons = [];
+        if (score.specialty >= 0.8 && requiredSpecialties.length > 0) {
+            reasons.push('专业领域高度匹配');
+        } else if (score.specialty >= 0.5 && requiredSpecialties.length > 0) {
+            reasons.push('专业领域部分匹配');
+        }
+        if (score.experience >= 0.8) {
+            reasons.push('经验丰富');
+        }
+        if (score.geography >= 0.8) {
+            reasons.push('同城/同省');
+        }
+        if (score.availability >= 0.8) {
+            reasons.push('可立即接案');
+        }
+        if (score.rating >= 0.9) {
+            reasons.push('客户好评如潮');
+        }
+        if (lawyer.cross_border_capable) {
+            reasons.push('支持跨境业务');
+        }
+        return reasons;
+    }
+
+    function getMatchExplanationV2(lawyerId, criteria) {
+        criteria = criteria || MatchV2State.currentCriteria;
+
+        if (MatchV2State.useBackend) {
+            return MatchAPI.getMatchExplanation(lawyerId, criteria)
+                .then(function (res) {
+                    if (res.ok && res.data) {
+                        return { ok: true, data: res.data, source: 'backend' };
+                    }
+                    console.warn('[MatchV2] 后端解释失败, 降级到前端:', res);
+                    return getMatchExplanationFrontend(lawyerId, criteria);
+                })
+                .catch(function (err) {
+                    console.warn('[MatchV2] 后端解释异常, 降级到前端:', err);
+                    return getMatchExplanationFrontend(lawyerId, criteria);
+                });
+        } else {
+            return getMatchExplanationFrontend(lawyerId, criteria);
+        }
+    }
+
+    function getMatchExplanationFrontend(lawyerId, criteria) {
+        criteria = criteria || {};
+        var requiredSpecialties = criteria.required_specialties || [];
+        var requiredRegion = criteria.required_region || '';
+
+        return new Promise(function (resolve) {
+            loadLawyerPool(function (err, pool) {
+                if (err) pool = DEMO_LAWYERS;
+                var lawyer = pool.find(function (l) { return l.lawyer_id === lawyerId; });
+                if (!lawyer) {
+                    resolve({ ok: false, error: '律师不存在' });
+                    return;
+                }
+
+                var score = computeMatchScore(lawyer, requiredSpecialties, requiredRegion);
+
+                var dims = [
+                    { name: '专业匹配', key: 'specialty', weight: 0.35, desc: '专业领域契合度' },
+                    { name: '经验资历', key: 'experience', weight: 0.20, desc: '执业年限与办案量' },
+                    { name: '地域匹配', key: 'geography', weight: 0.15, desc: '所在地区契合度' },
+                    { name: '可接案状态', key: 'availability', weight: 0.15, desc: '当前接案能力' },
+                    { name: '客户评分', key: 'rating', weight: 0.15, desc: '历史客户评价' }
+                ];
+
+                var dimensions = dims.map(function (d) {
+                    var s = score[d.key] || 0;
+                    var weighted = s * d.weight;
+                    var isStrength = s >= 0.8;
+                    var isWeakness = s < 0.5;
+                    var description = d.desc + ': ' + (s * 100).toFixed(0) + '分';
+                    if (d.key === 'specialty' && requiredSpecialties.length > 0) {
+                        var matched = requiredSpecialties.filter(function (sp) {
+                            return lawyer.specialties && lawyer.specialties.indexOf(sp) >= 0;
+                        });
+                        description = '匹配 ' + matched.length + '/' + requiredSpecialties.length + ' 个专业领域';
+                    }
+                    if (d.key === 'geography') {
+                        if (s >= 1) description = '同城律师, 沟通便利';
+                        else if (s >= 0.6) description = '同省律师';
+                        else description = '异地律师';
+                    }
+                    if (d.key === 'availability') {
+                        if (s >= 1) description = '可立即接案';
+                        else if (s >= 0.4) description = '案件较多, 需排队';
+                        else description = '暂不可用';
+                    }
+                    return {
+                        name: d.name,
+                        score: s,
+                        weight: d.weight,
+                        weighted_score: weighted,
+                        description: description,
+                        is_strength: isStrength,
+                        is_weakness: isWeakness
+                    };
+                });
+
+                var strengths = [];
+                var weaknesses = [];
+                var suggestions = [];
+
+                dimensions.forEach(function (d) {
+                    if (d.is_strength) strengths.push(d.name + '表现优秀');
+                    if (d.is_weakness) weaknesses.push(d.name + '待提升');
+                });
+
+                if (score.specialty < 0.5 && requiredSpecialties.length > 0) {
+                    suggestions.push('该律师专业领域与需求有差距, 可考虑其他更匹配的律师');
+                }
+                if (score.geography < 0.5) {
+                    suggestions.push('异地律师可能增加沟通成本, 可优先考虑本地律师');
+                }
+                if (score.availability < 0.5) {
+                    suggestions.push('该律师当前案件较多, 响应可能较慢');
+                }
+                if (lawyer.cross_border_capable && criteria.cross_border) {
+                    strengths.push('具备跨境业务能力');
+                }
+                if (suggestions.length === 0) {
+                    suggestions.push('综合表现良好, 可优先考虑');
+                }
+
+                resolve({
+                    ok: true,
+                    source: 'frontend',
+                    data: {
+                        lawyer_id: lawyer.lawyer_id,
+                        lawyer_name: lawyer.name,
+                        total_score: score.total,
+                        dimensions: dimensions,
+                        strengths: strengths,
+                        weaknesses: weaknesses,
+                        suggestions: suggestions
+                    }
+                });
+            });
+        });
+    }
+
+    function renderMatchSkeleton(count) {
+        count = count || 3;
+        var html = '';
+        for (var i = 0; i < count; i++) {
+            html +=
+                '<div class="mp-lawyer-card bg-white rounded-lg p-4 mb-3">' +
+                '<div class="flex items-start gap-3">' +
+                '<div class="w-12 h-12 rounded-full bg-bg-subtle animate-pulse flex-shrink-0"></div>' +
+                '<div class="flex-1 space-y-2">' +
+                '<div class="h-4 bg-bg-subtle rounded animate-pulse w-1/3"></div>' +
+                '<div class="h-3 bg-bg-subtle rounded animate-pulse w-1/2"></div>' +
+                '<div class="h-3 bg-bg-subtle rounded animate-pulse w-full"></div>' +
+                '<div class="h-3 bg-bg-subtle rounded animate-pulse w-2/3"></div>' +
+                '</div>' +
+                '<div class="text-right flex-shrink-0 space-y-2">' +
+                '<div class="h-6 bg-bg-subtle rounded animate-pulse w-16"></div>' +
+                '<div class="h-3 bg-bg-subtle rounded animate-pulse w-12"></div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        }
+        return html;
+    }
+
+    function renderMatchResultCard(lawyer, index) {
+        var matchScore = lawyer.match_score || {};
+        var totalScore = matchScore.total_score !== undefined ? matchScore.total_score : 0;
+        var scorePct = Math.round(totalScore * 100);
+        var availability = AVAILABILITY.find(function (a) { return a.value === lawyer.availability; }) || AVAILABILITY[0];
+
+        var scoreBadge = '';
+        if (totalScore >= 0.85) {
+            scoreBadge = '<span class="mp-badge-strong text-[10px] px-1.5 py-0.5 rounded block mb-1">强推荐</span>';
+        } else if (totalScore >= 0.65) {
+            scoreBadge = '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded block mb-1">推荐</span>';
+        } else if (totalScore >= 0.45) {
+            scoreBadge = '<span class="text-[10px] px-1.5 py-0.5 rounded block mb-1 bg-bg-subtle text-fg-secondary">候选</span>';
+        }
+
+        var reasonTags = '';
+        if (lawyer.match_reasons && lawyer.match_reasons.length > 0) {
+            reasonTags = lawyer.match_reasons.slice(0, 3).map(function (r) {
+                return '<span class="text-[10px] px-1.5 py-0.5 rounded bg-brand-tint text-brand">' + esc(r) + '</span>';
+            }).join('');
+        }
+
+        return (
+            '<div class="mp-lawyer-card mp-fade-in bg-white rounded-lg p-4 mb-3 hover:shadow-md transition-shadow" data-lawyer-id="' +
+            esc(lawyer.lawyer_id) +
+            '" style="animation-delay:' + (index * 50) + 'ms">' +
+            '<div class="flex items-start gap-3">' +
+            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-base font-semibold flex-shrink-0 cursor-pointer" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            esc(lawyer.name ? lawyer.name.substring(0, 1) : '?') +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 flex-wrap mb-1">' +
+            '<h3 class="text-sm font-semibold text-fg-primary truncate cursor-pointer hover:text-brand transition-colors" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            esc(lawyer.name) +
+            '</h3>' +
+            '<span class="text-[11px] text-fg-tertiary">' + esc(lawyer.firm_id || '独立律师') + '</span>' +
+            (lawyer.cross_border_capable ? '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded">跨境</span>' : '') +
+            '</div>' +
+            '<div class="flex flex-wrap gap-1 mb-2">' +
+            (lawyer.specialties || []).slice(0, 4).map(function (s) {
+                var t = CASE_TYPES.find(function (c) { return c.value === s; });
+                return '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(t ? t.label : s) + '</span>';
+            }).join('') +
+            '</div>' +
+            '<div class="flex items-center gap-3 text-[11px] text-fg-tertiary mb-2">' +
+            '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' + esc(lawyer.region || '未填') + (lawyer.city ? ' · ' + esc(lawyer.city) : '') + '</span>' +
+            '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' + (lawyer.experience_years || 0) + ' 年</span>' +
+            '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' + (lawyer.rating || 0).toFixed(1) + '</span>' +
+            '<span class="flex items-center gap-1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + availability.dot + '"></span> ' + availability.label + '</span>' +
+            (lawyer.price_per_hour > 0 ? '<span><iconify-icon icon="mdi:cash" class="text-xs"></iconify-icon> ¥' + lawyer.price_per_hour + '/h</span>' : '') +
+            '</div>' +
+            (reasonTags ? '<div class="flex flex-wrap gap-1 mb-2">' + reasonTags + '</div>' : '') +
+            '</div>' +
+            '<div class="text-right flex-shrink-0">' +
+            '<div class="mp-score-big text-2xl font-bold text-brand">' + scorePct + '</div>' +
+            '<div class="text-[10px] text-fg-tertiary mb-2">匹配度</div>' +
+            scoreBadge +
+            '<button class="mp-btn mp-btn-primary mp-btn-sm w-full" onclick="MarketplaceFn.openMatchDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            '<iconify-icon icon="mdi:chart-bar" class="text-xs"></iconify-icon> 匹配详情' +
+            '</button>' +
+            '<div class="flex gap-1 mt-1">' +
+            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="create-referral" data-lawyer-id="' + esc(lawyer.lawyer_id) + '">' +
+            '<iconify-icon icon="mdi:share-variant" class="text-xs"></iconify-icon>' +
+            '</button>' +
+            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="invite-co-counsel" data-lawyer-id="' + esc(lawyer.lawyer_id) + '">' +
+            '<iconify-icon icon="mdi:account-multiple-plus-outline" class="text-xs"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        );
+    }
+
+    function renderMatchRadarChart(dimensions) {
+        var size = 200;
+        var center = size / 2;
+        var radius = size / 2 - 30;
+        var n = dimensions.length;
+        if (n < 3) return '<div class="text-center text-fg-tertiary">维度不足</div>';
+
+        var angleStep = (Math.PI * 2) / n;
+        var startAngle = -Math.PI / 2;
+
+        var gridLines = '';
+        for (var level = 1; level <= 4; level++) {
+            var r = (radius * level) / 4;
+            var points = [];
+            for (var i = 0; i < n; i++) {
+                var angle = startAngle + i * angleStep;
+                var x = center + r * Math.cos(angle);
+                var y = center + r * Math.sin(angle);
+                points.push(x.toFixed(1) + ',' + y.toFixed(1));
+            }
+            gridLines += '<polygon points="' + points.join(' ') + '" fill="none" stroke="#e5e7eb" stroke-width="1"/>';
+        }
+
+        var axisLines = '';
+        var labels = '';
+        for (var j = 0; j < n; j++) {
+            var angle2 = startAngle + j * angleStep;
+            var x2 = center + radius * Math.cos(angle2);
+            var y2 = center + radius * Math.sin(angle2);
+            axisLines += '<line x1="' + center + '" y1="' + center + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="#e5e7eb" stroke-width="1"/>';
+
+            var labelR = radius + 18;
+            var lx = center + labelR * Math.cos(angle2);
+            var ly = center + labelR * Math.sin(angle2);
+            labels += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" fill="#6b7280" font-size="11px">' + esc(dimensions[j].name) + '</text>';
+        }
+
+        var dataPoints = [];
+        for (var k = 0; k < n; k++) {
+            var angle3 = startAngle + k * angleStep;
+            var score3 = Math.max(0, Math.min(1, dimensions[k].score || 0));
+            var r3 = radius * score3;
+            var dx = center + r3 * Math.cos(angle3);
+            var dy = center + r3 * Math.sin(angle3);
+            dataPoints.push(dx.toFixed(1) + ',' + dy.toFixed(1));
+        }
+
+        return (
+            '<svg viewBox="0 0 ' + size + ' ' + size + '" class="w-full max-w-[200px] mx-auto">' +
+            gridLines +
+            axisLines +
+            '<polygon points="' + dataPoints.join(' ') + '" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"/>' +
+            dataPoints.map(function (p) {
+                var coords = p.split(',');
+                return '<circle cx="' + coords[0] + '" cy="' + coords[1] + '" r="3" fill="#3b82f6"/>';
+            }).join('') +
+            labels +
+            '</svg>'
+        );
+    }
+
+    function renderMatchDimensionBars(dimensions) {
+        var html = '<div class="space-y-3">';
+        dimensions.forEach(function (d) {
+            var pct = Math.round((d.score || 0) * 100);
+            var barColor = d.is_strength ? 'linear-gradient(90deg, #10b981, #059669)'
+                : d.is_weakness ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
+                    : 'linear-gradient(90deg, #3b82f6, #6366f1)';
+            var labelClass = d.is_strength ? 'text-success' : d.is_weakness ? 'text-warning' : 'text-fg-secondary';
+
+            html +=
+                '<div class="match-dim-row">' +
+                '<div class="flex justify-between items-center mb-1">' +
+                '<span class="text-xs font-medium ' + labelClass + '">' + esc(d.name) + '</span>' +
+                '<span class="text-xs font-semibold text-fg-primary">' + pct + '分</span>' +
+                '</div>' +
+                '<div class="match-dim-track h-2 bg-bg-subtle rounded-full overflow-hidden">' +
+                '<div class="match-dim-fill h-full rounded-full transition-all duration-500" style="width:' + pct + '%;background:' + barColor + '"></div>' +
+                '</div>' +
+                '<div class="text-[10px] text-fg-tertiary mt-1">' + esc(d.description) + '</div>' +
+                '</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderMatchDetailModal(explanation) {
+        var data = explanation.data || explanation;
+        var totalPct = Math.round((data.total_score || 0) * 100);
+
+        var strengthTags = '';
+        if (data.strengths && data.strengths.length > 0) {
+            strengthTags = data.strengths.map(function (s) {
+                return '<span class="inline-block text-xs px-2 py-1 rounded-full bg-success/10 text-success mr-2 mb-1">✓ ' + esc(s) + '</span>';
+            }).join('');
+        }
+
+        var weaknessTags = '';
+        if (data.weaknesses && data.weaknesses.length > 0) {
+            weaknessTags = data.weaknesses.map(function (w) {
+                return '<span class="inline-block text-xs px-2 py-1 rounded-full bg-warning/10 text-warning mr-2 mb-1">⚠ ' + esc(w) + '</span>';
+            }).join('');
+        }
+
+        var suggestionsHtml = '';
+        if (data.suggestions && data.suggestions.length > 0) {
+            suggestionsHtml = '<ul class="list-disc list-inside space-y-1 text-xs text-fg-secondary">';
+            data.suggestions.forEach(function (s) {
+                suggestionsHtml += '<li>' + esc(s) + '</li>';
+            });
+            suggestionsHtml += '</ul>';
+        }
+
+        return (
+            '<div id="mp-match-detail-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4" onclick="if(event.target===this)MarketplaceFn.closeMatchDetail()">' +
+            '<div class="bg-white rounded-xl w-full max-w-lg max-h-[85vh] overflow-hidden shadow-2xl mp-fade-in">' +
+            '<div class="flex items-center justify-between p-4 border-b border-bg-border">' +
+            '<div class="flex items-center gap-3">' +
+            '<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white font-semibold">' +
+            esc(data.lawyer_name ? data.lawyer_name.substring(0, 1) : '?') +
+            '</div>' +
+            '<div>' +
+            '<h3 class="text-base font-semibold text-fg-primary">' + esc(data.lawyer_name) + ' · 匹配详情</h3>' +
+            '<p class="text-xs text-fg-tertiary">综合匹配度: <span class="text-brand font-semibold">' + totalPct + '分</span></p>' +
+            '</div>' +
+            '</div>' +
+            '<button class="text-fg-tertiary hover:text-fg-primary transition-colors text-xl" onclick="MarketplaceFn.closeMatchDetail()">×</button>' +
+            '</div>' +
+            '<div class="overflow-y-auto p-4" style="max-height: calc(85vh - 60px);">' +
+            '<div class="mb-4">' +
+            '<h4 class="text-sm font-semibold text-fg-primary mb-3">综合评估</h4>' +
+            renderMatchRadarChart(data.dimensions || []) +
+            '</div>' +
+            '<div class="mb-4">' +
+            '<h4 class="text-sm font-semibold text-fg-primary mb-3">各维度得分</h4>' +
+            renderMatchDimensionBars(data.dimensions || []) +
+            '</div>' +
+            (strengthTags || weaknessTags ?
+                '<div class="mb-4">' +
+                '<h4 class="text-sm font-semibold text-fg-primary mb-2">优劣势分析</h4>' +
+                (strengthTags ? '<div class="mb-2"><div class="text-xs text-success font-medium mb-1">强项</div>' + strengthTags + '</div>' : '') +
+                (weaknessTags ? '<div><div class="text-xs text-warning font-medium mb-1">待提升</div>' + weaknessTags + '</div>' : '') +
+                '</div>' : '') +
+            (suggestionsHtml ?
+                '<div>' +
+                '<h4 class="text-sm font-semibold text-fg-primary mb-2">改进建议</h4>' +
+                '<div class="bg-bg-subtle rounded-lg p-3">' + suggestionsHtml + '</div>' +
+                '</div>' : '') +
+            '<div class="mt-4 pt-4 border-t border-bg-border flex gap-2">' +
+            '<button class="mp-btn mp-btn-secondary flex-1" onclick="MarketplaceFn.closeMatchDetail()">关闭</button>' +
+            '<button class="mp-btn mp-btn-primary flex-1" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(data.lawyer_id) + '\');MarketplaceFn.closeMatchDetail();">查看完整资料</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        );
+    }
+
+    function openMatchDetail(lawyerId) {
+        var criteria = MatchV2State.currentCriteria;
+        var modalContainer = document.getElementById('mp-match-detail-container');
+        if (!modalContainer) {
+            modalContainer = document.createElement('div');
+            modalContainer.id = 'mp-match-detail-container';
+            document.body.appendChild(modalContainer);
+        }
+
+        modalContainer.innerHTML = renderMatchSkeleton(1);
+
+        getMatchExplanationV2(lawyerId, criteria).then(function (result) {
+            if (result.ok) {
+                modalContainer.innerHTML = renderMatchDetailModal(result.data);
+            } else {
+                modalContainer.innerHTML =
+                    '<div class="fixed inset-0 z-[1000] flex items-center justify-center p-4" onclick="if(event.target===this)MarketplaceFn.closeMatchDetail()">' +
+                    '<div class="bg-white rounded-xl p-6 max-w-sm text-center">' +
+                    '<p class="text-fg-secondary mb-4">加载匹配详情失败</p>' +
+                    '<button class="mp-btn mp-btn-primary" onclick="MarketplaceFn.closeMatchDetail()">关闭</button>' +
+                    '</div>' +
+                    '</div>';
+            }
+        });
+    }
+
+    function closeMatchDetail() {
+        var modalContainer = document.getElementById('mp-match-detail-container');
+        if (modalContainer) {
+            modalContainer.innerHTML = '';
+        }
+    }
+
+    function renderMatchFilters(criteria) {
+        criteria = criteria || MatchV2State.currentCriteria;
+        var sortOptions = [
+            { value: 'match_score', label: '综合匹配' },
+            { value: 'price', label: '价格' },
+            { value: 'experience', label: '经验' },
+            { value: 'rating', label: '评分' },
+            { value: 'response_speed', label: '响应速度' }
+        ];
+
+        var specialtyOptions = CASE_TYPES.slice(0, 9).map(function (c) {
+            return { value: c.value, label: c.label };
+        });
+
+        var regionOptions = ['北京', '上海', '深圳', '广州', '杭州', '成都'].map(function (r) {
+            return { value: r, label: r };
+        });
+
+        var html =
+            '<div class="mp-match-filters bg-white rounded-lg p-4 mb-4 border border-bg-border">' +
+            '<div class="flex flex-wrap gap-3 items-end">' +
+            '<div class="flex-1 min-w-[200px]">' +
+            '<label class="mp-label">专业领域</label>' +
+            '<select id="mp-filter-specialty" class="mp-input text-sm">' +
+            '<option value="">全部领域</option>' +
+            specialtyOptions.map(function (opt) {
+                var selected = (criteria.required_specialties || []).indexOf(opt.value) >= 0 ? ' selected' : '';
+                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+            }).join('') +
+            '</select>' +
+            '</div>' +
+            '<div class="flex-1 min-w-[150px]">' +
+            '<label class="mp-label">地区</label>' +
+            '<select id="mp-filter-region" class="mp-input text-sm">' +
+            '<option value="">全部地区</option>' +
+            regionOptions.map(function (opt) {
+                var selected = criteria.required_region === opt.value ? ' selected' : '';
+                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+            }).join('') +
+            '</select>' +
+            '</div>' +
+            '<div class="flex-1 min-w-[120px]">' +
+            '<label class="mp-label">排序方式</label>' +
+            '<select id="mp-filter-sort" class="mp-input text-sm">' +
+            sortOptions.map(function (opt) {
+                var selected = criteria.sort_by === opt.value ? ' selected' : '';
+                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+            }).join('') +
+            '</select>' +
+            '</div>' +
+            '<div class="w-24">' +
+            '<label class="mp-label">最低分</label>' +
+            '<input id="mp-filter-minrating" type="number" step="0.5" min="0" max="5" class="mp-input text-sm" placeholder="评分" value="' + ((criteria.filters && criteria.filters.min_rating) || '') + '">' +
+            '</div>' +
+            '<div class="w-24">' +
+            '<label class="mp-label">最低年限</label>' +
+            '<input id="mp-filter-minexperience" type="number" min="0" class="mp-input text-sm" placeholder="年限" value="' + ((criteria.filters && criteria.filters.min_experience_years) || '') + '">' +
+            '</div>' +
+            '<button id="mp-filter-submit" class="mp-btn mp-btn-primary text-sm">' +
+            '<iconify-icon icon="mdi:magnify" class="text-sm"></iconify-icon> 筛选' +
+            '</button>' +
+            '</div>' +
+            '<div class="mt-3 flex items-center gap-2 text-xs text-fg-tertiary flex-wrap">' +
+            '<label class="flex items-center gap-1 cursor-pointer">' +
+            '<input type="checkbox" id="mp-filter-crossborder" class="rounded" ' + ((criteria.filters && criteria.filters.cross_border_only) ? 'checked' : '') + '>' +
+            '仅跨境律师' +
+            '</label>' +
+            '<span class="text-bg-border">|</span>' +
+            '<span id="mp-match-source" class="text-fg-tertiary">数据源: ' + (MatchV2State.useBackend ? '<span class="text-success">后端</span>' : '<span class="text-warning">前端降级</span>') + '</span>' +
+            '<span class="text-bg-border">|</span>' +
+            '<span id="mp-match-count" class="text-fg-tertiary">共 0 位律师</span>' +
+            '</div>' +
+            '</div>';
+        return html;
+    }
+
+    function bindMatchFilters(root, onSearch) {
+        var submitBtn = root.querySelector('#mp-filter-submit');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function () {
+                var specialty = root.querySelector('#mp-filter-specialty').value;
+                var region = root.querySelector('#mp-filter-region').value;
+                var sortBy = root.querySelector('#mp-filter-sort').value;
+                var minRating = parseFloat(root.querySelector('#mp-filter-minrating').value);
+                var minExp = parseInt(root.querySelector('#mp-filter-minexperience').value);
+                var crossBorder = root.querySelector('#mp-filter-crossborder').checked;
+
+                var criteria = {
+                    required_specialties: specialty ? [specialty] : [],
+                    required_region: region,
+                    sort_by: sortBy,
+                    filters: {},
+                    page: 1,
+                    page_size: MatchV2State.currentCriteria.page_size || 10
+                };
+                if (!isNaN(minRating)) criteria.filters.min_rating = minRating;
+                if (!isNaN(minExp)) criteria.filters.min_experience_years = minExp;
+                if (crossBorder) criteria.filters.cross_border_only = true;
+
+                MatchV2State.currentCriteria = Object.assign({}, MatchV2State.currentCriteria, criteria);
+                if (typeof onSearch === 'function') onSearch(criteria);
+            });
+        }
+
+        ['mp-filter-specialty', 'mp-filter-region', 'mp-filter-sort'].forEach(function (id) {
+            var el = root.querySelector('#' + id);
+            if (el) {
+                el.addEventListener('change', function () {
+                    var btn = root.querySelector('#mp-filter-submit');
+                    if (btn) btn.click();
+                });
+            }
+        });
+    }
+
+    function renderMatchResults(container, criteria, opts) {
+        opts = opts || {};
+        var showFilters = opts.showFilters !== false;
+
+        if (showFilters) {
+            container.innerHTML = renderMatchFilters(criteria) +
+                '<div id="mp-match-results-list"></div>' +
+                '<div id="mp-match-pagination" class="mt-4 text-center"></div>';
+        } else {
+            container.innerHTML = '<div id="mp-match-results-list"></div>';
+        }
+
+        var listEl = container.querySelector('#mp-match-results-list');
+        listEl.innerHTML = renderMatchSkeleton(3);
+
+        var resultsList = listEl;
+        var paginationEl = container.querySelector('#mp-match-pagination');
+
+        bindMatchFilters(container, function (newCriteria) {
+            resultsList.innerHTML = renderMatchSkeleton(3);
+            doMatchSearch(newCriteria, resultsList, paginationEl);
+        });
+
+        doMatchSearch(criteria, resultsList, paginationEl);
+    }
+
+    function doMatchSearch(criteria, resultsList, paginationEl) {
+        matchLawyersV2(criteria).then(function (result) {
+            if (!result.ok) {
+                resultsList.innerHTML =
+                    '<div class="mp-empty">' +
+                    '<iconify-icon icon="mdi:alert-outline" class="mp-empty-icon text-warning"></iconify-icon>' +
+                    '<div>匹配失败</div>' +
+                    '<div class="text-[11px] mt-1 text-fg-tertiary">' + esc(result.error || '请稍后重试') + '</div>' +
+                    '<button class="mp-btn mp-btn-primary mt-3" onclick="MarketplaceFn.retryMatchSearch()">重试</button>' +
+                    '</div>';
+                return;
+            }
+
+            var data = result.data;
+            MatchV2State.lastResults = data;
+
+            var sourceEl = document.getElementById('mp-match-source');
+            if (sourceEl) {
+                sourceEl.innerHTML = '数据源: ' + (result.source === 'backend' ? '<span class="text-success">后端</span>' : '<span class="text-warning">前端降级</span>');
+            }
+
+            var countEl = document.getElementById('mp-match-count');
+            if (countEl) {
+                countEl.textContent = '共 ' + (data.total || 0) + ' 位律师';
+            }
+
+            if (!data.lawyers || data.lawyers.length === 0) {
+                resultsList.innerHTML =
+                    '<div class="mp-empty">' +
+                    '<iconify-icon icon="mdi:account-search-outline" class="mp-empty-icon"></iconify-icon>' +
+                    '<div>暂无匹配的律师</div>' +
+                    '<div class="text-[11px] mt-1 text-fg-tertiary">试试调整筛选条件</div>' +
+                    '</div>';
+                if (paginationEl) paginationEl.innerHTML = '';
+                return;
+            }
+
+            resultsList.innerHTML = data.lawyers.map(function (l, i) {
+                return renderMatchResultCard(l, i);
+            }).join('');
+
+            resultsList.querySelectorAll('[data-mp-action]').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var action = btn.getAttribute('data-mp-action');
+                    var lawyerId = btn.getAttribute('data-lawyer-id');
+                    if (action === 'create-referral') {
+                        if (typeof window.switchView === 'function') {
+                            window.switchView('marketplace-referrals');
+                            setTimeout(function () { openCreateReferralModal(lawyerId); }, 100);
+                        }
+                    } else if (action === 'invite-co-counsel') {
+                        if (typeof window.switchView === 'function') {
+                            window.switchView('marketplace-cases');
+                            setTimeout(function () { openCreateCaseModal(lawyerId); }, 100);
+                        }
+                    }
+                });
+            });
+
+            if (paginationEl && data.total_pages > 1) {
+                var page = data.page || 1;
+                var totalPages = data.total_pages;
+                var paginationHtml = '<div class="inline-flex items-center gap-1">';
+
+                paginationHtml += '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + (page - 1) + ')" ' + (page <= 1 ? 'disabled style="opacity:0.5"' : '') + '>' +
+                    '<iconify-icon icon="mdi:chevron-left" class="text-sm"></iconify-icon></button>';
+
+                var startPage = Math.max(1, page - 2);
+                var endPage = Math.min(totalPages, page + 2);
+                for (var p = startPage; p <= endPage; p++) {
+                    var btnClass = p === page ? 'mp-btn-primary' : 'mp-btn-secondary';
+                    paginationHtml += '<button class="mp-btn ' + btnClass + ' mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + p + ')">' + p + '</button>';
+                }
+
+                paginationHtml += '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + (page + 1) + ')" ' + (page >= totalPages ? 'disabled style="opacity:0.5"' : '') + '>' +
+                    '<iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon></button>';
+
+                paginationHtml += '</div>';
+                paginationEl.innerHTML = paginationHtml;
+            } else if (paginationEl) {
+                paginationEl.innerHTML = '';
+            }
+        });
+    }
+
+    function retryMatchSearch() {
+        var resultsList = document.querySelector('#mp-match-results-list');
+        var paginationEl = document.querySelector('#mp-match-pagination');
+        if (resultsList) {
+            resultsList.innerHTML = renderMatchSkeleton(3);
+            doMatchSearch(MatchV2State.currentCriteria, resultsList, paginationEl);
+        }
+    }
+
+    function goToMatchPage(page) {
+        if (page < 1) return;
+        MatchV2State.currentCriteria.page = page;
+        var resultsList = document.querySelector('#mp-match-results-list');
+        var paginationEl = document.querySelector('#mp-match-pagination');
+        if (resultsList) {
+            resultsList.innerHTML = renderMatchSkeleton(3);
+            doMatchSearch(MatchV2State.currentCriteria, resultsList, paginationEl);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function initMatchView() {
+        var container = document.getElementById('view-marketplace-match');
+        if (!container) return;
+
+        console.log('[MatchV2] init match view');
+        renderMatchResults(container, MatchV2State.currentCriteria);
+    }
+
+    // ========================================================================
     // 10. 页面 1: Lawyers 初始化
     // ========================================================================
 
@@ -2445,6 +3357,7 @@
         initReferralsView: initReferralsView,
         initCrossBorderView: initCrossBorderView,
         initMetricsView: initMetricsView,
+        initMatchView: initMatchView,
         openLawyerDetail: openLawyerDetail,
         closeLawyerDetail: closeLawyerDetail,
         openCaseDetail: openCaseDetail,
@@ -2456,9 +3369,19 @@
         openCreateReferralModal: openCreateReferralModal,
         openCreateCaseModal: openCreateCaseModal,
         openCreateCrossBorderModal: openCreateCrossBorderModal,
+        openMatchDetail: openMatchDetail,
+        closeMatchDetail: closeMatchDetail,
         computeMatchScore: computeMatchScore,
         rankLawyers: rankLawyers,
         renderStateStepBar: renderStateStepBar,
-        renderDimBars: renderDimBars
+        renderDimBars: renderDimBars,
+        matchLawyersV2: matchLawyersV2,
+        getMatchExplanationV2: getMatchExplanationV2,
+        renderMatchResults: renderMatchResults,
+        renderMatchResultCard: renderMatchResultCard,
+        renderMatchRadarChart: renderMatchRadarChart,
+        renderMatchDimensionBars: renderMatchDimensionBars,
+        retryMatchSearch: retryMatchSearch,
+        goToMatchPage: goToMatchPage
     };
 })();
