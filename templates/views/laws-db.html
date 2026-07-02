@@ -1,111 +1,216 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-laws-db">
-<div class="max-w-6xl mx-auto w-full space-y-5">
-    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 p-5">
-        <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                <iconify-icon class="text-2xl text-emerald-600" icon="mdi:book-open-variant"></iconify-icon>
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-laws-db">
+<div class="max-w-6xl mx-auto w-full space-y-4">
+    <!-- Hero 区域 -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 px-5 py-6 md:px-6 md:py-7 rounded-2xl" data-animate="fade-in-up" data-delay="0">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 blur-2xl"></div>
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <iconify-icon class="text-2xl md:text-3xl text-white" icon="mdi:book-open-variant"></iconify-icon>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold text-white mb-1">法律法规库</h1>
+                        <p class="text-white/80 text-xs md:text-sm max-w-md">全面的法律法规数据库，涵盖法律、行政法规、司法解释、部门规章等，助力您的法律研究与实务工作。</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-medium transition-all duration-300 hover:-translate-y-0.5">
+                        <iconify-icon icon="mdi:bookmark-outline" class="text-sm"></iconify-icon>
+                        <span>我的收藏</span>
+                    </button>
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white text-emerald-600 hover:bg-white/90 rounded-lg text-xs font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20">
+                        <iconify-icon icon="mdi:history" class="text-sm"></iconify-icon>
+                        <span>浏览历史</span>
+                    </button>
+                </div>
             </div>
-            <div class="flex-1">
-                <h1 class="text-lg font-bold text-fg-primary">法律法规库</h1>
-                <p class="text-xs text-fg-secondary mt-1">全面的法律法规数据库，涵盖法律、行政法规、司法解释、部门规章等。</p>
+            <!-- 数据统计 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer" data-animate="scale-in" data-stagger-group="laws-stats" data-stagger-index="0" data-delay="0.1" onclick="filterByCategory('法律')" data-category="法律">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">法律</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:scale-balance" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">2,156</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">现行有效</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer" data-animate="scale-in" data-stagger-group="laws-stats" data-stagger-index="1" data-delay="0.1" onclick="filterByCategory('行政法规')" data-category="行政法规">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">行政法规</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:file-document-multiple" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">6,342</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">国务院发布</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer" data-animate="scale-in" data-stagger-group="laws-stats" data-stagger-index="2" data-delay="0.1" onclick="filterByCategory('司法解释')" data-category="司法解释">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">司法解释</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:gavel" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">1,897</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">最高法/最高检</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer" data-animate="scale-in" data-stagger-group="laws-stats" data-stagger-index="3" data-delay="0.1" onclick="filterByCategory('部门规章')" data-category="部门规章">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">部门规章</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:folder-multiple" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">12,458</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">各部委发布</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border p-5">
-        <div class="flex items-center gap-2 mb-3">
-            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
-            <h2 class="text-sm font-semibold text-fg-primary">法规检索</h2>
+    <!-- 搜索区域 -->
+    <div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.2">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-md shadow-emerald-500/20">
+                <iconify-icon icon="mdi:magnify" class="text-white text-base"></iconify-icon>
+            </div>
+            <div>
+                <h2 class="text-sm font-semibold text-fg-primary">法规检索</h2>
+                <p class="text-[10px] text-fg-tertiary">多维度精准检索，快速定位您需要的法规</p>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-            <div class="md:col-span-2">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4">
+            <div class="md:col-span-5">
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">关键词</label>
-                <input type="text" id="laws-db-keyword" placeholder="请输入关键词检索法规" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary group-focus-within:text-emerald-500 transition-colors" icon="mdi:magnify"></iconify-icon>
+                    </div>
+                    <input type="text" id="laws-db-keyword" placeholder="请输入关键词检索法规" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 transition-all duration-200 placeholder:text-fg-disabled"/>
+                </div>
             </div>
-            <div>
+            <div class="md:col-span-3">
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">效力层级</label>
-                <select id="laws-db-level" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
-                    <option>全部层级</option>
-                    <option>法律</option>
-                    <option>行政法规</option>
-                    <option>司法解释</option>
-                    <option>部门规章</option>
-                    <option>地方性法规</option>
-                </select>
+                <div class="relative">
+                    <select id="laws-db-level" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 transition-all duration-200 cursor-pointer hover:border-emerald-500/40">
+                        <option>全部层级</option>
+                        <option>法律</option>
+                        <option>行政法规</option>
+                        <option>司法解释</option>
+                        <option>部门规章</option>
+                        <option>地方性法规</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
             </div>
-            <div>
+            <div class="md:col-span-3">
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">制定机关</label>
-                <select id="laws-db-organ" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
-                    <option>全部机关</option>
-                    <option>全国人大常委会</option>
-                    <option>国务院</option>
-                    <option>最高人民法院</option>
-                    <option>最高人民检察院</option>
-                </select>
+                <div class="relative">
+                    <select id="laws-db-organ" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-500/10 transition-all duration-200 cursor-pointer hover:border-emerald-500/40">
+                        <option>全部机关</option>
+                        <option>全国人大常委会</option>
+                        <option>国务院</option>
+                        <option>最高人民法院</option>
+                        <option>最高人民检察院</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+            <div class="md:col-span-1 flex items-end">
+                <button onclick="searchLaws()" class="w-full px-4 py-2.5 text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+                    <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                    检索
+                </button>
             </div>
         </div>
 
-        <div class="flex items-center justify-end">
-            <button onclick="searchLaws()" class="px-4 py-2 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
-                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
-                检索法规
-            </button>
+        <!-- 热门搜索标签 -->
+        <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[10px] text-fg-tertiary flex-shrink-0">热门搜索：</span>
+            <button onclick="hotSearchLaw('民法典')" class="px-2.5 py-1 text-[10px] bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors">民法典</button>
+            <button onclick="hotSearchLaw('劳动合同法')" class="px-2.5 py-1 text-[10px] bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">劳动合同法</button>
+            <button onclick="hotSearchLaw('民事诉讼法')" class="px-2.5 py-1 text-[10px] bg-purple-50 text-purple-600 rounded-full hover:bg-purple-100 transition-colors">民事诉讼法</button>
+            <button onclick="hotSearchLaw('刑法')" class="px-2.5 py-1 text-[10px] bg-red-50 text-red-600 rounded-full hover:bg-red-100 transition-colors">刑法</button>
+            <button onclick="hotSearchLaw('公司法')" class="px-2.5 py-1 text-[10px] bg-amber-50 text-amber-600 rounded-full hover:bg-amber-100 transition-colors">公司法</button>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer" onclick="filterByCategory('法律')" data-category="法律">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+    <!-- 快捷分类 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="filterByCategory('法律')" data-category="法律">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <iconify-icon class="text-xl text-red-500" icon="mdi:scale-balance"></iconify-icon>
                 </div>
                 <div>
-                    <p class="text-lg font-bold text-fg-primary">2,156</p>
-                    <p class="text-[10px] text-fg-tertiary">法律</p>
+                    <p class="text-sm font-semibold text-fg-primary">法律</p>
+                    <p class="text-[10px] text-fg-tertiary">全国人大及其常委会</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer" onclick="filterByCategory('行政法规')" data-category="行政法规">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="filterByCategory('行政法规')" data-category="行政法规">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <iconify-icon class="text-xl text-amber-500" icon="mdi:file-document-multiple"></iconify-icon>
                 </div>
                 <div>
-                    <p class="text-lg font-bold text-fg-primary">6,342</p>
-                    <p class="text-[10px] text-fg-tertiary">行政法规</p>
+                    <p class="text-sm font-semibold text-fg-primary">行政法规</p>
+                    <p class="text-[10px] text-fg-tertiary">国务院制定发布</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer" onclick="filterByCategory('司法解释')" data-category="司法解释">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="filterByCategory('司法解释')" data-category="司法解释">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <iconify-icon class="text-xl text-blue-500" icon="mdi:gavel"></iconify-icon>
                 </div>
                 <div>
-                    <p class="text-lg font-bold text-fg-primary">1,897</p>
-                    <p class="text-[10px] text-fg-tertiary">司法解释</p>
+                    <p class="text-sm font-semibold text-fg-primary">司法解释</p>
+                    <p class="text-[10px] text-fg-tertiary">最高法/最高检</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow cursor-pointer" onclick="filterByCategory('部门规章')" data-category="部门规章">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="filterByCategory('部门规章')" data-category="部门规章">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <iconify-icon class="text-xl text-green-500" icon="mdi:folder-multiple"></iconify-icon>
                 </div>
                 <div>
-                    <p class="text-lg font-bold text-fg-primary">12,458</p>
-                    <p class="text-[10px] text-fg-tertiary">部门规章</p>
+                    <p class="text-sm font-semibold text-fg-primary">部门规章</p>
+                    <p class="text-[10px] text-fg-tertiary">国务院各部委</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
-            <span class="text-xs text-fg-tertiary">热门法规</span>
+    <!-- 搜索结果列表 -->
+    <div class="ws-card overflow-hidden flex flex-col" data-animate="fade-in-up" data-delay="0.4">
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-bg-border bg-gradient-to-r from-bg-subtle to-bg-subtle/50">
+            <div class="flex items-center gap-2">
+                <iconify-icon icon="mdi:fire" class="text-orange-500 text-sm"></iconify-icon>
+                <span class="text-xs font-semibold text-fg-secondary">热门法规</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-fg-tertiary" id="laws-db-result-count"></span>
+                <select class="text-[10px] border border-bg-border rounded-lg px-2 py-1 text-fg-secondary focus:outline-none focus:border-emerald-500 bg-white cursor-pointer">
+                    <option>相关度排序</option>
+                    <option>发布日期</option>
+                    <option>效力层级</option>
+                </select>
+            </div>
         </div>
-        <div class="divide-y divide-bg" id="laws-db-results"></div>
+        <div class="divide-y divide-bg-border/60" id="laws-db-results"></div>
+        <!-- 分页 -->
+        <div class="flex items-center justify-center gap-1 px-5 py-4 border-t border-bg-border/60 bg-bg-subtle/30" id="laws-db-pagination"></div>
     </div>
 </div>
 </div>

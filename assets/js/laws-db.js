@@ -12,10 +12,10 @@
 
     // ===== 效力层级 -> badge 颜色映射 =====
     var LEVEL_STYLES = {
-        法律: 'bg-red-50 text-red-600',
-        行政法规: 'bg-amber-50 text-amber-600',
-        司法解释: 'bg-blue-50 text-blue-600',
-        部门规章: 'bg-green-50 text-green-600'
+        法律: 'bg-gradient-to-r from-red-50 to-red-100 text-red-600 border border-red-200/50',
+        行政法规: 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-700 border border-amber-200/50',
+        司法解释: 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 border border-blue-200/50',
+        部门规章: 'bg-gradient-to-r from-green-50 to-green-100 text-green-600 border border-green-200/50'
     };
 
     // ===== 分类统计 (数据库总量, 动态渲染到卡片) =====
@@ -194,54 +194,184 @@
         });
     }
 
+    var PAGE_SIZE = 8;
+    var state = {
+        page: 1
+    };
+
+    // ===== 工具函数 =====
+    function $(id) {
+        return document.getElementById(id);
+    }
+
     // ===== 渲染法规列表 =====
     function renderLaws(list) {
-        var container = document.getElementById('laws-db-results');
+        var container = $('laws-db-results');
+        var countEl = $('laws-db-result-count');
+        var pager = $('laws-db-pagination');
         if (!container) return;
+
+        if (countEl && list) {
+            countEl.textContent = '共 ' + list.length + ' 条';
+        }
 
         if (!list || list.length === 0) {
             container.innerHTML =
-                '<div class="text-center py-12">' +
-                '<iconify-icon class="text-5xl text-fg-disabled" icon="mdi:file-search-outline"></iconify-icon>' +
-                '<p class="text-sm text-fg-tertiary mt-3">未找到匹配的法规</p>' +
-                '<p class="text-xs text-fg-disabled mt-1">请调整关键词或筛选条件后重试</p>' +
+                '<div class="flex flex-col items-center justify-center py-16 px-4">' +
+                '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center mb-4">' +
+                '<iconify-icon class="text-4xl text-emerald-500/60" icon="mdi:file-search-outline"></iconify-icon>' +
+                '</div>' +
+                '<h4 class="text-base font-semibold text-fg-primary mb-1">未找到匹配的法规</h4>' +
+                '<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">请调整关键词或筛选条件后重试，或尝试其他搜索词</p>' +
+                '<button onclick="resetLawsSearch()" class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-md hover:shadow-emerald-500/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5">' +
+                '<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>' +
+                '重置筛选' +
+                '</button>' +
                 '</div>';
+            if (pager) pager.innerHTML = '';
             return;
         }
 
-        container.innerHTML = list
+        var totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+        if (state.page > totalPages) state.page = totalPages;
+        if (state.page < 1) state.page = 1;
+
+        var start = (state.page - 1) * PAGE_SIZE;
+        var end = Math.min(start + PAGE_SIZE, list.length);
+        var slice = list.slice(start, end);
+
+        container.innerHTML = slice
             .map(function (law, idx) {
-                var levelBadge = LEVEL_STYLES[law.level] || 'bg-gray-50 text-gray-600';
+                var levelBadge = LEVEL_STYLES[law.level] || 'bg-gray-50 text-gray-600 border border-gray-200/50';
                 var statusHtml =
                     law.status === '已废止'
-                        ? '<span class="text-gray-400"> · 已废止</span>'
-                        : '<span class="text-fg-tertiary"> · 现行有效</span>';
+                        ? '<span class="inline-flex items-center gap-1 text-[10px] text-gray-400"><iconify-icon icon="mdi:close-circle-outline" class="text-[10px]"></iconify-icon> 已废止</span>'
+                        : '<span class="inline-flex items-center gap-1 text-[10px] text-success"><iconify-icon icon="mdi:check-circle-outline" class="text-[10px]"></iconify-icon> 现行有效</span>';
                 return (
                     '' +
-                    '<div class="flex items-center gap-3 p-4 hover:bg-bg-subtle transition-colors cursor-pointer" onclick="openLawDetail(\'' +
+                    '<div class="p-4 md:p-5 hover:bg-emerald-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="laws-list" data-stagger-index="' + idx + '" data-delay="0.1" onclick="openLawDetail(\'' +
                     law.id +
                     '\')">' +
-                    '<span class="text-xs font-bold text-brand w-6">' +
-                    (idx + 1) +
-                    '</span>' +
+                    '<div class="flex items-start gap-3 md:gap-4">' +
+                    '<div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
+                    '<iconify-icon class="text-lg md:text-xl text-emerald-600" icon="mdi:file-document-outline"></iconify-icon>' +
+                    '</div>' +
                     '<div class="flex-1 min-w-0">' +
-                    '<h3 class="text-sm font-medium text-fg-primary hover:text-brand transition-colors truncate">' +
+                    '<div class="flex items-start justify-between gap-3 mb-1.5">' +
+                    '<h3 class="text-sm md:text-base font-semibold text-fg-primary group-hover:text-emerald-600 transition-colors line-clamp-1">' +
                     escapeHtml(law.name) +
                     '</h3>' +
-                    '<p class="text-[10px] text-fg-tertiary mt-0.5 truncate">' +
-                    escapeHtml(law.publishInfo) +
-                    statusHtml +
-                    '</p>' +
-                    '</div>' +
-                    '<span class="text-[10px] ' +
+                    '<span class="text-[10px] font-semibold ' +
                     levelBadge +
-                    ' px-2 py-0.5 rounded-full flex-shrink-0">' +
+                    ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' +
                     law.level +
                     '</span>' +
+                    '</div>' +
+                    '<p class="text-[11px] md:text-xs text-fg-secondary mb-2 line-clamp-1">' +
+                    escapeHtml(law.publishInfo) +
+                    '</p>' +
+                    '<div class="flex items-center gap-3 md:gap-4 flex-wrap">' +
+                    '<span class="inline-flex items-center gap-1 text-[10px] text-fg-tertiary">' +
+                    '<iconify-icon icon="mdi:domain" class="text-[11px]"></iconify-icon>' +
+                    escapeHtml(law.organ) +
+                    '</span>' +
+                    statusHtml +
+                    '</div>' +
+                    '</div>' +
+                    '<iconify-icon class="text-fg-disabled text-base md:text-lg opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0 flex-shrink-0 mt-1" icon="mdi:chevron-right"></iconify-icon>' +
+                    '</div>' +
                     '</div>'
                 );
             })
             .join('');
+
+        renderPagination(pager, totalPages);
+
+        if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+            Animations.initPageAnimations(container);
+        }
+    }
+
+    // ===== 分页渲染 =====
+    function renderPagination(pager, totalPages) {
+        if (!pager) return;
+        if (totalPages <= 1) {
+            pager.innerHTML = '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
+            return;
+        }
+
+        var html = '';
+        html += pageBtn(
+            state.page > 1,
+            '<iconify-icon icon="mdi:chevron-left"></iconify-icon>',
+            state.page - 1,
+            'text-fg-tertiary'
+        );
+
+        buildPageList(state.page, totalPages).forEach(function (p) {
+            if (p === '...') {
+                html += '<span class="text-xs text-fg-tertiary px-2">...</span>';
+            } else {
+                var active = p === state.page;
+                html +=
+                    '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
+                    (active ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20' : 'hover:bg-white text-fg-secondary hover:text-emerald-600') +
+                    ' transition-all duration-200" onclick="changeLawsPage(' +
+                    p +
+                    ')">' +
+                    p +
+                    '</button>';
+            }
+        });
+
+        html += pageBtn(
+            state.page < totalPages,
+            '<iconify-icon icon="mdi:chevron-right"></iconify-icon>',
+            state.page + 1,
+            'text-fg-tertiary'
+        );
+
+        pager.innerHTML = html;
+    }
+
+    function pageBtn(enabled, inner, target, cls) {
+        if (!enabled) {
+            return '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' + cls + ' opacity-40 cursor-not-allowed">' + inner + '</button>';
+        }
+        return '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' + cls + '" onclick="changeLawsPage(' + target + ')">' + inner + '</button>';
+    }
+
+    function buildPageList(current, total) {
+        var window = 2;
+        var set = {};
+        var nums = [];
+        function add(n) {
+            if (n < 1 || n > total || set[n]) return;
+            set[n] = true;
+            nums.push(n);
+        }
+        add(1);
+        for (var i = current - window; i <= current + window; i++) add(i);
+        add(total);
+        nums.sort(function (a, b) { return a - b; });
+
+        var result = [];
+        for (var j = 0; j < nums.length; j++) {
+            if (j > 0 && nums[j] - nums[j - 1] > 1) result.push('...');
+            result.push(nums[j]);
+        }
+        return result;
+    }
+
+    // ===== 翻页 =====
+    function changeLawsPage(page) {
+        if (page < 1) return;
+        state.page = page;
+        renderLaws(getFilteredLaws());
+        var container = $('laws-db-results');
+        if (container && container.scrollIntoView) {
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     // ===== loading 状态 =====
@@ -268,6 +398,7 @@
     // ===== 检索 (带 1s loading) =====
     function searchLaws() {
         showLoading();
+        state.page = 1;
         setTimeout(function () {
             renderLaws(getFilteredLaws());
         }, 1000);
@@ -277,7 +408,27 @@
     function filterByCategory(category) {
         var levelSel = document.getElementById('laws-db-level');
         if (levelSel) levelSel.value = category;
+        state.page = 1;
         renderLaws(getFilteredLaws());
+    }
+
+    // ===== 热门搜索 =====
+    function hotSearchLaw(keyword) {
+        var kwInput = document.getElementById('laws-db-keyword');
+        if (kwInput) kwInput.value = keyword;
+        searchLaws();
+    }
+
+    // ===== 重置搜索 =====
+    function resetLawsSearch() {
+        var kwInput = document.getElementById('laws-db-keyword');
+        var levelSel = document.getElementById('laws-db-level');
+        var organSel = document.getElementById('laws-db-organ');
+        if (kwInput) kwInput.value = '';
+        if (levelSel) levelSel.selectedIndex = 0;
+        if (organSel) organSel.selectedIndex = 0;
+        state.page = 1;
+        renderLaws(LAWS);
     }
 
     var _closeLawDetail = null;
@@ -403,4 +554,7 @@
     globalThis.filterByCategory = filterByCategory;
     globalThis.openLawDetail = openLawDetail;
     globalThis.closeLawDetail = closeLawDetail;
+    globalThis.hotSearchLaw = hotSearchLaw;
+    globalThis.resetLawsSearch = resetLawsSearch;
+    globalThis.changeLawsPage = changeLawsPage;
 })();

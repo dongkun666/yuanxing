@@ -1,54 +1,228 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-companies-db">
-<div class="max-w-6xl mx-auto w-full space-y-5">
-    <div class="bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200 p-5">
-        <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                <iconify-icon class="text-2xl text-sky-600" icon="mdi:domain"></iconify-icon>
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-companies-db">
+<div class="max-w-6xl mx-auto w-full space-y-4">
+    <!-- Hero 区域 -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 px-5 py-6 md:px-6 md:py-7 rounded-2xl" data-animate="fade-in-up" data-delay="0">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 blur-2xl"></div>
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <iconify-icon class="text-2xl md:text-3xl text-white" icon="mdi:office-building"></iconify-icon>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold text-white mb-1">企业数据库</h1>
+                        <p class="text-white/80 text-xs md:text-sm max-w-md">海量工商企业信息库，支持企业名称、法定代表人、统一社会信用代码等多维度检索，企业尽调更高效。</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-medium transition-all duration-300 hover:-translate-y-0.5">
+                        <iconify-icon icon="mdi:bookmark-outline" class="text-sm"></iconify-icon>
+                        <span>收藏企业</span>
+                    </button>
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white text-amber-600 hover:bg-white/90 rounded-lg text-xs font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-amber-500/20">
+                        <iconify-icon icon="mdi:history" class="text-sm"></iconify-icon>
+                        <span>检索历史</span>
+                    </button>
+                </div>
             </div>
-            <div class="flex-1">
-                <h1 class="text-lg font-bold text-fg-primary">企业信息库</h1>
-                <p class="text-xs text-fg-secondary mt-1">企业工商信息查询，包括基本信息、股东信息、对外投资、法律风险等。</p>
+            <!-- 数据统计 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="companies-stats" data-stagger-index="0" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">企业总量</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:building" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">8,600万+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">工商登记企业</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="companies-stats" data-stagger-index="1" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">存续企业</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:check-circle-outline" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">6,200万+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">正常经营</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="companies-stats" data-stagger-index="2" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">上市企业</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:trending-up" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">5,800+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">A股/港股/美股</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="companies-stats" data-stagger-index="3" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">行业分类</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:tag-multiple-outline" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">980+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">国民经济行业</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border p-5">
-        <div class="flex items-center gap-2 mb-3">
-            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
-            <h2 class="text-sm font-semibold text-fg-primary">企业查询</h2>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <div class="relative flex-1 max-w-xl">
-                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
-                <input type="text" id="companies-db-search" placeholder="输入企业名称、统一社会信用代码或法定代表人查询" class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+    <!-- 搜索区域 -->
+    <div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.2">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-md shadow-orange-500/20">
+                <iconify-icon icon="mdi:magnify" class="text-white text-base"></iconify-icon>
             </div>
-            <button onclick="searchCompanies()" class="px-5 py-2.5 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
-                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
-                查询
-            </button>
+            <div>
+                <h2 class="text-sm font-semibold text-fg-primary">企业检索</h2>
+                <p class="text-[10px] text-fg-tertiary">多条件组合筛选，精准定位目标企业</p>
+            </div>
         </div>
 
-        <div class="flex items-center gap-2 mt-3">
-            <span class="text-[10px] text-fg-tertiary">热门搜索：</span>
-            <button onclick="hotSearch('腾讯科技')" class="text-[10px] text-brand hover:underline">腾讯科技</button>
-            <span class="text-[10px] text-fg-disabled">|</span>
-            <button onclick="hotSearch('阿里巴巴')" class="text-[10px] text-brand hover:underline">阿里巴巴</button>
-            <span class="text-[10px] text-fg-disabled">|</span>
-            <button onclick="hotSearch('字节跳动')" class="text-[10px] text-brand hover:underline">字节跳动</button>
-            <span class="text-[10px] text-fg-disabled">|</span>
-            <button onclick="hotSearch('百度在线')" class="text-[10px] text-brand hover:underline">百度在线</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">企业名称</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary group-focus-within:text-orange-500 transition-colors" icon="mdi:domain"></iconify-icon>
+                    </div>
+                    <input type="text" id="companies-db-keyword" placeholder="请输入企业名称关键词" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all duration-200 placeholder:text-fg-disabled"/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">法定代表人</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary group-focus-within:text-orange-500 transition-colors" icon="mdi:account-outline"></iconify-icon>
+                    </div>
+                    <input type="text" id="companies-db-legal" placeholder="请输入法定代表人姓名" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all duration-200 placeholder:text-fg-disabled"/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">经营状态</label>
+                <div class="relative">
+                    <select id="companies-db-status" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all duration-200 cursor-pointer hover:border-orange-500/40">
+                        <option>全部状态</option>
+                        <option>存续</option>
+                        <option>在业</option>
+                        <option>注销</option>
+                        <option>吊销</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-fg-secondary mb-1.5">行业分类</label>
+                <div class="relative">
+                    <select id="companies-db-industry" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all duration-200 cursor-pointer hover:border-orange-500/40">
+                        <option>全部行业</option>
+                        <option>制造业</option>
+                        <option>信息传输、软件和信息技术服务业</option>
+                        <option>租赁和商务服务业</option>
+                        <option>批发和零售业</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] text-fg-tertiary">热门行业：</span>
+                <button onclick="quickSearchIndustry('科技')" class="px-2.5 py-1 text-[10px] bg-orange-50 text-orange-600 rounded-full hover:bg-orange-100 transition-colors">科技公司</button>
+                <button onclick="quickSearchIndustry('制造')" class="px-2.5 py-1 text-[10px] bg-amber-50 text-amber-600 rounded-full hover:bg-amber-100 transition-colors">制造业</button>
+                <button onclick="quickSearchIndustry('贸易')" class="px-2.5 py-1 text-[10px] bg-green-50 text-green-600 rounded-full hover:bg-green-100 transition-colors">贸易公司</button>
+                <button onclick="quickSearchIndustry('咨询')" class="px-2.5 py-1 text-[10px] bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">咨询服务</button>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetCompaniesDb()" class="px-4 py-2.5 text-sm border border-bg-border text-fg-secondary rounded-xl hover:bg-bg-subtle transition-all duration-200 flex items-center gap-1.5">
+                    <iconify-icon class="text-base" icon="mdi:refresh"></iconify-icon>
+                    重置
+                </button>
+                <button onclick="searchCompanies()" class="px-5 py-2.5 text-sm text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:shadow-lg hover:shadow-orange-500/25 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5">
+                    <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                    检索企业
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
-            <span class="text-xs text-fg-tertiary">我的关注企业</span>
-            <button id="companies-db-manage-btn" onclick="toggleManageMode()" class="text-[10px] text-brand hover:underline">管理关注</button>
+    <!-- 快捷行业分类 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchIndustry('科技')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-blue-500" icon="mdi:laptop"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">科技行业</p>
+                    <p class="text-[10px] text-fg-tertiary">386 万家</p>
+                </div>
+            </div>
         </div>
-        <div id="companies-db-results" class="divide-y divide-bg">
-            <!-- 由 companies-db.js 动态渲染 -->
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchIndustry('制造')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-amber-500" icon="mdi:factory"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">制造业</p>
+                    <p class="text-[10px] text-fg-tertiary">528 万家</p>
+                </div>
+            </div>
         </div>
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchIndustry('贸易')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-green-500" icon="mdi:cart-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">批发零售</p>
+                    <p class="text-[10px] text-fg-tertiary">1,260 万家</p>
+                </div>
+            </div>
+        </div>
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchIndustry('咨询')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-purple-500" icon="mdi:briefcase-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">商务服务</p>
+                    <p class="text-[10px] text-fg-tertiary">842 万家</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 企业列表 -->
+    <div class="ws-card overflow-hidden flex flex-col" data-animate="fade-in-up" data-delay="0.4">
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-bg-border bg-gradient-to-r from-bg-subtle to-bg-subtle/50">
+            <div class="flex items-center gap-2">
+                <iconify-icon icon="mdi:office-building" class="text-fg-tertiary text-sm"></iconify-icon>
+                <span class="text-xs font-semibold text-fg-secondary" id="companies-db-result-count">共 8,652 条结果</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-fg-tertiary">排序：</span>
+                <select id="companies-db-sort" onchange="changeCompaniesSort()" class="text-[10px] border border-bg-border rounded-lg px-2.5 py-1 text-fg-secondary focus:outline-none focus:border-orange-500 bg-white cursor-pointer hover:border-orange-500/40 transition-colors">
+                    <option>相关度</option>
+                    <option>注册资本</option>
+                    <option>成立日期</option>
+                </select>
+            </div>
+        </div>
+        <div class="divide-y divide-bg-border/60" id="companies-db-results"></div>
+        <!-- 分页 -->
+        <div class="flex items-center justify-center gap-1 px-5 py-4 border-t border-bg-border/60 bg-bg-subtle/30" id="companies-db-pagination"></div>
     </div>
 </div>
 </div>

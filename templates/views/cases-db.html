@@ -1,81 +1,233 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-cases-db">
-<div class="max-w-6xl mx-auto w-full space-y-5">
-    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200 p-5">
-        <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                <iconify-icon class="text-2xl text-blue-600" icon="mdi:library-books"></iconify-icon>
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-cases-db">
+<div class="max-w-6xl mx-auto w-full space-y-4">
+    <!-- Hero 区域 -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 px-5 py-6 md:px-6 md:py-7 rounded-2xl" data-animate="fade-in-up" data-delay="0">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/3 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 blur-2xl"></div>
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <iconify-icon class="text-2xl md:text-3xl text-white" icon="mdi:library-books"></iconify-icon>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold text-white mb-1">案例数据库</h1>
+                        <p class="text-white/80 text-xs md:text-sm max-w-md">海量裁判文书案例库，支持按案由、法院、当事人、律师等多维度检索，类案研究更高效。</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-medium transition-all duration-300 hover:-translate-y-0.5">
+                        <iconify-icon icon="mdi:bookmark-outline" class="text-sm"></iconify-icon>
+                        <span>收藏案例</span>
+                    </button>
+                    <button class="flex items-center gap-1.5 px-3 py-2 bg-white text-blue-600 hover:bg-white/90 rounded-lg text-xs font-medium transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-blue-500/20">
+                        <iconify-icon icon="mdi:history" class="text-sm"></iconify-icon>
+                        <span>检索历史</span>
+                    </button>
+                </div>
             </div>
-            <div class="flex-1">
-                <h1 class="text-lg font-bold text-fg-primary">案例数据库</h1>
-                <p class="text-xs text-fg-secondary mt-1">海量裁判文书案例库，支持按案由、法院、当事人、律师等多维度检索。</p>
+            <!-- 数据统计 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cases-stats" data-stagger-index="0" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">裁判文书</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:file-document-multiple-outline" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">1.2亿+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">全量文书</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cases-stats" data-stagger-index="1" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">指导案例</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:star-outline" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">214</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">最高法发布</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cases-stats" data-stagger-index="2" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">覆盖法院</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:domain" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">3,500+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">全国各级法院</p>
+                </div>
+                <div class="bg-white/15 backdrop-blur-md rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 group" data-animate="scale-in" data-stagger-group="cases-stats" data-stagger-index="3" data-delay="0.1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-white/70 text-[11px]">案由分类</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <iconify-icon icon="mdi:tag-multiple-outline" class="text-white text-sm"></iconify-icon>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold text-white kb-tabular-nums">480+</p>
+                    <p class="text-[10px] text-white/60 mt-0.5">三级案由</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border p-5">
-        <div class="flex items-center gap-2 mb-3">
-            <iconify-icon class="text-base text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
-            <h2 class="text-sm font-semibold text-fg-primary">案例检索</h2>
+    <!-- 高级搜索区域 -->
+    <div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.2">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-md shadow-blue-500/20">
+                <iconify-icon icon="mdi:filter-variant" class="text-white text-base"></iconify-icon>
+            </div>
+            <div>
+                <h2 class="text-sm font-semibold text-fg-primary">高级检索</h2>
+                <p class="text-[10px] text-fg-tertiary">多条件组合筛选，精准定位目标案例</p>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             <div>
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">关键词</label>
-                <input type="text" id="cases-db-keyword" placeholder="案由/当事人/关键词" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors"/>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary group-focus-within:text-blue-500 transition-colors" icon="mdi:magnify"></iconify-icon>
+                    </div>
+                    <input type="text" id="cases-db-keyword" placeholder="案由/当事人/关键词" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all duration-200 placeholder:text-fg-disabled"/>
+                </div>
             </div>
             <div>
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">案由</label>
-                <select id="cases-db-cause" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
-                    <option>全部案由</option>
-                    <option>合同纠纷</option>
-                    <option>侵权责任纠纷</option>
-                    <option>劳动争议</option>
-                    <option>知识产权纠纷</option>
-                </select>
+                <div class="relative">
+                    <select id="cases-db-cause" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all duration-200 cursor-pointer hover:border-blue-500/40">
+                        <option>全部案由</option>
+                        <option>合同纠纷</option>
+                        <option>侵权责任纠纷</option>
+                        <option>劳动争议</option>
+                        <option>知识产权纠纷</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
             </div>
             <div>
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">审理法院</label>
-                <select id="cases-db-court" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
-                    <option>全部法院</option>
-                    <option>最高人民法院</option>
-                    <option>北京市高级人民法院</option>
-                    <option>上海市高级人民法院</option>
-                </select>
+                <div class="relative">
+                    <select id="cases-db-court" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all duration-200 cursor-pointer hover:border-blue-500/40">
+                        <option>全部法院</option>
+                        <option>最高人民法院</option>
+                        <option>北京市高级人民法院</option>
+                        <option>上海市高级人民法院</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
             </div>
             <div>
                 <label class="block text-xs font-medium text-fg-secondary mb-1.5">裁判年份</label>
-                <select id="cases-db-year" class="w-full bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
-                    <option>全部年份</option>
-                    <option>2026年</option>
-                    <option>2025年</option>
-                    <option>2024年</option>
-                    <option>2023年</option>
-                </select>
+                <div class="relative">
+                    <select id="cases-db-year" class="appearance-none w-full bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all duration-200 cursor-pointer hover:border-blue-500/40">
+                        <option>全部年份</option>
+                        <option>2026年</option>
+                        <option>2025年</option>
+                        <option>2024年</option>
+                        <option>2023年</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                        <iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="flex items-center justify-end">
-            <button onclick="searchCases()" class="px-4 py-2 text-sm text-white bg-brand hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5">
-                <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
-                检索案例
-            </button>
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] text-fg-tertiary">热门案由：</span>
+                <button onclick="quickSearchCause('民间借贷')" class="px-2.5 py-1 text-[10px] bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">民间借贷</button>
+                <button onclick="quickSearchCause('劳动合同')" class="px-2.5 py-1 text-[10px] bg-purple-50 text-purple-600 rounded-full hover:bg-purple-100 transition-colors">劳动合同</button>
+                <button onclick="quickSearchCause('房屋买卖')" class="px-2.5 py-1 text-[10px] bg-amber-50 text-amber-600 rounded-full hover:bg-amber-100 transition-colors">房屋买卖</button>
+                <button onclick="quickSearchCause('知识产权')" class="px-2.5 py-1 text-[10px] bg-green-50 text-green-600 rounded-full hover:bg-green-100 transition-colors">知识产权</button>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetCasesDb()" class="px-4 py-2.5 text-sm border border-bg-border text-fg-secondary rounded-xl hover:bg-bg-subtle transition-all duration-200 flex items-center gap-1.5">
+                    <iconify-icon class="text-base" icon="mdi:refresh"></iconify-icon>
+                    重置
+                </button>
+                <button onclick="searchCases()" class="px-5 py-2.5 text-sm text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:shadow-lg hover:shadow-blue-500/25 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5">
+                    <iconify-icon class="text-base" icon="mdi:magnify"></iconify-icon>
+                    检索案例
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-3 border-b border-bg-border">
-            <span class="text-xs text-fg-tertiary" id="cases-db-result-count">共 12,586 条结果</span>
+    <!-- 案由分类快捷入口 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchCause('合同纠纷')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-blue-500" icon="mdi:file-document-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">合同纠纷</p>
+                    <p class="text-[10px] text-fg-tertiary">4,286 篇</p>
+                </div>
+            </div>
+        </div>
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchCause('侵权责任纠纷')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-red-500" icon="mdi:alert-octagon-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">侵权纠纷</p>
+                    <p class="text-[10px] text-fg-tertiary">1,892 篇</p>
+                </div>
+            </div>
+        </div>
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchCause('劳动争议')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-amber-500" icon="mdi:briefcase-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">劳动争议</p>
+                    <p class="text-[10px] text-fg-tertiary">2,156 篇</p>
+                </div>
+            </div>
+        </div>
+        <div class="ws-card p-4 hover:shadow-lg cursor-pointer group" onclick="quickSearchCause('知识产权纠纷')">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <iconify-icon class="text-xl text-purple-500" icon="mdi:lightbulb-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-fg-primary">知识产权</p>
+                    <p class="text-[10px] text-fg-tertiary">968 篇</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索结果列表 -->
+    <div class="ws-card overflow-hidden flex flex-col" data-animate="fade-in-up" data-delay="0.4">
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-bg-border bg-gradient-to-r from-bg-subtle to-bg-subtle/50">
+            <div class="flex items-center gap-2">
+                <iconify-icon icon="mdi:format-list-bulleted" class="text-fg-tertiary text-sm"></iconify-icon>
+                <span class="text-xs font-semibold text-fg-secondary" id="cases-db-result-count">共 12,586 条结果</span>
+            </div>
             <div class="flex items-center gap-2">
                 <span class="text-[10px] text-fg-tertiary">排序：</span>
-                <select id="cases-db-sort" onchange="changeCasesSort()" class="text-[10px] border border-bg-border rounded px-2 py-1 text-fg-secondary focus:outline-none focus:border-brand bg-white">
+                <select id="cases-db-sort" onchange="changeCasesSort()" class="text-[10px] border border-bg-border rounded-lg px-2.5 py-1 text-fg-secondary focus:outline-none focus:border-blue-500 bg-white cursor-pointer hover:border-blue-500/40 transition-colors">
                     <option>相关度</option>
                     <option>裁判日期</option>
                     <option>法院层级</option>
                 </select>
             </div>
         </div>
-        <div class="divide-y divide-bg" id="cases-db-results"></div>
-        <div class="flex items-center justify-center gap-1 px-5 py-4 border-t border-bg-border" id="cases-db-pagination"></div>
+        <div class="divide-y divide-bg-border/60" id="cases-db-results"></div>
+        <!-- 分页 -->
+        <div class="flex items-center justify-center gap-1 px-5 py-4 border-t border-bg-border/60 bg-bg-subtle/30" id="cases-db-pagination"></div>
     </div>
 </div>
 </div>

@@ -11,6 +11,13 @@
 (function () {
     'use strict';
 
+    var CAUSE_STYLES = {
+        合同纠纷: 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 border border-blue-200/50',
+        侵权责任纠纷: 'bg-gradient-to-r from-red-50 to-red-100 text-red-600 border border-red-200/50',
+        劳动争议: 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-600 border border-amber-200/50',
+        知识产权纠纷: 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-600 border border-purple-200/50'
+    };
+
     // ===== Mock 案例数据集 (16 条, 覆盖 4 案由 / 4 级法院 / 4 年份) =====
     // courtLevel: 1=最高 2=高级 3=中级 4=基层
     var CASES_DB = [
@@ -315,40 +322,71 @@
 
         if (slice.length === 0) {
             container.innerHTML =
-                '<div class="p-12 text-center">' +
-                '<iconify-icon class="text-5xl text-fg-disabled" icon="mdi:file-search-outline"></iconify-icon>' +
-                '<p class="text-sm text-fg-tertiary mt-3">未找到匹配的案例</p>' +
-                '<p class="text-[10px] text-fg-disabled mt-1">试试调整关键词或清除筛选条件</p>' +
+                '<div class="flex flex-col items-center justify-center py-16 px-4">' +
+                '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center mb-4">' +
+                '<iconify-icon class="text-4xl text-blue-500/60" icon="mdi:file-search-outline"></iconify-icon>' +
+                '</div>' +
+                '<h4 class="text-base font-semibold text-fg-primary mb-1">未找到匹配的案例</h4>' +
+                '<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">请调整关键词或筛选条件后重试，或尝试其他搜索词</p>' +
+                '<button onclick="resetCasesDb()" class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5">' +
+                '<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>' +
+                '重置筛选' +
+                '</button>' +
                 '</div>';
         } else {
-            container.innerHTML = slice.map(renderCaseItem).join('');
+            container.innerHTML = slice.map(function(c, idx) { return renderCaseItem(c, start + idx); }).join('');
         }
 
         renderPagination(pager, totalPages);
+
+        if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+            Animations.initPageAnimations(container);
+        }
     }
 
-    function renderCaseItem(c) {
+    function renderCaseItem(c, idx) {
+        var causeBadge = CAUSE_STYLES[c.cause] || 'bg-gray-50 text-gray-600 border border-gray-200/50';
+        var levelIconMap = { 1: 'mdi:crown', 2: 'mdi:shield-star', 3: 'mdi:scale-balance', 4: 'mdi:gavel' };
+        var levelIcon = levelIconMap[c.courtLevel] || 'mdi:gavel';
         return (
-            '<div class="p-5 hover:bg-bg-subtle transition-colors cursor-pointer" onclick="openCaseDetail(\'' +
+            '<div class="p-4 md:p-5 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="cases-list" data-stagger-index="' + idx + '" data-delay="0.05" onclick="openCaseDetail(\'' +
             c.id +
             '\')">' +
-            '<h3 class="text-sm font-medium text-brand hover:underline mb-2">' +
+            '<div class="flex items-start gap-3 md:gap-4">' +
+            '<div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
+            '<iconify-icon class="text-lg md:text-xl text-blue-500" icon="' + levelIcon + '"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-start justify-between gap-3 mb-1.5">' +
+            '<h3 class="text-sm md:text-base font-semibold text-fg-primary group-hover:text-blue-600 transition-colors line-clamp-2">' +
             escapeHtml(c.title) +
             '</h3>' +
-            '<div class="flex items-center gap-4 text-[10px] text-fg-tertiary mb-2">' +
-            '<span><iconify-icon class="inline" icon="mdi:domain"></iconify-icon> ' +
+            '<span class="text-[10px] font-semibold ' +
+            causeBadge +
+            ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' +
+            c.cause +
+            '</span>' +
+            '</div>' +
+            '<div class="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs text-fg-tertiary mb-2 flex-wrap">' +
+            '<span class="inline-flex items-center gap-1">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:domain"></iconify-icon>' +
             escapeHtml(c.court) +
             '</span>' +
-            '<span><iconify-icon class="inline" icon="mdi:calendar"></iconify-icon> ' +
+            '<span class="inline-flex items-center gap-1">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:calendar"></iconify-icon>' +
             escapeHtml(c.date) +
             '</span>' +
-            '<span><iconify-icon class="inline" icon="mdi:tag-outline"></iconify-icon> ' +
+            '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-bg-subtle rounded-md font-medium text-fg-secondary">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:tag-outline"></iconify-icon>' +
             escapeHtml(c.caseType) +
             '</span>' +
             '</div>' +
-            '<p class="text-xs text-fg-secondary line-clamp-2">' +
+            '<p class="text-[11px] md:text-xs text-fg-secondary line-clamp-2 leading-relaxed">' +
             escapeHtml(c.summary) +
             '</p>' +
+            '</div>' +
+            '<iconify-icon class="text-fg-disabled text-base md:text-lg opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0 flex-shrink-0 mt-1" icon="mdi:chevron-right"></iconify-icon>' +
+            '</div>' +
             '</div>'
         );
     }
@@ -363,7 +401,6 @@
         }
 
         var html = '';
-        // 上一页
         html += pageBtn(
             state.page > 1,
             '<iconify-icon icon="mdi:chevron-left"></iconify-icon>',
@@ -371,16 +408,15 @@
             'text-fg-tertiary'
         );
 
-        // 页码 (窗口式: 首尾 + 当前±2 + 省略号)
         buildPageList(state.page, totalPages).forEach(function (p) {
             if (p === '...') {
-                html += '<span class="text-xs text-fg-tertiary px-1">...</span>';
+                html += '<span class="text-xs text-fg-tertiary px-2">...</span>';
             } else {
                 var active = p === state.page;
                 html +=
-                    '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' +
-                    (active ? 'bg-brand text-white font-medium' : 'hover:bg-bg-subtle text-fg-secondary') +
-                    '" onclick="changeCasesPage(' +
+                    '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
+                    (active ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white text-fg-secondary hover:text-blue-600') +
+                    ' transition-all duration-200" onclick="changeCasesPage(' +
                     p +
                     ')">' +
                     p +
@@ -388,7 +424,6 @@
             }
         });
 
-        // 下一页
         html += pageBtn(
             state.page < totalPages,
             '<iconify-icon icon="mdi:chevron-right"></iconify-icon>',
@@ -495,6 +530,40 @@
         if (container && container.scrollIntoView) {
             container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+    }
+
+    // 快捷案由搜索
+    function quickSearchCause(cause) {
+        var causeSel = $('cases-db-cause');
+        if (causeSel) {
+            for (var i = 0; i < causeSel.options.length; i++) {
+                if (causeSel.options[i].text.indexOf(cause) >= 0) {
+                    causeSel.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        searchCases();
+    }
+
+    // 重置
+    function resetCasesDb() {
+        var kw = $('cases-db-keyword');
+        if (kw) kw.value = '';
+        var cause = $('cases-db-cause');
+        if (cause) cause.selectedIndex = 0;
+        var court = $('cases-db-court');
+        if (court) court.selectedIndex = 0;
+        var year = $('cases-db-year');
+        if (year) year.selectedIndex = 0;
+        var sort = $('cases-db-sort');
+        if (sort) sort.selectedIndex = 0;
+        state.page = 1;
+        state.sort = 'relevance';
+        state.keyword = '';
+        applyFilters();
+        applySort();
+        renderResults();
     }
 
     // 查看案例详情
@@ -614,4 +683,6 @@
     globalThis.openCaseDetail = openCaseDetail;
     globalThis.closeCaseDetail = closeCaseDetail;
     globalThis.changeCasesSort = changeCasesSort;
+    globalThis.quickSearchCause = quickSearchCause;
+    globalThis.resetCasesDb = resetCasesDb;
 })();

@@ -41,6 +41,10 @@
                     <iconify-icon icon="mdi:link-variant" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
                     <span>账号绑定</span>
                 </button>
+                <button class="settings-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 text-fg-secondary hover:bg-bg-subtle hover:text-fg-primary group" data-section="appearance" onclick="switchSettingsSection('appearance', this)">
+                    <iconify-icon icon="mdi:palette-outline" class="text-lg group-hover:text-brand transition-colors"></iconify-icon>
+                    <span>外观设置</span>
+                </button>
             </nav>
 
             <!-- 当前套餐快捷信息 -->
@@ -730,6 +734,73 @@
                             </div>
                         </div>
                         <button class="btn-outline px-4 py-1.5 text-xs font-medium" onclick="bindAccount('企业微信')">绑定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 外观设置 Section ====== -->
+        <div class="settings-section space-y-4 hidden" id="section-appearance">
+            <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                            <iconify-icon icon="mdi:palette-outline" class="text-white text-lg"></iconify-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-fg-primary">外观设置</h3>
+                            <p class="text-[11px] text-fg-tertiary">自定义界面主题和显示效果</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- 主题模式选择 -->
+                    <div class="p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">主题模式</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">选择浅色、深色或跟随系统主题</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3" id="theme-selector">
+                            <button class="theme-option p-4 rounded-xl border-2 border-bg-border hover:border-brand transition-all duration-300 flex flex-col items-center gap-2 group" data-theme="light" onclick="selectThemeOption('light')">
+                                <div class="w-12 h-12 rounded-xl bg-white border border-bg-border shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="mdi:weather-sunny" class="text-xl text-amber-500"></iconify-icon>
+                                </div>
+                                <span class="text-xs font-medium text-fg-secondary group-hover:text-fg-primary transition-colors">浅色</span>
+                            </button>
+                            <button class="theme-option p-4 rounded-xl border-2 border-bg-border hover:border-brand transition-all duration-300 flex flex-col items-center gap-2 group" data-theme="dark" onclick="selectThemeOption('dark')">
+                                <div class="w-12 h-12 rounded-xl bg-arco-gray-10 border border-bg-border shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="mdi:weather-night" class="text-xl text-indigo-400"></iconify-icon>
+                                </div>
+                                <span class="text-xs font-medium text-fg-secondary group-hover:text-fg-primary transition-colors">深色</span>
+                            </button>
+                            <button class="theme-option p-4 rounded-xl border-2 border-bg-border hover:border-brand transition-all duration-300 flex flex-col items-center gap-2 group" data-theme="auto" onclick="selectThemeOption('auto')">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-white to-arco-gray-10 border border-bg-border shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <iconify-icon icon="mdi:monitor-shimmer" class="text-xl text-brand"></iconify-icon>
+                                </div>
+                                <span class="text-xs font-medium text-fg-secondary group-hover:text-fg-primary transition-colors">跟随系统</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 快捷键提示 -->
+                    <div class="flex items-center justify-between p-4 rounded-xl hover:bg-bg-subtle/50 transition-all duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center">
+                                <iconify-icon icon="mdi:keyboard-outline" class="text-base text-brand"></iconify-icon>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-fg-primary">切换主题快捷键</p>
+                                <p class="text-[11px] text-fg-tertiary mt-0.5">使用键盘快捷键快速切换明暗模式</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <kbd class="px-2 py-1 text-[10px] font-medium bg-bg-subtle border border-bg-border rounded-md text-fg-secondary">Ctrl</kbd>
+                            <kbd class="px-2 py-1 text-[10px] font-medium bg-bg-subtle border border-bg-border rounded-md text-fg-secondary">Shift</kbd>
+                            <kbd class="px-2 py-1 text-[10px] font-medium bg-bg-subtle border border-bg-border rounded-md text-fg-secondary">L</kbd>
+                        </div>
                     </div>
                 </div>
             </div>

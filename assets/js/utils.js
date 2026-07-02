@@ -1379,7 +1379,10 @@
             { id: 'action-upload-file', name: '上传文件', description: '上传文件到附件库', icon: 'mdi:upload', category: 'action', shortcut: '', action: function () { showToast('上传文件功能开发中'); } },
             { id: 'action-search', name: '全局搜索', description: '搜索案件、文书、证据', icon: 'mdi:magnify', category: 'action', shortcut: 'Ctrl+/', action: function () { var input = document.querySelector('header input[type="text"]'); if (input) { input.focus(); input.select(); } } },
             { id: 'setting-shortcuts', name: '快捷键帮助', description: '查看所有键盘快捷键', icon: 'mdi:keyboard-variant', category: 'setting', shortcut: '?', action: function () { closeCommandPalette(); setTimeout(showShortcutHelp, 100); } },
-            { id: 'setting-theme', name: '切换主题', description: '切换浅色/深色主题（开发中）', icon: 'mdi:theme-light-dark', category: 'setting', shortcut: '', action: function () { showToast('主题切换功能开发中'); } }
+            { id: 'setting-theme-toggle', name: '切换主题', description: '切换浅色/深色模式', icon: 'mdi:theme-light-dark', category: 'setting', shortcut: 'Ctrl+Shift+L', action: function () { closeCommandPalette(); setTimeout(toggleTheme, 100); } },
+            { id: 'setting-theme-light', name: '浅色模式', description: '使用浅色主题', icon: 'mdi:white-balance-sunny', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('light'); }, 100); } },
+            { id: 'setting-theme-dark', name: '深色模式', description: '使用深色主题', icon: 'mdi:moon-waning-crescent', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('dark'); }, 100); } },
+            { id: 'setting-theme-auto', name: '跟随系统', description: '自动跟随系统主题', icon: 'mdi:monitor-screenshot', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('auto'); }, 100); } }
         ];
     }
 
@@ -1643,6 +1646,146 @@
         return true;
     }
 
+    // ===== 主题系统 =====
+    var THEME_STORAGE_KEY = 'lexprime-theme';
+    var _currentTheme = 'auto';
+    var _systemThemeMedia = null;
+    var _themeChangeListeners = [];
+
+    function _getSystemTheme() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    }
+
+    function _applyTheme(theme) {
+        var effectiveTheme = theme === 'auto' ? _getSystemTheme() : theme;
+        document.documentElement.setAttribute('data-theme', effectiveTheme);
+        document.documentElement.setAttribute('data-theme-mode', theme);
+
+        _updateThemeUI(theme, effectiveTheme);
+
+        _themeChangeListeners.forEach(function (fn) {
+            try {
+                fn(effectiveTheme, theme);
+            } catch (e) {
+                console.warn('[Theme] 监听回调执行失败:', e);
+            }
+        });
+    }
+
+    function _updateThemeUI(theme, effectiveTheme) {
+        var icon = document.getElementById('status-bar-theme-icon');
+        if (icon) {
+            if (theme === 'auto') {
+                icon.setAttribute('icon', 'mdi:monitor-shimmer');
+            } else if (effectiveTheme === 'dark') {
+                icon.setAttribute('icon', 'mdi:weather-night');
+            } else {
+                icon.setAttribute('icon', 'mdi:weather-sunny');
+            }
+        }
+
+        var themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) {
+            var options = themeSelector.querySelectorAll('.theme-option');
+            options.forEach(function (opt) {
+                var optTheme = opt.getAttribute('data-theme');
+                if (optTheme === theme) {
+                    opt.classList.add('border-brand', 'bg-brand-tint/30');
+                    opt.classList.remove('border-bg-border');
+                } else {
+                    opt.classList.remove('border-brand', 'bg-brand-tint/30');
+                    opt.classList.add('border-bg-border');
+                }
+            });
+        }
+    }
+
+    function selectThemeOption(theme) {
+        setTheme(theme);
+    }
+
+    function _initThemeSystem() {
+        try {
+            var saved = localStorage.getItem(THEME_STORAGE_KEY);
+            if (saved === 'light' || saved === 'dark' || saved === 'auto') {
+                _currentTheme = saved;
+            }
+        } catch (e) {
+            console.warn('[Theme] 读取 localStorage 失败:', e);
+        }
+
+        _applyTheme(_currentTheme);
+
+        if (window.matchMedia) {
+            _systemThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+            var handleSystemChange = function () {
+                if (_currentTheme === 'auto') {
+                    _applyTheme('auto');
+                }
+            };
+
+            if (_systemThemeMedia.addEventListener) {
+                _systemThemeMedia.addEventListener('change', handleSystemChange);
+            } else if (_systemThemeMedia.addListener) {
+                _systemThemeMedia.addListener(handleSystemChange);
+            }
+        }
+    }
+
+    function setTheme(theme) {
+        if (theme !== 'light' && theme !== 'dark' && theme !== 'auto') {
+            console.warn('[Theme] 无效的主题值:', theme);
+            return false;
+        }
+
+        _currentTheme = theme;
+
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+        } catch (e) {
+            console.warn('[Theme] 保存到 localStorage 失败:', e);
+        }
+
+        _applyTheme(theme);
+
+        var effectiveTheme = theme === 'auto' ? _getSystemTheme() : theme;
+        showToast({
+            type: 'success',
+            message: '已切换到' + (theme === 'auto' ? '跟随系统' : (effectiveTheme === 'dark' ? '深色模式' : '浅色模式')),
+            duration: 2000
+        });
+
+        return true;
+    }
+
+    function getTheme() {
+        return _currentTheme;
+    }
+
+    function getEffectiveTheme() {
+        return _currentTheme === 'auto' ? _getSystemTheme() : _currentTheme;
+    }
+
+    function toggleTheme() {
+        var effective = getEffectiveTheme();
+        var next = effective === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        return next;
+    }
+
+    function onThemeChange(callback) {
+        if (typeof callback !== 'function') return;
+        _themeChangeListeners.push(callback);
+        return function () {
+            _themeChangeListeners = _themeChangeListeners.filter(function (fn) {
+                return fn !== callback;
+            });
+        };
+    }
+
     function initShortcuts() {
         document.addEventListener('keydown', _handleKeyDown);
 
@@ -1683,6 +1826,12 @@
             description: '新建（智能判断）',
             category: 'action',
             allowInInput: false
+        });
+
+        registerShortcut('Ctrl+Shift+L', toggleTheme, {
+            description: '切换深色/浅色模式',
+            category: 'setting',
+            allowInInput: true
         });
 
         registerShortcut('Escape', function () {
@@ -1740,9 +1889,17 @@
         closeCommandPalette: closeCommandPalette,
         registerCommand: registerCommand,
         initShortcuts: initShortcuts,
-        formatShortcutKey: _formatKeyDisplay
+        formatShortcutKey: _formatKeyDisplay,
+        setTheme: setTheme,
+        getTheme: getTheme,
+        getEffectiveTheme: getEffectiveTheme,
+        toggleTheme: toggleTheme,
+        onThemeChange: onThemeChange,
+        selectThemeOption: selectThemeOption,
+        _initThemeSystem: _initThemeSystem
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）
     globalThis.escapeHtml = escapeHtml;
+    globalThis.selectThemeOption = selectThemeOption;
 })();

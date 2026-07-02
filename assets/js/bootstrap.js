@@ -24,6 +24,11 @@
         if (typeof Auth !== 'undefined' && Auth.restore) {
             Auth.restore();
         }
+
+        if (typeof Utils !== 'undefined' && typeof Utils._initThemeSystem === 'function') {
+            Utils._initThemeSystem();
+        }
+
         renderAppVersion();
         switchView(getStartView());
         updateNotificationBadgeState();
