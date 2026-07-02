@@ -82,9 +82,73 @@
 
     function handleAttentionAction(id) {
         var item = _attentionData.find(function(x) { return x.id === id; });
-        if (item && typeof showToast === 'function') {
-            showToast('正在处理: ' + item.title);
+        if (!item) {
+            if (typeof showToast === 'function') showToast('未找到事项 #' + id);
+            return;
         }
+
+        var modal = document.getElementById('attention-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'attention-detail-modal';
+            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeAttentionDetail();
+            });
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="' + item.icon + '" class="' + item.iconColor + ' text-lg"></iconify-icon>' +
+            '事项详情' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeAttentionDetail()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4">' +
+            '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
+            '<div class="w-12 h-12 rounded-lg ' + item.iconBg + ' flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon class="' + item.iconColor + ' text-xl" icon="' + item.icon + '"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 mb-0.5">' +
+            '<span class="text-[10px] ' + item.badgeBg + ' ' + item.badgeColor + ' font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(item.type) + '</span>' +
+            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(item.title) + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-fg-tertiary">' + escapeHtml(item.desc) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">状态信息</p>' +
+            '<p class="text-sm ' + item.actionColor + ' font-medium">' + escapeHtml(item.extra) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeAttentionDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="handleAttentionComplete(' + item.id + ')">标记已完成</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeAttentionDetail() {
+        var modal = document.getElementById('attention-detail-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function handleAttentionComplete(id) {
+        var item = _attentionData.find(function(x) { return x.id === id; });
+        if (!item) return;
+        _attentionData = _attentionData.filter(function(x) { return x.id !== id; });
+        closeAttentionDetail();
+        renderAttentionList();
+        if (typeof showToast === 'function') showToast('"' + item.title + '" 已标记完成', 'success');
     }
 
     function initSearch() {
@@ -109,4 +173,6 @@
     globalThis.initAttentionList = initAttentionList;
     globalThis.filterAttention = filterAttention;
     globalThis.handleAttentionAction = handleAttentionAction;
+    globalThis.closeAttentionDetail = closeAttentionDetail;
+    globalThis.handleAttentionComplete = handleAttentionComplete;
 })();

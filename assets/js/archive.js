@@ -115,7 +115,85 @@
     }
 
     function openArchiveDetail(id) {
-        if (typeof showToast === 'function') showToast('查看归档案件 #' + id);
+        var item = _archiveData.find(function(x) { return x.id === id; });
+        if (!item) {
+            if (typeof showToast === 'function') showToast('未找到归档案件 #' + id);
+            return;
+        }
+
+        var modal = document.getElementById('archive-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'archive-detail-modal';
+            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeArchiveDetail();
+            });
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="mdi:archive-search-outline" class="text-brand text-lg"></iconify-icon>' +
+            '归档详情' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeArchiveDetail()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4">' +
+            '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
+            '<div class="w-12 h-12 rounded-lg bg-wiki-tint text-wiki flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon icon="mdi:archive" class="text-xl"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<p class="font-medium text-sm text-fg-primary font-mono">' + escapeHtml(item.caseNum) + '</p>' +
+            '<p class="text-xs text-fg-tertiary">' + escapeHtml(item.cause) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">案件类型</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.type) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">归档年份</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.year) + ' 年</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">原告</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.plaintiff) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">被告</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.defendant) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">归档日期</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.archiveDate) + '</p>' +
+            '</div>' +
+            '<div class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
+            '案件已归档, 如需恢复可点击下方按钮' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeArchiveDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-brand hover:text-brand-hover bg-brand-tint border border-brand/20 rounded-lg" onclick="closeArchiveDetail(); restoreArchive(' + item.id + ')">还原案件</button>' +
+            '<button class="h-9 px-4 text-xs text-danger hover:text-danger/80 bg-danger-tint border border-danger/20 rounded-lg" onclick="closeArchiveDetail(); deleteArchive(' + item.id + ')">删除归档</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeArchiveDetail() {
+        var modal = document.getElementById('archive-detail-modal');
+        if (modal) modal.classList.add('hidden');
     }
 
     function restoreArchive(id) {
@@ -149,6 +227,7 @@
     globalThis.filterArchiveList = filterArchiveList;
     globalThis.toggleAllArchive = toggleAllArchive;
     globalThis.openArchiveDetail = openArchiveDetail;
+    globalThis.closeArchiveDetail = closeArchiveDetail;
     globalThis.restoreArchive = restoreArchive;
     globalThis.deleteArchive = deleteArchive;
     globalThis.initArchive = initArchive;

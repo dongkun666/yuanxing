@@ -161,11 +161,216 @@
     }
 
     function openCaseDynamicDetail(id) {
-        if (typeof showToast === 'function') showToast('查看动态详情 #' + id);
+        var item = _dynamics.find(function(x) { return x.id === id; });
+        if (!item) {
+            if (typeof showToast === 'function') showToast('未找到动态 #' + id);
+            return;
+        }
+
+        var modal = document.getElementById('dynamic-detail-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'dynamic-detail-modal';
+            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeDynamicDetail();
+            });
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="' + item.icon + '" class="' + item.iconColor + ' text-lg"></iconify-icon>' +
+            '动态详情' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeDynamicDetail()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4">' +
+            '<div class="flex items-center gap-3 p-3 bg-bg-subtle rounded-xl">' +
+            '<div class="w-12 h-12 rounded-lg ' + item.iconBg + ' flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon class="' + item.iconColor + ' text-xl" icon="' + item.icon + '"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 mb-0.5">' +
+            '<span class="text-[10px] ' + item.badgeBg + ' ' + item.badgeColor + ' font-medium px-1.5 py-0.5 rounded-full">' + escapeHtml(item.type) + '</span>' +
+            '<span class="font-medium text-sm text-fg-primary">' + escapeHtml(item.title) + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-fg-tertiary">' + escapeHtml(item.desc) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">发布时间</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.time) + '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">发布人</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.user) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-3 bg-bg-subtle rounded-xl">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">关联案件</p>' +
+            '<p class="text-sm text-fg-primary">' + escapeHtml(item.desc.split('·')[0] || '未关联案件') + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeDynamicDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeDynamicDetail(); openNewDynamicModal()">发布新动态</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeDynamicDetail() {
+        var modal = document.getElementById('dynamic-detail-modal');
+        if (modal) modal.classList.add('hidden');
     }
 
     function openNewDynamicModal() {
-        if (typeof showToast === 'function') showToast('发布动态功能开发中...');
+        var modal = document.getElementById('new-dynamic-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'new-dynamic-modal';
+            modal.className = 'hidden fixed inset-0 z-[1000] bg-black/40 flex items-center justify-center p-4';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeNewDynamicModal();
+            });
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">' +
+            '<div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">' +
+            '<h3 class="text-base font-semibold text-fg-primary flex items-center gap-2">' +
+            '<iconify-icon icon="mdi:plus-circle-outline" class="text-brand text-lg"></iconify-icon>' +
+            '发布动态' +
+            '</h3>' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary" onclick="closeNewDynamicModal()" aria-label="关闭">' +
+            '<iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>' +
+            '</button>' +
+            '</div>' +
+            '<div class="px-5 py-4 space-y-4">' +
+            '<div>' +
+            '<label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5">动态类型 <span class="text-danger">*</span></label>' +
+            '<div class="flex flex-wrap gap-2" id="new-dynamic-type-group">' +
+            '<button data-type="紧急" class="new-dyn-type-btn text-xs px-3 py-1.5 rounded-full bg-red-50 text-red-700 border border-red-200 hover:bg-red-100">紧急</button>' +
+            '<button data-type="文书" class="new-dyn-type-btn text-xs px-3 py-1.5 rounded-full bg-brand-tint text-brand border border-brand/20 hover:bg-brand-tint30">文书</button>' +
+            '<button data-type="开庭" class="new-dyn-type-btn text-xs px-3 py-1.5 rounded-full bg-wiki-tint text-wiki border border-wiki/20 hover:bg-wiki-tint30">开庭</button>' +
+            '<button data-type="归档" class="new-dyn-type-btn text-xs px-3 py-1.5 rounded-full bg-success-tint text-success border border-success/20 hover:bg-success-tint30">归档</button>' +
+            '<button data-type="提醒" class="new-dyn-type-btn text-xs px-3 py-1.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200 hover:bg-amber-200">提醒</button>' +
+            '</div>' +
+            '</div>' +
+            '<div>' +
+            '<label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5" for="new-dynamic-title">标题 <span class="text-danger">*</span></label>' +
+            '<input id="new-dynamic-title" type="text" maxlength="50" placeholder="请输入动态标题（最多 50 字）" class="w-full h-10 px-3 text-sm bg-white border border-bg-border rounded-lg focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors"/>' +
+            '</div>' +
+            '<div>' +
+            '<label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5" for="new-dynamic-desc">描述</label>' +
+            '<textarea id="new-dynamic-desc" rows="3" maxlength="200" placeholder="请输入动态描述（最多 200 字）" class="w-full px-3 py-2 text-sm bg-white border border-bg-border rounded-lg focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors resize-none"></textarea>' +
+            '</div>' +
+            '<div>' +
+            '<label class="flex items-center gap-1.5 text-xs font-medium text-fg-secondary mb-1.5" for="new-dynamic-case">关联案件</label>' +
+            '<input id="new-dynamic-case" type="text" placeholder="选填，例如：李明诉XX公司买卖合同纠纷" class="w-full h-10 px-3 text-sm bg-white border border-bg-border rounded-lg focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition-colors"/>' +
+            '</div>' +
+            '<div class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:information-outline"></iconify-icon>' +
+            '动态发布后将显示在案件动态列表顶部' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 px-5 py-4 bg-bg-subtle border-t border-bg-border">' +
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeNewDynamicModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg flex items-center gap-1" onclick="submitNewDynamic()">' +
+            '<iconify-icon icon="mdi:check"></iconify-icon>' +
+            '发布动态' +
+            '</button>' +
+            '</div>' +
+            '</div>';
+
+        modal.classList.remove('hidden');
+
+        var typeBtns = modal.querySelectorAll('.new-dyn-type-btn');
+        typeBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                typeBtns.forEach(function(b) {
+                    b.dataset.selected = 'false';
+                    b.style.outline = 'none';
+                    b.style.outlineOffset = '0';
+                });
+                btn.dataset.selected = 'true';
+                btn.style.outline = '2px solid currentColor';
+                btn.style.outlineOffset = '1px';
+            });
+        });
+    }
+
+    function closeNewDynamicModal() {
+        var modal = document.getElementById('new-dynamic-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function submitNewDynamic() {
+        var modal = document.getElementById('new-dynamic-modal');
+        if (!modal) return;
+
+        var selectedTypeBtn = modal.querySelector('.new-dyn-type-btn[data-selected="true"]');
+        var type = selectedTypeBtn ? selectedTypeBtn.dataset.type : '';
+        var titleInput = document.getElementById('new-dynamic-title');
+        var descInput = document.getElementById('new-dynamic-desc');
+        var caseInput = document.getElementById('new-dynamic-case');
+
+        var title = titleInput ? titleInput.value.trim() : '';
+        var desc = descInput ? descInput.value.trim() : '';
+        var caseName = caseInput ? caseInput.value.trim() : '';
+
+        if (!type) {
+            if (typeof showToast === 'function') showToast('请选择动态类型', 'warning');
+            return;
+        }
+        if (!title) {
+            if (typeof showToast === 'function') showToast('请输入动态标题', 'warning');
+            if (titleInput) titleInput.focus();
+            return;
+        }
+
+        var typeMeta = {
+            '紧急': { icon: 'mdi:clock-alert-outline', iconColor: 'text-red-500', iconBg: 'bg-red-50', borderColor: 'border-l-red-500', badgeBg: 'bg-red-100', badgeColor: 'text-red-700' },
+            '文书': { icon: 'mdi:file-document-outline', iconColor: 'text-brand', iconBg: 'bg-brand-tint3', borderColor: 'border-l-blue-500', badgeBg: 'bg-brand-tint', badgeColor: 'text-brand' },
+            '开庭': { icon: 'mdi:gavel', iconColor: 'text-purple-500', iconBg: 'bg-purple-50', borderColor: 'border-l-purple-500', badgeBg: 'bg-wiki-tint', badgeColor: 'text-wiki' },
+            '归档': { icon: 'mdi:check-circle-outline', iconColor: 'text-green-500', iconBg: 'bg-green-50', borderColor: 'border-l-green-500', badgeBg: 'bg-success-tint', badgeColor: 'text-success' },
+            '提醒': { icon: 'mdi:calendar-check-outline', iconColor: 'text-amber-500', iconBg: 'bg-amber-50', borderColor: 'border-l-amber-500', badgeBg: 'bg-amber-100', badgeColor: 'text-amber-700' }
+        }[type] || { icon: 'mdi:bell-outline', iconColor: 'text-fg-secondary', iconBg: 'bg-bg', borderColor: 'border-l-bg-border', badgeBg: 'bg-bg', badgeColor: 'text-fg-secondary' };
+
+        var now = new Date();
+        var hh = String(now.getHours()).padStart(2, '0');
+        var mm = String(now.getMinutes()).padStart(2, '0');
+
+        _dynamics.unshift({
+            id: Date.now(),
+            type: type,
+            title: title,
+            desc: caseName ? caseName + ' · ' + (desc || '无附加描述') : (desc || '无附加描述'),
+            time: '今天 ' + hh + ':' + mm,
+            user: '当前用户',
+            icon: typeMeta.icon,
+            iconColor: typeMeta.iconColor,
+            iconBg: typeMeta.iconBg,
+            borderColor: typeMeta.borderColor,
+            badgeBg: typeMeta.badgeBg,
+            badgeColor: typeMeta.badgeColor,
+            action: '查看'
+        });
+
+        closeNewDynamicModal();
+        renderDynamics();
+
+        if (typeof showToast === 'function') showToast('动态已发布', 'success');
     }
 
     function initCaseDynamics() {
@@ -191,6 +396,9 @@
     globalThis.searchDynamics = searchDynamics;
     globalThis.switchDynamicsView = switchDynamicsView;
     globalThis.openCaseDynamicDetail = openCaseDynamicDetail;
+    globalThis.closeDynamicDetail = closeDynamicDetail;
     globalThis.openNewDynamicModal = openNewDynamicModal;
+    globalThis.closeNewDynamicModal = closeNewDynamicModal;
+    globalThis.submitNewDynamic = submitNewDynamic;
     globalThis.initCaseDynamics = initCaseDynamics;
 })();
