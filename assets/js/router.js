@@ -194,6 +194,11 @@
             setTimeout(function () {
                 if (typeof window.__loadDashboardView === 'function') window.__loadDashboardView();
             }, 50);
+        },
+        client: function () {
+            setTimeout(function () {
+                if (typeof window.initClientsView === 'function') window.initClientsView();
+            }, 50);
         }
     };
 

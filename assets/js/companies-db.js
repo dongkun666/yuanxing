@@ -206,6 +206,11 @@
         }
     ];
 
+    // ===== API 联调状态 =====
+    // _COMPANIES_FALLBACK: mock 兜底数据 (不可变); _companiesData: 当前数据集 (API 成功覆盖)
+    var _COMPANIES_FALLBACK = _companiesData.slice();
+    var _companiesApiFailed = false; // 后端不可达标记, 命中后本次会话不再重试
+
     var _isLoading = false;
     var _closeCompanyDetail = null;
 
@@ -445,16 +450,99 @@
             '</div>';
     }
 
+    // ===== API 联调 (mock 兜底) =====
+    var _COMPANY_ICON_COLORS = [
+        ['bg-gradient-to-br from-orange-100 to-amber-50', 'text-orange-600'],
+        ['bg-gradient-to-br from-blue-100 to-cyan-50', 'text-blue-600'],
+        ['bg-gradient-to-br from-green-100 to-emerald-50', 'text-green-600'],
+        ['bg-gradient-to-br from-purple-100 to-violet-50', 'text-purple-600'],
+        ['bg-gradient-to-br from-red-100 to-rose-50', 'text-red-500']
+    ];
+
+    function pickCompanyIcon(name) {
+        var n = name || '';
+        var hash = 0;
+        for (var i = 0; i < n.length; i++) {
+            hash = (hash + n.charCodeAt(i)) % _COMPANY_ICON_COLORS.length;
+        }
+        return _COMPANY_ICON_COLORS[hash];
+    }
+
+    // 将后端 CompanyOut 归一化为前端结构 (兼容已归一化对象)
+    function normalizeCompany(c) {
+        if (!c) return null;
+        var name = c.company_name || c.name || '';
+        var ic = pickCompanyIcon(name);
+        return {
+            id: (c.id !== undefined && c.id !== null) ? c.id : c.unified_id,
+            name: name,
+            creditCode: c.unified_id || c.credit_code || c.creditCode || '',
+            legalRep: c.legal_rep || c.legalRep || '—',
+            registeredCapital: c.registered_capital || c.registeredCapital || '—',
+            establishDate: c.establish_date || c.establishDate || '',
+            status: c.business_status || c.status || '存续',
+            industry: c.industry || '',
+            legalRisk: c.legal_risk || c.legalRisk || 0,
+            operatingRisk: c.operating_risk || c.operatingRisk || 0,
+            ipCount: c.ip_count || c.ipCount || 0,
+            iconBg: c.iconBg || ic[0],
+            iconColor: c.iconColor || ic[1]
+        };
+    }
+
+    // 从 API 加载企业列表 (失败 reject)
+    function loadCompaniesFromAPI(params) {
+        if (typeof API === 'undefined' || !API.companies || !API.companies.list) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.companies.list(params || { limit: 50 }, { showError: false }).then(function (res) {
+            if (res && res.ok && Array.isArray(res.data)) {
+                var list = res.data.map(normalizeCompany).filter(function (x) { return x; });
+                if (list.length > 0) return list;
+            }
+            throw new Error('API response invalid');
+        });
+    }
+
+    // 回退到 mock 数据并提示
+    function fallbackToMockCompanies(reason) {
+        console.warn('[companies-db] API 调用失败, 回退 mock:', reason);
+        _companiesApiFailed = true;
+        _companiesData = _COMPANIES_FALLBACK.slice();
+        showToastMsg('后端不可达, 已切换本地示例数据');
+    }
+
+    // 搜索: 优先 API (关键词走 name 过滤), 失败回退 mock; status/industry/legal 本地二次过滤
     function searchCompanies() {
         renderLoading();
         _isLoading = true;
-        setTimeout(function () {
+        state.page = 1;
+
+        function renderLocal() {
             _isLoading = false;
-            state.page = 1;
             applyFilters();
             applySort();
             renderResults();
-        }, 800);
+        }
+
+        // 后端此前已判定不可达 → 直接走 mock
+        if (_companiesApiFailed || typeof API === 'undefined' || !API.companies || !API.companies.list) {
+            _companiesData = _COMPANIES_FALLBACK.slice();
+            renderLocal();
+            return;
+        }
+
+        var kw = ($('companies-db-keyword') ? $('companies-db-keyword').value : '').trim();
+        var params = { limit: 100 };
+        if (kw) params.name = kw;
+
+        loadCompaniesFromAPI(params).then(function (list) {
+            _companiesData = list;
+            renderLocal();
+        }).catch(function (err) {
+            fallbackToMockCompanies(err && err.message ? err.message : err);
+            renderLocal();
+        });
     }
 
     function quickSearchIndustry(keyword) {
@@ -609,9 +697,29 @@
         _isLoading = false;
         state.page = 1;
         state.sort = 'relevance';
+
+        // 先渲染 mock (立即可见)
+        _companiesData = _COMPANIES_FALLBACK.slice();
         applyFilters();
         applySort();
         renderResults();
+
+        // 尝试从 API 加载真实数据覆盖 (失败保持 mock)
+        if (!_companiesApiFailed && typeof API !== 'undefined' && API.companies && API.companies.list) {
+            renderLoading();
+            loadCompaniesFromAPI({ limit: 50 }).then(function (list) {
+                _companiesData = list;
+                applyFilters();
+                applySort();
+                renderResults();
+            }).catch(function (err) {
+                console.warn('[companies-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                _companiesApiFailed = true;
+                applyFilters();
+                applySort();
+                renderResults();
+            });
+        }
     }
 
     globalThis.initCompaniesDb = initCompaniesDb;

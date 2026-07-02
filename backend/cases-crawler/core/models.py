@@ -233,3 +233,39 @@ class CrawlerRun(Base):
     items_failed: Mapped[int] = mapped_column(Integer, default=0)
     error_log: Mapped[Optional[str]] = mapped_column(Text)
     config: Mapped[Optional[dict]] = mapped_column(JSON)
+
+
+# ========== 客户 ==========
+class Client(Base):
+    """客户表 (律所维度的客户主档)
+
+    Fields:
+        id            PK (autoincrement)
+        client_id     客户业务 ID (unique, CL-uuid8)
+        firm_id       律所 ID (FK -> firms.id)
+        name          客户名称 (个人姓名 / 企业名称)
+        client_type   客户类型 (personal 个人 / enterprise 企业)
+        id_number     证件号 (身份证 / 统一社会信用代码)
+        phone         联系电话
+        email         邮箱
+        address       地址
+        grade         客户分级 (A / B / C / D)
+        notes         备注
+        created_at    创建时间
+        updated_at    更新时间
+    """
+    __tablename__ = "clients"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    client_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    firm_id: Mapped[Optional[str]] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
+    name: Mapped[str] = mapped_column(String(256), index=True)
+    client_type: Mapped[str] = mapped_column(String(16), default="personal", index=True)
+    id_number: Mapped[Optional[str]] = mapped_column(String(64))
+    phone: Mapped[Optional[str]] = mapped_column(String(32), index=True)
+    email: Mapped[Optional[str]] = mapped_column(String(128))
+    address: Mapped[Optional[str]] = mapped_column(String(512))
+    grade: Mapped[str] = mapped_column(String(8), default="C", index=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

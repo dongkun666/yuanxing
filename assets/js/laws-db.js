@@ -173,6 +173,11 @@
         }
     ];
 
+    // ===== API 联调状态 =====
+    // _lawsData: 当前数据集 (API 成功 → API 数据; 失败 → LAWS 兜底)
+    var _lawsData = LAWS.slice();
+    var _lawsApiFailed = false; // 后端不可达标记, 命中后本次会话不再重试
+
     // ===== 读取检索条件并过滤 =====
     function getFilteredLaws() {
         var kwInput = document.getElementById('laws-db-keyword');
@@ -182,7 +187,7 @@
         var level = (levelSel && levelSel.value) || '全部层级';
         var organ = (organSel && organSel.value) || '全部机关';
 
-        return LAWS.filter(function (law) {
+        return _lawsData.filter(function (law) {
             var matchKw =
                 !keyword ||
                 law.name.toLowerCase().indexOf(keyword) > -1 ||
@@ -395,13 +400,85 @@
         });
     }
 
-    // ===== 检索 (带 1s loading) =====
+    // ===== API 联调 (mock 兜底) =====
+    // 后端 law_type → 前端 level (中文效力层级, 用于 LEVEL_STYLES 与下拉过滤)
+    function mapLawLevel(t) {
+        if (!t) return '法律';
+        var s = String(t);
+        if (LEVEL_STYLES[s]) return s;
+        if (s.indexOf('法律') >= 0) return '法律';
+        if (s.indexOf('行政') >= 0) return '行政法规';
+        if (s.indexOf('司法') >= 0) return '司法解释';
+        if (s.indexOf('规章') >= 0 || s.indexOf('部门') >= 0) return '部门规章';
+        return s;
+    }
+
+    // 将后端 LawOut 归一化为前端结构 (兼容已归一化对象)
+    function normalizeLaw(l) {
+        if (!l) return null;
+        var publishInfo = l.publishInfo;
+        if (!publishInfo) {
+            var parts = [];
+            if (l.issue_date) parts.push(String(l.issue_date).slice(0, 10) + ' 公布');
+            if (l.effective_date) parts.push(String(l.effective_date).slice(0, 10) + ' 施行');
+            publishInfo = parts.join(' · ') || (l.title || '');
+        }
+        return {
+            id: l.law_id || ('api-' + l.id),
+            name: l.title || l.name || '',
+            publishInfo: publishInfo,
+            level: mapLawLevel(l.law_type || l.level),
+            organ: l.organ || '',
+            status: l.status || '现行有效'
+        };
+    }
+
+    // 从 API 加载法规列表 (失败 reject)
+    function loadLawsFromAPI(params) {
+        if (typeof API === 'undefined' || !API.laws || !API.laws.list) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.laws.list(params || { limit: 50 }, { showError: false }).then(function (res) {
+            if (res && res.ok && Array.isArray(res.data)) {
+                var list = res.data.map(normalizeLaw).filter(function (x) { return x; });
+                if (list.length > 0) return list;
+            }
+            throw new Error('API response invalid');
+        });
+    }
+
+    // 回退到 mock 数据并提示
+    function fallbackToMockLaws(reason) {
+        console.warn('[laws-db] API 调用失败, 回退 mock:', reason);
+        _lawsApiFailed = true;
+        _lawsData = LAWS.slice();
+        if (typeof showToast === 'function') showToast('后端不可达, 已切换本地示例数据');
+    }
+
+    // ===== 检索: 优先 API, 失败回退 mock =====
     function searchLaws() {
         showLoading();
         state.page = 1;
-        setTimeout(function () {
+
+        function renderLocal() {
             renderLaws(getFilteredLaws());
-        }, 1000);
+        }
+
+        // 后端此前已判定不可达 → 直接走 mock
+        if (_lawsApiFailed || typeof API === 'undefined' || !API.laws || !API.laws.list) {
+            _lawsData = LAWS.slice();
+            renderLocal();
+            return;
+        }
+
+        // API list 仅支持 law_type/status 过滤, 关键词/机关在本地 getFilteredLaws 二次过滤
+        loadLawsFromAPI({ limit: 100 }).then(function (list) {
+            _lawsData = list;
+            renderLocal();
+        }).catch(function (err) {
+            fallbackToMockLaws(err && err.message ? err.message : err);
+            renderLocal();
+        });
     }
 
     // ===== 分类卡片筛选 =====
@@ -428,15 +505,15 @@
         if (levelSel) levelSel.selectedIndex = 0;
         if (organSel) organSel.selectedIndex = 0;
         state.page = 1;
-        renderLaws(LAWS);
+        renderLaws(_lawsData);
     }
 
     var _closeLawDetail = null;
 
     // ===== 法规详情 (toast 提示) =====
     function openLawDetail(id) {
-        var law = LAWS.find(function (x) {
-            return x.id === id;
+        var law = _lawsData.find(function (x) {
+            return String(x.id) === String(id);
         });
         if (!law) {
             if (typeof showToast === 'function') showToast('未找到法规 #' + id);
@@ -526,12 +603,27 @@
         view.dataset.lawsDbInit = '1';
 
         renderStats();
-        renderLaws(LAWS);
+        // 先渲染 mock (立即可见)
+        _lawsData = LAWS.slice();
+        renderLaws(_lawsData);
 
         var keywordInput = document.getElementById('laws-db-keyword');
         if (keywordInput) {
             keywordInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') searchLaws();
+            });
+        }
+
+        // 尝试从 API 加载真实数据覆盖 (失败保持 mock)
+        if (!_lawsApiFailed && typeof API !== 'undefined' && API.laws && API.laws.list) {
+            showLoading();
+            loadLawsFromAPI({ limit: 100 }).then(function (list) {
+                _lawsData = list;
+                renderLaws(getFilteredLaws());
+            }).catch(function (err) {
+                console.warn('[laws-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                _lawsApiFailed = true;
+                renderLaws(getFilteredLaws());
             });
         }
     }

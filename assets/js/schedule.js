@@ -5,6 +5,42 @@
  */
 
 var _scheduleListInitialized = false;
+var _scheduleApiLoaded = false;
+var _scheduleApiLoading = false;
+
+// 从后端 API 加载日程列表 (失败保留 mock/localStorage 数据)
+// 模式: API 优先 + mock 兜底 (参考 knowledge.js)
+function loadSchedulesFromAPI() {
+    if (_scheduleApiLoading) return Promise.resolve(false);
+    if (typeof API === 'undefined' || !API.schedule) {
+        console.warn('[schedule] API 未加载, 使用本地数据');
+        return Promise.resolve(false);
+    }
+    _scheduleApiLoading = true;
+    return API.schedule.list({}, { showError: false })
+        .then(function (res) {
+            if (res && res.ok && res.data && Array.isArray(res.data.items)) {
+                AppState.scheduleData = res.data.items;
+                persistSchedule();
+                _scheduleApiLoaded = true;
+                if (typeof renderScheduleList === 'function') renderScheduleList();
+                if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
+                if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
+                console.info('[schedule] 后端数据加载完成 (' + res.data.items.length + ' 项)');
+                return true;
+            }
+            console.warn('[schedule] API list 返回非 ok, 保留本地数据:', res);
+            return false;
+        })
+        .catch(function (err) {
+            console.warn('[schedule] API list 失败, 保留本地数据:', err);
+            return false;
+        })
+        .then(function (ok) {
+            _scheduleApiLoading = false;
+            return ok;
+        });
+}
 
 function showScheduleSkeleton() {
     var skeleton = document.getElementById('scheduleSkeletonContainer');
@@ -28,6 +64,9 @@ function initScheduleListWithSkeleton() {
 
     var startTime = Date.now();
     var minDuration = 500;
+
+    // 异步从后端加载日程 (失败保留本地 mock/localStorage 数据)
+    loadSchedulesFromAPI();
 
     setTimeout(function () {
         var elapsed = Date.now() - startTime;
@@ -612,9 +651,6 @@ async function saveSchedule() {
     if (saveBtn) Utils.setButtonLoading(saveBtn, '保存中...');
 
     try {
-        await new Promise(function (resolve) {
-            setTimeout(resolve, 500);
-        });
         const type = document.querySelector('input[name="sched-type"]:checked')?.value || '其他';
         const caseSelect = document.getElementById('sched-case');
         const caseVal = caseSelect ? caseSelect.value : '';
@@ -633,7 +669,7 @@ async function saveSchedule() {
                 return s.id === _editingScheduleId;
             });
             if (idx > -1) {
-                AppState.scheduleData[idx] = Object.assign({}, AppState.scheduleData[idx], {
+                var updateData = {
                     title: title,
                     date: date,
                     time: time,
@@ -644,10 +680,31 @@ async function saveSchedule() {
                     location: note || '',
                     note: note,
                     remind: remind
-                });
+                };
+
+                // 尝试调 API 更新 (失败回退本地)
+                var updateApiOk = false;
+                try {
+                    if (typeof API !== 'undefined' && API.schedule) {
+                        var updateRes = await API.schedule.update(_editingScheduleId, updateData, {
+                            showError: false,
+                            timeoutMs: 5000
+                        });
+                        if (updateRes && updateRes.ok) {
+                            updateApiOk = true;
+                            if (updateRes.data) {
+                                if (updateRes.data.endTime) updateData.endTime = updateRes.data.endTime;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[schedule] API update 失败, 回退本地:', e);
+                }
+
+                AppState.scheduleData[idx] = Object.assign({}, AppState.scheduleData[idx], updateData);
                 persistSchedule();
                 closeScheduleModal();
-                showToast('日程已更新');
+                showToast(updateApiOk ? '日程已更新' : '日程已更新 (本地)');
                 renderScheduleList();
                 if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
                 if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
@@ -677,8 +734,8 @@ async function saveSchedule() {
             return; // 等待用户选择
         }
 
-        // 新建模式: push 到日程数据
-        const newItem = {
+        // 新建模式: push 到日程数据 (尝试调 API, 失败回退本地)
+        var newItem = {
             id: Date.now(),
             title: title,
             date: date,
@@ -691,10 +748,26 @@ async function saveSchedule() {
             note: note,
             remind: remind
         };
+        var createApiOk = false;
+        try {
+            if (typeof API !== 'undefined' && API.schedule) {
+                var createRes = await API.schedule.create(newItem, {
+                    showError: false,
+                    timeoutMs: 5000
+                });
+                if (createRes && createRes.ok && createRes.data) {
+                    createApiOk = true;
+                    if (createRes.data.id) newItem.id = createRes.data.id;
+                    if (createRes.data.endTime) newItem.endTime = createRes.data.endTime;
+                }
+            }
+        } catch (e) {
+            console.warn('[schedule] API create 失败, 回退本地:', e);
+        }
         AppState.scheduleData.push(newItem);
         persistSchedule();
         closeScheduleModal();
-        showToast('日程已创建', 'success');
+        showToast(createApiOk ? '日程已创建' : '日程已创建 (本地)', 'success');
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
@@ -724,16 +797,23 @@ async function deleteScheduleItem(id, btn) {
             return;
         }
 
-        await new Promise(function (resolve) {
-            setTimeout(resolve, 300);
-        });
+        // 尝试调 API 删除 (失败回退本地)
+        var delApiOk = false;
+        try {
+            if (typeof API !== 'undefined' && API.schedule) {
+                var delRes = await API.schedule.delete(id, { showError: false, timeoutMs: 5000 });
+                if (delRes && delRes.ok) delApiOk = true;
+            }
+        } catch (e) {
+            console.warn('[schedule] API delete 失败, 回退本地:', e);
+        }
 
         var idx = AppState.scheduleData.findIndex(function (s) {
             return s.id === id;
         });
         if (idx > -1) AppState.scheduleData.splice(idx, 1);
         persistSchedule();
-        Utils.showToast('success', '日程已删除');
+        Utils.showToast('success', delApiOk ? '日程已删除' : '日程已删除 (本地)');
         renderScheduleList();
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();

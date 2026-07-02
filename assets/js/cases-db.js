@@ -210,6 +210,11 @@
         keyword: ''
     };
 
+    // ===== API 联调状态 =====
+    // _casesData: 当前数据集 (API 成功 → API 数据; 失败 → CASES_DB 兜底)
+    var _casesData = CASES_DB.slice();
+    var _casesApiFailed = false; // 后端不可达标记, 命中后本次会话不再重试, 避免每次搜索卡顿
+
     // ===== 工具 =====
     function $(id) {
         return document.getElementById(id);
@@ -258,7 +263,7 @@
         // 年份选项形如 "2026年", 提取数字
         var yearNum = yearActive ? year.replace(/[^0-9]/g, '') : '';
 
-        state.filtered = CASES_DB.filter(function (c) {
+        state.filtered = _casesData.filter(function (c) {
             var matchKw = true;
             if (kw) {
                 var k = kw.toLowerCase();
@@ -496,18 +501,137 @@
         if (pager) pager.innerHTML = '';
     }
 
+    // ===== API 联调 (mock 兜底) =====
+    // 从法院名推导层级: 1=最高 2=高级 3=中级 4=基层
+    function deriveCourtLevel(court) {
+        if (!court) return 4;
+        if (court.indexOf('最高人民法院') >= 0) return 1;
+        if (court.indexOf('高级') >= 0) return 2;
+        if (court.indexOf('中级') >= 0) return 3;
+        return 4;
+    }
+
+    // 将后端 CaseOut 归一化为前端结构 (兼容已归一化对象)
+    function normalizeCase(c) {
+        if (!c) return null;
+        var court = c.court || '';
+        var summary = c.summary || c.parties || c.full_text || c.legal_basis || '';
+        if (summary && summary.length > 240) summary = summary.slice(0, 240) + '…';
+        return {
+            id: c.doc_id || c.id || ('api-' + Math.random().toString(36).slice(2)),
+            title: c.case_name || c.title || '',
+            court: court,
+            courtLevel: c.courtLevel || deriveCourtLevel(court),
+            date: c.judgment_date || c.date || '',
+            cause: c.cause || '',
+            caseType: c.cause_category || c.caseType || '民事',
+            summary: summary || '（详情见裁判文书全文）'
+        };
+    }
+
+    // 读取当前筛选条件 (供 API 参数构造与本地过滤)
+    function readFilters() {
+        var kwInput = $('cases-db-keyword');
+        var causeSel = $('cases-db-cause');
+        var courtSel = $('cases-db-court');
+        var yearSel = $('cases-db-year');
+        var kw = (kwInput ? kwInput.value : '').trim();
+        var cause = causeSel ? causeSel.value : '全部案由';
+        var court = courtSel ? courtSel.value : '全部法院';
+        var year = yearSel ? yearSel.value : '全部年份';
+        var causeActive = cause && cause !== '全部案由';
+        var courtActive = court && court !== '全部法院';
+        var yearActive = year && year !== '全部年份';
+        var yearNum = yearActive ? year.replace(/[^0-9]/g, '') : '';
+        return {
+            keyword: kw,
+            cause: causeActive ? cause : null,
+            court: courtActive ? court : null,
+            year: yearNum ? Number(yearNum) : null
+        };
+    }
+
+    // 从 API 加载判例列表 (失败 reject)
+    function loadCasesFromAPI(params) {
+        if (typeof API === 'undefined' || !API.caseLaw || !API.caseLaw.list) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.caseLaw.list(params || { limit: 50 }, { showError: false }).then(function (res) {
+            if (res && res.ok && Array.isArray(res.data)) {
+                var list = res.data.map(normalizeCase).filter(function (x) { return x; });
+                if (list.length > 0) return list;
+            }
+            throw new Error('API response invalid');
+        });
+    }
+
+    // 调 API 全文搜索 (关键词命中), 失败 reject
+    function searchCasesViaAPI(keyword) {
+        if (typeof API === 'undefined' || !API.search || !API.search.cases) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.search.cases(keyword, {}, { showError: false }).then(function (res) {
+            var items = null;
+            if (res && res.ok && res.data) {
+                if (Array.isArray(res.data.items)) items = res.data.items;
+                else if (Array.isArray(res.data)) items = res.data;
+            }
+            if (!items || items.length === 0) throw new Error('search empty or invalid');
+            return items.map(normalizeCase).filter(function (x) { return x; });
+        });
+    }
+
+    // 回退到 mock 数据并提示
+    function fallbackToMockCases(reason) {
+        console.warn('[cases-db] API 调用失败, 回退 mock:', reason);
+        _casesApiFailed = true;
+        _casesData = CASES_DB.slice();
+        if (typeof showToast === 'function') showToast('后端不可达, 已切换本地示例数据');
+    }
+
     // ===== 对外 API =====
 
-    // 检索 (搜索按钮): 显示 1s loading 后渲染
+    // 检索 (搜索按钮): 优先 API (关键词→全文检索 / 否则→列表筛选), 失败回退 mock
     function searchCases() {
         showLoading();
         if (typeof showToast === 'function') showToast('正在检索案例...');
-        setTimeout(function () {
+
+        var filters = readFilters();
+        state.keyword = filters.keyword;
+
+        function renderLocal() {
             state.page = 1;
             applyFilters();
             applySort();
             renderResults();
-        }, 1000);
+        }
+
+        // 后端此前已判定不可达 → 直接走 mock
+        if (_casesApiFailed || typeof API === 'undefined' || !API.caseLaw || !API.search) {
+            _casesData = CASES_DB.slice();
+            renderLocal();
+            return;
+        }
+
+        var apiPromise;
+        if (filters.keyword && API.search.cases) {
+            apiPromise = searchCasesViaAPI(filters.keyword);
+        } else {
+            apiPromise = loadCasesFromAPI({
+                cause: filters.cause,
+                year: filters.year,
+                court: filters.court,
+                limit: 50
+            });
+        }
+
+        apiPromise.then(function (list) {
+            _casesData = list;
+            renderLocal();
+        }).catch(function (err) {
+            fallbackToMockCases(err && err.message ? err.message : err);
+            renderLocal();
+        });
     }
 
     // 切换排序: 读取排序下拉, 重新排序并回到第 1 页
@@ -569,9 +693,9 @@
     // 查看案例详情
     function openCaseDetail(id) {
         var c = null;
-        for (var i = 0; i < CASES_DB.length; i++) {
-            if (CASES_DB[i].id === id) {
-                c = CASES_DB[i];
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(id)) {
+                c = _casesData[i];
                 break;
             }
         }
@@ -653,7 +777,7 @@
         }
     }
 
-    // 初始化: 重置筛选/排序, 渲染全部案例 (首次进入视图时调用)
+    // 初始化: 重置筛选/排序, 先渲染 mock, 再尝试从 API 加载覆盖 (失败保持 mock)
     function initCasesDb() {
         state.page = 1;
         state.sort = 'relevance';
@@ -671,9 +795,29 @@
         var sort = $('cases-db-sort');
         if (sort) sort.selectedIndex = 0;
 
+        // 先用 mock 渲染 (立即可见)
+        _casesData = CASES_DB.slice();
         applyFilters();
         applySort();
         renderResults();
+
+        // 尝试从 API 加载真实数据覆盖
+        if (!_casesApiFailed && typeof API !== 'undefined' && API.caseLaw && API.caseLaw.list) {
+            showLoading();
+            loadCasesFromAPI({ limit: 50 }).then(function (list) {
+                _casesData = list;
+                applyFilters();
+                applySort();
+                renderResults();
+            }).catch(function (err) {
+                console.warn('[cases-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                _casesApiFailed = true;
+                // 保持已渲染的 mock 数据
+                applyFilters();
+                applySort();
+                renderResults();
+            });
+        }
     }
 
     // ===== 双绑定 =====

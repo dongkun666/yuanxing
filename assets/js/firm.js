@@ -83,6 +83,13 @@
     var _closeFirmSetting = null;
     var _closeMemberDetail = null;
 
+    // demo 律所 ID (后端联调用)
+    var FIRM_ID = 'firm-001';
+
+    // 数据加载状态: 'idle' | 'loading' | 'loaded' | 'error'
+    var _firmDataState = 'idle';
+    var _firmDataLoaded = false;
+
     // ===== 渲染统计卡片 =====
     function renderStats() {
         var container = document.getElementById('firm-stats');
@@ -606,8 +613,106 @@
         }
     }
 
+    // ===== 从后端 API 加载律所数据 (失败回退 mock) =====
+    function loadFirmDataFromAPI() {
+        if (_firmDataState === 'loading') return;
+        _firmDataState = 'loading';
+
+        if (typeof API === 'undefined' || !API.firm) {
+            _firmDataState = 'error';
+            console.warn('[firm] API 未加载, 使用 mock 数据');
+            return;
+        }
+
+        var statsOk = false;
+        var lawyersOk = false;
+
+        // 并行加载统计 + 律师列表
+        Promise.all([
+            API.firm.getStats(FIRM_ID, { showError: false }).then(function (res) {
+                if (res && res.ok && res.data) {
+                    statsOk = true;
+                    _applyStatsFromAPI(res.data);
+                } else {
+                    console.warn('[firm] getStats 返回非 ok, 保留 mock:', res);
+                }
+                return res;
+            }).catch(function (err) {
+                console.warn('[firm] getStats 失败, 保留 mock:', err);
+                return null;
+            }),
+            API.firm.getLawyers(FIRM_ID, {}, { showError: false }).then(function (res) {
+                if (res && res.ok && Array.isArray(res.data)) {
+                    lawyersOk = true;
+                    _applyMembersFromAPI(res.data);
+                } else {
+                    console.warn('[firm] getLawyers 返回非 ok, 保留 mock:', res);
+                }
+                return res;
+            }).catch(function (err) {
+                console.warn('[firm] getLawyers 失败, 保留 mock:', err);
+                return null;
+            })
+        ]).then(function () {
+            _firmDataState = (statsOk || lawyersOk) ? 'loaded' : 'error';
+            _firmDataLoaded = true;
+
+            // 任一接口成功都重渲染对应区块
+            if (statsOk) renderStats();
+            if (lawyersOk) renderMemberList();
+
+            if (statsOk && lawyersOk) {
+                console.info('[firm] 后端数据加载完成');
+            } else if (statsOk || lawyersOk) {
+                console.info('[firm] 部分后端数据加载完成 (其余保留 mock)');
+            } else {
+                console.warn('[firm] 后端不可达, 全部保留 mock 数据');
+            }
+        }).catch(function (err) {
+            _firmDataState = 'error';
+            _firmDataLoaded = true;
+            console.warn('[firm] 加载后端数据异常, 保留 mock:', err);
+        });
+    }
+
+    // 将后端 stats 数据合并到 _statsData (仅更新 API 提供的字段)
+    function _applyStatsFromAPI(data) {
+        if (!data || typeof data !== 'object') return;
+        // 团队成员数 (lawyer_count)
+        if (typeof data.lawyer_count === 'number' && _statsData[0]) {
+            _statsData[0].value = String(data.lawyer_count);
+        }
+        // 本月工时 (month_hours) - 复用「本月收费」卡片显示工时
+        if (typeof data.month_hours === 'number' && _statsData[2]) {
+            _statsData[2].value = data.month_hours + 'h';
+            _statsData[2].label = '本月工时';
+        }
+    }
+
+    // 将后端律师列表数据映射为前端 _membersData 格式
+    function _applyMembersFromAPI(lawyers) {
+        if (!Array.isArray(lawyers) || lawyers.length === 0) return;
+        _membersData = lawyers.map(function (l, idx) {
+            var specialties = l.specialties;
+            var field = '';
+            if (Array.isArray(specialties)) {
+                field = specialties.join(' · ');
+            } else if (typeof specialties === 'string') {
+                field = specialties;
+            }
+            return {
+                id: l.id || (idx + 1),
+                name: l.name || '未命名律师',
+                position: l.role || '执业律师',
+                field: field || '综合业务',
+                online: true
+            };
+        });
+    }
+
     // ===== 初始化（视图加载时调用） =====
     function initFirm() {
+        // 先用 mock 数据立即渲染 (避免 UI 空白)
         renderStats();
         renderMemberList();
 
@@ -617,6 +722,9 @@
                 Animations.initPageAnimations(view);
             }
         }
+
+        // 异步从后端加载 (失败保留 mock)
+        loadFirmDataFromAPI();
     }
 
     globalThis.initFirm = initFirm;
@@ -628,4 +736,5 @@
     globalThis.toggleMemberStatus = toggleMemberStatus;
     globalThis.openMemberDetail = openMemberDetail;
     globalThis.closeMemberDetail = closeMemberDetail;
+    globalThis.loadFirmDataFromAPI = loadFirmDataFromAPI;
 })();

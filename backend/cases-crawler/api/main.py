@@ -238,6 +238,32 @@ try:
 except Exception as e:
     logger.warning(f"W30 phase6-ai-backend AI 服务 API router 加载失败 (非致命): {e}")
 
+# W31 phase6-clients-backend (lex-coder · 2026-07-02) 客户管理 API
+# 7 端点 + 1 health = 8 endpoints
+# 端点: GET /api/clients (列表/搜索/过滤), GET /api/clients/{client_id} (详情),
+#       POST /api/clients (创建), PUT /api/clients/{client_id} (更新),
+#       DELETE /api/clients/{client_id} (删除),
+#       POST /api/clients/{client_id}/conflict-check (利益冲突检查),
+#       GET /api/clients/stats (统计)
+# W31: 客户管理 API
+try:
+    from api.clients_router import router as clients_router
+    app.include_router(clients_router)
+    logger.info("W31 phase6-clients-backend 客户管理 API router registered")
+except Exception as e:
+    logger.warning(f"clients_router 加载失败: {e}")
+
+# 日程管理 (lex-coder · 2026-07-02) Phase 6
+# 4 CRUD + 1 conflicts + 1 today + 1 health = 7 endpoints
+# 端点: GET/POST /api/schedule, PUT/DELETE /api/schedule/{id},
+#       GET /api/schedule/conflicts, GET /api/schedule/today
+try:
+    from api.schedule_router import router as schedule_router
+    app.include_router(schedule_router)
+    logger.info("日程管理 schedule_router registered")
+except Exception as e:
+    logger.warning(f"schedule_router 加载失败: {e}")
+
 
 # ========== 端点 ==========
 @app.get("/api/health")

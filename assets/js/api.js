@@ -1164,6 +1164,165 @@
             }
         },
 
+        // ===== Schedule (Python ai-service) =====
+        schedule: {
+            /**
+             * 获取日程列表 (支持 date_from, date_to, type 过滤)
+             * @param {object} params - { date_from, date_to, type }
+             * @param {object} opts - 请求选项
+             */
+            list: function (params, opts) {
+                opts = opts || {};
+                var qs = buildQueryString(params);
+                return get('/api/schedule' + qs, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 创建日程
+             * @param {object} data - 日程数据
+             * @param {object} opts - 请求选项
+             */
+            create: function (data, opts) {
+                opts = opts || {};
+                return post('/api/schedule', data, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 更新日程
+             * @param {string|number} id - 日程 ID
+             * @param {object} data - 更新字段
+             * @param {object} opts - 请求选项
+             */
+            update: function (id, data, opts) {
+                opts = opts || {};
+                return put('/api/schedule/' + id, data, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 删除日程
+             * @param {string|number} id - 日程 ID
+             * @param {object} opts - 请求选项
+             */
+            delete: function (id, opts) {
+                opts = opts || {};
+                return del('/api/schedule/' + id, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 检查时间冲突 (给定日期+时间, 返回是否有冲突)
+             * @param {object} params - { date, time, exclude_id }
+             * @param {object} opts - 请求选项
+             */
+            checkConflict: function (params, opts) {
+                opts = opts || {};
+                var qs = buildQueryString(params);
+                return get('/api/schedule/conflicts' + qs, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 获取今日日程
+             * @param {object} opts - 请求选项
+             */
+            getToday: function (opts) {
+                opts = opts || {};
+                return get('/api/schedule/today', Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 日程服务健康检查
+             * @param {object} opts - 请求选项
+             */
+            health: function (opts) {
+                opts = opts || {};
+                return get('/api/schedule/health', Object.assign({ service: 'aiService' }, opts));
+            }
+        },
+
+        // ===== 客户管理 (Python ai-service · W31) =====
+        clients: {
+            /**
+             * 获取客户列表 (支持 page / page_size / search / client_type / grade / firm_id)
+             * @param {object} params - 查询参数
+             * @param {object} opts - 请求选项
+             */
+            list: function (params, opts) {
+                opts = opts || {};
+                var qs = buildQueryString(params);
+                return get('/api/clients' + qs, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 获取客户详情
+             * @param {string} clientId - 客户 ID (client_id)
+             * @param {object} opts - 请求选项
+             */
+            get: function (clientId, opts) {
+                opts = opts || {};
+                return get('/api/clients/' + encodeURIComponent(clientId), Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 创建客户
+             * @param {object} data - 客户数据 (name / client_type / id_number / phone / email / address / grade / notes / firm_id)
+             * @param {object} opts - 请求选项
+             */
+            create: function (data, opts) {
+                opts = opts || {};
+                return post('/api/clients', data, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 更新客户
+             * @param {string} clientId - 客户 ID
+             * @param {object} data - 更新字段
+             * @param {object} opts - 请求选项
+             */
+            update: function (clientId, data, opts) {
+                opts = opts || {};
+                return put('/api/clients/' + encodeURIComponent(clientId), data, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 删除客户
+             * @param {string} clientId - 客户 ID
+             * @param {object} opts - 请求选项
+             */
+            delete: function (clientId, opts) {
+                opts = opts || {};
+                return del('/api/clients/' + encodeURIComponent(clientId), Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 利益冲突检查 (基于客户名称匹配其他客户 + 案件当事人)
+             * @param {string} clientId - 客户 ID
+             * @param {object} opts - 请求选项
+             */
+            conflictCheck: function (clientId, opts) {
+                opts = opts || {};
+                return post('/api/clients/' + encodeURIComponent(clientId) + '/conflict-check', {}, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 客户统计 (总数 / 类型分布 / 等级分布)
+             * @param {object} params - { firm_id }
+             * @param {object} opts - 请求选项
+             */
+            getStats: function (params, opts) {
+                opts = opts || {};
+                var qs = buildQueryString(params);
+                return get('/api/clients/stats' + qs, Object.assign({ service: 'aiService' }, opts));
+            },
+
+            /**
+             * 客户管理服务健康检查
+             * @param {object} opts - 请求选项
+             */
+            health: function (opts) {
+                opts = opts || {};
+                return get('/api/clients/health', Object.assign({ service: 'aiService' }, opts));
+            }
+        },
+
         // ===== 工具函数 =====
         utils: {
             /**
