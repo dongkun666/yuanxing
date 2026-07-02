@@ -200,6 +200,11 @@
                     if (typeof window.initArchive === 'function') window.initArchive();
                 }, 50);
             }
+            if (viewId === 'firm') {
+                setTimeout(function() {
+                    if (typeof window.initFirm === 'function') window.initFirm();
+                }, 50);
+            }
             if (viewId === 'orders') {
                 setTimeout(function() {
                     if (typeof window.initOrders === 'function') window.initOrders();
@@ -209,6 +214,26 @@
                 setTimeout(function() {
                     if (typeof window.switchDynamicsView === 'function') window.switchDynamicsView('list');
                     if (typeof window.initCaseDynamics === 'function') window.initCaseDynamics();
+                }, 50);
+            }
+            if (viewId === 'companies-db') {
+                setTimeout(function() {
+                    if (typeof window.initCompaniesDb === 'function') window.initCompaniesDb();
+                }, 50);
+            }
+            if (viewId === 'cases-db') {
+                setTimeout(function() {
+                    if (typeof window.initCasesDb === 'function') window.initCasesDb();
+                }, 50);
+            }
+            if (viewId === 'zhixing') {
+                setTimeout(function() {
+                    if (typeof window.initZhixing === 'function') window.initZhixing();
+                }, 50);
+            }
+            if (viewId === 'laws-db') {
+                setTimeout(function() {
+                    if (typeof window.initLawsDb === 'function') window.initLawsDb();
                 }, 50);
             }
             if (viewId === 'dashboard') {
@@ -300,6 +325,11 @@
                             if (typeof window.initArchive === 'function') window.initArchive();
                         }, 50);
                     }
+                    if (viewId === 'firm') {
+                        setTimeout(function() {
+                            if (typeof window.initFirm === 'function') window.initFirm();
+                        }, 50);
+                    }
                     if (viewId === 'orders') {
                         setTimeout(function() {
                             if (typeof window.initOrders === 'function') window.initOrders();
@@ -309,6 +339,26 @@
                         setTimeout(function() {
                             if (typeof window.switchDynamicsView === 'function') window.switchDynamicsView('list');
                             if (typeof window.initCaseDynamics === 'function') window.initCaseDynamics();
+                        }, 50);
+                    }
+                    if (viewId === 'companies-db') {
+                        setTimeout(function() {
+                            if (typeof window.initCompaniesDb === 'function') window.initCompaniesDb();
+                        }, 50);
+                    }
+                    if (viewId === 'cases-db') {
+                        setTimeout(function() {
+                            if (typeof window.initCasesDb === 'function') window.initCasesDb();
+                        }, 50);
+                    }
+                    if (viewId === 'zhixing') {
+                        setTimeout(function() {
+                            if (typeof window.initZhixing === 'function') window.initZhixing();
+                        }, 50);
+                    }
+                    if (viewId === 'laws-db') {
+                        setTimeout(function() {
+                            if (typeof window.initLawsDb === 'function') window.initLawsDb();
                         }, 50);
                     }
             if (viewId === 'dashboard') {

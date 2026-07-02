@@ -32,6 +32,9 @@
     var _currentCaseFilter = 'all';
     var _searchKeyword = '';
     var _currentView = 'grid';
+    var _currentPage = 1;
+    var _pageSize = 12;
+    var _searchTimer = null;
 
     var _typeOptions = ['全部分类', '文书文件', '证据材料', '合同文件', '图片', '其他'];
     var _caseOptions = ['全部案件', '张三合同纠纷', '李四借贷纠纷', '王五股权转让纠纷', '赵六劳动争议', '孙七建设工程合同纠纷', '周八借款纠纷', '吴九房屋租赁合同纠纷', '某科技公司', '模板库'];
@@ -96,6 +99,10 @@
         if (!container) return;
 
         var filtered = getFilteredAttachments();
+        var totalPages = Math.ceil(filtered.length / _pageSize);
+        if (_currentPage > totalPages) _currentPage = 1;
+        var start = (_currentPage - 1) * _pageSize;
+        var pageData = filtered.slice(start, start + _pageSize);
 
         if (filtered.length === 0) {
             container.className = 'flex-1 flex items-center justify-center';
@@ -108,14 +115,51 @@
 
         if (_currentView === 'grid') {
             container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3';
-            container.innerHTML = filtered.map(function(f) { return renderGridCard(f); }).join('');
+            container.innerHTML = pageData.map(function(f) { return renderGridCard(f); }).join('');
         } else {
             container.className = 'space-y-2';
-            container.innerHTML = filtered.map(function(f) { return renderListItem(f); }).join('');
+            container.innerHTML = pageData.map(function(f) { return renderListItem(f); }).join('');
         }
 
         var countEl = document.getElementById('attachment-count');
         if (countEl) countEl.textContent = '共 ' + filtered.length + ' 个文件';
+
+        renderPagination(filtered.length, totalPages);
+    }
+
+    function renderPagination(total, totalPages) {
+        var existing = document.getElementById('attachment-pagination');
+        if (existing) existing.remove();
+        if (totalPages <= 1) return;
+
+        var container = document.getElementById('attachment-grid');
+        if (!container) return;
+
+        var pagDiv = document.createElement('div');
+        pagDiv.id = 'attachment-pagination';
+        pagDiv.className = 'col-span-full flex items-center justify-center gap-1 mt-4';
+
+        var html = '';
+        if (_currentPage > 1) {
+            html += '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary" onclick="changeAttachmentPage(' + (_currentPage - 1) + ')"><iconify-icon icon="mdi:chevron-left"></iconify-icon></button>';
+        }
+        for (var i = 1; i <= totalPages; i++) {
+            if (i === _currentPage) {
+                html += '<button class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center text-xs font-medium">' + i + '</button>';
+            } else {
+                html += '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-secondary" onclick="changeAttachmentPage(' + i + ')">' + i + '</button>';
+            }
+        }
+        if (_currentPage < totalPages) {
+            html += '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary" onclick="changeAttachmentPage(' + (_currentPage + 1) + ')"><iconify-icon icon="mdi:chevron-right"></iconify-icon></button>';
+        }
+        pagDiv.innerHTML = html;
+        container.appendChild(pagDiv);
+    }
+
+    function changeAttachmentPage(page) {
+        _currentPage = page;
+        renderAttachments();
     }
 
     function initFilters() {
@@ -129,6 +173,7 @@
             }).join('');
             typeSelect.addEventListener('change', function() {
                 _currentTypeFilter = this.value;
+                _currentPage = 1;
                 renderAttachments();
             });
         }
@@ -139,14 +184,20 @@
             }).join('');
             caseSelect.addEventListener('change', function() {
                 _currentCaseFilter = this.value;
+                _currentPage = 1;
                 renderAttachments();
             });
         }
 
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                _searchKeyword = this.value;
-                renderAttachments();
+                clearTimeout(_searchTimer);
+                var val = this.value;
+                _searchTimer = setTimeout(function() {
+                    _searchKeyword = val;
+                    _currentPage = 1;
+                    renderAttachments();
+                }, 300);
             });
         }
     }
@@ -212,5 +263,6 @@
     globalThis.initAttachmentList = initAttachmentList;
     globalThis.downloadAttachment = downloadAttachment;
     globalThis.deleteAttachment = deleteAttachment;
+    globalThis.changeAttachmentPage = changeAttachmentPage;
     globalThis.openBatchUploadModal = openBatchUploadModal;
 })();

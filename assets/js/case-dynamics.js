@@ -15,6 +15,7 @@
     var _currentFilter = 'all';
     var _searchKeyword = '';
     var _currentView = 'list';
+    var _searchTimer = null;
 
     function getFilteredDynamics() {
         return _dynamics.filter(function(item) {
@@ -123,8 +124,12 @@
     function searchDynamics() {
         var input = document.getElementById('dynamics-search-input');
         if (input) {
-            _searchKeyword = input.value;
-            renderDynamics();
+            clearTimeout(_searchTimer);
+            var val = input.value;
+            _searchTimer = setTimeout(function() {
+                _searchKeyword = val;
+                renderDynamics();
+            }, 300);
         }
     }
 

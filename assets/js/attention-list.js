@@ -11,6 +11,7 @@
 
     var _currentFilter = 'all';
     var _searchKeyword = '';
+    var _searchTimer = null;
 
     function getFilteredData() {
         return _attentionData.filter(function(item) {
@@ -90,8 +91,12 @@
         var searchInput = document.getElementById('attention-search');
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                _searchKeyword = this.value;
-                renderAttentionList();
+                clearTimeout(_searchTimer);
+                var val = this.value;
+                _searchTimer = setTimeout(function() {
+                    _searchKeyword = val;
+                    renderAttentionList();
+                }, 300);
             });
         }
     }

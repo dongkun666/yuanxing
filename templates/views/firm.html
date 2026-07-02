@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div id="firm-stats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl border border-bg-border p-5">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center">
@@ -66,9 +66,9 @@
                     <iconify-icon class="text-base text-fg-tertiary" icon="mdi:account-group"></iconify-icon>
                     <h2 class="text-sm font-semibold text-fg-primary">团队成员</h2>
                 </div>
-                <button class="text-xs text-brand hover:underline">查看全部</button>
+                <button class="text-xs text-brand hover:underline" onclick="viewAllMembers()">查看全部</button>
             </div>
-            <div class="space-y-3">
+            <div id="firm-member-list" class="space-y-3">
                 <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-subtle transition-colors">
                     <div class="w-10 h-10 rounded-full bg-brand-tint3 flex items-center justify-center flex-shrink-0">
                         <span class="text-sm font-semibold text-brand">张</span>
@@ -118,32 +118,32 @@
                 <h2 class="text-sm font-semibold text-fg-primary">律所设置</h2>
             </div>
             <div class="space-y-2">
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('basic')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:office-building-outline"></iconify-icon>
                     <span class="text-sm text-fg-secondary">基本信息</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('members')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:account-multiple-plus"></iconify-icon>
                     <span class="text-sm text-fg-secondary">成员管理</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('departments')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:domain"></iconify-icon>
                     <span class="text-sm text-fg-secondary">部门设置</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('fees')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:cash"></iconify-icon>
                     <span class="text-sm text-fg-secondary">收费标准</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('contracts')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:file-document-edit"></iconify-icon>
                     <span class="text-sm text-fg-secondary">合同模板</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
                 </button>
-                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left">
+                <button class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle transition-colors text-left" onclick="openFirmSetting('permissions')">
                     <iconify-icon class="text-lg text-fg-tertiary" icon="mdi:shield-check"></iconify-icon>
                     <span class="text-sm text-fg-secondary">权限管理</span>
                     <iconify-icon class="text-fg-tertiary ml-auto" icon="mdi:chevron-right"></iconify-icon>
