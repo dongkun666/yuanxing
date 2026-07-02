@@ -907,12 +907,45 @@
     ];
 
     // ===== 批量上传 =====
-    // var batchFiles = []; // → AppState.batchFiles
+    var _closeBatchUploadModal = null;
     function openBatchUploadModal() {
-        document.getElementById('batch-upload-modal').classList.remove('hidden');
+        var content =
+            '<div class="space-y-4">' +
+            '<div class="border-2 border-dashed border-bg-border rounded-xl p-8 text-center" id="batch-drop-zone">' +
+            '<iconify-icon icon="mdi:cloud-upload-outline" class="text-4xl text-fg-tertiary mb-2"></iconify-icon>' +
+            '<p class="text-sm text-fg-secondary mb-1">拖拽文件到此处或点击选择</p>' +
+            '<p class="text-xs text-fg-tertiary">支持图片、PDF、Word、Excel，最多20个文件</p>' +
+            '<input type="file" multiple class="hidden" id="batch-file-input" onchange="handleBatchSelect(this)">' +
+            '<button class="mt-3 px-4 py-2 text-xs text-brand bg-brand-tint rounded-lg hover:bg-brand-tint/70" onclick="document.getElementById(\'batch-file-input\').click()">选择文件</button>' +
+            '</div>' +
+            '<div id="batch-progress-area" class="hidden">' +
+            '<div class="flex items-center justify-between mb-2">' +
+            '<span class="text-xs text-fg-secondary">已选 <span id="batch-file-count">0</span> 个文件</span>' +
+            '<button class="text-xs text-fg-tertiary hover:text-fg-secondary" onclick="clearBatchFiles()">清空</button>' +
+            '</div>' +
+            '<div id="batch-file-list" class="space-y-2 max-h-40 overflow-y-auto"></div>' +
+            '</div>' +
+            '</div>';
+
+        var footer =
+            '<button class="px-4 py-2 text-sm text-fg-secondary hover:bg-gray-50 rounded-lg transition-colors" onclick="closeBatchUploadModal()">取消</button>' +
+            '<button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand-tint30 rounded-lg flex items-center gap-1" onclick="confirmBatchUpload()">' +
+            '<iconify-icon icon="mdi:upload"></iconify-icon>上传 <span id="batch-upload-count">0</span> 个文件</button>';
+
+        _closeBatchUploadModal = Utils.showModal({
+            id: 'batch-upload-modal',
+            title: '批量上传',
+            icon: 'mdi:upload-multiple',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
     }
     function closeBatchUploadModal() {
-        document.getElementById('batch-upload-modal').classList.add('hidden');
+        if (_closeBatchUploadModal) {
+            _closeBatchUploadModal();
+            _closeBatchUploadModal = null;
+        }
     }
     function handleBatchSelect(input) {
         for (var i = 0; i < input.files.length; i++) {
