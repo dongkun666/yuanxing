@@ -37,7 +37,7 @@
     function escapeHtml(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -107,10 +107,10 @@
             (points.length === 0
                 ? '<div class="bg-white rounded-xl border border-bg-border p-12 text-center"><iconify-icon class="text-5xl text-fg-disabled" icon="mdi:book-search-outline"></iconify-icon><p class="text-sm text-fg-tertiary mt-3">未找到匹配的司法观点</p><p class="text-[10px] text-fg-disabled mt-1">试试调整搜索关键词或清除筛选</p></div>'
                 : points
-                      .map(function (p) {
-                          return renderPointCard(p);
-                      })
-                      .join('')) +
+                    .map(function (p) {
+                        return renderPointCard(p);
+                    })
+                    .join('')) +
             '</div>';
 
         panel.innerHTML = html;

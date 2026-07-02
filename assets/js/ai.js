@@ -535,7 +535,7 @@
             '<div class="bg-white rounded-xl w-[480px] max-h-[80vh] flex flex-col shadow-2xl" onclick="event.stopPropagation()">' +
             '<div class="flex items-center justify-between p-4 border-b border-bg-border">' +
             '<h3 class="text-base font-semibold text-fg-primary" id="more-action-title">标题</h3>' +
-            '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
+            '<button class="text-fg-tertiary hover:text-fg-secondary" aria-label="关闭" onclick="document.getElementById(\'more-action-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
             '</div>' +
             '<div class="p-5 overflow-y-auto" id="more-action-body"></div>' +
             '<div class="p-4 border-t border-bg-border flex justify-end gap-2" id="more-action-footer"></div>' +

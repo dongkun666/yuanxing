@@ -317,10 +317,10 @@
             '"></iconify-icon>' +
             '</div>' +
             '<span class="text-[10px] text-fg-tertiary opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="text-fg-tertiary hover:text-brand mr-1" onclick="event.stopPropagation(); downloadAttachment(' +
+            '<button class="text-fg-tertiary hover:text-brand mr-1" aria-label="下载文件" onclick="event.stopPropagation(); downloadAttachment(' +
             f.id +
             ')"><iconify-icon icon="mdi:download"></iconify-icon></button>' +
-            '<button class="text-fg-tertiary hover:text-red-500" onclick="event.stopPropagation(); deleteAttachment(' +
+            '<button class="text-fg-tertiary hover:text-red-500" aria-label="删除文件" onclick="event.stopPropagation(); deleteAttachment(' +
             f.id +
             ')"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>' +
             '</span>' +
@@ -376,10 +376,10 @@
             f.date +
             '</span>' +
             '<div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
-            '<button class="p-1 text-fg-tertiary hover:text-brand rounded" onclick="event.stopPropagation(); downloadAttachment(' +
+            '<button class="p-1 text-fg-tertiary hover:text-brand rounded" aria-label="下载文件" onclick="event.stopPropagation(); downloadAttachment(' +
             f.id +
             ')"><iconify-icon icon="mdi:download"></iconify-icon></button>' +
-            '<button class="p-1 text-fg-tertiary hover:text-red-500 rounded" onclick="event.stopPropagation(); deleteAttachment(' +
+            '<button class="p-1 text-fg-tertiary hover:text-red-500 rounded" aria-label="删除文件" onclick="event.stopPropagation(); deleteAttachment(' +
             f.id +
             ')"><iconify-icon icon="mdi:delete-outline"></iconify-icon></button>' +
             '</div>' +

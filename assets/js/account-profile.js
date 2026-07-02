@@ -135,7 +135,7 @@
         toast.innerHTML =
             '<iconify-icon icon="mdi:check-circle" class="text-green-600 text-lg"></iconify-icon><span>' +
             msg +
-            '</span><button onclick="this.parentElement.remove()" class="ml-2 text-green-400 hover:text-green-600"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>';
+            '</span><button onclick="this.parentElement.remove()" class="ml-2 text-green-400 hover:text-green-600" aria-label="关闭提示"><iconify-icon icon="mdi:close" class="text-sm"></iconify-icon></button>';
         document.body.appendChild(toast);
 
         setTimeout(function () {
@@ -158,7 +158,7 @@
                 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E8F3FF] text-[#165DFF] text-[10px] font-medium';
             span.innerHTML =
                 tag.trim() +
-                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
+                ' <button onclick="removeTag(this); autoSaveProfile()" class="hover:text-red-500" aria-label="移除标签"><iconify-icon icon="mdi:close" class="text-xs"></iconify-icon></button>';
             el.parentNode.insertBefore(span, el);
         }
     }

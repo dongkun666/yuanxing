@@ -660,7 +660,7 @@
                 '</div>' +
                 '<button class="text-[10px] mt-1.5 inline-flex items-center gap-0.5 px-2 py-1 rounded bg-white/80 hover:bg-white border border-current/20 transition-colors" onclick="copyDeadlineDate(\'' +
                 formatDate(deadline) +
-                "', '" +
+                '\', \'' +
                 escapeHtml(rule.name) +
                 '\')">' +
                 '<iconify-icon class="text-xs" icon="mdi:content-copy"></iconify-icon>' +

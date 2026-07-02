@@ -751,7 +751,7 @@ function renderScheduleFilterTabs(containerId, scope) {
         htmlStr +=
             '<button type="button" onclick="setScheduleFilter(\'' +
             scope +
-            "', '" +
+            '\', \'' +
             o.value +
             '\')" class="text-[10px] px-2 py-0.5 rounded-full ' +
             cls +
@@ -910,7 +910,7 @@ function renderScheduleList() {
 
 function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, function (m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[m];
     });
 }
 
@@ -1057,7 +1057,7 @@ function openAITrialCoach() {
         '<p class="text-xs text-fg-tertiary mt-0.5">案由: ' +
         escapeHtml(caseType) +
         ' · 律师控场演练</p></div>' +
-        '<button class="text-fg-tertiary hover:text-fg-secondary" onclick="document.getElementById(\'ai-trial-coach-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
+        '<button class="text-fg-tertiary hover:text-fg-secondary" aria-label="关闭" onclick="document.getElementById(\'ai-trial-coach-modal\').classList.add(\'hidden\')"><iconify-icon icon="mdi:close" class="text-xl"></iconify-icon></button>' +
         '</div>' +
         '<div class="p-5 overflow-y-auto flex-1">' +
         '<div class="bg-brand-tint3 border-l-4 border-brand p-3 rounded-r-lg mb-4"><p class="text-xs text-brand font-medium mb-1">AI 引导</p><p class="text-xs text-fg-secondary">本模拟基于 100+ 庭审数据训练. 每轮: 角色发言 → 你 (律师) 应对 → AI 给出优化建议. 重点练"临场反应 + 法条引用 + 关键证据组织"。</p></div>' +
@@ -1091,7 +1091,7 @@ function openAITrialCoach() {
         '</div>' +
         '<div class="p-4 border-t border-bg-border flex justify-end gap-2">' +
         '<button class="px-3 py-1.5 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg" onclick="document.getElementById(\'ai-trial-coach-modal\').classList.add(\'hidden\')">关闭</button>' +
-        "<button class=\"px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg\" onclick=\"if(typeof showToast==='function'){showToast('实战录制功能开发中 (下一版本)', 'info');}\">开始实战录制</button>" +
+        '<button class="px-4 py-1.5 text-xs font-semibold text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="if(typeof showToast===\'function\'){showToast(\'实战录制功能开发中 (下一版本)\', \'info\');}">开始实战录制</button>' +
         '</div>' +
         '</div>';
     modal.classList.remove('hidden');
@@ -1565,8 +1565,8 @@ function openScheduleDetail(id) {
                 days > 0
                     ? '还有 ' + days + ' 天' + (hours > 0 ? ' ' + hours + ' 小时' : '')
                     : hours > 0
-                      ? '还有 ' + hours + ' 小时' + (mins > 0 ? ' ' + mins + ' 分' : '')
-                      : '还有 ' + mins + ' 分钟';
+                        ? '还有 ' + hours + ' 小时' + (mins > 0 ? ' ' + mins + ' 分' : '')
+                        : '还有 ' + mins + ' 分钟';
             iconName = days === 0 ? 'mdi:alarm-light-outline' : days <= 3 ? 'mdi:alarm' : 'mdi:calendar-clock-outline';
         } else if (Math.abs(diffMs) < 60 * 60 * 1000) {
             // 1 小时内已过
@@ -1675,7 +1675,7 @@ function buildConflictResolveContent(conflicts) {
             return (
                 '<button onclick="selectSuggestedSlot(\'' +
                 s.start +
-                "','" +
+                '\',\'' +
                 s.end +
                 '\')" class="text-xs px-3 py-1.5 rounded-full border border-[#165DFF] text-[#165DFF] hover:bg-blue-50 transition-colors">' +
                 s.start +
@@ -2272,10 +2272,10 @@ function submitNewDynamic() {
         '\\n\\n附件：' +
         (AppState.dynamicAttachments.length > 0
             ? AppState.dynamicAttachments
-                  .map(function (a) {
-                      return escapeHtml(a.name);
-                  })
-                  .join(', ')
+                .map(function (a) {
+                    return escapeHtml(a.name);
+                })
+                .join(', ')
             : '无') +
         '\')">查看</button>' +
         '</div>' +

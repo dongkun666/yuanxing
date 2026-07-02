@@ -105,7 +105,7 @@
     function esc(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -122,10 +122,10 @@
             (type === 'success'
                 ? 'bg-success text-white'
                 : type === 'warning'
-                  ? 'bg-warning text-white'
-                  : type === 'error'
-                    ? 'bg-danger text-white'
-                    : 'bg-brand text-white');
+                    ? 'bg-warning text-white'
+                    : type === 'error'
+                        ? 'bg-danger text-white'
+                        : 'bg-brand text-white');
         el.textContent = msg;
         document.body.appendChild(el);
         setTimeout(function () {

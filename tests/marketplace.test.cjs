@@ -163,7 +163,7 @@ describe('marketplace.js - esc', function () {
     it('should escape all HTML special characters', function () {
         assert.strictEqual(esc('<script>'), '&lt;script&gt;');
         assert.strictEqual(esc('"q"'), '&quot;q&quot;');
-        assert.strictEqual(esc("‘a’"), '‘a’’"); // 智能引号不转义，只有直引号
+        assert.strictEqual(esc("a'b"), "a&#39;b");
     });
 
     it('should escape ampersand first', function () {

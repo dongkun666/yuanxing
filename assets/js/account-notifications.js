@@ -22,8 +22,8 @@
                 var trig = triggerSelector
                     ? document.querySelector(triggerSelector)
                     : document.querySelector(
-                          '[onclick*="toggle' + panelId.charAt(0).toUpperCase() + panelId.slice(1) + '"]'
-                      );
+                        '[onclick*="toggle' + panelId.charAt(0).toUpperCase() + panelId.slice(1) + '"]'
+                    );
                 if (panel.contains(e.target)) return;
                 if (trig && trig.contains(e.target)) return;
                 panel.classList.add('hidden');
@@ -189,12 +189,12 @@
                         btn.dataset.type === 'all'
                             ? '全部类型'
                             : {
-                                  document: '文档',
-                                  deadline: '截止',
-                                  case: '案件',
-                                  member: '会员',
-                                  system: '系统'
-                              }[btn.dataset.type] || ''
+                                document: '文档',
+                                deadline: '截止',
+                                case: '案件',
+                                member: '会员',
+                                system: '系统'
+                            }[btn.dataset.type] || ''
                     );
             } else {
                 var iconHtml2 = btn.innerHTML.match(/<iconify-icon[^>]*><\/iconify-icon>/);
@@ -203,12 +203,12 @@
                     btn.dataset.type === 'all'
                         ? '全部类型'
                         : {
-                              document: '文档',
-                              deadline: '截止',
-                              case: '案件',
-                              member: '会员',
-                              system: '系统'
-                          }[btn.dataset.type] || '';
+                            document: '文档',
+                            deadline: '截止',
+                            case: '案件',
+                            member: '会员',
+                            system: '系统'
+                        }[btn.dataset.type] || '';
                 btn.className =
                     'notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1';
                 btn.innerHTML = iconStr2 + escapeHtml(lbl);

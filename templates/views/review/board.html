@@ -316,11 +316,11 @@
       const lawyerIds = ['L1', 'L2', 'L3', 'L4', 'L5'];
 
       // header
-      let html = '<thead><tr class="border-b border-bg-border"><th class="text-left p-2 font-medium text-fg-tertiary">律师 \\ 合同</th>';
+      let html = '<thead><tr class="border-b border-bg-border"><th scope="col" class="text-left p-2 font-medium text-fg-tertiary">律师 \\ 合同</th>';
       contractIds.forEach(cid => {
-        html += `<th class="p-2 font-medium text-fg-tertiary text-center" title="${cid}">${contractShortLabels[cid]}</th>`;
+        html += `<th scope="col" class="p-2 font-medium text-fg-tertiary text-center" title="${cid}">${contractShortLabels[cid]}</th>`;
       });
-      html += '<th class="p-2 font-medium text-fg-tertiary text-center">综合</th></tr></thead>';
+      html += '<th scope="col" class="p-2 font-medium text-fg-tertiary text-center">综合</th></tr></thead>';
 
       // body - 每位律师一行, 显示该律师对该合同 5 维度综合
       html += '<tbody>';

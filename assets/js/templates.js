@@ -496,7 +496,7 @@ function syncCategoryListToModal() {
             ' 个模板)</span>' +
             '</div>' +
             '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' +
-            name.replace(/'/g, "\\'") +
+            name.replace(/'/g, '\\\'') +
             '\')">' +
             '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
         list.appendChild(div);
@@ -545,7 +545,7 @@ function addCategory() {
         '<span class="text-[10px] text-gray-400">(0 个模板)</span>' +
         '</div>' +
         '<button class="text-xs text-red-500 hover:bg-red-50 px-2 py-1 rounded delete-category-btn" onclick="deleteCategory(\'' +
-        name.replace(/'/g, "\\'") +
+        name.replace(/'/g, '\\\'') +
         '\')">' +
         '<iconify-icon icon="mdi:trash-can-outline"></iconify-icon>删除</button>';
     list.appendChild(div);
@@ -556,7 +556,7 @@ function addCategory() {
         tabBtn.className =
             'personal-category-tab text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-[#165DFF] hover:text-[#165DFF]';
         tabBtn.setAttribute('data-category', name);
-        tabBtn.setAttribute('onclick', "filterPersonalByCategory('" + name.replace(/'/g, "\\'") + "', this)");
+        tabBtn.setAttribute('onclick', 'filterPersonalByCategory(\'' + name.replace(/'/g, '\\\'') + '\', this)');
         tabBtn.textContent = name + ' (0)';
         tabs.appendChild(tabBtn);
     }
@@ -835,9 +835,9 @@ function previewOfficialTemplate(cardEl) {
     var footer =
         '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeOfficialTemplatePreview()">关闭</button>' +
         '<button class="h-9 px-4 text-xs text-brand bg-brand-tint border border-brand/20 rounded-lg hover:bg-brand-tint/70" onclick="closeOfficialTemplatePreview(); saveTemplateToPersonal(\'' +
-        escapeHtml(title).replace(/'/g, "\\'") +
+        escapeHtml(title).replace(/'/g, '\\\'') +
         '\')">保存到个人</button>' +
-        "<button class=\"h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg\" onclick=\"closeOfficialTemplatePreview(); if(typeof showToast==='function')showToast('正在下载模板...', 'info')\">下载模板</button>";
+        '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeOfficialTemplatePreview(); if(typeof showToast===\'function\')showToast(\'正在下载模板...\', \'info\')">下载模板</button>';
 
     if (_closeOfficialTemplatePreview) _closeOfficialTemplatePreview();
     _closeOfficialTemplatePreview = Utils.showModal({

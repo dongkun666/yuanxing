@@ -44,10 +44,10 @@
             (type === 'success'
                 ? 'bg-success text-white'
                 : type === 'warning'
-                  ? 'bg-warning text-white'
-                  : type === 'error'
-                    ? 'bg-danger text-white'
-                    : 'bg-brand text-white');
+                    ? 'bg-warning text-white'
+                    : type === 'error'
+                        ? 'bg-danger text-white'
+                        : 'bg-brand text-white');
         el.textContent = msg;
         document.body.appendChild(el);
         setTimeout(function () {
@@ -59,7 +59,7 @@
     function esc(s) {
         if (s === null || s === undefined) return '';
         return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
         });
     }
 
@@ -406,10 +406,10 @@
             var level = el.classList.contains('clause-fatal')
                 ? '致命风险'
                 : el.classList.contains('clause-major')
-                  ? '重大风险'
-                  : el.classList.contains('clause-advisory')
-                    ? '建议风险'
-                    : '合规';
+                    ? '重大风险'
+                    : el.classList.contains('clause-advisory')
+                        ? '建议风险'
+                        : '合规';
             var title = el.querySelector('h5');
             var label = level + ' - ' + (title ? title.textContent.trim() : '条款');
             if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', label);
