@@ -206,11 +206,21 @@
         var gridBtn = document.getElementById('attachment-grid-view');
         var listBtn = document.getElementById('attachment-list-view');
 
+        function setActive(activeBtn, inactiveBtn) {
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand', 'text-white');
+                activeBtn.classList.remove('bg-white', 'text-fg-secondary', 'hover:bg-gray-50');
+            }
+            if (inactiveBtn) {
+                inactiveBtn.classList.add('bg-white', 'text-fg-secondary', 'hover:bg-gray-50');
+                inactiveBtn.classList.remove('bg-brand', 'text-white');
+            }
+        }
+
         if (gridBtn) {
             gridBtn.addEventListener('click', function() {
                 _currentView = 'grid';
-                gridBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white';
-                listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50';
+                setActive(gridBtn, listBtn);
                 renderAttachments();
             });
         }
@@ -218,8 +228,7 @@
         if (listBtn) {
             listBtn.addEventListener('click', function() {
                 _currentView = 'list';
-                listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white';
-                gridBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50';
+                setActive(listBtn, gridBtn);
                 renderAttachments();
             });
         }
@@ -246,12 +255,6 @@
         if (typeof showToast === 'function') {
             showToast('上传功能开发中...');
         }
-    }
-
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     function initAttachmentList() {

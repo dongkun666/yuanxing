@@ -123,12 +123,6 @@
         if (typeof showToast === 'function') showToast('正在跳转订阅页面...');
     }
 
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
     function initOrders() {
         initStatusFilter();
         renderOrders();

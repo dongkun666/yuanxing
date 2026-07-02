@@ -11,6 +11,7 @@
 
     var _currentPage = 1;
     var _pageSize = 10;
+    var _searchTimer = null;
 
     function getFilteredData() {
         var searchInput = document.getElementById('archiveSearchInput');
@@ -52,7 +53,13 @@
         var endIdx = startIdx + _pageSize;
         var pageData = filtered.slice(startIdx, endIdx);
 
-        tbody.innerHTML = pageData.map(function(item) {
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center">' +
+                '<iconify-icon class="text-5xl text-fg-disabled" icon="mdi:archive-search-outline"></iconify-icon>' +
+                '<p class="text-sm text-fg-tertiary mt-3">未找到匹配的归档案件</p>' +
+                '</td></tr>';
+        } else {
+            tbody.innerHTML = pageData.map(function(item) {
             return '<tr class="hover:bg-bg-subtle transition-colors" data-year="' + item.year + '">' +
                 '<td class="py-3 px-4"><input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/></td>' +
                 '<td class="py-3 px-4"><span class="text-xs font-medium text-brand cursor-pointer hover:underline" onclick="openArchiveDetail(' + item.id + ')">' + escapeHtml(item.caseNum) + '</span></td>' +
@@ -71,6 +78,7 @@
                 '</td>' +
                 '</tr>';
         }).join('');
+        }
 
         if (resultCount) resultCount.textContent = '共 ' + filtered.length + ' 条';
         if (paginationInfo) paginationInfo.textContent = '共 ' + filtered.length + ' 条，第 ' + _currentPage + '/' + totalPages + ' 页';
@@ -94,8 +102,11 @@
     }
 
     function filterArchiveList() {
-        _currentPage = 1;
-        renderArchiveTable();
+        clearTimeout(_searchTimer);
+        _searchTimer = setTimeout(function() {
+            _currentPage = 1;
+            renderArchiveTable();
+        }, 300);
     }
 
     function toggleAllArchive(checkbox) {
@@ -125,12 +136,6 @@
             renderArchiveTable();
             if (typeof showToast === 'function') showToast('案件已删除');
         }
-    }
-
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     function initArchive() {

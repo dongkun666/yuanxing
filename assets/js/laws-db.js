@@ -54,13 +54,6 @@
         { id: 'law-017', name: '市场监督管理行政处罚程序规定', publishInfo: '2021年6月24日市场监管总局令第42号', level: '部门规章', organ: '市场监管总局', status: '现行有效' }
     ];
 
-    // ===== 工具: HTML 转义 =====
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = (text === null || text === undefined) ? '' : String(text);
-        return div.innerHTML;
-    }
-
     // ===== 读取检索条件并过滤 =====
     function getFilteredLaws() {
         var kwInput = document.getElementById('laws-db-keyword');

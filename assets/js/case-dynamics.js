@@ -51,8 +51,7 @@
     }
 
     function renderTimelineItem(item, index) {
-        var isLast = index === getFilteredDynamics().length - 1;
-        return '<div class="relative pb-8 ' + (isLast ? '' : '') + '">' +
+        return '<div class="relative pb-8">' +
             '<div class="absolute -left-8 top-1 w-6 h-6 rounded-full ' + item.iconBg + ' border-2 border-white flex items-center justify-center z-10">' +
             '<iconify-icon class="' + item.iconColor + ' text-sm" icon="' + item.icon + '"></iconify-icon>' +
             '</div>' +
@@ -114,10 +113,12 @@
 
         var btns = document.querySelectorAll('.dyn-filter-btn');
         btns.forEach(function(btn) {
-            btn.className = 'dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border';
+            btn.classList.add('bg-bg', 'text-fg-secondary', 'hover:bg-bg-border');
+            btn.classList.remove('bg-brand', 'text-white');
         });
         if (el) {
-            el.className = 'dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white';
+            el.classList.add('bg-brand', 'text-white');
+            el.classList.remove('bg-bg', 'text-fg-secondary', 'hover:bg-bg-border');
         }
     }
 
@@ -139,12 +140,21 @@
         var listBtn = document.getElementById('dyn-view-list');
         var timelineBtn = document.getElementById('dyn-view-timeline');
 
+        function setActive(activeBtn, inactiveBtn) {
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand', 'text-white');
+                activeBtn.classList.remove('bg-white', 'text-fg-secondary', 'hover:bg-gray-50');
+            }
+            if (inactiveBtn) {
+                inactiveBtn.classList.add('bg-white', 'text-fg-secondary', 'hover:bg-gray-50');
+                inactiveBtn.classList.remove('bg-brand', 'text-white');
+            }
+        }
+
         if (view === 'list') {
-            if (listBtn) listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white transition-colors';
-            if (timelineBtn) timelineBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50 transition-colors';
+            setActive(listBtn, timelineBtn);
         } else {
-            if (timelineBtn) timelineBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white transition-colors';
-            if (listBtn) listBtn.className = 'flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50 transition-colors';
+            setActive(timelineBtn, listBtn);
         }
 
         renderDynamics();
@@ -156,12 +166,6 @@
 
     function openNewDynamicModal() {
         if (typeof showToast === 'function') showToast('发布动态功能开发中...');
-    }
-
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     function initCaseDynamics() {

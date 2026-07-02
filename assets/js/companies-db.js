@@ -26,13 +26,6 @@
     var _manageMode = false;
     var _isLoading = false;
 
-    // ===== 工具函数 =====
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text == null ? '' : String(text);
-        return div.innerHTML;
-    }
-
     function showToastMsg(msg) {
         if (typeof showToast === 'function') {
             showToast(msg);

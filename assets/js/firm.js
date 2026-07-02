@@ -122,13 +122,6 @@
         }
     }
 
-    // ===== 工具函数 =====
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
     // ===== 初始化（视图加载时调用） =====
     function initFirm() {
         renderStats();

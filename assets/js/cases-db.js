@@ -45,13 +45,6 @@
     // ===== 工具 =====
     function $(id) { return document.getElementById(id); }
 
-    function escapeHtml(s) {
-        if (s == null) return '';
-        return String(s).replace(/[&<>"']/g, function(c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-        });
-    }
-
     // 从日期字符串取年份 (YYYY-MM-DD -> YYYY)
     function yearOf(date) {
         return String(date || '').slice(0, 4);
