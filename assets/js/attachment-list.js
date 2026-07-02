@@ -105,7 +105,8 @@
         var pageData = filtered.slice(start, start + _pageSize);
 
         if (filtered.length === 0) {
-            container.className = 'flex-1 flex items-center justify-center';
+            container.classList.remove('grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4', 'gap-3', 'space-y-2');
+            container.classList.add('flex-1', 'flex', 'items-center', 'justify-center');
             container.innerHTML = '<div class="text-center">' +
                 '<iconify-icon class="text-5xl text-fg-disabled" icon="mdi:folder-open-outline"></iconify-icon>' +
                 '<p class="text-sm text-fg-tertiary mt-3">没有找到匹配的文件</p>' +
@@ -113,11 +114,14 @@
             return;
         }
 
+        container.classList.remove('flex-1', 'flex', 'items-center', 'justify-center');
         if (_currentView === 'grid') {
-            container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3';
+            container.classList.remove('space-y-2');
+            container.classList.add('grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4', 'gap-3');
             container.innerHTML = pageData.map(function(f) { return renderGridCard(f); }).join('');
         } else {
-            container.className = 'space-y-2';
+            container.classList.remove('grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4', 'gap-3');
+            container.classList.add('space-y-2');
             container.innerHTML = pageData.map(function(f) { return renderListItem(f); }).join('');
         }
 

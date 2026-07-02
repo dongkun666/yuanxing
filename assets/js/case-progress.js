@@ -232,8 +232,14 @@
         searchProgress();
     }
 
-    // ===== 双绑定 =====
+    function initCaseProgress() {
+        var root = document.getElementById('view-case-progress');
+        if (!root) return;
+        resetProgress();
+    }
+
     globalThis.searchProgress = searchProgress;
     globalThis.resetProgress = resetProgress;
     globalThis.quickSearchProgress = quickSearchProgress;
+    globalThis.initCaseProgress = initCaseProgress;
 })();

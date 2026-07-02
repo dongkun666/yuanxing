@@ -246,6 +246,11 @@
                     if (typeof window.initAIDocView === 'function') window.initAIDocView();
                 }, 50);
             }
+            if (viewId === 'case-progress') {
+                setTimeout(function() {
+                    if (typeof window.initCaseProgress === 'function') window.initCaseProgress();
+                }, 50);
+            }
             if (viewId === 'dashboard') {
                 // W13 C1 dashboard: chart 已在 view 内部初始化 (DOMContentLoaded), 重新可见时重建 chart
                 setTimeout(function() {
@@ -381,7 +386,12 @@
                             if (typeof window.initAIDocView === 'function') window.initAIDocView();
                         }, 50);
                     }
-            if (viewId === 'dashboard') {
+                    if (viewId === 'case-progress') {
+                        setTimeout(function() {
+                            if (typeof window.initCaseProgress === 'function') window.initCaseProgress();
+                        }, 50);
+                    }
+                    if (viewId === 'dashboard') {
                 // W13 C1 dashboard 首次加载: view 内部 DOMContentLoaded 会触发 chart 初始化
                 // 这里额外调一次确保 chart 在视图可见时重建
                 setTimeout(function() {

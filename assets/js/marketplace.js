@@ -23,36 +23,30 @@
     // ========================================================================
 
     var MarketplaceState = {
-        // 当前律师 ID (从 Auth.currentUser().id 派生, 实际生产应从后端 profile 拉)
         currentLawyerId: null,
         currentLawyerName: null,
 
-        // 缓存 (避免重复拉取, 5min TTL)
         cache: {},
         cacheTtlMs: 5 * 60 * 1000,
 
-        // 律师池 (来自 W15 1000 律师 + W29 Marketplace 律师)
         lawyerPool: [],
         lawyerPoolLoadedAt: 0,
 
-        // Marketplace 5 维度指标
         metrics: null,
         metricsLoadedAt: 0,
 
-        // 转介绍列表
         referrals: [],
         referralsLoadedAt: 0,
 
-        // 协同办案列表
         cases: [],
         casesLoadedAt: 0,
 
-        // 跨境文件订单列表
         crossBorderJobs: [],
         crossBorderJobsLoadedAt: 0,
 
-        // 律师详情 + Top-K 推荐
-        lawyerDetailCache: {},  // { lawyer_id: { data, ts } }
+        lawyerDetailCache: {},
+
+        searchTimer: null
     };
 
     // 跟 Auth 集成: 启动时拉取当前用户 lawyer_id
@@ -474,7 +468,12 @@
 
         // 事件: 搜索 + 案件类型筛选
         var search = root.querySelector('#mp-lawyer-search');
-        if (search) search.addEventListener('input', function() { applyLawyerFilter(root); });
+        if (search) search.addEventListener('input', function() {
+            clearTimeout(MarketplaceState.searchTimer);
+            MarketplaceState.searchTimer = setTimeout(function() {
+                applyLawyerFilter(root);
+            }, 300);
+        });
 
         var caseTypeSel = root.querySelector('#mp-lawyer-case-type');
         if (caseTypeSel) caseTypeSel.addEventListener('change', function() { applyLawyerFilter(root); });
