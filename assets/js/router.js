@@ -73,7 +73,10 @@
         'marketplace-cases': 'marketplace/cases.html',
         'marketplace-referrals': 'marketplace/referrals.html',
         'marketplace-cross-border': 'marketplace/cross-border.html',
-        'marketplace-metrics': 'marketplace/metrics.html'
+        'marketplace-metrics': 'marketplace/metrics.html',
+        // 孤儿视图: onboarding + pricing (嵌入式视图, 需要路由注册)
+        'onboarding': 'onboarding.html',
+        'pricing': 'pricing.html'
     };
 
     // ===== Dev 模式检测 (URL 含 ?dev=1 或 dev=N 非 0) =====
