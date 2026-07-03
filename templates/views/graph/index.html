@@ -1,0 +1,922 @@
+<!--
+  法律关系图谱 - 前端视图
+  可视化法律关系网络，支持案件、企业、律师多维度图谱
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden bg-bg" id="view-graph" data-view-source="graph/index.html">
+<style>
+  .graph-canvas-container {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: #f7f8fa;
+  }
+  .graph-canvas {
+    width: 100%;
+    height: 100%;
+  }
+  .graph-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #4E5969;
+  }
+  .graph-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .graph-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    max-width: 250px;
+    display: none;
+  }
+  .graph-tooltip-title {
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+  .graph-tooltip-type {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  .graph-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 2px;
+    color: #86909C;
+    font-size: 11px;
+  }
+  .graph-tooltip-row span:last-child {
+    color: #1D2129;
+    font-weight: 500;
+  }
+</style>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- 左侧面板 -->
+  <div class="hidden lg:flex flex-col w-72 border-r border-bg-border bg-white flex-none" data-animate="slide-in-left" data-delay="0.05">
+    <div class="p-4 border-b border-bg-border">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center shadow-md shadow-wiki/20">
+          <iconify-icon class="text-base text-white" icon="mdi:graphql"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-fg-primary">法律关系图谱</h3>
+          <p class="text-[10px] text-fg-tertiary">可视化关系网络</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图谱类型选择 -->
+    <div class="p-3 border-b border-bg-border">
+      <p class="text-[11px] font-semibold text-fg-tertiary mb-2">图谱类型</p>
+      <div class="grid grid-cols-3 gap-2">
+        <button class="graph-type-btn py-2 text-xs font-medium text-white bg-wiki rounded-lg transition-all active" data-type="case" onclick="switchGraphType('case')">
+          <iconify-icon icon="mdi:gavel" class="text-base block mx-auto mb-1"></iconify-icon>
+          案件
+        </button>
+        <button class="graph-type-btn py-2 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all" data-type="company" onclick="switchGraphType('company')">
+          <iconify-icon icon="mdi:office-building" class="text-base block mx-auto mb-1"></iconify-icon>
+          企业
+        </button>
+        <button class="graph-type-btn py-2 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all" data-type="lawyer" onclick="switchGraphType('lawyer')">
+          <iconify-icon icon="mdi:account-tie" class="text-base block mx-auto mb-1"></iconify-icon>
+          律师
+        </button>
+      </div>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="p-3 border-b border-bg-border">
+      <div class="relative">
+        <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
+        <input id="graphSearchInput" class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" placeholder="搜索节点..." type="text" oninput="filterGraphNodes(this.value)"/>
+      </div>
+    </div>
+
+    <!-- 节点类型筛选 -->
+    <div class="p-3 border-b border-bg-border">
+      <p class="text-[11px] font-semibold text-fg-tertiary mb-2 flex items-center justify-between">
+        <span>节点类型筛选</span>
+        <button class="text-[10px] text-brand hover:underline" onclick="resetGraphFilter()">重置</button>
+      </p>
+      <div class="space-y-1.5" id="graphTypeFilter">
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="case" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#165DFF"></span>
+            <span>案件</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="person" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#F53F3F"></span>
+            <span>当事人</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="company" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#FF7D00"></span>
+            <span>企业</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="lawyer" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#722ED1"></span>
+            <span>律师</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="court" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#00B42A"></span>
+            <span>法院</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" checked data-type="law" class="graph-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyGraphFilter()"/>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#14C9C9"></span>
+            <span>法规</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="flex-1 overflow-y-auto p-3">
+      <p class="text-[11px] font-semibold text-fg-tertiary mb-2">图谱统计</p>
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <div class="bg-bg rounded-xl p-3 text-center">
+          <p class="text-lg font-bold text-fg-primary" id="graphNodeCount">0</p>
+          <p class="text-[10px] text-fg-tertiary">节点数</p>
+        </div>
+        <div class="bg-bg rounded-xl p-3 text-center">
+          <p class="text-lg font-bold text-fg-primary" id="graphEdgeCount">0</p>
+          <p class="text-[10px] text-fg-tertiary">关系数</p>
+        </div>
+      </div>
+      <div class="bg-white border border-bg-border rounded-xl p-3">
+        <p class="text-[11px] font-medium text-fg-secondary mb-2" id="graphCenterTitle">中心节点</p>
+        <p class="text-xs text-fg-primary font-semibold" id="graphCenterLabel">—</p>
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="p-3 border-t border-bg-border space-y-2">
+      <button class="w-full py-2 text-xs font-medium text-fg-secondary bg-white border border-bg-border hover:border-brand hover:text-brand rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="zoomInGraph()">
+        <iconify-icon icon="mdi:magnify-plus-outline" class="text-sm"></iconify-icon>
+        放大
+      </button>
+      <button class="w-full py-2 text-xs font-medium text-fg-secondary bg-white border border-bg-border hover:border-brand hover:text-brand rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="zoomOutGraph()">
+        <iconify-icon icon="mdi:magnify-minus-outline" class="text-sm"></iconify-icon>
+        缩小
+      </button>
+      <button class="w-full py-2 text-xs font-medium text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5" onclick="resetGraphView()">
+        <iconify-icon icon="mdi:target" class="text-sm"></iconify-icon>
+        重置视图
+      </button>
+    </div>
+  </div>
+
+  <!-- 主区域：图谱画布 -->
+  <div class="flex-1 flex flex-col overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+    <!-- 顶部工具栏 -->
+    <div class="bg-white border-b border-bg-border px-4 py-3 flex items-center justify-between flex-none">
+      <div class="flex items-center gap-3">
+        <button class="lg:hidden w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary" onclick="toggleGraphSidebar()">
+          <iconify-icon class="text-base" icon="mdi:menu"></iconify-icon>
+        </button>
+        <div>
+          <h2 class="text-sm font-bold text-fg-primary" id="graphPageTitle">案件关系图谱</h2>
+          <p class="text-[10px] text-fg-tertiary">可视化展示法律关系网络 · 支持缩放拖拽</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="全屏" onclick="toggleGraphFullscreen()">
+          <iconify-icon class="text-base" icon="mdi:fullscreen"></iconify-icon>
+        </button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="导出图片" onclick="exportGraphImage()">
+          <iconify-icon class="text-base" icon="mdi:image-outline"></iconify-icon>
+        </button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="刷新" onclick="refreshGraph()">
+          <iconify-icon class="text-base" icon="mdi:refresh"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- 图谱画布 -->
+    <div class="graph-canvas-container" id="graphCanvasContainer">
+      <canvas class="graph-canvas" id="graphCanvas"></canvas>
+      <div class="graph-tooltip" id="graphTooltip"></div>
+
+      <!-- 图例 -->
+      <div class="absolute bottom-4 left-4 bg-white rounded-xl border border-bg-border shadow-lg p-3">
+        <p class="text-[10px] font-semibold text-fg-tertiary mb-2">图例</p>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5">
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#165DFF"></span>
+            <span>案件</span>
+          </div>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#F53F3F"></span>
+            <span>当事人</span>
+          </div>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#FF7D00"></span>
+            <span>企业</span>
+          </div>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#722ED1"></span>
+            <span>律师</span>
+          </div>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#00B42A"></span>
+            <span>法院</span>
+          </div>
+          <div class="graph-legend-item">
+            <span class="graph-legend-dot" style="background:#14C9C9"></span>
+            <span>法规</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 缩放控制 -->
+      <div class="absolute bottom-4 right-4 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden flex flex-col">
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors border-b border-bg-border" onclick="zoomInGraph()" title="放大">
+          <iconify-icon icon="mdi:plus" class="text-base"></iconify-icon>
+        </button>
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors border-b border-bg-border" onclick="zoomOutGraph()" title="缩小">
+          <iconify-icon icon="mdi:minus" class="text-base"></iconify-icon>
+        </button>
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors" onclick="resetGraphView()" title="重置">
+          <iconify-icon icon="mdi:target" class="text-base"></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var currentGraphType = 'case';
+    var currentGraphData = null;
+    var canvas = null;
+    var ctx = null;
+    var nodes = [];
+    var edges = [];
+    var scale = 1;
+    var offsetX = 0;
+    var offsetY = 0;
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var dragNode = null;
+    var animationId = null;
+
+    var typeColors = {
+        case: '#165DFF',
+        person: '#F53F3F',
+        company: '#FF7D00',
+        lawyer: '#722ED1',
+        court: '#00B42A',
+        law: '#14C9C9'
+    };
+
+    var typeLabels = {
+        case: '案件',
+        person: '当事人',
+        company: '企业',
+        lawyer: '律师',
+        court: '法院',
+        law: '法规'
+    };
+
+    function initGraphCanvas() {
+        canvas = document.getElementById('graphCanvas');
+        if (!canvas) {
+            return;
+        }
+        var container = document.getElementById('graphCanvasContainer');
+        if (!container) {
+            return;
+        }
+
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('mousedown', onMouseDown);
+        canvas.addEventListener('mousemove', onMouseMove);
+        canvas.addEventListener('mouseup', onMouseUp);
+        canvas.addEventListener('mouseleave', onMouseUp);
+        canvas.addEventListener('wheel', onWheel);
+
+        window.addEventListener('resize', function () {
+            if (canvas && container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                drawGraph();
+            }
+        });
+    }
+
+    function loadGraph(type, id) {
+        var url = '/api/graph/' + type + '/' + (id || 'default');
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                currentGraphData = data;
+                setupGraphData(data);
+                updateStats(data);
+                drawGraph();
+                startAnimation();
+            })
+            .catch(function () {
+                // mock fallback
+                var mockData = getMockGraphData(type);
+                currentGraphData = mockData;
+                setupGraphData(mockData);
+                updateStats(mockData);
+                drawGraph();
+                startAnimation();
+            });
+    }
+
+    function getMockGraphData(type) {
+        if (type === 'case') {
+            return {
+                nodes: [
+                    { id: 'case-001', label: '张三诉李四借款\n合同纠纷案', type: 'case', size: 45, color: '#165DFF', data: { case_number: '(2026)京01民初123号', court: '北京市第一中级人民法院' } },
+                    { id: 'p1', label: '张三', type: 'person', size: 30, color: '#F53F3F', data: { role: '原告' } },
+                    { id: 'p2', label: '李四', type: 'person', size: 30, color: '#F53F3F', data: { role: '被告' } },
+                    { id: 'l1', label: '王律师', type: 'lawyer', size: 28, color: '#722ED1', data: { role: '原告代理人' } },
+                    { id: 'l2', label: '赵律师', type: 'lawyer', size: 28, color: '#722ED1', data: { role: '被告代理人' } },
+                    { id: 'c1', label: '北京一中院', type: 'court', size: 35, color: '#00B42A', data: { level: '中级人民法院' } },
+                    { id: 'law1', label: '民法典\n第667条', type: 'law', size: 25, color: '#14C9C9', data: {} },
+                    { id: 'law2', label: '民间借贷\n规定第25条', type: 'law', size: 25, color: '#14C9C9', data: {} },
+                    { id: 'comp1', label: '某投资公司', type: 'company', size: 32, color: '#FF7D00', data: { role: '担保人' } }
+                ],
+                edges: [
+                    { source: 'case-001', target: 'p1', label: '原告' },
+                    { source: 'case-001', target: 'p2', label: '被告' },
+                    { source: 'p1', target: 'l1', label: '代理' },
+                    { source: 'p2', target: 'l2', label: '代理' },
+                    { source: 'case-001', target: 'c1', label: '审理' },
+                    { source: 'case-001', target: 'law1', label: '引用' },
+                    { source: 'case-001', target: 'law2', label: '引用' },
+                    { source: 'case-001', target: 'comp1', label: '担保' },
+                    { source: 'p1', target: 'p2', label: '借款关系' }
+                ],
+                center_node_id: 'case-001',
+                stats: { total_nodes: 9, total_edges: 9 }
+            };
+        } else if (type === 'company') {
+            return {
+                nodes: [
+                    { id: 'comp1', label: '北京某科技\n有限公司', type: 'company', size: 45, color: '#FF7D00', data: { legal_rep: '张三', status: '存续' } },
+                    { id: 'p1', label: '张三', type: 'person', size: 30, color: '#F53F3F', data: { role: '法定代表人' } },
+                    { id: 'p2', label: '李四', type: 'person', size: 28, color: '#F53F3F', data: { role: '股东40%' } },
+                    { id: 'comp2', label: '某投资合伙企业', type: 'company', size: 32, color: '#FF7D00', data: { relation: '子公司' } },
+                    { id: 'comp3', label: '上海某贸易公司', type: 'company', size: 30, color: '#FF7D00', data: { relation: '合作伙伴' } },
+                    { id: 'case1', label: '某买卖合同案', type: 'case', size: 32, color: '#165DFF', data: { role: '原告' } },
+                    { id: 'case2', label: '某借款合同案', type: 'case', size: 32, color: '#165DFF', data: { role: '被告' } },
+                    { id: 'l1', label: '王律师', type: 'lawyer', size: 28, color: '#722ED1', data: { role: '法律顾问' } },
+                    { id: 'c1', label: '北京知产法院', type: 'court', size: 32, color: '#00B42A', data: {} }
+                ],
+                edges: [
+                    { source: 'comp1', target: 'p1', label: '法定代表人' },
+                    { source: 'comp1', target: 'p2', label: '股东40%' },
+                    { source: 'comp1', target: 'comp2', label: '子公司' },
+                    { source: 'comp1', target: 'comp3', label: '合作' },
+                    { source: 'comp1', target: 'case1', label: '原告' },
+                    { source: 'comp1', target: 'case2', label: '被告' },
+                    { source: 'comp1', target: 'l1', label: '顾问' },
+                    { source: 'case1', target: 'c1', label: '审理' }
+                ],
+                center_node_id: 'comp1',
+                stats: { total_nodes: 9, total_edges: 8 }
+            };
+        } else {
+            return {
+                nodes: [
+                    { id: 'l1', label: '王律师', type: 'lawyer', size: 45, color: '#722ED1', data: { position: '高级合伙人', experience: '15年' } },
+                    { id: 'case1', label: '某股权纠纷案', type: 'case', size: 32, color: '#165DFF', data: { result: '胜诉' } },
+                    { id: 'case2', label: '某房地产案', type: 'case', size: 32, color: '#165DFF', data: { result: '调解' } },
+                    { id: 'case3', label: '某知产侵权案', type: 'case', size: 32, color: '#165DFF', data: { result: '审理中' } },
+                    { id: 'comp1', label: '某科技公司', type: 'company', size: 35, color: '#FF7D00', data: { type: '常年客户' } },
+                    { id: 'comp2', label: '某房地产公司', type: 'company', size: 32, color: '#FF7D00', data: { type: '重要客户' } },
+                    { id: 'l2', label: '李律师', type: 'lawyer', size: 28, color: '#722ED1', data: { position: '合伙人' } },
+                    { id: 'l3', label: '张律师', type: 'lawyer', size: 28, color: '#722ED1', data: { position: '资深律师' } },
+                    { id: 'c1', label: '北京一中院', type: 'court', size: 32, color: '#00B42A', data: {} }
+                ],
+                edges: [
+                    { source: 'l1', target: 'case1', label: '代理原告' },
+                    { source: 'l1', target: 'case2', label: '代理被告' },
+                    { source: 'l1', target: 'case3', label: '代理原告' },
+                    { source: 'l1', target: 'comp1', label: '法律顾问' },
+                    { source: 'l1', target: 'comp2', label: '专项顾问' },
+                    { source: 'l1', target: 'l2', label: '合伙人' },
+                    { source: 'l1', target: 'l3', label: '团队' },
+                    { source: 'case1', target: 'c1', label: '审理' },
+                    { source: 'case2', target: 'c1', label: '审理' }
+                ],
+                center_node_id: 'l1',
+                stats: { total_nodes: 9, total_edges: 9 }
+            };
+        }
+    }
+
+    function setupGraphData(data) {
+        nodes = JSON.parse(JSON.stringify(data.nodes));
+        edges = JSON.parse(JSON.stringify(data.edges));
+
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].id === data.center_node_id) {
+                nodes[i].x = centerX;
+                nodes[i].y = centerY;
+                nodes[i].isCenter = true;
+            } else {
+                var angle = (i / (nodes.length - 1)) * Math.PI * 2;
+                var radius = 150 + Math.random() * 100;
+                nodes[i].x = centerX + Math.cos(angle) * radius;
+                nodes[i].y = centerY + Math.sin(angle) * radius;
+            }
+            nodes[i].vx = 0;
+            nodes[i].vy = 0;
+            nodes[i].visible = true;
+        }
+    }
+
+    function updateStats(data) {
+        var nodeCountEl = document.getElementById('graphNodeCount');
+        var edgeCountEl = document.getElementById('graphEdgeCount');
+        var centerLabelEl = document.getElementById('graphCenterLabel');
+        var centerTitleEl = document.getElementById('graphCenterTitle');
+
+        if (nodeCountEl) {
+            nodeCountEl.textContent = data.stats.total_nodes || data.nodes.length;
+        }
+        if (edgeCountEl) {
+            edgeCountEl.textContent = data.stats.total_edges || data.edges.length;
+        }
+        if (centerLabelEl && data.center_node_id) {
+            var centerNode = null;
+            for (var i = 0; i < data.nodes.length; i++) {
+                if (data.nodes[i].id === data.center_node_id) {
+                    centerNode = data.nodes[i];
+                    break;
+                }
+            }
+            if (centerNode) {
+                centerLabelEl.textContent = centerNode.label.replace(/\n/g, '');
+                if (centerTitleEl && centerNode.type) {
+                    centerTitleEl.textContent = typeLabels[centerNode.type] || '中心节点';
+                }
+            }
+        }
+    }
+
+    function drawGraph() {
+        if (!ctx || !canvas) {
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scale, scale);
+
+        for (var i = 0; i < edges.length; i++) {
+            var edge = edges[i];
+            var sourceNode = findNode(edge.source);
+            var targetNode = findNode(edge.target);
+            if (sourceNode && targetNode && sourceNode.visible && targetNode.visible) {
+                ctx.beginPath();
+                ctx.moveTo(sourceNode.x, sourceNode.y);
+                ctx.lineTo(targetNode.x, targetNode.y);
+                ctx.strokeStyle = '#C9CDD4';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                var midX = (sourceNode.x + targetNode.x) / 2;
+                var midY = (sourceNode.y + targetNode.y) / 2;
+                ctx.font = '10px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+                ctx.fillStyle = '#86909C';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(edge.label || '', midX, midY - 8);
+            }
+        }
+
+        for (var j = 0; j < nodes.length; j++) {
+            var node = nodes[j];
+            if (!node.visible) {
+                continue;
+            }
+
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+            ctx.fillStyle = node.color || typeColors[node.type] || '#165DFF';
+            ctx.globalAlpha = 0.85;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.font = '11px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+            ctx.fillStyle = '#1D2129';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            var lines = (node.label || '').split('\n');
+            for (var k = 0; k < lines.length; k++) {
+                ctx.fillText(lines[k], node.x, node.y + node.size + 5 + k * 14);
+            }
+        }
+
+        ctx.restore();
+    }
+
+    function findNode(id) {
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].id === id) {
+                return nodes[i];
+            }
+        }
+        return null;
+    }
+
+    function startAnimation() {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        var frame = 0;
+        function animate() {
+            if (frame < 100) {
+                applyForceSimulation(0.05);
+                drawGraph();
+                frame++;
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        animate();
+    }
+
+    function applyForceSimulation(damping) {
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].isCenter) {
+                continue;
+            }
+            for (var j = 0; j < nodes.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+                var dx = nodes[i].x - nodes[j].x;
+                var dy = nodes[i].y - nodes[j].y;
+                var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                var force = 2000 / (dist * dist);
+                nodes[i].vx += (dx / dist) * force * 0.1;
+                nodes[i].vy += (dy / dist) * force * 0.1;
+            }
+        }
+
+        for (var k = 0; k < edges.length; k++) {
+            var edge = edges[k];
+            var src = findNode(edge.source);
+            var tgt = findNode(edge.target);
+            if (src && tgt) {
+                var dx2 = tgt.x - src.x;
+                var dy2 = tgt.y - src.y;
+                var dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
+                var targetDist = 180;
+                var force2 = (dist2 - targetDist) * 0.02;
+                if (!src.isCenter) {
+                    src.vx += (dx2 / dist2) * force2;
+                    src.vy += (dy2 / dist2) * force2;
+                }
+                if (!tgt.isCenter) {
+                    tgt.vx -= (dx2 / dist2) * force2;
+                    tgt.vy -= (dy2 / dist2) * force2;
+                }
+            }
+        }
+
+        for (var n = 0; n < nodes.length; n++) {
+            if (nodes[n].isCenter) {
+                continue;
+            }
+            nodes[n].x += nodes[n].vx * damping;
+            nodes[n].y += nodes[n].vy * damping;
+            nodes[n].vx *= 0.9;
+            nodes[n].vy *= 0.9;
+        }
+    }
+
+    function onMouseDown(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left - offsetX) / scale;
+        var y = (e.clientY - rect.top - offsetY) / scale;
+
+        for (var i = nodes.length - 1; i >= 0; i--) {
+            var node = nodes[i];
+            if (!node.visible) {
+                continue;
+            }
+            var dx = x - node.x;
+            var dy = y - node.y;
+            if (Math.sqrt(dx * dx + dy * dy) <= node.size) {
+                dragNode = node;
+                isDragging = true;
+                return;
+            }
+        }
+
+        isDragging = true;
+        dragStartX = e.clientX - offsetX;
+        dragStartY = e.clientY - offsetY;
+    }
+
+    function onMouseMove(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left - offsetX) / scale;
+        var y = (e.clientY - rect.top - offsetY) / scale;
+
+        if (dragNode) {
+            dragNode.x = x;
+            dragNode.y = y;
+            drawGraph();
+            showTooltip(e, dragNode);
+            return;
+        }
+
+        if (isDragging) {
+            offsetX = e.clientX - dragStartX;
+            offsetY = e.clientY - dragStartY;
+            drawGraph();
+            return;
+        }
+
+        var hovered = null;
+        for (var i = nodes.length - 1; i >= 0; i--) {
+            var node = nodes[i];
+            if (!node.visible) {
+                continue;
+            }
+            var dx = x - node.x;
+            var dy = y - node.y;
+            if (Math.sqrt(dx * dx + dy * dy) <= node.size) {
+                hovered = node;
+                break;
+            }
+        }
+
+        if (hovered) {
+            canvas.style.cursor = 'pointer';
+            showTooltip(e, hovered);
+        } else {
+            canvas.style.cursor = 'grab';
+            hideTooltip();
+        }
+    }
+
+    function onMouseUp() {
+        isDragging = false;
+        dragNode = null;
+    }
+
+    function onWheel(e) {
+        e.preventDefault();
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+
+        var delta = e.deltaY > 0 ? 0.9 : 1.1;
+        var newScale = scale * delta;
+        newScale = Math.max(0.3, Math.min(3, newScale));
+
+        offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
+        offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
+        scale = newScale;
+
+        drawGraph();
+    }
+
+    function showTooltip(e, node) {
+        var tooltip = document.getElementById('graphTooltip');
+        var container = document.getElementById('graphCanvasContainer');
+        if (!tooltip || !container) {
+            return;
+        }
+
+        var typeLabel = typeLabels[node.type] || node.type;
+        var typeColor = typeColors[node.type] || '#165DFF';
+
+        var html = '<div class="graph-tooltip-title">' + node.label.replace(/\n/g, '') + '</div>' +
+            '<span class="graph-tooltip-type" style="background:' + typeColor + '20;color:' + typeColor + '">' + typeLabel + '</span>';
+
+        if (node.data) {
+            for (var key in node.data) {
+                if (node.data.hasOwnProperty(key)) {
+                    var labelMap = {
+                        role: '角色',
+                        case_number: '案号',
+                        court: '法院',
+                        position: '职位',
+                        experience: '从业年限',
+                        legal_rep: '法定代表人',
+                        status: '状态',
+                        result: '结果',
+                        level: '级别'
+                    };
+                    var label = labelMap[key] || key;
+                    html += '<div class="graph-tooltip-row"><span>' + label + '</span><span>' + node.data[key] + '</span></div>';
+                }
+            }
+        }
+
+        tooltip.innerHTML = html;
+        tooltip.style.display = 'block';
+
+        var rect = container.getBoundingClientRect();
+        var left = e.clientX - rect.left + 15;
+        var top = e.clientY - rect.top + 15;
+
+        if (left + 260 > container.clientWidth) {
+            left = e.clientX - rect.left - 270;
+        }
+        if (top + 200 > container.clientHeight) {
+            top = e.clientY - rect.top - 210;
+        }
+
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    }
+
+    function hideTooltip() {
+        var tooltip = document.getElementById('graphTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
+
+    window.switchGraphType = function (type) {
+        currentGraphType = type;
+
+        var btns = document.querySelectorAll('.graph-type-btn');
+        for (var i = 0; i < btns.length; i++) {
+            if (btns[i].dataset.type === type) {
+                btns[i].classList.add('active', 'bg-wiki', 'text-white');
+                btns[i].classList.remove('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            } else {
+                btns[i].classList.remove('active', 'bg-wiki', 'text-white');
+                btns[i].classList.add('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            }
+        }
+
+        var titleMap = {
+            case: '案件关系图谱',
+            company: '企业关系图谱',
+            lawyer: '律师关系图谱'
+        };
+        var titleEl = document.getElementById('graphPageTitle');
+        if (titleEl) {
+            titleEl.textContent = titleMap[type] || '关系图谱';
+        }
+
+        var checkboxes = document.querySelectorAll('.graph-filter-checkbox');
+        for (var j = 0; j < checkboxes.length; j++) {
+            checkboxes[j].checked = true;
+        }
+
+        loadGraph(type, 'default');
+    };
+
+    window.zoomInGraph = function () {
+        scale = Math.min(3, scale * 1.2);
+        drawGraph();
+    };
+
+    window.zoomOutGraph = function () {
+        scale = Math.max(0.3, scale / 1.2);
+        drawGraph();
+    };
+
+    window.resetGraphView = function () {
+        scale = 1;
+        offsetX = 0;
+        offsetY = 0;
+        if (currentGraphData) {
+            setupGraphData(currentGraphData);
+        }
+        drawGraph();
+        startAnimation();
+    };
+
+    window.applyGraphFilter = function () {
+        var checkboxes = document.querySelectorAll('.graph-filter-checkbox');
+        var visibleTypes = {};
+        for (var i = 0; i < checkboxes.length; i++) {
+            visibleTypes[checkboxes[i].dataset.type] = checkboxes[i].checked;
+        }
+
+        for (var j = 0; j < nodes.length; j++) {
+            nodes[j].visible = visibleTypes[nodes[j].type] !== false;
+        }
+
+        drawGraph();
+    };
+
+    window.resetGraphFilter = function () {
+        var checkboxes = document.querySelectorAll('.graph-filter-checkbox');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = true;
+        }
+        for (var j = 0; j < nodes.length; j++) {
+            nodes[j].visible = true;
+        }
+        drawGraph();
+    };
+
+    window.filterGraphNodes = function (query) {
+        var q = (query || '').toLowerCase();
+        for (var i = 0; i < nodes.length; i++) {
+            if (!q) {
+                nodes[i].visible = true;
+            } else {
+                nodes[i].visible = (nodes[i].label || '').toLowerCase().indexOf(q) >= 0;
+            }
+        }
+        drawGraph();
+    };
+
+    window.refreshGraph = function () {
+        loadGraph(currentGraphType, 'default');
+    };
+
+    window.toggleGraphSidebar = function () {
+        var sidebar = document.querySelector('#view-graph .lg\\:flex');
+        if (sidebar) {
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+        }
+    };
+
+    window.toggleGraphFullscreen = function () {
+        var el = document.getElementById('view-graph');
+        if (el && document.fullscreenElement) {
+            document.exitFullscreen();
+        } else if (el && el.requestFullscreen) {
+            el.requestFullscreen();
+        }
+    };
+
+    window.exportGraphImage = function () {
+        if (canvas) {
+            var link = document.createElement('a');
+            link.download = 'graph.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    };
+
+    function init() {
+        initGraphCanvas();
+        loadGraph('case', 'default');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        setTimeout(init, 100);
+    }
+})();
+</script>

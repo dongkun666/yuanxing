@@ -1,0 +1,90 @@
+<view class="container" wx:if="{{!loading && caseDetail}}">
+  <view class="case-header card">
+    <view class="case-title-row">
+      <text class="case-title">{{caseDetail.case_name}}</text>
+    </view>
+    <view class="case-meta">
+      <view class="meta-item">
+        <text class="meta-label">案号</text>
+        <text class="meta-value">{{caseDetail.case_id}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">法院</text>
+        <text class="meta-value">{{caseDetail.court}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">判决日期</text>
+        <text class="meta-value">{{caseDetail.judgment_date}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">案由</text>
+        <view class="badge">{{caseDetail.cause}}</view>
+      </view>
+    </view>
+    <view class="case-score-row">
+      <view class="score-box">
+        <text class="score-label">LexScore</text>
+        <text class="score-value">{{caseDetail.lex_score || 0}}</text>
+      </view>
+      <view class="stats-row">
+        <text class="stat">👁 {{caseDetail.view_count || 0}} 浏览</text>
+        <text class="stat">⭐ {{caseDetail.favorite_count || 0}} 收藏</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-bar card">
+    <view class="action-item" bindtap="toggleFavorite">
+      <text class="action-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+      <text class="action-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+    </view>
+    <view class="action-item" bindtap="shareCase">
+      <text class="action-icon">📤</text>
+      <text class="action-text">分享</text>
+    </view>
+    <view class="action-item" bindtap="exportCase">
+      <text class="action-icon">📥</text>
+      <text class="action-text">导出</text>
+    </view>
+  </view>
+
+  <view class="section card" wx:if="{{caseDetail.parties}}">
+    <text class="section-title">当事人</text>
+    <text class="section-content">{{caseDetail.parties}}</text>
+  </view>
+
+  <view class="section card" wx:if="{{caseDetail.legal_basis}}">
+    <text class="section-title">法律依据</text>
+    <text class="section-content">{{caseDetail.legal_basis}}</text>
+  </view>
+
+  <view class="section card" wx:if="{{caseDetail.keywords && caseDetail.keywords.length > 0}}">
+    <text class="section-title">关键词</text>
+    <view class="keywords">
+      <view class="keyword-tag" wx:for="{{caseDetail.keywords}}" wx:key="*this">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <view class="section card">
+    <view class="section-header">
+      <text class="section-title">判决书全文</text>
+      <text class="toggle-btn" bindtap="toggleFullText">
+        {{showFullText ? '收起' : '展开'}}
+      </text>
+    </view>
+    <view class="full-text {{showFullText ? 'expanded' : 'collapsed'}}">
+      <text>{{caseDetail.full_text}}</text>
+    </view>
+  </view>
+</view>
+
+<view class="loading" wx:if="{{loading}}">
+  <text>加载中...</text>
+</view>
+
+<view class="empty-state" wx:if="{{!loading && !caseDetail}}">
+  <text class="icon">📄</text>
+  <text>案件不存在</text>
+</view>

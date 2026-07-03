@@ -1,0 +1,381 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-data-market">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-6 text-white" data-animate="fade-in-up" data-delay="0">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">数据市场</h1>
+                <p class="text-sm text-white/80 mt-1">海量法律数据集，API 接入即拿即用</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="px-4 py-2 bg-white text-orange-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm" onclick="switchDataTab('my')">
+                    <iconify-icon icon="mdi:database-outline" class="inline mr-1"></iconify-icon>我的数据
+                </button>
+                <button class="px-4 py-2 bg-white/20 text-white border border-white/30 font-medium rounded-lg hover:bg-white/30 transition-colors text-sm" onclick="switchDataTab('market')">
+                    <iconify-icon icon="mdi:store-outline" class="inline mr-1"></iconify-icon>浏览数据
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-4" data-animate="fade-in-up" data-delay="0.1">
+        <div class="flex items-center gap-3">
+            <div class="relative flex-1 max-w-md">
+                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+                <input type="text" placeholder="搜索数据集..." class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors" id="data-market-search" oninput="filterDataMarket(this.value)"/>
+            </div>
+            <select id="data-market-category" class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors" onchange="filterDataMarketByCategory(this.value)">
+                <option value="all">全部分类</option>
+                <option value="cases">判例数据</option>
+                <option value="laws">法规数据</option>
+                <option value="companies">企业数据</option>
+                <option value="lawyers">律师数据</option>
+                <option value="analytics">分析报告</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>综合排序</option>
+                <option>销量最高</option>
+                <option>评分最高</option>
+                <option>最新上架</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>价格不限</option>
+                <option>免费</option>
+                <option>付费</option>
+                <option>订阅制</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="data-market-tab-content" id="data-tab-market">
+        <div class="grid grid-cols-3 gap-5" data-animate="fade-in-up" data-delay="0.15">
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('1')">
+                <div class="h-36 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:gavel" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">全国裁判文书库</h3>
+                        <p class="text-xs text-white/80 mt-1">1.2 亿条判例数据</p>
+                    </div>
+                    <span class="absolute top-2 right-2 text-[10px] px-2 py-0.5 bg-white/20 text-white rounded-full">热门</span>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">判例数据</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">API 接入</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">涵盖全国各级法院裁判文书，支持按案由、法院、当事人、律师等多维度检索，数据每日更新。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-brand">¥999</span>
+                            <span class="text-xs text-fg-tertiary">/月</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('2')">
+                <div class="h-36 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:book-open-variant" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">法律法规全集</h3>
+                        <p class="text-xs text-white/80 mt-1">50 万+ 法规条文</p>
+                    </div>
+                    <span class="absolute top-2 right-2 text-[10px] px-2 py-0.5 bg-white/20 text-white rounded-full">推荐</span>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">法规数据</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">API 接入</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">收录宪法、法律、行政法规、部门规章、司法解释等各类规范性文件，实时更新。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-brand">¥499</span>
+                            <span class="text-xs text-fg-tertiary">/月</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('3')">
+                <div class="h-36 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:domain" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">企业工商信息库</h3>
+                        <p class="text-xs text-white/80 mt-1">8000 万+ 企业数据</p>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">企业数据</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">API 接入</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">全国企业工商信息、股东结构、经营风险、知识产权、司法涉诉等全方位企业数据。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-brand">¥799</span>
+                            <span class="text-xs text-fg-tertiary">/月</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('4')">
+                <div class="h-36 bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:account-tie" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">律师执业数据库</h3>
+                        <p class="text-xs text-white/80 mt-1">60 万+ 律师信息</p>
+                    </div>
+                    <span class="absolute top-2 right-2 text-[10px] px-2 py-0.5 bg-emerald-500 text-white rounded-full">免费</span>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">律师数据</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">API 接入</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">全国执业律师基本信息、执业领域、律所归属、专业认证等数据查询。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-emerald-600">免费</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('5')">
+                <div class="h-36 bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:chart-timeline-variant" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">司法大数据分析</h3>
+                        <p class="text-xs text-white/80 mt-1">行业趋势分析报告</p>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">分析报告</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">数据下载</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">基于海量司法数据的行业分析报告，涵盖诉讼趋势、裁判规律、律师排行等。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-brand">¥2999</span>
+                            <span class="text-xs text-fg-tertiary">/份</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openDataMarketDetail('6')">
+                <div class="h-36 bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center relative p-4">
+                    <div class="text-white text-center">
+                        <iconify-icon icon="mdi:home-city" class="text-4xl mb-2 opacity-90"></iconify-icon>
+                        <h3 class="text-base font-bold">房地产纠纷数据库</h3>
+                        <p class="text-xs text-white/80 mt-1">500 万+ 房产案件</p>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded-full">判例数据</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">API 接入</span>
+                    </div>
+                    <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">房屋买卖、租赁、拆迁、物业等房地产领域专项裁判文书数据集。</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg font-bold text-brand">¥599</span>
+                            <span class="text-xs text-fg-tertiary">/月</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                            <span class="text-xs text-fg-secondary">4.7</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center mt-8 gap-1">
+            <button class="px-3 py-1.5 text-xs text-fg-tertiary border border-bg-border rounded hover:bg-bg-subtle">上一页</button>
+            <button class="px-3 py-1.5 text-xs text-white bg-brand rounded">1</button>
+            <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">2</button>
+            <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">3</button>
+            <span class="px-2 text-xs text-fg-tertiary">...</span>
+            <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">下一页</button>
+        </div>
+    </div>
+
+    <div class="data-market-tab-content hidden" id="data-tab-my">
+        <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+            <div class="px-5 py-4 border-b border-bg-border flex items-center justify-between">
+                <h3 class="text-base font-semibold text-fg-primary">我购买的数据集</h3>
+                <span class="text-xs text-fg-tertiary">共 2 个数据集</span>
+            </div>
+            <div class="divide-y divide-bg-border">
+                <div class="p-5 hover:bg-bg-subtle/30 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <iconify-icon icon="mdi:gavel" class="text-2xl text-white"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-1">全国裁判文书库</h4>
+                                <p class="text-xs text-fg-tertiary mb-1">1.2 亿条判例数据 · 按月订阅</p>
+                                <div class="flex items-center gap-3 text-[10px] text-fg-tertiary">
+                                    <span>有效期至：2027-01-15</span>
+                                    <span class="text-emerald-600">● 使用中</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1.5 text-xs text-brand border border-brand/30 hover:bg-brand-tint3 rounded-lg transition-colors">
+                                API 文档
+                            </button>
+                            <button class="px-3 py-1.5 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                管理
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-5 hover:bg-bg-subtle/30 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                                <iconify-icon icon="mdi:book-open-variant" class="text-2xl text-white"></iconify-icon>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-1">法律法规全集</h4>
+                                <p class="text-xs text-fg-tertiary mb-1">50 万+ 法规条文 · 按月订阅</p>
+                                <div class="flex items-center gap-3 text-[10px] text-fg-tertiary">
+                                    <span>有效期至：2026-12-20</span>
+                                    <span class="text-emerald-600">● 使用中</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1.5 text-xs text-brand border border-brand/30 hover:bg-brand-tint3 rounded-lg transition-colors">
+                                API 文档
+                            </button>
+                            <button class="px-3 py-1.5 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                管理
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="data-market-detail-modal">
+    <div class="bg-white rounded-xl w-[720px] max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border sticky top-0 bg-white z-10">
+            <h3 class="text-base font-semibold text-fg-primary">数据集详情</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeDataMarketDetail()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-white mb-5">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <iconify-icon icon="mdi:gavel" class="text-3xl"></iconify-icon>
+                            <h2 class="text-xl font-bold">全国裁判文书库</h2>
+                        </div>
+                        <p class="text-sm text-white/80">1.2 亿条判例数据 · 每日更新</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-3xl font-bold">¥999<span class="text-sm font-normal text-white/80">/月</span></p>
+                        <button class="mt-3 px-5 py-2 bg-white text-indigo-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm" onclick="purchaseDataset()">
+                            立即购买
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-b border-bg-border mb-4">
+                <div class="flex gap-6">
+                    <button class="pb-3 text-sm font-medium text-brand border-b-2 border-brand">数据介绍</button>
+                    <button class="pb-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent">API 文档</button>
+                    <button class="pb-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent">使用示例</button>
+                    <button class="pb-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent">评价</button>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-3">数据概况</h4>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="bg-bg-subtle rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-fg-primary">1.2亿+</p>
+                            <p class="text-[10px] text-fg-tertiary">裁判文书</p>
+                        </div>
+                        <div class="bg-bg-subtle rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-fg-primary">3500+</p>
+                            <p class="text-[10px] text-fg-tertiary">法院覆盖</p>
+                        </div>
+                        <div class="bg-bg-subtle rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-fg-primary">20年</p>
+                            <p class="text-[10px] text-fg-tertiary">数据跨度</p>
+                        </div>
+                        <div class="bg-bg-subtle rounded-lg p-3 text-center">
+                            <p class="text-lg font-bold text-fg-primary">每日</p>
+                            <p class="text-[10px] text-fg-tertiary">实时更新</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">数据集介绍</h4>
+                    <p class="text-xs text-fg-secondary leading-relaxed">全国裁判文书库收录了全国各级法院公开的裁判文书，涵盖民事、刑事、行政、执行等各类案件。数据来源于中国裁判文书网及各级法院公开渠道，经过结构化处理和清洗，支持多维度检索和批量导出。</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">数据字段</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">案件名称</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">案号</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">审理法院</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">案由</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">当事人</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">裁判日期</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">法律依据</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">判决结果</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded">全文</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">API 接入方式</h4>
+                    <div class="bg-bg-subtle rounded-lg p-4 font-mono text-xs text-fg-secondary">
+                        <p class="mb-2">// 请求示例</p>
+                        <p>GET /api/data/cases/search?q=借款合同</p>
+                        <p>X-API-Key: your_api_key</p>
+                        <p class="mt-2 mb-2">// 响应示例</p>
+                        <p>{</p>
+                        <p>&nbsp;&nbsp;"total": 12345,</p>
+                        <p>&nbsp;&nbsp;"items": [...]</p>
+                        <p>}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,418 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-bg" id="view-growth">
+<div class="max-w-7xl mx-auto w-full space-y-4 md:space-y-5">
+
+    <!-- 页面标题 -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3" data-animate="fade-in-up">
+        <div>
+            <h2 class="text-xl md:text-2xl font-bold text-fg-primary flex items-center gap-2">
+                <iconify-icon icon="mdi:chart-line" class="text-brand"></iconify-icon>
+                增长分析
+            </h2>
+            <p class="text-xs md:text-sm text-fg-tertiary mt-1">实时监控用户增长与业务表现</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <select class="form-input text-xs md:text-sm w-auto" id="growth-date-range" onchange="updateDateRange()">
+                <option value="7">最近 7 天</option>
+                <option value="30" selected>最近 30 天</option>
+                <option value="90">最近 90 天</option>
+            </select>
+            <button class="px-3 py-2 text-xs md:text-sm font-semibold rounded-xl border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-300 flex items-center gap-1.5" onclick="refreshGrowthData()">
+                <iconify-icon icon="mdi:refresh" class="text-base"></iconify-icon>
+                刷新
+            </button>
+        </div>
+    </div>
+
+    <!-- 核心指标卡片 -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4" data-animate="fade-in-up" data-delay="0.05">
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-brand/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:account-plus-outline" class="text-xl text-white"></iconify-icon>
+                    </div>
+                    <span class="inline-flex items-center gap-0.5 text-xs font-semibold text-success bg-success-tint px-2 py-1 rounded-full">
+                        <iconify-icon icon="mdi:trending-up" class="text-[10px]"></iconify-icon>
+                        +12.5%
+                    </span>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-new-users">1,286</p>
+                <p class="text-xs text-fg-tertiary">新增用户</p>
+            </div>
+        </div>
+
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-wiki/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wiki/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-wiki to-green-600 flex items-center justify-center shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:account-check-outline" class="text-xl text-white"></iconify-icon>
+                    </div>
+                    <span class="inline-flex items-center gap-0.5 text-xs font-semibold text-success bg-success-tint px-2 py-1 rounded-full">
+                        <iconify-icon icon="mdi:trending-up" class="text-[10px]"></iconify-icon>
+                        +8.3%
+                    </span>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-active-users">3,542</p>
+                <p class="text-xs text-fg-tertiary">活跃用户</p>
+            </div>
+        </div>
+
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-warning/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:cash-multiple" class="text-xl text-white"></iconify-icon>
+                    </div>
+                    <span class="inline-flex items-center gap-0.5 text-xs font-semibold text-success bg-success-tint px-2 py-1 rounded-full">
+                        <iconify-icon icon="mdi:trending-up" class="text-[10px]"></iconify-icon>
+                        +23.1%
+                    </span>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-revenue">¥89,420</p>
+                <p class="text-xs text-fg-tertiary">本月收入</p>
+            </div>
+        </div>
+
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                        <iconify-icon icon="mdi:percent-outline" class="text-xl text-white"></iconify-icon>
+                    </div>
+                    <span class="inline-flex items-center gap-0.5 text-xs font-semibold text-success bg-success-tint px-2 py-1 rounded-full">
+                        <iconify-icon icon="mdi:trending-up" class="text-[10px]"></iconify-icon>
+                        +2.1%
+                    </span>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-conversion">6.8%</p>
+                <p class="text-xs text-fg-tertiary">付费转化率</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4 md:gap-5">
+        <!-- 转化漏斗 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                        <iconify-icon icon="mdi:funnel-outline" class="text-white text-sm"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-bold text-fg-primary">转化漏斗</h3>
+                </div>
+                <span class="text-xs text-fg-tertiary">近 30 天</span>
+            </div>
+            <div class="space-y-3" id="funnel-container">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+
+        <!-- 留存曲线 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.15">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-wiki to-green-600 flex items-center justify-center shadow-md shadow-wiki/20">
+                        <iconify-icon icon="mdi:chart-bell-curve" class="text-white text-sm"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-bold text-fg-primary">用户留存</h3>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button class="px-2 py-1 text-[10px] font-semibold rounded-md bg-brand-tint text-brand" onclick="setRetentionView('day')">次日</button>
+                    <button class="px-2 py-1 text-[10px] font-medium rounded-md text-fg-tertiary hover:bg-bg-subtle" onclick="setRetentionView('week')">7日</button>
+                    <button class="px-2 py-1 text-[10px] font-medium rounded-md text-fg-tertiary hover:bg-bg-subtle" onclick="setRetentionView('month')">30日</button>
+                </div>
+            </div>
+            <div class="h-48 md:h-56 flex items-end gap-1.5 md:gap-2" id="retention-chart">
+                <!-- 由 JS 渲染 -->
+            </div>
+            <div class="flex justify-between mt-2 pt-2 border-t border-bg-border/50">
+                <span class="text-[10px] text-fg-tertiary">D1</span>
+                <span class="text-[10px] text-fg-tertiary">D3</span>
+                <span class="text-[10px] text-fg-tertiary">D7</span>
+                <span class="text-[10px] text-fg-tertiary">D14</span>
+                <span class="text-[10px] text-fg-tertiary">D30</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4 md:gap-5">
+        <!-- 收入趋势 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.2">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-success to-green-500 flex items-center justify-center shadow-md shadow-success/20">
+                        <iconify-icon icon="mdi:trending-up" class="text-white text-sm"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-bold text-fg-primary">收入趋势</h3>
+                </div>
+                <span class="text-xs text-success font-medium flex items-center gap-1">
+                    <iconify-icon icon="mdi:arrow-up" class="text-[10px]"></iconify-icon>
+                    23.1%
+                </span>
+            </div>
+            <div class="h-48 md:h-56 flex items-end gap-1 md:gap-1.5" id="revenue-chart">
+                <!-- 由 JS 渲染 -->
+            </div>
+            <div class="flex justify-between mt-2 pt-2 border-t border-bg-border/50">
+                <span class="text-[10px] text-fg-tertiary">1周</span>
+                <span class="text-[10px] text-fg-tertiary">2周</span>
+                <span class="text-[10px] text-fg-tertiary">3周</span>
+                <span class="text-[10px] text-fg-tertiary">4周</span>
+            </div>
+        </div>
+
+        <!-- 激活数据 -->
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.25">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20">
+                        <iconify-icon icon="mdi:lightning-bolt-outline" class="text-white text-sm"></iconify-icon>
+                    </div>
+                    <h3 class="text-base font-bold text-fg-primary">用户激活</h3>
+                </div>
+                <span class="text-xs text-fg-tertiary">完成关键动作</span>
+            </div>
+            <div class="space-y-4" id="activation-container">
+                <!-- 由 JS 渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 渠道来源 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.3">
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md shadow-purple-500/20">
+                    <iconify-icon icon="mdi:earth" class="text-white text-sm"></iconify-icon>
+                </div>
+                <h3 class="text-base font-bold text-fg-primary">用户来源渠道</h3>
+            </div>
+            <span class="text-xs text-fg-tertiary">近 30 天</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="channels-container">
+            <!-- 由 JS 渲染 -->
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var loaded = false;
+    var currentDateRange = 30;
+    var currentRetentionView = 'day';
+
+    function getApiBaseUrl() {
+        return '';
+    }
+
+    function getAuthHeaders() {
+        var token = localStorage.getItem('access_token') || '';
+        return {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    var mockFunnelData = [
+        { name: '访问网站', count: 25680, percent: 100, color: 'from-blue-500 to-blue-600', icon: 'mdi:web' },
+        { name: '注册账号', count: 8450, percent: 32.9, color: 'from-brand to-brand-hover', icon: 'mdi:account-plus-outline' },
+        { name: '首次搜索', count: 5230, percent: 20.4, color: 'from-wiki to-green-600', icon: 'mdi:magnify' },
+        { name: '使用案例', count: 3120, percent: 12.1, color: 'from-warning to-orange-500', icon: 'mdi:book-open-page-variant' },
+        { name: '付费转化', count: 574, percent: 2.2, color: 'from-purple-500 to-purple-600', icon: 'mdi:credit-card-check-outline' }
+    ];
+
+    var mockRetentionData = {
+        day: [68, 52, 45, 38, 32, 28, 25, 22, 20, 18],
+        week: [100, 75, 62, 55, 48, 42, 38, 35, 32, 30],
+        month: [100, 85, 72, 65, 58, 52, 48, 45, 42, 40]
+    };
+
+    var mockRevenueData = [12500, 15800, 18200, 21500, 19800, 24200, 28900, 32100, 35600, 38200, 42100, 45800, 48500, 52100, 55600, 58900, 62400, 65800, 68200, 72500, 75800, 79200, 82600, 85400, 88200, 91500, 94800, 97200, 102500, 108900];
+
+    var mockActivationData = [
+        { name: '完成首次搜索', count: 5230, total: 8450, percent: 61.9, color: 'from-brand to-brand-hover' },
+        { name: '查看案例详情', count: 4120, total: 8450, percent: 48.8, color: 'from-wiki to-green-600' },
+        { name: '使用 AI 助手', count: 3580, total: 8450, percent: 42.4, color: 'from-warning to-orange-500' },
+        { name: '收藏案例', count: 2340, total: 8450, percent: 27.7, color: 'from-purple-500 to-purple-600' },
+        { name: '导出文书', count: 1890, total: 8450, percent: 22.4, color: 'from-pink-500 to-pink-600' }
+    ];
+
+    var mockChannelsData = [
+        { name: '自然搜索', count: 3856, percent: 30, color: 'from-blue-500 to-blue-600', icon: 'mdi:google' },
+        { name: '邀请裂变', count: 2572, percent: 20, color: 'from-brand to-brand-hover', icon: 'mdi:account-group-outline' },
+        { name: '社交媒体', count: 2186, percent: 17, color: 'from-wiki to-green-600', icon: 'mdi:share-variant-outline' },
+        { name: '内容营销', count: 1929, percent: 15, color: 'from-warning to-orange-500', icon: 'mdi:newspaper-variant-outline' },
+        { name: '其他渠道', count: 2297, percent: 18, color: 'from-gray-500 to-gray-600', icon: 'mdi:dots-horizontal' }
+    ];
+
+    function renderFunnel(data) {
+        var container = document.getElementById('funnel-container');
+        if (!container) return;
+
+        var html = '';
+        data.forEach(function(item, index) {
+            var widthPercent = 30 + (item.percent / 100) * 70;
+            html += '' +
+                '<div class="relative">' +
+                    '<div class="flex items-center justify-between mb-1.5">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<div class="w-6 h-6 rounded-lg bg-gradient-to-br ' + item.color + ' flex items-center justify-center shadow-sm">' +
+                                '<iconify-icon icon="' + item.icon + '" class="text-xs text-white"></iconify-icon>' +
+                            '</div>' +
+                            '<span class="text-xs md:text-sm font-medium text-fg-primary">' + item.name + '</span>' +
+                        '</div>' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="text-xs font-bold text-fg-primary">' + item.count.toLocaleString() + '</span>' +
+                            '<span class="text-[10px] text-fg-tertiary">(' + item.percent + '%)</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="h-8 md:h-10 bg-bg-subtle rounded-lg overflow-hidden">' +
+                        '<div class="h-full bg-gradient-to-r ' + item.color + ' rounded-lg flex items-center justify-end pr-3 transition-all duration-700 progress-bar-animate" style="width: ' + widthPercent + '%">' +
+                            (index < data.length - 1 ? '<iconify-icon icon="mdi:chevron-down" class="text-white/60 text-sm"></iconify-icon>' : '') +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function renderRetentionChart(data) {
+        var container = document.getElementById('retention-chart');
+        if (!container) return;
+
+        var maxVal = Math.max.apply(null, data);
+        var html = '';
+        data.forEach(function(val, index) {
+            var heightPercent = (val / maxVal) * 100;
+            var delay = index * 0.03;
+            html += '' +
+                '<div class="flex-1 flex flex-col justify-end items-center gap-1">' +
+                    '<span class="text-[9px] font-medium text-fg-tertiary">' + val + '%</span>' +
+                    '<div class="w-full rounded-t-md bg-gradient-to-t from-wiki to-green-500 transition-all duration-700 progress-bar-animate" style="height: ' + heightPercent + '%; animation-delay: ' + delay + 's"></div>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function renderRevenueChart(data) {
+        var container = document.getElementById('revenue-chart');
+        if (!container) return;
+
+        var maxVal = Math.max.apply(null, data);
+        var html = '';
+        data.forEach(function(val, index) {
+            var heightPercent = (val / maxVal) * 100;
+            var delay = index * 0.015;
+            var isRecent = index >= data.length - 7;
+            html += '' +
+                '<div class="flex-1 flex flex-col justify-end items-center">' +
+                    '<div class="w-full rounded-t-md transition-all duration-700 progress-bar-animate ' + (isRecent ? 'bg-gradient-to-t from-success to-green-400' : 'bg-gradient-to-t from-brand/40 to-brand') + '" style="height: ' + heightPercent + '%; animation-delay: ' + delay + 's"></div>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function renderActivation(data) {
+        var container = document.getElementById('activation-container');
+        if (!container) return;
+
+        var html = '';
+        data.forEach(function(item, index) {
+            var delay = index * 0.05;
+            html += '' +
+                '<div class="relative" style="animation-delay: ' + delay + 's">' +
+                    '<div class="flex items-center justify-between mb-1.5">' +
+                        '<span class="text-xs md:text-sm font-medium text-fg-primary">' + item.name + '</span>' +
+                        '<span class="text-xs font-bold text-fg-primary">' + item.percent + '%</span>' +
+                    '</div>' +
+                    '<div class="h-2.5 md:h-3 bg-bg-subtle rounded-full overflow-hidden">' +
+                        '<div class="h-full bg-gradient-to-r ' + item.color + ' rounded-full transition-all duration-700 progress-bar-animate" style="width: ' + item.percent + '%; animation-delay: ' + delay + 's"></div>' +
+                    '</div>' +
+                    '<div class="flex justify-between mt-1">' +
+                        '<span class="text-[10px] text-fg-tertiary">' + item.count.toLocaleString() + ' 人</span>' +
+                        '<span class="text-[10px] text-fg-tertiary">共 ' + item.total.toLocaleString() + ' 人</span>' +
+                    '</div>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function renderChannels(data) {
+        var container = document.getElementById('channels-container');
+        if (!container) return;
+
+        var html = '';
+        data.forEach(function(item, index) {
+            var delay = index * 0.05;
+            html += '' +
+                '<div class="p-4 rounded-xl bg-gradient-to-br from-bg-subtle to-white border border-bg-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group" style="animation-delay: ' + delay + 's">' +
+                    '<div class="w-10 h-10 rounded-xl bg-gradient-to-br ' + item.color + ' flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform">' +
+                        '<iconify-icon icon="' + item.icon + '" class="text-xl text-white"></iconify-icon>' +
+                    '</div>' +
+                    '<p class="text-sm font-bold text-fg-primary mb-0.5">' + item.name + '</p>' +
+                    '<p class="text-lg md:text-xl font-bold bg-gradient-to-r from-brand to-wiki bg-clip-text text-transparent">' + item.count.toLocaleString() + '</p>' +
+                    '<p class="text-[10px] text-fg-tertiary mt-0.5">占比 ' + item.percent + '%</p>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    window.updateDateRange = function() {
+        var select = document.getElementById('growth-date-range');
+        if (select) {
+            currentDateRange = parseInt(select.value) || 30;
+            loadAllGrowthData();
+        }
+    };
+
+    window.setRetentionView = function(view) {
+        currentRetentionView = view;
+        var data = mockRetentionData[view] || mockRetentionData.day;
+        renderRetentionChart(data);
+
+        var buttons = document.querySelectorAll('#view-growth button[onclick^="setRetentionView"]');
+        buttons.forEach(function(btn) {
+            btn.className = 'px-2 py-1 text-[10px] font-medium rounded-md text-fg-tertiary hover:bg-bg-subtle';
+        });
+
+        var activeBtn = document.querySelector('#view-growth button[onclick="setRetentionView(\\\'' + view + '\\\')"]');
+        if (activeBtn) {
+            activeBtn.className = 'px-2 py-1 text-[10px] font-semibold rounded-md bg-brand-tint text-brand';
+        }
+    };
+
+    window.refreshGrowthData = function() {
+        loadAllGrowthData();
+    };
+
+    function loadAllGrowthData() {
+        renderFunnel(mockFunnelData);
+        renderRetentionChart(mockRetentionData[currentRetentionView] || mockRetentionData.day);
+        renderRevenueChart(mockRevenueData);
+        renderActivation(mockActivationData);
+        renderChannels(mockChannelsData);
+    }
+
+    function init() {
+        if (loaded) return;
+        loaded = true;
+        loadAllGrowthData();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    window._growthInit = init;
+})();
+</script>

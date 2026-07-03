@@ -1,0 +1,431 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-bg" id="view-invite">
+<div class="max-w-5xl mx-auto w-full space-y-4 md:space-y-5">
+
+    <!-- Hero Section -->
+    <div class="ws-card p-6 md:p-8 relative overflow-hidden" data-animate="fade-in-up">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-brand/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-wiki/10 to-transparent rounded-full translate-y-1/2 -translate-x-1/3"></div>
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
+            <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-xl shadow-brand/20 flex-shrink-0">
+                <iconify-icon icon="mdi:account-group-outline" class="text-4xl md:text-5xl text-white"></iconify-icon>
+            </div>
+            <div class="flex-1 text-center md:text-left">
+                <h2 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-brand to-wiki bg-clip-text text-transparent mb-2">邀请好友，共享特权</h2>
+                <p class="text-sm text-fg-secondary mb-3">每邀请一位好友注册，双方均可获得丰厚奖励</p>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-tint text-brand text-xs font-semibold rounded-full">
+                        <iconify-icon icon="mdi:gift-outline" class="text-sm"></iconify-icon>
+                        双方各得 7 天 Pro 会员
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-wiki/10 text-wiki text-xs font-semibold rounded-full">
+                        <iconify-icon icon="mdi:trophy-outline" class="text-sm"></iconify-icon>
+                        邀请越多，奖励越多
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 邀请码和链接 -->
+    <div class="grid md:grid-cols-2 gap-4 md:gap-5">
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.05">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                    <iconify-icon icon="mdi:ticket-outline" class="text-white text-sm"></iconify-icon>
+                </div>
+                <h3 class="text-base font-bold text-fg-primary">我的邀请码</h3>
+            </div>
+            <div class="bg-gradient-to-br from-brand-tint3/50 to-brand-tint/30 border border-brand-tint2/50 rounded-xl p-4 mb-3">
+                <p class="text-xs text-fg-tertiary mb-1.5">您的专属邀请码</p>
+                <p class="text-2xl md:text-3xl font-mono font-bold text-brand tracking-wider" id="invite-code-display">LEXPRIME</p>
+            </div>
+            <button class="w-full py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="copyInviteCode()">
+                <iconify-icon icon="mdi:content-copy" class="text-base"></iconify-icon>
+                复制邀请码
+            </button>
+        </div>
+
+        <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.1">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-wiki to-green-600 flex items-center justify-center shadow-md shadow-wiki/20">
+                    <iconify-icon icon="mdi:link-variant" class="text-white text-sm"></iconify-icon>
+                </div>
+                <h3 class="text-base font-bold text-fg-primary">邀请链接</h3>
+            </div>
+            <div class="bg-bg-subtle border border-bg-border rounded-xl p-3 mb-3">
+                <p class="text-xs text-fg-tertiary mb-1">分享此链接给好友</p>
+                <p class="text-xs font-mono text-fg-secondary break-all" id="invite-link-display">https://lexprime.com/register?ref=LEXPRIME</p>
+            </div>
+            <button class="w-full py-2.5 text-sm font-semibold rounded-xl border-2 border-brand text-brand hover:bg-brand-tint transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="copyInviteLink()">
+                <iconify-icon icon="mdi:link-variant" class="text-base"></iconify-icon>
+                复制邀请链接
+            </button>
+        </div>
+    </div>
+
+    <!-- 分享按钮 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.15">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-success to-green-500 flex items-center justify-center shadow-md shadow-success/20">
+                <iconify-icon icon="mdi:share-variant-outline" class="text-white text-sm"></iconify-icon>
+            </div>
+            <h3 class="text-base font-bold text-fg-primary">分享到</h3>
+        </div>
+        <div class="grid grid-cols-4 gap-3">
+            <button class="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-bg-subtle transition-all duration-300 hover:-translate-y-1 group" onclick="shareToWeChat()">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-md shadow-green-500/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:wechat" class="text-2xl text-white"></iconify-icon>
+                </div>
+                <span class="text-xs font-medium text-fg-secondary">微信好友</span>
+            </button>
+            <button class="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-bg-subtle transition-all duration-300 hover:-translate-y-1 group" onclick="shareToMoments()">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center shadow-md shadow-green-600/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:camera-outline" class="text-2xl text-white"></iconify-icon>
+                </div>
+                <span class="text-xs font-medium text-fg-secondary">朋友圈</span>
+            </button>
+            <button class="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-bg-subtle transition-all duration-300 hover:-translate-y-1 group" onclick="shareToWeibo()">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-md shadow-red-500/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:comment-text-outline" class="text-2xl text-white"></iconify-icon>
+                </div>
+                <span class="text-xs font-medium text-fg-secondary">微博</span>
+            </button>
+            <button class="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-bg-subtle transition-all duration-300 hover:-translate-y-1 group" onclick="shareToEmail()">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:email-outline" class="text-2xl text-white"></iconify-icon>
+                </div>
+                <span class="text-xs font-medium text-fg-secondary">邮件</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 奖励统计 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" data-animate="fade-in-up" data-delay="0.2">
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-brand/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-brand/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20 mb-3 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:account-group-outline" class="text-xl text-white"></iconify-icon>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-invited-count">0</p>
+                <p class="text-xs text-fg-tertiary">已邀请好友</p>
+            </div>
+        </div>
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-wiki/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-wiki/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-wiki to-green-600 flex items-center justify-center shadow-md shadow-wiki/20 mb-3 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:gift-outline" class="text-xl text-white"></iconify-icon>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-reward-days">0</p>
+                <p class="text-xs text-fg-tertiary">累计奖励天数</p>
+            </div>
+        </div>
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-warning/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-warning/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20 mb-3 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:trophy-outline" class="text-xl text-white"></iconify-icon>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-level">0</p>
+                <p class="text-xs text-fg-tertiary">当前等级</p>
+            </div>
+        </div>
+        <div class="ws-card p-4 md:p-5 relative overflow-hidden group hover:shadow-lg hover:shadow-success/5 transition-all duration-300 hover:-translate-y-0.5">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-success/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-green-500 flex items-center justify-center shadow-md shadow-success/20 mb-3 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:coin-outline" class="text-xl text-white"></iconify-icon>
+                </div>
+                <p class="text-2xl md:text-3xl font-bold text-fg-primary mb-1" id="stat-coins">0</p>
+                <p class="text-xs text-fg-tertiary">LexPrime 币</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 邀请记录 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.25">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20">
+                    <iconify-icon icon="mdi:clipboard-list-outline" class="text-white text-sm"></iconify-icon>
+                </div>
+                <h3 class="text-base font-bold text-fg-primary">邀请记录</h3>
+            </div>
+            <span class="text-xs text-fg-tertiary" id="invite-count-badge">共 0 人</span>
+        </div>
+        <div class="space-y-2.5" id="invite-records-container">
+            <!-- 由 JS 渲染 -->
+        </div>
+        <div id="invite-empty-state" class="text-center py-8">
+            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-bg-subtle flex items-center justify-center">
+                <iconify-icon icon="mdi:account-group-outline" class="text-3xl text-fg-tertiary"></iconify-icon>
+            </div>
+            <p class="text-sm text-fg-secondary mb-1">暂无邀请记录</p>
+            <p class="text-xs text-fg-tertiary">分享您的邀请码给好友，开始获得奖励</p>
+        </div>
+    </div>
+
+    <!-- 奖励规则 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.3">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md shadow-purple-500/20">
+                <iconify-icon icon="mdi:information-outline" class="text-white text-sm"></iconify-icon>
+            </div>
+            <h3 class="text-base font-bold text-fg-primary">奖励规则</h3>
+        </div>
+        <div class="space-y-3">
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-brand-tint3/30 to-transparent hover:from-brand-tint3/50 transition-colors">
+                <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="text-xs font-bold text-white">1</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-fg-primary mb-0.5">邀请好友注册</p>
+                    <p class="text-xs text-fg-tertiary">好友通过您的邀请链接或邀请码注册成功，双方各获得 7 天 Pro 会员体验</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-wiki/10 to-transparent hover:from-wiki/20 transition-colors">
+                <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-wiki to-green-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="text-xs font-bold text-white">2</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-fg-primary mb-0.5">好友升级付费</p>
+                    <p class="text-xs text-fg-tertiary">好友首次购买付费套餐，您可获得该套餐 30% 的 LexPrime 币奖励</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-warning/10 to-transparent hover:from-warning/20 transition-colors">
+                <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span class="text-xs font-bold text-white">3</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-fg-primary mb-0.5">等级加速奖励</p>
+                    <p class="text-xs text-fg-tertiary">邀请满 5 人升级为 Lv.2，额外 20% 奖励加成；邀请满 20 人升级为 Lv.3，额外 50% 奖励加成</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 复制成功提示 -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[900] px-5 py-3 bg-fg-primary/90 text-white text-sm rounded-xl shadow-xl backdrop-blur-sm flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-300" id="copy-toast">
+        <iconify-icon icon="mdi:check-circle-outline" class="text-success text-base"></iconify-icon>
+        <span id="copy-toast-text">复制成功</span>
+    </div>
+
+</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var loaded = false;
+    var inviteData = null;
+
+    function getApiBaseUrl() {
+        return '';
+    }
+
+    function getAuthHeaders() {
+        var token = localStorage.getItem('access_token') || '';
+        return {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    function generateMockInviteCode() {
+        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        var code = '';
+        for (var i = 0; i < 8; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return code;
+    }
+
+    function fetchInviteData() {
+        var url = getApiBaseUrl() + '/api/invite/code';
+        return fetch(url, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed');
+            return res.json();
+        }).catch(function() {
+            return {
+                code: generateMockInviteCode(),
+                link: 'https://lexprime.com/register?ref=' + generateMockInviteCode(),
+                invite_count: 0,
+                reward_days: 0,
+                level: 1,
+                coins: 0
+            };
+        });
+    }
+
+    function fetchInviteRecords() {
+        var url = getApiBaseUrl() + '/api/invite/records';
+        return fetch(url, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed');
+            return res.json();
+        }).then(function(data) {
+            return data.records || [];
+        }).catch(function() {
+            return [];
+        });
+    }
+
+    function updateInviteDisplay(data) {
+        inviteData = data;
+
+        var codeEl = document.getElementById('invite-code-display');
+        var linkEl = document.getElementById('invite-link-display');
+        var invitedCountEl = document.getElementById('stat-invited-count');
+        var rewardDaysEl = document.getElementById('stat-reward-days');
+        var levelEl = document.getElementById('stat-level');
+        var coinsEl = document.getElementById('stat-coins');
+        var countBadgeEl = document.getElementById('invite-count-badge');
+
+        if (codeEl && data.code) codeEl.textContent = data.code;
+        if (linkEl && data.link) linkEl.textContent = data.link;
+        if (invitedCountEl) invitedCountEl.textContent = data.invite_count || 0;
+        if (rewardDaysEl) rewardDaysEl.textContent = data.reward_days || 0;
+        if (levelEl) levelEl.textContent = data.level || 1;
+        if (coinsEl) coinsEl.textContent = data.coins || 0;
+        if (countBadgeEl) countBadgeEl.textContent = '共 ' + (data.invite_count || 0) + ' 人';
+    }
+
+    function renderInviteRecords(records) {
+        var container = document.getElementById('invite-records-container');
+        var emptyState = document.getElementById('invite-empty-state');
+        if (!container) return;
+
+        if (!records || records.length === 0) {
+            container.innerHTML = '';
+            if (emptyState) emptyState.classList.remove('hidden');
+            return;
+        }
+
+        if (emptyState) emptyState.classList.add('hidden');
+
+        var html = '';
+        records.forEach(function(record, index) {
+            var statusIcon = record.status === 'completed' ? 'mdi:check-circle-outline' : 'mdi:clock-outline';
+            var statusColor = record.status === 'completed' ? 'text-success' : 'text-warning';
+            var statusText = record.status === 'completed' ? '已完成' : '待激活';
+            var rewardText = record.reward_text || '+7 天 Pro';
+
+            html += '' +
+                '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle transition-colors group" style="animation-delay: ' + (index * 0.03) + 's">' +
+                    '<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
+                        '<iconify-icon icon="mdi:account-outline" class="text-lg text-brand"></iconify-icon>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                        '<p class="text-sm font-medium text-fg-primary truncate">' + (record.nickname || 'LexPrime 用户') + '</p>' +
+                        '<p class="text-xs text-fg-tertiary flex items-center gap-1">' +
+                            '<iconify-icon icon="mdi:calendar-outline" class="text-[10px]"></iconify-icon>' +
+                            (record.created_at || '2024-01-01') +
+                        '</p>' +
+                    '</div>' +
+                    '<div class="flex flex-col items-end gap-1">' +
+                        '<span class="text-xs font-semibold ' + statusColor + ' flex items-center gap-1">' +
+                            '<iconify-icon icon="' + statusIcon + '" class="text-[10px]"></iconify-icon>' +
+                            statusText +
+                        '</span>' +
+                        '<span class="text-xs text-brand font-medium">' + rewardText + '</span>' +
+                    '</div>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function showCopyToast(text) {
+        var toast = document.getElementById('copy-toast');
+        var toastText = document.getElementById('copy-toast-text');
+        if (!toast) return;
+        if (toastText && text) toastText.textContent = text;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        setTimeout(function() {
+            toast.classList.add('opacity-0', 'pointer-events-none');
+        }, 2000);
+    }
+
+    window.copyInviteCode = function() {
+        var codeEl = document.getElementById('invite-code-display');
+        if (!codeEl) return;
+        var code = codeEl.textContent;
+        copyToClipboard(code);
+        showCopyToast('邀请码已复制');
+    };
+
+    window.copyInviteLink = function() {
+        var linkEl = document.getElementById('invite-link-display');
+        if (!linkEl) return;
+        var link = linkEl.textContent;
+        copyToClipboard(link);
+        showCopyToast('邀请链接已复制');
+    };
+
+    function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+        } else {
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (e) {}
+            document.body.removeChild(textarea);
+        }
+    }
+
+    window.shareToWeChat = function() {
+        alert('请使用微信扫描二维码分享给好友');
+    };
+
+    window.shareToMoments = function() {
+        alert('请使用微信扫描二维码分享到朋友圈');
+    };
+
+    window.shareToWeibo = function() {
+        var link = (inviteData && inviteData.link) || 'https://lexprime.com';
+        var text = '推荐一款超好用的法律AI助手 LexPrime，注册即可免费使用！';
+        var url = 'https://service.weibo.com/share/share.php?url=' + encodeURIComponent(link) + '&title=' + encodeURIComponent(text);
+        window.open(url, '_blank');
+    };
+
+    window.shareToEmail = function() {
+        var link = (inviteData && inviteData.link) || 'https://lexprime.com';
+        var subject = '推荐 LexPrime - 智能法律助手';
+        var body = '你好，我正在使用 LexPrime 智能法律助手，非常好用！点击链接注册：' + link;
+        window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    };
+
+    function init() {
+        if (loaded) return;
+        loaded = true;
+
+        fetchInviteData().then(function(data) {
+            updateInviteDisplay(data);
+        });
+
+        fetchInviteRecords().then(function(records) {
+            renderInviteRecords(records);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    window._inviteInit = init;
+})();
+</script>

@@ -1,0 +1,524 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto bg-bg-subtle" id="view-pricing">
+
+<!-- Hero 区 -->
+<section class="relative overflow-hidden bg-gradient-to-br from-brand via-brand to-wiki" data-animate="fade-in-up" data-delay="0">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl hero-orb"></div>
+    <div class="absolute bottom-0 left-1/4 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 blur-2xl hero-orb"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-20">
+        <div class="text-center max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-medium mb-6">
+                <iconify-icon icon="mdi:gift-outline" class="text-sm"></iconify-icon>
+                30 天免费试用 · 无信用卡 · 随时取消
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight">
+                选择适合您的方案
+            </h1>
+            <p class="mt-4 text-base md:text-lg text-white/80">
+                律师的第二大脑 · 数据完全本地化 · AI 辅助不替代律师
+            </p>
+            <div class="mt-8 inline-flex items-center gap-3 bg-white/15 backdrop-blur-sm rounded-2xl p-1.5">
+                <button id="pricing-monthly-btn" class="px-6 py-2.5 rounded-xl bg-white text-brand text-sm font-semibold shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                    月付
+                </button>
+                <button id="pricing-yearly-btn" class="px-6 py-2.5 rounded-xl text-white/80 text-sm font-medium hover:text-white transition-all duration-300">
+                    年付
+                    <span class="ml-1.5 inline-flex items-center px-2 py-0.5 rounded-full bg-success text-white text-[10px] font-bold">省 20%</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 当前套餐状态 -->
+<section class="py-8 -mt-8 relative z-20" id="current-plan-section">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-bg-border p-6" id="current-plan-card">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center">
+                        <iconify-icon icon="mdi:star" class="text-white text-xl"></iconify-icon>
+                    </div>
+                    <div>
+                        <div class="text-xs text-fg-tertiary">当前套餐</div>
+                        <div class="text-lg font-bold text-fg-primary" id="current-plan-name">免费版</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-fg-secondary" id="current-plan-status">免费使用</div>
+                    <div class="text-xs text-fg-tertiary" id="current-plan-expiry">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 定价卡片 4 档 -->
+<section class="py-12 relative z-10">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" id="pricing-cards-container">
+            <!-- 卡片由 JS 渲染 -->
+        </div>
+    </div>
+</section>
+
+<!-- 功能对比表格 -->
+<section class="py-16 bg-white border-y border-bg-border">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-fg-primary">功能对比</h2>
+            <p class="mt-3 text-sm text-fg-secondary">详细了解各套餐功能差异，选择最适合您的方案</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm" id="feature-comparison-table">
+                <thead class="bg-bg-subtle">
+                    <tr>
+                        <th scope="col" class="text-left px-6 py-4 font-semibold text-fg-tertiary text-xs uppercase tracking-wider">功能</th>
+                        <th scope="col" class="px-4 py-4 text-center font-semibold text-fg-tertiary text-xs uppercase tracking-wider">免费版</th>
+                        <th scope="col" class="px-4 py-4 text-center font-semibold text-fg-tertiary text-xs uppercase tracking-wider">基础版</th>
+                        <th scope="col" class="px-4 py-4 text-center font-semibold text-brand text-xs uppercase tracking-wider bg-brand-tint/30">专业版</th>
+                        <th scope="col" class="px-4 py-4 text-center font-semibold text-fg-tertiary text-xs uppercase tracking-wider">企业版</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-bg-border" id="feature-comparison-body">
+                    <!-- 由 JS 渲染 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-16 bg-bg-subtle">
+    <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-fg-primary">常见问题</h2>
+            <p class="mt-3 text-sm text-fg-secondary">还有疑问？看看大家都在问什么</p>
+        </div>
+        <div class="space-y-3" id="pricing-faq-list">
+            <details class="faq-item bg-white border border-bg-border rounded-2xl p-5 group hover:shadow-md transition-all duration-300" open>
+                <summary class="flex items-center justify-between cursor-pointer list-none">
+                    <span class="font-semibold text-fg-primary text-sm flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-tint flex items-center justify-center flex-shrink-0">
+                            <iconify-icon icon="mdi:help-circle-outline" class="text-brand text-base"></iconify-icon>
+                        </span>
+                        30 天免费试用包含哪些功能？
+                    </span>
+                    <span class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center text-fg-tertiary group-open:rotate-180 transition-transform duration-300">
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </span>
+                </summary>
+                <p class="mt-4 text-sm text-fg-secondary leading-relaxed pl-11">
+                    试用期内全部功能开放，不限制次数。试用期结束后基础功能仍可用，高级功能将锁定。
+                </p>
+            </details>
+            <details class="faq-item bg-white border border-bg-border rounded-2xl p-5 group hover:shadow-md transition-all duration-300">
+                <summary class="flex items-center justify-between cursor-pointer list-none">
+                    <span class="font-semibold text-fg-primary text-sm flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-tint flex items-center justify-center flex-shrink-0">
+                            <iconify-icon icon="mdi:credit-card-outline" class="text-brand text-base"></iconify-icon>
+                        </span>
+                        需要绑信用卡吗？
+                    </span>
+                    <span class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center text-fg-tertiary group-open:rotate-180 transition-transform duration-300">
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </span>
+                </summary>
+                <p class="mt-4 text-sm text-fg-secondary leading-relaxed pl-11">
+                    不需要。注册只需邮箱 + 验证码，30 天试用不收集任何支付信息。试用期结束升级时再付款。
+                </p>
+            </details>
+            <details class="faq-item bg-white border border-bg-border rounded-2xl p-5 group hover:shadow-md transition-all duration-300">
+                <summary class="flex items-center justify-between cursor-pointer list-none">
+                    <span class="font-semibold text-fg-primary text-sm flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-tint flex items-center justify-center flex-shrink-0">
+                            <iconify-icon icon="mdi:calendar-month-outline" class="text-brand text-base"></iconify-icon>
+                        </span>
+                        月付和年付哪个划算？
+                    </span>
+                    <span class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center text-fg-tertiary group-open:rotate-180 transition-transform duration-300">
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </span>
+                </summary>
+                <p class="mt-4 text-sm text-fg-secondary leading-relaxed pl-11">
+                    年付立省约 20%。老用户续费可叠加优惠。
+                </p>
+            </details>
+            <details class="faq-item bg-white border border-bg-border rounded-2xl p-5 group hover:shadow-md transition-all duration-300">
+                <summary class="flex items-center justify-between cursor-pointer list-none">
+                    <span class="font-semibold text-fg-primary text-sm flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-brand-tint flex items-center justify-center flex-shrink-0">
+                            <iconify-icon icon="mdi:refresh" class="text-brand text-base"></iconify-icon>
+                        </span>
+                        中途不想用了能退款吗？
+                    </span>
+                    <span class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center text-fg-tertiary group-open:rotate-180 transition-transform duration-300">
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </span>
+                </summary>
+                <p class="mt-4 text-sm text-fg-secondary leading-relaxed pl-11">
+                    月付：随时取消，当月不退；年付：30 天内全额退款，之后按月折算。取消后数据保留 90 天可下载期。
+                </p>
+            </details>
+        </div>
+    </div>
+</section>
+
+<!-- 底部 CTA -->
+<section class="py-16 relative overflow-hidden bg-gradient-to-br from-brand via-ai to-wiki text-white">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl hero-orb"></div>
+    <div class="absolute bottom-0 left-1/4 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 blur-2xl hero-orb"></div>
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <div class="w-20 h-20 mx-auto rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
+            <iconify-icon icon="mdi:rocket-launch-outline" class="text-4xl text-white"></iconify-icon>
+        </div>
+        <h2 class="text-2xl md:text-4xl font-bold">30 天免费试用，立即开始</h2>
+        <p class="mt-4 text-base md:text-lg opacity-90">注册 30 秒，无信用卡，上传首个案件即可体验全部功能</p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button onclick="window.app && window.app.openView('register')"
+               class="w-full sm:w-auto px-8 py-4 bg-white text-brand font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center justify-center gap-2">
+                <span>免费注册</span>
+                <iconify-icon icon="mdi:arrow-right"></iconify-icon>
+            </button>
+        </div>
+    </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var currentBilling = 'monthly';
+    var plansData = [];
+    var loaded = false;
+
+    var featureRows = [
+        { name: '案件管理', icon: 'mdi:briefcase-outline', free: true, basic: true, pro: true, enterprise: true },
+        { name: '客户管理', icon: 'mdi:account-group-outline', free: true, basic: true, pro: true, enterprise: true },
+        { name: '日程管理', icon: 'mdi:calendar-outline', free: true, basic: true, pro: true, enterprise: true },
+        { name: '模板库', icon: 'mdi:file-document-multiple-outline', free: true, basic: true, pro: true, enterprise: true },
+        { name: '类案检索', icon: 'mdi:book-search-outline', free: false, basic: true, pro: true, enterprise: true },
+        { name: 'AI 文书生成', icon: 'mdi:file-document-edit-outline', free: false, basic: '200次/月', pro: '无限', enterprise: '无限' },
+        { name: '合同审查', icon: 'mdi:file-check-outline', free: false, basic: '5次/月', pro: '50次/月', enterprise: '无限' },
+        { name: '司法观点', icon: 'mdi:gavel', free: false, basic: false, pro: true, enterprise: true },
+        { name: '法律问答', icon: 'mdi:comment-question-outline', free: false, basic: false, pro: true, enterprise: true },
+        { name: '庭审准备', icon: 'mdi:theater', free: false, basic: false, pro: '50次/月', enterprise: '无限' },
+        { name: '本地知识库', icon: 'mdi:database-outline', free: false, basic: false, pro: true, enterprise: true },
+        { name: '存储空间', icon: 'mdi:harddisk-outline', free: '1 GB', basic: '5 GB', pro: '20 GB', enterprise: '200 GB' },
+        { name: '团队协作', icon: 'mdi:account-multiple-plus-outline', free: false, basic: false, pro: false, enterprise: true },
+        { name: '共享知识库', icon: 'mdi:library-outline', free: false, basic: false, pro: false, enterprise: true },
+        { name: '数据统计分析', icon: 'mdi:chart-bar-outline', free: false, basic: false, pro: false, enterprise: true },
+        { name: '专属客服', icon: 'mdi:lifebuoy', free: '社区', basic: '邮件 48h', pro: '优先 24h', enterprise: '7×24 专属' },
+    ];
+
+    function getApiBaseUrl() {
+        return '';
+    }
+
+    function getAuthHeaders() {
+        var token = localStorage.getItem('access_token') || '';
+        return {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    function loadPlans() {
+        var url = getApiBaseUrl() + '/api/subscription/plans';
+        return fetch(url, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed to load plans');
+            return res.json();
+        }).catch(function() {
+            return [
+                { code: 'free', name: '免费版', description: '基础功能体验', price_monthly: 0, price_yearly: 0, is_popular: false, tier: 'free', sort_order: 0, features: {}, limits: {} },
+                { code: 'basic', name: '个人基础版', description: '入门体验', price_monthly: 99, price_yearly: 899, is_popular: false, tier: 'basic', sort_order: 1, features: {}, limits: {} },
+                { code: 'pro', name: '个人专业版', description: '最适合个人律师', price_monthly: 199, price_yearly: 1910, is_popular: true, tier: 'pro', sort_order: 2, features: {}, limits: {} },
+                { code: 'enterprise', name: '企业版', description: '适合律所及团队', price_monthly: 1500, price_yearly: 15000, is_popular: false, tier: 'enterprise', sort_order: 3, features: {}, limits: {} }
+            ];
+        });
+    }
+
+    function loadCurrentSubscription() {
+        var url = getApiBaseUrl() + '/api/subscription/current';
+        return fetch(url, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed to load subscription');
+            return res.json();
+        }).catch(function() {
+            return {
+                plan_code: 'free',
+                plan_name: '免费版',
+                status: 'free',
+                current_period_end: null
+            };
+        });
+    }
+
+    function renderPricingCards() {
+        var container = document.getElementById('pricing-cards-container');
+        if (!container) return;
+
+        var html = '';
+        plansData.forEach(function(plan, index) {
+            var price = currentBilling === 'yearly' ? plan.price_yearly : plan.price_monthly;
+            var period = currentBilling === 'yearly' ? '/年' : '/月';
+            var isPopular = plan.is_popular;
+            var isFree = plan.code === 'free';
+            var isEnterprise = plan.code === 'enterprise';
+
+            var features = getPlanFeatures(plan.code);
+
+            html += '' +
+                '<div class="pricing-card relative bg-white rounded-2xl border border-bg-border p-6 flex flex-col ws-card group ' + (isPopular ? 'md:-translate-y-4 shadow-xl shadow-brand/20 border-brand/30' : '') + '"' +
+                ' data-animate="scale-in" data-stagger-group="pricing-cards" data-stagger-index="' + index + '" data-delay="0.1">' +
+                    (isPopular ? '<div class="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold shadow-xl z-20"><iconify-icon icon="mdi:star" class="text-sm"></iconify-icon>最受欢迎</div>' : '') +
+                    '<div class="relative z-10">' +
+                        '<div class="flex items-center justify-between mb-2">' +
+                            '<div class="flex items-center gap-3">' +
+                                '<div class="w-12 h-12 rounded-xl ' + getPlanIconBg(plan.code) + ' flex items-center justify-center group-hover:scale-110 transition-transform duration-300">' +
+                                    '<iconify-icon icon="' + getPlanIcon(plan.code) + '" class="text-2xl ' + (isPopular ? 'text-white' : 'text-fg-tertiary') + '"></iconify-icon>' +
+                                '</div>' +
+                                '<div>' +
+                                    '<h3 class="text-lg font-bold text-fg-primary">' + plan.name + '</h3>' +
+                                    '<p class="text-[11px] text-fg-tertiary">' + (plan.description || '') + '</p>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-6">' +
+                            '<div class="flex items-baseline gap-1">' +
+                                '<span class="text-4xl font-bold ' + (isPopular ? 'text-brand' : 'text-fg-primary') + '">¥' + (isEnterprise ? price.toLocaleString() : price) + '</span>' +
+                                '<span class="text-sm text-fg-tertiary">' + period + '</span>' +
+                            '</div>' +
+                            (currentBilling === 'yearly' && !isFree ? '<div class="mt-1 text-xs text-success font-medium">省 ¥' + Math.round(plan.price_monthly * 12 - plan.price_yearly) + '</div>' : '') +
+                        '</div>' +
+                        getPlanButton(plan) +
+                    '</div>' +
+                    '<ul class="mt-6 space-y-2.5 text-sm flex-1 relative z-10">' + features + '</ul>' +
+                '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    function getPlanFeatures(code) {
+        var features = [];
+        if (code === 'free') {
+            features = [
+                { text: '每日 3 次 AI 对话', included: true },
+                { text: '基础案件管理（3个）', included: true },
+                { text: '基础日程管理', included: true },
+                { text: '类案检索', included: false },
+                { text: 'AI 文书生成', included: false },
+                { text: '合同审查', included: false },
+            ];
+        } else if (code === 'basic') {
+            features = [
+                { text: '案件 / 客户 / 日程 / 模板 完整功能', included: true },
+                { text: '类案检索 不限次数', included: true },
+                { text: 'AI 文书生成 200 次/月', included: true },
+                { text: '合同审查 5 次/月', included: true },
+                { text: '存储 5 GB · 多端同步', included: true },
+                { text: '邮件支持 48h', included: true },
+                { text: '庭审准备', included: false },
+                { text: '批量合同审查', included: false },
+            ];
+        } else if (code === 'pro') {
+            features = [
+                { text: '包含基础版全部功能', included: true },
+                { text: 'AI 文书生成 无限次', included: true, highlight: true },
+                { text: '司法观点 / 法律问答 无限次', included: true, highlight: true },
+                { text: '庭审准备 50 次/月', included: true, highlight: true },
+                { text: '批量合同审查 20 次/月', included: true, highlight: true },
+                { text: '本地知识库 (LanceDB)', included: true },
+                { text: '存储 20 GB · 优先客服 24h', included: true },
+            ];
+        } else if (code === 'enterprise') {
+            features = [
+                { text: '包含专业版全部功能', included: true },
+                { text: '团队协作（10人）', included: true },
+                { text: '共享知识库', included: true },
+                { text: '数据统计分析', included: true },
+                { text: '自定义 SOP 工作流', included: true },
+                { text: '私有化部署选项', included: true },
+                { text: '专属顾问 + 7×24 客服', included: true },
+            ];
+        }
+
+        var html = '';
+        features.forEach(function(f) {
+            var iconColor = f.included ? 'text-success' : 'text-fg-disabled';
+            var icon = f.included ? 'mdi:check' : 'mdi:close';
+            var bgColor = f.included ? 'bg-success-tint' : 'bg-bg';
+            var textClass = f.included ? 'text-fg-secondary' : 'text-fg-tertiary line-through opacity-50';
+            html += '' +
+                '<li class="flex items-start gap-2.5 ' + textClass + '">' +
+                    '<div class="w-5 h-5 rounded-full ' + bgColor + ' flex items-center justify-center flex-shrink-0 mt-0.5">' +
+                        '<iconify-icon icon="' + icon + '" class="' + iconColor + ' text-xs"></iconify-icon>' +
+                    '</div>' +
+                    '<span' + (f.highlight ? ' class="font-medium"' : '') + '>' + f.text + '</span>' +
+                '</li>';
+        });
+        return html;
+    }
+
+    function getPlanIcon(code) {
+        var icons = {
+            'free': 'mdi:seed-outline',
+            'basic': 'mdi:leaf',
+            'pro': 'mdi:crown',
+            'enterprise': 'mdi:domain'
+        };
+        return icons[code] || 'mdi:star-outline';
+    }
+
+    function getPlanIconBg(code) {
+        var bgs = {
+            'free': 'bg-gradient-to-br from-gray-100 to-bg',
+            'basic': 'bg-gradient-to-br from-blue-100 to-blue-50',
+            'pro': 'bg-gradient-to-br from-brand to-brand-hover shadow-md shadow-brand/30',
+            'enterprise': 'bg-gradient-to-br from-purple-500 to-wiki shadow-md shadow-wiki/20'
+        };
+        return bgs[code] || 'bg-gray-100';
+    }
+
+    function getPlanButton(plan) {
+        var isFree = plan.code === 'free';
+        var isEnterprise = plan.code === 'enterprise';
+        var isPopular = plan.is_popular;
+
+        if (isFree) {
+            return '<button class="mt-6 w-full py-3 text-center bg-white text-fg-primary border-2 border-bg-border rounded-xl text-sm font-semibold hover:border-brand hover:text-brand transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/10" onclick="goToPricing(\'' + plan.code + '\')">当前使用</button>';
+        }
+        if (isEnterprise) {
+            return '<button class="mt-6 w-full py-3 text-center bg-white text-fg-primary border-2 border-bg-border rounded-xl text-sm font-semibold hover:border-wiki hover:text-wiki transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-wiki/10" onclick="openContactModal()">联系商务</button>';
+        }
+        if (isPopular) {
+            return '<button class="mt-6 w-full py-3 text-center bg-gradient-to-r from-brand to-brand-hover text-white rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5" onclick="goToPayment(\'' + plan.code + '\')">立即订阅</button>';
+        }
+        return '<button class="mt-6 w-full py-3 text-center bg-white text-fg-primary border-2 border-bg-border rounded-xl text-sm font-semibold hover:border-brand hover:text-brand transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/10" onclick="goToPayment(\'' + plan.code + '\')">选择' + plan.name.replace('个人', '') + '</button>';
+    }
+
+    function renderFeatureComparison() {
+        var tbody = document.getElementById('feature-comparison-body');
+        if (!tbody) return;
+
+        var html = '';
+        featureRows.forEach(function(row) {
+            html += '<tr class="hover:bg-bg-subtle/50 transition-colors">';
+            html += '<td class="px-6 py-4 text-fg-secondary"><div class="flex items-center gap-3"><iconify-icon icon="' + row.icon + '" class="text-brand text-base"></iconify-icon><span>' + row.name + '</span></div></td>';
+            ['free', 'basic', 'pro', 'enterprise'].forEach(function(tier) {
+                var val = row[tier];
+                var cellClass = tier === 'pro' ? 'bg-brand-tint/10' : '';
+                html += '<td class="px-4 py-4 text-center ' + cellClass + '">';
+                if (typeof val === 'boolean') {
+                    if (val) {
+                        html += '<div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-success-tint"><iconify-icon icon="mdi:check" class="text-success text-sm"></iconify-icon></div>';
+                    } else {
+                        html += '<div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-bg"><iconify-icon icon="mdi:close" class="text-fg-disabled text-sm"></iconify-icon></div>';
+                    }
+                } else {
+                    html += '<span class="text-xs text-fg-secondary font-medium">' + val + '</span>';
+                }
+                html += '</td>';
+            });
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+    }
+
+    function renderCurrentPlan(sub) {
+        var nameEl = document.getElementById('current-plan-name');
+        var statusEl = document.getElementById('current-plan-status');
+        var expiryEl = document.getElementById('current-plan-expiry');
+
+        if (nameEl) nameEl.textContent = sub.plan_name || '免费版';
+        if (statusEl) {
+            var statusText = '';
+            if (sub.status === 'active') statusText = '订阅中';
+            else if (sub.status === 'trialing') statusText = '试用中';
+            else if (sub.status === 'cancelled') statusText = '已取消';
+            else statusText = '免费使用';
+            statusEl.textContent = statusText;
+        }
+        if (expiryEl) {
+            if (sub.current_period_end) {
+                expiryEl.textContent = '有效期至 ' + sub.current_period_end.split('T')[0];
+            } else {
+                expiryEl.textContent = '—';
+            }
+        }
+    }
+
+    function toggleBilling(period) {
+        currentBilling = period;
+        var monthlyBtn = document.getElementById('pricing-monthly-btn');
+        var yearlyBtn = document.getElementById('pricing-yearly-btn');
+
+        if (monthlyBtn && yearlyBtn) {
+            monthlyBtn.className = 'px-6 py-2.5 rounded-xl text-white/80 text-sm font-medium hover:text-white transition-all duration-300';
+            yearlyBtn.className = 'px-6 py-2.5 rounded-xl text-white/80 text-sm font-medium hover:text-white transition-all duration-300';
+
+            if (period === 'monthly') {
+                monthlyBtn.className = 'px-6 py-2.5 rounded-xl bg-white text-brand text-sm font-semibold shadow-lg transition-all duration-300 hover:-translate-y-0.5';
+            } else {
+                yearlyBtn.className = 'px-6 py-2.5 rounded-xl bg-white text-brand text-sm font-semibold shadow-lg transition-all duration-300 hover:-translate-y-0.5';
+            }
+        }
+
+        renderPricingCards();
+    }
+
+    window.goToPayment = function(planCode) {
+        if (window.app && window.app.openView) {
+            window.app._pendingPlan = planCode;
+            window.app._pendingBilling = currentBilling;
+            window.app.openView('payment');
+        }
+    };
+
+    window.goToPricing = function(planCode) {
+        if (window.app && window.app.openView) {
+            window.app.openView('subscription');
+        }
+    };
+
+    window.openContactModal = function() {
+        alert('请联系商务：business@lexprime.cn');
+    };
+
+    function init() {
+        if (loaded) return;
+        loaded = true;
+
+        var monthlyBtn = document.getElementById('pricing-monthly-btn');
+        var yearlyBtn = document.getElementById('pricing-yearly-btn');
+        if (monthlyBtn) monthlyBtn.addEventListener('click', function() { toggleBilling('monthly'); });
+        if (yearlyBtn) yearlyBtn.addEventListener('click', function() { toggleBilling('yearly'); });
+
+        loadPlans().then(function(plans) {
+            plansData = plans.sort(function(a, b) { return a.sort_order - b.sort_order; });
+            renderPricingCards();
+        });
+
+        loadCurrentSubscription().then(function(sub) {
+            renderCurrentPlan(sub);
+        });
+
+        renderFeatureComparison();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    window._pricingInit = init;
+})();
+</script>

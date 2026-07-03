@@ -1,0 +1,997 @@
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-collaboration">
+  <!-- 移动端顶部操作栏 -->
+  <div class="flex items-center justify-between mb-2 md:hidden px-3 pt-3">
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <iconify-icon class="text-xl text-fg-primary" icon="mdi:menu"></iconify-icon>
+    </button>
+    <h2 class="text-sm font-semibold text-fg-primary">团队协作</h2>
+    <button class="w-11 h-11 flex items-center justify-center text-fg-secondary hover:text-brand transition-colors" onclick="showInviteMemberModal()">
+      <iconify-icon icon="mdi:user-plus" class="text-xl"></iconify-icon>
+    </button>
+  </div>
+
+  <!-- 页面头部 -->
+  <div class="px-4 md:px-6 py-4 md:py-5 bg-white border-b border-bg-border sticky top-0 z-20">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <iconify-icon icon="mdi:account-group-outline" class="text-brand text-xl"></iconify-icon>
+          <h1 class="text-lg md:text-xl font-bold text-fg-primary">团队协作</h1>
+          <span class="px-2 py-0.5 bg-brand-tint text-brand text-[10px] font-medium rounded-full">Beta</span>
+        </div>
+        <p class="text-xs text-fg-tertiary">高效协作，共同推进案件进度</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" onclick="switchView('files')">
+          <iconify-icon icon="mdi:folder-multiple-outline" class="text-sm"></iconify-icon>
+          <span class="hidden sm:inline">文件库</span>
+        </button>
+        <button class="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-lg hover:shadow-brand/30 rounded-lg transition-all" onclick="showInviteMemberModal()">
+          <iconify-icon icon="mdi:user-plus" class="text-sm"></iconify-icon>
+          <span>邀请成员</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 md:p-6 flex-1 max-w-7xl mx-auto w-full">
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5" data-animate-container>
+      <div class="bg-white rounded-xl shadow-card border border-bg-border p-4" data-animate="scale-in" data-stagger-group="collab-stats" data-stagger-index="0" data-delay="0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">团队成员</span>
+          <div class="w-8 h-8 rounded-lg bg-brand-tint flex items-center justify-center">
+            <iconify-icon icon="mdi:account-group" class="text-brand text-base"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">12</p>
+        <p class="text-[10px] text-success mt-1 flex items-center">
+          <iconify-icon icon="mdi:arrow-up" class="mr-0.5"></iconify-icon> +3 本月
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-card border border-bg-border p-4" data-animate="scale-in" data-stagger-group="collab-stats" data-stagger-index="1" data-delay="0.05">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">进行中任务</span>
+          <div class="w-8 h-8 rounded-lg bg-wiki-tint flex items-center justify-center">
+            <iconify-icon icon="mdi:clipboard-list-outline" class="text-wiki text-base"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">28</p>
+        <p class="text-[10px] text-warning mt-1 flex items-center">
+          <iconify-icon icon="mdi:alert-outline" class="mr-0.5"></iconify-icon> 5 项即将到期
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-card border border-bg-border p-4" data-animate="scale-in" data-stagger-group="collab-stats" data-stagger-index="2" data-delay="0.1">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">协作案件</span>
+          <div class="w-8 h-8 rounded-lg bg-success-tint flex items-center justify-center">
+            <iconify-icon icon="mdi:briefcase-outline" class="text-success text-base"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">15</p>
+        <p class="text-[10px] text-success mt-1 flex items-center">
+          <iconify-icon icon="mdi:check-circle" class="mr-0.5"></iconify-icon> 8 件本月结案
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-card border border-bg-border p-4" data-animate="scale-in" data-stagger-group="collab-stats" data-stagger-index="3" data-delay="0.15">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-fg-tertiary font-medium">共享文件</span>
+          <div class="w-8 h-8 rounded-lg bg-warning-tint flex items-center justify-center">
+            <iconify-icon icon="mdi:file-multiple-outline" class="text-warning text-base"></iconify-icon>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-fg-primary">156</p>
+        <p class="text-[10px] text-fg-tertiary mt-1 flex items-center">
+          <iconify-icon icon="mdi:upload" class="mr-0.5"></iconify-icon> 12 份本周新增
+        </p>
+      </div>
+    </div>
+
+    <!-- Tab 切换 -->
+    <div class="flex items-center gap-1 mb-5 bg-bg rounded-xl p-1 overflow-x-auto" id="collab-tabs">
+      <button class="collab-tab active flex-1 min-w-[100px] px-4 py-2 text-xs font-medium rounded-lg transition-all" data-tab="members" onclick="switchCollabTab('members')">
+        <iconify-icon icon="mdi:account-group" class="text-sm mr-1"></iconify-icon>团队成员
+      </button>
+      <button class="collab-tab flex-1 min-w-[100px] px-4 py-2 text-xs font-medium rounded-lg transition-all" data-tab="tasks" onclick="switchCollabTab('tasks')">
+        <iconify-icon icon="mdi:clipboard-list" class="text-sm mr-1"></iconify-icon>任务分配
+      </button>
+      <button class="collab-tab flex-1 min-w-[100px] px-4 py-2 text-xs font-medium rounded-lg transition-all" data-tab="comments" onclick="switchCollabTab('comments')">
+        <iconify-icon icon="mdi:comment-text-outline" class="text-sm mr-1"></iconify-icon>讨论区
+      </button>
+      <button class="collab-tab flex-1 min-w-[100px] px-4 py-2 text-xs font-medium rounded-lg transition-all" data-tab="files" onclick="switchCollabTab('files')">
+        <iconify-icon icon="mdi:folder-multiple" class="text-sm mr-1"></iconify-icon>文件共享
+      </button>
+      <button class="collab-tab flex-1 min-w-[100px] px-4 py-2 text-xs font-medium rounded-lg transition-all" data-tab="permissions" onclick="switchCollabTab('permissions')">
+        <iconify-icon icon="mdi:shield-key-outline" class="text-sm mr-1"></iconify-icon>权限管理
+      </button>
+    </div>
+
+    <!-- 团队成员 Tab -->
+    <div class="collab-tab-content" id="collab-tab-members">
+      <div class="bg-white rounded-xl shadow-card border border-bg-border overflow-hidden">
+        <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+            <iconify-icon icon="mdi:account-group-outline" class="text-brand"></iconify-icon>
+            团队成员
+          </h3>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <iconify-icon icon="mdi:magnify" class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm"></iconify-icon>
+              <input type="text" placeholder="搜索成员..." class="pl-8 pr-3 py-1.5 text-xs border border-bg-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand w-40 md:w-48" id="member-search-input" oninput="filterMembers(this.value)">
+            </div>
+            <select class="text-xs border border-bg-border rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand/30" id="member-role-filter" onchange="filterMembersByRole(this.value)">
+              <option value="all">全部角色</option>
+              <option value="admin">管理员</option>
+              <option value="lawyer">执业律师</option>
+              <option value="paralegal">律师助理</option>
+              <option value="intern">实习生</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divide-y divide-bg-border" id="members-list">
+          <!-- 成员列表项由 JS 动态生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 任务分配 Tab -->
+    <div class="collab-tab-content hidden" id="collab-tab-tasks">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- 待办 -->
+        <div class="bg-bg-subtle/50 rounded-xl p-3">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-warning"></span>
+              <h4 class="text-sm font-semibold text-fg-primary">待办</h4>
+              <span class="text-[10px] bg-warning-tint text-warning px-1.5 py-0.5 rounded font-medium" id="task-todo-count">5</span>
+            </div>
+            <button class="text-xs text-brand hover:underline" onclick="showNewTaskModal('todo')">+ 新建</button>
+          </div>
+          <div class="space-y-2" id="task-column-todo">
+            <!-- 任务卡片由 JS 生成 -->
+          </div>
+        </div>
+
+        <!-- 进行中 -->
+        <div class="bg-bg-subtle/50 rounded-xl p-3">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-brand"></span>
+              <h4 class="text-sm font-semibold text-fg-primary">进行中</h4>
+              <span class="text-[10px] bg-brand-tint text-brand px-1.5 py-0.5 rounded font-medium" id="task-progress-count">8</span>
+            </div>
+            <button class="text-xs text-brand hover:underline" onclick="showNewTaskModal('progress')">+ 新建</button>
+          </div>
+          <div class="space-y-2" id="task-column-progress">
+            <!-- 任务卡片由 JS 生成 -->
+          </div>
+        </div>
+
+        <!-- 已完成 -->
+        <div class="bg-bg-subtle/50 rounded-xl p-3">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-success"></span>
+              <h4 class="text-sm font-semibold text-fg-primary">已完成</h4>
+              <span class="text-[10px] bg-success-tint text-success px-1.5 py-0.5 rounded font-medium" id="task-done-count">15</span>
+            </div>
+            <button class="text-xs text-brand hover:underline" onclick="clearCompletedTasks()">清除已完成</button>
+          </div>
+          <div class="space-y-2" id="task-column-done">
+            <!-- 任务卡片由 JS 生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 讨论区 Tab -->
+    <div class="collab-tab-content hidden" id="collab-tab-comments">
+      <div class="bg-white rounded-xl shadow-card border border-bg-border overflow-hidden">
+        <div class="px-4 py-3 border-b border-bg-border">
+          <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+            <iconify-icon icon="mdi:comment-text-outline" class="text-brand"></iconify-icon>
+            案件讨论区
+          </h3>
+          <p class="text-[11px] text-fg-tertiary mt-0.5">选择案件参与讨论，与团队成员协作沟通</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row" style="min-height: 500px;">
+          <!-- 讨论列表 -->
+          <div class="w-full md:w-72 border-b md:border-b-0 md:border-r border-bg-border">
+            <div class="p-2 border-b border-bg-border">
+              <div class="relative">
+                <iconify-icon icon="mdi:magnify" class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm"></iconify-icon>
+                <input type="text" placeholder="搜索讨论..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-bg-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand/30">
+              </div>
+            </div>
+            <div class="overflow-y-auto max-h-96 md:max-h-none" id="discussion-list">
+              <!-- 讨论列表由 JS 生成 -->
+            </div>
+          </div>
+
+          <!-- 讨论详情 -->
+          <div class="flex-1 flex flex-col" id="discussion-detail">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white">
+                  <iconify-icon icon="mdi:gavel" class="text-base"></iconify-icon>
+                </div>
+                <div>
+                  <h4 class="text-sm font-semibold text-fg-primary">张三诉李四合同纠纷案</h4>
+                  <p class="text-[10px] text-fg-tertiary">3 位成员 · 28 条消息</p>
+                </div>
+              </div>
+              <button class="text-xs text-fg-tertiary hover:text-fg-secondary transition-colors">
+                <iconify-icon icon="mdi:dots-vertical" class="text-lg"></iconify-icon>
+              </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-bg-subtle/30" id="comment-list">
+              <!-- 评论由 JS 生成 -->
+            </div>
+
+            <div class="p-3 border-t border-bg-border bg-white">
+              <div class="flex items-end gap-2">
+                <div class="flex-1 relative">
+                  <textarea class="w-full px-3 py-2 text-xs border border-bg-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand" rows="2" placeholder="输入消息，Enter 发送，Shift+Enter 换行..." id="comment-input" onkeydown="handleCommentKeydown(event)"></textarea>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle text-fg-tertiary hover:text-brand transition-colors flex items-center justify-center" title="添加附件">
+                    <iconify-icon icon="mdi:paperclip" class="text-base"></iconify-icon>
+                  </button>
+                  <button class="w-8 h-8 rounded-lg bg-brand hover:bg-brand-hover text-white transition-colors flex items-center justify-center" onclick="sendComment()">
+                    <iconify-icon icon="mdi:send" class="text-sm"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文件共享 Tab -->
+    <div class="collab-tab-content hidden" id="collab-tab-files">
+      <div class="bg-white rounded-xl shadow-card border border-bg-border overflow-hidden">
+        <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+            <iconify-icon icon="mdi:folder-multiple-outline" class="text-brand"></iconify-icon>
+            共享文件库
+          </h3>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-0.5 bg-bg rounded-lg p-0.5">
+              <button class="w-7 h-7 rounded-md flex items-center justify-center text-brand bg-white shadow-sm" title="列表视图">
+                <iconify-icon icon="mdi:view-list" class="text-sm"></iconify-icon>
+              </button>
+              <button class="w-7 h-7 rounded-md flex items-center justify-center text-fg-tertiary hover:text-fg-secondary transition-colors" title="网格视图">
+                <iconify-icon icon="mdi:view-grid-outline" class="text-sm"></iconify-icon>
+              </button>
+            </div>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-lg transition-all" onclick="showUploadFileModal()">
+              <iconify-icon icon="mdi:upload" class="text-sm"></iconify-icon>
+              <span>上传文件</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 文件面包屑 -->
+        <div class="px-4 py-2 border-b border-bg-border flex items-center gap-1 bg-bg-subtle/30 text-xs">
+          <button class="text-brand hover:underline flex items-center gap-1">
+            <iconify-icon icon="mdi:home" class="text-sm"></iconify-icon>
+            根目录
+          </button>
+        </div>
+
+        <div class="divide-y divide-bg-border" id="files-list">
+          <!-- 文件列表由 JS 生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 权限管理 Tab -->
+    <div class="collab-tab-content hidden" id="collab-tab-permissions">
+      <div class="bg-white rounded-xl shadow-card border border-bg-border overflow-hidden">
+        <div class="px-4 py-3 border-b border-bg-border">
+          <h3 class="text-sm font-semibold text-fg-primary flex items-center gap-2">
+            <iconify-icon icon="mdi:shield-key-outline" class="text-brand"></iconify-icon>
+            权限管理
+          </h3>
+          <p class="text-[11px] text-fg-tertiary mt-0.5">为团队成员设置不同的访问和操作权限</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead class="bg-bg-subtle/50">
+              <tr>
+                <th class="text-left px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">成员</th>
+                <th class="text-left px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">角色</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">案件查看</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">案件编辑</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">文件管理</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">任务分配</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">成员管理</th>
+                <th class="text-center px-4 py-3 font-medium text-fg-secondary whitespace-nowrap">操作</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-bg-border" id="permissions-table-body">
+              <!-- 权限列表由 JS 生成 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.collab-tab.active {
+  background-color: white;
+  color: #165DFF;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.collab-tab:not(.active):hover {
+  color: #4E5969;
+}
+.task-card {
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.task-card:active {
+  cursor: grabbing;
+}
+.discussion-item.active {
+  background-color: rgba(22, 93, 255, 0.05);
+  border-left: 3px solid #165DFF;
+}
+.discussion-item:hover:not(.active) {
+  background-color: rgba(0,0,0,0.02);
+}
+</style>
+
+<script>
+// ============== 团队成员数据 ==============
+var mockMembers = [
+  { id: 1, name: '张明', role: 'admin', roleName: '管理员', avatar: '', email: 'zhangming@lexprime.com', status: 'online', cases: 45, tasks: 8 },
+  { id: 2, name: '李华', role: 'lawyer', roleName: '执业律师', avatar: '', email: 'lihua@lexprime.com', status: 'online', cases: 38, tasks: 6 },
+  { id: 3, name: '王芳', role: 'lawyer', roleName: '执业律师', avatar: '', email: 'wangfang@lexprime.com', status: 'busy', cases: 42, tasks: 10 },
+  { id: 4, name: '陈伟', role: 'paralegal', roleName: '律师助理', avatar: '', email: 'chenwei@lexprime.com', status: 'online', cases: 25, tasks: 12 },
+  { id: 5, name: '刘洋', role: 'paralegal', roleName: '律师助理', avatar: '', email: 'liuyang@lexprime.com', status: 'offline', cases: 18, tasks: 4 },
+  { id: 6, name: '赵雪', role: 'intern', roleName: '实习生', avatar: '', email: 'zhaoxue@lexprime.com', status: 'online', cases: 8, tasks: 5 },
+];
+
+var mockTasks = {
+  todo: [
+    { id: 1, title: '起草起诉状', case: '张三诉李四合同纠纷案', assignee: '陈伟', priority: 'high', dueDate: '2026-07-05' },
+    { id: 2, title: '整理证据目录', case: '王五劳动争议案', assignee: '赵雪', priority: 'medium', dueDate: '2026-07-06' },
+    { id: 3, title: '检索类案', case: '某公司知识产权案', assignee: '刘洋', priority: 'low', dueDate: '2026-07-08' },
+  ],
+  progress: [
+    { id: 4, title: '合同审查修改', case: '某科技公司融资项目', assignee: '李华', priority: 'high', dueDate: '2026-07-04' },
+    { id: 5, title: '庭审准备', case: '张三诉李四合同纠纷案', assignee: '张明', priority: 'high', dueDate: '2026-07-07' },
+    { id: 6, title: '客户沟通', case: '王五劳动争议案', assignee: '王芳', priority: 'medium', dueDate: '2026-07-05' },
+  ],
+  done: [
+    { id: 7, title: '立案材料准备', case: '张三诉李四合同纠纷案', assignee: '陈伟', priority: 'medium', dueDate: '2026-07-01' },
+    { id: 8, title: '法律意见书', case: '某公司合规审查', assignee: '李华', priority: 'high', dueDate: '2026-06-30' },
+  ]
+};
+
+var mockDiscussions = [
+  { id: 1, title: '张三诉李四合同纠纷案', unread: 3, lastMsg: '证据目录我已经整理好了', lastTime: '10分钟前', members: 3 },
+  { id: 2, title: '王五劳动争议案', unread: 0, lastMsg: '好的，我知道了', lastTime: '1小时前', members: 2 },
+  { id: 3, title: '某公司知识产权案', unread: 8, lastMsg: '这个法条很关键', lastTime: '2小时前', members: 4 },
+  { id: 4, title: '某科技公司融资项目', unread: 0, lastMsg: '合同已定稿', lastTime: '昨天', members: 3 },
+];
+
+var mockComments = [
+  { id: 1, author: '张明', role: '管理员', content: '大家好，这个案子需要重点关注一下证据链的问题。', time: '09:30', isMe: false },
+  { id: 2, author: '李华', role: '执业律师', content: '收到，我已经整理了相关的类案判决，等会儿分享到文件库。', time: '09:35', isMe: false },
+  { id: 3, author: '我', role: '执业律师', content: '好的，我也在查相关的法律条文，有几个点想和大家讨论一下：\n1. 关于合同解除的条件\n2. 违约金的计算方式\n3. 举证责任的分配', time: '09:42', isMe: true },
+  { id: 4, author: '王芳', role: '执业律师', content: '我觉得举证责任这块是重点，原告需要证明被告存在违约行为。', time: '10:05', isMe: false },
+];
+
+var mockFiles = [
+  { id: 1, name: '案件材料', type: 'folder', size: '-', updatedAt: '2026-07-02 14:30', updater: '张明' },
+  { id: 2, name: '法律文书', type: 'folder', size: '-', updatedAt: '2026-07-01 10:15', updater: '李华' },
+  { id: 3, name: '证据目录.docx', type: 'doc', size: '256 KB', updatedAt: '2026-07-03 09:20', updater: '陈伟' },
+  { id: 4, name: '起诉状.pdf', type: 'pdf', size: '1.2 MB', updatedAt: '2026-07-02 16:45', updater: '张明' },
+  { id: 5, name: '类案检索报告.xlsx', type: 'sheet', size: '512 KB', updatedAt: '2026-07-01 11:30', updater: '李华' },
+  { id: 6, name: '合同模板.docx', type: 'doc', size: '128 KB', updatedAt: '2026-06-28 15:00', updater: '王芳' },
+];
+
+var mockPermissions = [
+  { memberId: 1, name: '张明', role: 'admin', roleName: '管理员', caseView: true, caseEdit: true, fileManage: true, taskAssign: true, memberManage: true },
+  { memberId: 2, name: '李华', role: 'lawyer', roleName: '执业律师', caseView: true, caseEdit: true, fileManage: true, taskAssign: true, memberManage: false },
+  { memberId: 3, name: '王芳', role: 'lawyer', roleName: '执业律师', caseView: true, caseEdit: true, fileManage: true, taskAssign: false, memberManage: false },
+  { memberId: 4, name: '陈伟', role: 'paralegal', roleName: '律师助理', caseView: true, caseEdit: false, fileManage: false, taskAssign: false, memberManage: false },
+];
+
+// ============== Tab 切换 ==============
+function switchCollabTab(tabName) {
+  document.querySelectorAll('.collab-tab').forEach(function(tab) {
+    tab.classList.remove('active');
+    if (tab.getAttribute('data-tab') === tabName) {
+      tab.classList.add('active');
+    }
+  });
+
+  document.querySelectorAll('.collab-tab-content').forEach(function(content) {
+    content.classList.add('hidden');
+  });
+
+  var targetContent = document.getElementById('collab-tab-' + tabName);
+  if (targetContent) {
+    targetContent.classList.remove('hidden');
+  }
+}
+
+// ============== 成员列表渲染 ==============
+function renderMembers(members) {
+  var listEl = document.getElementById('members-list');
+  if (!listEl) return;
+
+  var html = '';
+  members.forEach(function(member) {
+    var statusColor = member.status === 'online' ? 'bg-success' : member.status === 'busy' ? 'bg-warning' : 'bg-fg-disabled';
+    var roleBadgeColor = member.role === 'admin' ? 'bg-brand-tint text-brand' :
+                         member.role === 'lawyer' ? 'bg-wiki-tint text-wiki' :
+                         member.role === 'paralegal' ? 'bg-success-tint text-success' :
+                         'bg-warning-tint text-warning';
+
+    html +=
+      '<div class="flex items-center justify-between p-4 hover:bg-bg-subtle/50 transition-colors member-item">' +
+        '<div class="flex items-center gap-3">' +
+          '<div class="relative">' +
+            '<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-sm font-semibold">' +
+              member.name.charAt(0) +
+            '</div>' +
+            '<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full ' + statusColor + ' border-2 border-white"></span>' +
+          '</div>' +
+          '<div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-sm font-medium text-fg-primary">' + Utils.escapeHtml(member.name) + '</span>' +
+              '<span class="text-[10px] px-1.5 py-0.5 rounded ' + roleBadgeColor + ' font-medium">' + member.roleName + '</span>' +
+            '</div>' +
+            '<p class="text-[11px] text-fg-tertiary mt-0.5">' + Utils.escapeHtml(member.email) + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-4">' +
+          '<div class="hidden md:flex items-center gap-6 text-center">' +
+            '<div>' +
+              '<p class="text-sm font-semibold text-fg-primary">' + member.cases + '</p>' +
+              '<p class="text-[10px] text-fg-tertiary">协作案件</p>' +
+            '</div>' +
+            '<div>' +
+              '<p class="text-sm font-semibold text-fg-primary">' + member.tasks + '</p>' +
+              '<p class="text-[10px] text-fg-tertiary">进行中任务</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-1">' +
+            '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle text-fg-tertiary hover:text-brand transition-colors flex items-center justify-center" title="发消息" onclick="startChat(\'' + member.name + '\')">' +
+              '<iconify-icon icon="mdi:message-outline" class="text-base"></iconify-icon>' +
+            '</button>' +
+            '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle text-fg-tertiary hover:text-fg-secondary transition-colors flex items-center justify-center" title="更多" onclick="showMemberMenu(' + member.id + ')">' +
+              '<iconify-icon icon="mdi:dots-vertical" class="text-base"></iconify-icon>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  listEl.innerHTML = html;
+}
+
+function filterMembers(keyword) {
+  var filtered = mockMembers.filter(function(m) {
+    return m.name.indexOf(keyword) !== -1 || m.email.indexOf(keyword) !== -1;
+  });
+  renderMembers(filtered);
+}
+
+function filterMembersByRole(role) {
+  if (role === 'all') {
+    renderMembers(mockMembers);
+    return;
+  }
+  var filtered = mockMembers.filter(function(m) {
+    return m.role === role;
+  });
+  renderMembers(filtered);
+}
+
+// ============== 任务卡片渲染 ==============
+function getPriorityColor(priority) {
+  if (priority === 'high') return { bg: 'bg-red-50', text: 'text-red-600', label: '高' };
+  if (priority === 'medium') return { bg: 'bg-amber-50', text: 'text-amber-600', label: '中' };
+  return { bg: 'bg-blue-50', text: 'text-blue-600', label: '低' };
+}
+
+function renderTaskCard(task) {
+  var pri = getPriorityColor(task.priority);
+  return (
+    '<div class="task-card bg-white rounded-lg p-3 border border-bg-border shadow-sm" draggable="true" data-task-id="' + task.id + '">' +
+      '<div class="flex items-start justify-between mb-2">' +
+        '<span class="text-[10px] px-1.5 py-0.5 rounded ' + pri.bg + ' ' + pri.text + ' font-medium">' + pri.label + '优先级</span>' +
+        '<button class="text-fg-tertiary hover:text-fg-secondary transition-colors" onclick="event.stopPropagation(); showTaskMenu(' + task.id + ')">' +
+          '<iconify-icon icon="mdi:dots-horizontal" class="text-base"></iconify-icon>' +
+        '</button>' +
+      '</div>' +
+      '<h5 class="text-sm font-medium text-fg-primary mb-1">' + Utils.escapeHtml(task.title) + '</h5>' +
+      '<p class="text-[11px] text-fg-tertiary mb-3 truncate">' + Utils.escapeHtml(task.case) + '</p>' +
+      '<div class="flex items-center justify-between">' +
+        '<div class="flex items-center gap-1.5">' +
+          '<div class="w-5 h-5 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-[9px] font-semibold">' +
+            task.assignee.charAt(0) +
+          '</div>' +
+          '<span class="text-[10px] text-fg-tertiary">' + Utils.escapeHtml(task.assignee) + '</span>' +
+        '</div>' +
+        '<div class="flex items-center gap-1 text-[10px] text-fg-tertiary">' +
+          '<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>' +
+          Utils.escapeHtml(task.dueDate) +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function renderTasks() {
+  ['todo', 'progress', 'done'].forEach(function(status) {
+    var colEl = document.getElementById('task-column-' + status);
+    if (!colEl) return;
+    var html = '';
+    (mockTasks[status] || []).forEach(function(task) {
+      html += renderTaskCard(task);
+    });
+    colEl.innerHTML = html;
+
+    var countEl = document.getElementById('task-' + status + '-count');
+    if (countEl) {
+      countEl.textContent = (mockTasks[status] || []).length;
+    }
+  });
+}
+
+// ============== 讨论列表渲染 ==============
+function renderDiscussions() {
+  var listEl = document.getElementById('discussion-list');
+  if (!listEl) return;
+
+  var html = '';
+  mockDiscussions.forEach(function(disc, idx) {
+    html +=
+      '<div class="discussion-item p-3 cursor-pointer border-l-3 border-transparent transition-colors ' + (idx === 0 ? 'active' : '') + '" onclick="selectDiscussion(' + disc.id + ')">' +
+        '<div class="flex items-start gap-2">' +
+          '<div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white flex-shrink-0">' +
+            '<iconify-icon icon="mdi:gavel" class="text-sm"></iconify-icon>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center justify-between mb-0.5">' +
+              '<h5 class="text-xs font-medium text-fg-primary truncate">' + Utils.escapeHtml(disc.title) + '</h5>' +
+              (disc.unread > 0 ? '<span class="bg-red-500 text-white text-[9px] min-w-[16px] h-4 flex items-center justify-center rounded-full px-1 flex-shrink-0">' + disc.unread + '</span>' : '') +
+            '</div>' +
+            '<p class="text-[10px] text-fg-tertiary truncate">' + Utils.escapeHtml(disc.lastMsg) + '</p>' +
+            '<div class="flex items-center justify-between mt-1">' +
+              '<span class="text-[9px] text-fg-tertiary">' + disc.members + ' 人参与</span>' +
+              '<span class="text-[9px] text-fg-tertiary">' + Utils.escapeHtml(disc.lastTime) + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  listEl.innerHTML = html;
+}
+
+function selectDiscussion(id) {
+  document.querySelectorAll('.discussion-item').forEach(function(item) {
+    item.classList.remove('active');
+  });
+  event.currentTarget.classList.add('active');
+}
+
+// ============== 评论渲染 ==============
+function renderComments() {
+  var listEl = document.getElementById('comment-list');
+  if (!listEl) return;
+
+  var html = '';
+  mockComments.forEach(function(comment) {
+    if (comment.isMe) {
+      html +=
+        '<div class="flex justify-end gap-2">' +
+          '<div class="max-w-[70%]">' +
+            '<div class="bg-brand text-white rounded-xl rounded-tr-sm px-3 py-2 text-xs leading-relaxed whitespace-pre-wrap">' +
+              Utils.escapeHtml(comment.content) +
+            '</div>' +
+            '<div class="flex items-center justify-end gap-2 mt-1">' +
+              '<span class="text-[10px] text-fg-tertiary">' + comment.time + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">' +
+            comment.author.charAt(0) +
+          '</div>' +
+        '</div>';
+    } else {
+      html +=
+        '<div class="flex gap-2">' +
+          '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-wiki to-ai flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">' +
+            comment.author.charAt(0) +
+          '</div>' +
+          '<div class="max-w-[70%]">' +
+            '<div class="flex items-center gap-2 mb-1">' +
+              '<span class="text-xs font-medium text-fg-primary">' + Utils.escapeHtml(comment.author) + '</span>' +
+              '<span class="text-[9px] text-fg-tertiary">' + comment.role + '</span>' +
+            '</div>' +
+            '<div class="bg-white border border-bg-border rounded-xl rounded-tl-sm px-3 py-2 text-xs text-fg-primary leading-relaxed whitespace-pre-wrap">' +
+              Utils.escapeHtml(comment.content) +
+            '</div>' +
+            '<div class="flex items-center gap-2 mt-1">' +
+              '<span class="text-[10px] text-fg-tertiary">' + comment.time + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+  });
+
+  listEl.innerHTML = html;
+  listEl.scrollTop = listEl.scrollHeight;
+}
+
+function handleCommentKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendComment();
+  }
+}
+
+function sendComment() {
+  var inputEl = document.getElementById('comment-input');
+  if (!inputEl || !inputEl.value.trim()) return;
+
+  var now = new Date();
+  var timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+  mockComments.push({
+    id: Date.now(),
+    author: '我',
+    role: '执业律师',
+    content: inputEl.value.trim(),
+    time: timeStr,
+    isMe: true
+  });
+
+  inputEl.value = '';
+  renderComments();
+}
+
+// ============== 文件列表渲染 ==============
+function getFileIcon(type) {
+  if (type === 'folder') return { icon: 'mdi:folder', color: 'text-warning', bg: 'bg-warning-tint' };
+  if (type === 'pdf') return { icon: 'mdi:file-pdf-box', color: 'text-red-500', bg: 'bg-red-50' };
+  if (type === 'doc') return { icon: 'mdi:file-document-outline', color: 'text-brand', bg: 'bg-brand-tint' };
+  if (type === 'sheet') return { icon: 'mdi:microsoft-excel', color: 'text-success', bg: 'bg-success-tint' };
+  return { icon: 'mdi:file-outline', color: 'text-fg-tertiary', bg: 'bg-bg' };
+}
+
+function renderFiles() {
+  var listEl = document.getElementById('files-list');
+  if (!listEl) return;
+
+  var html = '';
+  mockFiles.forEach(function(file) {
+    var icon = getFileIcon(file.type);
+    html +=
+      '<div class="flex items-center justify-between p-3 hover:bg-bg-subtle/50 transition-colors cursor-pointer" ondblclick="openFile(' + file.id + ')">' +
+        '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+          '<div class="w-10 h-10 rounded-lg ' + icon.bg + ' flex items-center justify-center flex-shrink-0">' +
+            '<iconify-icon icon="' + icon.icon + '" class="text-xl ' + icon.color + '"></iconify-icon>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<h5 class="text-sm font-medium text-fg-primary truncate">' + Utils.escapeHtml(file.name) + '</h5>' +
+            '<div class="flex items-center gap-3 text-[11px] text-fg-tertiary mt-0.5">' +
+              '<span>' + file.size + '</span>' +
+              '<span>更新于 ' + Utils.escapeHtml(file.updatedAt) + '</span>' +
+              '<span class="hidden sm:inline">' + Utils.escapeHtml(file.updater) + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-1">' +
+          '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle text-fg-tertiary hover:text-brand transition-colors flex items-center justify-center" title="下载" onclick="event.stopPropagation(); downloadFile(' + file.id + ')">' +
+            '<iconify-icon icon="mdi:download-outline" class="text-base"></iconify-icon>' +
+          '</button>' +
+          '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle text-fg-tertiary hover:text-fg-secondary transition-colors flex items-center justify-center" title="更多" onclick="event.stopPropagation(); showFileMenu(' + file.id + ')">' +
+            '<iconify-icon icon="mdi:dots-vertical" class="text-base"></iconify-icon>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+  });
+
+  listEl.innerHTML = html;
+}
+
+// ============== 权限表格渲染 ==============
+function renderPermissions() {
+  var tbody = document.getElementById('permissions-table-body');
+  if (!tbody) return;
+
+  var html = '';
+  mockPermissions.forEach(function(perm) {
+    var roleColor = perm.role === 'admin' ? 'bg-brand-tint text-brand' :
+                     perm.role === 'lawyer' ? 'bg-wiki-tint text-wiki' :
+                     perm.role === 'paralegal' ? 'bg-success-tint text-success' :
+                     'bg-warning-tint text-warning';
+
+    function renderCheck(val) {
+      return val
+        ? '<iconify-icon icon="mdi:check-circle" class="text-success text-base"></iconify-icon>'
+        : '<iconify-icon icon="mdi:close-circle" class="text-fg-disabled text-base"></iconify-icon>';
+    }
+
+    html +=
+      '<tr class="hover:bg-bg-subtle/30 transition-colors">' +
+        '<td class="px-4 py-3">' +
+          '<div class="flex items-center gap-2">' +
+            '<div class="w-7 h-7 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-xs font-semibold">' +
+              perm.name.charAt(0) +
+            '</div>' +
+            '<span class="text-xs font-medium text-fg-primary">' + Utils.escapeHtml(perm.name) + '</span>' +
+          '</div>' +
+        '</td>' +
+        '<td class="px-4 py-3">' +
+          '<span class="text-[10px] px-1.5 py-0.5 rounded ' + roleColor + ' font-medium">' + perm.roleName + '</span>' +
+        '</td>' +
+        '<td class="px-4 py-3 text-center">' + renderCheck(perm.caseView) + '</td>' +
+        '<td class="px-4 py-3 text-center">' + renderCheck(perm.caseEdit) + '</td>' +
+        '<td class="px-4 py-3 text-center">' + renderCheck(perm.fileManage) + '</td>' +
+        '<td class="px-4 py-3 text-center">' + renderCheck(perm.taskAssign) + '</td>' +
+        '<td class="px-4 py-3 text-center">' + renderCheck(perm.memberManage) + '</td>' +
+        '<td class="px-4 py-3 text-center">' +
+          '<button class="text-xs text-brand hover:underline" onclick="editPermission(' + perm.memberId + ')">编辑权限</button>' +
+        '</td>' +
+      '</tr>';
+  });
+
+  tbody.innerHTML = html;
+}
+
+// ============== 模态框 ==============
+function showInviteMemberModal() {
+  var content =
+    '<div class="space-y-4">' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">成员邮箱 <span class="text-danger">*</span></label>' +
+        '<input type="email" class="form-input w-full" placeholder="请输入邮箱地址，多个邮箱用逗号分隔">' +
+        '<p class="text-[10px] text-fg-tertiary mt-1">邀请链接将发送到对方邮箱，有效期 7 天</p>' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">默认角色</label>' +
+        '<select class="form-input w-full">' +
+          '<option value="lawyer">执业律师</option>' +
+          '<option value="paralegal">律师助理</option>' +
+          '<option value="intern">实习生</option>' +
+        '</select>' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">邀请留言（可选）</label>' +
+        '<textarea class="form-input w-full resize-none" rows="2" placeholder="输入邀请留言..."></textarea>' +
+      '</div>' +
+    '</div>';
+
+  var footer =
+    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-modal-cancel>取消</button>' +
+    '<button class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-lg hover:shadow-brand/30 rounded-lg transition-all" data-modal-confirm>发送邀请</button>';
+
+  Utils.showModal({
+    id: 'invite-member-modal',
+    title: '邀请团队成员',
+    content: content,
+    footer: footer,
+    size: 'md',
+    icon: 'mdi:email-plus-outline',
+    escClose: true
+  });
+}
+
+function showNewTaskModal(status) {
+  var content =
+    '<div class="space-y-4">' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">任务标题 <span class="text-danger">*</span></label>' +
+        '<input type="text" class="form-input w-full" placeholder="请输入任务标题">' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">关联案件</label>' +
+        '<select class="form-input w-full">' +
+          '<option>请选择案件...</option>' +
+          '<option>张三诉李四合同纠纷案</option>' +
+          '<option>王五劳动争议案</option>' +
+          '<option>某公司知识产权案</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="grid grid-cols-2 gap-3">' +
+        '<div>' +
+          '<label class="text-xs font-medium text-fg-secondary block mb-1.5">负责人</label>' +
+          '<select class="form-input w-full">' +
+            '<option>请选择...</option>' +
+            '<option>张明</option>' +
+            '<option>李华</option>' +
+            '<option>王芳</option>' +
+            '<option>陈伟</option>' +
+          '</select>' +
+        '</div>' +
+        '<div>' +
+          '<label class="text-xs font-medium text-fg-secondary block mb-1.5">优先级</label>' +
+          '<select class="form-input w-full">' +
+            '<option value="high">高</option>' +
+            '<option value="medium" selected>中</option>' +
+            '<option value="low">低</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">截止日期</label>' +
+        '<input type="date" class="form-input w-full">' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">任务描述</label>' +
+        '<textarea class="form-input w-full resize-none" rows="3" placeholder="请输入任务描述..."></textarea>' +
+      '</div>' +
+    '</div>';
+
+  var footer =
+    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-modal-cancel>取消</button>' +
+    '<button class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-lg hover:shadow-brand/30 rounded-lg transition-all" data-modal-confirm>创建任务</button>';
+
+  Utils.showModal({
+    id: 'new-task-modal',
+    title: '新建任务',
+    content: content,
+    footer: footer,
+    size: 'md',
+    icon: 'mdi:plus-circle-outline',
+    escClose: true
+  });
+}
+
+function showUploadFileModal() {
+  var content =
+    '<div class="space-y-4">' +
+      '<div class="border-2 border-dashed border-bg-border rounded-xl p-8 text-center hover:border-brand/50 transition-colors cursor-pointer" onclick="document.getElementById(\'file-upload-input\').click()">' +
+        '<input type="file" id="file-upload-input" class="hidden" multiple onchange="handleFileSelect(this)">' +
+        '<div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-brand-tint flex items-center justify-center">' +
+          '<iconify-icon icon="mdi:cloud-upload-outline" class="text-3xl text-brand"></iconify-icon>' +
+        '</div>' +
+        '<p class="text-sm font-medium text-fg-primary mb-1">点击或拖拽文件到此处上传</p>' +
+        '<p class="text-[11px] text-fg-tertiary">支持 PDF、Word、Excel、图片等格式，单文件最大 100MB</p>' +
+      '</div>' +
+      '<div>' +
+        '<label class="text-xs font-medium text-fg-secondary block mb-1.5">保存位置</label>' +
+        '<select class="form-input w-full">' +
+          '<option>根目录</option>' +
+          '<option>案件材料</option>' +
+          '<option>法律文书</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>';
+
+  var footer =
+    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-modal-cancel>取消</button>' +
+    '<button class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-lg hover:shadow-brand/30 rounded-lg transition-all" data-modal-confirm>开始上传</button>';
+
+  Utils.showModal({
+    id: 'upload-file-modal',
+    title: '上传文件',
+    content: content,
+    footer: footer,
+    size: 'md',
+    icon: 'mdi:upload',
+    escClose: true
+  });
+}
+
+// ============== 其他函数 ==============
+function startChat(name) {
+  Utils.showToast({
+    type: 'info',
+    message: '正在打开与 ' + name + ' 的对话...',
+    duration: 2000
+  });
+}
+
+function showMemberMenu(id) {
+  Utils.showToast({
+    type: 'info',
+    message: '成员操作菜单开发中',
+    duration: 2000
+  });
+}
+
+function showTaskMenu(id) {
+  Utils.showToast({
+    type: 'info',
+    message: '任务操作菜单开发中',
+    duration: 2000
+  });
+}
+
+function showFileMenu(id) {
+  Utils.showToast({
+    type: 'info',
+    message: '文件操作菜单开发中',
+    duration: 2000
+  });
+}
+
+function openFile(id) {
+  Utils.showToast({
+    type: 'info',
+    message: '正在打开文件...',
+    duration: 2000
+  });
+}
+
+function downloadFile(id) {
+  Utils.showToast({
+    type: 'success',
+    message: '文件已开始下载',
+    duration: 2000
+  });
+}
+
+function editPermission(id) {
+  Utils.showToast({
+    type: 'info',
+    message: '权限编辑功能开发中',
+    duration: 2000
+  });
+}
+
+function clearCompletedTasks() {
+  Utils.showConfirm('确定要清除所有已完成的任务吗？', '清除已完成任务').then(function(confirmed) {
+    if (confirmed) {
+      mockTasks.done = [];
+      renderTasks();
+      Utils.showToast({ type: 'success', message: '已清除所有完成任务' });
+    }
+  });
+}
+
+function handleFileSelect(input) {
+  if (input.files && input.files.length > 0) {
+    Utils.showToast({
+      type: 'success',
+      message: '已选择 ' + input.files.length + ' 个文件',
+      duration: 2000
+    });
+  }
+}
+
+// ============== 初始化 ==============
+document.addEventListener('DOMContentLoaded', function() {
+  var view = document.getElementById('view-collaboration');
+  if (view && !view.classList.contains('hidden')) {
+    initCollaborationPage();
+  }
+});
+
+function initCollaborationPage() {
+  renderMembers(mockMembers);
+  renderTasks();
+  renderDiscussions();
+  renderComments();
+  renderFiles();
+  renderPermissions();
+
+  if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+    Animations.initPageAnimations(document.getElementById('view-collaboration'));
+  }
+}
+</script>

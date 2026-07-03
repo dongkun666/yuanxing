@@ -1,0 +1,77 @@
+<view class="container">
+  <view class="logo-section">
+    <view class="logo">⚖️</view>
+    <text class="app-name">LexPrime</text>
+    <text class="app-slogan">智能法律助手</text>
+  </view>
+
+  <view class="login-section">
+    <view class="form-group">
+      <input 
+        class="form-input" 
+        placeholder="邮箱地址" 
+        type="text"
+        value="{{email}}"
+        bindinput="onEmailInput"
+      />
+    </view>
+    
+    <view class="form-group">
+      <input 
+        class="form-input" 
+        placeholder="密码" 
+        password
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+    </view>
+
+    <view class="forgot-password">
+      <text class="link" bindtap="goToForgotPassword">忘记密码？</text>
+    </view>
+
+    <button 
+      class="btn-primary login-btn" 
+      bindtap="onEmailLogin"
+      loading="{{isLogging}}"
+      disabled="{{isLogging}}"
+    >
+      邮箱登录
+    </button>
+
+    <view class="divider-text">
+      <view class="divider-line"></view>
+      <text class="divider-label">或</text>
+      <view class="divider-line"></view>
+    </view>
+
+    <button 
+      class="wx-login-btn" 
+      bindtap="onWxLogin"
+      loading="{{isLogging}}"
+      disabled="{{isLogging}}"
+    >
+      <text class="wx-icon">💬</text>
+      微信一键登录
+    </button>
+  </view>
+
+  <view class="terms-section">
+    <view class="checkbox-row" bindtap="toggleAgree">
+      <view class="checkbox {{agreeTerms ? 'checked' : ''}}">
+        <text wx:if="{{agreeTerms}}">✓</text>
+      </view>
+      <text class="terms-text">
+        我已阅读并同意
+        <text class="link" catchtap="showTerms">《用户协议》</text>
+        和
+        <text class="link" catchtap="showPrivacy">《隐私政策》</text>
+      </text>
+    </view>
+  </view>
+
+  <view class="register-section">
+    <text>还没有账号？</text>
+    <text class="link" bindtap="goToRegister">立即注册</text>
+  </view>
+</view>

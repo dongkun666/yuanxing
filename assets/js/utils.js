@@ -2646,6 +2646,49 @@
         return canvas.toDataURL('image/png');
     }
 
+    /**
+     * 检查是否为首次访问
+     * @returns {boolean} - 是否首次访问
+     */
+    function checkFirstVisit() {
+        if (typeof Onboarding !== 'undefined' && Onboarding.checkFirstVisit) {
+            return Onboarding.checkFirstVisit();
+        }
+        var STORAGE_KEY = 'lexprime.onboarding.has_visited';
+        var hasVisited = false;
+        try {
+            hasVisited = localStorage.getItem(STORAGE_KEY) === 'true';
+        } catch (e) {
+            hasVisited = false;
+        }
+        if (!hasVisited) {
+            try {
+                localStorage.setItem(STORAGE_KEY, 'true');
+            } catch (e) {
+                console.warn('[Utils] 保存访问记录失败:', e.message);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 显示 Onboarding 引导
+     * @param {string} [tourId] - 引导流程 ID，不传则显示欢迎弹窗
+     * @param {Object} [options] - 配置选项
+     */
+    function showOnboarding(tourId, options) {
+        if (typeof Onboarding !== 'undefined') {
+            if (tourId) {
+                return Onboarding.startTour(tourId, options);
+            } else {
+                return Onboarding.showWelcome();
+            }
+        }
+        console.warn('[Utils] Onboarding 模块未加载');
+        return null;
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -2694,7 +2737,9 @@
         initMobileOptimizations: initMobileOptimizations,
         initImageLazyLoad: initImageLazyLoad,
         isInViewport: isInViewport,
-        createPlaceholderImage: createPlaceholderImage
+        createPlaceholderImage: createPlaceholderImage,
+        checkFirstVisit: checkFirstVisit,
+        showOnboarding: showOnboarding
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

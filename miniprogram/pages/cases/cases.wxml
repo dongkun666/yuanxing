@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="search-section">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="搜索判例关键词..." 
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+      />
+      <view class="search-btn" bindtap="onSearch">🔍</view>
+    </view>
+  </view>
+
+  <scroll-view class="category-scroll" scroll-x="true">
+    <view class="category-list">
+      <view 
+        class="category-item {{causeCategory === item.value ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onCategoryTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="case-list">
+    <view 
+      class="case-item card" 
+      wx:for="{{cases}}" 
+      wx:key="id"
+      data-doc-id="{{item.doc_id}}"
+      bindtap="onCaseTap"
+    >
+      <view class="case-header">
+        <text class="case-name">{{item.case_name}}</text>
+        <view class="case-badge badge">{{item.cause_category || '其他'}}</view>
+      </view>
+      <view class="case-info">
+        <text class="case-court">{{item.court}}</text>
+        <text class="case-date">{{item.judgment_date}}</text>
+      </view>
+      <view class="case-footer">
+        <view class="case-score">
+          <text class="score-label">LexScore</text>
+          <text class="score-value">{{item.lex_score || 0}}</text>
+        </view>
+        <view class="case-stats">
+          <text class="stat">👁 {{item.view_count || 0}}</text>
+          <text class="stat">⭐ {{item.favorite_count || 0}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <view class="end-tip" wx:if="{{!hasMore && cases.length > 0}}">
+    <text>— 没有更多了 —</text>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && cases.length === 0}}">
+    <text class="icon">📚</text>
+    <text>暂无判例数据</text>
+  </view>
+</view>

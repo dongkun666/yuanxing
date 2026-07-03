@@ -1,0 +1,28 @@
+{
+    "id": "example-plugin",
+    "name": "示例插件",
+    "version": "1.0.0",
+    "description": "LexPrime 插件开发示例，展示插件系统的基本功能",
+    "author": "LexPrime Team",
+    "license": "MIT",
+    "type": "frontend",
+    "entry": "plugin.js",
+    "backend_entry": "plugin.py",
+    "permissions": [
+        "case.read",
+        "ui.inject"
+    ],
+    "extension_points": {
+        "workstation.top": {
+            "weight": 100,
+            "description": "在工作台顶部显示欢迎卡片"
+        },
+        "settings.section": {
+            "weight": 50,
+            "description": "在设置页面添加插件设置"
+        }
+    },
+    "dependencies": {},
+    "min_version": "0.7.0",
+    "max_version": "1.0.0"
+}

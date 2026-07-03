@@ -1,0 +1,549 @@
+<!--
+  智能法律问答系统 - 前端视图
+  基于 RAG 架构，支持自然语言提问、引用来源、历史记录、热门问题
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden bg-bg" id="view-ai-qa" data-view-source="ai-qa/index.html">
+<div class="flex-1 flex overflow-hidden">
+  <!-- 侧边栏：历史记录 + 热门问题 -->
+  <div class="hidden lg:flex flex-col w-72 border-r border-bg-border bg-white flex-none" data-animate="slide-in-left" data-delay="0.05">
+    <!-- 侧边栏头部 -->
+    <div class="p-4 border-b border-bg-border">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md shadow-brand/20">
+            <iconify-icon class="text-base text-white" icon="mdi:book-search-outline"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-fg-primary">法律问答</h3>
+            <p class="text-[10px] text-fg-tertiary">智能法律智库</p>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="新问答" onclick="startNewQA()">
+          <iconify-icon class="text-base" icon="mdi:plus"></iconify-icon>
+        </button>
+      </div>
+      <button class="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="startNewQA()">
+        <iconify-icon class="text-base" icon="mdi:message-question-outline"></iconify-icon>
+        新问答
+      </button>
+    </div>
+
+    <!-- 标签切换 -->
+    <div class="px-3 py-2 border-b border-bg-border flex gap-1">
+      <button class="flex-1 py-1.5 text-xs font-medium text-white bg-brand rounded-lg transition-all qa-sidebar-tab active" data-tab="history" onclick="switchQASidebarTab('history')">
+        历史记录
+      </button>
+      <button class="flex-1 py-1.5 text-xs font-medium text-fg-secondary hover:bg-bg-subtle rounded-lg transition-all qa-sidebar-tab" data-tab="hot" onclick="switchQASidebarTab('hot')">
+        热门问题
+      </button>
+    </div>
+
+    <!-- 历史记录列表 -->
+    <div class="flex-1 overflow-y-auto px-3 py-2" id="qaHistoryPanel">
+      <div class="space-y-1" id="qaHistoryList">
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-history-item active" data-id="qa-conv-001" onclick="selectQAHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-brand" icon="mdi:currency-cny"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">民间借贷利息计算</p>
+            <p class="text-[10px] text-fg-tertiary">今天 14:30 · 5 条</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-history-item" data-id="qa-conv-002" onclick="selectQAHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-wiki" icon="mdi:briefcase-outline"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">劳动合同赔偿</p>
+            <p class="text-[10px] text-fg-tertiary">今天 10:15 · 3 条</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-history-item" data-id="qa-conv-003" onclick="selectQAHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-pink-500" icon="mdi:heart-broken-outline"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">离婚财产分割</p>
+            <p class="text-[10px] text-fg-tertiary">06-28 16:45 · 7 条</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- 热门问题列表 -->
+    <div class="flex-1 overflow-y-auto px-3 py-2 hidden" id="qaHotPanel">
+      <div class="space-y-1" id="qaHotList">
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('民间借贷利息最高可以约定多少？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-urgent/10 text-urgent text-[10px] font-bold flex items-center justify-center">1</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">民间借贷利息最高可以约定多少？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">借贷纠纷 · 1256 次浏览</p>
+        </div>
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('劳动合同到期不续签有赔偿吗？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-urgent/10 text-urgent text-[10px] font-bold flex items-center justify-center">2</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">劳动合同到期不续签有赔偿吗？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">劳动争议 · 987 次浏览</p>
+        </div>
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('离婚时夫妻共同财产如何分割？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-bold flex items-center justify-center">3</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">离婚时夫妻共同财产如何分割？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">婚姻家庭 · 876 次浏览</p>
+        </div>
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('开发商逾期交房怎么维权？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-bold flex items-center justify-center">4</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">开发商逾期交房怎么维权？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">房产纠纷 · 765 次浏览</p>
+        </div>
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('交通事故赔偿标准是怎样的？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-green-500/10 text-green-600 text-[10px] font-bold flex items-center justify-center">5</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">交通事故赔偿标准是怎样的？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">侵权责任 · 654 次浏览</p>
+        </div>
+        <div class="group p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm qa-hot-item" onclick="askHotQuestion('公司股东知情权如何行使？')">
+          <div class="flex items-start gap-2">
+            <span class="flex-none w-5 h-5 rounded bg-green-500/10 text-green-600 text-[10px] font-bold flex items-center justify-center">6</span>
+            <p class="text-xs font-medium text-fg-primary leading-relaxed">公司股东知情权如何行使？</p>
+          </div>
+          <p class="text-[10px] text-fg-tertiary mt-1 ml-7">公司法律 · 543 次浏览</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 侧边栏底部 -->
+    <div class="p-3 border-t border-bg-border">
+      <div class="flex items-center gap-2 text-[10px] text-fg-tertiary">
+        <iconify-icon icon="mdi:database-search-outline" class="text-base"></iconify-icon>
+        <span>检索判例库 + 法规库</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主区域：问答 -->
+  <div class="flex-1 flex flex-col overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+    <!-- 顶部标题栏 -->
+    <div class="bg-white border-b border-bg-border px-4 py-3 flex items-center justify-between flex-none">
+      <div class="flex items-center gap-3">
+        <button class="lg:hidden w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary" onclick="toggleQASidebar()">
+          <iconify-icon class="text-base" icon="mdi:menu"></iconify-icon>
+        </button>
+        <div>
+          <h2 class="text-sm font-bold text-fg-primary" id="qaTitle">新问答</h2>
+          <p class="text-[10px] text-fg-tertiary">智能法律问答 · 基于 RAG 检索增强生成</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="筛选来源" onclick="toggleQAFilter()">
+          <iconify-icon class="text-base" icon="mdi:filter-variant"></iconify-icon>
+        </button>
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-lg transition-all duration-300 hover:-translate-y-0.5" onclick="startNewQA()">
+          <iconify-icon class="text-xs" icon="mdi:plus"></iconify-icon>
+          新问答
+        </button>
+      </div>
+    </div>
+
+    <!-- 消息列表 -->
+    <div class="flex-1 overflow-y-auto px-4 py-6 space-y-5 max-w-4xl mx-auto w-full" id="qaMessages">
+      <!-- 欢迎空状态 -->
+      <div class="flex flex-col items-center justify-center py-8 text-center" id="qaWelcomeState">
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand via-brand to-wiki flex items-center justify-center mb-5 shadow-xl shadow-brand/20">
+          <iconify-icon class="text-4xl text-white" icon="mdi:book-search-outline"></iconify-icon>
+        </div>
+        <h2 class="text-xl font-bold text-fg-primary mb-2">智能法律问答 👋</h2>
+        <p class="text-sm text-fg-secondary mb-6 max-w-md">
+          基于海量判例和法规，为您提供专业的法律问答服务。
+          每一条回答都附有权威来源引用，确保答案可靠。
+        </p>
+
+        <!-- 快捷问题卡片 -->
+        <p class="text-xs font-semibold text-fg-tertiary mb-3 self-start">💡 试试这些问题</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+          <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-brand/30 hover:shadow-lg hover:shadow-brand/10 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAskQA('民间借贷利息最高可以约定多少？')">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-brand" icon="mdi:currency-cny"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <h4 class="text-sm font-semibold text-fg-primary mb-1">民间借贷利息</h4>
+                <p class="text-[11px] text-fg-tertiary">利率上限、逾期利息、复利规定</p>
+              </div>
+              <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-brand transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAskQA('公司违法解除劳动合同怎么赔偿？')">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-wiki" icon="mdi:briefcase-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <h4 class="text-sm font-semibold text-fg-primary mb-1">劳动赔偿计算</h4>
+                <p class="text-[11px] text-fg-tertiary">N、N+1、2N 赔偿标准详解</p>
+              </div>
+              <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-wiki transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-pink-300 hover:shadow-lg hover:shadow-pink-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAskQA('离婚时夫妻共同财产如何分割？')">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-pink-500" icon="mdi:heart-broken-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <h4 class="text-sm font-semibold text-fg-primary mb-1">离婚财产分割</h4>
+                <p class="text-[11px] text-fg-tertiary">共同财产认定与分割原则</p>
+              </div>
+              <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-pink-500 transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAskQA('合同违约金过高可以调整吗？')">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-success" icon="mdi:file-document-edit-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0 text-left">
+                <h4 class="text-sm font-semibold text-fg-primary mb-1">合同违约金</h4>
+                <p class="text-[11px] text-fg-tertiary">违约金调整条件与标准</p>
+              </div>
+              <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-success transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 输入区 -->
+    <div class="flex-none px-4 pb-5 pt-2 max-w-4xl mx-auto w-full">
+      <div class="bg-white rounded-2xl border border-bg-border p-3 shadow-sm hover:shadow-md hover:border-brand/30 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-brand/10 focus-within:border-brand/50">
+        <textarea id="qaInput" class="w-full bg-transparent border-0 outline-none text-sm text-fg-primary placeholder-[#86909C] resize-none focus:ring-0 leading-relaxed px-1 py-2" placeholder="输入您的法律问题，基于判例和法规为您解答... (Enter 发送, Shift+Enter 换行)" rows="2" onkeydown="handleQAInputKeydown(event)"></textarea>
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-bg-border">
+          <div class="flex items-center gap-1">
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="上传文件">
+              <iconify-icon class="text-base" icon="mdi:paperclip"></iconify-icon>
+            </button>
+            <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="语音输入">
+              <iconify-icon class="text-base" icon="mdi:microphone"></iconify-icon>
+            </button>
+            <div class="w-px h-5 bg-bg-border mx-1"></div>
+            <span class="text-[10px] text-fg-tertiary">回答基于判例和法规，仅供参考</span>
+          </div>
+          <button id="qaSendBtn" class="w-10 h-10 rounded-xl bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/30 text-white flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0" onclick="sendQAQuestion()">
+            <iconify-icon id="qaSendIcon" class="text-base" icon="mdi:send"></iconify-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var qaConversationId = null;
+    var qaMessageCount = 0;
+
+    function renderMarkdown(text) {
+        if (!text) {
+            return '';
+        }
+        var html = text;
+        html = html.replace(/^### (.*$)/gim, '<h4 class="text-sm font-bold text-fg-primary mt-4 mb-2">$1</h4>');
+        html = html.replace(/^## (.*$)/gim, '<h3 class="text-base font-bold text-fg-primary mt-5 mb-3">$1</h3>');
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-fg-primary">$1</strong>');
+        html = html.replace(/^- (.*$)/gim, '<li class="text-sm text-fg-secondary leading-relaxed ml-4">$1</li>');
+        html = html.replace(/^(\d+)\. (.*$)/gim, '<li class="text-sm text-fg-secondary leading-relaxed ml-4">$1. $2</li>');
+        html = html.replace(/\n\n/g, '</p><p class="text-sm text-fg-secondary leading-relaxed mb-3">');
+        html = '<p class="text-sm text-fg-secondary leading-relaxed mb-3">' + html + '</p>';
+        return html;
+    }
+
+    function addQAMessage(role, content, citations) {
+        var messagesEl = document.getElementById('qaMessages');
+        var welcomeEl = document.getElementById('qaWelcomeState');
+        if (welcomeEl) {
+            welcomeEl.style.display = 'none';
+        }
+
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'flex gap-3 ' + (role === 'user' ? 'justify-end' : 'justify-start');
+        msgDiv.dataset.animate = 'fade-in-up';
+
+        var avatarHtml = '';
+        if (role === 'assistant') {
+            avatarHtml = '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center flex-shrink-0 shadow-sm shadow-brand/20">' +
+                '<iconify-icon class="text-xs text-white" icon="mdi:book-search-outline"></iconify-icon>' +
+                '</div>';
+        }
+
+        var bubbleClass = role === 'user'
+            ? 'bg-gradient-to-br from-brand to-brand-hover text-white rounded-2xl rounded-tr-sm'
+            : 'bg-white text-fg-primary rounded-2xl rounded-tl-sm border border-bg-border shadow-sm';
+
+        var contentHtml = role === 'user'
+            ? '<p class="text-sm leading-relaxed">' + content + '</p>'
+            : renderMarkdown(content);
+
+        var citationsHtml = '';
+        if (citations && citations.length > 0) {
+            citationsHtml = '<div class="mt-4 pt-3 border-t border-bg-border">' +
+                '<p class="text-[11px] font-semibold text-fg-tertiary mb-2 flex items-center gap-1">' +
+                '<iconify-icon icon="mdi:link-variant" class="text-xs"></iconify-icon>' +
+                '引用来源 (' + citations.length + ')' +
+                '</p>' +
+                '<div class="space-y-2">';
+
+            for (var i = 0; i < citations.length; i++) {
+                var cit = citations[i];
+                var typeIcon = cit.type === 'law' ? 'mdi:book-outline' : 'mdi:gavel';
+                var typeColor = cit.type === 'law' ? 'text-wiki' : 'text-brand';
+                var typeLabel = cit.type === 'law' ? '法规' : '判例';
+                citationsHtml += '<div class="p-2.5 bg-bg-subtle rounded-xl hover:bg-bg transition-colors cursor-pointer group">' +
+                    '<div class="flex items-start gap-2">' +
+                    '<iconify-icon icon="' + typeIcon + '" class="text-base ' + typeColor + ' flex-shrink-0 mt-0.5"></iconify-icon>' +
+                    '<div class="flex-1 min-w-0">' +
+                    '<div class="flex items-center gap-2 mb-1">' +
+                    '<span class="text-[10px] px-1.5 py-0.5 rounded ' + typeColor + ' bg-white font-medium">' + typeLabel + '</span>' +
+                    '<span class="text-xs font-medium text-fg-primary truncate">' + cit.title + '</span>' +
+                    '</div>' +
+                    '<p class="text-[11px] text-fg-tertiary mb-1">' + cit.reference + '</p>' +
+                    '<p class="text-[11px] text-fg-secondary line-clamp-2">"' + cit.snippet + '"</p>' +
+                    '</div>' +
+                    '<iconify-icon icon="mdi:open-in-new" class="text-xs text-fg-disabled opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1"></iconify-icon>' +
+                    '</div>' +
+                    '</div>';
+            }
+            citationsHtml += '</div></div>';
+        }
+
+        var bubbleHtml = '<div class="max-w-[85%] ' + bubbleClass + ' px-4 py-3">' +
+            contentHtml +
+            citationsHtml +
+            '</div>';
+
+        if (role === 'user') {
+            msgDiv.innerHTML = bubbleHtml +
+                '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                '<span class="text-xs text-white font-bold">张</span>' +
+                '</div>';
+        } else {
+            msgDiv.innerHTML = avatarHtml + bubbleHtml;
+        }
+
+        messagesEl.appendChild(msgDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        qaMessageCount++;
+    }
+
+    function addQALoading() {
+        var messagesEl = document.getElementById('qaMessages');
+        var loadingDiv = document.createElement('div');
+        loadingDiv.id = 'qaLoading';
+        loadingDiv.className = 'flex gap-3 justify-start';
+        loadingDiv.innerHTML = '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center flex-shrink-0 shadow-sm shadow-brand/20">' +
+            '<iconify-icon class="text-xs text-white" icon="mdi:book-search-outline"></iconify-icon>' +
+            '</div>' +
+            '<div class="bg-white text-fg-primary rounded-2xl rounded-tl-sm border border-bg-border shadow-sm px-4 py-3">' +
+            '<div class="flex items-center gap-2 text-sm text-fg-tertiary">' +
+            '<div class="flex gap-1">' +
+            '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay: 0ms"></span>' +
+            '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay: 150ms"></span>' +
+            '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay: 300ms"></span>' +
+            '</div>' +
+            '<span>正在检索判例和法规...</span>' +
+            '</div>' +
+            '</div>';
+        messagesEl.appendChild(loadingDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function removeQALoading() {
+        var loadingEl = document.getElementById('qaLoading');
+        if (loadingEl) {
+            loadingEl.remove();
+        }
+    }
+
+    function addRelatedQuestions(questions) {
+        if (!questions || questions.length === 0) {
+            return;
+        }
+        var messagesEl = document.getElementById('qaMessages');
+        var div = document.createElement('div');
+        div.className = 'flex gap-3 justify-start';
+        var html = '<div class="w-8 h-8 flex-shrink-0"></div>' +
+            '<div class="max-w-[85%]">' +
+            '<p class="text-[11px] text-fg-tertiary mb-2 flex items-center gap-1">' +
+            '<iconify-icon icon="mdi:lightbulb-on-outline" class="text-xs text-amber-500"></iconify-icon>' +
+            '相关问题' +
+            '</p>' +
+            '<div class="flex flex-wrap gap-2">';
+
+        for (var i = 0; i < questions.length; i++) {
+            html += '<button class="px-3 py-1.5 text-[11px] bg-white border border-bg-border rounded-full text-fg-secondary hover:border-brand hover:text-brand hover:bg-brand-tint/30 transition-all" onclick="quickAskQA(\'' + questions[i] + '\')">' +
+                questions[i] +
+                '</button>';
+        }
+        html += '</div></div>';
+        div.innerHTML = html;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function sendQA(question) {
+        if (!question || !question.trim()) {
+            return;
+        }
+
+        addQAMessage('user', question);
+        addQALoading();
+
+        var btn = document.getElementById('qaSendBtn');
+        var input = document.getElementById('qaInput');
+        if (btn) {
+            btn.disabled = true;
+        }
+        if (input) {
+            input.value = '';
+        }
+
+        var body = {
+            question: question,
+            conversation_id: qaConversationId
+        };
+
+        fetch('/api/ai/qa', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                removeQALoading();
+                if (btn) {
+                    btn.disabled = false;
+                }
+                if (data && data.answer) {
+                    qaConversationId = data.conversation_id;
+                    addQAMessage('assistant', data.answer, data.citations);
+                    if (data.related_questions) {
+                        addRelatedQuestions(data.related_questions);
+                    }
+                }
+            })
+            .catch(function () {
+                removeQALoading();
+                if (btn) {
+                    btn.disabled = false;
+                }
+            });
+    }
+
+    window.sendQAQuestion = function () {
+        var input = document.getElementById('qaInput');
+        if (input) {
+            sendQA(input.value);
+        }
+    };
+
+    window.quickAskQA = function (question) {
+        sendQA(question);
+    };
+
+    window.askHotQuestion = function (question) {
+        sendQA(question);
+    };
+
+    window.handleQAInputKeydown = function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendQAQuestion();
+        }
+    };
+
+    window.startNewQA = function () {
+        var messagesEl = document.getElementById('qaMessages');
+        var welcomeEl = document.getElementById('qaWelcomeState');
+        if (messagesEl) {
+            messagesEl.innerHTML = '';
+        }
+        qaConversationId = null;
+        qaMessageCount = 0;
+
+        if (messagesEl && welcomeEl) {
+            var clone = welcomeEl.cloneNode(true);
+            clone.style.display = 'flex';
+            clone.id = 'qaWelcomeState';
+            messagesEl.appendChild(clone);
+        }
+
+        var titleEl = document.getElementById('qaTitle');
+        if (titleEl) {
+            titleEl.textContent = '新问答';
+        }
+    };
+
+    window.switchQASidebarTab = function (tab) {
+        var tabs = document.querySelectorAll('.qa-sidebar-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].dataset.tab === tab) {
+                tabs[i].classList.add('active', 'bg-brand', 'text-white');
+                tabs[i].classList.remove('text-fg-secondary', 'hover:bg-bg-subtle');
+            } else {
+                tabs[i].classList.remove('active', 'bg-brand', 'text-white');
+                tabs[i].classList.add('text-fg-secondary', 'hover:bg-bg-subtle');
+            }
+        }
+
+        var historyPanel = document.getElementById('qaHistoryPanel');
+        var hotPanel = document.getElementById('qaHotPanel');
+        if (tab === 'history') {
+            if (historyPanel) {
+                historyPanel.classList.remove('hidden');
+            }
+            if (hotPanel) {
+                hotPanel.classList.add('hidden');
+            }
+        } else {
+            if (historyPanel) {
+                historyPanel.classList.add('hidden');
+            }
+            if (hotPanel) {
+                hotPanel.classList.remove('hidden');
+            }
+        }
+    };
+
+    window.selectQAHistory = function (el) {
+        var items = document.querySelectorAll('.qa-history-item');
+        for (var i = 0; i < items.length; i++) {
+            items[i].classList.remove('active');
+        }
+        el.classList.add('active');
+    };
+
+    window.toggleQASidebar = function () {
+        var sidebar = document.querySelector('#view-ai-qa .lg\\:flex');
+        if (sidebar) {
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+        }
+    };
+
+    window.toggleQAFilter = function () {
+        // 可扩展：显示来源筛选弹窗
+    };
+})();
+</script>

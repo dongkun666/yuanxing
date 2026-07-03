@@ -1,0 +1,315 @@
+.container {
+  padding: 0;
+}
+
+.header {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  padding: 48rpx 32rpx 40rpx;
+  color: #ffffff;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.logo {
+  font-size: 56rpx;
+}
+
+.brand-name {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brand-slogan {
+  display: block;
+  font-size: 22rpx;
+  opacity: 0.8;
+  margin-top: 4rpx;
+}
+
+.user-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-placeholder {
+  font-size: 22rpx;
+  color: #ffffff;
+}
+
+.search-bar {
+  display: flex;
+  gap: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16rpx;
+  padding: 8rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1e293b;
+}
+
+.search-btn {
+  background: #1e40af;
+  color: #ffffff;
+  padding: 0 32rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.quick-actions {
+  padding: 32rpx 24rpx 0;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 32rpx 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.action-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+.icon-blue {
+  background: #dbeafe;
+}
+
+.icon-green {
+  background: #d1fae5;
+}
+
+.icon-orange {
+  background: #fed7aa;
+}
+
+.icon-purple {
+  background: #e9d5ff;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: #475569;
+}
+
+.stats-section {
+  margin: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.stats-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-number {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #e2e8f0;
+}
+
+.section {
+  padding: 0 24rpx 32rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.section-more {
+  font-size: 26rpx;
+  color: #64748b;
+}
+
+.case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.case-item {
+  margin-bottom: 0;
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.case-name {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.case-badge {
+  flex-shrink: 0;
+}
+
+.case-info {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.case-court,
+.case-date {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.case-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f1f5f9;
+}
+
+.case-score {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.score-label {
+  font-size: 22rpx;
+  color: #94a3b8;
+}
+
+.score-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.case-stats {
+  display: flex;
+  gap: 24rpx;
+}
+
+.case-stats .stat {
+  font-size: 22rpx;
+  color: #94a3b8;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 0;
+}
+
+.schedule-time {
+  flex-shrink: 0;
+  width: 120rpx;
+  padding-top: 4rpx;
+}
+
+.time {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.schedule-content {
+  flex: 1;
+}
+
+.schedule-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 6rpx;
+}
+
+.schedule-type {
+  font-size: 24rpx;
+  color: #94a3b8;
+}

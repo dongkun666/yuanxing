@@ -443,6 +443,51 @@ try:
 except Exception as e:
     logger.warning(f"W30 phase6-ai-backend AI 服务 API router 加载失败 (非致命): {e}")
 
+# 智能法律问答系统 API
+# 端点: POST /api/ai/qa, GET /api/ai/qa/history, GET /api/ai/qa/hot
+try:
+    from api.ai_qa_router import router as ai_qa_router
+    app.include_router(ai_qa_router)
+    logger.info("智能法律问答系统 AI QA router registered")
+except Exception as e:
+    logger.warning(f"智能法律问答系统 AI QA router 加载失败 (非致命): {e}")
+
+# 法律关系图谱 API
+# 端点: GET /api/graph/case/{id}, GET /api/graph/company/{id}, GET /api/graph/lawyer/{id}
+try:
+    from api.graph_router import router as graph_router
+    app.include_router(graph_router)
+    logger.info("法律关系图谱 Graph router registered")
+except Exception as e:
+    logger.warning(f"法律关系图谱 Graph router 加载失败 (非致命): {e}")
+
+# 案件风险预测 API
+# 端点: POST /api/risk/predict, GET /api/risk/similar-cases
+try:
+    from api.risk_router import router as risk_router
+    app.include_router(risk_router)
+    logger.info("案件风险预测 Risk router registered")
+except Exception as e:
+    logger.warning(f"案件风险预测 Risk router 加载失败 (非致命): {e}")
+
+# 智能合同生成 API
+# 端点: POST /api/contract/generate, GET /api/contract/templates
+try:
+    from api.contract_gen_router import router as contract_gen_router
+    app.include_router(contract_gen_router)
+    logger.info("智能合同生成 Contract Gen router registered")
+except Exception as e:
+    logger.warning(f"智能合同生成 Contract Gen router 加载失败 (非致命): {e}")
+
+# 多文档摘要和对比 API
+# 端点: POST /api/doc/compare, POST /api/doc/summarize-multi
+try:
+    from api.doc_compare_router import router as doc_compare_router
+    app.include_router(doc_compare_router)
+    logger.info("多文档摘要和对比 Doc Compare router registered")
+except Exception as e:
+    logger.warning(f"多文档摘要和对比 Doc Compare router 加载失败 (非致命): {e}")
+
 # W31 phase6-clients-backend (lex-coder · 2026-07-02) 客户管理 API
 # 7 端点 + 1 health = 8 endpoints
 # 端点: GET /api/clients (列表/搜索/过滤), GET /api/clients/{client_id} (详情),
@@ -504,6 +549,90 @@ try:
     logger.info("数据导入导出 import_export_router registered")
 except Exception as e:
     logger.warning(f"import_export_router 加载失败: {e}")
+
+# 数据分析 API
+# 端点: GET /api/analytics/dashboard, GET /api/analytics/trends,
+#       GET /api/analytics/lawyer/{id}, GET /api/analytics/case-types,
+#       GET /api/analytics/heatmap
+try:
+    from api.analytics_router import router as analytics_router
+    app.include_router(analytics_router)
+    logger.info("数据分析 analytics_router registered")
+except Exception as e:
+    logger.warning(f"analytics_router 加载失败: {e}")
+
+# 团队协作 API
+# 端点: GET /api/collaboration/members, POST /api/collaboration/tasks,
+#       POST /api/collaboration/comments, PUT /api/collaboration/permissions,
+#       GET /api/collaboration/files, GET /api/collaboration/stats
+try:
+    from api.collaboration_router import router as collaboration_router
+    app.include_router(collaboration_router)
+    logger.info("团队协作 collaboration_router registered")
+except Exception as e:
+    logger.warning(f"collaboration_router 加载失败: {e}")
+
+# 个性化推荐 API
+# 端点: GET /api/recommend/cases, GET /api/recommend/lawyers,
+#       GET /api/recommend/templates, POST /api/recommend/feedback,
+#       GET /api/recommend/refresh
+try:
+    from api.recommendation_router import router as recommendation_router
+    app.include_router(recommendation_router)
+    logger.info("个性化推荐 recommendation_router registered")
+except Exception as e:
+    logger.warning(f"recommendation_router 加载失败: {e}")
+
+# 订阅计费系统 API
+# 端点: GET /api/subscription/plans, GET /api/subscription/current,
+#       POST /api/subscription/subscribe, POST /api/subscription/cancel,
+#       GET /api/subscription/invoices
+try:
+    from api.subscription_router import router as subscription_router
+    app.include_router(subscription_router)
+    logger.info("订阅计费系统 subscription_router registered")
+except Exception as e:
+    logger.warning(f"subscription_router 加载失败: {e}")
+
+# 支付集成 API (Mock)
+# 端点: POST /api/payment/create, POST /api/payment/notify,
+#       GET /api/payment/{id}, GET /api/payment/methods
+try:
+    from api.payment_router import router as payment_router
+    app.include_router(payment_router)
+    logger.info("支付集成 payment_router registered")
+except Exception as e:
+    logger.warning(f"payment_router 加载失败: {e}")
+
+# 邀请裂变 v2 API
+# 端点: GET /api/invite/code, POST /api/invite/redeem,
+#       GET /api/invite/records, GET /api/invite/rewards, GET /api/invite/stats
+try:
+    from api.invite_router_v2 import router as invite_router_v2
+    app.include_router(invite_router_v2)
+    logger.info("邀请裂变 v2 invite_router_v2 registered")
+except Exception as e:
+    logger.warning(f"invite_router_v2 加载失败: {e}")
+
+# 用户增长分析 API (admin)
+# 端点: GET /api/growth/overview, GET /api/growth/funnel,
+#       GET /api/growth/retention, GET /api/growth/activation, GET /api/growth/revenue
+try:
+    from api.growth_router import router as growth_router
+    app.include_router(growth_router)
+    logger.info("用户增长分析 growth_router registered")
+except Exception as e:
+    logger.warning(f"growth_router 加载失败: {e}")
+
+# 统一 API 网关 - 多端接入
+# 端点: /api/gateway/*
+# 功能: 多端认证、设备管理、消息推送、数据同步
+try:
+    from api.gateway_router import router as gateway_router
+    app.include_router(gateway_router)
+    logger.info("统一 API 网关 gateway_router registered")
+except Exception as e:
+    logger.warning(f"gateway_router 加载失败: {e}")
 
 
 # ========== 端点 ==========
