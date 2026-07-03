@@ -20,6 +20,107 @@
     }
 
     /**
+     * HTML 净化函数，过滤危险标签和属性
+     * @param {string} html - 需要净化的 HTML
+     * @returns {string} - 净化后的安全 HTML
+     */
+    function sanitizeHtml(html) {
+        if (!html) return '';
+
+        var allowedTags = {
+            b: true,
+            strong: true,
+            i: true,
+            em: true,
+            u: true,
+            s: true,
+            del: true,
+            sub: true,
+            sup: true,
+            br: true,
+            p: true,
+            div: true,
+            span: true,
+            a: { href: true, target: '_blank', rel: 'noopener noreferrer' },
+            img: { src: true, alt: true },
+            ul: true,
+            ol: true,
+            li: true,
+            h1: true,
+            h2: true,
+            h3: true,
+            h4: true,
+            h5: true,
+            h6: true,
+            table: true,
+            tr: true,
+            td: true,
+            th: true,
+            thead: true,
+            tbody: true,
+            tfoot: true,
+            blockquote: true,
+            code: true,
+            pre: true,
+            hr: true
+        };
+
+        var allowedProtocols = ['http:', 'https:', 'data:'];
+
+        var temp = document.createElement('div');
+        temp.innerHTML = html;
+
+        function sanitizeNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                return;
+            }
+
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                var tagName = node.tagName.toLowerCase();
+
+                if (!allowedTags[tagName]) {
+                    node.parentNode.replaceChild(document.createTextNode(node.textContent), node);
+                    return;
+                }
+
+                var allowedAttrs = allowedTags[tagName];
+                for (var i = node.attributes.length - 1; i >= 0; i--) {
+                    var attr = node.attributes[i];
+                    var attrName = attr.name.toLowerCase();
+
+                    if (typeof allowedAttrs === 'object') {
+                        if (!allowedAttrs[attrName]) {
+                            node.removeAttribute(attr.name);
+                            continue;
+                        }
+
+                        if (attrName === 'href' || attrName === 'src') {
+                            var url = attr.value;
+                            var protocol = url.split(':')[0] + ':';
+                            if (allowedProtocols.indexOf(protocol) === -1 && !url.startsWith('/')) {
+                                node.removeAttribute(attr.name);
+                            } else if (attrName === 'href') {
+                                node.setAttribute('rel', 'noopener noreferrer');
+                                node.setAttribute('target', '_blank');
+                            }
+                        }
+                    } else {
+                        node.removeAttribute(attr.name);
+                    }
+                }
+            }
+
+            for (var j = node.childNodes.length - 1; j >= 0; j--) {
+                sanitizeNode(node.childNodes[j]);
+            }
+        }
+
+        sanitizeNode(temp);
+
+        return temp.innerHTML;
+    }
+
+    /**
      * 防抖函数，延迟执行并在多次调用时只执行最后一次
      * @param {Function} fn - 需要防抖的函数
      * @param {number} wait - 延迟时间（毫秒）
@@ -2268,6 +2369,7 @@
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
+        sanitizeHtml: sanitizeHtml,
         debounce: debounce,
         throttle: throttle,
         formatDate: formatDate,

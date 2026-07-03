@@ -2,9 +2,73 @@
 LexPrime 配置加载
 2026-06-28
 """
+import sys
+import json
 from pathlib import Path
+from datetime import datetime
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from loguru import logger
+
+
+def _serialize_log_record(record):
+    """loguru 结构化日志序列化器 - JSON 格式"""
+    record_dict = {
+        "timestamp": datetime.fromtimestamp(record["time"].timestamp()).isoformat(),
+        "level": record["level"].name,
+        "logger": record["name"],
+        "module": record["module"],
+        "function": record["function"],
+        "line": record["line"],
+        "message": record["message"],
+    }
+    
+    if record["extra"]:
+        record_dict["extra"] = record["extra"]
+    
+    if record["exception"]:
+        record_dict["exception"] = {
+            "type": record["exception"].type.__name__ if record["exception"].type else None,
+            "value": str(record["exception"].value) if record["exception"].value else None,
+            "traceback": record["exception"].traceback if record["exception"].traceback else None,
+        }
+    
+    return json.dumps(record_dict, ensure_ascii=False)
+
+
+def configure_loguru():
+    """配置 loguru 日志系统 - 结构化 JSON 输出"""
+    logger.remove()
+    
+    logger.add(
+        sys.stderr,
+        format="{message}",
+        filter=lambda record: record["level"].name != "DEBUG",
+        level="INFO",
+        serialize=_serialize_log_record,
+        colorize=False,
+    )
+    
+    logger.add(
+        sys.stderr,
+        format="{message}",
+        level="DEBUG",
+        serialize=_serialize_log_record,
+        colorize=False,
+    )
+    
+    log_dir = Path(__file__).resolve().parent.parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    
+    logger.add(
+        log_dir / "app_{time:YYYY-MM-DD}.log",
+        format="{message}",
+        level="DEBUG",
+        serialize=_serialize_log_record,
+        rotation="1 day",
+        retention="7 days",
+        compression="zip",
+    )
 
 
 # 项目根目录: 这个文件 (core/config.py) 的父目录的父目录
@@ -15,6 +79,9 @@ _DEFAULT_DB_URL = f"sqlite+aiosqlite:///{_DEFAULT_DB_PATH.as_posix().lstrip('/')
 
 class Settings(BaseSettings):
     """应用配置 - 全部从 .env 加载"""
+
+    app_env: str = "development"
+    elasticsearch_url: str = "http://localhost:9200"
 
     # PostgreSQL
     postgres_host: str = "localhost"
@@ -92,6 +159,20 @@ class Settings(BaseSettings):
     auth_license_ai_min_score: float = 0.7       # AI 初审通过阈值 (0-1)
     auth_license_ocr_engine: str = "mock"        # OCR 引擎: mock / paddle / aliyun (W4+ 真接)
 
+    # Redis (可选)
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    redis_password: str = ""
+    redis_db: int = 0
+    redis_url: str = ""
+
+    # 缓存配置
+    cache_default_ttl: int = 300                 # 默认缓存过期时间 (秒)
+    cache_user_info_ttl: int = 3600              # 用户信息缓存过期时间 (秒)
+    cache_lawyer_matching_ttl: int = 1800        # 律师匹配结果缓存过期时间 (秒)
+    cache_contract_template_ttl: int = 7200      # 合同模板缓存过期时间 (秒)
+    cache_cases_ttl: int = 1200                  # 案例缓存过期时间 (秒)
+
     class Config:
         env_file = ".env"
         case_sensitive = False
@@ -103,3 +184,5 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+
+configure_loguru()

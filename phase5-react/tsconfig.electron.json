@@ -11,7 +11,6 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "outDir": "dist-electron",
-    "rootDir": "electron",
     "sourceMap": true,
     "declaration": false,
     "strict": true,
@@ -26,5 +25,5 @@
       "@electron/*": ["electron/*"]
     }
   },
-  "include": ["electron/**/*.ts"]
+  "include": ["electron/**/*.ts", "src/main/**/*.ts"]
 }

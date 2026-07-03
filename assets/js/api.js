@@ -2,6 +2,7 @@
  * API 客户端层 - 统一封装 fetch, 自动注入 Bearer token
  * Phase 3 P0 新增: 后端地址配置 + 401 拦截 + 错误统一处理
  * Phase 6 扩展: Marketplace / Contract Review / AI API + Loading 管理 + 增强错误处理
+ * Phase 7 安全加固: CSRF 防护 + Token 自动刷新
  *
  * 依赖: Auth (auth.js) - token 存储
  *       Utils (utils.js) - showToast / showError (可选)
@@ -9,6 +10,30 @@
 
 (function () {
     'use strict';
+
+    var CSRF_TOKEN_KEY = 'lexprime.csrf_token';
+
+    function getCsrfToken() {
+        try {
+            return localStorage.getItem(CSRF_TOKEN_KEY);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function setCsrfToken(token) {
+        try {
+            localStorage.setItem(CSRF_TOKEN_KEY, token);
+        } catch (e) {
+            console.warn('[API] CSRF token 存储失败:', e.message);
+        }
+    }
+
+    function clearCsrfToken() {
+        try {
+            localStorage.removeItem(CSRF_TOKEN_KEY);
+        } catch (e) {}
+    }
 
     // 后端服务地址 (dev 模式)
     const CONFIG = {
@@ -269,6 +294,15 @@
             }
         }
 
+        // 注入 CSRF token (仅非 GET 请求)
+        var csrfSafeMethods = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
+        if (csrfSafeMethods.indexOf(method.toUpperCase()) === -1) {
+            var csrfToken = getCsrfToken();
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
+            }
+        }
+
         // 默认 JSON body
         let body = options.body;
         if (body && !(body instanceof FormData) && !options.raw) {
@@ -292,9 +326,33 @@
             });
             clearTimeout(timeoutId);
 
-            // 401: token 失效, 跳登录
+            // 401: token 失效, 尝试自动刷新
             if (res.status === 401 && typeof Auth !== 'undefined') {
-                Auth.logout();
+                if (typeof Auth.onUnauthorized === 'function') {
+                    await Auth.onUnauthorized();
+                }
+                if (Auth.isLoggedIn()) {
+                    var newToken = Auth.getToken();
+                    if (newToken) {
+                        headers['Authorization'] = 'Bearer ' + newToken;
+                        var retryRes = await fetch(url, {
+                            method: method,
+                            headers: headers,
+                            body: body,
+                            signal: controller.signal
+                        });
+                        if (retryRes.ok) {
+                            var retryData = null;
+                            var retryCt = retryRes.headers.get('content-type') || '';
+                            if (retryCt.indexOf('application/json') >= 0) {
+                                retryData = await retryRes.json().catch(function () { return null; });
+                            } else {
+                                retryData = await retryRes.text().catch(function () { return null; });
+                            }
+                            return { ok: true, status: retryRes.status, data: retryData };
+                        }
+                    }
+                }
                 ErrorHandler.showToast('登录已过期, 请重新登录', 'error');
                 if (typeof switchView === 'function') {
                     switchView('login');
@@ -428,7 +486,31 @@
             clearTimeout(timeoutId);
 
             if (res.status === 401 && typeof Auth !== 'undefined') {
-                Auth.logout();
+                if (typeof Auth.onUnauthorized === 'function') {
+                    await Auth.onUnauthorized();
+                }
+                if (Auth.isLoggedIn()) {
+                    var newToken = Auth.getToken();
+                    if (newToken) {
+                        headers['Authorization'] = 'Bearer ' + newToken;
+                        var retryRes = await fetch(url, {
+                            method: 'POST',
+                            headers: headers,
+                            body: formData,
+                            signal: controller.signal
+                        });
+                        if (retryRes.ok) {
+                            var retryData = null;
+                            var retryCt = retryRes.headers.get('content-type') || '';
+                            if (retryCt.indexOf('application/json') >= 0) {
+                                retryData = await retryRes.json().catch(function () { return null; });
+                            } else {
+                                retryData = await retryRes.text().catch(function () { return null; });
+                            }
+                            return { ok: true, status: retryRes.status, data: retryData };
+                        }
+                    }
+                }
                 ErrorHandler.showToast('登录已过期, 请重新登录', 'error');
                 if (typeof switchView === 'function') {
                     switchView('login');
@@ -518,12 +600,13 @@
              * 登录 - 暂走 demo (后端 Phase 2 hardcode u-1)
              */
             login: function (email, password) {
-                // TODO: 替换为 POST /api/v1/auth/login
                 return Promise.resolve({
                     ok: true,
                     status: 200,
                     data: {
                         token: 'demo-token-' + Date.now(),
+                        refresh_token: 'demo-refresh-' + Date.now(),
+                        expires_in: 900,
                         user: {
                             id: 'u-1',
                             email: email || 'demo@lexprime.cn',
@@ -538,6 +621,8 @@
                     status: 200,
                     data: {
                         token: 'demo-token-' + Date.now(),
+                        refresh_token: 'demo-refresh-' + Date.now(),
+                        expires_in: 900,
                         user: {
                             id: 'u-1',
                             email: email,
@@ -554,6 +639,21 @@
              */
             demo: function () {
                 return this.login('demo@lexprime.cn', '');
+            },
+            /**
+             * 使用 refresh_token 刷新 access_token
+             */
+            refresh: function (refreshToken) {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    data: {
+                        token: 'demo-token-' + Date.now(),
+                        refresh_token: 'demo-refresh-' + Date.now(),
+                        expires_in: 900,
+                        user: Auth.currentUser()
+                    }
+                });
             }
         },
 
@@ -1356,7 +1456,22 @@
              */
             getActiveRequestCount: function () {
                 return LoadingManager.getActiveCount();
-            }
+            },
+
+            /**
+             * 获取当前 CSRF token
+             */
+            getCsrfToken: getCsrfToken,
+
+            /**
+             * 设置 CSRF token
+             */
+            setCsrfToken: setCsrfToken,
+
+            /**
+             * 清空 CSRF token
+             */
+            clearCsrfToken: clearCsrfToken
         }
     };
 

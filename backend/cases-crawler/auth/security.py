@@ -215,6 +215,37 @@ def extract_user_id_from_payload(payload: dict[str, Any]) -> int:
         raise TokenInvalidError(f"invalid sub claim: {sub}") from e
 
 
+# ========== CSRF 防护 ==========
+def generate_csrf_token() -> str:
+    """
+    生成 CSRF token
+    - 使用 secrets.token_urlsafe 生成高熵随机字符串
+    - 长度 32 字符，约 192 bits 熵
+    """
+    return secrets.token_urlsafe(32)
+
+
+def validate_csrf_token(token: Optional[str]) -> bool:
+    """
+    验证 CSRF token 格式
+    - 检查非空且长度合理
+    - 实际验证需要结合 session 存储的 token 进行比对
+    """
+    if not token:
+        return False
+    if len(token) < 16 or len(token) > 128:
+        return False
+    try:
+        decoded = token.replace("-", "+").replace("_", "/")
+        if len(decoded) % 4 != 0:
+            decoded += "=" * (4 - len(decoded) % 4)
+        import base64
+        base64.b64decode(decoded)
+        return True
+    except Exception:
+        return False
+
+
 # ========== 自检 (模块加载时跑一次, 早失败) ==========
 def _self_check() -> None:
     """确保 hash/verify 闭环工作"""
@@ -223,6 +254,13 @@ def _self_check() -> None:
     assert h.startswith("$2"), f"bcrypt hash format unexpected: {h[:5]}"
     assert verify_password(sample, h), "bcrypt verify self-check failed"
     assert not verify_password("wrong", h), "bcrypt should reject wrong password"
+
+    csrf_token = generate_csrf_token()
+    assert len(csrf_token) >= 32, f"CSRF token too short: {len(csrf_token)}"
+    assert validate_csrf_token(csrf_token), "CSRF token validation failed"
+    assert not validate_csrf_token(None), "CSRF should reject None"
+    assert not validate_csrf_token(""), "CSRF should reject empty"
+
     logger.debug("auth.security self-check OK")
 
 

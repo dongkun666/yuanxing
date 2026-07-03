@@ -64,19 +64,24 @@ class User(Base):
     subscription_tier: Mapped[str] = mapped_column(String(16), default="trial", index=True)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True, nullable=False)
-    is_email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    is_phone_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    is_2fa_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    totp_secret: Mapped[Optional[str]] = mapped_column(String(64))  # W2 用, TOTP 密钥
+    is_email_verified: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    is_phone_verified: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    is_2fa_enabled: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    totp_secret: Mapped[Optional[str]] = mapped_column(String(64))
 
-    last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    last_login_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     last_login_ip: Mapped[Optional[str]] = mapped_column(String(64))
     failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    locked_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    locked_until: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False, index=True
+    )
+
+    __table_args__ = (
+        Index("idx_user_role_active", "role", "is_active"),
+        Index("idx_user_tier_active", "subscription_tier", "is_active"),
     )
 
     # Relationships
@@ -114,32 +119,37 @@ class LawyerProfile(Base):
         BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), unique=True, index=True, nullable=False
     )
 
-    name: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     license_no: Mapped[Optional[str]] = mapped_column(String(64), unique=True, index=True)
     firm_id: Mapped[Optional[str]] = mapped_column(
         String(64), ForeignKey("firms.id", ondelete="SET NULL"), index=True
     )
-    firm_role: Mapped[str] = mapped_column(String(16), default="lawyer")  # partner/senior/lawyer/assistant
+    firm_role: Mapped[str] = mapped_column(String(16), default="lawyer", index=True)
 
     # 执业证审核状态
     license_status: Mapped[str] = mapped_column(String(16), default="pending", index=True, nullable=False)
     license_image_url: Mapped[Optional[str]] = mapped_column(Text)
     license_ocr_data: Mapped[Optional[dict]] = mapped_column(JSON)
-    license_submitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    license_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    license_submitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+    license_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     license_reviewed_by: Mapped[Optional[int]] = mapped_column(
-        BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL")
+        BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL"), index=True
     )
     license_reject_reason: Mapped[Optional[str]] = mapped_column(Text)
 
     specialties: Mapped[Optional[List[str]]] = mapped_column(JSON)
     bio: Mapped[Optional[str]] = mapped_column(Text)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text)
-    region: Mapped[Optional[str]] = mapped_column(String(32))
+    region: Mapped[Optional[str]] = mapped_column(String(32), index=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False, index=True
+    )
+
+    __table_args__ = (
+        Index("idx_profile_license_status", "license_status", "created_at"),
+        Index("idx_profile_firm_status", "firm_id", "license_status"),
     )
 
     # Relationships
@@ -168,17 +178,22 @@ class Token(Base):
         BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), index=True, nullable=False
     )
     token_hash: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
-    token_type: Mapped[str] = mapped_column(String(16), default="refresh", nullable=False)
+    token_type: Mapped[str] = mapped_column(String(16), default="refresh", nullable=False, index=True)
 
     device_info: Mapped[Optional[str]] = mapped_column(String(512))
     ip_address: Mapped[Optional[str]] = mapped_column(String(64))
     user_agent: Mapped[Optional[str]] = mapped_column(Text)
 
-    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, nullable=False)
-    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     revoked_reason: Mapped[Optional[str]] = mapped_column(String(64))
+
+    __table_args__ = (
+        Index("idx_token_user_revoked", "user_id", "revoked_at"),
+        Index("idx_token_expires_revoked", "expires_at", "revoked_at"),
+    )
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="tokens")
@@ -199,11 +214,11 @@ class OTPLog(Base):
 
     id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
     target: Mapped[str] = mapped_column(String(128), index=True, nullable=False)
-    target_type: Mapped[str] = mapped_column(String(16), default="email", nullable=False)  # email / phone
+    target_type: Mapped[str] = mapped_column(String(16), default="email", nullable=False, index=True)
     purpose: Mapped[str] = mapped_column(String(32), index=True, nullable=False)
 
     code_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    sent_to: Mapped[str] = mapped_column(String(128), nullable=False)  # 冗余, 方便查询"哪些用户收到过 OTP"
+    sent_to: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
 
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, nullable=False)
     consumed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
@@ -216,9 +231,12 @@ class OTPLog(Base):
         BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL"), index=True
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
-    __table_args__ = (Index("idx_otp_target_purpose", "target", "purpose"),)
+    __table_args__ = (
+        Index("idx_otp_target_purpose", "target", "purpose"),
+        Index("idx_otp_user_purpose", "related_user_id", "purpose"),
+    )
 
 
 # ========== EmailVerification (W3: 邮箱验证长 token) ==========
@@ -239,7 +257,7 @@ class EmailVerification(Base):
     )
     email: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
-    purpose: Mapped[str] = mapped_column(String(32), default="verify_email", nullable=False)
+    purpose: Mapped[str] = mapped_column(String(32), default="verify_email", nullable=False, index=True)
     # purpose: verify_email / reset_password / change_email
 
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True, nullable=False)
@@ -249,10 +267,12 @@ class EmailVerification(Base):
     ip_address: Mapped[Optional[str]] = mapped_column(String(64))
     user_agent: Mapped[Optional[str]] = mapped_column(Text)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
-    # Relationships (单向足够, 不反向查回 user)
-    __table_args__ = (Index("idx_email_verify_user_purpose", "user_id", "purpose"),)
+    __table_args__ = (
+        Index("idx_email_verify_user_purpose", "user_id", "purpose"),
+        Index("idx_email_verify_email_purpose", "email", "purpose"),
+    )
 
 
 # ========== TotpBackupCode (W3: TOTP 一次性恢复码) ==========
@@ -278,9 +298,12 @@ class TotpBackupCode(Base):
     consumed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     consumed_ip: Mapped[Optional[str]] = mapped_column(String(64))
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
-    __table_args__ = (Index("idx_totp_backup_user", "user_id"),)
+    __table_args__ = (
+        Index("idx_totp_backup_user", "user_id"),
+        Index("idx_totp_backup_user_consumed", "user_id", "consumed_at"),
+    )
 
 
 # ========== LicenseReviewLog (W3: 律师执业证审核审计) ==========
@@ -302,18 +325,22 @@ class LicenseReviewLog(Base):
         BigIntFK, ForeignKey("auth_users.id", ondelete="CASCADE"), index=True, nullable=False
     )
 
-    from_status: Mapped[Optional[str]] = mapped_column(String(16))
-    to_status: Mapped[str] = mapped_column(String(16), nullable=False)
-    actor_type: Mapped[str] = mapped_column(String(16), default="system", nullable=False)
+    from_status: Mapped[Optional[str]] = mapped_column(String(16), index=True)
+    to_status: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    actor_type: Mapped[str] = mapped_column(String(16), default="system", nullable=False, index=True)
     # actor_type: system / ai / admin / user (user = 用户自己上传触发)
     actor_id: Mapped[Optional[int]] = mapped_column(
-        BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL")
+        BigIntFK, ForeignKey("auth_users.id", ondelete="SET NULL"), index=True
     )
 
     ai_score: Mapped[Optional[float]] = mapped_column()  # 0.0 - 1.0
     reason: Mapped[Optional[str]] = mapped_column(Text)
     extra: Mapped[Optional[dict]] = mapped_column(JSON)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
-    __table_args__ = (Index("idx_license_review_profile", "profile_id"),)
+    __table_args__ = (
+        Index("idx_license_review_profile", "profile_id"),
+        Index("idx_license_review_actor", "actor_id", "actor_type"),
+        Index("idx_license_review_status", "from_status", "to_status"),
+    )

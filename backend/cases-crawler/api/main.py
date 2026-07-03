@@ -14,17 +14,44 @@ LexPrime 简易 API (FastAPI)
 - POST /api/firm/lawyers             律所律师列表
 - POST /api/firm/time-entries        工时记录
 - GET  /api/health                   健康检查
+- POST /api/logs                     前端日志上报 (错误 + 性能)
 """
+import os
+import json
+from datetime import datetime
 from contextlib import asynccontextmanager
-from typing import List, Optional
-from fastapi import FastAPI, HTTPException, Query, Depends
+from typing import List, Optional, Any
+from fastapi import FastAPI, HTTPException, Query, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 from loguru import logger
 
 from core.db import Database, ESClient, Neo4jClient
 from core.config import settings
 from core.models import Case, Law, Company, Lawyer, Firm, FirmTimeEntry
+
+
+def _get_log_file_path() -> str:
+    """获取日志文件路径"""
+    log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    return os.path.join(log_dir, f"frontend_{datetime.now().strftime('%Y-%m-%d')}.log")
+
+
+def _write_log_entry(entry_type: str, data: dict):
+    """写入日志条目到文件"""
+    try:
+        log_path = _get_log_file_path()
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "type": entry_type,
+            "data": data,
+        }
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception as e:
+        logger.error(f"Failed to write log entry: {e}")
 
 
 # ========== Pydantic 模型 ==========
@@ -122,6 +149,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 请求日志中间件
+try:
+    from api.logging_middleware import logging_middleware
+    app.middleware("http")(logging_middleware)
+    logger.info("请求日志中间件已注册")
+except Exception as e:
+    logger.warning(f"请求日志中间件加载失败 (非致命): {e}")
 
 
 # ========== Skill Hub 端点 (Track E) ==========
@@ -268,16 +303,120 @@ except Exception as e:
 # ========== 端点 ==========
 @app.get("/api/health")
 async def health():
-    """健康检查"""
-    return {
-        "status": "ok",
-        "version": "0.1.0",
-        "databases": {
-            "postgres": Database._engine is not None,
-            "elasticsearch": ESClient._client is not None,
-            "neo4j": Neo4jClient._driver is not None,
-        },
+    """增强健康检查 - 检查数据库连接、ES、Neo4j"""
+    import time
+    
+    db_status = {
+        "connected": Database._engine is not None,
+        "backend": Database._backend if hasattr(Database, "_backend") else "unknown",
     }
+    
+    if Database._engine is not None:
+        try:
+            start_time = time.time()
+            async with Database.session() as session:
+                await session.execute("SELECT 1")
+            db_status["latency_ms"] = round((time.time() - start_time) * 1000, 2)
+            db_status["query_ok"] = True
+        except Exception as e:
+            db_status["query_ok"] = False
+            db_status["error"] = str(e)
+    
+    es_status = {
+        "connected": ESClient._client is not None,
+        "using_mock": ESClient.is_mock(),
+    }
+    
+    if ESClient._client is not None and not ESClient.is_mock():
+        try:
+            start_time = time.time()
+            await ESClient._client.info()
+            es_status["latency_ms"] = round((time.time() - start_time) * 1000, 2)
+            es_status["query_ok"] = True
+        except Exception as e:
+            es_status["query_ok"] = False
+            es_status["error"] = str(e)
+    
+    neo4j_status = {
+        "connected": Neo4jClient._driver is not None,
+        "available": Neo4jClient.is_available(),
+    }
+    
+    if Neo4jClient._driver is not None:
+        try:
+            start_time = time.time()
+            async with Neo4jClient._driver.session() as session:
+                await session.run("RETURN 1").single()
+            neo4j_status["latency_ms"] = round((time.time() - start_time) * 1000, 2)
+            neo4j_status["query_ok"] = True
+        except Exception as e:
+            neo4j_status["query_ok"] = False
+            neo4j_status["error"] = str(e)
+    
+    all_ok = (
+        db_status.get("connected", False) and
+        es_status.get("connected", False) and
+        neo4j_status.get("available", True)
+    )
+    
+    return {
+        "status": "ok" if all_ok else "degraded",
+        "version": "0.1.0",
+        "timestamp": datetime.now().isoformat(),
+        "databases": {
+            "main": db_status,
+            "elasticsearch": es_status,
+            "neo4j": neo4j_status,
+        },
+        "environment": settings.api_debug and "development" or "production",
+    }
+
+
+class FrontendError(BaseModel):
+    timestamp: str
+    user: dict = {}
+    browser: dict = {}
+    page: dict = {}
+    error: dict = {}
+    type: str = "frontend_error"
+
+
+class FrontendPerformance(BaseModel):
+    timestamp: str
+    user: dict = {}
+    browser: dict = {}
+    page: dict = {}
+    performance: dict = {}
+    type: str = "frontend_performance"
+
+
+class LogsRequest(BaseModel):
+    errors: Optional[List[FrontendError]] = None
+    performance: Optional[List[FrontendPerformance]] = None
+
+
+@app.post("/api/logs")
+async def receive_frontend_logs(req: LogsRequest, request: Request):
+    """接收前端错误和性能日志"""
+    client_ip = request.client.host if request.client else "unknown"
+    
+    if req.errors:
+        for error in req.errors:
+            logger.error("frontend_error", extra={
+                "client_ip": client_ip,
+                **error.dict(),
+            })
+            _write_log_entry("frontend_error", error.dict())
+    
+    if req.performance:
+        for perf in req.performance:
+            logger.info("frontend_performance", extra={
+                "client_ip": client_ip,
+                **perf.dict(),
+            })
+            _write_log_entry("frontend_performance", perf.dict())
+    
+    return {"status": "ok", "received_errors": len(req.errors or []), "received_performance": len(req.performance or [])}
 
 
 # --- 判例 ---

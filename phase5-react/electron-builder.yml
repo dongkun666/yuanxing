@@ -41,6 +41,15 @@ win:
   # icon: build/icon.ico   # Phase 5.2 用默认 Electron 图标 (生产需替换)
   publisherName: LexPrime (元枢法智)
   verifyUpdateCodeSignature: false  # 未签名时跳过校验
+  fileAssociations:
+    - ext: docx
+      name: Microsoft Word Document
+      description: Word 文档
+      icon: build/icon.ico
+    - ext: pdf
+      name: PDF Document
+      description: PDF 文档
+      icon: build/icon.ico
   # ===== Code Signing (Windows) =====
   # 生产签名需要:
   # 1. EV 代码签名证书 (.pfx 格式)
@@ -67,6 +76,15 @@ mac:
   # icon: build/icon.icns   # Phase 5.2 用默认 Electron 图标
   hardenedRuntime: false  # 未签名时关闭 hardened runtime
   gatekeeperAssess: false
+  fileAssociations:
+    - ext: docx
+      name: Microsoft Word Document
+      description: Word 文档
+      role: Editor
+    - ext: pdf
+      name: PDF Document
+      description: PDF 文档
+      role: Editor
   # ===== macOS 公证 (Notarization) =====
   # electron-builder 23.6.0 不支持内联 notarize, 用 afterSign 钩子:
   # 1. 安装 @electron/notarize: npm i -D @electron/notarize
@@ -100,6 +118,13 @@ linux:
   description: |
     LexPrime 元枢法智 · 律师单人版 MVP
     AI 辅助不替代律师 · 5 大价值主张 · 6 大模块
+  fileAssociations:
+    - ext: docx
+      name: Microsoft Word Document
+      description: Word 文档
+    - ext: pdf
+      name: PDF Document
+      description: PDF 文档
   desktop:
     entry:
       Name: LexPrime 元枢法智
