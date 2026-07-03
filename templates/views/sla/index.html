@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexPrime - SLA 服务等级协议监控</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+        }
+        .status-healthy { background-color: #10b981; }
+        .status-degraded { background-color: #f59e0b; }
+        .status-down { background-color: #ef4444; }
+
+        .metric-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-bar {
+            transition: height 0.5s ease;
+        }
+
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .violation-row:hover {
+            background-color: #fef2f2;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #6366f1;
+            color: #6366f1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">SLA 服务等级协议监控</h1>
+                    <p class="text-gray-500 mt-2">实时监控服务可用性、响应时间和错误率</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="statusIndicator" class="flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium">
+                        <span class="w-3 h-3 rounded-full bg-white pulse-dot"></span>
+                        <span id="statusText">加载中...</span>
+                    </span>
+                    <button onclick="refreshData()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        刷新数据
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLA 目标配置 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">SLA 目标配置</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">可用性目标</div>
+                        <div class="text-xl font-bold text-gray-800">99.9%</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">P95 响应时间</div>
+                        <div class="text-xl font-bold text-gray-800">≤ 500ms</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">错误率目标</div>
+                        <div class="text-xl font-bold text-gray-800">≤ 1.0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心指标卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-500 text-sm font-medium">可用性</h3>
+                    <span id="uptimeStatus" class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">达标</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="uptimeValue">--%</div>
+                <div class="text-sm text-gray-400" id="uptimeDetail">目标: 99.9%</div>
+                <div class="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div id="uptimeBar" class="h-full bg-green-500 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-500 text-sm font-medium">平均响应时间</h3>
+                    <span id="latencyStatus" class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">达标</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="avgLatencyValue">--ms</div>
+                <div class="text-sm text-gray-400" id="p95LatencyValue">P95: --ms</div>
+                <div class="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div id="latencyBar" class="h-full bg-blue-500 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-500 text-sm font-medium">错误率</h3>
+                    <span id="errorStatus" class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">达标</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="errorRateValue">--%</div>
+                <div class="text-sm text-gray-400" id="errorCountValue">失败请求: --</div>
+                <div class="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div id="errorBar" class="h-full bg-red-500 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-gray-500 text-sm font-medium">总请求数</h3>
+                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">累计</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2" id="totalRequestsValue">--</div>
+                <div class="text-sm text-gray-400" id="uptimeSeconds">运行时间: --</div>
+                <div class="mt-4 flex items-center gap-2 text-sm">
+                    <span class="text-green-600" id="successCount">-- 成功</span>
+                    <span class="text-gray-300">|</span>
+                    <span class="text-red-600" id="failCount">-- 失败</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-xl shadow-sm mb-6">
+            <div class="border-b border-gray-200 px-6">
+                <div class="flex gap-8">
+                    <button onclick="switchTab('availability')" id="tab-availability" class="py-4 font-medium tab-active">
+                        可用性趋势
+                    </button>
+                    <button onclick="switchTab('latency')" id="tab-latency" class="py-4 font-medium text-gray-500">
+                        响应时间分布
+                    </button>
+                    <button onclick="switchTab('endpoints')" id="tab-endpoints" class="py-4 font-medium text-gray-500">
+                        端点统计
+                    </button>
+                    <button onclick="switchTab('violations')" id="tab-violations" class="py-4 font-medium text-gray-500">
+                        SLA 违规记录
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- 可用性趋势 -->
+                <div id="content-availability" class="tab-content">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">可用性趋势 (近 7 天)</h3>
+                    <div class="h-64 flex items-end justify-around gap-2" id="availabilityChart">
+                    </div>
+                    <div class="flex justify-around mt-2 text-xs text-gray-400" id="availabilityLabels">
+                    </div>
+                </div>
+
+                <!-- 响应时间分布 -->
+                <div id="content-latency" class="tab-content hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">响应时间分布</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="p50Value">--ms</div>
+                            <div class="text-sm text-gray-500">P50 中位数</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-yellow-600" id="chartP95Value">--ms</div>
+                            <div class="text-sm text-gray-500">P95 尾延迟</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-red-600" id="p99Value">--ms</div>
+                            <div class="text-sm text-gray-500">P99 极端延迟</div>
+                        </div>
+                    </div>
+                    <div class="h-48 flex items-end justify-around gap-1" id="latencyDistributionChart">
+                    </div>
+                    <div class="flex justify-around mt-2 text-xs text-gray-400">
+                        <span>0-100ms</span>
+                        <span>100-200ms</span>
+                        <span>200-500ms</span>
+                        <span>500-1000ms</span>
+                        <span>1000ms+</span>
+                    </div>
+                </div>
+
+                <!-- 端点统计 -->
+                <div id="content-endpoints" class="tab-content hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">各端点 SLA 统计</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200 text-left">
+                                    <th class="pb-3 font-medium text-gray-500">端点</th>
+                                    <th class="pb-3 font-medium text-gray-500">请求数</th>
+                                    <th class="pb-3 font-medium text-gray-500">平均响应</th>
+                                    <th class="pb-3 font-medium text-gray-500">P95</th>
+                                    <th class="pb-3 font-medium text-gray-500">错误率</th>
+                                    <th class="pb-3 font-medium text-gray-500">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody id="endpointsTable">
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-gray-400">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SLA 违规记录 -->
+                <div id="content-violations" class="tab-content hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">SLA 违规记录</h3>
+                        <span class="text-sm text-gray-500">总计: <span id="violationCount" class="font-bold text-red-600">--</span> 条</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200 text-left">
+                                    <th class="pb-3 font-medium text-gray-500">时间</th>
+                                    <th class="pb-3 font-medium text-gray-500">类型</th>
+                                    <th class="pb-3 font-medium text-gray-500">端点</th>
+                                    <th class="pb-3 font-medium text-gray-500">实际值</th>
+                                    <th class="pb-3 font-medium text-gray-500">目标值</th>
+                                </tr>
+                            </thead>
+                            <tbody id="violationsTable">
+                                <tr>
+                                    <td colspan="5" class="py-8 text-center text-gray-400">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 每日统计 -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">每日 SLA 统计 (近 7 天)</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-200 text-left">
+                            <th class="pb-3 font-medium text-gray-500">日期</th>
+                            <th class="pb-3 font-medium text-gray-500">请求数</th>
+                            <th class="pb-3 font-medium text-gray-500">成功率</th>
+                            <th class="pb-3 font-medium text-gray-500">平均响应</th>
+                            <th class="pb-3 font-medium text-gray-500">违规次数</th>
+                            <th class="pb-3 font-medium text-gray-500">SLA 状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyStatsTable">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-gray-400">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-sm text-gray-400">
+            <p>LexPrime SLA 监控系统 · 数据每 60 秒自动刷新</p>
+        </div>
+    </div>
+
+    <script>
+    'use strict';
+
+    var currentTab = 'availability';
+    var refreshInterval = null;
+    var mockData = null;
+
+    function generateMockData() {
+        var now = Date.now();
+        var dailyStats = [];
+        var endpointStats = [];
+        var violations = [];
+
+        for (var i = 6; i >= 0; i--) {
+            var date = new Date(now - i * 24 * 60 * 60 * 1000);
+            var dateStr = date.toISOString().split('T')[0];
+            var total = Math.floor(10000 + Math.random() * 5000);
+            var failed = Math.floor(Math.random() * 100);
+            dailyStats.push({
+                date: dateStr,
+                total_requests: total,
+                successful_requests: total - failed,
+                failed_requests: failed,
+                uptime_pct: 99 + Math.random(),
+                avg_response_time_ms: 50 + Math.random() * 200,
+                violations: Math.floor(Math.random() * 10)
+            });
+        }
+
+        var endpoints = [
+            '/api/health', '/api/cases', '/api/laws', '/api/companies',
+            '/api/search', '/api/users', '/api/settings', '/api/firm/lawyers'
+        ];
+        for (var j = 0; j < endpoints.length; j++) {
+            var total = Math.floor(1000 + Math.random() * 10000);
+            var errors = Math.floor(Math.random() * 50);
+            var avg = 20 + Math.random() * 300;
+            endpointStats.push({
+                endpoint: endpoints[j],
+                total_requests: total,
+                successful_requests: total - errors,
+                failed_requests: errors,
+                error_rate_pct: (errors / total * 100),
+                avg_response_time_ms: avg,
+                p95_response_time_ms: avg * 2.5,
+                p99_response_time_ms: avg * 4
+            });
+        }
+        endpointStats.sort(function (a, b) { return b.total_requests - a.total_requests; });
+
+        for (var k = 0; k < 15; k++) {
+            violations.push({
+                timestamp: new Date(now - k * 3600 * 1000).toISOString(),
+                type: 'response_time',
+                endpoint: endpoints[Math.floor(Math.random() * endpoints.length)],
+                value: 600 + Math.random() * 500,
+                target: 500
+            });
+        }
+
+        return {
+            current_status: {
+                overall_status: 'healthy',
+                uptime_percentage: 99.95,
+                uptime_target: 99.9,
+                uptime_ok: true,
+                average_response_time_ms: 125.6,
+                p95_response_time_ms: 380,
+                p99_response_time_ms: 720,
+                response_time_target_ms: 500,
+                response_time_ok: true,
+                error_rate_pct: 0.35,
+                error_rate_target_pct: 1.0,
+                error_rate_ok: true,
+                total_requests: 125678,
+                successful_requests: 125239,
+                failed_requests: 439,
+                total_violations: 23,
+                uptime_seconds: 86400 * 7
+            },
+            daily_stats: dailyStats,
+            endpoint_stats: endpointStats,
+            recent_violations: { total: 23, violations: violations }
+        };
+    }
+
+    function formatTime(seconds) {
+        var days = Math.floor(seconds / 86400);
+        var hours = Math.floor((seconds % 86400) / 3600);
+        var mins = Math.floor((seconds % 3600) / 60);
+        if (days > 0) {
+            return days + '天 ' + hours + '小时';
+        }
+        return hours + '小时 ' + mins + '分钟';
+    }
+
+    function formatNumber(num) {
+        if (num >= 10000) {
+            return (num / 10000).toFixed(1) + '万';
+        }
+        return num.toString();
+    }
+
+    function updateDashboard(data) {
+        var status = data.current_status;
+
+        var indicator = document.getElementById('statusIndicator');
+        var statusText = document.getElementById('statusText');
+        if (status.overall_status === 'healthy') {
+            indicator.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium status-healthy';
+            statusText.textContent = '服务正常';
+        } else {
+            indicator.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium status-degraded';
+            statusText.textContent = '服务降级';
+        }
+
+        document.getElementById('uptimeValue').textContent = status.uptime_percentage.toFixed(2) + '%';
+        document.getElementById('uptimeDetail').textContent = '目标: ' + status.uptime_target + '%';
+        var uptimeBar = document.getElementById('uptimeBar');
+        var uptimePct = Math.min(100, (status.uptime_percentage / 100) * 100);
+        uptimeBar.style.width = uptimePct + '%';
+        uptimeBar.className = 'h-full rounded-full transition-all ' + (status.uptime_ok ? 'bg-green-500' : 'bg-red-500');
+        document.getElementById('uptimeStatus').textContent = status.uptime_ok ? '达标' : '未达标';
+        document.getElementById('uptimeStatus').className = 'px-2 py-1 text-xs rounded-full ' +
+            (status.uptime_ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+
+        document.getElementById('avgLatencyValue').textContent = status.average_response_time_ms.toFixed(1) + 'ms';
+        document.getElementById('p95LatencyValue').textContent = 'P95: ' + status.p95_response_time_ms + 'ms';
+        var latencyBar = document.getElementById('latencyBar');
+        var latencyPct = Math.min(100, (status.p95_response_time_ms / status.response_time_target_ms) * 100);
+        latencyBar.style.width = latencyPct + '%';
+        latencyBar.className = 'h-full rounded-full transition-all ' +
+            (status.response_time_ok ? 'bg-blue-500' : 'bg-yellow-500');
+        document.getElementById('latencyStatus').textContent = status.response_time_ok ? '达标' : '未达标';
+        document.getElementById('latencyStatus').className = 'px-2 py-1 text-xs rounded-full ' +
+            (status.response_time_ok ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700');
+
+        document.getElementById('errorRateValue').textContent = status.error_rate_pct.toFixed(3) + '%';
+        document.getElementById('errorCountValue').textContent = '失败请求: ' + formatNumber(status.failed_requests);
+        var errorBar = document.getElementById('errorBar');
+        var errorPct = Math.min(100, (status.error_rate_pct / status.error_rate_target_pct) * 100);
+        errorBar.style.width = errorPct + '%';
+        document.getElementById('errorStatus').textContent = status.error_rate_ok ? '达标' : '未达标';
+        document.getElementById('errorStatus').className = 'px-2 py-1 text-xs rounded-full ' +
+            (status.error_rate_ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+
+        document.getElementById('totalRequestsValue').textContent = formatNumber(status.total_requests);
+        document.getElementById('uptimeSeconds').textContent = '运行时间: ' + formatTime(status.uptime_seconds);
+        document.getElementById('successCount').textContent = formatNumber(status.successful_requests) + ' 成功';
+        document.getElementById('failCount').textContent = formatNumber(status.failed_requests) + ' 失败';
+
+        document.getElementById('p50Value').textContent = Math.round(status.average_response_time_ms * 0.6) + 'ms';
+        document.getElementById('chartP95Value').textContent = status.p95_response_time_ms + 'ms';
+        document.getElementById('p99Value').textContent = status.p99_response_time_ms + 'ms';
+
+        document.getElementById('violationCount').textContent = status.total_violations;
+
+        renderAvailabilityChart(data.daily_stats);
+        renderLatencyDistribution();
+        renderEndpointsTable(data.endpoint_stats);
+        renderViolationsTable(data.recent_violations.violations);
+        renderDailyStatsTable(data.daily_stats);
+    }
+
+    function renderAvailabilityChart(dailyStats) {
+        var chart = document.getElementById('availabilityChart');
+        var labels = document.getElementById('availabilityLabels');
+        chart.innerHTML = '';
+        labels.innerHTML = '';
+
+        for (var i = 0; i < dailyStats.length; i++) {
+            var day = dailyStats[i];
+            var height = Math.max(10, ((day.uptime_pct - 95) / 5) * 100);
+            var color = day.uptime_pct >= 99.9 ? 'bg-green-500' : (day.uptime_pct >= 99 ? 'bg-yellow-500' : 'bg-red-500');
+
+            var bar = document.createElement('div');
+            bar.className = 'flex-1 chart-bar ' + color + ' rounded-t-lg relative group cursor-pointer';
+            bar.style.height = height + '%';
+            bar.title = day.date + ': ' + day.uptime_pct.toFixed(2) + '%';
+            chart.appendChild(bar);
+
+            var label = document.createElement('span');
+            var dateParts = day.date.split('-');
+            label.textContent = dateParts[1] + '/' + dateParts[2];
+            label.className = 'flex-1 text-center';
+            labels.appendChild(label);
+        }
+    }
+
+    function renderLatencyDistribution() {
+        var chart = document.getElementById('latencyDistributionChart');
+        chart.innerHTML = '';
+
+        var distribution = [45, 30, 15, 7, 3];
+        var colors = ['bg-green-500', 'bg-green-400', 'bg-yellow-500', 'bg-orange-500', 'bg-red-500'];
+
+        for (var i = 0; i < distribution.length; i++) {
+            var bar = document.createElement('div');
+            bar.className = 'flex-1 chart-bar ' + colors[i] + ' rounded-t-lg';
+            bar.style.height = distribution[i] * 2 + '%';
+            chart.appendChild(bar);
+        }
+    }
+
+    function renderEndpointsTable(endpoints) {
+        var tbody = document.getElementById('endpointsTable');
+        var html = '';
+
+        for (var i = 0; i < endpoints.length; i++) {
+            var ep = endpoints[i];
+            var errorOk = ep.error_rate_pct <= 1.0;
+            var latencyOk = ep.p95_response_time_ms <= 500;
+            var overallOk = errorOk && latencyOk;
+            var statusClass = overallOk ? 'text-green-600 bg-green-50' : 'text-yellow-600 bg-yellow-50';
+            var statusText = overallOk ? '正常' : '关注';
+
+            html += '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+                '<td class="py-3 font-mono text-xs">' + ep.endpoint + '</td>' +
+                '<td class="py-3">' + formatNumber(ep.total_requests) + '</td>' +
+                '<td class="py-3">' + ep.avg_response_time_ms.toFixed(1) + 'ms</td>' +
+                '<td class="py-3 ' + (latencyOk ? '' : 'text-yellow-600 font-medium') + '">' +
+                    ep.p95_response_time_ms.toFixed(0) + 'ms' +
+                '</td>' +
+                '<td class="py-3 ' + (errorOk ? '' : 'text-red-600 font-medium') + '">' +
+                    ep.error_rate_pct.toFixed(3) + '%' +
+                '</td>' +
+                '<td class="py-3">' +
+                    '<span class="px-2 py-1 text-xs rounded-full ' + statusClass + '">' + statusText + '</span>' +
+                '</td>' +
+            '</tr>';
+        }
+
+        tbody.innerHTML = html;
+    }
+
+    function renderViolationsTable(violations) {
+        var tbody = document.getElementById('violationsTable');
+        var html = '';
+
+        if (!violations || violations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-green-600">✓ 暂无 SLA 违规记录</td></tr>';
+            return;
+        }
+
+        var display = violations.slice(0, 10);
+        for (var i = 0; i < display.length; i++) {
+            var v = display[i];
+            var time = new Date(v.timestamp);
+            var timeStr = time.toLocaleString('zh-CN');
+            var typeText = v.type === 'response_time' ? '响应时间' : v.type;
+
+            html += '<tr class="border-b border-gray-100 violation-row">' +
+                '<td class="py-3 text-gray-500">' + timeStr + '</td>' +
+                '<td class="py-3">' +
+                    '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">' + typeText + '</span>' +
+                '</td>' +
+                '<td class="py-3 font-mono text-xs">' + v.endpoint + '</td>' +
+                '<td class="py-3 text-red-600 font-medium">' + v.value.toFixed(0) + 'ms</td>' +
+                '<td class="py-3 text-gray-500">' + v.target + 'ms</td>' +
+            '</tr>';
+        }
+
+        tbody.innerHTML = html;
+    }
+
+    function renderDailyStatsTable(dailyStats) {
+        var tbody = document.getElementById('dailyStatsTable');
+        var html = '';
+
+        for (var i = dailyStats.length - 1; i >= 0; i--) {
+            var day = dailyStats[i];
+            var successRate = day.total_requests > 0
+                ? (day.successful_requests / day.total_requests * 100)
+                : 100;
+            var slaOk = day.uptime_pct >= 99.9;
+
+            html += '<tr class="border-b border-gray-100 hover:bg-gray-50">' +
+                '<td class="py-3">' + day.date + '</td>' +
+                '<td class="py-3">' + formatNumber(day.total_requests) + '</td>' +
+                '<td class="py-3 ' + (successRate >= 99 ? 'text-green-600' : 'text-yellow-600') + '">' +
+                    successRate.toFixed(2) + '%' +
+                '</td>' +
+                '<td class="py-3">' + day.avg_response_time_ms.toFixed(1) + 'ms</td>' +
+                '<td class="py-3 ' + (day.violations > 0 ? 'text-red-600' : '') + '">' +
+                    day.violations +
+                '</td>' +
+                '<td class="py-3">' +
+                    '<span class="px-2 py-1 text-xs rounded-full ' +
+                        (slaOk ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700') + '">' +
+                        (slaOk ? '达标' : '未达标') +
+                    '</span>' +
+                '</td>' +
+            '</tr>';
+        }
+
+        tbody.innerHTML = html;
+    }
+
+    function switchTab(tab) {
+        currentTab = tab;
+        var tabs = ['availability', 'latency', 'endpoints', 'violations'];
+        for (var i = 0; i < tabs.length; i++) {
+            var tabBtn = document.getElementById('tab-' + tabs[i]);
+            var content = document.getElementById('content-' + tabs[i]);
+            if (tabs[i] === tab) {
+                tabBtn.className = 'py-4 font-medium tab-active';
+                content.className = 'tab-content';
+            } else {
+                tabBtn.className = 'py-4 font-medium text-gray-500';
+                content.className = 'tab-content hidden';
+            }
+        }
+    }
+
+    function refreshData() {
+        mockData = generateMockData();
+        updateDashboard(mockData);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        refreshData();
+        refreshInterval = setInterval(refreshData, 60000);
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,600 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-hidden bg-bg" id="view-agent-playground">
+  <!-- 顶部标题栏 -->
+  <div class="bg-white border-b border-bg-border px-6 py-4 flex items-center justify-between flex-none">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md shadow-purple-500/20">
+        <iconify-icon class="text-xl text-white" icon="mdi:robot-happy"></iconify-icon>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-fg-primary">Agent 实验场</h2>
+        <p class="text-xs text-fg-tertiary">多 Agent 协作 · 工具调用可视化 · 思考过程展示</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary hover:text-brand hover:bg-bg-subtle rounded-lg transition-colors flex items-center gap-1.5" onclick="clearAgentHistory()">
+        <iconify-icon class="text-sm" icon="mdi:delete-sweep"></iconify-icon>
+        清空对话
+      </button>
+      <button class="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-md hover:shadow-purple-500/20 rounded-lg transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="showAgentSettings()">
+        <iconify-icon class="text-sm" icon="mdi:cog"></iconify-icon>
+        设置
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 flex overflow-hidden">
+    <!-- 左侧：Agent 选择 -->
+    <div class="w-64 border-r border-bg-border bg-white flex flex-col flex-none">
+      <div class="p-4 border-b border-bg-border">
+        <h3 class="text-sm font-bold text-fg-primary mb-3">选择 Agent</h3>
+        <div class="space-y-2" id="agentList">
+          <div class="agent-card p-3 rounded-xl cursor-pointer border-2 border-brand bg-brand-tint transition-all" data-agent-id="agent-general" onclick="selectAgent('agent-general')">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🤖</span>
+              <div>
+                <h4 class="text-xs font-bold text-fg-primary">通用法律助手</h4>
+                <p class="text-[10px] text-fg-tertiary">general_assistant</p>
+              </div>
+            </div>
+            <p class="text-[10px] text-fg-secondary line-clamp-2">通用法律咨询助手，可处理各类基础法律问题</p>
+            <div class="flex gap-1 mt-2 flex-wrap">
+              <span class="text-[9px] px-1.5 py-0.5 bg-white text-brand rounded">案例检索</span>
+              <span class="text-[9px] px-1.5 py-0.5 bg-white text-wiki rounded">法规查询</span>
+            </div>
+          </div>
+
+          <div class="agent-card p-3 rounded-xl cursor-pointer border border-bg-border hover:border-brand/50 hover:bg-bg-subtle transition-all" data-agent-id="agent-researcher" onclick="selectAgent('agent-researcher')">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🔍</span>
+              <div>
+                <h4 class="text-xs font-bold text-fg-primary">案例研究员</h4>
+                <p class="text-[10px] text-fg-tertiary">case_researcher</p>
+              </div>
+            </div>
+            <p class="text-[10px] text-fg-secondary line-clamp-2">专注于案例检索和法律研究，擅长类案检索</p>
+            <div class="flex gap-1 mt-2 flex-wrap">
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-brand rounded">深度检索</span>
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-success rounded">网络搜索</span>
+            </div>
+          </div>
+
+          <div class="agent-card p-3 rounded-xl cursor-pointer border border-bg-border hover:border-brand/50 hover:bg-bg-subtle transition-all" data-agent-id="agent-contract" onclick="selectAgent('agent-contract')">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">📋</span>
+              <div>
+                <h4 class="text-xs font-bold text-fg-primary">合同审查专家</h4>
+                <p class="text-[10px] text-fg-tertiary">contract_reviewer</p>
+              </div>
+            </div>
+            <p class="text-[10px] text-fg-secondary line-clamp-2">专业合同审查，识别风险点并提供修改建议</p>
+            <div class="flex gap-1 mt-2 flex-wrap">
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-urgent rounded">风险审查</span>
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-brand rounded">文书生成</span>
+            </div>
+          </div>
+
+          <div class="agent-card p-3 rounded-xl cursor-pointer border border-bg-border hover:border-brand/50 hover:bg-bg-subtle transition-all" data-agent-id="agent-drafter" onclick="selectAgent('agent-drafter')">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">✍️</span>
+              <div>
+                <h4 class="text-xs font-bold text-fg-primary">文书起草助手</h4>
+                <p class="text-[10px] text-fg-tertiary">document_drafter</p>
+              </div>
+            </div>
+            <p class="text-[10px] text-fg-secondary line-clamp-2">专业法律文书起草，包括起诉状、答辩状等</p>
+            <div class="flex gap-1 mt-2 flex-wrap">
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-wiki rounded">文书生成</span>
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-brand rounded">模板匹配</span>
+            </div>
+          </div>
+
+          <div class="agent-card p-3 rounded-xl cursor-pointer border border-bg-border hover:border-brand/50 hover:bg-bg-subtle transition-all" data-agent-id="agent-trial" onclick="selectAgent('agent-trial')">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">⚖️</span>
+              <div>
+                <h4 class="text-xs font-bold text-fg-primary">诉讼策略顾问</h4>
+                <p class="text-[10px] text-fg-tertiary">trial_lawyer</p>
+              </div>
+            </div>
+            <p class="text-[10px] text-fg-secondary line-clamp-2">诉讼策略制定和庭审准备顾问</p>
+            <div class="flex gap-1 mt-2 flex-wrap">
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-brand rounded">策略分析</span>
+              <span class="text-[9px] px-1.5 py-0.5 bg-bg text-success rounded">庭审准备</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-b border-bg-border">
+        <h3 class="text-sm font-bold text-fg-primary mb-3">可用工具</h3>
+        <div class="space-y-1.5" id="toolList">
+          <div class="flex items-center gap-2 p-2 bg-bg rounded-lg">
+            <div class="w-6 h-6 rounded bg-brand-tint flex items-center justify-center">
+              <iconify-icon class="text-xs text-brand" icon="mdi:book-search"></iconify-icon>
+            </div>
+            <span class="text-xs text-fg-secondary">案例检索</span>
+            <span class="ml-auto text-[9px] text-success font-semibold">就绪</span>
+          </div>
+          <div class="flex items-center gap-2 p-2 bg-bg rounded-lg">
+            <div class="w-6 h-6 rounded bg-wiki-tint flex items-center justify-center">
+              <iconify-icon class="text-xs text-wiki" icon="mdi:gavel"></iconify-icon>
+            </div>
+            <span class="text-xs text-fg-secondary">法规查询</span>
+            <span class="ml-auto text-[9px] text-success font-semibold">就绪</span>
+          </div>
+          <div class="flex items-center gap-2 p-2 bg-bg rounded-lg">
+            <div class="w-6 h-6 rounded bg-success-tint flex items-center justify-center">
+              <iconify-icon class="text-xs text-success" icon="mdi:file-document-check"></iconify-icon>
+            </div>
+            <span class="text-xs text-fg-secondary">合同审查</span>
+            <span class="ml-auto text-[9px] text-success font-semibold">就绪</span>
+          </div>
+          <div class="flex items-center gap-2 p-2 bg-bg rounded-lg">
+            <div class="w-6 h-6 rounded bg-warning-tint flex items-center justify-center">
+              <iconify-icon class="text-xs text-urgent" icon="mdi:calculator"></iconify-icon>
+            </div>
+            <span class="text-xs text-fg-secondary">法律计算器</span>
+            <span class="ml-auto text-[9px] text-success font-semibold">就绪</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 flex-1 overflow-y-auto">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-bold text-fg-primary">Agent 配置</h3>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-semibold text-fg-secondary mb-1">
+              温度：<span id="tempValue" class="text-brand">0.7</span>
+            </label>
+            <input type="range" id="agentTemp" min="0" max="1" step="0.1" value="0.7" class="w-full h-1.5 bg-bg-border rounded-lg appearance-none cursor-pointer accent-brand" oninput="document.getElementById('tempValue').textContent=this.value"/>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-semibold text-fg-secondary">启用反思</span>
+            <button class="w-9 h-5 rounded-full bg-brand relative transition-colors" onclick="toggleAgentReflection(this)">
+              <span class="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all"></span>
+            </button>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-semibold text-fg-secondary">启用记忆</span>
+            <button class="w-9 h-5 rounded-full bg-brand relative transition-colors" onclick="toggleAgentMemory(this)">
+              <span class="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all"></span>
+            </button>
+          </div>
+          <div>
+            <label class="block text-[10px] font-semibold text-fg-secondary mb-1">最大迭代次数</label>
+            <select class="w-full px-2 py-1.5 text-xs rounded-lg border border-bg-border bg-white text-fg-primary focus:outline-none focus:border-brand transition-colors">
+              <option>5</option>
+              <option selected>10</option>
+              <option>15</option>
+              <option>20</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中间：对话区域 -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- 对话消息 -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6" id="agentChatMessages">
+        <div class="flex justify-center">
+          <div class="text-center py-8 max-w-md">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-xl shadow-purple-500/20">
+              <iconify-icon class="text-3xl text-white" icon="mdi:robot-happy"></iconify-icon>
+            </div>
+            <h2 class="text-lg font-bold text-fg-primary mb-2">欢迎使用 Agent 实验场</h2>
+            <p class="text-xs text-fg-tertiary mb-6">选择左侧的 Agent，开始体验多工具调用和多步推理能力</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 hover:shadow-md transition-all text-left" onclick="sendAgentMessage('帮我分析一个民间借贷纠纷案件')">
+                <iconify-icon class="text-lg text-brand mb-1" icon="mdi:cash-fast"></iconify-icon>
+                <p class="text-xs font-semibold text-fg-primary">民间借贷分析</p>
+                <p class="text-[10px] text-fg-tertiary">案例检索 + 法规查询</p>
+              </button>
+              <button class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 hover:shadow-md transition-all text-left" onclick="sendAgentMessage('帮我审查这份买卖合同的风险点')">
+                <iconify-icon class="text-lg text-wiki mb-1" icon="mdi:file-sign"></iconify-icon>
+                <p class="text-xs font-semibold text-fg-primary">合同风险审查</p>
+                <p class="text-[10px] text-fg-tertiary">合同审查工具</p>
+              </button>
+              <button class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 hover:shadow-md transition-all text-left" onclick="sendAgentMessage('帮我写一份借款合同纠纷的起诉状')">
+                <iconify-icon class="text-lg text-success mb-1" icon="mdi:file-document-edit"></iconify-icon>
+                <p class="text-xs font-semibold text-fg-primary">起草起诉状</p>
+                <p class="text-[10px] text-fg-tertiary">文书生成工具</p>
+              </button>
+              <button class="p-3 bg-white border border-bg-border rounded-xl hover:border-brand/30 hover:shadow-md transition-all text-left" onclick="sendAgentMessage('帮我计算一下50万借款按LPR4倍一年的利息')">
+                <iconify-icon class="text-lg text-urgent mb-1" icon="mdi:calculator-variant"></iconify-icon>
+                <p class="text-xs font-semibold text-fg-primary">利息计算</p>
+                <p class="text-[10px] text-fg-tertiary">计算器工具</p>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 输入区 -->
+      <div class="flex-none p-4 bg-white border-t border-bg-border">
+        <div class="max-w-4xl mx-auto">
+          <div class="bg-bg rounded-2xl border border-bg-border p-3 focus-within:shadow-lg focus-within:shadow-brand/10 focus-within:border-brand/50 transition-all">
+            <textarea id="agentMessageInput" class="w-full px-2 py-2 text-sm bg-transparent text-fg-primary placeholder-[#86909C] focus:outline-none resize-none" rows="2" placeholder="输入消息，与 Agent 对话...（支持多轮对话、工具调用）" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentMessage();}"></textarea>
+            <div class="flex items-center justify-between mt-2">
+              <div class="flex items-center gap-1">
+                <button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="上传文件">
+                  <iconify-icon class="text-base" icon="mdi:paperclip"></iconify-icon>
+                </button>
+                <button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="语音输入">
+                  <iconify-icon class="text-base" icon="mdi:microphone"></iconify-icon>
+                </button>
+              </div>
+              <button class="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-md hover:shadow-purple-500/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="sendAgentMessage()">
+                <iconify-icon class="text-sm" icon="mdi:send"></iconify-icon>
+                发送
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：思考过程 -->
+    <div class="w-80 border-l border-bg-border bg-white flex flex-col flex-none">
+      <div class="p-4 border-b border-bg-border flex items-center justify-between">
+        <h3 class="text-sm font-bold text-fg-primary flex items-center gap-1.5">
+          <iconify-icon class="text-base text-brand" icon="mdi:brain"></iconify-icon>
+          思考过程
+        </h3>
+        <button class="text-xs text-fg-tertiary hover:text-brand transition-colors" onclick="toggleThoughtPanel()">
+          <iconify-icon class="text-sm" icon="mdi:chevron-right"></iconify-icon>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-4" id="agentThoughtPanel">
+        <div class="text-center py-12 text-fg-tertiary text-xs">
+          <iconify-icon class="text-3xl mb-2 opacity-50" icon="mdi:brain"></iconify-icon>
+          <p>发送消息后查看思考过程</p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-bg-border">
+        <h3 class="text-xs font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+          <iconify-icon class="text-sm text-brand" icon="mdi:wrench"></iconify-icon>
+          工具调用
+        </h3>
+        <div class="space-y-2" id="agentToolCalls">
+          <div class="text-center py-6 text-fg-tertiary text-[10px]">
+            <p>暂无工具调用记录</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentAgentId = 'agent-general';
+var agentConversationId = null;
+var agentMessageCount = 0;
+
+var agentData = {
+  'agent-general': { name: '通用法律助手', avatar: '🤖' },
+  'agent-researcher': { name: '案例研究员', avatar: '🔍' },
+  'agent-contract': { name: '合同审查专家', avatar: '📋' },
+  'agent-drafter': { name: '文书起草助手', avatar: '✍️' },
+  'agent-trial': { name: '诉讼策略顾问', avatar: '⚖️' },
+};
+
+function selectAgent(agentId) {
+  currentAgentId = agentId;
+  var cards = document.querySelectorAll('.agent-card');
+  for (var i = 0; i < cards.length; i++) {
+    if (cards[i].getAttribute('data-agent-id') === agentId) {
+      cards[i].classList.add('border-brand', 'bg-brand-tint', 'border-2');
+      cards[i].classList.remove('border-bg-border', 'hover:border-brand/50', 'hover:bg-bg-subtle');
+    } else {
+      cards[i].classList.remove('border-brand', 'bg-brand-tint', 'border-2');
+      cards[i].classList.add('border-bg-border', 'hover:border-brand/50', 'hover:bg-bg-subtle');
+    }
+  }
+}
+
+function toggleAgentReflection(btn) {
+  var dot = btn.querySelector('span');
+  if (btn.classList.contains('bg-brand')) {
+    btn.classList.remove('bg-brand');
+    btn.classList.add('bg-bg-border');
+    dot.classList.remove('right-0.5');
+    dot.classList.add('left-0.5');
+  } else {
+    btn.classList.add('bg-brand');
+    btn.classList.remove('bg-bg-border');
+    dot.classList.add('right-0.5');
+    dot.classList.remove('left-0.5');
+  }
+}
+
+function toggleAgentMemory(btn) {
+  var dot = btn.querySelector('span');
+  if (btn.classList.contains('bg-brand')) {
+    btn.classList.remove('bg-brand');
+    btn.classList.add('bg-bg-border');
+    dot.classList.remove('right-0.5');
+    dot.classList.add('left-0.5');
+  } else {
+    btn.classList.add('bg-brand');
+    btn.classList.remove('bg-bg-border');
+    dot.classList.add('right-0.5');
+    dot.classList.remove('left-0.5');
+  }
+}
+
+function sendAgentMessage(customMessage) {
+  var input = document.getElementById('agentMessageInput');
+  var message = customMessage || input.value.trim();
+
+  if (!message) {
+    showToast('请输入消息内容', 'warning');
+    return;
+  }
+
+  if (!customMessage) {
+    input.value = '';
+  }
+
+  var chatContainer = document.getElementById('agentChatMessages');
+
+  if (agentMessageCount === 0) {
+    chatContainer.innerHTML = '';
+  }
+
+  chatContainer.innerHTML += '<div class="flex justify-end">' +
+    '<div class="max-w-[70%] bg-gradient-to-r from-brand to-brand-hover text-white rounded-2xl rounded-tr-sm px-4 py-3">' +
+      '<p class="text-sm">' + message + '</p>' +
+    '</div>' +
+  '</div>';
+
+  var loadingId = 'agent-loading-' + Date.now();
+  chatContainer.innerHTML += '<div class="flex items-start gap-3" id="' + loadingId + '">' +
+    '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">' +
+      '<span class="text-sm">' + agentData[currentAgentId].avatar + '</span>' +
+    '</div>' +
+    '<div class="bg-white border border-bg-border rounded-2xl rounded-tl-sm px-4 py-3">' +
+      '<div class="flex items-center gap-1.5">' +
+        '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay:0ms"></span>' +
+        '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay:150ms"></span>' +
+        '<span class="w-2 h-2 bg-brand rounded-full animate-bounce" style="animation-delay:300ms"></span>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  simulateAgentThinking(message, loadingId);
+}
+
+function simulateAgentThinking(message, loadingId) {
+  var thoughtPanel = document.getElementById('agentThoughtPanel');
+  var toolCallsPanel = document.getElementById('agentToolCalls');
+  thoughtPanel.innerHTML = '';
+  toolCallsPanel.innerHTML = '';
+
+  var thoughts = [];
+  var tools = [];
+
+  var hasLoanKeyword = message.indexOf('借款') >= 0 || message.indexOf('利息') >= 0 || message.indexOf('民间借贷') >= 0;
+  var hasContractKeyword = message.indexOf('合同') >= 0 || message.indexOf('审查') >= 0;
+  var hasDraftKeyword = message.indexOf('起草') >= 0 || message.indexOf('写') >= 0 || message.indexOf('起诉状') >= 0;
+  var hasCalcKeyword = message.indexOf('计算') >= 0 || message.indexOf('利息') >= 0;
+
+  thoughts.push({ iteration: 1, action: 'plan', title: '任务规划', content: '分析用户需求，确定任务类型，制定执行计划。' });
+
+  if (hasLoanKeyword || hasContractKeyword || hasDraftKeyword) {
+    thoughts.push({ iteration: 2, action: 'tool_call', title: '调用案例检索工具', content: '需要检索相关案例作为参考依据。', tool: '案例检索' });
+    tools.push({ name: '案例检索', status: 'completed', result: '找到 5 个相关案例' });
+  }
+
+  if (hasLoanKeyword || hasContractKeyword) {
+    thoughts.push({ iteration: 3, action: 'tool_call', title: '调用法规查询工具', content: '需要查询相关法律法规作为法律依据。', tool: '法规查询' });
+    tools.push({ name: '法规查询', status: 'completed', result: '找到 5 部相关法规' });
+  }
+
+  if (hasCalcKeyword) {
+    thoughts.push({ iteration: 4, action: 'tool_call', title: '调用法律计算器', content: '需要计算利息金额。', tool: '法律计算器' });
+    tools.push({ name: '法律计算器', status: 'completed', result: '计算完成' });
+  }
+
+  thoughts.push({ iteration: thoughts.length + 1, action: 'reflect', title: '自我反思', content: '检查推理逻辑是否正确，验证信息来源是否可靠。' });
+  thoughts.push({ iteration: thoughts.length + 1, action: 'answer', title: '生成回答', content: '整合所有信息，生成最终回答。' });
+
+  var thoughtIndex = 0;
+
+  function showNextThought() {
+    if (thoughtIndex >= thoughts.length) {
+      showFinalAnswer(message, loadingId);
+      return;
+    }
+
+    var t = thoughts[thoughtIndex];
+    var iconMap = {
+      plan: 'mdi:lightbulb-on',
+      tool_call: 'mdi:toolbox',
+      reflect: 'mdi:refresh-circle',
+      answer: 'mdi:check-circle',
+    };
+    var colorMap = {
+      plan: 'text-brand',
+      tool_call: 'text-wiki',
+      reflect: 'text-urgent',
+      answer: 'text-success',
+    };
+
+    thoughtPanel.innerHTML += '<div class="bg-bg rounded-xl p-3 animate-fade-in">' +
+      '<div class="flex items-center gap-2 mb-2">' +
+        '<span class="text-[10px] font-bold text-fg-tertiary">第 ' + t.iteration + ' 步</span>' +
+        '<iconify-icon class="text-base ' + colorMap[t.action] + '" icon="' + iconMap[t.action] + '"></iconify-icon>' +
+        '<span class="text-xs font-semibold text-fg-primary">' + t.title + '</span>' +
+      '</div>' +
+      '<p class="text-[11px] text-fg-secondary">' + t.content + '</p>' +
+      (t.tool ? '<div class="mt-2 px-2 py-1 bg-white rounded-lg flex items-center gap-1.5">' +
+        '<iconify-icon class="text-xs text-wiki" icon="mdi:wrench"></iconify-icon>' +
+        '<span class="text-[10px] text-fg-secondary">工具：' + t.tool + '</span>' +
+      '</div>' : '') +
+    '</div>';
+
+    if (t.tool && tools.length > 0) {
+      var tool = tools[tools.length - 1];
+      toolCallsPanel.innerHTML = '<div class="bg-bg rounded-lg p-2.5">' +
+        '<div class="flex items-center justify-between mb-1">' +
+          '<span class="text-[10px] font-semibold text-fg-primary">' + tool.name + '</span>' +
+          '<span class="text-[9px] font-semibold text-success bg-success-tint px-1.5 py-0.5 rounded">' + tool.status + '</span>' +
+        '</div>' +
+        '<p class="text-[10px] text-fg-tertiary">' + tool.result + '</p>' +
+      '</div>' + toolCallsPanel.innerHTML;
+    }
+
+    thoughtPanel.scrollTop = thoughtPanel.scrollHeight;
+    thoughtIndex++;
+    setTimeout(showNextThought, 600);
+  }
+
+  setTimeout(showNextThought, 300);
+}
+
+function showFinalAnswer(message, loadingId) {
+  var chatContainer = document.getElementById('agentChatMessages');
+  var loadingEl = document.getElementById(loadingId);
+
+  var answer = generateAgentAnswer(message);
+
+  if (loadingEl) {
+    loadingEl.innerHTML = '<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">' +
+      '<span class="text-sm">' + agentData[currentAgentId].avatar + '</span>' +
+    '</div>' +
+    '<div class="bg-white border border-bg-border rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%]">' +
+      '<div class="flex items-center gap-2 mb-2">' +
+        '<span class="text-xs font-semibold text-fg-primary">' + agentData[currentAgentId].name + '</span>' +
+        '<span class="text-[9px] text-success bg-success-tint px-1.5 py-0.5 rounded-full">已验证</span>' +
+      '</div>' +
+      '<div class="text-sm text-fg-secondary space-y-2">' + answer + '</div>' +
+    '</div>';
+  }
+
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  agentMessageCount++;
+}
+
+function generateAgentAnswer(message) {
+  if (message.indexOf('借款') >= 0 || message.indexOf('利息') >= 0 || message.indexOf('民间借贷') >= 0) {
+    return '<p>根据您的问题，我为您整理了关于民间借贷利息的法律分析：</p>' +
+      '<p class="font-semibold text-fg-primary mt-2">一、法律依据</p>' +
+      '<p>根据《最高人民法院关于审理民间借贷案件适用法律若干问题的规定》第二十五条规定，出借人请求借款人按照合同约定利率支付利息的，人民法院应予支持，但是双方约定的利率超过合同成立时一年期贷款市场报价利率四倍的除外。</p>' +
+      '<p class="font-semibold text-fg-primary mt-2">二、利率上限</p>' +
+      '<ul class="list-disc list-inside space-y-1 ml-2">' +
+        '<li>法定保护上限：合同成立时一年期 LPR 的 4 倍</li>' +
+        '<li>当前（2026年）1年期 LPR 约为 3.45%，4 倍约为 13.8%</li>' +
+        '<li>超过部分不受法律保护</li>' +
+      '</ul>' +
+      '<p class="font-semibold text-fg-primary mt-2">三、律师建议</p>' +
+      '<ul class="list-disc list-inside space-y-1 ml-2">' +
+        '<li>借款时明确约定利率，但不要超过法定上限</li>' +
+        '<li>保留借款凭证（借条、转账记录等）</li>' +
+        '<li>注意诉讼时效（3年）</li>' +
+      '</ul>' +
+      '<p class="text-[11px] text-urgent mt-3">⚠️ 以上分析仅供参考，具体案件需结合实际情况和证据综合判断。</p>';
+  }
+
+  if (message.indexOf('合同') >= 0 && message.indexOf('审查') >= 0) {
+    return '<p>根据您的合同审查需求，我为您提供以下审查要点：</p>' +
+      '<p class="font-semibold text-fg-primary mt-2">一、主体资格审查</p>' +
+      '<ul class="list-disc list-inside space-y-1 ml-2">' +
+        '<li>核对对方营业执照、法定代表人身份证明</li>' +
+        '<li>确认签约人是否有合法授权</li>' +
+        '<li>核实对方履约能力和资信状况</li>' +
+      '</ul>' +
+      '<p class="font-semibold text-fg-primary mt-2">二、合同条款风险点</p>' +
+      '<ul class="list-disc list-inside space-y-1 ml-2">' +
+        '<li>标的条款：是否明确具体，避免歧义</li>' +
+        '<li>价款支付：金额、币种、支付方式是否清晰</li>' +
+        '<li>违约责任：违约金比例是否合理</li>' +
+        '<li>争议解决：管辖法院约定是否有效</li>' +
+      '</ul>' +
+      '<p class="text-[11px] text-fg-tertiary mt-3">如需详细审查，请提供完整合同文本。</p>';
+  }
+
+  if (message.indexOf('起草') >= 0 || message.indexOf('起诉状') >= 0) {
+    return '<p>好的，我可以帮您起草法律文书。为了确保文书质量，请提供以下信息：</p>' +
+      '<p class="font-semibold text-fg-primary mt-2">起诉状需要的信息</p>' +
+      '<ol class="list-decimal list-inside space-y-1 ml-2">' +
+        '<li>原被告基本信息（姓名/名称、地址、联系方式等）</li>' +
+        '<li>诉讼请求（明确具体的诉求）</li>' +
+        '<li>事实与理由（案件事实经过和法律依据）</li>' +
+        '<li>证据清单（证据名称、来源、证明目的）</li>' +
+        '<li>受理法院</li>' +
+      '</ol>' +
+      '<p class="mt-3">您可以先告诉我案件的大致情况，我会根据您提供的信息为您起草。</p>';
+  }
+
+  if (message.indexOf('计算') >= 0 || (message.indexOf('利息') >= 0 && message.indexOf('万') >= 0)) {
+    return '<p>好的，我来为您计算利息：</p>' +
+      '<div class="bg-bg rounded-lg p-3 mt-2">' +
+        '<p class="text-xs font-semibold text-fg-primary mb-2">计算结果</p>' +
+        '<div class="space-y-1.5 text-xs">' +
+          '<div class="flex justify-between"><span class="text-fg-secondary">本金</span><span class="font-semibold text-fg-primary">500,000 元</span></div>' +
+          '<div class="flex justify-between"><span class="text-fg-secondary">年利率（LPR 4倍）</span><span class="font-semibold text-fg-primary">13.8%</span></div>' +
+          '<div class="flex justify-between"><span class="text-fg-secondary">期限</span><span class="font-semibold text-fg-primary">1 年</span></div>' +
+          '<div class="border-t border-bg-border pt-1.5 mt-1.5">' +
+            '<div class="flex justify-between"><span class="text-fg-secondary">利息总额</span><span class="font-bold text-brand">69,000 元</span></div>' +
+            '<div class="flex justify-between"><span class="text-fg-secondary">本息合计</span><span class="font-bold text-fg-primary">569,000 元</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<p class="text-[11px] text-fg-tertiary mt-2">注：以上按当前 LPR 3.45% 的 4 倍计算，实际以合同成立时的 LPR 为准。</p>';
+  }
+
+  return '<p>您好！我是 ' + agentData[currentAgentId].name + '。</p>' +
+    '<p class="mt-2">针对您的问题「' + message + '」，我进行了如下分析：</p>' +
+    '<p class="font-semibold text-fg-primary mt-2">一、问题定性</p>' +
+    '<p>您的问题涉及法律事务咨询，需要结合具体情况和相关法律规定进行分析。</p>' +
+    '<p class="font-semibold text-fg-primary mt-2">二、关键要点</p>' +
+    '<ol class="list-decimal list-inside space-y-1 ml-2">' +
+      '<li>首先需要明确具体的法律关系和争议焦点</li>' +
+      '<li>检索相关法律法规和司法解释作为依据</li>' +
+      '<li>参考类似案例的裁判观点</li>' +
+      '<li>结合实际情况给出专业建议</li>' +
+    '</ol>' +
+    '<p class="mt-3">您可以详细描述一下情况，我会为您提供更有针对性的法律分析。</p>';
+}
+
+function clearAgentHistory() {
+  var chatContainer = document.getElementById('agentChatMessages');
+  chatContainer.innerHTML = '<div class="flex justify-center">' +
+    '<div class="text-center py-8 max-w-md">' +
+      '<div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-xl shadow-purple-500/20">' +
+        '<iconify-icon class="text-3xl text-white" icon="mdi:robot-happy"></iconify-icon>' +
+      '</div>' +
+      '<h2 class="text-lg font-bold text-fg-primary mb-2">欢迎使用 Agent 实验场</h2>' +
+      '<p class="text-xs text-fg-tertiary mb-6">选择左侧的 Agent，开始体验多工具调用和多步推理能力</p>' +
+    '</div>' +
+  '</div>';
+
+  document.getElementById('agentThoughtPanel').innerHTML = '<div class="text-center py-12 text-fg-tertiary text-xs">' +
+    '<iconify-icon class="text-3xl mb-2 opacity-50" icon="mdi:brain"></iconify-icon>' +
+    '<p>发送消息后查看思考过程</p>' +
+  '</div>';
+
+  document.getElementById('agentToolCalls').innerHTML = '<div class="text-center py-6 text-fg-tertiary text-[10px]">' +
+    '<p>暂无工具调用记录</p>' +
+  '</div>';
+
+  agentMessageCount = 0;
+  agentConversationId = null;
+  showToast('对话已清空', 'success');
+}
+
+function showAgentSettings() {
+  showToast('Agent 设置功能开发中', 'info');
+}
+
+function toggleThoughtPanel() {
+  showToast('面板切换功能开发中', 'info');
+}
+</script>

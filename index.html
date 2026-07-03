@@ -32,6 +32,15 @@
 </script>
 <!-- Tailwind CSS -->
 <link rel="stylesheet" href="./assets/css/tailwind.css">
+<!-- 预加载关键资源 -->
+<link rel="preload" href="./assets/js/app-state.js" as="script">
+<link rel="preload" href="./assets/js/utils.js" as="script">
+<link rel="preload" href="./assets/js/router.js" as="script">
+<link rel="preload" href="./assets/js/script.js" as="script">
+<link rel="preload" href="./assets/js/iconify-icon.min.js" as="script">
+<link rel="preconnect" href="http://localhost:3847">
+<!-- DNS 预解析 -->
+<link rel="dns-prefetch" href="http://localhost:3847">
 <!-- 应用全局元数据 (供 footer 版本号 + 调试用) -->
 <script>
     // 应用版本号 (build manifest 同步位)

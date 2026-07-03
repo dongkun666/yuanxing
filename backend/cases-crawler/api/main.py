@@ -635,6 +635,122 @@ except Exception as e:
     logger.warning(f"gateway_router 加载失败: {e}")
 
 
+# 模型管理 API
+# 端点: GET /api/models, GET /api/models/{id}, POST /api/models/train,
+#       GET /api/models/{id}/status, POST /api/models/{id}/deploy
+try:
+    from api.model_router import router as model_router
+    app.include_router(model_router)
+    logger.info("模型管理 model_router registered")
+except Exception as e:
+    logger.warning(f"模型管理 model_router 加载失败 (非致命): {e}")
+
+# 评测管理 API
+# 端点: /api/evaluation/*
+# 功能: 评测任务管理、数据集管理、模型对比、评测报告
+try:
+    from api.evaluation_router import router as evaluation_router
+    app.include_router(evaluation_router)
+    logger.info("评测管理 evaluation_router registered")
+except Exception as e:
+    logger.warning(f"评测管理 evaluation_router 加载失败 (非致命): {e}")
+
+# 企业级 - 多租户管理 API
+# 端点: GET/POST/PUT/DELETE /api/tenants, /api/tenants/{id}/suspend, /api/tenants/{id}/activate
+try:
+    from core import multitenancy as _mt  # noqa: F401
+    from api.tenant_router import router as tenant_router
+    app.include_router(tenant_router)
+    logger.info("企业级 - 多租户管理 tenant_router registered")
+except Exception as e:
+    logger.warning(f"多租户管理 tenant_router 加载失败 (非致命): {e}")
+
+# 企业级 - SSO 单点登录 API
+# 端点: GET/POST/PUT/DELETE /api/sso/providers, /api/sso/login/{provider}, /api/sso/callback/{provider}
+try:
+    from auth import sso as _sso  # noqa: F401
+    from api.sso_router import router as sso_router
+    app.include_router(sso_router)
+    logger.info("企业级 - SSO 单点登录 sso_router registered")
+except Exception as e:
+    logger.warning(f"SSO 单点登录 sso_router 加载失败 (非致命): {e}")
+
+# 企业级 - 审计日志 API
+# 端点: GET /api/audit/logs, /api/audit/logs/{id}, /api/audit/export, /api/audit/stats, /api/audit/report
+try:
+    from core import audit_log as _audit  # noqa: F401
+    from api.audit_router import router as audit_router
+    app.include_router(audit_router)
+    logger.info("企业级 - 审计日志 audit_router registered")
+except Exception as e:
+    logger.warning(f"审计日志 audit_router 加载失败 (非致命): {e}")
+
+# 企业级 - 组织架构管理 API
+# 端点: GET/POST/PUT/DELETE /api/org/departments, /api/org/teams, /api/org/roles, /api/org/members
+try:
+    from core import organization as _org  # noqa: F401
+    from api.org_router import router as org_router
+    app.include_router(org_router)
+    logger.info("企业级 - 组织架构管理 org_router registered")
+except Exception as e:
+    logger.warning(f"组织架构管理 org_router 加载失败 (非致命): {e}")
+
+
+# ========== Phase 7 数据资产模块 ==========
+
+# 法律知识图谱 API
+# 端点: GET /api/kg/entity/{id}, GET /api/kg/entity/search, GET /api/kg/relation/{id},
+#       GET /api/kg/graph, GET /api/kg/path, GET /api/kg/similar
+try:
+    from api.kg_router import router as kg_router
+    app.include_router(kg_router)
+    logger.info("Phase 7 - 法律知识图谱 kg_router registered")
+except Exception as e:
+    logger.warning(f"法律知识图谱 kg_router 加载失败 (非致命): {e}")
+
+# 判例数据库管理 API
+# 端点: GET /api/cases-db/stats, GET /api/cases-db/tags, POST /api/cases-db/import,
+#       POST /api/cases-db/dedupe, GET /api/cases-db/quality, POST /api/cases-db/reindex
+try:
+    from api.case_db_router import router as case_db_router
+    app.include_router(case_db_router)
+    logger.info("Phase 7 - 判例数据库 case_db_router registered")
+except Exception as e:
+    logger.warning(f"判例数据库 case_db_router 加载失败 (非致命): {e}")
+
+# 法规数据库管理 API
+# 端点: GET /api/laws-db/stats, GET /api/laws-db/categories, POST /api/laws-db/import,
+#       GET /api/laws-db/{id}/versions, GET /api/laws-db/{id}/references, POST /api/laws-db/reindex
+try:
+    from api.law_db_router import router as law_db_router
+    app.include_router(law_db_router)
+    logger.info("Phase 7 - 法规数据库 law_db_router registered")
+except Exception as e:
+    logger.warning(f"法规数据库 law_db_router 加载失败 (非致命): {e}")
+
+# 企业数据库管理 API
+# 端点: GET /api/companies-db/stats, POST /api/companies-db/import,
+#       GET /api/companies-db/{id}/equity, GET /api/companies-db/{id}/risk,
+#       GET /api/companies-db/{id}/relations, POST /api/companies-db/reindex
+try:
+    from api.company_db_router import router as company_db_router
+    app.include_router(company_db_router)
+    logger.info("Phase 7 - 企业数据库 company_db_router registered")
+except Exception as e:
+    logger.warning(f"企业数据库 company_db_router 加载失败 (非致命): {e}")
+
+# 律师数据库管理 API
+# 端点: GET /api/lawyers-db/stats, POST /api/lawyers-db/import,
+#       GET /api/lawyers-db/{id}/profile, GET /api/lawyers-db/{id}/cases,
+#       GET /api/lawyers-db/match, POST /api/lawyers-db/reindex
+try:
+    from api.lawyer_db_router import router as lawyer_db_router
+    app.include_router(lawyer_db_router)
+    logger.info("Phase 7 - 律师数据库 lawyer_db_router registered")
+except Exception as e:
+    logger.warning(f"律师数据库 lawyer_db_router 加载失败 (非致命): {e}")
+
+
 # ========== 端点 ==========
 
 @app.get("/api/health", summary="健康检查", description="检查数据库、Elasticsearch、Neo4j 的连接状态和延迟")

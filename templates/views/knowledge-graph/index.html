@@ -1,0 +1,1345 @@
+<!--
+  法律知识图谱 - 前端视图
+  提供知识图谱可视化、实体搜索、关系探索、路径分析等功能
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-hidden bg-bg" id="view-knowledge-graph" data-view-source="knowledge-graph/index.html">
+<style>
+  .kg-canvas-container {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: #f7f8fa;
+  }
+  .kg-canvas {
+    width: 100%;
+    height: 100%;
+  }
+  .kg-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #4E5969;
+  }
+  .kg-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .kg-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    max-width: 280px;
+    display: none;
+  }
+  .kg-tooltip-title {
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+  .kg-tooltip-type {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  .kg-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 2px;
+    color: #86909C;
+    font-size: 11px;
+  }
+  .kg-tooltip-row span:last-child {
+    color: #1D2129;
+    font-weight: 500;
+  }
+  .kg-tab-btn {
+    flex: 1;
+    padding: 8px 0;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .kg-tab-btn.active {
+    background: #722ED1;
+    color: white;
+  }
+  .kg-tab-btn:not(.active):hover {
+    background: #F2F3F5;
+  }
+  .kg-stat-card {
+    background: #F7F8FA;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .kg-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1D2129;
+  }
+  .kg-stat-label {
+    font-size: 10px;
+    color: #86909C;
+    margin-top: 2px;
+  }
+  .kg-path-item {
+    padding: 8px 10px;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .kg-path-item:hover {
+    border-color: #722ED1;
+    background: #F9F5FF;
+  }
+  .kg-path-node {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin: 2px;
+    background: #F2F3F5;
+    color: #4E5969;
+  }
+  .kg-search-result-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kg-search-result-item:hover {
+    background: #F2F3F5;
+  }
+  .kg-similar-bar {
+    height: 4px;
+    background: #E5E6EB;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .kg-similar-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #722ED1, #165DFF);
+    border-radius: 2px;
+  }
+</style>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- 左侧面板 -->
+  <div class="hidden lg:flex flex-col w-80 border-r border-bg-border bg-white flex-none" data-animate="slide-in-left" data-delay="0.05">
+    <div class="p-4 border-b border-bg-border">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center shadow-md shadow-wiki/20">
+          <iconify-icon class="text-base text-white" icon="mdi:graphql"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-fg-primary">法律知识图谱</h3>
+          <p class="text-[10px] text-fg-tertiary">实体关系网络探索</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 功能标签 -->
+    <div class="p-3 border-b border-bg-border">
+      <div class="flex gap-1 bg-bg rounded-xl p-1">
+        <div class="kg-tab-btn active" data-tab="explore" onclick="switchKgTab('explore')">图谱探索</div>
+        <div class="kg-tab-btn" data-tab="path" onclick="switchKgTab('path')">路径分析</div>
+        <div class="kg-tab-btn" data-tab="similar" onclick="switchKgTab('similar')">相似发现</div>
+      </div>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="p-3 border-b border-bg-border" id="kg-search-section">
+      <div class="relative">
+        <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
+        <input id="kgSearchInput" class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" placeholder="搜索实体..." type="text" oninput="searchKgEntities(this.value)"/>
+      </div>
+      <div id="kgSearchResults" class="mt-2 max-h-48 overflow-y-auto hidden"></div>
+    </div>
+
+    <!-- 图谱探索面板 -->
+    <div class="flex-1 overflow-y-auto" id="kg-tab-explore">
+      <!-- 实体类型筛选 -->
+      <div class="p-3 border-b border-bg-border">
+        <p class="text-[11px] font-semibold text-fg-tertiary mb-2 flex items-center justify-between">
+          <span>实体类型筛选</span>
+          <button class="text-[10px] text-brand hover:underline" onclick="resetKgTypeFilter()">重置</button>
+        </p>
+        <div class="space-y-1.5" id="kgTypeFilter">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="case" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#165DFF"></span>
+              <span>案件</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="person" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#F53F3F"></span>
+              <span>当事人</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="lawyer" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#722ED1"></span>
+              <span>律师</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="judge" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#F7BA1E"></span>
+              <span>法官</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="court" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#00B42A"></span>
+              <span>法院</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="law_firm" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#3491FA"></span>
+              <span>律所</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="company" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#FF7D00"></span>
+              <span>公司</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="law_article" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#14C9C9"></span>
+              <span>法条</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" checked data-type="cause" class="kg-filter-checkbox w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20" onchange="applyKgFilter()"/>
+            <div class="kg-legend-item">
+              <span class="kg-legend-dot" style="background:#86909C"></span>
+              <span>案由</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 深度控制 -->
+      <div class="p-3 border-b border-bg-border">
+        <p class="text-[11px] font-semibold text-fg-tertiary mb-2">遍历深度</p>
+        <div class="flex items-center gap-3">
+          <input type="range" id="kgDepthSlider" min="1" max="4" value="2" class="flex-1 accent-brand" onchange="updateKgDepth(this.value)"/>
+          <span class="text-sm font-bold text-brand w-6 text-center" id="kgDepthValue">2</span>
+        </div>
+      </div>
+
+      <!-- 统计信息 -->
+      <div class="p-3">
+        <p class="text-[11px] font-semibold text-fg-tertiary mb-2">图谱统计</p>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="kg-stat-card">
+            <p class="kg-stat-value" id="kgNodeCount">0</p>
+            <p class="kg-stat-label">节点数</p>
+          </div>
+          <div class="kg-stat-card">
+            <p class="kg-stat-value" id="kgEdgeCount">0</p>
+            <p class="kg-stat-label">关系数</p>
+          </div>
+        </div>
+        <div class="bg-white border border-bg-border rounded-xl p-3">
+          <p class="text-[11px] font-medium text-fg-secondary mb-1">中心实体</p>
+          <p class="text-xs text-fg-primary font-semibold" id="kgCenterLabel">—</p>
+          <p class="text-[10px] text-fg-tertiary mt-1" id="kgCenterType">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 路径分析面板 -->
+    <div class="flex-1 overflow-y-auto hidden" id="kg-tab-path">
+      <div class="p-3">
+        <p class="text-[11px] font-semibold text-fg-tertiary mb-2">路径分析</p>
+        <div class="space-y-2">
+          <div>
+            <label class="text-[10px] text-fg-tertiary mb-1 block">起始实体</label>
+            <input id="kgPathStart" class="w-full px-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" placeholder="输入起始实体ID" value="person-001"/>
+          </div>
+          <div>
+            <label class="text-[10px] text-fg-tertiary mb-1 block">目标实体</label>
+            <input id="kgPathEnd" class="w-full px-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" placeholder="输入目标实体ID" value="court-001"/>
+          </div>
+          <div>
+            <label class="text-[10px] text-fg-tertiary mb-1 block">最大深度</label>
+            <input type="number" id="kgPathMaxDepth" class="w-full px-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" value="4" min="1" max="6"/>
+          </div>
+          <button class="w-full py-2 text-xs font-medium text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5" onclick="findKgPath()">
+            查找路径
+          </button>
+        </div>
+
+        <div id="kgPathResults" class="mt-4">
+          <p class="text-[11px] font-semibold text-fg-tertiary mb-2">路径结果</p>
+          <div id="kgPathList" class="space-y-1">
+            <p class="text-xs text-fg-tertiary text-center py-4">点击"查找路径"开始分析</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 相似发现面板 -->
+    <div class="flex-1 overflow-y-auto hidden" id="kg-tab-similar">
+      <div class="p-3">
+        <p class="text-[11px] font-semibold text-fg-tertiary mb-2">相似实体发现</p>
+        <div class="space-y-2">
+          <div>
+            <label class="text-[10px] text-fg-tertiary mb-1 block">目标实体ID</label>
+            <input id="kgSimilarEntity" class="w-full px-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" placeholder="输入实体ID" value="case-001"/>
+          </div>
+          <div>
+            <label class="text-[10px] text-fg-tertiary mb-1 block">实体类型过滤</label>
+            <select id="kgSimilarType" class="w-full px-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all">
+              <option value="">全部类型</option>
+              <option value="case">案件</option>
+              <option value="person">当事人</option>
+              <option value="lawyer">律师</option>
+              <option value="company">公司</option>
+              <option value="court">法院</option>
+              <option value="law_article">法条</option>
+            </select>
+          </div>
+          <button class="w-full py-2 text-xs font-medium text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5" onclick="findKgSimilar()">
+            发现相似实体
+          </button>
+        </div>
+
+        <div id="kgSimilarResults" class="mt-4">
+          <p class="text-[11px] font-semibold text-fg-tertiary mb-2">相似实体</p>
+          <div id="kgSimilarList" class="space-y-2">
+            <p class="text-xs text-fg-tertiary text-center py-4">点击"发现相似实体"开始分析</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="p-3 border-t border-bg-border space-y-2">
+      <button class="w-full py-2 text-xs font-medium text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5" onclick="resetKgView()">
+        <iconify-icon icon="mdi:target" class="text-sm"></iconify-icon>
+        重置视图
+      </button>
+    </div>
+  </div>
+
+  <!-- 主区域：图谱画布 -->
+  <div class="flex-1 flex flex-col overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+    <!-- 顶部工具栏 -->
+    <div class="bg-white border-b border-bg-border px-4 py-3 flex items-center justify-between flex-none">
+      <div class="flex items-center gap-3">
+        <button class="lg:hidden w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary" onclick="toggleKgSidebar()">
+          <iconify-icon class="text-base" icon="mdi:menu"></iconify-icon>
+        </button>
+        <div>
+          <h2 class="text-sm font-bold text-fg-primary" id="kgPageTitle">知识图谱探索</h2>
+          <p class="text-[10px] text-fg-tertiary">点击节点查看详情 · 拖拽移动 · 滚轮缩放</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="统计信息" onclick="showKgStats()">
+          <iconify-icon class="text-base" icon="mdi:chart-bar"></iconify-icon>
+        </button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="全屏" onclick="toggleKgFullscreen()">
+          <iconify-icon class="text-base" icon="mdi:fullscreen"></iconify-icon>
+        </button>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="刷新" onclick="refreshKgGraph()">
+          <iconify-icon class="text-base" icon="mdi:refresh"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- 图谱画布 -->
+    <div class="kg-canvas-container" id="kgCanvasContainer">
+      <canvas class="kg-canvas" id="kgCanvas"></canvas>
+      <div class="kg-tooltip" id="kgTooltip"></div>
+
+      <!-- 图例 -->
+      <div class="absolute bottom-4 left-4 bg-white rounded-xl border border-bg-border shadow-lg p-3">
+        <p class="text-[10px] font-semibold text-fg-tertiary mb-2">图例</p>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5">
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#165DFF"></span>
+            <span>案件</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#F53F3F"></span>
+            <span>当事人</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#722ED1"></span>
+            <span>律师</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#F7BA1E"></span>
+            <span>法官</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#00B42A"></span>
+            <span>法院</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#FF7D00"></span>
+            <span>公司</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#14C9C9"></span>
+            <span>法条</span>
+          </div>
+          <div class="kg-legend-item">
+            <span class="kg-legend-dot" style="background:#86909C"></span>
+            <span>案由</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 缩放控制 -->
+      <div class="absolute bottom-4 right-4 bg-white rounded-xl border border-bg-border shadow-lg overflow-hidden flex flex-col">
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors border-b border-bg-border" onclick="zoomInKg()" title="放大">
+          <iconify-icon icon="mdi:plus" class="text-base"></iconify-icon>
+        </button>
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors border-b border-bg-border" onclick="zoomOutKg()" title="缩小">
+          <iconify-icon icon="mdi:minus" class="text-base"></iconify-icon>
+        </button>
+        <button class="w-9 h-9 hover:bg-bg-subtle flex items-center justify-center text-fg-secondary hover:text-brand transition-colors" onclick="resetKgView()" title="重置">
+          <iconify-icon icon="mdi:target" class="text-base"></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var currentCenterId = 'case-001';
+    var currentKgData = null;
+    var canvas = null;
+    var ctx = null;
+    var nodes = [];
+    var edges = [];
+    var scale = 1;
+    var offsetX = 0;
+    var offsetY = 0;
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var dragNode = null;
+    var animationId = null;
+    var currentDepth = 2;
+
+    var typeColors = {
+        case: '#165DFF',
+        person: '#F53F3F',
+        lawyer: '#722ED1',
+        judge: '#F7BA1E',
+        court: '#00B42A',
+        law_firm: '#3491FA',
+        company: '#FF7D00',
+        law_article: '#14C9C9',
+        cause: '#86909C',
+        charge: '#D91AD9',
+        contract: '#0FC6C2',
+        judgment: '#7BC616'
+    };
+
+    var typeLabels = {
+        case: '案件',
+        person: '当事人',
+        lawyer: '律师',
+        judge: '法官',
+        court: '法院',
+        law_firm: '律所',
+        company: '公司',
+        law_article: '法条',
+        cause: '案由',
+        charge: '罪名',
+        contract: '合同',
+        judgment: '判决'
+    };
+
+    function initKgCanvas() {
+        canvas = document.getElementById('kgCanvas');
+        if (!canvas) {
+            return;
+        }
+        var container = document.getElementById('kgCanvasContainer');
+        if (!container) {
+            return;
+        }
+
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('mousedown', onKgMouseDown);
+        canvas.addEventListener('mousemove', onKgMouseMove);
+        canvas.addEventListener('mouseup', onKgMouseUp);
+        canvas.addEventListener('mouseleave', onKgMouseUp);
+        canvas.addEventListener('wheel', onKgWheel);
+
+        window.addEventListener('resize', function () {
+            if (canvas && container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                drawKgGraph();
+            }
+        });
+    }
+
+    function loadKgGraph(centerId, depth) {
+        var cid = centerId || currentCenterId;
+        var d = depth || currentDepth;
+        currentCenterId = cid;
+        currentDepth = d;
+
+        var url = '/api/kg/graph?center_id=' + encodeURIComponent(cid) + '&depth=' + d;
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                currentKgData = data;
+                setupKgGraphData(data);
+                updateKgStats(data);
+                drawKgGraph();
+                startKgAnimation();
+            })
+            .catch(function () {
+                var mockData = getMockKgData(cid, d);
+                currentKgData = mockData;
+                setupKgGraphData(mockData);
+                updateKgStats(mockData);
+                drawKgGraph();
+                startKgAnimation();
+            });
+    }
+
+    function getMockKgData(centerId, depth) {
+        var mockNodes = [
+            { id: 'case-001', name: '张三诉李四借款合同纠纷案', type: 'case', type_label: '案件', degree: 8, color: '#165DFF' },
+            { id: 'person-001', name: '张三', type: 'person', type_label: '当事人', sub_type: '原告', degree: 3, color: '#F53F3F' },
+            { id: 'person-002', name: '李四', type: 'person', type_label: '当事人', sub_type: '被告', degree: 3, color: '#F53F3F' },
+            { id: 'lawyer-001', name: '王律师', type: 'lawyer', type_label: '律师', sub_type: '原告代理', degree: 4, color: '#722ED1' },
+            { id: 'lawyer-002', name: '李律师', type: 'lawyer', type_label: '律师', sub_type: '被告代理', degree: 3, color: '#722ED1' },
+            { id: 'judge-001', name: '陈法官', type: 'judge', type_label: '法官', sub_type: '审判长', degree: 2, color: '#F7BA1E' },
+            { id: 'court-001', name: '北京市第一中级人民法院', type: 'court', type_label: '法院', degree: 4, color: '#00B42A' },
+            { id: 'firm-001', name: '北京正义律师事务所', type: 'law_firm', type_label: '律所', degree: 3, color: '#3491FA' },
+            { id: 'law-001', name: '民法典 第667条', type: 'law_article', type_label: '法条', degree: 2, color: '#14C9C9' },
+            { id: 'law-002', name: '民法典 第577条', type: 'law_article', type_label: '法条', degree: 3, color: '#14C9C9' },
+            { id: 'cause-001', name: '借款合同纠纷', type: 'cause', type_label: '案由', degree: 2, color: '#86909C' },
+            { id: 'contract-001', name: '借款合同', type: 'contract', type_label: '合同', degree: 2, color: '#0FC6C2' }
+        ];
+
+        var mockEdges = [
+            { id: 'e1', source_id: 'case-001', target_id: 'person-001', type: 'plaintiff', type_label: '原告', label: '原告', weight: 1.0 },
+            { id: 'e2', source_id: 'case-001', target_id: 'person-002', type: 'defendant', type_label: '被告', label: '被告', weight: 1.0 },
+            { id: 'e3', source_id: 'person-001', target_id: 'lawyer-001', type: 'represents', type_label: '代理', label: '委托代理', weight: 1.0 },
+            { id: 'e4', source_id: 'person-002', target_id: 'lawyer-002', type: 'represents', type_label: '代理', label: '委托代理', weight: 1.0 },
+            { id: 'e5', source_id: 'case-001', target_id: 'court-001', type: 'tries', type_label: '审理', label: '审理', weight: 1.0 },
+            { id: 'e6', source_id: 'case-001', target_id: 'law-001', type: 'cites', type_label: '引用', label: '引用法条', weight: 1.0 },
+            { id: 'e7', source_id: 'case-001', target_id: 'law-002', type: 'cites', type_label: '引用', label: '引用法条', weight: 0.8 },
+            { id: 'e8', source_id: 'case-001', target_id: 'cause-001', type: 'involves', type_label: '涉及', label: '涉及案由', weight: 1.0 },
+            { id: 'e9', source_id: 'case-001', target_id: 'contract-001', type: 'related_to', type_label: '相关', label: '涉案合同', weight: 1.0 },
+            { id: 'e10', source_id: 'case-001', target_id: 'judge-001', type: 'related_to', type_label: '相关', label: '审判长', weight: 0.8 },
+            { id: 'e11', source_id: 'lawyer-001', target_id: 'firm-001', type: 'employs', type_label: '雇佣', label: '任职于', weight: 1.0 },
+            { id: 'e12', source_id: 'lawyer-002', target_id: 'firm-001', type: 'employs', type_label: '雇佣', label: '任职于', weight: 1.0 }
+        ];
+
+        return {
+            nodes: mockNodes,
+            edges: mockEdges,
+            stats: {
+                total_nodes: mockNodes.length,
+                total_edges: mockEdges.length,
+                center_id: centerId,
+                depth: depth
+            }
+        };
+    }
+
+    function setupKgGraphData(data) {
+        nodes = JSON.parse(JSON.stringify(data.nodes));
+        edges = JSON.parse(JSON.stringify(data.edges));
+
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+        var centerId = data.stats && data.stats.center_id ? data.stats.center_id : (nodes[0] && nodes[0].id);
+
+        for (var i = 0; i < nodes.length; i++) {
+            var size = 20 + (nodes[i].degree || 0) * 3;
+            nodes[i].size = Math.min(Math.max(size, 15), 45);
+
+            if (nodes[i].id === centerId) {
+                nodes[i].x = centerX;
+                nodes[i].y = centerY;
+                nodes[i].isCenter = true;
+                nodes[i].size = nodes[i].size * 1.3;
+            } else {
+                var angle = (i / (nodes.length - 1)) * Math.PI * 2;
+                var radius = 150 + Math.random() * 100;
+                nodes[i].x = centerX + Math.cos(angle) * radius;
+                nodes[i].y = centerY + Math.sin(angle) * radius;
+            }
+            nodes[i].vx = 0;
+            nodes[i].vy = 0;
+            nodes[i].visible = true;
+        }
+    }
+
+    function updateKgStats(data) {
+        var nodeCountEl = document.getElementById('kgNodeCount');
+        var edgeCountEl = document.getElementById('kgEdgeCount');
+        var centerLabelEl = document.getElementById('kgCenterLabel');
+        var centerTypeEl = document.getElementById('kgCenterType');
+
+        if (nodeCountEl) {
+            nodeCountEl.textContent = data.stats.total_nodes || data.nodes.length;
+        }
+        if (edgeCountEl) {
+            edgeCountEl.textContent = data.stats.total_edges || data.edges.length;
+        }
+        if (centerLabelEl) {
+            var centerId = data.stats && data.stats.center_id ? data.stats.center_id : null;
+            var centerNode = null;
+            for (var i = 0; i < data.nodes.length; i++) {
+                if (data.nodes[i].id === centerId || data.nodes[i].isCenter) {
+                    centerNode = data.nodes[i];
+                    break;
+                }
+            }
+            if (centerNode) {
+                centerLabelEl.textContent = centerNode.name;
+                if (centerTypeEl) {
+                    centerTypeEl.textContent = (centerNode.type_label || typeLabels[centerNode.type] || centerNode.type) +
+                        (centerNode.sub_type ? ' · ' + centerNode.sub_type : '');
+                }
+            }
+        }
+    }
+
+    function drawKgGraph() {
+        if (!ctx || !canvas) {
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scale, scale);
+
+        for (var i = 0; i < edges.length; i++) {
+            var edge = edges[i];
+            var sourceNode = findKgNode(edge.source_id);
+            var targetNode = findKgNode(edge.target_id);
+            if (sourceNode && targetNode && sourceNode.visible && targetNode.visible) {
+                ctx.beginPath();
+                ctx.moveTo(sourceNode.x, sourceNode.y);
+                ctx.lineTo(targetNode.x, targetNode.y);
+                ctx.strokeStyle = '#C9CDD4';
+                ctx.lineWidth = edge.weight ? edge.weight * 2 : 1.5;
+                ctx.globalAlpha = 0.6;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+
+                var midX = (sourceNode.x + targetNode.x) / 2;
+                var midY = (sourceNode.y + targetNode.y) / 2;
+                ctx.font = '9px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+                ctx.fillStyle = '#86909C';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(edge.label || edge.type_label || '', midX, midY - 8);
+            }
+        }
+
+        for (var j = 0; j < nodes.length; j++) {
+            var node = nodes[j];
+            if (!node.visible) {
+                continue;
+            }
+
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+            ctx.fillStyle = node.color || typeColors[node.type] || '#165DFF';
+            ctx.globalAlpha = node.isCenter ? 1 : 0.85;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = node.isCenter ? 4 : 3;
+            ctx.stroke();
+
+            ctx.font = '10px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+            ctx.fillStyle = '#1D2129';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            var label = node.name || '';
+            var maxLen = 8;
+            if (label.length > maxLen) {
+                label = label.substring(0, maxLen) + '...';
+            }
+            ctx.fillText(label, node.x, node.y + node.size + 5);
+        }
+
+        ctx.restore();
+    }
+
+    function findKgNode(id) {
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].id === id) {
+                return nodes[i];
+            }
+        }
+        return null;
+    }
+
+    function startKgAnimation() {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+        var frame = 0;
+        function animate() {
+            if (frame < 80) {
+                applyKgForceSimulation(0.05);
+                drawKgGraph();
+                frame++;
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        animate();
+    }
+
+    function applyKgForceSimulation(damping) {
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].isCenter) {
+                continue;
+            }
+            for (var j = 0; j < nodes.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+                var dx = nodes[i].x - nodes[j].x;
+                var dy = nodes[i].y - nodes[j].y;
+                var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                var force = 2000 / (dist * dist);
+                nodes[i].vx += (dx / dist) * force * 0.08;
+                nodes[i].vy += (dy / dist) * force * 0.08;
+            }
+        }
+
+        for (var k = 0; k < edges.length; k++) {
+            var edge = edges[k];
+            var src = findKgNode(edge.source_id);
+            var tgt = findKgNode(edge.target_id);
+            if (src && tgt) {
+                var dx2 = tgt.x - src.x;
+                var dy2 = tgt.y - src.y;
+                var dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2) || 1;
+                var targetDist = 160;
+                var force2 = (dist2 - targetDist) * 0.02;
+                if (!src.isCenter) {
+                    src.vx += (dx2 / dist2) * force2;
+                    src.vy += (dy2 / dist2) * force2;
+                }
+                if (!tgt.isCenter) {
+                    tgt.vx -= (dx2 / dist2) * force2;
+                    tgt.vy -= (dy2 / dist2) * force2;
+                }
+            }
+        }
+
+        for (var n = 0; n < nodes.length; n++) {
+            if (nodes[n].isCenter) {
+                continue;
+            }
+            nodes[n].x += nodes[n].vx * damping;
+            nodes[n].y += nodes[n].vy * damping;
+            nodes[n].vx *= 0.92;
+            nodes[n].vy *= 0.92;
+        }
+    }
+
+    function onKgMouseDown(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left - offsetX) / scale;
+        var y = (e.clientY - rect.top - offsetY) / scale;
+
+        for (var i = nodes.length - 1; i >= 0; i--) {
+            var node = nodes[i];
+            if (!node.visible) {
+                continue;
+            }
+            var dx = x - node.x;
+            var dy = y - node.y;
+            if (Math.sqrt(dx * dx + dy * dy) <= node.size) {
+                dragNode = node;
+                isDragging = true;
+                return;
+            }
+        }
+
+        isDragging = true;
+        dragStartX = e.clientX - offsetX;
+        dragStartY = e.clientY - offsetY;
+    }
+
+    function onKgMouseMove(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = (e.clientX - rect.left - offsetX) / scale;
+        var y = (e.clientY - rect.top - offsetY) / scale;
+
+        if (dragNode) {
+            dragNode.x = x;
+            dragNode.y = y;
+            drawKgGraph();
+            showKgTooltip(e, dragNode);
+            return;
+        }
+
+        if (isDragging) {
+            offsetX = e.clientX - dragStartX;
+            offsetY = e.clientY - dragStartY;
+            drawKgGraph();
+            return;
+        }
+
+        var hovered = null;
+        for (var i = nodes.length - 1; i >= 0; i--) {
+            var node = nodes[i];
+            if (!node.visible) {
+                continue;
+            }
+            var dx2 = x - node.x;
+            var dy2 = y - node.y;
+            if (Math.sqrt(dx2 * dx2 + dy2 * dy2) <= node.size) {
+                hovered = node;
+                break;
+            }
+        }
+
+        if (hovered) {
+            canvas.style.cursor = 'pointer';
+            showKgTooltip(e, hovered);
+        } else {
+            canvas.style.cursor = 'grab';
+            hideKgTooltip();
+        }
+    }
+
+    function onKgMouseUp(e) {
+        if (dragNode && !isDragging) {
+            onKgNodeClick(dragNode);
+        }
+        isDragging = false;
+        dragNode = null;
+    }
+
+    function onKgWheel(e) {
+        e.preventDefault();
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+
+        var delta = e.deltaY > 0 ? 0.9 : 1.1;
+        var newScale = scale * delta;
+        newScale = Math.max(0.3, Math.min(3, newScale));
+
+        offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
+        offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
+        scale = newScale;
+
+        drawKgGraph();
+    }
+
+    function onKgNodeClick(node) {
+        loadKgGraph(node.id, currentDepth);
+    }
+
+    function showKgTooltip(e, node) {
+        var tooltip = document.getElementById('kgTooltip');
+        var container = document.getElementById('kgCanvasContainer');
+        if (!tooltip || !container) {
+            return;
+        }
+
+        var typeLabel = node.type_label || typeLabels[node.type] || node.type;
+        var typeColor = node.color || typeColors[node.type] || '#165DFF';
+
+        var html = '<div class="kg-tooltip-title">' + (node.name || '') + '</div>' +
+            '<span class="kg-tooltip-type" style="background:' + typeColor + '20;color:' + typeColor + '">' + typeLabel + '</span>';
+
+        if (node.sub_type) {
+            html += '<div class="kg-tooltip-row"><span>子类型</span><span>' + node.sub_type + '</span></div>';
+        }
+        if (node.degree !== undefined) {
+            html += '<div class="kg-tooltip-row"><span>关联度</span><span>' + node.degree + '</span></div>';
+        }
+
+        tooltip.innerHTML = html;
+        tooltip.style.display = 'block';
+
+        var rect = container.getBoundingClientRect();
+        var left = e.clientX - rect.left + 15;
+        var top = e.clientY - rect.top + 15;
+
+        if (left + 280 > container.clientWidth) {
+            left = e.clientX - rect.left - 290;
+        }
+        if (top + 200 > container.clientHeight) {
+            top = e.clientY - rect.top - 210;
+        }
+
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    }
+
+    function hideKgTooltip() {
+        var tooltip = document.getElementById('kgTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
+
+    function searchKgEntities(query) {
+        var resultsEl = document.getElementById('kgSearchResults');
+        if (!resultsEl) {
+            return;
+        }
+
+        if (!query || query.length < 1) {
+            resultsEl.classList.add('hidden');
+            return;
+        }
+
+        var url = '/api/kg/entity/search?q=' + encodeURIComponent(query);
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                renderKgSearchResults(data);
+            })
+            .catch(function () {
+                var mockResults = getMockSearchResults(query);
+                renderKgSearchResults(mockResults);
+            });
+    }
+
+    function getMockSearchResults(query) {
+        var allEntities = [
+            { id: 'case-001', name: '张三诉李四借款合同纠纷案', type: 'case', type_label: '案件' },
+            { id: 'case-002', name: '王五与赵六股权纠纷案', type: 'case', type_label: '案件' },
+            { id: 'case-003', name: '某科技公司专利侵权案', type: 'case', type_label: '案件' },
+            { id: 'person-001', name: '张三', type: 'person', type_label: '当事人' },
+            { id: 'person-002', name: '李四', type: 'person', type_label: '当事人' },
+            { id: 'lawyer-001', name: '王律师', type: 'lawyer', type_label: '律师' },
+            { id: 'court-001', name: '北京市第一中级人民法院', type: 'court', type_label: '法院' },
+            { id: 'company-001', name: '北京创新科技有限公司', type: 'company', type_label: '公司' },
+            { id: 'law-001', name: '民法典 第667条', type: 'law_article', type_label: '法条' }
+        ];
+
+        var q = query.toLowerCase();
+        var results = [];
+        for (var i = 0; i < allEntities.length; i++) {
+            if (allEntities[i].name.toLowerCase().indexOf(q) >= 0) {
+                results.push(allEntities[i]);
+            }
+        }
+        return results;
+    }
+
+    function renderKgSearchResults(results) {
+        var resultsEl = document.getElementById('kgSearchResults');
+        if (!resultsEl) {
+            return;
+        }
+
+        if (!results || results.length === 0) {
+            resultsEl.innerHTML = '<p class="text-xs text-fg-tertiary text-center py-2">未找到相关实体</p>';
+            resultsEl.classList.remove('hidden');
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < Math.min(results.length, 8); i++) {
+            var entity = results[i];
+            var color = typeColors[entity.type] || '#165DFF';
+            html += '<div class="kg-search-result-item" onclick="selectKgEntity(\'' + entity.id + '\')">' +
+                '<span class="kg-legend-dot" style="background:' + color + ';width:8px;height:8px;border-radius:50%"></span>' +
+                '<div class="flex-1 min-w-0">' +
+                '<p class="text-xs font-medium text-fg-primary truncate">' + entity.name + '</p>' +
+                '<p class="text-[10px] text-fg-tertiary">' + entity.type_label + '</p>' +
+                '</div>' +
+                '</div>';
+        }
+
+        resultsEl.innerHTML = html;
+        resultsEl.classList.remove('hidden');
+    }
+
+    window.selectKgEntity = function (entityId) {
+        var resultsEl = document.getElementById('kgSearchResults');
+        if (resultsEl) {
+            resultsEl.classList.add('hidden');
+        }
+        var searchInput = document.getElementById('kgSearchInput');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        loadKgGraph(entityId, currentDepth);
+    };
+
+    window.switchKgTab = function (tab) {
+        var tabs = document.querySelectorAll('.kg-tab-btn');
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].dataset.tab === tab) {
+                tabs[i].classList.add('active');
+            } else {
+                tabs[i].classList.remove('active');
+            }
+        }
+
+        var explorePanel = document.getElementById('kg-tab-explore');
+        var pathPanel = document.getElementById('kg-tab-path');
+        var similarPanel = document.getElementById('kg-tab-similar');
+
+        if (explorePanel) { explorePanel.classList.add('hidden'); }
+        if (pathPanel) { pathPanel.classList.add('hidden'); }
+        if (similarPanel) { similarPanel.classList.add('hidden'); }
+
+        if (tab === 'explore' && explorePanel) {
+            explorePanel.classList.remove('hidden');
+            explorePanel.classList.add('flex-1', 'overflow-y-auto');
+        } else if (tab === 'path' && pathPanel) {
+            pathPanel.classList.remove('hidden');
+            pathPanel.classList.add('flex-1', 'overflow-y-auto');
+        } else if (tab === 'similar' && similarPanel) {
+            similarPanel.classList.remove('hidden');
+            similarPanel.classList.add('flex-1', 'overflow-y-auto');
+        }
+
+        var titleMap = {
+            explore: '知识图谱探索',
+            path: '路径分析',
+            similar: '相似实体发现'
+        };
+        var titleEl = document.getElementById('kgPageTitle');
+        if (titleEl) {
+            titleEl.textContent = titleMap[tab] || '知识图谱';
+        }
+    };
+
+    window.applyKgFilter = function () {
+        var checkboxes = document.querySelectorAll('.kg-filter-checkbox');
+        var visibleTypes = {};
+        for (var i = 0; i < checkboxes.length; i++) {
+            visibleTypes[checkboxes[i].dataset.type] = checkboxes[i].checked;
+        }
+
+        for (var j = 0; j < nodes.length; j++) {
+            nodes[j].visible = visibleTypes[nodes[j].type] !== false;
+        }
+
+        drawKgGraph();
+    };
+
+    window.resetKgTypeFilter = function () {
+        var checkboxes = document.querySelectorAll('.kg-filter-checkbox');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = true;
+        }
+        for (var j = 0; j < nodes.length; j++) {
+            nodes[j].visible = true;
+        }
+        drawKgGraph();
+    };
+
+    window.updateKgDepth = function (value) {
+        currentDepth = parseInt(value, 10);
+        var valueEl = document.getElementById('kgDepthValue');
+        if (valueEl) {
+            valueEl.textContent = currentDepth;
+        }
+        loadKgGraph(currentCenterId, currentDepth);
+    };
+
+    window.findKgPath = function () {
+        var startId = document.getElementById('kgPathStart').value.trim();
+        var endId = document.getElementById('kgPathEnd').value.trim();
+        var maxDepth = parseInt(document.getElementById('kgPathMaxDepth').value, 10) || 4;
+
+        if (!startId || !endId) {
+            alert('请输入起始和目标实体ID');
+            return;
+        }
+
+        var url = '/api/kg/path?start_id=' + encodeURIComponent(startId) +
+            '&end_id=' + encodeURIComponent(endId) +
+            '&max_depth=' + maxDepth;
+
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                renderKgPathResults(data);
+            })
+            .catch(function () {
+                var mockData = getMockPathData(startId, endId);
+                renderKgPathResults(mockData);
+            });
+    };
+
+    function getMockPathData(startId, endId) {
+        return {
+            start_id: startId,
+            end_id: endId,
+            max_depth: 4,
+            paths_count: 2,
+            paths: [
+                {
+                    length: 3,
+                    nodes: [
+                        { id: startId, name: '张三', type: 'person', type_label: '当事人', color: '#F53F3F' },
+                        { id: 'case-001', name: '张三诉李四借款合同纠纷案', type: 'case', type_label: '案件', color: '#165DFF' },
+                        { id: 'court-001', name: '北京市第一中级人民法院', type: 'court', type_label: '法院', color: '#00B42A' }
+                    ],
+                    relations: [
+                        { id: 'r1', type_label: '原告', label: '原告' },
+                        { id: 'r2', type_label: '审理', label: '审理' }
+                    ]
+                },
+                {
+                    length: 4,
+                    nodes: [
+                        { id: startId, name: '张三', type: 'person', type_label: '当事人', color: '#F53F3F' },
+                        { id: 'lawyer-001', name: '王律师', type: 'lawyer', type_label: '律师', color: '#722ED1' },
+                        { id: 'firm-001', name: '北京正义律师事务所', type: 'law_firm', type_label: '律所', color: '#3491FA' },
+                        { id: 'court-001', name: '北京市第一中级人民法院', type: 'court', type_label: '法院', color: '#00B42A' }
+                    ],
+                    relations: [
+                        { id: 'r1', type_label: '代理', label: '委托代理' },
+                        { id: 'r2', type_label: '雇佣', label: '任职于' },
+                        { id: 'r3', type_label: '相关', label: '常管辖法院' }
+                    ]
+                }
+            ]
+        };
+    }
+
+    function renderKgPathResults(data) {
+        var listEl = document.getElementById('kgPathList');
+        if (!listEl) {
+            return;
+        }
+
+        if (!data.paths || data.paths.length === 0) {
+            listEl.innerHTML = '<p class="text-xs text-fg-tertiary text-center py-4">未找到路径</p>';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < data.paths.length; i++) {
+            var path = data.paths[i];
+            html += '<div class="kg-path-item" onclick="highlightKgPath(' + i + ')">';
+            html += '<div class="flex items-center justify-between mb-1">';
+            html += '<span class="text-[10px] font-medium text-brand">路径 ' + (i + 1) + '</span>';
+            html += '<span class="text-[10px] text-fg-tertiary">' + path.length + ' 跳</span>';
+            html += '</div>';
+            html += '<div class="flex flex-wrap items-center">';
+            for (var j = 0; j < path.nodes.length; j++) {
+                var node = path.nodes[j];
+                var color = node.color || typeColors[node.type] || '#165DFF';
+                html += '<span class="kg-path-node" style="background:' + color + '20;color:' + color + '">' + node.name + '</span>';
+                if (j < path.relations.length) {
+                    html += '<iconify-icon icon="mdi:arrow-right" class="text-xs text-fg-tertiary mx-1"></iconify-icon>';
+                }
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+
+        listEl.innerHTML = html;
+    }
+
+    window.highlightKgPath = function (index) {
+        // 可以在这里添加路径高亮逻辑
+    };
+
+    window.findKgSimilar = function () {
+        var entityId = document.getElementById('kgSimilarEntity').value.trim();
+        var entityType = document.getElementById('kgSimilarType').value;
+
+        if (!entityId) {
+            alert('请输入实体ID');
+            return;
+        }
+
+        var url = '/api/kg/similar?entity_id=' + encodeURIComponent(entityId);
+        if (entityType) {
+            url += '&entity_type=' + entityType;
+        }
+
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                renderKgSimilarResults(data);
+            })
+            .catch(function () {
+                var mockData = getMockSimilarData(entityId);
+                renderKgSimilarResults(mockData);
+            });
+    };
+
+    function getMockSimilarData(entityId) {
+        return {
+            entity_id: entityId,
+            similar_count: 5,
+            results: [
+                { similarity: 0.75, common_neighbors: 5, entity: { id: 'case-002', name: '王五与赵六股权纠纷案', type: 'case', type_label: '案件', color: '#165DFF' } },
+                { similarity: 0.62, common_neighbors: 4, entity: { id: 'case-003', name: '某科技公司专利侵权案', type: 'case', type_label: '案件', color: '#165DFF' } },
+                { similarity: 0.45, common_neighbors: 3, entity: { id: 'contract-001', name: '借款合同', type: 'contract', type_label: '合同', color: '#0FC6C2' } },
+                { similarity: 0.38, common_neighbors: 2, entity: { id: 'cause-001', name: '借款合同纠纷', type: 'cause', type_label: '案由', color: '#86909C' } },
+                { similarity: 0.30, common_neighbors: 2, entity: { id: 'law-001', name: '民法典 第667条', type: 'law_article', type_label: '法条', color: '#14C9C9' } }
+            ]
+        };
+    }
+
+    function renderKgSimilarResults(data) {
+        var listEl = document.getElementById('kgSimilarList');
+        if (!listEl) {
+            return;
+        }
+
+        if (!data.results || data.results.length === 0) {
+            listEl.innerHTML = '<p class="text-xs text-fg-tertiary text-center py-4">未找到相似实体</p>';
+            return;
+        }
+
+        var html = '';
+        for (var i = 0; i < data.results.length; i++) {
+            var item = data.results[i];
+            var entity = item.entity;
+            var color = entity.color || typeColors[entity.type] || '#165DFF';
+            html += '<div class="kg-search-result-item" onclick="selectKgEntity(\'' + entity.id + '\')">' +
+                '<span class="kg-legend-dot" style="background:' + color + ';width:8px;height:8px;border-radius:50%"></span>' +
+                '<div class="flex-1 min-w-0">' +
+                '<div class="flex items-center justify-between">' +
+                '<p class="text-xs font-medium text-fg-primary truncate">' + entity.name + '</p>' +
+                '<span class="text-[10px] font-bold text-brand">' + (item.similarity * 100).toFixed(0) + '%</span>' +
+                '</div>' +
+                '<div class="kg-similar-bar">' +
+                '<div class="kg-similar-bar-fill" style="width:' + (item.similarity * 100) + '%"></div>' +
+                '</div>' +
+                '<p class="text-[10px] text-fg-tertiary mt-1">' + entity.type_label + ' · ' + item.common_neighbors + ' 个共同邻居</p>' +
+                '</div>' +
+                '</div>';
+        }
+
+        listEl.innerHTML = html;
+    }
+
+    window.zoomInKg = function () {
+        scale = Math.min(3, scale * 1.2);
+        drawKgGraph();
+    };
+
+    window.zoomOutKg = function () {
+        scale = Math.max(0.3, scale / 1.2);
+        drawKgGraph();
+    };
+
+    window.resetKgView = function () {
+        scale = 1;
+        offsetX = 0;
+        offsetY = 0;
+        if (currentKgData) {
+            setupKgGraphData(currentKgData);
+        }
+        drawKgGraph();
+        startKgAnimation();
+    };
+
+    window.refreshKgGraph = function () {
+        loadKgGraph(currentCenterId, currentDepth);
+    };
+
+    window.toggleKgSidebar = function () {
+        var sidebar = document.querySelector('#view-knowledge-graph .lg\\:flex');
+        if (sidebar) {
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+        }
+    };
+
+    window.toggleKgFullscreen = function () {
+        var el = document.getElementById('view-knowledge-graph');
+        if (el && document.fullscreenElement) {
+            document.exitFullscreen();
+        } else if (el && el.requestFullscreen) {
+            el.requestFullscreen();
+        }
+    };
+
+    window.showKgStats = function () {
+        var url = '/api/kg/stats';
+        fetch(url)
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                alert('知识图谱统计:\n实体总数: ' + data.total_entities +
+                    '\n关系总数: ' + data.total_relations +
+                    '\n平均度数: ' + data.avg_degree +
+                    '\n最大度数: ' + data.max_degree +
+                    '\n图密度: ' + data.density);
+            })
+            .catch(function () {
+                alert('知识图谱统计:\n实体总数: 30\n关系总数: 32\n平均度数: 2.13\n最大度数: 8\n图密度: 0.0736');
+            });
+    };
+
+    function init() {
+        initKgCanvas();
+        loadKgGraph('case-001', 2);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        setTimeout(init, 100);
+    }
+})();
+</script>

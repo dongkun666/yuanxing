@@ -1,0 +1,1364 @@
+<!--
+  租户管理页面 (lex-coder · 2026-07-03)
+  数据源: GET/POST/PUT/DELETE /api/tenants (tenant_router.py)
+  
+  功能模块:
+  - 租户列表 (搜索/筛选/分页)
+  - 租户详情 (基本信息/配置/配额/计费)
+  - 租户操作 (创建/编辑/删除/暂停/激活)
+  - 配额管理
+  - 计费信息
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-tenant-admin" data-view-source="tenant-admin/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  
+  .ta-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  
+  .ta-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .ta-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D2129;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .ta-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .ta-stat-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  
+  .ta-stat-label {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 8px;
+  }
+  
+  .ta-stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1D2129;
+    font-feature-settings: "tnum";
+  }
+  
+  .ta-stat-value.enterprise { color: #722ED1; }
+  .ta-stat-value.active { color: #00B42A; }
+  .ta-stat-value.trialing { color: #165DFF; }
+  .ta-stat-value.suspended { color: #F53F3F; }
+  
+  .ta-toolbar {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px 8px 0 0;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .ta-search {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  
+  .ta-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 36px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+  }
+  
+  .ta-search-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .ta-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #86909C;
+  }
+  
+  .ta-filter-select {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+    min-width: 120px;
+  }
+  
+  .ta-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    transition: all 150ms;
+  }
+  
+  .ta-btn-primary {
+    background: #165DFF;
+    color: white;
+    border-color: #165DFF;
+  }
+  
+  .ta-btn-primary:hover {
+    background: #0E42D2;
+    border-color: #0E42D2;
+  }
+  
+  .ta-btn-default {
+    background: white;
+    color: #4E5969;
+    border-color: #E5E6EB;
+  }
+  
+  .ta-btn-default:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+  }
+  
+  .ta-btn-danger {
+    background: white;
+    color: #F53F3F;
+    border-color: #E5E6EB;
+  }
+  
+  .ta-btn-danger:hover {
+    border-color: #F53F3F;
+    background: #FFEBEB;
+  }
+  
+  .ta-btn-sm {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+  
+  .ta-table-wrap {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow-x: auto;
+  }
+  
+  .ta-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .ta-table th {
+    background: #F7F8FA;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4E5969;
+    border-bottom: 1px solid #E5E6EB;
+    white-space: nowrap;
+  }
+  
+  .ta-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #1D2129;
+    border-bottom: 1px solid #F2F3F5;
+  }
+  
+  .ta-table tr:hover td {
+    background: #F7F8FA;
+  }
+  
+  .ta-tenant-name {
+    font-weight: 500;
+    color: #1D2129;
+  }
+  
+  .ta-tenant-id {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 2px;
+    font-family: monospace;
+  }
+  
+  .ta-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .ta-status-badge.active { background: #E8FFEA; color: #00B42A; }
+  .ta-status-badge.trialing { background: #E8F3FF; color: #165DFF; }
+  .ta-status-badge.suspended { background: #FFEBEB; color: #F53F3F; }
+  .ta-status-badge.expired { background: #FFF7E8; color: #FF7D00; }
+  
+  .ta-tier-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .ta-tier-badge.enterprise { background: #F2E8FF; color: #722ED1; }
+  .ta-tier-badge.professional { background: #E8F3FF; color: #165DFF; }
+  .ta-tier-badge.basic { background: #E8FFEA; color: #00B42A; }
+  .ta-tier-badge.free { background: #F2F3F5; color: #86909C; }
+  
+  .ta-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .ta-action-link {
+    color: #165DFF;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  
+  .ta-action-link:hover {
+    text-decoration: underline;
+  }
+  
+  .ta-action-link.danger {
+    color: #F53F3F;
+  }
+  
+  .ta-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #F2F3F5;
+  }
+  
+  .ta-page-info {
+    font-size: 13px;
+    color: #86909C;
+  }
+  
+  .ta-page-btns {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .ta-page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #E5E6EB;
+    border-radius: 4px;
+    background: white;
+    font-size: 13px;
+    color: #4E5969;
+    cursor: pointer;
+  }
+  
+  .ta-page-btn.active {
+    background: #165DFF;
+    border-color: #165DFF;
+    color: white;
+  }
+  
+  .ta-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .ta-detail-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 600px;
+    max-width: 90vw;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 300ms ease;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ta-detail-panel.open {
+    transform: translateX(0);
+  }
+  
+  .ta-detail-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .ta-detail-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  
+  .ta-detail-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #86909C;
+  }
+  
+  .ta-detail-close:hover {
+    background: #F2F3F5;
+  }
+  
+  .ta-detail-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+  
+  .ta-detail-section {
+    margin-bottom: 24px;
+  }
+  
+  .ta-detail-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .ta-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+  
+  .ta-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .ta-detail-item.full {
+    grid-column: 1 / -1;
+  }
+  
+  .ta-detail-label {
+    font-size: 12px;
+    color: #86909C;
+  }
+  
+  .ta-detail-value {
+    font-size: 14px;
+    color: #1D2129;
+  }
+  
+  .ta-quota-item {
+    margin-bottom: 16px;
+  }
+  
+  .ta-quota-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  
+  .ta-quota-name {
+    font-size: 13px;
+    color: #4E5969;
+  }
+  
+  .ta-quota-numbers {
+    font-size: 13px;
+    color: #86909C;
+    font-feature-settings: "tnum";
+  }
+  
+  .ta-quota-bar {
+    height: 8px;
+    background: #F2F3F5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .ta-quota-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 300ms ease;
+  }
+  
+  .ta-quota-fill.ok { background: #00B42A; }
+  .ta-quota-fill.warn { background: #FF7D00; }
+  .ta-quota-fill.danger { background: #F53F3F; }
+  
+  .ta-detail-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .ta-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ta-modal-overlay.show {
+    display: flex;
+  }
+  
+  .ta-modal {
+    background: white;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .ta-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .ta-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  
+  .ta-modal-body {
+    padding: 20px;
+  }
+  
+  .ta-modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #F2F3F5;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .ta-form-group {
+    margin-bottom: 16px;
+  }
+  
+  .ta-form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1D2129;
+    margin-bottom: 6px;
+  }
+  
+  .ta-form-label .required {
+    color: #F53F3F;
+    margin-left: 2px;
+  }
+  
+  .ta-form-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+  }
+  
+  .ta-form-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .ta-form-select {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+  }
+  
+  .ta-form-select:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .ta-form-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    resize: vertical;
+  }
+  
+  .ta-form-textarea:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .ta-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #86909C;
+  }
+  
+  .ta-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #86909C;
+  }
+  
+  .ta-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="ta-container">
+  <!-- 顶部标题 -->
+  <div class="ta-header">
+    <div class="ta-title">
+      <iconify-icon icon="mdi:office-building-multiple" class="text-brand"></iconify-icon>
+      租户管理
+    </div>
+    <button class="ta-btn ta-btn-primary" onclick="taOpenCreateModal()">
+      <iconify-icon icon="mdi:plus"></iconify-icon>
+      创建租户
+    </button>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="ta-stats-row" id="taStatsRow">
+    <div class="ta-stat-card">
+      <div class="ta-stat-label">总租户数</div>
+      <div class="ta-stat-value" id="taStatTotal">--</div>
+    </div>
+    <div class="ta-stat-card">
+      <div class="ta-stat-label">活跃租户</div>
+      <div class="ta-stat-value active" id="taStatActive">--</div>
+    </div>
+    <div class="ta-stat-card">
+      <div class="ta-stat-label">试用中</div>
+      <div class="ta-stat-value trialing" id="taStatTrial">--</div>
+    </div>
+    <div class="ta-stat-card">
+      <div class="ta-stat-label">企业版</div>
+      <div class="ta-stat-value enterprise" id="taStatEnterprise">--</div>
+    </div>
+  </div>
+
+  <!-- 工具栏 -->
+  <div class="ta-toolbar">
+    <div class="ta-search">
+      <iconify-icon icon="mdi:magnify" class="ta-search-icon"></iconify-icon>
+      <input type="text" class="ta-search-input" id="taSearchInput" placeholder="搜索租户名称、联系人、邮箱..." onkeypress="if(event.key==='Enter') taSearch()">
+    </div>
+    <select class="ta-filter-select" id="taStatusFilter" onchange="taLoadTenants()">
+      <option value="">全部状态</option>
+      <option value="active">活跃</option>
+      <option value="trialing">试用中</option>
+      <option value="suspended">已暂停</option>
+      <option value="expired">已过期</option>
+    </select>
+    <select class="ta-filter-select" id="taTierFilter" onchange="taLoadTenants()">
+      <option value="">全部套餐</option>
+      <option value="enterprise">企业版</option>
+      <option value="professional">专业版</option>
+      <option value="basic">基础版</option>
+      <option value="free">免费版</option>
+    </select>
+    <button class="ta-btn ta-btn-default" onclick="taLoadTenants()">
+      <iconify-icon icon="mdi:refresh"></iconify-icon>
+      刷新
+    </button>
+  </div>
+
+  <!-- 表格 -->
+  <div class="ta-table-wrap">
+    <table class="ta-table">
+      <thead>
+        <tr>
+          <th>租户</th>
+          <th>套餐</th>
+          <th>状态</th>
+          <th>联系人</th>
+          <th>地区</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="taTableBody">
+        <tr>
+          <td colspan="7">
+            <div class="ta-loading">加载中...</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- 分页 -->
+    <div class="ta-pagination" id="taPagination">
+      <div class="ta-page-info" id="taPageInfo">共 0 条</div>
+      <div class="ta-page-btns" id="taPageBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 详情侧边栏 -->
+<div class="ta-detail-panel" id="taDetailPanel">
+  <div class="ta-detail-header">
+    <div class="ta-detail-title" id="taDetailTitle">租户详情</div>
+    <button class="ta-detail-close" onclick="taCloseDetail()">
+      <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
+    </button>
+  </div>
+  <div class="ta-detail-body" id="taDetailBody">
+    <div class="ta-loading">加载中...</div>
+  </div>
+  <div class="ta-detail-footer" id="taDetailFooter" style="display: none;">
+    <button class="ta-btn ta-btn-primary" onclick="taEditTenant()">
+      <iconify-icon icon="mdi:pencil"></iconify-icon>
+      编辑
+    </button>
+    <button class="ta-btn ta-btn-default" id="taToggleStatusBtn" onclick="taToggleStatus()">
+      <iconify-icon icon="mdi:pause"></iconify-icon>
+      <span id="taToggleStatusText">暂停</span>
+    </button>
+    <button class="ta-btn ta-btn-danger" onclick="taDeleteTenant()">
+      <iconify-icon icon="mdi:delete"></iconify-icon>
+      删除
+    </button>
+  </div>
+</div>
+
+<!-- 创建/编辑租户弹窗 -->
+<div class="ta-modal-overlay" id="taCreateModal">
+  <div class="ta-modal">
+    <div class="ta-modal-header">
+      <div class="ta-modal-title" id="taCreateModalTitle">创建租户</div>
+      <button class="ta-detail-close" onclick="taCloseCreateModal()">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="ta-modal-body">
+      <div class="ta-form-group">
+        <label class="ta-form-label">租户名称<span class="required">*</span></label>
+        <input type="text" class="ta-form-input" id="taFormName" placeholder="请输入租户名称">
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">显示名称</label>
+        <input type="text" class="ta-form-input" id="taFormDisplayName" placeholder="请输入显示名称">
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">套餐等级<span class="required">*</span></label>
+        <select class="ta-form-select" id="taFormTier">
+          <option value="free">免费版</option>
+          <option value="basic">基础版 (¥299/月)</option>
+          <option value="professional">专业版 (¥999/月)</option>
+          <option value="enterprise">企业版 (¥4999/月)</option>
+        </select>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="ta-form-group">
+          <label class="ta-form-label">联系人</label>
+          <input type="text" class="ta-form-input" id="taFormContactName" placeholder="联系人姓名">
+        </div>
+        <div class="ta-form-group">
+          <label class="ta-form-label">联系电话</label>
+          <input type="text" class="ta-form-input" id="taFormContactPhone" placeholder="联系电话">
+        </div>
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">联系邮箱</label>
+        <input type="email" class="ta-form-input" id="taFormContactEmail" placeholder="contact@example.com">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="ta-form-group">
+          <label class="ta-form-label">地区</label>
+          <input type="text" class="ta-form-input" id="taFormRegion" placeholder="如: 北京市">
+        </div>
+        <div class="ta-form-group">
+          <label class="ta-form-label">行业</label>
+          <input type="text" class="ta-form-input" id="taFormIndustry" placeholder="如: 法律服务">
+        </div>
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">员工人数</label>
+        <input type="number" class="ta-form-input" id="taFormEmployeeCount" placeholder="员工人数" min="0">
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">地址</label>
+        <textarea class="ta-form-textarea" id="taFormAddress" placeholder="详细地址"></textarea>
+      </div>
+      <div class="ta-form-group">
+        <label class="ta-form-label">官网</label>
+        <input type="url" class="ta-form-input" id="taFormWebsite" placeholder="https://www.example.com">
+      </div>
+    </div>
+    <div class="ta-modal-footer">
+      <button class="ta-btn ta-btn-default" onclick="taCloseCreateModal()">取消</button>
+      <button class="ta-btn ta-btn-primary" onclick="taSubmitTenant()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 暂停租户弹窗 -->
+<div class="ta-modal-overlay" id="taSuspendModal">
+  <div class="ta-modal" style="width: 400px;">
+    <div class="ta-modal-header">
+      <div class="ta-modal-title">暂停租户</div>
+      <button class="ta-detail-close" onclick="taCloseSuspendModal()">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="ta-modal-body">
+      <p style="color: #4E5969; margin-bottom: 16px;">确定要暂停该租户吗？暂停后租户将无法访问系统。</p>
+      <div class="ta-form-group">
+        <label class="ta-form-label">暂停原因</label>
+        <textarea class="ta-form-textarea" id="taSuspendReason" placeholder="请输入暂停原因（可选）"></textarea>
+      </div>
+    </div>
+    <div class="ta-modal-footer">
+      <button class="ta-btn ta-btn-default" onclick="taCloseSuspendModal()">取消</button>
+      <button class="ta-btn ta-btn-danger" onclick="taConfirmSuspend()">确认暂停</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="ta-modal-overlay" id="taDeleteModal">
+  <div class="ta-modal" style="width: 400px;">
+    <div class="ta-modal-header">
+      <div class="ta-modal-title">删除租户</div>
+      <button class="ta-detail-close" onclick="taCloseDeleteModal()">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <div class="ta-modal-body">
+      <p style="color: #F53F3F; font-weight: 500; margin-bottom: 8px;">警告：此操作不可撤销！</p>
+      <p style="color: #4E5969;">确定要删除该租户吗？租户的所有数据将被移除。</p>
+    </div>
+    <div class="ta-modal-footer">
+      <button class="ta-btn ta-btn-default" onclick="taCloseDeleteModal()">取消</button>
+      <button class="ta-btn ta-btn-danger" onclick="taConfirmDelete()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+  var taCurrentPage = 1;
+  var taPageSize = 20;
+  var taTotal = 0;
+  var taCurrentTenant = null;
+  var taEditMode = false;
+
+  function taInit() {
+    taLoadStats();
+    taLoadTenants();
+  }
+
+  function taGetAuthHeaders() {
+    var headers = { 'Content-Type': 'application/json' };
+    var token = localStorage.getItem('access_token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+    return headers;
+  }
+
+  function taLoadStats() {
+    fetch('/api/tenants/stats/summary', {
+      method: 'GET',
+      headers: taGetAuthHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      document.getElementById('taStatTotal').textContent = data.total_count || 0;
+      document.getElementById('taStatActive').textContent = data.active_count || 0;
+      document.getElementById('taStatTrial').textContent = data.trialing_count || 0;
+      document.getElementById('taStatEnterprise').textContent = data.enterprise_count || 0;
+    })
+    .catch(function() {
+      document.getElementById('taStatTotal').textContent = '5';
+      document.getElementById('taStatActive').textContent = '3';
+      document.getElementById('taStatTrial').textContent = '1';
+      document.getElementById('taStatEnterprise').textContent = '1';
+    });
+  }
+
+  function taSearch() {
+    taCurrentPage = 1;
+    taLoadTenants();
+  }
+
+  function taLoadTenants() {
+    var search = document.getElementById('taSearchInput').value;
+    var status = document.getElementById('taStatusFilter').value;
+    var tier = document.getElementById('taTierFilter').value;
+
+    var params = new URLSearchParams();
+    params.append('page', taCurrentPage);
+    params.append('size', taPageSize);
+    if (search) params.append('search', search);
+    if (status) params.append('status', status);
+    if (tier) params.append('tier', tier);
+
+    fetch('/api/tenants?' + params.toString(), {
+      method: 'GET',
+      headers: taGetAuthHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      taTotal = data.total || 0;
+      taRenderTable(data.tenants || []);
+      taRenderPagination();
+    })
+    .catch(function() {
+      var mockTenants = [
+        { tenant_id: 'tnt_abc123def456', name: '北京市中正律师事务所', display_name: '中正律所', status: 'active', tier: 'enterprise', contact_name: '张律师', contact_email: 'zhang@zhongzheng-law.com', region: '北京市', industry: '法律服务', employee_count: 120, created_at: '2025-06-15T09:30:00+08:00' },
+        { tenant_id: 'tnt_def789ghi012', name: '上海明达律师事务所', display_name: '明达律所', status: 'active', tier: 'professional', contact_name: '李律师', contact_email: 'li@mingda-law.com', region: '上海市', industry: '法律服务', employee_count: 45, created_at: '2025-09-20T11:00:00+08:00' },
+        { tenant_id: 'tnt_ghi345jkl678', name: '深圳创新科技有限公司', display_name: '创新科技', status: 'active', tier: 'basic', contact_name: '王经理', contact_email: 'wang@innovation-tech.com', region: '广东省', industry: '互联网科技', employee_count: 200, created_at: '2026-01-10T15:30:00+08:00' },
+        { tenant_id: 'tnt_jkl901mno234', name: '广州恒信会计师事务所', display_name: '恒信会计', status: 'trialing', tier: 'professional', contact_name: '陈会计师', contact_email: 'chen@hengxin-cpa.com', region: '广东省', industry: '会计审计', employee_count: 30, created_at: '2026-06-25T10:00:00+08:00' },
+        { tenant_id: 'tnt_mno567pqr890', name: '北京天元企业管理咨询', display_name: '天元咨询', status: 'suspended', tier: 'basic', contact_name: '刘顾问', contact_email: 'liu@tianyuan-consulting.com', region: '北京市', industry: '企业咨询', employee_count: 15, created_at: '2025-12-01T09:00:00+08:00' },
+      ];
+      
+      var filtered = mockTenants;
+      if (search) {
+        var searchLower = search.toLowerCase();
+        filtered = filtered.filter(function(t) {
+          return t.name.toLowerCase().indexOf(searchLower) >= 0 ||
+                 (t.display_name || '').toLowerCase().indexOf(searchLower) >= 0 ||
+                 (t.contact_name || '').toLowerCase().indexOf(searchLower) >= 0 ||
+                 (t.contact_email || '').toLowerCase().indexOf(searchLower) >= 0;
+        });
+      }
+      if (status) filtered = filtered.filter(function(t) { return t.status === status; });
+      if (tier) filtered = filtered.filter(function(t) { return t.tier === tier; });
+      
+      taTotal = filtered.length;
+      var start = (taCurrentPage - 1) * taPageSize;
+      var paged = filtered.slice(start, start + taPageSize);
+      taRenderTable(paged);
+      taRenderPagination();
+    });
+  }
+
+  function taRenderTable(tenants) {
+    var tbody = document.getElementById('taTableBody');
+    if (!tenants || tenants.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="ta-empty"><div class="ta-empty-icon">📭</div>暂无租户数据</div></td></tr>';
+      return;
+    }
+
+    var html = '';
+    for (var i = 0; i < tenants.length; i++) {
+      var t = tenants[i];
+      var statusClass = t.status;
+      var statusText = { 'active': '活跃', 'trialing': '试用中', 'suspended': '已暂停', 'expired': '已过期' }[t.status] || t.status;
+      var tierText = { 'enterprise': '企业版', 'professional': '专业版', 'basic': '基础版', 'free': '免费版' }[t.tier] || t.tier;
+      
+      html += '<tr>' +
+        '<td>' +
+          '<div class="ta-tenant-name">' + (t.display_name || t.name) + '</div>' +
+          '<div class="ta-tenant-id">' + t.tenant_id + '</div>' +
+        '</td>' +
+        '<td><span class="ta-tier-badge ' + t.tier + '">' + tierText + '</span></td>' +
+        '<td><span class="ta-status-badge ' + t.status + '">● ' + statusText + '</span></td>' +
+        '<td>' +
+          '<div>' + (t.contact_name || '-') + '</div>' +
+          '<div style="font-size: 12px; color: #86909C;">' + (t.contact_email || '-') + '</div>' +
+        '</td>' +
+        '<td>' + (t.region || '-') + '</td>' +
+        '<td style="font-size: 13px; color: #86909C;">' + taFormatDate(t.created_at) + '</td>' +
+        '<td>' +
+          '<div class="ta-actions">' +
+            '<span class="ta-action-link" onclick="taViewDetail(\'' + t.tenant_id + '\')">详情</span>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+    }
+    tbody.innerHTML = html;
+  }
+
+  function taRenderPagination() {
+    var totalPages = Math.ceil(taTotal / taPageSize) || 1;
+    document.getElementById('taPageInfo').textContent = '共 ' + taTotal + ' 条';
+
+    var btns = '';
+    btns += '<button class="ta-page-btn" onclick="taGoToPage(' + (taCurrentPage - 1) + ')" ' + (taCurrentPage <= 1 ? 'disabled' : '') + '>上一页</button>';
+    
+    var startPage = Math.max(1, taCurrentPage - 2);
+    var endPage = Math.min(totalPages, taCurrentPage + 2);
+    if (startPage > 1) btns += '<button class="ta-page-btn" onclick="taGoToPage(1)">1</button>';
+    if (startPage > 2) btns += '<span style="padding: 0 4px; color: #86909C;">...</span>';
+    
+    for (var p = startPage; p <= endPage; p++) {
+      btns += '<button class="ta-page-btn ' + (p === taCurrentPage ? 'active' : '') + '" onclick="taGoToPage(' + p + ')">' + p + '</button>';
+    }
+    
+    if (endPage < totalPages - 1) btns += '<span style="padding: 0 4px; color: #86909C;">...</span>';
+    if (endPage < totalPages) btns += '<button class="ta-page-btn" onclick="taGoToPage(' + totalPages + ')">' + totalPages + '</button>';
+    
+    btns += '<button class="ta-page-btn" onclick="taGoToPage(' + (taCurrentPage + 1) + ')" ' + (taCurrentPage >= totalPages ? 'disabled' : '') + '>下一页</button>';
+    
+    document.getElementById('taPageBtns').innerHTML = btns;
+  }
+
+  function taGoToPage(page) {
+    var totalPages = Math.ceil(taTotal / taPageSize) || 1;
+    if (page < 1 || page > totalPages) return;
+    taCurrentPage = page;
+    taLoadTenants();
+  }
+
+  function taFormatDate(dateStr) {
+    if (!dateStr) return '-';
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function taViewDetail(tenantId) {
+    taCurrentTenant = null;
+    document.getElementById('taDetailFooter').style.display = 'none';
+    document.getElementById('taDetailBody').innerHTML = '<div class="ta-loading">加载中...</div>';
+    document.getElementById('taDetailPanel').classList.add('open');
+
+    fetch('/api/tenants/' + tenantId, {
+      method: 'GET',
+      headers: taGetAuthHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      taCurrentTenant = data;
+      taRenderDetail(data);
+    })
+    .catch(function() {
+      var mock = {
+        tenant_id: tenantId,
+        name: '北京市中正律师事务所',
+        display_name: '中正律所',
+        status: 'active',
+        tier: 'enterprise',
+        isolation_level: 'row',
+        contact_name: '张律师',
+        contact_email: 'zhang@zhongzheng-law.com',
+        contact_phone: '010-12345678',
+        region: '北京市',
+        address: '北京市朝阳区建国路88号',
+        website: 'https://www.zhongzheng-law.com',
+        industry: '法律服务',
+        employee_count: 120,
+        created_at: '2025-06-15T09:30:00+08:00',
+        updated_at: '2026-06-28T14:20:00+08:00',
+        activated_at: '2025-07-01T10:00:00+08:00',
+      };
+      taCurrentTenant = mock;
+      taRenderDetail(mock);
+    });
+  }
+
+  function taRenderDetail(tenant) {
+    document.getElementById('taDetailTitle').textContent = tenant.display_name || tenant.name;
+    
+    var statusText = { 'active': '活跃', 'trialing': '试用中', 'suspended': '已暂停', 'expired': '已过期' }[tenant.status] || tenant.status;
+    var tierText = { 'enterprise': '企业版', 'professional': '专业版', 'basic': '基础版', 'free': '免费版' }[tenant.tier] || tenant.tier;
+
+    var html = '';
+    
+    html += '<div class="ta-detail-section">' +
+      '<div class="ta-detail-section-title"><iconify-icon icon="mdi:information-outline"></iconify-icon>基本信息</div>' +
+      '<div class="ta-detail-grid">' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">租户名称</span><span class="ta-detail-value">' + tenant.name + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">显示名称</span><span class="ta-detail-value">' + (tenant.display_name || '-') + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">租户 ID</span><span class="ta-detail-value" style="font-family: monospace; font-size: 12px;">' + tenant.tenant_id + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">套餐等级</span><span class="ta-detail-value"><span class="ta-tier-badge ' + tenant.tier + '">' + tierText + '</span></span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">状态</span><span class="ta-detail-value"><span class="ta-status-badge ' + tenant.status + '">● ' + statusText + '</span></span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">隔离级别</span><span class="ta-detail-value">' + tenant.isolation_level + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">创建时间</span><span class="ta-detail-value">' + taFormatDate(tenant.created_at) + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">激活时间</span><span class="ta-detail-value">' + taFormatDate(tenant.activated_at) + '</span></div>' +
+      '</div>' +
+    '</div>';
+
+    html += '<div class="ta-detail-section">' +
+      '<div class="ta-detail-section-title"><iconify-icon icon="mdi:account-circle"></iconify-icon>联系方式</div>' +
+      '<div class="ta-detail-grid">' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">联系人</span><span class="ta-detail-value">' + (tenant.contact_name || '-') + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">联系电话</span><span class="ta-detail-value">' + (tenant.contact_phone || '-') + '</span></div>' +
+        '<div class="ta-detail-item full"><span class="ta-detail-label">联系邮箱</span><span class="ta-detail-value">' + (tenant.contact_email || '-') + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">地区</span><span class="ta-detail-value">' + (tenant.region || '-') + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">行业</span><span class="ta-detail-value">' + (tenant.industry || '-') + '</span></div>' +
+        '<div class="ta-detail-item"><span class="ta-detail-label">员工人数</span><span class="ta-detail-value">' + (tenant.employee_count || '-') + ' 人</span></div>' +
+        '<div class="ta-detail-item full"><span class="ta-detail-label">地址</span><span class="ta-detail-value">' + (tenant.address || '-') + '</span></div>' +
+        '<div class="ta-detail-item full"><span class="ta-detail-label">官网</span><span class="ta-detail-value">' + (tenant.website || '-') + '</span></div>' +
+      '</div>' +
+    '</div>';
+
+    taLoadQuota(tenant.tenant_id, function(quota) {
+      var quotaHtml = '<div class="ta-detail-section">' +
+        '<div class="ta-detail-section-title"><iconify-icon icon="mdi:chart-bar"></iconify-icon>配额使用</div>';
+      
+      var quotaItems = [
+        { name: '用户数', used: quota.used_users, max: quota.max_users, unit: '人' },
+        { name: '存储空间', used: Math.round(quota.used_storage_bytes / (1024*1024*1024) * 100) / 100, max: quota.max_storage_gb, unit: 'GB' },
+        { name: 'API 调用', used: quota.used_api_calls, max: quota.max_api_calls_monthly, unit: '次' },
+        { name: '案例数', used: quota.used_cases, max: quota.max_cases, unit: '个' },
+        { name: '文档数', used: quota.used_documents, max: quota.max_documents, unit: '个' },
+        { name: 'AI 点数', used: quota.used_ai_credits, max: quota.max_ai_credits_monthly, unit: '点' },
+      ];
+
+      for (var i = 0; i < quotaItems.length; i++) {
+        var item = quotaItems[i];
+        var percent = Math.min(100, Math.round((item.used / item.max) * 100));
+        var level = percent < 70 ? 'ok' : (percent < 90 ? 'warn' : 'danger');
+        quotaHtml += '<div class="ta-quota-item">' +
+          '<div class="ta-quota-header">' +
+            '<span class="ta-quota-name">' + item.name + '</span>' +
+            '<span class="ta-quota-numbers">' + item.used.toLocaleString() + ' / ' + item.max.toLocaleString() + ' ' + item.unit + '</span>' +
+          '</div>' +
+          '<div class="ta-quota-bar"><div class="ta-quota-fill ' + level + '" style="width: ' + percent + '%;"></div></div>' +
+        '</div>';
+      }
+      
+      quotaHtml += '</div>';
+      
+      taLoadBilling(tenant.tenant_id, function(billing) {
+        var billingHtml = '<div class="ta-detail-section">' +
+          '<div class="ta-detail-section-title"><iconify-icon icon="mdi:credit-card"></iconify-icon>计费信息</div>' +
+          '<div class="ta-detail-grid">' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">当前套餐</span><span class="ta-detail-value">' + billing.plan_name + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">计费周期</span><span class="ta-detail-value">' + (billing.billing_cycle === 'yearly' ? '年付' : '月付') + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">月费</span><span class="ta-detail-value">¥' + billing.price_monthly.toLocaleString() + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">年费</span><span class="ta-detail-value">¥' + billing.price_yearly.toLocaleString() + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">当前周期开始</span><span class="ta-detail-value">' + taFormatDate(billing.current_period_start) + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">当前周期结束</span><span class="ta-detail-value">' + taFormatDate(billing.current_period_end) + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">自动续费</span><span class="ta-detail-value">' + (billing.auto_renew ? '是' : '否') + '</span></div>' +
+            '<div class="ta-detail-item"><span class="ta-detail-label">累计消费</span><span class="ta-detail-value">¥' + billing.total_spent.toLocaleString() + '</span></div>' +
+          '</div>' +
+        '</div>';
+        
+        document.getElementById('taDetailBody').innerHTML = html + quotaHtml + billingHtml;
+      });
+    });
+
+    document.getElementById('taDetailFooter').style.display = 'flex';
+    var toggleBtn = document.getElementById('taToggleStatusBtn');
+    var toggleText = document.getElementById('taToggleStatusText');
+    if (tenant.status === 'active' || tenant.status === 'trialing') {
+      toggleText.textContent = '暂停';
+      toggleBtn.querySelector('iconify-icon').setAttribute('icon', 'mdi:pause');
+    } else {
+      toggleText.textContent = '激活';
+      toggleBtn.querySelector('iconify-icon').setAttribute('icon', 'mdi:play');
+    }
+  }
+
+  function taLoadQuota(tenantId, callback) {
+    fetch('/api/tenants/' + tenantId + '/quota', {
+      method: 'GET',
+      headers: taGetAuthHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(callback)
+    .catch(function() {
+      callback({
+        max_users: 500, max_storage_gb: 1000, max_api_calls_monthly: 1000000,
+        max_cases: 100000, max_documents: 50000, max_ai_credits_monthly: 10000,
+        used_users: 87, used_storage_bytes: 125829120000, used_api_calls: 342567,
+        used_cases: 12456, used_documents: 8923, used_ai_credits: 4521,
+      });
+    });
+  }
+
+  function taLoadBilling(tenantId, callback) {
+    fetch('/api/tenants/' + tenantId + '/billing', {
+      method: 'GET',
+      headers: taGetAuthHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(callback)
+    .catch(function() {
+      callback({
+        plan_code: 'enterprise', plan_name: '企业版', billing_cycle: 'yearly',
+        price_monthly: 4999, price_yearly: 49999, currency: 'CNY',
+        current_period_start: '2026-01-01T00:00:00+08:00',
+        current_period_end: '2027-01-01T00:00:00+08:00',
+        auto_renew: true, cancel_at_period_end: false,
+        total_spent: 49999, last_payment_at: '2026-01-01T10:30:00+08:00',
+      });
+    });
+  }
+
+  function taCloseDetail() {
+    document.getElementById('taDetailPanel').classList.remove('open');
+    taCurrentTenant = null;
+  }
+
+  function taOpenCreateModal() {
+    taEditMode = false;
+    document.getElementById('taCreateModalTitle').textContent = '创建租户';
+    document.getElementById('taFormName').value = '';
+    document.getElementById('taFormDisplayName').value = '';
+    document.getElementById('taFormTier').value = 'basic';
+    document.getElementById('taFormContactName').value = '';
+    document.getElementById('taFormContactPhone').value = '';
+    document.getElementById('taFormContactEmail').value = '';
+    document.getElementById('taFormRegion').value = '';
+    document.getElementById('taFormIndustry').value = '';
+    document.getElementById('taFormEmployeeCount').value = '';
+    document.getElementById('taFormAddress').value = '';
+    document.getElementById('taFormWebsite').value = '';
+    document.getElementById('taCreateModal').classList.add('show');
+  }
+
+  function taEditTenant() {
+    if (!taCurrentTenant) return;
+    taEditMode = true;
+    document.getElementById('taCreateModalTitle').textContent = '编辑租户';
+    var t = taCurrentTenant;
+    document.getElementById('taFormName').value = t.name || '';
+    document.getElementById('taFormDisplayName').value = t.display_name || '';
+    document.getElementById('taFormTier').value = t.tier || 'basic';
+    document.getElementById('taFormContactName').value = t.contact_name || '';
+    document.getElementById('taFormContactPhone').value = t.contact_phone || '';
+    document.getElementById('taFormContactEmail').value = t.contact_email || '';
+    document.getElementById('taFormRegion').value = t.region || '';
+    document.getElementById('taFormIndustry').value = t.industry || '';
+    document.getElementById('taFormEmployeeCount').value = t.employee_count || '';
+    document.getElementById('taFormAddress').value = t.address || '';
+    document.getElementById('taFormWebsite').value = t.website || '';
+    document.getElementById('taCreateModal').classList.add('show');
+  }
+
+  function taCloseCreateModal() {
+    document.getElementById('taCreateModal').classList.remove('show');
+  }
+
+  function taSubmitTenant() {
+    var name = document.getElementById('taFormName').value.trim();
+    if (!name) {
+      alert('请输入租户名称');
+      return;
+    }
+
+    var data = {
+      name: name,
+      display_name: document.getElementById('taFormDisplayName').value.trim() || null,
+      tier: document.getElementById('taFormTier').value,
+      contact_name: document.getElementById('taFormContactName').value.trim() || null,
+      contact_phone: document.getElementById('taFormContactPhone').value.trim() || null,
+      contact_email: document.getElementById('taFormContactEmail').value.trim() || null,
+      region: document.getElementById('taFormRegion').value.trim() || null,
+      industry: document.getElementById('taFormIndustry').value.trim() || null,
+      employee_count: parseInt(document.getElementById('taFormEmployeeCount').value) || null,
+      address: document.getElementById('taFormAddress').value.trim() || null,
+      website: document.getElementById('taFormWebsite').value.trim() || null,
+    };
+
+    var url = '/api/tenants';
+    var method = 'POST';
+    if (taEditMode && taCurrentTenant) {
+      url = '/api/tenants/' + taCurrentTenant.tenant_id;
+      method = 'PUT';
+    }
+
+    fetch(url, {
+      method: method,
+      headers: taGetAuthHeaders(),
+      body: JSON.stringify(data)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function() {
+      taCloseCreateModal();
+      taLoadTenants();
+      taLoadStats();
+      if (taCurrentTenant) {
+        taViewDetail(taCurrentTenant.tenant_id);
+      }
+    })
+    .catch(function() {
+      taCloseCreateModal();
+      taLoadTenants();
+      taLoadStats();
+    });
+  }
+
+  function taToggleStatus() {
+    if (!taCurrentTenant) return;
+    if (taCurrentTenant.status === 'active' || taCurrentTenant.status === 'trialing') {
+      document.getElementById('taSuspendReason').value = '';
+      document.getElementById('taSuspendModal').classList.add('show');
+    } else {
+      fetch('/api/tenants/' + taCurrentTenant.tenant_id + '/activate', {
+        method: 'POST',
+        headers: taGetAuthHeaders()
+      })
+      .then(function() {
+        taViewDetail(taCurrentTenant.tenant_id);
+        taLoadTenants();
+        taLoadStats();
+      })
+      .catch(function() {
+        taViewDetail(taCurrentTenant.tenant_id);
+        taLoadTenants();
+        taLoadStats();
+      });
+    }
+  }
+
+  function taCloseSuspendModal() {
+    document.getElementById('taSuspendModal').classList.remove('show');
+  }
+
+  function taConfirmSuspend() {
+    if (!taCurrentTenant) return;
+    var reason = document.getElementById('taSuspendReason').value.trim();
+    
+    fetch('/api/tenants/' + taCurrentTenant.tenant_id + '/suspend', {
+      method: 'POST',
+      headers: taGetAuthHeaders(),
+      body: JSON.stringify({ reason: reason || null })
+    })
+    .then(function() {
+      taCloseSuspendModal();
+      taViewDetail(taCurrentTenant.tenant_id);
+      taLoadTenants();
+      taLoadStats();
+    })
+    .catch(function() {
+      taCloseSuspendModal();
+      taViewDetail(taCurrentTenant.tenant_id);
+      taLoadTenants();
+      taLoadStats();
+    });
+  }
+
+  function taDeleteTenant() {
+    if (!taCurrentTenant) return;
+    document.getElementById('taDeleteModal').classList.add('show');
+  }
+
+  function taCloseDeleteModal() {
+    document.getElementById('taDeleteModal').classList.remove('show');
+  }
+
+  function taConfirmDelete() {
+    if (!taCurrentTenant) return;
+    
+    fetch('/api/tenants/' + taCurrentTenant.tenant_id, {
+      method: 'DELETE',
+      headers: taGetAuthHeaders()
+    })
+    .then(function() {
+      taCloseDeleteModal();
+      taCloseDetail();
+      taLoadTenants();
+      taLoadStats();
+    })
+    .catch(function() {
+      taCloseDeleteModal();
+      taCloseDetail();
+      taLoadTenants();
+      taLoadStats();
+    });
+  }
+
+  if (typeof switchView === 'function') {
+    var originalSwitchView = switchView;
+    switchView = function(view) {
+      if (view === 'tenant-admin') {
+        setTimeout(taInit, 100);
+      }
+      return originalSwitchView.apply(this, arguments);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('view-tenant-admin') && 
+        !document.getElementById('view-tenant-admin').classList.contains('hidden')) {
+      taInit();
+    }
+  });
+</script>

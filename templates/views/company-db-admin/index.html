@@ -1,0 +1,1097 @@
+<!--
+  企业库管理 - 前端视图
+  提供数据概览、股权图谱、风险分析、关系网络、导入导出等功能
+-->
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-company-db-admin" data-view-source="company-db-admin/index.html">
+<style>
+  .cdb-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #E5E6EB;
+    transition: all 0.2s;
+  }
+  .cdb-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+  .cdb-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cdb-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1D2129;
+    line-height: 1.2;
+  }
+  .cdb-stat-label {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+  }
+  .cdb-tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #4E5969;
+  }
+  .cdb-tab-btn.active {
+    background: #FF7D00;
+    color: white;
+  }
+  .cdb-tab-btn:not(.active):hover {
+    background: #F2F3F5;
+  }
+  .cdb-section-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E6EB;
+    overflow: hidden;
+  }
+  .cdb-section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cdb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  .cdb-section-body {
+    padding: 20px;
+  }
+  .cdb-risk-gauge {
+    width: 140px;
+    height: 140px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .cdb-risk-gauge-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(#00B42A 0deg 90deg, #F7BA1E 90deg 180deg, #FF7D00 180deg 270deg, #F53F3F 270deg 360deg);
+  }
+  .cdb-risk-gauge-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .cdb-risk-bar {
+    height: 8px;
+    background: #F2F3F5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .cdb-risk-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .cdb-equity-node {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #F7F8FA;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cdb-equity-node:hover {
+    background: #E8F3FF;
+  }
+  .cdb-equity-node.company {
+    background: #FFF7E8;
+  }
+  .cdb-equity-node.person {
+    background: #E8FFEA;
+  }
+  .cdb-equity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+  .cdb-relation-card {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #E5E6EB;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .cdb-relation-card:hover {
+    border-color: #FF7D00;
+    box-shadow: 0 2px 8px rgba(255, 125, 0, 0.1);
+  }
+  .cdb-relation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .cdb-import-area {
+    border: 2px dashed #C9CDD4;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .cdb-import-area:hover {
+    border-color: #FF7D00;
+    background: #FFF7E8;
+  }
+  .cdb-company-item {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #E5E6EB;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .cdb-company-item:hover {
+    border-color: #FF7D00;
+    box-shadow: 0 2px 8px rgba(255, 125, 0, 0.1);
+  }
+  .cdb-risk-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .cdb-risk-tag.low { background: #E8FFEA; color: #00B42A; }
+  .cdb-risk-tag.medium { background: #FFF7E8; color: #FF7D00; }
+  .cdb-risk-tag.high { background: #FFECE8; color: #F53F3F; }
+  .cdb-risk-tag.very_high { background: #FFE8E8; color: #D91AD9; }
+</style>
+
+<div class="max-w-7xl mx-auto w-full space-y-4">
+  <!-- 头部区域 -->
+  <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0">
+    <div class="cdb-section-header">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md shadow-orange-500/20">
+          <iconify-icon class="text-xl text-white" icon="mdi:domain"></iconify-icon>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-fg-primary">企业库管理</h1>
+          <p class="text-[11px] text-fg-tertiary">股权穿透、风险画像、关系网络分析</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="refreshCompanyDbStats()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-fg-secondary hover:text-brand hover:bg-brand/5 rounded-lg transition-all">
+          <iconify-icon icon="mdi:refresh"></iconify-icon>
+          <span>刷新</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="0" data-delay="0.05">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value">12.5万</div>
+          <div class="cdb-stat-label">企业总数</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #FFF7E8; color: #FF7D00;">
+          <iconify-icon icon="mdi:office-building-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="1" data-delay="0.1">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value">45万</div>
+          <div class="cdb-stat-label">关联人员</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #E8F3FF; color: #165DFF;">
+          <iconify-icon icon="mdi:account-group-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="2" data-delay="0.15">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value">89万</div>
+          <div class="cdb-stat-label">关系网络</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #F9F0FF; color: #722ED1;">
+          <iconify-icon icon="mdi:share-variant-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="3" data-delay="0.2">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value">23万</div>
+          <div class="cdb-stat-label">涉诉记录</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #FFECE8; color: #F53F3F;">
+          <iconify-icon icon="mdi:gavel" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 功能标签页 -->
+  <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.25">
+    <div class="cdb-section-header">
+      <div class="flex items-center gap-1 bg-bg rounded-xl p-1">
+        <div class="cdb-tab-btn active" data-tab="overview" onclick="switchCdbTab('overview')">数据概览</div>
+        <div class="cdb-tab-btn" data-tab="equity" onclick="switchCdbTab('equity')">股权图谱</div>
+        <div class="cdb-tab-btn" data-tab="risk" onclick="switchCdbTab('risk')">风险分析</div>
+        <div class="cdb-tab-btn" data-tab="relations" onclick="switchCdbTab('relations')">关系网络</div>
+        <div class="cdb-tab-btn" data-tab="import" onclick="switchCdbTab('import')">导入导出</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 数据概览面板 -->
+  <div id="cdb-tab-overview" class="cdb-tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 行业分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">行业分布</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">制造业</span>
+                <span class="text-xs font-medium text-fg-primary">35,600</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 100%; background: #FF7D00;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">批发和零售业</span>
+                <span class="text-xs font-medium text-fg-primary">28,900</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 81%; background: #165DFF;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">软件和信息技术服务</span>
+                <span class="text-xs font-medium text-fg-primary">18,700</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 53%; background: #722ED1;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">金融业</span>
+                <span class="text-xs font-medium text-fg-primary">12,300</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 35%; background: #00B42A;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">科学研究和技术服务</span>
+                <span class="text-xs font-medium text-fg-primary">9,800</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 28%; background: #14C9C9;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 地区分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">地区分布</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <span class="text-sm text-fg-primary">广东省</span>
+              <span class="text-xs font-medium text-orange-600">22,300</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <span class="text-sm text-fg-primary">北京市</span>
+              <span class="text-xs font-medium text-orange-600">18,900</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <span class="text-sm text-fg-primary">上海市</span>
+              <span class="text-xs font-medium text-orange-600">15,600</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <span class="text-sm text-fg-primary">江苏省</span>
+              <span class="text-xs font-medium text-orange-600">12,800</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <span class="text-sm text-fg-primary">浙江省</span>
+              <span class="text-xs font-medium text-orange-600">11,200</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 风险分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">风险分布</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-risk-gauge mb-4">
+            <div class="cdb-risk-gauge-bg"></div>
+            <div class="cdb-risk-gauge-inner">
+              <div class="text-xl font-bold text-fg-primary">60%</div>
+              <div class="text-[10px] text-fg-tertiary">低风险占比</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="p-2 rounded-lg bg-green-50 text-center">
+              <div class="text-base font-bold text-green-600">7.5万</div>
+              <div class="text-[10px] text-green-500">低风险</div>
+            </div>
+            <div class="p-2 rounded-lg bg-yellow-50 text-center">
+              <div class="text-base font-bold text-yellow-600">3.5万</div>
+              <div class="text-[10px] text-yellow-500">中风险</div>
+            </div>
+            <div class="p-2 rounded-lg bg-orange-50 text-center">
+              <div class="text-base font-bold text-orange-600">1.2万</div>
+              <div class="text-[10px] text-orange-500">高风险</div>
+            </div>
+            <div class="p-2 rounded-lg bg-red-50 text-center">
+              <div class="text-base font-bold text-red-600">0.3万</div>
+              <div class="text-[10px] text-red-500">极高风险</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门企业 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.45">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">热门企业</h3>
+          <span class="text-xs text-fg-tertiary">按浏览量排序</span>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-company-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary">北京智联科技股份有限公司</h4>
+                  <span class="cdb-risk-tag medium">中风险</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">软件和信息技术服务业 · 北京市朝阳区 · 5000万注册资本</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:account-outline" class="inline mr-1"></iconify-icon>法定代表人: 赵六</span>
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>2.8万 浏览</span>
+                  <span><iconify-icon icon="mdi:gavel" class="inline mr-1"></iconify-icon>45 涉诉</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cdb-company-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary">北京创新科技有限公司</h4>
+                  <span class="cdb-risk-tag low">低风险</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">软件和信息技术服务业 · 北京市海淀区 · 1000万注册资本</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:account-outline" class="inline mr-1"></iconify-icon>法定代表人: 王五</span>
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>1.5万 浏览</span>
+                  <span><iconify-icon icon="mdi:gavel" class="inline mr-1"></iconify-icon>12 涉诉</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cdb-company-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary">北京宏达投资有限公司</h4>
+                  <span class="cdb-risk-tag low">低风险</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">投资 · 北京市西城区 · 1亿注册资本</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:account-outline" class="inline mr-1"></iconify-icon>法定代表人: 钱七</span>
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>1.2万 浏览</span>
+                  <span><iconify-icon icon="mdi:gavel" class="inline mr-1"></iconify-icon>8 涉诉</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 企业状态 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.5">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">企业状态</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:check-circle-outline" class="text-green-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">在业/存续</span>
+              </div>
+              <span class="text-xs font-medium text-green-600">98,500</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:pause-circle-outline" class="text-yellow-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">停业</span>
+              </div>
+              <span class="text-xs font-medium text-yellow-600">8,900</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:cancel" class="text-red-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">吊销</span>
+              </div>
+              <span class="text-xs font-medium text-red-600">12,300</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:delete-outline" class="text-gray-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">注销</span>
+              </div>
+              <span class="text-xs font-medium text-gray-600">4,500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 股权图谱面板 -->
+  <div id="cdb-tab-equity" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 企业搜索 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">选择企业</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="relative mb-3">
+            <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
+            <input placeholder="搜索企业..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all" type="text"/>
+          </div>
+          <div class="space-y-2">
+            <div class="cdb-equity-node company cursor-pointer" onclick="selectCompanyForEquity('company-001')">
+              <div class="cdb-equity-dot" style="background: #FF7D00;"></div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">北京创新科技有限公司</div>
+                <div class="text-[10px] text-fg-tertiary">5 股东 · 3 子公司</div>
+              </div>
+            </div>
+            <div class="cdb-equity-node company cursor-pointer" onclick="selectCompanyForEquity('company-002')">
+              <div class="cdb-equity-dot" style="background: #FF7D00;"></div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">北京智联科技股份有限公司</div>
+                <div class="text-[10px] text-fg-tertiary">12 股东 · 8 子公司</div>
+              </div>
+            </div>
+            <div class="cdb-equity-node company cursor-pointer" onclick="selectCompanyForEquity('company-003')">
+              <div class="cdb-equity-dot" style="background: #FF7D00;"></div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">北京宏达投资有限公司</div>
+                <div class="text-[10px] text-fg-tertiary">3 股东 · 15 子公司</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 股权结构 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">股权穿透 - 北京创新科技有限公司</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-fg-tertiary">穿透深度</span>
+            <select class="bg-bg border border-bg-border rounded-lg px-2 py-1 text-xs text-fg-secondary focus:outline-none">
+              <option>3层</option>
+              <option>5层</option>
+            </select>
+          </div>
+        </div>
+        <div class="cdb-section-body">
+          <!-- 顶层公司 -->
+          <div class="text-center mb-6">
+            <div class="inline-block px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-semibold text-sm shadow-lg">
+              北京创新科技有限公司
+            </div>
+            <p class="text-[11px] text-fg-tertiary mt-1">注册资本: 1000万元</p>
+          </div>
+
+          <!-- 箭头 -->
+          <div class="flex justify-center mb-4">
+            <iconify-icon icon="mdi:arrow-down" class="text-2xl text-gray-300"></iconify-icon>
+          </div>
+
+          <!-- 第一层股东 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="cdb-equity-node person flex-col text-center py-3">
+              <iconify-icon icon="mdi:account-circle" class="text-2xl text-green-600 mb-1"></iconify-icon>
+              <div class="text-sm font-medium text-fg-primary">王五</div>
+              <div class="text-[10px] text-green-600 font-semibold">60% · 实际控制人</div>
+            </div>
+            <div class="cdb-equity-node company flex-col text-center py-3">
+              <iconify-icon icon="mdi:domain" class="text-2xl text-orange-600 mb-1"></iconify-icon>
+              <div class="text-sm font-medium text-fg-primary">北京宏达投资</div>
+              <div class="text-[10px] text-orange-600 font-semibold">20%</div>
+            </div>
+            <div class="cdb-equity-node company flex-col text-center py-3">
+              <iconify-icon icon="mdi:domain" class="text-2xl text-purple-600 mb-1"></iconify-icon>
+              <div class="text-sm font-medium text-fg-primary">深圳科创投资</div>
+              <div class="text-[10px] text-purple-600 font-semibold">15%</div>
+            </div>
+            <div class="cdb-equity-node person flex-col text-center py-3">
+              <iconify-icon icon="mdi:account-circle" class="text-2xl text-blue-600 mb-1"></iconify-icon>
+              <div class="text-sm font-medium text-fg-primary">郑十一</div>
+              <div class="text-[10px] text-blue-600 font-semibold">5% · 员工持股</div>
+            </div>
+          </div>
+
+          <!-- 实际控制人信息 -->
+          <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                <iconify-icon icon="mdi:crown" class="text-white text-xl"></iconify-icon>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-fg-primary mb-1">实际控制人: 王五</h4>
+                <p class="text-xs text-fg-tertiary">直接持股 60%，通过北京宏达投资间接持股 3%，合计控制 63% 股权</p>
+              </div>
+              <button class="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-all">
+                查看链路
+              </button>
+            </div>
+          </div>
+
+          <!-- 关联企业 -->
+          <div class="mt-6">
+            <h4 class="text-sm font-semibold text-fg-primary mb-3">关联企业发现</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div class="cdb-relation-card">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-fg-primary">北京智联科技</span>
+                  <span class="cdb-relation-badge bg-purple-100 text-purple-700">共同股东</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mt-1">共同股东：北京宏达投资、深圳科创投资</p>
+              </div>
+              <div class="cdb-relation-card">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-fg-primary">上海创新企业管理</span>
+                  <span class="cdb-relation-badge bg-blue-100 text-blue-700">同一控制人</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mt-1">同一实际控制人控制</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 风险分析面板 -->
+  <div id="cdb-tab-risk" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 风险总览 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">风险总览</h3>
+        </div>
+        <div class="cdb-section-body text-center">
+          <div class="cdb-risk-gauge mb-4">
+            <div class="cdb-risk-gauge-bg" style="background: conic-gradient(#00B42A 0deg 90deg, #F7BA1E 90deg 180deg, #FF7D00 180deg 270deg, #F53F3F 270deg 360deg); clip-path: inset(0 0 0 0);"></div>
+            <div class="cdb-risk-gauge-inner">
+              <div class="text-2xl font-bold text-green-600">25.5</div>
+              <div class="text-[10px] text-fg-tertiary">风险评分</div>
+            </div>
+          </div>
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+            <iconify-icon icon="mdi:shield-check-outline"></iconify-icon>
+            <span>低风险</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 风险维度 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">风险维度分析</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="mdi:gavel" class="text-red-500"></iconify-icon>
+                  <span class="text-sm font-medium text-fg-primary">涉诉风险</span>
+                </div>
+                <span class="text-sm font-bold text-red-600">30.0</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 30%; background: linear-gradient(90deg, #F53F3F, #FF7D00);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">涉诉12起，需关注诉讼进展</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="mdi:chart-line" class="text-yellow-500"></iconify-icon>
+                  <span class="text-sm font-medium text-fg-primary">经营风险</span>
+                </div>
+                <span class="text-sm font-bold text-yellow-600">20.0</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 20%; background: linear-gradient(90deg, #F7BA1E, #FF7D00);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">经营状况良好，无异常经营记录</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="mdi:credit-card-scan" class="text-blue-500"></iconify-icon>
+                  <span class="text-sm font-medium text-fg-primary">信用风险</span>
+                </div>
+                <span class="text-sm font-bold text-blue-600">15.0</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 15%; background: linear-gradient(90deg, #165DFF, #00B42A);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">信用记录良好，无失信记录</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="mdi:shield-alert-outline" class="text-green-500"></iconify-icon>
+                  <span class="text-sm font-medium text-fg-primary">合规风险</span>
+                </div>
+                <span class="text-sm font-bold text-green-600">25.0</span>
+              </div>
+              <div class="cdb-risk-bar">
+                <div class="cdb-risk-fill" style="width: 25%; background: linear-gradient(90deg, #00B42A, #23C343);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">合规经营，无行政处罚记录</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 风险趋势 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">风险趋势</h3>
+          <span class="text-xs text-fg-tertiary">近6个月</span>
+        </div>
+        <div class="cdb-section-body">
+          <div class="flex items-end justify-between gap-2 h-32">
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 65%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">10月</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 62%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">11月</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 60%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">12月</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 58%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">1月</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 55%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">2月</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <div class="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-md" style="height: 52%;"></div>
+              <span class="text-[10px] text-fg-tertiary mt-2">3月</span>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center justify-between text-xs">
+            <span class="text-fg-tertiary">风险评分呈下降趋势，整体向好</span>
+            <span class="text-green-600 font-medium">-3.0 环比</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 风险提示 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.45">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">风险提示</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div class="p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg">
+              <h4 class="text-sm font-semibold text-yellow-800 mb-1">涉诉提醒</h4>
+              <p class="text-xs text-yellow-700">共有12起涉诉记录，其中3起为被告身份，建议关注进展</p>
+            </div>
+            <div class="p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+              <h4 class="text-sm font-semibold text-blue-800 mb-1">股权变更</h4>
+              <p class="text-xs text-blue-700">近6个月内有2次股权变更记录，需关注股东稳定性</p>
+            </div>
+            <div class="p-3 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+              <h4 class="text-sm font-semibold text-green-800 mb-1">信用良好</h4>
+              <p class="text-xs text-green-700">无失信被执行人记录，无重大行政处罚</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关系网络面板 -->
+  <div id="cdb-tab-relations" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 关系类型 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">关系类型</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-2">
+            <div class="cdb-equity-node" style="background: #E8F3FF;">
+              <iconify-icon icon="mdi:cash-multiple" class="text-blue-600 mr-2"></iconify-icon>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">投资关系</div>
+                <div class="text-[10px] text-fg-tertiary">8 条</div>
+              </div>
+            </div>
+            <div class="cdb-equity-node" style="background: #FFECE8;">
+              <iconify-icon icon="mdi:gavel" class="text-red-600 mr-2"></iconify-icon>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">诉讼关系</div>
+                <div class="text-[10px] text-fg-tertiary">2 条</div>
+              </div>
+            </div>
+            <div class="cdb-equity-node" style="background: #E8FFEA;">
+              <iconify-icon icon="mdi:handshake-outline" class="text-green-600 mr-2"></iconify-icon>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">合作关系</div>
+                <div class="text-[10px] text-fg-tertiary">1 条</div>
+              </div>
+            </div>
+            <div class="cdb-equity-node" style="background: #F9F0FF;">
+              <iconify-icon icon="mdi:account-group-outline" class="text-purple-600 mr-2"></iconify-icon>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-fg-primary">关联关系</div>
+                <div class="text-[10px] text-fg-tertiary">5 条</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 关系列表 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">企业关系 - 北京创新科技有限公司</h3>
+          <div class="flex items-center gap-2">
+            <select class="bg-bg border border-bg-border rounded-lg px-2 py-1 text-xs text-fg-secondary focus:outline-none">
+              <option>全部关系</option>
+              <option>投资关系</option>
+              <option>诉讼关系</option>
+              <option>合作关系</option>
+            </select>
+          </div>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-relation-card">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:domain" class="text-orange-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm font-medium text-fg-primary">北京宏达投资有限公司</span>
+              </div>
+              <span class="cdb-relation-badge bg-blue-100 text-blue-700">股东</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">持股20%，投资金额200万元，为第二大股东</p>
+          </div>
+          <div class="cdb-relation-card">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:domain" class="text-purple-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm font-medium text-fg-primary">深圳科创股权投资合伙企业</span>
+              </div>
+              <span class="cdb-relation-badge bg-blue-100 text-blue-700">股东</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">持股15%，为第三大股东</p>
+          </div>
+          <div class="cdb-relation-card">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:domain" class="text-red-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm font-medium text-fg-primary">北京智联科技股份有限公司</span>
+              </div>
+              <span class="cdb-relation-badge bg-red-100 text-red-700">诉讼对手</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">专利侵权诉讼，共2起案件，最新日期: 2026-01-10</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入导出面板 -->
+  <div id="cdb-tab-import" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- 批量导入 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">批量导入</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-import-area" onclick="document.getElementById('cdb-import-file').click()">
+            <input type="file" id="cdb-import-file" class="hidden" accept=".json,.csv,.xlsx" onchange="handleCompanyImportFile(this)"/>
+            <iconify-icon icon="mdi:cloud-upload-outline" class="text-4xl text-fg-tertiary mb-3"></iconify-icon>
+            <p class="text-sm font-medium text-fg-primary mb-1">点击或拖拽文件到此处</p>
+            <p class="text-xs text-fg-tertiary">支持 JSON、CSV、Excel 格式</p>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">解析股权结构</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">风险评估</span>
+              </label>
+            </div>
+            <button onclick="startCompanyImport()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:upload"></iconify-icon>
+              <span>开始导入</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导出数据 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">数据导出</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">导出格式</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10">
+                <option>JSON 格式</option>
+                <option>CSV 格式</option>
+                <option>Excel 格式</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">数据范围</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10">
+                <option>全部企业</option>
+                <option>按行业筛选</option>
+                <option>按地区筛选</option>
+                <option>按风险等级</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">包含内容</label>
+              <div class="flex flex-wrap gap-2">
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  基本信息
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  股权结构
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  风险画像
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  关系网络
+                </label>
+              </div>
+            </div>
+            <button onclick="startCompanyExport()" class="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:download"></iconify-icon>
+              <span>导出数据</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 索引管理 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">索引管理</h3>
+          <button onclick="reindexCompanyDb()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-orange-600 hover:bg-orange-700 rounded-lg transition-all">
+            <iconify-icon icon="mdi:refresh"></iconify-icon>
+            <span>重建全部索引</span>
+          </button>
+        </div>
+        <div class="cdb-section-body">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:format-text" class="text-orange-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">全文索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">12.5万</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:domain" class="text-blue-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">企业名称</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">12.5万</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:credit-card-scan" class="text-purple-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">统一信用代码</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">12.5万</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:shield-alert-outline" class="text-red-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">风险索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">12.5万</p>
+              <p class="text-[10px] text-yellow-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                同步中
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var currentCdbTab = 'overview';
+
+function switchCdbTab(tabName) {
+  currentCdbTab = tabName;
+  var tabBtns = document.querySelectorAll('.cdb-tab-btn');
+  for (var i = 0; i < tabBtns.length; i++) {
+    if (tabBtns[i].getAttribute('data-tab') === tabName) {
+      tabBtns[i].classList.add('active');
+    } else {
+      tabBtns[i].classList.remove('active');
+    }
+  }
+  var panels = document.querySelectorAll('.cdb-tab-panel');
+  for (var j = 0; j < panels.length; j++) {
+    panels[j].classList.add('hidden');
+  }
+  var targetPanel = document.getElementById('cdb-tab-' + tabName);
+  if (targetPanel) {
+    targetPanel.classList.remove('hidden');
+  }
+}
+
+function selectCompanyForEquity(companyId) {
+  showToast('加载股权结构...', 'info');
+}
+
+function refreshCompanyDbStats() {
+  showToast('刷新中...', 'info');
+  setTimeout(function() {
+    showToast('数据已更新', 'success');
+  }, 800);
+}
+
+function handleCompanyImportFile(input) {
+  if (input.files && input.files.length > 0) {
+    showToast('已选择文件: ' + input.files[0].name, 'info');
+  }
+}
+
+function startCompanyImport() {
+  showToast('开始导入...', 'info');
+  setTimeout(function() {
+    showToast('导入完成：成功 1568 条，失败 12 条', 'success');
+  }, 1500);
+}
+
+function startCompanyExport() {
+  showToast('正在生成导出文件...', 'info');
+  setTimeout(function() {
+    showToast('导出完成，文件已准备好下载', 'success');
+  }, 1000);
+}
+
+function reindexCompanyDb() {
+  showToast('正在重建索引...', 'info');
+  setTimeout(function() {
+    showToast('索引重建完成', 'success');
+  }, 2000);
+}
+</script>

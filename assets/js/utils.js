@@ -2689,6 +2689,215 @@
         return null;
     }
 
+    // ===== 缓存管理模块 =====
+    var CacheManager = (function () {
+        var memoryCache = {};
+        var memoryCacheMeta = {};
+        var DEFAULT_TTL = 5 * 60 * 1000;
+        var MAX_MEMORY_ITEMS = 500;
+        var STORAGE_PREFIX = 'lexprime_cache_';
+
+        function _generateKey(namespace, key) {
+            return STORAGE_PREFIX + namespace + '_' + key;
+        }
+
+        function _cleanExpiredMemory() {
+            var now = Date.now();
+            var keys = Object.keys(memoryCacheMeta);
+            for (var i = 0; i < keys.length; i++) {
+                if (memoryCacheMeta[keys[i]] && memoryCacheMeta[keys[i]].expiresAt && memoryCacheMeta[keys[i]].expiresAt < now) {
+                    delete memoryCache[keys[i]];
+                    delete memoryCacheMeta[keys[i]];
+                }
+            }
+        }
+
+        function _enforceMemoryLimit() {
+            var keys = Object.keys(memoryCacheMeta);
+            if (keys.length <= MAX_MEMORY_ITEMS) return;
+
+            keys.sort(function (a, b) {
+                var aTime = memoryCacheMeta[a] ? memoryCacheMeta[a].accessedAt || 0 : 0;
+                var bTime = memoryCacheMeta[b] ? memoryCacheMeta[b].accessedAt || 0 : 0;
+                return aTime - bTime;
+            });
+
+            var toRemove = keys.length - MAX_MEMORY_ITEMS;
+            for (var i = 0; i < toRemove; i++) {
+                delete memoryCache[keys[i]];
+                delete memoryCacheMeta[keys[i]];
+            }
+        }
+
+        function set(namespace, key, value, ttl) {
+            var cacheKey = _generateKey(namespace, key);
+            var ttlMs = ttl || DEFAULT_TTL;
+            var now = Date.now();
+
+            memoryCache[cacheKey] = value;
+            memoryCacheMeta[cacheKey] = {
+                createdAt: now,
+                expiresAt: now + ttlMs,
+                accessedAt: now,
+                ttl: ttlMs
+            };
+
+            _enforceMemoryLimit();
+
+            try {
+                var storageItem = {
+                    value: value,
+                    expiresAt: now + ttlMs
+                };
+                localStorage.setItem(cacheKey, JSON.stringify(storageItem));
+            } catch (e) {
+                console.warn('[CacheManager] localStorage 写入失败:', e);
+            }
+        }
+
+        function get(namespace, key) {
+            var cacheKey = _generateKey(namespace, key);
+            var now = Date.now();
+
+            if (memoryCache.hasOwnProperty(cacheKey)) {
+                var meta = memoryCacheMeta[cacheKey];
+                if (meta && meta.expiresAt && meta.expiresAt < now) {
+                    delete memoryCache[cacheKey];
+                    delete memoryCacheMeta[cacheKey];
+                    return null;
+                }
+                if (meta) {
+                    meta.accessedAt = now;
+                }
+                return memoryCache[cacheKey];
+            }
+
+            try {
+                var storageStr = localStorage.getItem(cacheKey);
+                if (storageStr) {
+                    var storageItem = JSON.parse(storageStr);
+                    if (storageItem.expiresAt && storageItem.expiresAt < now) {
+                        localStorage.removeItem(cacheKey);
+                        return null;
+                    }
+                    memoryCache[cacheKey] = storageItem.value;
+                    memoryCacheMeta[cacheKey] = {
+                        createdAt: now,
+                        expiresAt: storageItem.expiresAt,
+                        accessedAt: now,
+                        ttl: storageItem.expiresAt - now
+                    };
+                    return storageItem.value;
+                }
+            } catch (e) {
+                console.warn('[CacheManager] localStorage 读取失败:', e);
+            }
+
+            return null;
+        }
+
+        function remove(namespace, key) {
+            var cacheKey = _generateKey(namespace, key);
+            delete memoryCache[cacheKey];
+            delete memoryCacheMeta[cacheKey];
+            try {
+                localStorage.removeItem(cacheKey);
+            } catch (e) {
+                console.warn('[CacheManager] localStorage 删除失败:', e);
+            }
+        }
+
+        function clearNamespace(namespace) {
+            var prefix = _generateKey(namespace, '');
+
+            var memKeys = Object.keys(memoryCache);
+            for (var i = 0; i < memKeys.length; i++) {
+                if (memKeys[i].indexOf(prefix) === 0) {
+                    delete memoryCache[memKeys[i]];
+                    delete memoryCacheMeta[memKeys[i]];
+                }
+            }
+
+            try {
+                var keysToRemove = [];
+                for (var j = 0; j < localStorage.length; j++) {
+                    var sKey = localStorage.key(j);
+                    if (sKey && sKey.indexOf(prefix) === 0) {
+                        keysToRemove.push(sKey);
+                    }
+                }
+                for (var k = 0; k < keysToRemove.length; k++) {
+                    localStorage.removeItem(keysToRemove[k]);
+                }
+            } catch (e) {
+                console.warn('[CacheManager] localStorage 命名空间清理失败:', e);
+            }
+        }
+
+        function clearAll() {
+            memoryCache = {};
+            memoryCacheMeta = {};
+            try {
+                var keysToRemove = [];
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf(STORAGE_PREFIX) === 0) {
+                        keysToRemove.push(key);
+                    }
+                }
+                for (var j = 0; j < keysToRemove.length; j++) {
+                    localStorage.removeItem(keysToRemove[j]);
+                }
+            } catch (e) {
+                console.warn('[CacheManager] localStorage 全部清理失败:', e);
+            }
+        }
+
+        function getStats() {
+            _cleanExpiredMemory();
+            var memCount = Object.keys(memoryCache).length;
+            var storageCount = 0;
+            try {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var key = localStorage.key(i);
+                    if (key && key.indexOf(STORAGE_PREFIX) === 0) {
+                        storageCount++;
+                    }
+                }
+            } catch (e) {
+            }
+            return {
+                memoryItems: memCount,
+                storageItems: storageCount,
+                maxMemoryItems: MAX_MEMORY_ITEMS
+            };
+        }
+
+        function wrapFetch(namespace, key, fetchFn, ttl) {
+            var cached = get(namespace, key);
+            if (cached !== null) {
+                return Promise.resolve(cached);
+            }
+            return fetchFn().then(function (result) {
+                set(namespace, key, result, ttl);
+                return result;
+            });
+        }
+
+        setInterval(_cleanExpiredMemory, 60 * 1000);
+
+        return {
+            set: set,
+            get: get,
+            remove: remove,
+            clearNamespace: clearNamespace,
+            clearAll: clearAll,
+            getStats: getStats,
+            wrapFetch: wrapFetch,
+            DEFAULT_TTL: DEFAULT_TTL
+        };
+    })();
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -2739,7 +2948,8 @@
         isInViewport: isInViewport,
         createPlaceholderImage: createPlaceholderImage,
         checkFirstVisit: checkFirstVisit,
-        showOnboarding: showOnboarding
+        showOnboarding: showOnboarding,
+        CacheManager: CacheManager
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）

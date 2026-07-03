@@ -19,6 +19,155 @@
     var scriptCache = {};
     var scriptLoading = {};
 
+    // ===== 预加载管理 =====
+    var preloadedViews = {};
+    var preloadingViews = {};
+    var preloadQueue = [];
+    var isPreloading = false;
+
+    /**
+     * 预加载视图（HTML + JS）
+     * @param {string} viewId - 视图ID
+     * @param {Function} callback - 预加载完成回调
+     */
+    function preloadView(viewId, callback) {
+        if (preloadedViews[viewId]) {
+            if (callback) callback();
+            return;
+        }
+
+        if (preloadingViews[viewId]) {
+            if (callback) {
+                var checkPreloaded = setInterval(function () {
+                    if (preloadedViews[viewId]) {
+                        clearInterval(checkPreloaded);
+                        callback();
+                    }
+                }, 50);
+            }
+            return;
+        }
+
+        preloadingViews[viewId] = true;
+
+        var scriptUrl = viewScriptMap[viewId];
+        var hasScript = !!scriptUrl;
+        var htmlLoaded = false;
+        var scriptLoaded = !hasScript;
+
+        function checkAllLoaded() {
+            if (htmlLoaded && scriptLoaded) {
+                preloadedViews[viewId] = true;
+                preloadingViews[viewId] = false;
+                if (callback) callback();
+            }
+        }
+
+        var fileName = viewFileMap[viewId];
+        if (fileName) {
+            var url = 'templates/views/' + fileName;
+            fetch(url)
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (html) {
+                    viewCache[viewId] = html;
+                    htmlLoaded = true;
+                    checkAllLoaded();
+                })
+                .catch(function () {
+                    htmlLoaded = true;
+                    checkAllLoaded();
+                });
+        } else {
+            htmlLoaded = true;
+        }
+
+        if (hasScript) {
+            loadScript(scriptUrl, function () {
+                scriptLoaded = true;
+                checkAllLoaded();
+            });
+        } else {
+            scriptLoaded = true;
+            checkAllLoaded();
+        }
+    }
+
+    /**
+     * 批量预加载视图
+     * @param {Array<string>} viewIds - 视图ID列表
+     * @param {Function} callback - 全部预加载完成回调
+     */
+    function preloadViews(viewIds, callback) {
+        if (!viewIds || viewIds.length === 0) {
+            if (callback) callback();
+            return;
+        }
+
+        var loaded = 0;
+        var total = viewIds.length;
+
+        function onOneLoaded() {
+            loaded++;
+            if (loaded >= total && callback) {
+                callback();
+            }
+        }
+
+        viewIds.forEach(function (viewId) {
+            preloadView(viewId, onOneLoaded);
+        });
+    }
+
+    /**
+     * 智能预加载 - 根据当前视图预测下一个可能访问的视图
+     * @param {string} currentViewId - 当前视图ID
+     */
+    function smartPreload(currentViewId) {
+        var nextViews = getPredictedNextViews(currentViewId);
+        if (nextViews.length > 0) {
+            setTimeout(function () {
+                preloadViews(nextViews);
+            }, 200);
+        }
+    }
+
+    /**
+     * 获取预测的下一个视图列表
+     * @param {string} currentViewId - 当前视图ID
+     * @returns {Array<string>} 预测的视图ID列表
+     */
+    function getPredictedNextViews(currentViewId) {
+        var predictions = {
+            'workstation': ['case-list', 'schedule-calendar', 'client', 'dashboard'],
+            'case-list': ['case-detail', 'cases-db', 'case-progress'],
+            'case-detail': ['case-list', 'case-progress', 'contract-review-upload'],
+            'schedule-calendar': ['schedule-list', 'workstation'],
+            'client': ['client-detail', 'workstation'],
+            'knowledge': ['laws-db', 'cases-db', 'companies-db'],
+            'cases-db': ['case-detail', 'knowledge'],
+            'laws-db': ['knowledge'],
+            'companies-db': ['knowledge'],
+            'ai': ['ai-doc', 'case-analysis'],
+            'ai-doc': ['doc-gen', 'doc-review', 'ai'],
+            'contract-review-upload': ['contract-review-result', 'case-list'],
+            'firm': ['member-center', 'orders'],
+            'member-center': ['account-settings', 'orders', 'firm']
+        };
+        return predictions[currentViewId] || [];
+    }
+
+    /**
+     * 预加载关键资源（首屏优化）
+     */
+    function preloadCriticalResources() {
+        var criticalViews = ['workstation', 'case-list', 'schedule-calendar', 'ai'];
+        setTimeout(function () {
+            preloadViews(criticalViews);
+        }, 500);
+    }
+
     /**
      * 动态加载脚本文件，支持缓存和回调
      * @param {string} url - 脚本URL
@@ -459,6 +608,7 @@
                 }
                 initView(viewId);
                 initViewAnimations(target);
+                smartPreload(viewId);
             } else {
                 loadView(viewId, function () {
                     var newTarget = document.getElementById('view-' + viewId);
@@ -472,6 +622,7 @@
                         }
                         initView(viewId);
                         initViewAnimations(newTarget);
+                        smartPreload(viewId);
                     }
                 });
             }
@@ -581,12 +732,17 @@
     globalThis.viewCache = viewCache;
     globalThis.viewFileMap = viewFileMap;
     globalThis.scriptCache = scriptCache;
+    globalThis.preloadedViews = preloadedViews;
     globalThis.isDevMode = isDevMode;
     globalThis.loadView = loadView;
     globalThis.loadScript = loadScript;
     globalThis.loadViewScripts = loadViewScripts;
     globalThis.switchView = switchView;
     globalThis.switchSidebarTab = switchSidebarTab;
+    globalThis.preloadView = preloadView;
+    globalThis.preloadViews = preloadViews;
+    globalThis.smartPreload = smartPreload;
+    globalThis.preloadCriticalResources = preloadCriticalResources;
 
     // ===== 全局 click 监听: 关菜单 + 关通知面板 =====
     document.addEventListener('click', function (e) {

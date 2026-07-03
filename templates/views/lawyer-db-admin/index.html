@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>律师库管理 - LexPrime</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css">
+</head>
+<body>
+<div class="admin-layout">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <div class="admin-main">
+        <div th:replace="~{fragments/admin_header :: header('律师库管理')}"></div>
+
+        <div class="admin-content">
+            <div class="page-header">
+                <h1 class="page-title">律师库管理</h1>
+                <p class="page-desc">管理律师数据、能力画像与专长匹配</p>
+            </div>
+
+            <div class="tabs-nav">
+                <div class="tab-item active" data-tab="overview" onclick="switchTab('overview')">
+                    <i class="fas fa-chart-pie"></i> 数据概览
+                </div>
+                <div class="tab-item" data-tab="profile" onclick="switchTab('profile')">
+                    <i class="fas fa-user-tie"></i> 律师画像
+                </div>
+                <div class="tab-item" data-tab="match" onclick="switchTab('match')">
+                    <i class="fas fa-search"></i> 匹配测试
+                </div>
+                <div class="tab-item" data-tab="quality" onclick="switchTab('quality')">
+                    <i class="fas fa-check-circle"></i> 数据质量
+                </div>
+                <div class="tab-item" data-tab="import" onclick="switchTab('import')">
+                    <i class="fas fa-file-import"></i> 导入导出
+                </div>
+            </div>
+
+            <!-- 数据概览 -->
+            <div class="tab-panel active" id="tab-overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #3b82f6;">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalLawyers">--</div>
+                            <div class="stat-label">律师总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #10b981;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalFirms">--</div>
+                            <div class="stat-label">律所数量</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #f59e0b;">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalCases">--</div>
+                            <div class="stat-label">代理案件</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #8b5cf6;">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="avgRating">--</div>
+                            <div class="stat-label">平均评分</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>级别分布</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="levelChart" class="bar-chart"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>专业领域分布</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="fieldChart" class="bar-chart horizontal"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>地区分布</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="regionChart" class="donut-chart"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>费用区间分布</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="feeChart" class="bar-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 律师画像 -->
+            <div class="tab-panel" id="tab-profile">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>律师列表</h3>
+                        <div class="card-actions">
+                            <input type="text" class="form-input" id="searchLawyer" placeholder="搜索律师..." onkeyup="searchLawyers(this.value)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>律师</th>
+                                        <th>律所</th>
+                                        <th>级别</th>
+                                        <th>执业年限</th>
+                                        <th>专业领域</th>
+                                        <th>胜诉率</th>
+                                        <th>评分</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lawyerTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="profileDetailCard" style="display: none;">
+                    <div class="card-header">
+                        <h3>能力画像详情</h3>
+                    </div>
+                    <div class="card-body" id="profileDetailBody">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 匹配测试 -->
+            <div class="tab-panel" id="tab-match">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>专长匹配条件</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>专业领域</label>
+                                <select class="form-select" id="matchField">
+                                    <option value="">全部</option>
+                                    <option value="civil">民商事</option>
+                                    <option value="criminal">刑事辩护</option>
+                                    <option value="corporate">公司法律</option>
+                                    <option value="ip">知识产权</option>
+                                    <option value="labor">劳动争议</option>
+                                    <option value="family">婚姻家庭</option>
+                                    <option value="real_estate">房产纠纷</option>
+                                    <option value="finance">金融证券</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>地区</label>
+                                <input type="text" class="form-input" id="matchRegion" placeholder="如: 北京市">
+                            </div>
+                            <div class="form-group">
+                                <label>最低执业年限</label>
+                                <input type="number" class="form-input" id="matchMinYears" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>最高预算(元)</label>
+                                <input type="number" class="form-input" id="matchMaxFee" placeholder="不限">
+                            </div>
+                            <div class="form-group">
+                                <label>返回数量</label>
+                                <input type="number" class="form-input" id="matchTopK" value="10" min="1" max="50">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="runMatch()">
+                                <i class="fas fa-search"></i> 开始匹配
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="matchResultCard" style="display: none;">
+                    <div class="card-header">
+                        <h3>匹配结果</h3>
+                    </div>
+                    <div class="card-body" id="matchResultBody">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据质量 -->
+            <div class="tab-panel" id="tab-quality">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>数据质量报告</h3>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="refreshQuality()">
+                                <i class="fas fa-sync"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="quality-summary" id="qualitySummary">
+                        </div>
+                        <div class="quality-items" id="qualityItems">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 导入导出 -->
+            <div class="tab-panel" id="tab-import">
+                <div class="card-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>批量导入</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-area" onclick="document.getElementById('importFile').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>点击或拖拽文件到此处上传</p>
+                                <p class="text-muted">支持 CSV、JSON 格式</p>
+                                <input type="file" id="importFile" accept=".csv,.json" style="display: none;" onchange="handleImportFile(this)">
+                            </div>
+                            <div class="form-group">
+                                <label>更新模式</label>
+                                <select class="form-select" id="importMode">
+                                    <option value="skip">跳过已存在</option>
+                                    <option value="overwrite">覆盖已存在</option>
+                                    <option value="merge">合并更新</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary" onclick="startImport()">
+                                    <i class="fas fa-upload"></i> 开始导入
+                                </button>
+                            </div>
+                            <div id="importResult" style="margin-top: 16px;"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>数据导出</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>导出格式</label>
+                                <select class="form-select" id="exportFormat">
+                                    <option value="json">JSON</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="excel">Excel</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>导出范围</label>
+                                <select class="form-select" id="exportScope">
+                                    <option value="all">全部律师</option>
+                                    <option value="filtered">筛选结果</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-outline" onclick="exportData()">
+                                    <i class="fas fa-download"></i> 导出数据
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>索引管理</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="index-list" id="indexList">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="reindex()">
+                                <i class="fas fa-sync"></i> 重建索引
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>
+<script>
+var currentStats = null;
+var currentLawyer = null;
+
+$(document).ready(function() {
+    loadStats();
+    loadLawyers();
+    loadQuality();
+    loadIndexes();
+});
+
+function switchTab(tabName) {
+    $('.tab-item').removeClass('active');
+    $('.tab-panel').removeClass('active');
+    $('.tab-item[data-tab="' + tabName + '"]').addClass('active');
+    $('#tab-' + tabName).addClass('panel');
+    $('#tab-' + tabName).addClass('active');
+}
+
+function loadStats() {
+    $.get('/api/lawyers-db/stats', function(data) {
+        currentStats = data;
+        $('#totalLawyers').text(data.total_lawyers.toLocaleString());
+        $('#totalFirms').text(data.total_law_firms.toLocaleString());
+        $('#totalCases').text(data.total_cases.toLocaleString());
+        $('#avgRating').text(data.avg_rating.toFixed(1));
+        renderLevelChart(data.level_distribution);
+        renderFieldChart(data.field_distribution);
+        renderRegionChart(data.region_distribution);
+        renderFeeChart(data.fee_distribution);
+    });
+}
+
+function renderLevelChart(data) {
+    var labels = {
+        'junior': '初级',
+        'mid_level': '中级',
+        'senior': '资深',
+        'partner': '合伙人',
+        'senior_partner': '高级合伙人'
+    };
+    var container = $('#levelChart');
+    container.empty();
+    var keys = Object.keys(data);
+    var maxVal = Math.max.apply(null, keys.map(function(k) { return data[k]; }));
+    keys.forEach(function(key) {
+        var val = data[key];
+        var pct = (val / maxVal * 100).toFixed(1);
+        var bar = $('<div class="bar-item"></div>');
+        bar.append('<div class="bar-label">' + (labels[key] || key) + '</div>');
+        bar.append('<div class="bar-track"><div class="bar-fill" style="width: ' + pct + '%; background: #3b82f6;"></div></div>');
+        bar.append('<div class="bar-value">' + val.toLocaleString() + '</div>');
+        container.append(bar);
+    });
+}
+
+function renderFieldChart(data) {
+    var labels = {
+        'civil': '民商事',
+        'criminal': '刑事辩护',
+        'corporate': '公司法律',
+        'ip': '知识产权',
+        'labor': '劳动争议',
+        'family': '婚姻家庭',
+        'real_estate': '房产纠纷',
+        'finance': '金融证券',
+        'tax': '税务',
+        'administrative': '行政诉讼',
+        'international': '涉外法律'
+    };
+    var container = $('#fieldChart');
+    container.empty();
+    var entries = Object.entries(data).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 8);
+    var maxVal = entries.length > 0 ? entries[0][1] : 1;
+    entries.forEach(function(entry) {
+        var key = entry[0];
+        var val = entry[1];
+        var pct = (val / maxVal * 100).toFixed(1);
+        var bar = $('<div class="bar-item horizontal"></div>');
+        bar.append('<div class="bar-label" style="width: 80px;">' + (labels[key] || key) + '</div>');
+        bar.append('<div class="bar-track"><div class="bar-fill" style="height: ' + pct + '%; background: #10b981;"></div></div>');
+        bar.append('<div class="bar-value">' + val.toLocaleString() + '</div>');
+        container.append(bar);
+    });
+}
+
+function renderRegionChart(data) {
+    var container = $('#regionChart');
+    container.empty();
+    var total = Object.values(data).reduce(function(a, b) { return a + b; }, 0);
+    var colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#6b7280'];
+    var entries = Object.entries(data).sort(function(a, b) { return b[1] - a[1]; });
+    var legend = $('<div class="donut-legend"></div>');
+    entries.forEach(function(entry, idx) {
+        var pct = total > 0 ? (entry[1] / total * 100).toFixed(1) : 0;
+        var color = colors[idx % colors.length];
+        legend.append('<div class="legend-item"><span class="legend-dot" style="background: ' + color + ';"></span>' + entry[0] + ' - ' + pct + '%</div>');
+    });
+    container.append('<div class="donut-visual"><div class="donut-center"><span>' + total.toLocaleString() + '</span><small>总计</small></div></div>');
+    container.append(legend);
+}
+
+function renderFeeChart(data) {
+    var labels = {
+        'below_5k': '5k以下',
+        '5k_to_20k': '5k-2万',
+        '20k_to_50k': '2万-5万',
+        'above_50k': '5万以上'
+    };
+    var container = $('#feeChart');
+    container.empty();
+    var keys = Object.keys(data);
+    var maxVal = Math.max.apply(null, keys.map(function(k) { return data[k]; }));
+    keys.forEach(function(key) {
+        var val = data[key];
+        var pct = (val / maxVal * 100).toFixed(1);
+        var bar = $('<div class="bar-item"></div>');
+        bar.append('<div class="bar-label">' + (labels[key] || key) + '</div>');
+        bar.append('<div class="bar-track"><div class="bar-fill" style="width: ' + pct + '%; background: #f59e0b;"></div></div>');
+        bar.append('<div class="bar-value">' + val.toLocaleString() + '</div>');
+        container.append(bar);
+    });
+}
+
+function loadLawyers() {
+    $.get('/api/lawyers-db/search?size=20', function(data) {
+        var tbody = $('#lawyerTableBody');
+        tbody.empty();
+        data.items.forEach(function(lawyer) {
+            var tr = $('<tr></tr>');
+            tr.append('<td><div class="lawyer-cell"><strong>' + lawyer.name + '</strong><br><small>' + (lawyer.gender || '') + ' · ' + (lawyer.age || '-') + '岁</small></div></td>');
+            tr.append('<td>' + (lawyer.law_firm || '-') + '</td>');
+            tr.append('<td><span class="badge badge-info">' + lawyer.level_name + '</span></td>');
+            tr.append('<td>' + lawyer.practice_years + '年</td>');
+            var fields = lawyer.specialties.map(function(s) { return s.field_name; }).join('、');
+            tr.append('<td>' + fields + '</td>');
+            var winRatePct = (lawyer.win_rate * 100).toFixed(1);
+            tr.append('<td><span class="text-success">' + winRatePct + '%</span></td>');
+            tr.append('<td><span class="text-warning">★ ' + lawyer.avg_rating + '</span></td>');
+            tr.append('<td><button class="btn btn-sm btn-outline" onclick="viewProfile(\'' + lawyer.id + '\')">查看画像</button></td>');
+            tbody.append(tr);
+        });
+    });
+}
+
+function searchLawyers(keyword) {
+    $.get('/api/lawyers-db/search?q=' + encodeURIComponent(keyword) + '&size=20', function(data) {
+        var tbody = $('#lawyerTableBody');
+        tbody.empty();
+        data.items.forEach(function(lawyer) {
+            var tr = $('<tr></tr>');
+            tr.append('<td><div class="lawyer-cell"><strong>' + lawyer.name + '</strong><br><small>' + (lawyer.gender || '') + ' · ' + (lawyer.age || '-') + '岁</small></div></td>');
+            tr.append('<td>' + (lawyer.law_firm || '-') + '</td>');
+            tr.append('<td><span class="badge badge-info">' + lawyer.level_name + '</span></td>');
+            tr.append('<td>' + lawyer.practice_years + '年</td>');
+            var fields = lawyer.specialties.map(function(s) { return s.field_name; }).join('、');
+            tr.append('<td>' + fields + '</td>');
+            var winRatePct = (lawyer.win_rate * 100).toFixed(1);
+            tr.append('<td><span class="text-success">' + winRatePct + '%</span></td>');
+            tr.append('<td><span class="text-warning">★ ' + lawyer.avg_rating + '</span></td>');
+            tr.append('<td><button class="btn btn-sm btn-outline" onclick="viewProfile(\'' + lawyer.id + '\')">查看画像</button></td>');
+            tbody.append(tr);
+        });
+    });
+}
+
+function viewProfile(lawyerId) {
+    $.get('/api/lawyers-db/' + lawyerId + '/profile', function(data) {
+        currentLawyer = data;
+        $('#profileDetailCard').show();
+        var body = $('#profileDetailBody');
+        var p = data.profile;
+        var html = '<div class="profile-grid">';
+        html += '<div class="profile-main">';
+        html += '<div class="profile-header">';
+        html += '<h3>' + data.lawyer.name + ' <span class="badge badge-info">' + data.lawyer.level_name + '</span></h3>';
+        html += '<p>' + (data.lawyer.law_firm || '-') + ' · ' + data.lawyer.practice_years + '年执业经验</p>';
+        html += '</div>';
+        html += '<div class="profile-scores">';
+        html += renderScoreBar('综合评分', p.overall_score, '#3b82f6');
+        html += renderScoreBar('经验评分', p.experience_score, '#10b981');
+        html += renderScoreBar('专业评分', p.expertise_score, '#f59e0b');
+        html += renderScoreBar('胜诉评分', p.success_score, '#8b5cf6');
+        html += renderScoreBar('声誉评分', p.reputation_score, '#ef4444');
+        html += renderScoreBar('性价比', p.cost_score, '#6b7280');
+        html += '</div>';
+        html += '<div class="profile-strengths">';
+        html += '<h5><i class="fas fa-thumbs-up"></i> 优势</h5>';
+        html += '<div class="tag-list">';
+        p.strengths.forEach(function(s) {
+            html += '<span class="tag tag-success">' + s + '</span>';
+        });
+        html += '</div>';
+        html += '</div>';
+        if (p.weaknesses.length > 0) {
+            html += '<div class="profile-weaknesses">';
+            html += '<h5><i class="fas fa-thumbs-down"></i> 待提升</h5>';
+            html += '<div class="tag-list">';
+            p.weaknesses.forEach(function(w) {
+                html += '<span class="tag tag-warning">' + w + '</span>';
+            });
+            html += '</div>';
+            html += '</div>';
+        }
+        html += '</div>';
+        html += '<div class="profile-side">';
+        html += '<div class="info-box">';
+        html += '<h5>基本信息</h5>';
+        html += '<p><strong>执业证号:</strong> ' + (data.lawyer.license_number || '-') + '</p>';
+        html += '<p><strong>地区:</strong> ' + (data.lawyer.region || '-') + '</p>';
+        html += '<p><strong>电话:</strong> ' + (data.lawyer.phone || '-') + '</p>';
+        html += '<p><strong>邮箱:</strong> ' + (data.lawyer.email || '-') + '</p>';
+        html += '<p><strong>代理案件:</strong> ' + data.lawyer.total_cases + ' 件</p>';
+        html += '<p><strong>胜诉率:</strong> ' + (data.lawyer.win_rate * 100).toFixed(1) + '%</p>';
+        html += '<p><strong>客户评价:</strong> ★ ' + data.lawyer.avg_rating + ' (' + data.lawyer.review_count + '条)</p>';
+        html += '<p><strong>费用范围:</strong> ' + (data.lawyer.fee_range_min || '-') + ' - ' + (data.lawyer.fee_range_max || '-') + ' 元/件</p>';
+        html += '</div>';
+        html += '<div class="info-box">';
+        html += '<h5>专业领域</h5>';
+        data.lawyer.specialties.forEach(function(s) {
+            html += '<div class="specialty-item">';
+            html += '<div class="specialty-header"><strong>' + s.field_name + '</strong><span class="text-muted">Lv.' + s.level + '</span></div>';
+            html += '<div class="specialty-stats">' + s.case_count + '件 · 胜诉率 ' + (s.win_rate * 100).toFixed(0) + '%</div>';
+            if (s.description) {
+                html += '<p class="text-muted">' + s.description + '</p>';
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        body.html(html);
+
+        loadCases(lawyerId);
+        loadReviews(lawyerId);
+    });
+}
+
+function renderScoreBar(label, score, color) {
+    return '<div class="score-bar">' +
+        '<div class="score-label">' + label + '</div>' +
+        '<div class="score-track"><div class="score-fill" style="width: ' + score + '%; background: ' + color + ';"></div></div>' +
+        '<div class="score-value">' + score + '</div>' +
+        '</div>';
+}
+
+function loadCases(lawyerId) {
+    $.get('/api/lawyers-db/' + lawyerId + '/cases?is_representative=true', function(data) {
+        var html = '<div class="info-box"><h5>典型案例</h5>';
+        if (data.items && data.items.length > 0) {
+            data.items.forEach(function(c) {
+                html += '<div class="case-item">';
+                html += '<div class="case-header"><strong>' + c.case_name + '</strong>';
+                html += c.is_win ? '<span class="badge badge-success">胜诉</span>' : '<span class="badge badge-danger">败诉</span>';
+                html += '</div>';
+                html += '<div class="case-meta text-muted">' + c.case_number + ' · ' + c.court + ' · ' + c.date + '</div>';
+                if (c.summary) {
+                    html += '<p>' + c.summary + '</p>';
+                }
+                html += '</div>';
+            });
+        } else {
+            html += '<p class="text-muted">暂无典型案例</p>';
+        }
+        html += '</div>';
+        $('.profile-side').append(html);
+    });
+}
+
+function loadReviews(lawyerId) {
+    $.get('/api/lawyers-db/' + lawyerId + '/reviews', function(data) {
+        var html = '<div class="info-box"><h5>客户评价</h5>';
+        if (data.items && data.items.length > 0) {
+            data.items.forEach(function(r) {
+                html += '<div class="review-item">';
+                html += '<div class="review-header"><strong>' + r.client_name + '</strong>';
+                html += '<span class="text-warning">★ ' + r.rating + '</span>';
+                html += '<span class="text-muted">' + r.date + '</span>';
+                html += '</div>';
+                html += '<p>' + r.content + '</p>';
+                html += '</div>';
+            });
+        } else {
+            html += '<p class="text-muted">暂无评价</p>';
+        }
+        html += '</div>';
+        $('.profile-side').append(html);
+    });
+}
+
+function runMatch() {
+    var req = {
+        field: $('#matchField').val() || null,
+        region: $('#matchRegion').val() || null,
+        min_practice_years: parseInt($('#matchMinYears').val()) || 0,
+        max_fee: $('#matchMaxFee').val() ? parseInt($('#matchMaxFee').val()) : null,
+        top_k: parseInt($('#matchTopK').val()) || 10
+    };
+    $.ajax({
+        url: '/api/lawyers-db/match',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(req),
+        success: function(data) {
+            $('#matchResultCard').show();
+            var body = $('#matchResultBody');
+            var html = '<p class="text-muted">共找到 ' + data.total + ' 位匹配律师，显示前 ' + data.top_k + ' 位</p>';
+            html += '<div class="match-list">';
+            data.items.forEach(function(item, idx) {
+                html += '<div class="match-item">';
+                html += '<div class="match-rank">#' + (idx + 1) + '</div>';
+                html += '<div class="match-info">';
+                html += '<h4>' + item.lawyer.name + ' <span class="badge badge-info">' + item.lawyer.level_name + '</span></h4>';
+                html += '<p>' + (item.lawyer.law_firm || '-') + ' · ' + item.lawyer.practice_years + '年经验 · 胜诉率 ' + (item.lawyer.win_rate * 100).toFixed(1) + '%</p>';
+                html += '<div class="match-details">';
+                item.match_details.forEach(function(d) {
+                    html += '<span class="tag tag-info">' + d.text + ' (+' + d.score + ')</span>';
+                });
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="match-score">';
+                html += '<div class="score-circle" style="background: conic-gradient(#10b981 ' + (item.match_score / 100 * 360) + 'deg, #e5e7eb 0deg);">';
+                html += '<span>' + item.match_score.toFixed(0) + '分</span>';
+                html += '</div>';
+                html += '<button class="btn btn-sm btn-outline" onclick="viewProfile(\'' + item.lawyer.id + '\'); switchTab(\'profile\');">详情</button>';
+                html += '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            body.html(html);
+        }
+    });
+}
+
+function loadQuality() {
+    var html = '<div class="quality-score">';
+    html += '<div class="score-ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/><circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="8" stroke-dasharray="' + (85 * 2.83) + ' 283" stroke-linecap="round" transform="rotate(-90 50 50)"/></svg><div class="score-text">85<span>分</span></div></div>';
+    html += '<div class="quality-desc"><h3>数据质量良好</h3><p>整体数据完整度较高，部分字段有待完善</p></div>';
+    html += '</div>';
+    $('#qualitySummary').html(html);
+
+    var items = [
+        { name: '姓名完整度', score: 98, status: 'good', count: '24,500 / 25,000' },
+        { name: '律所信息完整度', score: 92, status: 'good', count: '23,000 / 25,000' },
+        { name: '执业证号完整度', score: 88, status: 'good', count: '22,000 / 25,000' },
+        { name: '专业领域完整度', score: 75, status: 'warning', count: '18,750 / 25,000' },
+        { name: '胜诉率数据', score: 65, status: 'warning', count: '16,250 / 25,000' },
+        { name: '客户评价数据', score: 45, status: 'error', count: '11,250 / 25,000' },
+    ];
+    var itemsHtml = '';
+    items.forEach(function(item) {
+        var color = item.status === 'good' ? '#10b981' : (item.status === 'warning' ? '#f59e0b' : '#ef4444');
+        itemsHtml += '<div class="quality-item">';
+        itemsHtml += '<div class="quality-item-header"><span>' + item.name + '</span><span class="quality-item-score" style="color: ' + color + ';">' + item.score + '%</span></div>';
+        itemsHtml += '<div class="quality-bar"><div class="quality-bar-fill" style="width: ' + item.score + '%; background: ' + color + ';"></div></div>';
+        itemsHtml += '<div class="quality-item-footer text-muted">' + item.count + '</div>';
+        itemsHtml += '</div>';
+    });
+    $('#qualityItems').html(itemsHtml);
+}
+
+function refreshQuality() {
+    loadQuality();
+}
+
+function handleImportFile(input) {
+    if (input.files && input.files.length > 0) {
+        $('#importResult').html('<p class="text-info">已选择文件: ' + input.files[0].name + '</p>');
+    }
+}
+
+function startImport() {
+    var mode = $('#importMode').val();
+    $('#importResult').html('<p class="text-info">正在导入...</p>');
+    $.ajax({
+        url: '/api/lawyers-db/import',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            lawyers: [
+                { name: '测试律师1', law_firm: '测试律所', level: 'mid_level', practice_years: 5 },
+                { name: '测试律师2', law_firm: '测试律所', level: 'senior', practice_years: 10 }
+            ],
+            source: 'test',
+            update_mode: mode
+        }),
+        success: function(data) {
+            $('#importResult').html('<div class="alert alert-success">导入完成: 成功 ' + data.success + ' 条，失败 ' + data.failed + ' 条</div>');
+        },
+        error: function() {
+            $('#importResult').html('<div class="alert alert-error">导入失败</div>');
+        }
+    });
+}
+
+function exportData() {
+    var format = $('#exportFormat').val();
+    alert('导出功能 - 格式: ' + format);
+}
+
+function loadIndexes() {
+    var indexes = [
+        { name: 'full_text', displayName: '全文索引', status: 'active', docCount: 25000 },
+        { name: 'lawyer_name', displayName: '律师姓名索引', status: 'active', docCount: 25000 },
+        { name: 'law_firm', displayName: '律所索引', status: 'active', docCount: 25000 },
+        { name: 'specialty', displayName: '专业领域索引', status: 'active', docCount: 25000 },
+        { name: 'region', displayName: '地区索引', status: 'active', docCount: 25000 },
+        { name: 'level', displayName: '级别索引', status: 'active', docCount: 25000 },
+    ];
+    var html = '';
+    indexes.forEach(function(idx) {
+        html += '<div class="index-item">';
+        html += '<div class="index-info"><strong>' + idx.displayName + '</strong><span class="text-muted">' + idx.name + '</span></div>';
+        html += '<div class="index-stats">文档数: ' + idx.docCount.toLocaleString() + ' <span class="badge badge-success">正常</span></div>';
+        html += '</div>';
+    });
+    $('#indexList').html(html);
+}
+
+function reindex() {
+    if (!confirm('确定要重建索引吗？此操作可能需要一些时间。')) return;
+    $.post('/api/lawyers-db/reindex', function(data) {
+        alert('索引重建完成！共索引 ' + data.total_indexed + ' 条记录，耗时 ' + data.duration_ms + 'ms');
+        loadIndexes();
+    });
+}
+</script>
+
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+}
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+}
+.stat-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+.card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.bar-chart.horizontal {
+    flex-direction: row;
+    align-items: flex-end;
+    height: 200px;
+}
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.bar-item.horizontal {
+    flex-direction: column;
+    flex: 1;
+    text-align: center;
+}
+.bar-label {
+    font-size: 13px;
+    color: #374151;
+    min-width: 80px;
+}
+.bar-track {
+    flex: 1;
+    height: 24px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.bar-item.horizontal .bar-track {
+    width: 100%;
+    height: 120px;
+    position: relative;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+.bar-item.horizontal .bar-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100% !important;
+    border-radius: 4px 4px 0 0;
+}
+.bar-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    min-width: 60px;
+    text-align: right;
+}
+.donut-chart {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.donut-visual {
+    width: 150px;
+    height: 150px;
+    position: relative;
+}
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.donut-center span {
+    display: block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+}
+.donut-center small {
+    color: #6b7280;
+}
+.donut-legend {
+    flex: 1;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+}
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.profile-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+.profile-header h3 {
+    margin: 0 0 8px 0;
+}
+.profile-header p {
+    margin: 0;
+    color: #6b7280;
+}
+.profile-scores {
+    margin-top: 20px;
+}
+.score-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.score-label {
+    width: 80px;
+    font-size: 13px;
+    color: #374151;
+}
+.score-track {
+    flex: 1;
+    height: 20px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.score-fill {
+    height: 100%;
+    border-radius: 10px;
+}
+.score-value {
+    width: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+}
+.profile-strengths, .profile-weaknesses {
+    margin-top: 20px;
+}
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.tag {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+}
+.tag-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+.tag-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+.tag-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.info-box {
+    background: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.info-box h5 {
+    margin: 0 0 12px 0;
+    color: #111827;
+}
+.info-box p {
+    margin: 6px 0;
+    font-size: 13px;
+}
+.specialty-item {
+    padding: 12px;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.specialty-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.specialty-stats {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+.case-item {
+    padding: 12px;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.case-meta {
+    font-size: 12px;
+    margin-top: 4px;
+}
+.review-item {
+    padding: 12px;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.lawyer-cell strong {
+    display: block;
+}
+.match-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.match-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+.match-rank {
+    width: 40px;
+    height: 40px;
+    background: #3b82f6;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+.match-info {
+    flex: 1;
+}
+.match-info h4 {
+    margin: 0 0 6px 0;
+}
+.match-info p {
+    margin: 0 0 10px 0;
+    color: #6b7280;
+}
+.match-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.match-score {
+    text-align: center;
+}
+.score-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+}
+.score-circle span {
+    background: #f9fafb;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+.quality-summary {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 24px;
+    background: #f0fdf4;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+.score-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+.score-ring svg {
+    width: 100%;
+    height: 100%;
+}
+.score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #065f46;
+}
+.score-text span {
+    font-size: 12px;
+    font-weight: 400;
+}
+.quality-desc h3 {
+    margin: 0 0 4px 0;
+    color: #065f46;
+}
+.quality-desc p {
+    margin: 0;
+    color: #047857;
+}
+.quality-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.quality-item {
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+.quality-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.quality-item-score {
+    font-weight: 600;
+}
+.quality-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+.quality-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+.quality-item-footer {
+    font-size: 12px;
+}
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+}
+.upload-area:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+.upload-area i {
+    font-size: 48px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+.upload-area p {
+    margin: 4px 0;
+}
+.text-muted {
+    color: #6b7280;
+    font-size: 13px;
+}
+.index-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.index-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+.index-info strong {
+    display: block;
+    margin-bottom: 4px;
+}
+.index-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #6b7280;
+}
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.badge-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+.text-success {
+    color: #10b981;
+}
+.text-warning {
+    color: #f59e0b;
+}
+.text-info {
+    color: #3b82f6;
+}
+.text-error {
+    color: #ef4444;
+}
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.alert-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+.form-input, .form-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-primary {
+    background: #3b82f6;
+    color: #fff;
+}
+.btn-primary:hover {
+    background: #2563eb;
+}
+.btn-outline {
+    background: #fff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+.btn-outline:hover {
+    background: #f9fafb;
+}
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+.table th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 13px;
+    color: #374151;
+}
+.table-responsive {
+    overflow-x: auto;
+}
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+.card-body {
+    padding: 20px;
+}
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+</style>
+</body>
+</html>
