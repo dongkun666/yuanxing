@@ -115,7 +115,7 @@
 
     <!-- ============ 总览卡片 (4 张) ============ -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">总 Ticket</span>
           <iconify-icon icon="mdi:ticket-outline" class="text-brand text-lg"></iconify-icon>
@@ -123,7 +123,7 @@
         <p id="bl-total-tickets" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
         <p class="text-[10px] text-fg-tertiary mt-1">来自 review_questions</p>
       </div>
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">P0 高优</span>
           <iconify-icon icon="mdi:alert-circle-outline" class="text-error text-lg"></iconify-icon>
@@ -131,7 +131,7 @@
         <p id="bl-p0-tickets" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
         <p class="text-[10px] text-fg-tertiary mt-1"><span id="bl-completion">0</span> 完成率</p>
       </div>
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">进行中</span>
           <iconify-icon icon="mdi:progress-clock" class="text-warning text-lg"></iconify-icon>
@@ -139,7 +139,7 @@
         <p id="bl-in-progress" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
         <p class="text-[10px] text-fg-tertiary mt-1"><span id="bl-open">0</span> 待 triage</p>
       </div>
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">未分配</span>
           <iconify-icon icon="mdi:account-question-outline" class="text-ai text-lg"></iconify-icon>
@@ -150,7 +150,7 @@
     </div>
 
     <!-- ============ 视图切换 tab ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-3 mb-5 fade-in flex items-center gap-2 overflow-x-auto">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-3 mb-5 fade-in flex items-center gap-2 overflow-x-auto" data-animate="fade-in-up">
       <button class="view-tab active" data-view="summary">
         <iconify-icon icon="mdi:view-dashboard-outline" class="text-base"></iconify-icon>
         <span>总览</span>
@@ -181,7 +181,7 @@
     <!-- ============ 视图 1: 总览 (默认) ============ -->
     <div id="bl-view-summary" class="bl-view-panel">
       <!-- 优先级 + 状态 双重维度条形图 -->
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-sm font-semibold flex items-center gap-1.5">
             <iconify-icon icon="mdi:chart-bar" class="text-brand"></iconify-icon>
@@ -208,7 +208,7 @@
 
     <!-- ============ 视图 2: 按状态 ============ -->
     <div id="bl-view-status" class="bl-view-panel hidden">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
         <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
           <iconify-icon icon="mdi:flag-outline" class="text-brand"></iconify-icon>
           按状态分组 (5 维度)
@@ -221,7 +221,7 @@
 
     <!-- ============ 视图 3: 按优先级 ============ -->
     <div id="bl-view-priority" class="bl-view-panel hidden">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
         <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
           <iconify-icon icon="mdi:alert-decagram-outline" class="text-brand"></iconify-icon>
           按优先级分组 (P0 红 → P3 蓝)
@@ -234,7 +234,7 @@
 
     <!-- ============ 视图 4: 按 Owner ============ -->
     <div id="bl-view-owner" class="bl-view-panel hidden">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
         <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
           <iconify-icon icon="mdi:account-group-outline" class="text-brand"></iconify-icon>
           按 Owner 分组 (6 agents)
@@ -247,7 +247,7 @@
 
     <!-- ============ 视图 5: 按来源律师 ============ -->
     <div id="bl-view-source" class="bl-view-panel hidden">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
         <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
           <iconify-icon icon="mdi:account-tie-outline" class="text-brand"></iconify-icon>
           按来源律师 (L1-L5)
@@ -260,7 +260,7 @@
     </div>
 
     <!-- ============ 最近 ticket 列表 (10 条最新) ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold flex items-center gap-1.5">
           <iconify-icon icon="mdi:history" class="text-brand"></iconify-icon>

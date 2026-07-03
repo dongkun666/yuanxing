@@ -61,7 +61,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <div class="col-span-8 space-y-3">
 
           <!-- 预览工具栏 -->
-          <div class="bg-white rounded-md shadow-card px-4 py-2.5 flex items-center justify-between">
+          <div class="bg-white rounded-md shadow-card px-4 py-2.5 flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
             <div class="flex items-center gap-1.5 text-xs text-fg-secondary">
               <iconify-icon icon="mdi:file-eye-outline" class="text-brand"></iconify-icon>
               <span class="font-medium">报告预览</span>
@@ -87,7 +87,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- ============ 报告纸张 (封面 + 摘要 + 风险条款) ============ -->
-          <div class="paper">
+          <div class="paper" data-animate="fade-in-up" data-delay="0.05">
 
             <!-- 报告封面 -->
             <div class="text-center pb-6 border-b-2 border-brand">
@@ -299,7 +299,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <div class="col-span-4 space-y-3">
 
           <!-- 导出格式 -->
-          <div class="bg-white rounded-md shadow-card">
+          <div class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.1">
             <div class="px-4 py-3 border-b border-bg-border">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <iconify-icon class="text-brand" icon="mdi:export-variant"></iconify-icon>
@@ -345,7 +345,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 报告配置 -->
-          <div class="bg-white rounded-md shadow-card">
+          <div class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.15">
             <div class="px-4 py-3 border-b border-bg-border">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <iconify-icon class="text-brand" icon="mdi:cog-outline"></iconify-icon>
@@ -381,7 +381,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 邮件发送律师 -->
-          <div class="bg-white rounded-md shadow-card">
+          <div class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.2">
             <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <iconify-icon class="text-brand" icon="mdi:email-outline"></iconify-icon>
@@ -429,7 +429,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 主操作 -->
-          <div class="space-y-2">
+          <div class="space-y-2" data-animate="fade-in-up" data-delay="0.25">
             <button class="w-full h-11 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center justify-center gap-1.5 shadow-sm">
               <iconify-icon icon="mdi:download" class="text-lg"></iconify-icon>
               下载 Word 报告
@@ -445,7 +445,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 性能 + 体积 -->
-          <div class="bg-bg-subtle rounded-md p-3 text-[10px] text-fg-tertiary space-y-1">
+          <div class="bg-bg-subtle rounded-md p-3 text-[10px] text-fg-tertiary space-y-1" data-animate="fade-in-up" data-delay="0.3">
             <div class="flex items-center justify-between">
               <span>Word 生成耗时</span>
               <span class="text-success font-medium">~1.2s</span>

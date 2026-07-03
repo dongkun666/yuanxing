@@ -1022,6 +1022,204 @@
     }
 
     /**
+     * 生成空状态 HTML
+     * @param {Object} options - 配置选项
+     * @param {string} [options.icon] - 图标 (iconify icon name)
+     * @param {string} [options.title] - 标题
+     * @param {string} [options.description] - 描述
+     * @param {string} [options.actionText] - 操作按钮文本
+     * @param {Function} [options.actionHandler] - 操作按钮点击回调
+     * @param {string} [options.secondaryActionText] - 次要操作按钮文本
+     * @param {Function} [options.secondaryActionHandler] - 次要操作按钮点击回调
+     * @param {string} [options.iconColor] - 图标颜色 (如 'success', 'danger', 'warning')
+     * @param {string} [options.type='default'] - 类型: 'default' | 'search' | 'data' | 'error' | 'loading'
+     * @returns {string} - HTML 字符串
+     */
+    function renderEmptyState(options) {
+        options = options || {};
+        var type = options.type || 'default';
+
+        var typeConfig = {
+            'default': {
+                icon: 'mdi:folder-open-outline',
+                title: '暂无数据',
+                description: '列表中还没有任何内容',
+                iconClass: 'empty-list'
+            },
+            'search': {
+                icon: 'mdi:magnify-scan',
+                title: '没有找到结果',
+                description: '没有匹配的内容，请尝试其他关键词',
+                iconClass: 'no-result'
+            },
+            'data': {
+                icon: 'mdi:database-outline',
+                title: '暂无数据',
+                description: '数据加载中或暂无内容',
+                iconClass: 'empty-list'
+            },
+            'error': {
+                icon: 'mdi:alert-circle-outline',
+                title: '加载失败',
+                description: '抱歉，加载过程中出现了问题，请稍后重试',
+                iconClass: 'error'
+            },
+            'loading': {
+                icon: 'mdi:loading',
+                title: '加载中',
+                description: '正在加载数据，请稍候...',
+                iconClass: 'loading'
+            }
+        };
+
+        var config = typeConfig[type] || typeConfig['default'];
+        var icon = options.icon || config.icon;
+        var title = options.title !== undefined ? options.title : config.title;
+        var description = options.description !== undefined ? options.description : config.description;
+        var iconClass = config.iconClass;
+        var iconColor = options.iconColor || '';
+        var actionText = options.actionText || '';
+        var actionHandler = options.actionHandler || null;
+        var secondaryActionText = options.secondaryActionText || '';
+        var secondaryActionHandler = options.secondaryActionHandler || null;
+
+        var iconColorClass = iconColor ? ' text-' + iconColor : '';
+
+        var actionHtml = '';
+        if (actionText || secondaryActionText) {
+            actionHtml = '<div class="empty-state-action flex items-center gap-2">';
+            if (actionText) {
+                var handlerAttr = actionHandler ? 'data-empty-action="true"' : '';
+                actionHtml +=
+                    '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" ' + handlerAttr + '>' +
+                    escapeHtml(actionText) +
+                    '</button>';
+            }
+            if (secondaryActionText) {
+                var secondaryHandlerAttr = secondaryActionHandler ? 'data-empty-secondary-action="true"' : '';
+                actionHtml +=
+                    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg-subtle hover:bg-bg rounded-lg transition-colors" ' + secondaryHandlerAttr + '>' +
+                    escapeHtml(secondaryActionText) +
+                    '</button>';
+            }
+            actionHtml += '</div>';
+        }
+
+        var html =
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon ' + iconClass + iconColorClass + '">' +
+            '<iconify-icon icon="' + icon + '"' + (type === 'loading' ? ' class="animate-spin"' : '') + '></iconify-icon>' +
+            '</div>' +
+            (title ? '<div class="empty-state-title">' + escapeHtml(title) + '</div>' : '') +
+            (description ? '<div class="empty-state-desc">' + escapeHtml(description) + '</div>' : '') +
+            actionHtml +
+            '</div>';
+
+        if (actionHandler && typeof actionHandler === 'function') {
+            setTimeout(function () {
+                var btn = document.querySelector('[data-empty-action="true"]:not([data-bound])');
+                if (btn) {
+                    btn.setAttribute('data-bound', 'true');
+                    btn.addEventListener('click', actionHandler);
+                }
+            }, 0);
+        }
+
+        if (secondaryActionHandler && typeof secondaryActionHandler === 'function') {
+            setTimeout(function () {
+                var btn = document.querySelector('[data-empty-secondary-action="true"]:not([data-bound])');
+                if (btn) {
+                    btn.setAttribute('data-bound', 'true');
+                    btn.addEventListener('click', secondaryActionHandler);
+                }
+            }, 0);
+        }
+
+        return html;
+    }
+
+    /**
+     * 生成错误状态 HTML
+     * @param {Object} options - 配置选项
+     * @param {string} [options.title] - 标题
+     * @param {string} [options.description] - 描述
+     * @param {string} [options.retryText] - 重试按钮文本
+     * @param {Function} [options.retryHandler] - 重试按钮点击回调
+     * @param {Error|string} [options.error] - 原始错误对象
+     * @returns {string} - HTML 字符串
+     */
+    function renderErrorState(options) {
+        options = options || {};
+        var title = options.title || '加载失败';
+        var description = options.description || '抱歉，加载过程中出现了问题，请稍后重试';
+        var retryText = options.retryText || '重新加载';
+        var retryHandler = options.retryHandler || null;
+        var error = options.error || null;
+
+        var errorDetail = '';
+        if (error) {
+            var errorMsg = typeof error === 'string' ? error : (error.message || '');
+            if (errorMsg) {
+                errorDetail =
+                    '<div class="empty-state-error-detail text-[11px] text-fg-tertiary mt-2 p-2 bg-bg-subtle rounded-lg text-left max-w-xs overflow-x-auto">' +
+                    '<code>' + escapeHtml(errorMsg) + '</code>' +
+                    '</div>';
+            }
+        }
+
+        var retryHtml = '';
+        if (retryText) {
+            var handlerAttr = retryHandler ? 'data-error-retry="true"' : '';
+            retryHtml =
+                '<div class="empty-state-action">' +
+                '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1.5" ' + handlerAttr + '>' +
+                '<iconify-icon icon="mdi:refresh" class="text-sm"></iconify-icon>' +
+                escapeHtml(retryText) +
+                '</button>' +
+                '</div>';
+        }
+
+        var html =
+            '<div class="empty-state error-state">' +
+            '<div class="empty-state-icon error">' +
+            '<iconify-icon icon="mdi:alert-circle-outline"></iconify-icon>' +
+            '</div>' +
+            '<div class="empty-state-title">' + escapeHtml(title) + '</div>' +
+            '<div class="empty-state-desc">' + escapeHtml(description) + '</div>' +
+            errorDetail +
+            retryHtml +
+            '</div>';
+
+        if (retryHandler && typeof retryHandler === 'function') {
+            setTimeout(function () {
+                var btn = document.querySelector('[data-error-retry="true"]:not([data-bound])');
+                if (btn) {
+                    btn.setAttribute('data-bound', 'true');
+                    btn.addEventListener('click', retryHandler);
+                }
+            }, 0);
+        }
+
+        return html;
+    }
+
+    /**
+     * 生成骨架屏 HTML
+     * @param {Object} options - 配置选项
+     * @param {string} [options.type='list'] - 类型: 'list' | 'card' | 'detail'
+     * @param {number} [options.count=5] - 数量
+     * @returns {string} - HTML 字符串
+     */
+    function renderSkeleton(options) {
+        options = options || {};
+        var type = options.type || 'list';
+        var count = options.count || 5;
+        if (count < 1) count = 1;
+
+        return createSkeleton(type, count);
+    }
+
+    /**
      * 创建骨架屏组件
      * @param {string} type - 骨架屏类型: 'list' | 'card' | 'table' | 'text'
      * @param {number} [count=1] - 数量
@@ -1875,6 +2073,9 @@
         showPrompt: showPrompt,
         createEmptyState: createEmptyState,
         createSkeleton: createSkeleton,
+        renderEmptyState: renderEmptyState,
+        renderErrorState: renderErrorState,
+        renderSkeleton: renderSkeleton,
         showPageLoading: showPageLoading,
         hidePageLoading: hidePageLoading,
         setButtonLoading: setButtonLoading,

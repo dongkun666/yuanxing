@@ -160,7 +160,22 @@
 
         if (filtered.length === 0) {
             container.innerHTML = '';
-            if (emptyEl) emptyEl.classList.remove('hidden');
+            if (emptyEl) {
+                if (typeof Utils !== 'undefined' && Utils.renderEmptyState) {
+                    emptyEl.innerHTML = Utils.renderEmptyState({
+                        type: 'default',
+                        icon: 'mdi:check-circle-outline',
+                        iconColor: 'success',
+                        title: '所有事项已处理完毕',
+                        description: '太棒了！你已完成全部待办事项，继续保持高效工作',
+                        actionText: '新建提醒',
+                        actionHandler: function () { switchView('deadline'); },
+                        secondaryActionText: '查看日程',
+                        secondaryActionHandler: function () { switchView('schedule'); }
+                    });
+                }
+                emptyEl.classList.remove('hidden');
+            }
         } else {
             if (emptyEl) emptyEl.classList.add('hidden');
             container.innerHTML =

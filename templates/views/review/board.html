@@ -93,8 +93,8 @@
   <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
 
     <!-- ============ 总览卡片 (4 张) ============ -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5" data-animate-container>
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up" data-stagger-group="summary-cards" data-stagger-index="0" data-delay="0">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">总评分行</span>
           <iconify-icon icon="mdi:counter" class="text-brand text-lg"></iconify-icon>
@@ -110,7 +110,7 @@
         <p id="board-completion" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
         <p class="text-[10px] text-fg-tertiary mt-1"><span id="board-evaluations">0</span> / 25 条评估</p>
       </div>
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up" data-stagger-group="summary-cards" data-stagger-index="2" data-delay="0">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">综合评分</span>
           <iconify-icon icon="mdi:star-four-points-outline" class="text-warning text-lg"></iconify-icon>
@@ -118,7 +118,7 @@
         <p id="board-rubric-score" class="text-2xl md:text-3xl font-bold text-fg-primary score-number">—</p>
         <p class="text-[10px] text-fg-tertiary mt-1">/ 5.0 (门槛 4.0)</p>
       </div>
-      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in">
+      <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 fade-in" data-animate="fade-in-up" data-stagger-group="summary-cards" data-stagger-index="3" data-delay="0">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] text-fg-tertiary font-medium">律师问题</span>
           <iconify-icon icon="mdi:comment-question-outline" class="text-ai text-lg"></iconify-icon>
@@ -129,7 +129,7 @@
     </div>
 
     <!-- ============ 5 维度均值对比卡 ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.05">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold flex items-center gap-1.5">
           <iconify-icon icon="mdi:chart-bar" class="text-brand"></iconify-icon>
@@ -143,7 +143,7 @@
     </div>
 
     <!-- ============ 5 律师 × 5 合同 评分矩阵 ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.1">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold flex items-center gap-1.5">
           <iconify-icon icon="mdi:grid" class="text-brand"></iconify-icon>
@@ -159,7 +159,7 @@
     </div>
 
     <!-- ============ 律师卡片 (5 张) ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.15">
       <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
         <iconify-icon icon="mdi:account-tie" class="text-brand"></iconify-icon>
         5 律师评审概览
@@ -170,7 +170,7 @@
     </div>
 
     <!-- ============ 合同评分条形图 (5 合同) ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.2">
       <h3 class="text-sm font-semibold mb-3 flex items-center gap-1.5">
         <iconify-icon icon="mdi:file-document-multiple-outline" class="text-brand"></iconify-icon>
         5 合同平均分对比
@@ -181,7 +181,7 @@
     </div>
 
     <!-- ============ 律师问题流 ============ -->
-    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.25">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold flex items-center gap-1.5">
           <iconify-icon icon="mdi:comment-question-outline" class="text-ai"></iconify-icon>
@@ -198,7 +198,7 @@
     </div>
 
     <!-- ============ PRD v1.0 自动反馈 ============ -->
-    <div class="bg-gradient-to-br from-ai/5 to-brand/5 rounded-lg border border-ai/20 p-4 md:p-5 mb-5 fade-in">
+    <div class="bg-gradient-to-br from-ai/5 to-brand/5 rounded-lg border border-ai/20 p-4 md:p-5 mb-5 fade-in" data-animate="fade-in-up" data-delay="0.3">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-sm font-semibold flex items-center gap-1.5">
           <iconify-icon icon="mdi:file-document-edit-outline" class="text-ai"></iconify-icon>

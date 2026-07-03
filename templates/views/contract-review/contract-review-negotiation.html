@@ -64,7 +64,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
     </div>
 
     <!-- ============ 风险条 (顶部) ============ -->
-    <div class="px-6 py-3 bg-gradient-to-r from-danger-tint via-warning-tint to-brand-tint border-b border-bg-border flex-shrink-0">
+    <div class="px-6 py-3 bg-gradient-to-r from-danger-tint via-warning-tint to-brand-tint border-b border-bg-border flex-shrink-0" data-animate="fade-in-up" data-delay="0">
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-1.5">
           <span class="w-2.5 h-2.5 rounded-full bg-danger"></span>
@@ -96,7 +96,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <!-- ============ 左 4 栏: 策略导航 (4 大策略) ============ -->
         <div class="col-span-4 space-y-3">
           <!-- 策略总览 -->
-          <div class="bg-white rounded-md border border-bg-border">
+          <div class="bg-white rounded-md border border-bg-border" data-animate="fade-in-up" data-delay="0.05">
             <div class="px-4 py-3 border-b border-bg-border">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <iconify-icon class="text-ai" icon="mdi:strategy"></iconify-icon>
@@ -139,7 +139,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 策略总览元信息 -->
-          <div class="bg-gradient-to-br from-ai/10 to-brand-tint3 rounded-md p-4 border border-ai/20">
+          <div class="bg-gradient-to-br from-ai/10 to-brand-tint3 rounded-md p-4 border border-ai/20" data-animate="fade-in-up" data-delay="0.1">
             <div class="flex items-center gap-2 mb-2">
               <iconify-icon icon="mdi:information" class="text-ai"></iconify-icon>
               <h4 class="font-semibold text-sm">策略概览</h4>
@@ -158,7 +158,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </div>
 
           <!-- 强制提醒 -->
-          <div class="bg-warning-tint border-l-4 border-warning rounded-md p-3 text-xs leading-relaxed text-fg-secondary">
+          <div class="bg-warning-tint border-l-4 border-warning rounded-md p-3 text-xs leading-relaxed text-fg-secondary" data-animate="fade-in-up" data-delay="0.15">
             <div class="flex items-center gap-1.5 font-semibold text-warning mb-1">
               <iconify-icon icon="mdi:alert"></iconify-icon> 立场感知提示
             </div>
@@ -170,7 +170,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
         <div class="col-span-8 space-y-4">
 
           <!-- 1. 优先谈判条款 -->
-          <section id="priority" class="bg-white rounded-md shadow-card">
+          <section id="priority" class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.1">
             <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">1</span>
@@ -316,7 +316,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </section>
 
           <!-- 2. 谈判筹码 -->
-          <section id="leverage" class="bg-white rounded-md shadow-card">
+          <section id="leverage" class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.15">
             <div class="px-4 py-3 border-b border-bg-border">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-brand text-white flex items-center justify-center text-xs font-bold">2</span>
@@ -359,7 +359,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </section>
 
           <!-- 3. 红线条款 -->
-          <section id="redline" class="bg-white rounded-md shadow-card border-l-4 border-danger">
+          <section id="redline" class="bg-white rounded-md shadow-card border-l-4 border-danger" data-animate="fade-in-up" data-delay="0.2">
             <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <span class="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center text-xs font-bold">3</span>
@@ -389,7 +389,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </section>
 
           <!-- 4. 立场建议 (乙方专属) -->
-          <section id="stance" class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20">
+          <section id="stance" class="bg-gradient-to-br from-ai/10 via-brand-tint3 to-brand-tint2 rounded-md p-4 border border-ai/20" data-animate="fade-in-up" data-delay="0.25">
             <div class="flex items-center gap-2 mb-3">
               <span class="w-6 h-6 rounded-full bg-ai text-white flex items-center justify-center text-xs font-bold">4</span>
               <h4 class="font-semibold text-sm">立场建议 (乙方专属)</h4>
@@ -442,7 +442,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
           </section>
 
           <!-- 历史案例 (类案检索) -->
-          <section class="bg-white rounded-md shadow-card">
+          <section class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.3">
             <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
               <h4 class="font-semibold text-sm flex items-center gap-2">
                 <iconify-icon class="text-ai" icon="mdi:history"></iconify-icon>

@@ -194,15 +194,26 @@
                 emptyState.classList.add('flex');
                 var searchInput = document.getElementById('archiveSearchInput');
                 var hasSearch = searchInput && searchInput.value.trim() !== '';
-                Utils.createEmptyState({
-                    preset: hasSearch ? 'no-result' : 'empty-list',
-                    icon: 'mdi:archive-search-outline',
-                    title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
-                    description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
-                    actionText: hasSearch ? '重置筛选' : '查看案件列表',
-                    actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); },
-                    container: emptyState
-                });
+                if (typeof Utils !== 'undefined' && Utils.renderEmptyState) {
+                    emptyState.innerHTML = Utils.renderEmptyState({
+                        type: hasSearch ? 'search' : 'default',
+                        icon: 'mdi:archive-search-outline',
+                        title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
+                        description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
+                        actionText: hasSearch ? '重置筛选' : '查看案件列表',
+                        actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); }
+                    });
+                } else if (typeof Utils !== 'undefined' && Utils.createEmptyState) {
+                    Utils.createEmptyState({
+                        preset: hasSearch ? 'no-result' : 'empty-list',
+                        icon: 'mdi:archive-search-outline',
+                        title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
+                        description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
+                        actionText: hasSearch ? '重置筛选' : '查看案件列表',
+                        actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); },
+                        container: emptyState
+                    });
+                }
             }
         } else {
             if (table) table.classList.remove('hidden');

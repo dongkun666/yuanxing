@@ -160,11 +160,14 @@ function filterClientList() {
     var gradeFilter = document.getElementById('clientGradeFilter');
     var typeFilter = document.getElementById('clientTypeFilter');
     var rows = document.querySelectorAll('#clientTableBody .client-table-row');
+    var table = document.getElementById('clientTable');
+    var emptyState = document.getElementById('clientEmptyState');
     var visibleCount = 0;
 
     var searchText = searchInput ? searchInput.value.toLowerCase() : '';
     var gradeValue = gradeFilter ? gradeFilter.value : '';
     var typeValue = typeFilter ? typeFilter.value : '';
+    var hasFilter = searchText || gradeValue || typeValue;
 
     rows.forEach(function (row) {
         var clientName = row.querySelector('td:first-child .text-fg-primary')?.textContent.toLowerCase() || '';
@@ -182,6 +185,44 @@ function filterClientList() {
             row.style.display = 'none';
         }
     });
+
+    if (visibleCount === 0 && emptyState) {
+        if (typeof Utils !== 'undefined' && Utils.renderEmptyState) {
+            if (hasFilter) {
+                emptyState.innerHTML = Utils.renderEmptyState({
+                    type: 'search',
+                    icon: 'mdi:account-search-outline',
+                    title: '没有找到匹配的客户',
+                    description: '请尝试调整搜索条件或筛选条件',
+                    actionText: '重置筛选',
+                    actionHandler: function () {
+                        if (searchInput) searchInput.value = '';
+                        if (gradeFilter) gradeFilter.value = '';
+                        if (typeFilter) typeFilter.value = '';
+                        filterClientList();
+                    }
+                });
+            } else {
+                emptyState.innerHTML = Utils.renderEmptyState({
+                    type: 'default',
+                    icon: 'mdi:account-group-outline',
+                    title: '暂无客户数据',
+                    description: '还没有添加任何客户，点击下方按钮开始您的第一个客户管理',
+                    actionText: '新建客户',
+                    actionHandler: showNewClientModal
+                });
+            }
+        }
+        if (table) table.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+    } else {
+        if (table) table.classList.remove('hidden');
+        if (emptyState) {
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+        }
+    }
 
     var countEl = document.getElementById('clientResultCount');
     if (countEl) {

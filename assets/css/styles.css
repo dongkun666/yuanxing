@@ -3924,3 +3924,236 @@ textarea.form-input {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* ===== 统一空状态 / 错误状态 / 骨架屏样式 ===== */
+
+/* 空状态容器 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    animation: emptyStateFadeIn 0.4s ease-out;
+}
+
+@keyframes emptyStateFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 空状态图标 */
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.empty-state-icon.empty-list {
+    background-color: var(--arco-gray-1);
+    color: var(--arco-gray-6);
+}
+
+.empty-state-icon.no-result {
+    background-color: var(--arco-blue-1);
+    color: var(--arco-blue-6);
+}
+
+.empty-state-icon.error {
+    background-color: #fff1f0;
+    color: var(--arco-danger);
+}
+
+.empty-state-icon.loading {
+    background-color: var(--arco-blue-1);
+    color: var(--arco-blue-6);
+}
+
+/* 空状态标题 */
+.empty-state-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--arco-gray-10);
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+/* 空状态描述 */
+.empty-state-desc,
+.empty-state-description {
+    font-size: 12px;
+    color: var(--arco-gray-6);
+    margin-bottom: 16px;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+/* 空状态操作按钮 */
+.empty-state-action {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* 错误状态（基于空状态扩展） */
+.error-state .empty-state-icon {
+    background-color: #fff1f0;
+    color: var(--arco-danger);
+}
+
+.error-state .empty-state-title {
+    color: var(--arco-danger);
+}
+
+/* 错误详情 */
+.empty-state-error-detail {
+    margin-bottom: 16px;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+}
+
+.empty-state-error-detail code {
+    font-family: inherit;
+    word-break: break-all;
+}
+
+/* 骨架屏容器 */
+.skeleton {
+    background-color: var(--arco-gray-1);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+    );
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 骨架项 */
+.skeleton-item {
+    background-color: var(--arco-gray-1);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+    );
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* 骨架线条 */
+.skeleton-line {
+    height: 12px;
+    margin-bottom: 8px;
+    background-color: var(--arco-gray-1);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+    );
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+.skeleton-line:last-child {
+    margin-bottom: 0;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+/* 深色模式适配 */
+[data-theme='dark'] .empty-state-icon.empty-list {
+    background-color: var(--color-bg-subtle);
+    color: var(--color-fg-tertiary);
+}
+
+[data-theme='dark'] .empty-state-icon.error {
+    background-color: rgba(245, 34, 45, 0.15);
+    color: var(--arco-danger);
+}
+
+[data-theme='dark'] .error-state .empty-state-icon {
+    background-color: rgba(245, 34, 45, 0.15);
+    color: var(--arco-danger);
+}
+
+[data-theme='dark'] .skeleton,
+[data-theme='dark'] .skeleton-item,
+[data-theme='dark'] .skeleton-line {
+    background-color: var(--color-bg-subtle);
+}
+
+[data-theme='dark'] .skeleton::before,
+[data-theme='dark'] .skeleton-item::before,
+[data-theme='dark'] .skeleton-line::before {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.08),
+        transparent
+    );
+}

@@ -326,18 +326,29 @@
         var slice = list.slice(start, end);
 
         if (slice.length === 0) {
-            container.innerHTML =
-                '<div class="flex flex-col items-center justify-center py-16 px-4">' +
-                '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center mb-4">' +
-                '<iconify-icon class="text-4xl text-blue-500/60" icon="mdi:file-search-outline"></iconify-icon>' +
-                '</div>' +
-                '<h4 class="text-base font-semibold text-fg-primary mb-1">未找到匹配的案例</h4>' +
-                '<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">请调整关键词或筛选条件后重试，或尝试其他搜索词</p>' +
-                '<button onclick="resetCasesDb()" class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5">' +
-                '<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>' +
-                '重置筛选' +
-                '</button>' +
-                '</div>';
+            if (typeof Utils !== 'undefined' && Utils.renderEmptyState) {
+                container.innerHTML = Utils.renderEmptyState({
+                    type: 'search',
+                    icon: 'mdi:file-search-outline',
+                    title: '未找到匹配的案例',
+                    description: '请调整关键词或筛选条件后重试，或尝试其他搜索词',
+                    actionText: '重置筛选',
+                    actionHandler: resetCasesDb
+                });
+            } else {
+                container.innerHTML =
+                    '<div class="flex flex-col items-center justify-center py-16 px-4">' +
+                    '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center mb-4">' +
+                    '<iconify-icon class="text-4xl text-blue-500/60" icon="mdi:file-search-outline"></iconify-icon>' +
+                    '</div>' +
+                    '<h4 class="text-base font-semibold text-fg-primary mb-1">未找到匹配的案例</h4>' +
+                    '<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">请调整关键词或筛选条件后重试，或尝试其他搜索词</p>' +
+                    '<button onclick="resetCasesDb()" class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5">' +
+                    '<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>' +
+                    '重置筛选' +
+                    '</button>' +
+                    '</div>';
+            }
         } else {
             container.innerHTML = slice.map(function(c, idx) { return renderCaseItem(c, start + idx); }).join('');
         }
