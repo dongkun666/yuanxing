@@ -4,6 +4,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#165DFF" name="theme-color"/>
+<meta content="LexPrime 元枢法智 - AI 赋能诉讼案件管理系统" name="description"/>
+<link rel="manifest" href="./manifest.json"/>
 <title>LexPrime 元枢法智 - AI 赋能诉讼案件管理系统</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23165DFF'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'%3E%E5%AE%AA%3C/text%3E%3C/svg%3E"/>
 <script>
@@ -387,71 +390,75 @@ window.Iconify.disableRemoteAPI = true;
 </button>
 </div>
 </nav>
-<!-- Phase 3 P0: API 客户端 + Auth - 在所有模块之前 -->
+<!-- Phase 3 P0: API 客户端 + Auth - 在所有模块之前 (关键依赖，同步加载) -->
 <script src="./assets/js/api.js?v=1"></script>
 <script src="./assets/js/auth.js?v=1"></script>
-<!-- IIFE 拆分 (2026-06-28) - 全局状态 + 路由必须先于业务模块加载 -->
+<!-- IIFE 拆分 (2026-06-28) - 全局状态 + 路由必须先于业务模块加载 (关键依赖，同步加载) -->
 <script src="./assets/js/app-state.js?v=18"></script>
 <script src="./assets/js/router.js?v=19"></script>
-<!-- 公共工具函数（必须在其他模块之前加载） -->
+<!-- 公共工具函数（必须在其他模块之前加载）(关键依赖，同步加载) -->
 <script src="./assets/js/utils.js?v=1"></script>
+<!-- 触摸手势处理（移动端优化核心模块）(关键依赖，同步加载) -->
+<script src="./assets/js/touch.js?v=1"></script>
+
+<!-- 业务模块 (使用 defer 延迟加载，DOM 解析完成后按顺序执行) -->
 <!-- GSAP 动画工具函数 -->
-<script src="./assets/js/animations.js?v=1"></script>
+<script src="./assets/js/animations.js?v=1" defer></script>
 <!-- 模块拆分 (按业务域) - 在主脚本之前加载 -->
 <!-- 案件模块 (2026-06-28 拆分自原 cases.js 56KB) -->
-<script src="./assets/js/cases-list.js?v=20"></script>
-<script src="./assets/js/cases-detail.js?v=20"></script>
-<script src="./assets/js/cases-tabs.js?v=20"></script>
-<script src="./assets/js/clients.js?v=1"></script>
-<script src="./assets/js/schedule.js?v=1"></script>
-<script src="./assets/js/knowledge.js?v=1"></script>
-<script src="./assets/js/ai.js?v=1"></script>
-<script src="./assets/js/templates.js?v=1"></script>
+<script src="./assets/js/cases-list.js?v=20" defer></script>
+<script src="./assets/js/cases-detail.js?v=20" defer></script>
+<script src="./assets/js/cases-tabs.js?v=20" defer></script>
+<script src="./assets/js/clients.js?v=1" defer></script>
+<script src="./assets/js/schedule.js?v=1" defer></script>
+<script src="./assets/js/knowledge.js?v=1" defer></script>
+<script src="./assets/js/ai.js?v=1" defer></script>
+<script src="./assets/js/templates.js?v=1" defer></script>
 <!-- 账号模块 (2026-06-28 拆分自原 account.js 44KB) -->
-<script src="./assets/js/account-notifications.js?v=19"></script>
-<script src="./assets/js/account-subscription.js?v=19"></script>
-<script src="./assets/js/account-profile.js?v=19"></script>
+<script src="./assets/js/account-notifications.js?v=19" defer></script>
+<script src="./assets/js/account-subscription.js?v=19" defer></script>
+<script src="./assets/js/account-profile.js?v=19" defer></script>
 <!-- 主脚本 (helper 函数 + 案件/客户/模板配置) -->
-<script src="./assets/js/script.js?v=30"></script>
-<!-- 启动流程 (必须最后 - 依赖 Auth/AppState/router/script 全部就绪) -->
-<script src="./assets/js/bootstrap.js?v=18"></script>
+<script src="./assets/js/script.js?v=30" defer></script>
 <!-- Phase 3.1 (2026-06-28): 法律期限计算器 -->
-<script src="./assets/js/deadline.js?v=21"></script>
+<script src="./assets/js/deadline.js?v=21" defer></script>
 <!-- Phase 3.2-1 (2026-06-28): 案件进度跟踪 -->
-<script src="./assets/js/case-progress.js?v=21"></script>
+<script src="./assets/js/case-progress.js?v=21" defer></script>
 <!-- Phase 3.2-2 (2026-06-28): AI 文书生成 -->
-<script src="./assets/js/ai-doc.js?v=21"></script>
+<script src="./assets/js/ai-doc.js?v=21" defer></script>
 <!-- 附件列表模块 -->
-<script src="./assets/js/attachment-list.js?v=1"></script>
+<script src="./assets/js/attachment-list.js?v=1" defer></script>
 <!-- 关注列表模块 -->
-<script src="./assets/js/attention-list.js?v=1"></script>
+<script src="./assets/js/attention-list.js?v=1" defer></script>
 <!-- 归档管理模块 -->
-<script src="./assets/js/archive.js?v=1"></script>
+<script src="./assets/js/archive.js?v=1" defer></script>
 <!-- 会员中心模块 -->
-<script src="./assets/js/member-center.js?v=1"></script>
+<script src="./assets/js/member-center.js?v=1" defer></script>
 <!-- 律所管理模块 -->
-<script src="./assets/js/firm.js?v=1"></script>
+<script src="./assets/js/firm.js?v=1" defer></script>
 <!-- 订单记录模块 -->
-<script src="./assets/js/orders.js?v=1"></script>
+<script src="./assets/js/orders.js?v=1" defer></script>
 <!-- 案件动态模块 -->
-<script src="./assets/js/case-dynamics.js?v=1"></script>
+<script src="./assets/js/case-dynamics.js?v=1" defer></script>
 <!-- 企业信息库模块 -->
-<script src="./assets/js/companies-db.js?v=1"></script>
+<script src="./assets/js/companies-db.js?v=1" defer></script>
 <!-- W5 (2026-06-29): Skill 2 合同风险审查 (lex-coder) -->
-    <script src="./assets/js/contract-review.js?v=3"></script>
+<script src="./assets/js/contract-review.js?v=3" defer></script>
 <!-- W6 (2026-06-29): 律师评审 Score App (lex-coder) - 移动端评分 + 5 测试合同 -->
-<script src="./assets/js/score-app.js?v=1"></script>
+<script src="./assets/js/score-app.js?v=1" defer></script>
 <!-- 司法观点库 (与知识库集成) -->
-<script src="./assets/js/judicial-data.js?v=22"></script>
-<script src="./assets/js/judicial.js?v=22"></script>
+<script src="./assets/js/judicial-data.js?v=22" defer></script>
+<script src="./assets/js/judicial.js?v=22" defer></script>
 <!-- W30 (2026-07-01 lex-coder) Phase 6.1 Marketplace UI (复用 W29 1b07d88 backend 7 API) -->
-<script src="./assets/js/marketplace.js?v=1"></script>
+<script src="./assets/js/marketplace.js?v=1" defer></script>
 <!-- 执行案件查询模块 -->
-<script src="./assets/js/zhixing.js?v=1"></script>
+<script src="./assets/js/zhixing.js?v=1" defer></script>
 <!-- 案例数据库 (检索/排序/分页) -->
-<script src="./assets/js/cases-db.js?v=1"></script>
+<script src="./assets/js/cases-db.js?v=1" defer></script>
 <!-- 法律法规库 (检索/分类筛选/详情) -->
-<script src="./assets/js/laws-db.js?v=1"></script>
+<script src="./assets/js/laws-db.js?v=1" defer></script>
+<!-- 启动流程 (必须最后 - 依赖 Auth/AppState/router/script 全部就绪) -->
+<script src="./assets/js/bootstrap.js?v=18" defer></script>
 <!-- 预加载弹窗模板 -->
 <script>
 (function() {

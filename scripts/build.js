@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const zlib = require('zlib');
 const CleanCSS = require('clean-css');
 const { minify: terserMinify } = require('terser');
 
@@ -9,6 +10,10 @@ const ASSETS_CSS_DIR = path.join(ROOT_DIR, 'assets', 'css');
 const ASSETS_JS_DIR = path.join(ROOT_DIR, 'assets', 'js');
 const JS_DIST_DIR = path.join(ASSETS_JS_DIR, 'dist');
 const CSS_DIST_DIR = path.join(ASSETS_CSS_DIR, 'dist');
+
+const ENABLE_GZIP = true;
+const ENABLE_BROTLI = true;
+const ENABLE_CRITICAL_INLINE = true;
 
 function formatBytes(bytes) {
   return (bytes / 1024).toFixed(2) + ' KB';
@@ -123,6 +128,113 @@ function getFileHash(filePath) {
   return crypto.createHash('md5').update(content).digest('hex').slice(0, 8);
 }
 
+function compressFile(inputPath) {
+  if (!fs.existsSync(inputPath)) return;
+
+  const content = fs.readFileSync(inputPath);
+  const originalSize = content.length;
+
+  if (ENABLE_GZIP) {
+    const gzipContent = zlib.gzipSync(content, { level: zlib.constants.Z_BEST_COMPRESSION });
+    fs.writeFileSync(inputPath + '.gz', gzipContent);
+    console.log(`    gzip:    ${formatBytes(gzipContent.length)} (${((1 - gzipContent.length / originalSize) * 100).toFixed(1)}%)`);
+  }
+
+  if (ENABLE_BROTLI) {
+    const brotliContent = zlib.brotliCompressSync(content, {
+      params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11 }
+    });
+    fs.writeFileSync(inputPath + '.br', brotliContent);
+    console.log(`    brotli:  ${formatBytes(brotliContent.length)} (${((1 - brotliContent.length / originalSize) * 100).toFixed(1)}%)`);
+  }
+}
+
+function inlineCriticalResources(html) {
+  if (!ENABLE_CRITICAL_INLINE) return html;
+
+  const criticalJsFiles = ['api.js', 'auth.js', 'app-state.js', 'router.js', 'utils.js'];
+  const criticalCssFiles = ['tailwind.min.css'];
+
+  let result = html;
+
+  criticalJsFiles.forEach(function (file) {
+    const filePath = path.join(JS_DIST_DIR, file);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const scriptTag = '<script src="./assets/js/dist/' + file + '[^"]*"></script>';
+      const regex = new RegExp(scriptTag, 'g');
+      result = result.replace(regex, '<script>' + content + '</script>');
+    }
+  });
+
+  criticalCssFiles.forEach(function (file) {
+    const filePath = path.join(CSS_DIST_DIR, file);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const linkTag = '<link rel="stylesheet" href="./assets/css/dist/' + file + '[^"]*">';
+      const regex = new RegExp(linkTag, 'g');
+      result = result.replace(regex, '<style>' + content + '</style>');
+    }
+  });
+
+  return result;
+}
+
+function addPreloadLinks(html) {
+  const preloadResources = [
+    { type: 'script', href: './assets/js/dist/script.js' },
+    { type: 'script', href: './assets/js/dist/cases-list.js' },
+    { type: 'script', href: './assets/js/dist/cases-detail.js' },
+    { type: 'style', href: './assets/css/dist/styles.min.css' },
+    { type: 'style', href: './assets/css/dist/marketplace.min.css' },
+    { type: 'font', href: './assets/fonts/Inter-Regular.woff2', as: 'font' }
+  ];
+
+  let preloadHtml = '';
+  preloadResources.forEach(function (res) {
+    const asAttr = res.as ? 'as="' + res.as + '"' : '';
+    preloadHtml += '<link rel="preload" ' + asAttr + ' href="' + res.href + '">\n';
+  });
+
+  const prefetchResources = [
+    { type: 'script', href: './assets/js/dist/schedule.js' },
+    { type: 'script', href: './assets/js/dist/knowledge.js' },
+    { type: 'script', href: './assets/js/dist/marketplace.js' }
+  ];
+
+  prefetchResources.forEach(function (res) {
+    preloadHtml += '<link rel="prefetch" href="' + res.href + '">\n';
+  });
+
+  return html.replace('<!-- Tailwind CSS -->', preloadHtml + '<!-- Tailwind CSS -->');
+}
+
+function compressDistFiles() {
+  console.log('=== 资源压缩 ===');
+
+  const jsFiles = fs.readdirSync(JS_DIST_DIR).filter(function (file) {
+    return file.endsWith('.js');
+  });
+
+  jsFiles.forEach(function (file) {
+    const filePath = path.join(JS_DIST_DIR, file);
+    console.log(`  ${file}:`);
+    compressFile(filePath);
+  });
+
+  const cssFiles = fs.readdirSync(CSS_DIST_DIR).filter(function (file) {
+    return file.endsWith('.css');
+  });
+
+  cssFiles.forEach(function (file) {
+    const filePath = path.join(CSS_DIST_DIR, file);
+    console.log(`  ${file}:`);
+    compressFile(filePath);
+  });
+
+  console.log();
+}
+
 // 生成生产版 index.html: 把 JS/CSS 引用切换到 dist 压缩产物 + 内容哈希
 // 保留 index.html 作为开发版, 输出 index.prod.html 供部署使用
 function buildProdHtml() {
@@ -151,22 +263,30 @@ function buildProdHtml() {
 
   // 替换自定义 CSS: styles.css / marketplace.css -> dist/*.min.css
   const customCssFiles = ['styles.css', 'marketplace.css'];
-  for (const file of customCssFiles) {
+  customCssFiles.forEach(function (file) {
     const minName = file.replace('.css', '.min.css');
     const distPath = path.join(CSS_DIST_DIR, minName);
-    if (!fs.existsSync(distPath)) continue;
+    if (!fs.existsSync(distPath)) return;
     const hash = getFileHash(distPath);
     const regex = new RegExp(
       '\\.\\/assets\\/css\\/' + file.replace('.', '\\.') + '(\\?v=\\d+)?',
       'g'
     );
     html = html.replace(regex, './assets/css/dist/' + minName + '?v=' + hash);
-  }
+  });
+
+  // 添加资源预加载和预获取
+  html = addPreloadLinks(html);
+
+  // 内联关键资源
+  html = inlineCriticalResources(html);
 
   fs.writeFileSync(outFile, html);
   console.log('=== 生产 HTML ===');
   console.log('  index.html -> index.prod.html');
   console.log('  切换: JS/CSS 全部指向 dist/ 压缩产物 + 内容哈希');
+  console.log('  优化: 添加 preload/prefetch 资源预加载');
+  console.log('  优化: 关键 CSS/JS 内联到 HTML');
   console.log('  部署时: 用 index.prod.html 替换 index.html');
   console.log();
 }
@@ -178,6 +298,7 @@ async function main() {
     await buildTailwind();
     await buildCustomCSS();
     await buildJS();
+    compressDistFiles();
     buildProdHtml();
     console.log('构建完成！');
   } catch (err) {

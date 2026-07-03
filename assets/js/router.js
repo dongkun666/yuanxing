@@ -15,6 +15,119 @@
     // ===== 视图缓存管理 =====
     var viewCache = {};
 
+    // ===== 脚本加载缓存 (避免重复加载) =====
+    var scriptCache = {};
+    var scriptLoading = {};
+
+    /**
+     * 动态加载脚本文件，支持缓存和回调
+     * @param {string} url - 脚本URL
+     * @param {Function} callback - 加载完成回调
+     */
+    function loadScript(url, callback) {
+        if (scriptCache[url]) {
+            if (callback) callback();
+            return;
+        }
+
+        if (scriptLoading[url]) {
+            var checkLoaded = setInterval(function () {
+                if (scriptCache[url]) {
+                    clearInterval(checkLoaded);
+                    if (callback) callback();
+                }
+            }, 50);
+            return;
+        }
+
+        scriptLoading[url] = true;
+
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+
+        script.onload = function () {
+            scriptCache[url] = true;
+            scriptLoading[url] = false;
+            if (callback) callback();
+        };
+
+        script.onerror = function () {
+            scriptLoading[url] = false;
+            console.error('[loadScript] 加载脚本失败:', url);
+            if (callback) callback();
+        };
+
+        document.head.appendChild(script);
+    }
+
+    /**
+     * 视图对应的脚本文件映射（按需加载）
+     */
+    var viewScriptMap = {
+        'case-list': './assets/js/cases-list.js',
+        'case-detail': './assets/js/cases-detail.js',
+        'cases-tabs': './assets/js/cases-tabs.js',
+        client: './assets/js/clients.js',
+        'client-detail': './assets/js/clients.js',
+        'schedule-calendar': './assets/js/schedule.js',
+        'schedule-list': './assets/js/schedule.js',
+        knowledge: './assets/js/knowledge.js',
+        ai: './assets/js/ai.js',
+        template: './assets/js/templates.js',
+        notifications: './assets/js/account-notifications.js',
+        subscription: './assets/js/account-subscription.js',
+        'member-center': './assets/js/member-center.js',
+        'account-settings': './assets/js/account-profile.js',
+        archive: './assets/js/archive.js',
+        deadline: './assets/js/deadline.js',
+        zhixing: './assets/js/zhixing.js',
+        'case-progress': './assets/js/case-progress.js',
+        'ai-doc': './assets/js/ai-doc.js',
+        firm: './assets/js/firm.js',
+        'cases-db': './assets/js/cases-db.js',
+        'laws-db': './assets/js/laws-db.js',
+        'companies-db': './assets/js/companies-db.js',
+        'contract-review-upload': './assets/js/contract-review.js',
+        'contract-review-result': './assets/js/contract-review.js',
+        'contract-review-suggestion': './assets/js/contract-review.js',
+        'contract-review-negotiation': './assets/js/contract-review.js',
+        'contract-review-export': './assets/js/contract-review.js',
+        'review-score-app': './assets/js/score-app.js',
+        'review-board': './assets/js/score-app.js',
+        backlog: './assets/js/schedule.js',
+        'doc-gen': './assets/js/ai-doc.js',
+        'doc-review': './assets/js/ai-doc.js',
+        founding: './assets/js/ai-doc.js',
+        dashboard: './assets/js/script.js',
+        'marketplace-lawyers': './assets/js/marketplace.js',
+        'marketplace-cases': './assets/js/marketplace.js',
+        'marketplace-referrals': './assets/js/marketplace.js',
+        'marketplace-cross-border': './assets/js/marketplace.js',
+        'marketplace-metrics': './assets/js/marketplace.js',
+        'case-dynamics': './assets/js/case-dynamics.js',
+        'attention-list': './assets/js/attention-list.js',
+        'attachment-list': './assets/js/attachment-list.js',
+        orders: './assets/js/orders.js',
+        onboarding: './assets/js/script.js',
+        pricing: './assets/js/script.js'
+    };
+
+    /**
+     * 加载视图所需的脚本文件
+     * @param {string} viewId - 视图ID
+     * @param {Function} callback - 加载完成回调
+     */
+    function loadViewScripts(viewId, callback) {
+        var scriptUrl = viewScriptMap[viewId];
+        if (!scriptUrl) {
+            if (callback) callback();
+            return;
+        }
+
+        loadScript(scriptUrl, callback);
+    }
+
     // ===== 视图文件名映射 =====
     var viewFileMap = {
         login: 'login.html',
@@ -334,51 +447,53 @@
             Utils.closeAllModals();
         }
 
-        var target = document.getElementById('view-' + viewId);
-        if (target) {
-            document.querySelectorAll('.view-content').forEach(function (view) {
-                view.classList.add('hidden');
-            });
-            target.classList.remove('hidden');
-            if (viewId === 'schedule-list' || viewId === 'attention-list') {
-                target.classList.add('flex-col');
-            }
-            initView(viewId);
-            initViewAnimations(target);
-        } else {
-            loadView(viewId, function () {
-                var newTarget = document.getElementById('view-' + viewId);
-                if (newTarget) {
-                    document.querySelectorAll('.view-content').forEach(function (view) {
-                        view.classList.add('hidden');
-                    });
-                    newTarget.classList.remove('hidden');
-                    if (viewId === 'schedule-list' || viewId === 'attention-list') {
-                        newTarget.classList.add('flex-col');
-                    }
-                    initView(viewId);
-                    initViewAnimations(newTarget);
+        loadViewScripts(viewId, function () {
+            var target = document.getElementById('view-' + viewId);
+            if (target) {
+                document.querySelectorAll('.view-content').forEach(function (view) {
+                    view.classList.add('hidden');
+                });
+                target.classList.remove('hidden');
+                if (viewId === 'schedule-list' || viewId === 'attention-list') {
+                    target.classList.add('flex-col');
                 }
-            });
-        }
+                initView(viewId);
+                initViewAnimations(target);
+            } else {
+                loadView(viewId, function () {
+                    var newTarget = document.getElementById('view-' + viewId);
+                    if (newTarget) {
+                        document.querySelectorAll('.view-content').forEach(function (view) {
+                            view.classList.add('hidden');
+                        });
+                        newTarget.classList.remove('hidden');
+                        if (viewId === 'schedule-list' || viewId === 'attention-list') {
+                            newTarget.classList.add('flex-col');
+                        }
+                        initView(viewId);
+                        initViewAnimations(newTarget);
+                    }
+                });
+            }
 
-        if (el) {
-            document.querySelectorAll('.sidebar-item').forEach(function (item) {
-                item.classList.remove('active');
-            });
-            el.classList.add('active');
-        }
+            if (el) {
+                document.querySelectorAll('.sidebar-item').forEach(function (item) {
+                    item.classList.remove('active');
+                });
+                el.classList.add('active');
+            }
 
-        if (viewId === 'workstation') {
-            setTimeout(function () {
-                if (typeof window.updateTodayScheduleBadge === 'function') window.updateTodayScheduleBadge();
-                if (typeof window.renderTodayScheduleDateControls === 'function')
-                    window.renderTodayScheduleDateControls();
-                if (typeof window.renderTodaySchedule === 'function') window.renderTodaySchedule();
-            }, 50);
-        }
+            if (viewId === 'workstation') {
+                setTimeout(function () {
+                    if (typeof window.updateTodayScheduleBadge === 'function') window.updateTodayScheduleBadge();
+                    if (typeof window.renderTodayScheduleDateControls === 'function')
+                        window.renderTodayScheduleDateControls();
+                    if (typeof window.renderTodaySchedule === 'function') window.renderTodaySchedule();
+                }, 50);
+            }
 
-        updateMobileTab(viewId);
+            updateMobileTab(viewId);
+        });
     }
 
     /**
@@ -465,8 +580,11 @@
     // ===== 双绑定 (globalThis) =====
     globalThis.viewCache = viewCache;
     globalThis.viewFileMap = viewFileMap;
+    globalThis.scriptCache = scriptCache;
     globalThis.isDevMode = isDevMode;
     globalThis.loadView = loadView;
+    globalThis.loadScript = loadScript;
+    globalThis.loadViewScripts = loadViewScripts;
     globalThis.switchView = switchView;
     globalThis.switchSidebarTab = switchSidebarTab;
 

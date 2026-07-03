@@ -11,6 +11,11 @@
 (function () {
     'use strict';
 
+    // ===== 移动端优化初始化 =====
+    if (typeof Utils !== 'undefined' && Utils.initMobileOptimizations) {
+        Utils.initMobileOptimizations();
+    }
+
     // ===== 案件列表筛选 =====
     var caseCurrentPage = 1;
 

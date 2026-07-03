@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#165DFF" name="theme-color"/>
+<title>LexPrime - 离线模式</title>
+<link rel="stylesheet" href="./assets/css/tailwind.css">
+<link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body class="h-screen flex flex-col items-center justify-center bg-bg">
+<div class="text-center max-w-md px-6">
+    <div class="w-20 h-20 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-fg-primary mb-2">网络连接已断开</h1>
+    <p class="text-fg-secondary mb-6">您当前处于离线状态，请检查网络连接后重试。</p>
+    <div class="bg-bg-subtle rounded-lg p-4 mb-6">
+        <p class="text-sm text-fg-tertiary">
+            <span class="inline-block w-2 h-2 bg-success rounded-full mr-2"></span>
+            已缓存的数据仍然可用
+        </p>
+        <p class="text-sm text-fg-tertiary mt-1">
+            <span class="inline-block w-2 h-2 bg-info rounded-full mr-2"></span>
+            重新连接后将自动同步更新
+        </p>
+    </div>
+    <button class="w-full bg-brand text-white font-medium py-3 px-6 rounded-lg hover:bg-brand-hover transition-colors" onclick="location.reload()">
+        重新加载
+    </button>
+</div>
+</body>
+</html>

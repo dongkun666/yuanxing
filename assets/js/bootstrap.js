@@ -7,11 +7,15 @@
  *       switchView (router.js), renderAppVersion / updateNotificationBadgeState
  *
  * 暴露: bootstrapApp, renderAppVersion, updateNotificationBadgeState,
- *       recordError, initLoginView
+ *       recordError, initLoginView, registerServiceWorker, checkSWUpdate,
+ *       isOnline, showUpdateNotification
  */
 
 (function () {
     'use strict';
+
+    var swRegistration = null;
+    var updateAvailable = false;
 
     /**
      * 应用启动入口: 同步 Auth + 切初始 view + 通知红点
@@ -36,6 +40,9 @@
         if (typeof Utils !== 'undefined' && typeof Utils.initShortcuts === 'function') {
             Utils.initShortcuts();
         }
+
+        registerServiceWorker();
+        initOnlineStatus();
     }
 
     /**
@@ -166,6 +173,96 @@
         }
     }
     globalThis.initLoginView = initLoginView;
+
+    /**
+     * 注册 Service Worker
+     */
+    function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+                    swRegistration = registration;
+                    checkSWUpdate(registration);
+
+                    registration.addEventListener('updatefound', function() {
+                        var newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', function() {
+                            if (newWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    updateAvailable = true;
+                                    showUpdateNotification();
+                                }
+                            }
+                        });
+                    });
+                }).catch(function(error) {
+                    console.warn('Service Worker 注册失败:', error);
+                });
+            });
+        }
+    }
+
+    /**
+     * 检查 Service Worker 更新
+     */
+    function checkSWUpdate(registration) {
+        if (registration && registration.waiting) {
+            updateAvailable = true;
+            showUpdateNotification();
+        }
+    }
+
+    /**
+     * 显示更新通知
+     */
+    function showUpdateNotification() {
+        if (typeof showToast === 'function') {
+            showToast('应用已更新，请刷新页面以获取最新版本');
+        }
+    }
+
+    /**
+     * 获取当前在线状态
+     */
+    function isOnline() {
+        return typeof navigator !== 'undefined' && navigator.onLine;
+    }
+
+    /**
+     * 初始化在线状态监听
+     */
+    function initOnlineStatus() {
+        if (typeof navigator !== 'undefined') {
+            window.addEventListener('online', function() {
+                if (typeof showToast === 'function') {
+                    showToast('网络连接已恢复');
+                }
+            });
+
+            window.addEventListener('offline', function() {
+                if (typeof showToast === 'function') {
+                    showToast('网络连接已断开，已切换至离线模式');
+                }
+            });
+        }
+    }
+
+    /**
+     * 触发 Service Worker 更新
+     */
+    function triggerSWUpdate() {
+        if (swRegistration && swRegistration.waiting) {
+            swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            window.location.reload();
+        }
+    }
+
+    // ===== 双绑定 (Service Worker 相关) =====
+    globalThis.registerServiceWorker = registerServiceWorker;
+    globalThis.checkSWUpdate = checkSWUpdate;
+    globalThis.isOnline = isOnline;
+    globalThis.showUpdateNotification = showUpdateNotification;
+    globalThis.triggerSWUpdate = triggerSWUpdate;
 
     // ===== MutationObserver 监听 view-login 出现 =====
     if (document.body) {

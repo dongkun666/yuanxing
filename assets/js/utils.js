@@ -22,18 +22,28 @@
     /**
      * 防抖函数，延迟执行并在多次调用时只执行最后一次
      * @param {Function} fn - 需要防抖的函数
-     * @param {number} delay - 延迟时间（毫秒）
+     * @param {number} wait - 延迟时间（毫秒）
+     * @param {boolean} [immediate=false] - 是否立即执行
      * @returns {Function} - 防抖后的函数
      */
-    function debounce(fn, delay) {
+    function debounce(fn, wait, immediate) {
         var timer = null;
         return function () {
             var context = this;
             var args = arguments;
+            var callNow = immediate && !timer;
+
             clearTimeout(timer);
             timer = setTimeout(function () {
+                timer = null;
+                if (!immediate) {
+                    fn.apply(context, args);
+                }
+            }, wait);
+
+            if (callNow) {
                 fn.apply(context, args);
-            }, delay);
+            }
         };
     }
 
@@ -2058,6 +2068,203 @@
         });
     }
 
+    // ===== 移动端优化工具 =====
+
+    function isMobile() {
+        if (typeof window !== 'undefined' && window.matchMedia) {
+            return window.matchMedia('(max-width: 768px)').matches;
+        }
+        if (typeof navigator !== 'undefined') {
+            var ua = navigator.userAgent.toLowerCase();
+            return /android|iphone|ipad|ipod|blackberry|windows phone/i.test(ua);
+        }
+        return false;
+    }
+
+    function preventClickDelay() {
+        if (!('ontouchstart' in window)) return;
+
+        var lastTouchEnd = 0;
+        document.addEventListener('touchend', function (e) {
+            var now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        document.addEventListener('touchstart', function () {}, { passive: true });
+    }
+
+    function optimizeMobileScroll() {
+        if (!('ontouchstart' in window)) return;
+
+        var scrollContainers = document.querySelectorAll(
+            'body, .overflow-y-auto, .overflow-x-auto, .overflow-auto, #main-content, #sidebar'
+        );
+
+        scrollContainers.forEach(function (container) {
+            var hasTouchHandler = container.getAttribute('data-touch-optimized') === 'true';
+            if (hasTouchHandler) return;
+
+            container.setAttribute('data-touch-optimized', 'true');
+
+            container.addEventListener('touchstart', function () {}, { passive: true });
+            container.addEventListener('touchmove', function () {}, { passive: true });
+        });
+    }
+
+    function adjustForKeyboard() {
+        if (!('ontouchstart' in window)) return;
+
+        var originalBodyPadding = document.body.style.paddingBottom;
+
+        function handleResize() {
+            var viewportHeight = window.innerHeight;
+            var documentHeight = document.documentElement.clientHeight;
+            var keyboardHeight = documentHeight - viewportHeight;
+
+            if (keyboardHeight > 50) {
+                document.body.style.paddingBottom = keyboardHeight + 'px';
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.paddingBottom = originalBodyPadding;
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleResize);
+        } else {
+            window.addEventListener('resize', debounce(handleResize, 100));
+        }
+
+        document.addEventListener('focusin', function (e) {
+            var target = e.target;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+                setTimeout(function () {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+
+        document.addEventListener('focusout', function () {
+            setTimeout(function () {
+                document.body.style.paddingBottom = originalBodyPadding;
+                document.body.style.overflow = '';
+            }, 300);
+        });
+    }
+
+    function initMobileOptimizations() {
+        preventClickDelay();
+        optimizeMobileScroll();
+        adjustForKeyboard();
+    }
+
+    // ===== 图片懒加载 =====
+    var _lazyLoadObserver = null;
+
+    /**
+     * 初始化图片懒加载
+     * 为所有 img 标签添加 loading="lazy" 属性
+     * 使用 Intersection Observer API 实现视口外图片的懒加载
+     */
+    function initImageLazyLoad() {
+        var images = document.querySelectorAll('img');
+
+        images.forEach(function (img) {
+            if (!img.hasAttribute('loading')) {
+                img.setAttribute('loading', 'lazy');
+            }
+
+            if (img.dataset.src && !img.src) {
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 0.3s ease-in';
+            }
+        });
+
+        if ('IntersectionObserver' in window) {
+            _lazyLoadObserver = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        var img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+                        img.onload = function () {
+                            img.style.opacity = '1';
+                        };
+                        _lazyLoadObserver.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px',
+                threshold: 0.1
+            });
+
+            images.forEach(function (img) {
+                if (img.dataset.src) {
+                    _lazyLoadObserver.observe(img);
+                }
+            });
+        } else {
+            var lazyLoadHandler = throttle(function () {
+                images.forEach(function (img) {
+                    if (img.dataset.src && isInViewport(img)) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        img.style.opacity = '1';
+                    }
+                });
+            }, 200);
+
+            document.addEventListener('DOMContentLoaded', lazyLoadHandler);
+            window.addEventListener('scroll', lazyLoadHandler);
+            window.addEventListener('resize', lazyLoadHandler);
+        }
+    }
+
+    /**
+     * 检查元素是否在视口内
+     * @param {HTMLElement} el - 要检查的元素
+     * @returns {boolean} - 是否在视口内
+     */
+    function isInViewport(el) {
+        var rect = el.getBoundingClientRect();
+        var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+        return (
+            rect.top >= -50 &&
+            rect.left >= -50 &&
+            rect.bottom <= windowHeight + 50 &&
+            rect.right <= windowWidth + 50
+        );
+    }
+
+    /**
+     * 创建图片占位图（渐变色）
+     * @param {number} width - 宽度
+     * @param {number} height - 高度
+     * @returns {string} - base64 图片 URL
+     */
+    function createPlaceholderImage(width, height) {
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+
+        var gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#f3f4f6');
+        gradient.addColorStop(1, '#e5e7eb');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        return canvas.toDataURL('image/png');
+    }
+
     // 暴露到全局
     globalThis.Utils = {
         escapeHtml: escapeHtml,
@@ -2097,7 +2304,15 @@
         toggleTheme: toggleTheme,
         onThemeChange: onThemeChange,
         selectThemeOption: selectThemeOption,
-        _initThemeSystem: _initThemeSystem
+        _initThemeSystem: _initThemeSystem,
+        isMobile: isMobile,
+        preventClickDelay: preventClickDelay,
+        optimizeMobileScroll: optimizeMobileScroll,
+        adjustForKeyboard: adjustForKeyboard,
+        initMobileOptimizations: initMobileOptimizations,
+        initImageLazyLoad: initImageLazyLoad,
+        isInViewport: isInViewport,
+        createPlaceholderImage: createPlaceholderImage
     };
 
     // 兼容旧版：单独暴露 escapeHtml（供各模块迁移过渡）
