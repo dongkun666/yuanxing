@@ -219,7 +219,10 @@
 
     // 职业认证 - 提交审核
     function submitCertification() {
-        Utils.showToast('success', '您的律师执业认证申请已提交！我们将在 1-3 个工作日内完成审核。审核结果将以消息通知您。');
+        Utils.showToast(
+            'success',
+            '您的律师执业认证申请已提交！我们将在 1-3 个工作日内完成审核。审核结果将以消息通知您。'
+        );
     }
 
     // 双因素认证切换

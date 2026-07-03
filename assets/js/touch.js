@@ -28,10 +28,34 @@
 
     TouchHandler.prototype._bindEvents = function () {
         var self = this;
-        this.element.addEventListener('touchstart', function (e) { self._onTouchStart(e); }, { passive: true });
-        this.element.addEventListener('touchmove', function (e) { self._onTouchMove(e); }, { passive: false });
-        this.element.addEventListener('touchend', function (e) { self._onTouchEnd(e); }, { passive: true });
-        this.element.addEventListener('touchcancel', function (e) { self._onTouchEnd(e); }, { passive: true });
+        this.element.addEventListener(
+            'touchstart',
+            function (e) {
+                self._onTouchStart(e);
+            },
+            { passive: true }
+        );
+        this.element.addEventListener(
+            'touchmove',
+            function (e) {
+                self._onTouchMove(e);
+            },
+            { passive: false }
+        );
+        this.element.addEventListener(
+            'touchend',
+            function (e) {
+                self._onTouchEnd(e);
+            },
+            { passive: true }
+        );
+        this.element.addEventListener(
+            'touchcancel',
+            function (e) {
+                self._onTouchEnd(e);
+            },
+            { passive: true }
+        );
     };
 
     TouchHandler.prototype._onTouchStart = function (e) {
@@ -47,16 +71,19 @@
             this._isLongPressTriggered = false;
             this._isScrolling = false;
 
-            this._longPressTimer = setTimeout(function () {
-                if (!self._isScrolling && !self._isLongPressTriggered) {
-                    self._isLongPressTriggered = true;
-                    self._trigger('longpress', {
-                        x: self._startX,
-                        y: self._startY,
-                        target: e.target
-                    });
-                }
-            }.bind(this), this._longPressThreshold);
+            this._longPressTimer = setTimeout(
+                function () {
+                    if (!self._isScrolling && !self._isLongPressTriggered) {
+                        self._isLongPressTriggered = true;
+                        self._trigger('longpress', {
+                            x: self._startX,
+                            y: self._startY,
+                            target: e.target
+                        });
+                    }
+                }.bind(this),
+                this._longPressThreshold
+            );
         } else if (this._touchCount === 2) {
             if (this._longPressTimer) {
                 clearTimeout(this._longPressTimer);
@@ -104,8 +131,8 @@
                 y: this._currentY,
                 deltaX: deltaX,
                 deltaY: deltaY,
-                velocityX: (this._currentX - prevX),
-                velocityY: (this._currentY - prevY),
+                velocityX: this._currentX - prevX,
+                velocityY: this._currentY - prevY,
                 target: e.target
             });
         } else if (this._touchCount === 2) {

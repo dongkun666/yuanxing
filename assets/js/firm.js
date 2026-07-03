@@ -112,14 +112,24 @@
                     iconGradient = 'from-purple-500 to-wiki';
                 }
                 return (
-                    '<div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="firm-stats" data-stagger-index="' + idx + '" data-delay="0.2">' +
+                    '<div class="ws-card p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group" data-animate="scale-in" data-stagger-group="firm-stats" data-stagger-index="' +
+                    idx +
+                    '" data-delay="0.2">' +
                     '<div class="flex items-center justify-between mb-2">' +
-                    '<span class="text-[11px] text-fg-tertiary">' + escapeHtml(item.label) + '</span>' +
-                    '<div class="w-7 h-7 rounded-lg bg-gradient-to-br ' + iconGradient + ' flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">' +
-                    '<iconify-icon class="text-white text-sm" icon="' + item.icon + '"></iconify-icon>' +
+                    '<span class="text-[11px] text-fg-tertiary">' +
+                    escapeHtml(item.label) +
+                    '</span>' +
+                    '<div class="w-7 h-7 rounded-lg bg-gradient-to-br ' +
+                    iconGradient +
+                    ' flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">' +
+                    '<iconify-icon class="text-white text-sm" icon="' +
+                    item.icon +
+                    '"></iconify-icon>' +
                     '</div>' +
                     '</div>' +
-                    '<p class="text-2xl font-bold text-fg-primary">' + escapeHtml(item.value) + '</p>' +
+                    '<p class="text-2xl font-bold text-fg-primary">' +
+                    escapeHtml(item.value) +
+                    '</p>' +
                     '</div>'
                 );
             })
@@ -144,7 +154,9 @@
                         title: '暂无团队成员',
                         description: '添加团队成员，开始协作办公',
                         actionText: '添加成员',
-                        actionHandler: function() { openFirmSetting('members'); }
+                        actionHandler: function () {
+                            openFirmSetting('members');
+                        }
                     });
                 }
             }
@@ -158,17 +170,15 @@
             .map(function (member, idx) {
                 var color = _avatarColors[idx % _avatarColors.length];
                 var firstChar = member.name.charAt(0);
-                var badgeClass = member.online
-                    ? 'bg-success-tint text-success'
-                    : 'bg-bg text-fg-disabled';
-                var badgeDotClass = member.online
-                    ? 'bg-success'
-                    : 'bg-fg-disabled';
+                var badgeClass = member.online ? 'bg-success-tint text-success' : 'bg-bg text-fg-disabled';
+                var badgeDotClass = member.online ? 'bg-success' : 'bg-fg-disabled';
                 var badgeText = member.online ? '在线' : '离线';
                 return (
                     '<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-bg-subtle/70 transition-all duration-300 cursor-pointer group hover:-translate-y-0.5 hover:shadow-sm" onclick="openMemberDetail(' +
                     member.id +
-                    ')" data-animate="fade-in-up" data-delay="' + (0.1 + idx * 0.05) + '">' +
+                    ')" data-animate="fade-in-up" data-delay="' +
+                    (0.1 + idx * 0.05) +
+                    '">' +
                     '<div class="relative flex-shrink-0">' +
                     '<div class="w-12 h-12 rounded-xl ' +
                     color.bg +
@@ -629,50 +639,58 @@
 
         // 并行加载统计 + 律师列表
         Promise.all([
-            API.firm.getStats(FIRM_ID, { showError: false }).then(function (res) {
-                if (res && res.ok && res.data) {
-                    statsOk = true;
-                    _applyStatsFromAPI(res.data);
+            API.firm
+                .getStats(FIRM_ID, { showError: false })
+                .then(function (res) {
+                    if (res && res.ok && res.data) {
+                        statsOk = true;
+                        _applyStatsFromAPI(res.data);
+                    } else {
+                        console.warn('[firm] getStats 返回非 ok, 保留 mock:', res);
+                    }
+                    return res;
+                })
+                .catch(function (err) {
+                    console.warn('[firm] getStats 失败, 保留 mock:', err);
+                    return null;
+                }),
+            API.firm
+                .getLawyers(FIRM_ID, {}, { showError: false })
+                .then(function (res) {
+                    if (res && res.ok && Array.isArray(res.data)) {
+                        lawyersOk = true;
+                        _applyMembersFromAPI(res.data);
+                    } else {
+                        console.warn('[firm] getLawyers 返回非 ok, 保留 mock:', res);
+                    }
+                    return res;
+                })
+                .catch(function (err) {
+                    console.warn('[firm] getLawyers 失败, 保留 mock:', err);
+                    return null;
+                })
+        ])
+            .then(function () {
+                _firmDataState = statsOk || lawyersOk ? 'loaded' : 'error';
+                _firmDataLoaded = true;
+
+                // 任一接口成功都重渲染对应区块
+                if (statsOk) renderStats();
+                if (lawyersOk) renderMemberList();
+
+                if (statsOk && lawyersOk) {
+                    console.info('[firm] 后端数据加载完成');
+                } else if (statsOk || lawyersOk) {
+                    console.info('[firm] 部分后端数据加载完成 (其余保留 mock)');
                 } else {
-                    console.warn('[firm] getStats 返回非 ok, 保留 mock:', res);
+                    console.warn('[firm] 后端不可达, 全部保留 mock 数据');
                 }
-                return res;
-            }).catch(function (err) {
-                console.warn('[firm] getStats 失败, 保留 mock:', err);
-                return null;
-            }),
-            API.firm.getLawyers(FIRM_ID, {}, { showError: false }).then(function (res) {
-                if (res && res.ok && Array.isArray(res.data)) {
-                    lawyersOk = true;
-                    _applyMembersFromAPI(res.data);
-                } else {
-                    console.warn('[firm] getLawyers 返回非 ok, 保留 mock:', res);
-                }
-                return res;
-            }).catch(function (err) {
-                console.warn('[firm] getLawyers 失败, 保留 mock:', err);
-                return null;
             })
-        ]).then(function () {
-            _firmDataState = (statsOk || lawyersOk) ? 'loaded' : 'error';
-            _firmDataLoaded = true;
-
-            // 任一接口成功都重渲染对应区块
-            if (statsOk) renderStats();
-            if (lawyersOk) renderMemberList();
-
-            if (statsOk && lawyersOk) {
-                console.info('[firm] 后端数据加载完成');
-            } else if (statsOk || lawyersOk) {
-                console.info('[firm] 部分后端数据加载完成 (其余保留 mock)');
-            } else {
-                console.warn('[firm] 后端不可达, 全部保留 mock 数据');
-            }
-        }).catch(function (err) {
-            _firmDataState = 'error';
-            _firmDataLoaded = true;
-            console.warn('[firm] 加载后端数据异常, 保留 mock:', err);
-        });
+            .catch(function (err) {
+                _firmDataState = 'error';
+                _firmDataLoaded = true;
+                console.warn('[firm] 加载后端数据异常, 保留 mock:', err);
+            });
     }
 
     // 将后端 stats 数据合并到 _statsData (仅更新 API 提供的字段)
@@ -701,7 +719,7 @@
                 field = specialties;
             }
             return {
-                id: l.id || (idx + 1),
+                id: l.id || idx + 1,
                 name: l.name || '未命名律师',
                 position: l.role || '执业律师',
                 field: field || '综合业务',

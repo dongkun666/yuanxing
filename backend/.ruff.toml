@@ -1,0 +1,54 @@
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "C4",
+    "DTZ",
+    "FIX",
+    "G",
+    "ICN",
+    "INP",
+    "ISC",
+    "N",
+    "PTH",
+    "Q",
+    "RUF",
+    "SIM",
+    "SLF",
+    "T20",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
+ignore = [
+    "E501",
+]
+exclude = [
+    "**/__pycache__",
+    "**/.git",
+    "**/node_modules",
+    "**/.eggs",
+    "**/*.egg-info",
+    "**/dist",
+    "**/build",
+]
+
+[tool.ruff.lint]
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "RUF", "S", "SIM", "T", "W", "YTT"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.lint.pydantic]
+model-field-required-by-default = true
+
+[tool.ruff.format]
+docstring-code-format = true

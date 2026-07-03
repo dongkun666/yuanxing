@@ -196,7 +196,9 @@
         if (targetBtn) Utils.setButtonLoading(targetBtn, '归档中...');
 
         try {
-            var confirmed = await Utils.showConfirm('确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。');
+            var confirmed = await Utils.showConfirm(
+                '确定归档当前案件？归档后会从案件列表移除，可在"归档管理"中查看/恢复。'
+            );
             if (!confirmed) {
                 if (targetBtn) Utils.setButtonNormal(targetBtn);
                 return;
@@ -520,7 +522,8 @@
             if (tbody) {
                 var index = tbody.querySelectorAll('tr').length;
                 var tr = document.createElement('tr');
-                tr.className = 'case-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group';
+                tr.className =
+                    'case-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group';
                 tr.setAttribute('data-status', status);
                 tr.setAttribute('data-type', caseType);
                 tr.setAttribute('data-row-idx', index);
@@ -569,7 +572,6 @@
 
             closeNewCaseModal();
             showToast('案件创建成功', 'success');
-
         } catch (e) {
             Utils.showError(e);
             if (submitBtn) Utils.setButtonNormal(submitBtn);

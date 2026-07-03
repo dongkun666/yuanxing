@@ -173,20 +173,7 @@
         }
     ];
 
-    function escapeHtml(s) {
-        if (s === null || s === undefined) return '';
-        return String(s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c];
-        });
-    }
-
-    function toast(msg) {
-        if (typeof showToast === 'function') showToast(msg);
-    }
-
-    function $(id) {
-        return document.getElementById(id);
-    }
+    var $ = document.getElementById.bind(document);
     function getVal(id) {
         var el = $(id);
         return el ? el.value.trim() : '';
@@ -194,7 +181,13 @@
 
     function getStatusBadge(status) {
         var style = STATUS_STYLES[status] || 'bg-gray-50 text-gray-600 border border-gray-200/50';
-        return '<span class="text-[10px] font-semibold ' + style + ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' + escapeHtml(status) + '</span>';
+        return (
+            '<span class="text-[10px] font-semibold ' +
+            style +
+            ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' +
+            Utils.escapeHtml(status) +
+            '</span>'
+        );
     }
 
     function applyFilters() {
@@ -244,20 +237,26 @@
             : '';
 
         return (
-            '<div class="p-4 md:p-5 hover:bg-rose-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="zhixing-list" data-stagger-index="' + idx + '" data-delay="0.05" onclick="openZhixingDetail(\'' +
+            '<div class="p-4 md:p-5 hover:bg-rose-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="zhixing-list" data-stagger-index="' +
+            idx +
+            '" data-delay="0.05" onclick="openZhixingDetail(\'' +
             item.id +
             '\')">' +
             '<div class="flex items-start gap-3 md:gap-4">' +
             '<div class="w-10 h-10 md:w-11 md:h-11 rounded-xl ' +
-            (item.isShixin ? 'bg-gradient-to-br from-red-100 to-rose-50' : 'bg-gradient-to-br from-rose-100 to-orange-50') +
+            (item.isShixin
+                ? 'bg-gradient-to-br from-red-100 to-rose-50'
+                : 'bg-gradient-to-br from-rose-100 to-orange-50') +
             ' flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
-            '<iconify-icon class="text-lg md:text-xl ' + (item.isShixin ? 'text-red-500' : 'text-rose-500') + '" icon="mdi:gavel"></iconify-icon>' +
+            '<iconify-icon class="text-lg md:text-xl ' +
+            (item.isShixin ? 'text-red-500' : 'text-rose-500') +
+            '" icon="mdi:gavel"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-start justify-between gap-3 mb-2">' +
             '<div class="flex-1 min-w-0">' +
             '<h3 class="text-sm md:text-base font-semibold text-fg-primary group-hover:text-rose-600 transition-colors line-clamp-1 font-mono">' +
-            escapeHtml(item.caseNum) +
+            Utils.escapeHtml(item.caseNum) +
             '</h3>' +
             '</div>' +
             getStatusBadge(item.status) +
@@ -265,25 +264,25 @@
             '<div class="flex items-center gap-3 md:gap-4 mb-2 flex-wrap">' +
             '<span class="inline-flex items-center gap-1.5 text-xs md:text-sm text-fg-secondary font-medium">' +
             '<iconify-icon class="text-[13px] text-fg-tertiary" icon="mdi:account-outline"></iconify-icon>' +
-            escapeHtml(item.name) +
+            Utils.escapeHtml(item.name) +
             '</span>' +
             shixinBadge +
             '<span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-bg-subtle rounded-md text-fg-secondary font-medium">' +
-            escapeHtml(item.caseType) +
+            Utils.escapeHtml(item.caseType) +
             '</span>' +
             '</div>' +
             '<div class="flex items-center gap-3 md:gap-5 text-[10px] md:text-xs text-fg-tertiary flex-wrap">' +
             '<span class="inline-flex items-center gap-1">' +
             '<iconify-icon class="text-[11px]" icon="mdi:domain"></iconify-icon>' +
-            escapeHtml(item.court) +
+            Utils.escapeHtml(item.court) +
             '</span>' +
             '<span class="inline-flex items-center gap-1">' +
             '<iconify-icon class="text-[11px]" icon="mdi:calendar"></iconify-icon>' +
-            escapeHtml(item.date) +
+            Utils.escapeHtml(item.date) +
             '</span>' +
             '<span class="inline-flex items-center gap-1 font-semibold text-rose-600">' +
             '<iconify-icon class="text-[11px]" icon="mdi:cash"></iconify-icon>' +
-            escapeHtml(item.amount) +
+            Utils.escapeHtml(item.amount) +
             '</span>' +
             '</div>' +
             '</div>' +
@@ -326,7 +325,11 @@
                 '</button>' +
                 '</div>';
         } else {
-            container.innerHTML = slice.map(function(item, idx) { return renderItem(item, start + idx); }).join('');
+            container.innerHTML = slice
+                .map(function (item, idx) {
+                    return renderItem(item, start + idx);
+                })
+                .join('');
         }
 
         renderPagination(pager, totalPages);
@@ -339,7 +342,8 @@
     function renderPagination(pager, totalPages) {
         if (!pager) return;
         if (totalPages <= 1) {
-            pager.innerHTML = '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
+            pager.innerHTML =
+                '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
             return;
         }
 
@@ -358,7 +362,9 @@
                 var active = p === state.page;
                 html +=
                     '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
-                    (active ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-md shadow-rose-500/20' : 'hover:bg-white text-fg-secondary hover:text-rose-600') +
+                    (active
+                        ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-md shadow-rose-500/20'
+                        : 'hover:bg-white text-fg-secondary hover:text-rose-600') +
                     ' transition-all duration-200" onclick="changeZhixingPage(' +
                     p +
                     ')">' +
@@ -379,9 +385,23 @@
 
     function pageBtn(enabled, inner, target, cls) {
         if (!enabled) {
-            return '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' + cls + ' opacity-40 cursor-not-allowed">' + inner + '</button>';
+            return (
+                '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' +
+                cls +
+                ' opacity-40 cursor-not-allowed">' +
+                inner +
+                '</button>'
+            );
         }
-        return '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' + cls + '" onclick="changeZhixingPage(' + target + ')">' + inner + '</button>';
+        return (
+            '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' +
+            cls +
+            '" onclick="changeZhixingPage(' +
+            target +
+            ')">' +
+            inner +
+            '</button>'
+        );
     }
 
     function buildPageList(current, total) {
@@ -396,7 +416,9 @@
         add(1);
         for (var i = current - window; i <= current + window; i++) add(i);
         add(total);
-        nums.sort(function (a, b) { return a - b; });
+        nums.sort(function (a, b) {
+            return a - b;
+        });
 
         var result = [];
         for (var j = 0; j < nums.length; j++) {
@@ -425,7 +447,7 @@
             applyFilters();
             applySort();
             renderResults();
-            toast('查询完成, 共 ' + state.filtered.length + ' 条结果');
+            Utils.showToast('查询完成, 共 ' + state.filtered.length + ' 条结果');
         }, 800);
     }
 
@@ -438,7 +460,7 @@
     function changeZhixingSort() {
         var sel = $('zhixing-sort');
         var label = sel ? sel.value : '立案日期';
-        var map = { '立案日期': 'date', '执行标的': 'amount', '相关度': 'relevance' };
+        var map = { 立案日期: 'date', 执行标的: 'amount', 相关度: 'relevance' };
         state.sort = map[label] || 'date';
         state.page = 1;
         applySort();
@@ -475,15 +497,17 @@
         applyFilters();
         applySort();
         renderResults();
-        toast('已重置查询条件');
+        Utils.showToast('已重置查询条件');
     }
 
     var _closeZhixingDetail = null;
 
     function openZhixingDetail(id) {
-        var item = mockData.find(function (x) { return x.id === id; });
+        var item = mockData.find(function (x) {
+            return x.id === id;
+        });
         if (!item) {
-            toast('未找到案件');
+            Utils.showToast('未找到案件');
             return;
         }
 
@@ -501,19 +525,25 @@
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2 flex-wrap">' +
-            '<span class="text-sm font-bold font-mono text-fg-primary">' + escapeHtml(item.caseNum) + '</span>' +
+            '<span class="text-sm font-bold font-mono text-fg-primary">' +
+            Utils.escapeHtml(item.caseNum) +
+            '</span>' +
             getStatusBadge(item.status) +
             '</div>' +
-            '<p class="text-xs text-fg-tertiary mt-0.5">' + escapeHtml(item.court) + '</p>' +
+            '<p class="text-xs text-fg-tertiary mt-0.5">' +
+            Utils.escapeHtml(item.court) +
+            '</p>' +
             '</div>' +
             '</div>' +
-            (item.isShixin ? '<div class="mt-2.5 p-2.5 bg-red-100/80 border border-red-200/50 rounded-lg flex items-start gap-2">' +
-                '<iconify-icon icon="mdi:alert-decagram" class="text-red-500 text-base flex-shrink-0 mt-0.5"></iconify-icon>' +
-                '<div>' +
-                '<p class="text-xs font-semibold text-red-700">失信被执行人</p>' +
-                '<p class="text-[10px] text-red-600/80">该被执行人已被纳入失信被执行人名单</p>' +
-                '</div>' +
-                '</div>' : '') +
+            (item.isShixin
+                ? '<div class="mt-2.5 p-2.5 bg-red-100/80 border border-red-200/50 rounded-lg flex items-start gap-2">' +
+                  '<iconify-icon icon="mdi:alert-decagram" class="text-red-500 text-base flex-shrink-0 mt-0.5"></iconify-icon>' +
+                  '<div>' +
+                  '<p class="text-xs font-semibold text-red-700">失信被执行人</p>' +
+                  '<p class="text-[10px] text-red-600/80">该被执行人已被纳入失信被执行人名单</p>' +
+                  '</div>' +
+                  '</div>'
+                : '') +
             '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-3 text-sm">' +
@@ -521,13 +551,18 @@
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:account-outline"></iconify-icon> 被执行人' +
             '</p>' +
-            '<p class="text-sm font-semibold text-fg-primary">' + escapeHtml(item.name) + '</p>' +
+            '<p class="text-sm font-semibold text-fg-primary">' +
+            Utils.escapeHtml(item.name) +
+            '</p>' +
             '</div>' +
             '<div class="p-3.5 bg-bg-subtle rounded-xl border border-bg-border/60 hover:border-rose-200/50 transition-colors">' +
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
-            '<iconify-icon class="text-xs" icon="mdi:card-account-details-outline"></iconify-icon> ' + idLabel +
+            '<iconify-icon class="text-xs" icon="mdi:card-account-details-outline"></iconify-icon> ' +
+            idLabel +
             '</p>' +
-            '<p class="text-xs font-mono text-fg-primary">' + escapeHtml(item.idcard) + '</p>' +
+            '<p class="text-xs font-mono text-fg-primary">' +
+            Utils.escapeHtml(item.idcard) +
+            '</p>' +
             '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-3 text-sm">' +
@@ -535,13 +570,17 @@
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:domain"></iconify-icon> 执行法院' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-medium">' + escapeHtml(item.court) + '</p>' +
+            '<p class="text-sm text-fg-primary font-medium">' +
+            Utils.escapeHtml(item.court) +
+            '</p>' +
             '</div>' +
             '<div class="p-3.5 bg-bg-subtle rounded-xl border border-bg-border/60 hover:border-rose-200/50 transition-colors">' +
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:calendar"></iconify-icon> 立案日期' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-medium">' + escapeHtml(item.date) + '</p>' +
+            '<p class="text-sm text-fg-primary font-medium">' +
+            Utils.escapeHtml(item.date) +
+            '</p>' +
             '</div>' +
             '</div>' +
             '<div class="p-4 bg-gradient-to-r from-rose-50 to-orange-50 rounded-xl border border-rose-100/50">' +
@@ -550,12 +589,14 @@
             '<p class="text-[11px] text-rose-600/80 mb-1 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:cash"></iconify-icon> 执行标的' +
             '</p>' +
-            '<p class="text-2xl font-bold text-rose-600 kb-tabular-nums">' + escapeHtml(item.amount) + '</p>' +
+            '<p class="text-2xl font-bold text-rose-600 kb-tabular-nums">' +
+            Utils.escapeHtml(item.amount) +
+            '</p>' +
             '</div>' +
             '<div class="text-right">' +
             '<p class="text-[11px] text-fg-tertiary mb-1">案件类型</p>' +
             '<span class="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 bg-white rounded-full text-fg-secondary border border-bg-border font-medium">' +
-            escapeHtml(item.caseType) +
+            Utils.escapeHtml(item.caseType) +
             '</span>' +
             '</div>' +
             '</div>' +

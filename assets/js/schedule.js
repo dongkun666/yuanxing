@@ -17,7 +17,8 @@ function loadSchedulesFromAPI() {
         return Promise.resolve(false);
     }
     _scheduleApiLoading = true;
-    return API.schedule.list({}, { showError: false })
+    return API.schedule
+        .list({}, { showError: false })
         .then(function (res) {
             if (res && res.ok && res.data && Array.isArray(res.data.items)) {
                 AppState.scheduleData = res.data.items;
@@ -655,7 +656,7 @@ async function saveSchedule() {
         const caseSelect = document.getElementById('sched-case');
         const caseVal = caseSelect ? caseSelect.value : '';
         const caseName =
-        caseSelect && caseSelect.selectedIndex >= 0 ? caseSelect.options[caseSelect.selectedIndex].text || '' : '';
+            caseSelect && caseSelect.selectedIndex >= 0 ? caseSelect.options[caseSelect.selectedIndex].text || '' : '';
         const note = document.getElementById('sched-note').value.trim();
         const remind = document.querySelector('input[name="sched-remind"]:checked')?.value || '60';
 
@@ -664,7 +665,7 @@ async function saveSchedule() {
         const endTime = String(endHour).padStart(2, '0') + ':' + time.split(':')[1];
 
         if (_editingScheduleId) {
-        // 修改模式: 直接更新现有项 (跳过冲突检测 - 用户已在编辑自己)
+            // 修改模式: 直接更新现有项 (跳过冲突检测 - 用户已在编辑自己)
             var idx = AppState.scheduleData.findIndex(function (s) {
                 return s.id === _editingScheduleId;
             });
@@ -716,7 +717,7 @@ async function saveSchedule() {
         // 新建模式: 冲突检测
         const conflicts = checkScheduleConflict(date, time);
         if (conflicts && conflicts.length > 0) {
-        // 暂存待保存日程
+            // 暂存待保存日程
             pendingSchedule = {
                 id: Date.now(),
                 title: title,
@@ -772,7 +773,6 @@ async function saveSchedule() {
         if (typeof filterScheduleByDate === 'function') filterScheduleByDate();
         if (typeof updateTodayScheduleBadge === 'function') updateTodayScheduleBadge();
         if (typeof renderTodaySchedule === 'function') renderTodaySchedule();
-
     } catch (e) {
         Utils.showError(e);
         if (saveBtn) Utils.setButtonNormal(saveBtn);
@@ -1369,9 +1369,13 @@ function renderTodaySchedule() {
                         title: '今日待办已全部完成',
                         description: todayDone + ' 项已完成',
                         actionText: '查看已完成',
-                        actionHandler: function () { setScheduleFilter('today', 'completed'); },
+                        actionHandler: function () {
+                            setScheduleFilter('today', 'completed');
+                        },
                         secondaryActionText: '查看全部',
-                        secondaryActionHandler: function () { setScheduleFilter('today', 'all'); }
+                        secondaryActionHandler: function () {
+                            setScheduleFilter('today', 'all');
+                        }
                     });
                 } else if (f === 'completed' && todayDone === 0) {
                     emptyEl.innerHTML = Utils.renderEmptyState({
@@ -1380,7 +1384,9 @@ function renderTodaySchedule() {
                         title: '今日还没有已完成日程',
                         description: '',
                         actionText: '查看待办',
-                        actionHandler: function () { setScheduleFilter('today', 'pending'); }
+                        actionHandler: function () {
+                            setScheduleFilter('today', 'pending');
+                        }
                     });
                 } else {
                     emptyEl.innerHTML = Utils.renderEmptyState({
@@ -2367,19 +2373,27 @@ function showDynamicDetail(title, caseName, desc, attachments) {
         '<div class="space-y-3 text-sm">' +
         '<div>' +
         '<p class="text-xs text-fg-tertiary mb-1">标题</p>' +
-        '<p class="text-fg-primary font-medium">' + Utils.escapeHtml(title) + '</p>' +
+        '<p class="text-fg-primary font-medium">' +
+        Utils.escapeHtml(title) +
+        '</p>' +
         '</div>' +
         '<div>' +
         '<p class="text-xs text-fg-tertiary mb-1">案件</p>' +
-        '<p class="text-fg-secondary">' + Utils.escapeHtml(caseName) + '</p>' +
+        '<p class="text-fg-secondary">' +
+        Utils.escapeHtml(caseName) +
+        '</p>' +
         '</div>' +
         '<div>' +
         '<p class="text-xs text-fg-tertiary mb-1">描述</p>' +
-        '<p class="text-fg-secondary">' + Utils.escapeHtml(desc || '暂无描述') + '</p>' +
+        '<p class="text-fg-secondary">' +
+        Utils.escapeHtml(desc || '暂无描述') +
+        '</p>' +
         '</div>' +
         '<div>' +
         '<p class="text-xs text-fg-tertiary mb-1">附件</p>' +
-        '<p class="text-fg-secondary">' + Utils.escapeHtml(attachments || '无') + '</p>' +
+        '<p class="text-fg-secondary">' +
+        Utils.escapeHtml(attachments || '无') +
+        '</p>' +
         '</div>' +
         '</div>';
     Utils.showModal({

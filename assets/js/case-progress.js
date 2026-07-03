@@ -191,7 +191,8 @@
         if (defendantDisplay) defendantDisplay.textContent = data.parties.defendant;
 
         var stageDisplay = document.getElementById('progress-stage-display');
-        if (stageDisplay) stageDisplay.textContent = '第 ' + (data.currentStageIndex + 1) + ' / ' + data.stages.length + ' 阶段';
+        if (stageDisplay)
+            stageDisplay.textContent = '第 ' + (data.currentStageIndex + 1) + ' / ' + data.stages.length + ' 阶段';
 
         // 基本信息详情
         var basic = document.getElementById('progress-basic-info');
@@ -203,7 +204,9 @@
                 '</span>' +
                 '<div>' +
                 '<p class="text-[11px] text-fg-tertiary">案件类型</p>' +
-                '<p class="text-xs font-medium text-fg-primary">' + escapeHtml(data.caseType) + '</p>' +
+                '<p class="text-xs font-medium text-fg-primary">' +
+                escapeHtml(data.caseType) +
+                '</p>' +
                 '</div>' +
                 '</div>' +
                 '<div class="flex items-center gap-2">' +
@@ -212,7 +215,9 @@
                 '</span>' +
                 '<div>' +
                 '<p class="text-[11px] text-fg-tertiary">案由</p>' +
-                '<p class="text-xs font-medium text-fg-primary">' + escapeHtml(data.cause) + '</p>' +
+                '<p class="text-xs font-medium text-fg-primary">' +
+                escapeHtml(data.cause) +
+                '</p>' +
                 '</div>' +
                 '</div>' +
                 '<div class="flex items-center gap-2">' +
@@ -233,7 +238,7 @@
         // 时间线 - 升级样式
         var timeline = document.getElementById('progress-timeline');
         var html = '<div class="absolute left-[18px] top-4 bottom-4 w-0.5 bg-bg-border"></div>';
-        var progressPercent = data.stages.length > 1 ? ((data.currentStageIndex * 100) / (data.stages.length - 1)) : 0;
+        var progressPercent = data.stages.length > 1 ? (data.currentStageIndex * 100) / (data.stages.length - 1) : 0;
         html +=
             '<div class="absolute left-[18px] top-4 w-0.5 bg-gradient-to-b from-brand to-ai rounded-full" style="height: ' +
             progressPercent +
@@ -248,7 +253,8 @@
                 badgeCls = 'bg-success-tint text-success';
                 cardCls = 'bg-white border-bg-border hover:border-success/30 hover:shadow-md';
             } else if (stage.status === 'current') {
-                circleCls = 'bg-gradient-to-br from-brand to-ai text-white ring-4 ring-brand-tint animate-pulse shadow-xl shadow-brand/30';
+                circleCls =
+                    'bg-gradient-to-br from-brand to-ai text-white ring-4 ring-brand-tint animate-pulse shadow-xl shadow-brand/30';
                 iconName = 'mdi:clock-outline';
                 textCls = 'text-fg-primary font-semibold';
                 badgeCls = 'bg-gradient-to-r from-brand to-ai text-white';
@@ -263,11 +269,16 @@
 
             var statusLabel = '';
             if (stage.status === 'current') {
-                statusLabel = '<span class="text-[10px] ' + badgeCls + ' px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5"><iconify-icon class="text-[10px]" icon="mdi:lightning-bolt"></iconify-icon>进行中</span>';
+                statusLabel =
+                    '<span class="text-[10px] ' +
+                    badgeCls +
+                    ' px-2 py-0.5 rounded-full font-bold flex items-center gap-0.5"><iconify-icon class="text-[10px]" icon="mdi:lightning-bolt"></iconify-icon>进行中</span>';
             } else if (stage.status === 'done') {
-                statusLabel = '<span class="text-[10px] ' + badgeCls + ' px-2 py-0.5 rounded-full font-medium">已完成</span>';
+                statusLabel =
+                    '<span class="text-[10px] ' + badgeCls + ' px-2 py-0.5 rounded-full font-medium">已完成</span>';
             } else {
-                statusLabel = '<span class="text-[10px] ' + badgeCls + ' px-2 py-0.5 rounded-full font-medium">待办</span>';
+                statusLabel =
+                    '<span class="text-[10px] ' + badgeCls + ' px-2 py-0.5 rounded-full font-medium">待办</span>';
             }
 
             html +=
@@ -279,7 +290,9 @@
                 iconName +
                 '"></iconify-icon>' +
                 '</div>' +
-                '<div class="rounded-xl border p-4 transition-all duration-300 ' + cardCls + '">' +
+                '<div class="rounded-xl border p-4 transition-all duration-300 ' +
+                cardCls +
+                '">' +
                 '<div class="flex items-start justify-between gap-3">' +
                 '<div class="flex-1 min-w-0">' +
                 '<div class="flex items-center gap-2 flex-wrap mb-1">' +

@@ -493,7 +493,9 @@
 
         var closeHtml = closable
             ? '<button class="toast-close-btn flex-shrink-0 -mr-1 -mt-1 w-5 h-5 flex items-center justify-center rounded hover:bg-black/5 transition-colors" aria-label="关闭">' +
-              '<iconify-icon icon="mdi:close" class="text-sm ' + config.text + '"></iconify-icon>' +
+              '<iconify-icon icon="mdi:close" class="text-sm ' +
+              config.text +
+              '"></iconify-icon>' +
               '</button>'
             : '';
 
@@ -651,8 +653,7 @@
         btn.disabled = true;
 
         var text = loadingText || '加载中...';
-        var spinnerHtml =
-            '<iconify-icon icon="mdi:loading" class="animate-spin text-sm"></iconify-icon>';
+        var spinnerHtml = '<iconify-icon icon="mdi:loading" class="animate-spin text-sm"></iconify-icon>';
 
         var originalIcon = btn.querySelector('iconify-icon');
         var originalIconHtml = originalIcon ? originalIcon.outerHTML : '';
@@ -1038,13 +1039,13 @@
             description: '没有匹配的内容，请尝试其他关键词',
             iconClass: 'no-result'
         },
-        'error': {
+        error: {
             icon: 'mdi:alert-circle-outline',
             title: '加载失败',
             description: '抱歉，加载过程中出现了问题，请稍后重试',
             iconClass: 'error'
         },
-        'loading': {
+        loading: {
             icon: 'mdi:loading',
             title: '加载中',
             description: '正在加载数据，请稍候...',
@@ -1071,8 +1072,8 @@
         options = options || {};
         var preset = options.preset ? emptyStatePresets[options.preset] : null;
         var icon = options.icon || (preset ? preset.icon : 'mdi:folder-open-outline');
-        var title = options.title !== undefined ? options.title : (preset ? preset.title : '暂无数据');
-        var description = options.description !== undefined ? options.description : (preset ? preset.description : '');
+        var title = options.title !== undefined ? options.title : preset ? preset.title : '暂无数据';
+        var description = options.description !== undefined ? options.description : preset ? preset.description : '';
         var iconClass = preset ? preset.iconClass : '';
         var actionText = options.actionText || '';
         var actionHandler = options.actionHandler || null;
@@ -1085,18 +1086,28 @@
         if (actionText || secondaryActionText) {
             actionHtml = '<div class="empty-state-action">';
             if (secondaryActionText) {
-                actionHtml += '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-empty-secondary>' + escapeHtml(secondaryActionText) + '</button>';
+                actionHtml +=
+                    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" data-empty-secondary>' +
+                    escapeHtml(secondaryActionText) +
+                    '</button>';
             }
             if (actionText) {
-                actionHtml += '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" data-empty-action>' + escapeHtml(actionText) + '</button>';
+                actionHtml +=
+                    '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" data-empty-action>' +
+                    escapeHtml(actionText) +
+                    '</button>';
             }
             actionHtml += '</div>';
         }
 
         var html =
             '<div class="empty-state">' +
-            '<div class="empty-state-icon ' + iconClass + '">' +
-            '<iconify-icon icon="' + icon + '"></iconify-icon>' +
+            '<div class="empty-state-icon ' +
+            iconClass +
+            '">' +
+            '<iconify-icon icon="' +
+            icon +
+            '"></iconify-icon>' +
             '</div>' +
             (title ? '<div class="empty-state-title">' + escapeHtml(title) + '</div>' : '') +
             (description ? '<div class="empty-state-description">' + escapeHtml(description) + '</div>' : '') +
@@ -1151,31 +1162,31 @@
         var type = options.type || 'default';
 
         var typeConfig = {
-            'default': {
+            default: {
                 icon: 'mdi:folder-open-outline',
                 title: '暂无数据',
                 description: '列表中还没有任何内容',
                 iconClass: 'empty-list'
             },
-            'search': {
+            search: {
                 icon: 'mdi:magnify-scan',
                 title: '没有找到结果',
                 description: '没有匹配的内容，请尝试其他关键词',
                 iconClass: 'no-result'
             },
-            'data': {
+            data: {
                 icon: 'mdi:database-outline',
                 title: '暂无数据',
                 description: '数据加载中或暂无内容',
                 iconClass: 'empty-list'
             },
-            'error': {
+            error: {
                 icon: 'mdi:alert-circle-outline',
                 title: '加载失败',
                 description: '抱歉，加载过程中出现了问题，请稍后重试',
                 iconClass: 'error'
             },
-            'loading': {
+            loading: {
                 icon: 'mdi:loading',
                 title: '加载中',
                 description: '正在加载数据，请稍候...',
@@ -1202,14 +1213,18 @@
             if (actionText) {
                 var handlerAttr = actionHandler ? 'data-empty-action="true"' : '';
                 actionHtml +=
-                    '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" ' + handlerAttr + '>' +
+                    '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" ' +
+                    handlerAttr +
+                    '>' +
                     escapeHtml(actionText) +
                     '</button>';
             }
             if (secondaryActionText) {
                 var secondaryHandlerAttr = secondaryActionHandler ? 'data-empty-secondary-action="true"' : '';
                 actionHtml +=
-                    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg-subtle hover:bg-bg rounded-lg transition-colors" ' + secondaryHandlerAttr + '>' +
+                    '<button class="px-4 py-2 text-sm font-medium text-fg-secondary bg-bg-subtle hover:bg-bg rounded-lg transition-colors" ' +
+                    secondaryHandlerAttr +
+                    '>' +
                     escapeHtml(secondaryActionText) +
                     '</button>';
             }
@@ -1218,8 +1233,15 @@
 
         var html =
             '<div class="empty-state">' +
-            '<div class="empty-state-icon ' + iconClass + iconColorClass + '">' +
-            '<iconify-icon icon="' + icon + '"' + (type === 'loading' ? ' class="animate-spin"' : '') + '></iconify-icon>' +
+            '<div class="empty-state-icon ' +
+            iconClass +
+            iconColorClass +
+            '">' +
+            '<iconify-icon icon="' +
+            icon +
+            '"' +
+            (type === 'loading' ? ' class="animate-spin"' : '') +
+            '></iconify-icon>' +
             '</div>' +
             (title ? '<div class="empty-state-title">' + escapeHtml(title) + '</div>' : '') +
             (description ? '<div class="empty-state-desc">' + escapeHtml(description) + '</div>' : '') +
@@ -1269,11 +1291,13 @@
 
         var errorDetail = '';
         if (error) {
-            var errorMsg = typeof error === 'string' ? error : (error.message || '');
+            var errorMsg = typeof error === 'string' ? error : error.message || '';
             if (errorMsg) {
                 errorDetail =
                     '<div class="empty-state-error-detail text-[11px] text-fg-tertiary mt-2 p-2 bg-bg-subtle rounded-lg text-left max-w-xs overflow-x-auto">' +
-                    '<code>' + escapeHtml(errorMsg) + '</code>' +
+                    '<code>' +
+                    escapeHtml(errorMsg) +
+                    '</code>' +
                     '</div>';
             }
         }
@@ -1283,7 +1307,9 @@
             var handlerAttr = retryHandler ? 'data-error-retry="true"' : '';
             retryHtml =
                 '<div class="empty-state-action">' +
-                '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1.5" ' + handlerAttr + '>' +
+                '<button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1.5" ' +
+                handlerAttr +
+                '>' +
                 '<iconify-icon icon="mdi:refresh" class="text-sm"></iconify-icon>' +
                 escapeHtml(retryText) +
                 '</button>' +
@@ -1295,8 +1321,12 @@
             '<div class="empty-state-icon error">' +
             '<iconify-icon icon="mdi:alert-circle-outline"></iconify-icon>' +
             '</div>' +
-            '<div class="empty-state-title">' + escapeHtml(title) + '</div>' +
-            '<div class="empty-state-desc">' + escapeHtml(description) + '</div>' +
+            '<div class="empty-state-title">' +
+            escapeHtml(title) +
+            '</div>' +
+            '<div class="empty-state-desc">' +
+            escapeHtml(description) +
+            '</div>' +
             errorDetail +
             retryHtml +
             '</div>';
@@ -1369,7 +1399,8 @@
         case 'table':
             html += '<div class="space-y-0">';
             for (var k = 0; k < count; k++) {
-                html += '<div class="skeleton skeleton-table-row" style="margin-bottom: 0; border-radius: 0;"></div>';
+                html +=
+                        '<div class="skeleton skeleton-table-row" style="margin-bottom: 0; border-radius: 0;"></div>';
             }
             html += '</div>';
             break;
@@ -1405,8 +1436,7 @@
             _pageLoadingEl = document.createElement('div');
             _pageLoadingEl.className = 'page-loading';
             _pageLoadingEl.innerHTML =
-                '<div class="page-loading-spinner"></div>' +
-                '<div class="page-loading-text">加载中...</div>';
+                '<div class="page-loading-spinner"></div>' + '<div class="page-loading-text">加载中...</div>';
             document.body.appendChild(_pageLoadingEl);
         }
 
@@ -1638,15 +1668,23 @@
             contentHtml +=
                 '<div class="shortcut-category mb-4">' +
                 '<div class="flex items-center gap-2 mb-2">' +
-                '<iconify-icon icon="' + cat.icon + '" class="text-brand"></iconify-icon>' +
-                '<span class="text-sm font-semibold text-fg-primary">' + cat.label + '</span>' +
+                '<iconify-icon icon="' +
+                cat.icon +
+                '" class="text-brand"></iconify-icon>' +
+                '<span class="text-sm font-semibold text-fg-primary">' +
+                cat.label +
+                '</span>' +
                 '</div>' +
                 '<div class="space-y-1 pl-6">';
             cat.items.forEach(function (item) {
                 contentHtml +=
                     '<div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-bg-subtle">' +
-                    '<span class="text-xs text-fg-secondary">' + escapeHtml(item.description) + '</span>' +
-                    '<kbd class="shortcut-kbd">' + item.displayKey + '</kbd>' +
+                    '<span class="text-xs text-fg-secondary">' +
+                    escapeHtml(item.description) +
+                    '</span>' +
+                    '<kbd class="shortcut-kbd">' +
+                    item.displayKey +
+                    '</kbd>' +
                     '</div>';
             });
             contentHtml += '</div></div>';
@@ -1674,24 +1712,221 @@
 
     function _registerDefaultCommands() {
         _commands = [
-            { id: 'nav-workstation', name: '工作台', description: '返回工作台首页', icon: 'mdi:view-dashboard-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('workstation'); } },
-            { id: 'nav-cases', name: '案件管理', description: '查看和管理所有案件', icon: 'mdi:briefcase-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchToList === 'function') switchToList('case-list'); } },
-            { id: 'nav-schedule', name: '日程管理', description: '查看和管理日程安排', icon: 'mdi:calendar-month-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('schedule-calendar'); } },
-            { id: 'nav-clients', name: '客户管理', description: '管理客户信息', icon: 'mdi:account-group-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('client'); } },
-            { id: 'nav-templates', name: '模板管理', description: '管理文书模板', icon: 'mdi:file-document-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('template'); } },
-            { id: 'nav-knowledge', name: '知识库', description: '法律知识库检索', icon: 'mdi:bookshelf', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('knowledge'); } },
-            { id: 'nav-archive', name: '归档管理', description: '已归档案件', icon: 'mdi:archive-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchView === 'function') switchView('archive'); } },
-            { id: 'nav-ai-chat', name: 'AI 对话', description: '打开 LexPrime 助手', icon: 'mdi:chat-processing-outline', category: 'navigation', shortcut: '', action: function () { if (typeof switchSidebarTab === 'function') switchSidebarTab('ai'); } },
-            { id: 'nav-settings', name: '账号设置', description: '个人设置与偏好', icon: 'mdi:cog-outline', category: 'navigation', shortcut: '', action: function () { if (typeof window.switchToAccountSettings === 'function') window.switchToAccountSettings(); } },
-            { id: 'action-new-case', name: '新建案件', description: '创建一个新的案件', icon: 'mdi:plus-circle-outline', category: 'action', shortcut: 'Ctrl+N', action: function () { if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal(); else showToast('新建案件功能开发中'); } },
-            { id: 'action-new-schedule', name: '新建日程', description: '添加新的日程安排', icon: 'mdi:calendar-plus', category: 'action', shortcut: '', action: function () { if (typeof window.openScheduleModal === 'function') window.openScheduleModal(); else showToast('新建日程功能开发中'); } },
-            { id: 'action-upload-file', name: '上传文件', description: '上传文件到附件库', icon: 'mdi:upload', category: 'action', shortcut: '', action: function () { showToast('上传文件功能开发中'); } },
-            { id: 'action-search', name: '全局搜索', description: '搜索案件、文书、证据', icon: 'mdi:magnify', category: 'action', shortcut: 'Ctrl+/', action: function () { var input = document.querySelector('header input[type="text"]'); if (input) { input.focus(); input.select(); } } },
-            { id: 'setting-shortcuts', name: '快捷键帮助', description: '查看所有键盘快捷键', icon: 'mdi:keyboard-variant', category: 'setting', shortcut: '?', action: function () { closeCommandPalette(); setTimeout(showShortcutHelp, 100); } },
-            { id: 'setting-theme-toggle', name: '切换主题', description: '切换浅色/深色模式', icon: 'mdi:theme-light-dark', category: 'setting', shortcut: 'Ctrl+Shift+L', action: function () { closeCommandPalette(); setTimeout(toggleTheme, 100); } },
-            { id: 'setting-theme-light', name: '浅色模式', description: '使用浅色主题', icon: 'mdi:white-balance-sunny', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('light'); }, 100); } },
-            { id: 'setting-theme-dark', name: '深色模式', description: '使用深色主题', icon: 'mdi:moon-waning-crescent', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('dark'); }, 100); } },
-            { id: 'setting-theme-auto', name: '跟随系统', description: '自动跟随系统主题', icon: 'mdi:monitor-screenshot', category: 'setting', shortcut: '', action: function () { closeCommandPalette(); setTimeout(function () { setTheme('auto'); }, 100); } }
+            {
+                id: 'nav-workstation',
+                name: '工作台',
+                description: '返回工作台首页',
+                icon: 'mdi:view-dashboard-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('workstation');
+                }
+            },
+            {
+                id: 'nav-cases',
+                name: '案件管理',
+                description: '查看和管理所有案件',
+                icon: 'mdi:briefcase-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchToList === 'function') switchToList('case-list');
+                }
+            },
+            {
+                id: 'nav-schedule',
+                name: '日程管理',
+                description: '查看和管理日程安排',
+                icon: 'mdi:calendar-month-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('schedule-calendar');
+                }
+            },
+            {
+                id: 'nav-clients',
+                name: '客户管理',
+                description: '管理客户信息',
+                icon: 'mdi:account-group-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('client');
+                }
+            },
+            {
+                id: 'nav-templates',
+                name: '模板管理',
+                description: '管理文书模板',
+                icon: 'mdi:file-document-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('template');
+                }
+            },
+            {
+                id: 'nav-knowledge',
+                name: '知识库',
+                description: '法律知识库检索',
+                icon: 'mdi:bookshelf',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('knowledge');
+                }
+            },
+            {
+                id: 'nav-archive',
+                name: '归档管理',
+                description: '已归档案件',
+                icon: 'mdi:archive-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchView === 'function') switchView('archive');
+                }
+            },
+            {
+                id: 'nav-ai-chat',
+                name: 'AI 对话',
+                description: '打开 LexPrime 助手',
+                icon: 'mdi:chat-processing-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof switchSidebarTab === 'function') switchSidebarTab('ai');
+                }
+            },
+            {
+                id: 'nav-settings',
+                name: '账号设置',
+                description: '个人设置与偏好',
+                icon: 'mdi:cog-outline',
+                category: 'navigation',
+                shortcut: '',
+                action: function () {
+                    if (typeof window.switchToAccountSettings === 'function') window.switchToAccountSettings();
+                }
+            },
+            {
+                id: 'action-new-case',
+                name: '新建案件',
+                description: '创建一个新的案件',
+                icon: 'mdi:plus-circle-outline',
+                category: 'action',
+                shortcut: 'Ctrl+N',
+                action: function () {
+                    if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal();
+                    else showToast('新建案件功能开发中');
+                }
+            },
+            {
+                id: 'action-new-schedule',
+                name: '新建日程',
+                description: '添加新的日程安排',
+                icon: 'mdi:calendar-plus',
+                category: 'action',
+                shortcut: '',
+                action: function () {
+                    if (typeof window.openScheduleModal === 'function') window.openScheduleModal();
+                    else showToast('新建日程功能开发中');
+                }
+            },
+            {
+                id: 'action-upload-file',
+                name: '上传文件',
+                description: '上传文件到附件库',
+                icon: 'mdi:upload',
+                category: 'action',
+                shortcut: '',
+                action: function () {
+                    showToast('上传文件功能开发中');
+                }
+            },
+            {
+                id: 'action-search',
+                name: '全局搜索',
+                description: '搜索案件、文书、证据',
+                icon: 'mdi:magnify',
+                category: 'action',
+                shortcut: 'Ctrl+/',
+                action: function () {
+                    var input = document.querySelector('header input[type="text"]');
+                    if (input) {
+                        input.focus();
+                        input.select();
+                    }
+                }
+            },
+            {
+                id: 'setting-shortcuts',
+                name: '快捷键帮助',
+                description: '查看所有键盘快捷键',
+                icon: 'mdi:keyboard-variant',
+                category: 'setting',
+                shortcut: '?',
+                action: function () {
+                    closeCommandPalette();
+                    setTimeout(showShortcutHelp, 100);
+                }
+            },
+            {
+                id: 'setting-theme-toggle',
+                name: '切换主题',
+                description: '切换浅色/深色模式',
+                icon: 'mdi:theme-light-dark',
+                category: 'setting',
+                shortcut: 'Ctrl+Shift+L',
+                action: function () {
+                    closeCommandPalette();
+                    setTimeout(toggleTheme, 100);
+                }
+            },
+            {
+                id: 'setting-theme-light',
+                name: '浅色模式',
+                description: '使用浅色主题',
+                icon: 'mdi:white-balance-sunny',
+                category: 'setting',
+                shortcut: '',
+                action: function () {
+                    closeCommandPalette();
+                    setTimeout(function () {
+                        setTheme('light');
+                    }, 100);
+                }
+            },
+            {
+                id: 'setting-theme-dark',
+                name: '深色模式',
+                description: '使用深色主题',
+                icon: 'mdi:moon-waning-crescent',
+                category: 'setting',
+                shortcut: '',
+                action: function () {
+                    closeCommandPalette();
+                    setTimeout(function () {
+                        setTheme('dark');
+                    }, 100);
+                }
+            },
+            {
+                id: 'setting-theme-auto',
+                name: '跟随系统',
+                description: '自动跟随系统主题',
+                icon: 'mdi:monitor-screenshot',
+                category: 'setting',
+                shortcut: '',
+                action: function () {
+                    closeCommandPalette();
+                    setTimeout(function () {
+                        setTheme('auto');
+                    }, 100);
+                }
+            }
         ];
     }
 
@@ -1713,7 +1948,9 @@
             return;
         }
         _filteredCommands = _commands.filter(function (cmd) {
-            return _fuzzyMatch(query, cmd.name) || _fuzzyMatch(query, cmd.description) || _fuzzyMatch(query, cmd.category);
+            return (
+                _fuzzyMatch(query, cmd.name) || _fuzzyMatch(query, cmd.description) || _fuzzyMatch(query, cmd.category)
+            );
         });
     }
 
@@ -1730,7 +1967,8 @@
         var displayIndex = 0;
 
         if (_filteredCommands.length === 0) {
-            html = '<div class="p-8 text-center text-fg-tertiary text-sm">' +
+            html =
+                '<div class="p-8 text-center text-fg-tertiary text-sm">' +
                 '<iconify-icon icon="mdi:magnify-scan" class="text-3xl mb-2 block mx-auto"></iconify-icon>' +
                 '没有找到匹配的命令' +
                 '</div>';
@@ -1741,18 +1979,39 @@
         _filteredCommands.forEach(function (cmd, idx) {
             if (cmd.category !== currentCategory) {
                 currentCategory = cmd.category;
-                html += '<div class="command-category px-3 py-1.5 text-[11px] font-medium text-fg-tertiary bg-bg-subtle/50 sticky top-0 backdrop-blur-sm z-10">' + _getCategoryLabel(cmd.category) + '</div>';
+                html +=
+                    '<div class="command-category px-3 py-1.5 text-[11px] font-medium text-fg-tertiary bg-bg-subtle/50 sticky top-0 backdrop-blur-sm z-10">' +
+                    _getCategoryLabel(cmd.category) +
+                    '</div>';
             }
             var isSelected = idx === _selectedIndex;
-            var shortcutHtml = cmd.shortcut ? '<kbd class="shortcut-kbd text-[10px]">' + _formatKeyDisplay(cmd.shortcut) + '</kbd>' : '';
+            var shortcutHtml = cmd.shortcut
+                ? '<kbd class="shortcut-kbd text-[10px]">' + _formatKeyDisplay(cmd.shortcut) + '</kbd>'
+                : '';
             html +=
-                '<div class="command-item flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors ' + (isSelected ? 'bg-brand/10' : 'hover:bg-bg-subtle') + '" data-index="' + idx + '" role="option" aria-selected="' + (isSelected ? 'true' : 'false') + '">' +
-                '<div class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center flex-shrink-0 ' + (isSelected ? 'bg-brand/20' : '') + '">' +
-                '<iconify-icon icon="' + cmd.icon + '" class="' + (isSelected ? 'text-brand' : 'text-fg-tertiary') + '"></iconify-icon>' +
+                '<div class="command-item flex items-center gap-3 px-3 py-2 cursor-pointer transition-colors ' +
+                (isSelected ? 'bg-brand/10' : 'hover:bg-bg-subtle') +
+                '" data-index="' +
+                idx +
+                '" role="option" aria-selected="' +
+                (isSelected ? 'true' : 'false') +
+                '">' +
+                '<div class="w-8 h-8 rounded-lg bg-bg-subtle flex items-center justify-center flex-shrink-0 ' +
+                (isSelected ? 'bg-brand/20' : '') +
+                '">' +
+                '<iconify-icon icon="' +
+                cmd.icon +
+                '" class="' +
+                (isSelected ? 'text-brand' : 'text-fg-tertiary') +
+                '"></iconify-icon>' +
                 '</div>' +
                 '<div class="flex-1 min-w-0">' +
-                '<div class="text-sm font-medium text-fg-primary truncate">' + escapeHtml(cmd.name) + '</div>' +
-                '<div class="text-[11px] text-fg-tertiary truncate">' + escapeHtml(cmd.description) + '</div>' +
+                '<div class="text-sm font-medium text-fg-primary truncate">' +
+                escapeHtml(cmd.name) +
+                '</div>' +
+                '<div class="text-[11px] text-fg-tertiary truncate">' +
+                escapeHtml(cmd.description) +
+                '</div>' +
                 '</div>' +
                 shortcutHtml +
                 '</div>';
@@ -1767,7 +2026,8 @@
         }
 
         if (typeof gsap !== 'undefined') {
-            gsap.fromTo(_commandListEl.querySelectorAll('.command-item'),
+            gsap.fromTo(
+                _commandListEl.querySelectorAll('.command-item'),
                 { opacity: 0, y: 4 },
                 { opacity: 1, y: 0, duration: 0.15, stagger: 0.02, ease: 'power2.out' }
             );
@@ -1842,7 +2102,9 @@
             '<span><kbd class="shortcut-kbd text-[9px]">↵</kbd> 执行</span>' +
             '<span><kbd class="shortcut-kbd text-[9px]">Esc</kbd> 关闭</span>' +
             '</div>' +
-            '<span class="text-fg-tertiary">' + _commands.length + ' 个命令</span>' +
+            '<span class="text-fg-tertiary">' +
+            _commands.length +
+            ' 个命令</span>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -1907,14 +2169,12 @@
 
         if (typeof gsap !== 'undefined') {
             var modal = _commandPaletteEl.querySelector('.command-palette-modal');
-            gsap.fromTo(modal,
+            gsap.fromTo(
+                modal,
                 { opacity: 0, y: -20, scale: 0.96 },
                 { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: 'power3.out' }
             );
-            gsap.fromTo(_commandPaletteEl,
-                { opacity: 0 },
-                { opacity: 1, duration: 0.15, ease: 'power2.out' }
-            );
+            gsap.fromTo(_commandPaletteEl, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: 'power2.out' });
         }
     }
 
@@ -1924,7 +2184,11 @@
         if (typeof gsap !== 'undefined') {
             var modal = _commandPaletteEl.querySelector('.command-palette-modal');
             gsap.to(modal, {
-                opacity: 0, y: -10, scale: 0.98, duration: 0.15, ease: 'power2.in',
+                opacity: 0,
+                y: -10,
+                scale: 0.98,
+                duration: 0.15,
+                ease: 'power2.in',
                 onComplete: function () {
                     if (_commandPaletteEl) _commandPaletteEl.classList.add('hidden');
                 }
@@ -2063,7 +2327,7 @@
         var effectiveTheme = theme === 'auto' ? _getSystemTheme() : theme;
         showToast({
             type: 'success',
-            message: '已切换到' + (theme === 'auto' ? '跟随系统' : (effectiveTheme === 'dark' ? '深色模式' : '浅色模式')),
+            message: '已切换到' + (theme === 'auto' ? '跟随系统' : effectiveTheme === 'dark' ? '深色模式' : '浅色模式'),
             duration: 2000
         });
 
@@ -2110,32 +2374,40 @@
             allowInInput: true
         });
 
-        registerShortcut('Ctrl+/', function () {
-            var input = document.querySelector('header input[type="text"]');
-            if (input) {
-                input.focus();
-                input.select();
+        registerShortcut(
+            'Ctrl+/',
+            function () {
+                var input = document.querySelector('header input[type="text"]');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            },
+            {
+                description: '聚焦搜索框',
+                category: 'action',
+                allowInInput: false
             }
-        }, {
-            description: '聚焦搜索框',
-            category: 'action',
-            allowInInput: false
-        });
+        );
 
-        registerShortcut('Ctrl+N', function () {
-            var view = _currentScope;
-            if (view === 'case-list' || view === 'cases') {
-                if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal();
-            } else if (view === 'schedule' || view === 'schedule-calendar') {
-                if (typeof window.openScheduleModal === 'function') window.openScheduleModal();
-            } else {
-                openCommandPalette();
+        registerShortcut(
+            'Ctrl+N',
+            function () {
+                var view = _currentScope;
+                if (view === 'case-list' || view === 'cases') {
+                    if (typeof window.showNewCaseModal === 'function') window.showNewCaseModal();
+                } else if (view === 'schedule' || view === 'schedule-calendar') {
+                    if (typeof window.openScheduleModal === 'function') window.openScheduleModal();
+                } else {
+                    openCommandPalette();
+                }
+            },
+            {
+                description: '新建（智能判断）',
+                category: 'action',
+                allowInInput: false
             }
-        }, {
-            description: '新建（智能判断）',
-            category: 'action',
-            allowInInput: false
-        });
+        );
 
         registerShortcut('Ctrl+Shift+L', toggleTheme, {
             description: '切换深色/浅色模式',
@@ -2143,24 +2415,28 @@
             allowInInput: true
         });
 
-        registerShortcut('Escape', function () {
-            if (_isPaletteOpen) {
-                closeCommandPalette();
-                return;
-            }
-            var modals = document.querySelectorAll('[role="dialog"]:not(.hidden)');
-            for (var i = modals.length - 1; i >= 0; i--) {
-                var closeBtn = modals[i].querySelector('[data-modal-close]');
-                if (closeBtn) {
-                    closeBtn.click();
+        registerShortcut(
+            'Escape',
+            function () {
+                if (_isPaletteOpen) {
+                    closeCommandPalette();
                     return;
                 }
+                var modals = document.querySelectorAll('[role="dialog"]:not(.hidden)');
+                for (var i = modals.length - 1; i >= 0; i--) {
+                    var closeBtn = modals[i].querySelector('[data-modal-close]');
+                    if (closeBtn) {
+                        closeBtn.click();
+                        return;
+                    }
+                }
+            },
+            {
+                description: '关闭弹窗/取消',
+                category: 'other',
+                allowInInput: true
             }
-        }, {
-            description: '关闭弹窗/取消',
-            category: 'other',
-            allowInInput: true
-        });
+        );
 
         registerShortcut('?', showShortcutHelp, {
             description: '显示快捷键帮助',
@@ -2186,13 +2462,17 @@
         if (!('ontouchstart' in window)) return;
 
         var lastTouchEnd = 0;
-        document.addEventListener('touchend', function (e) {
-            var now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
+        document.addEventListener(
+            'touchend',
+            function (e) {
+                var now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            },
+            false
+        );
 
         document.addEventListener('touchstart', function () {}, { passive: true });
     }
@@ -2286,24 +2566,27 @@
         });
 
         if ('IntersectionObserver' in window) {
-            _lazyLoadObserver = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        var img = entry.target;
-                        if (img.dataset.src) {
-                            img.src = img.dataset.src;
-                            img.removeAttribute('data-src');
+            _lazyLoadObserver = new IntersectionObserver(
+                function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            var img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                            }
+                            img.onload = function () {
+                                img.style.opacity = '1';
+                            };
+                            _lazyLoadObserver.unobserve(img);
                         }
-                        img.onload = function () {
-                            img.style.opacity = '1';
-                        };
-                        _lazyLoadObserver.unobserve(img);
-                    }
-                });
-            }, {
-                rootMargin: '50px',
-                threshold: 0.1
-            });
+                    });
+                },
+                {
+                    rootMargin: '50px',
+                    threshold: 0.1
+                }
+            );
 
             images.forEach(function (img) {
                 if (img.dataset.src) {
@@ -2337,10 +2620,7 @@
         var windowHeight = window.innerHeight || document.documentElement.clientHeight;
         var windowWidth = window.innerWidth || document.documentElement.clientWidth;
         return (
-            rect.top >= -50 &&
-            rect.left >= -50 &&
-            rect.bottom <= windowHeight + 50 &&
-            rect.right <= windowWidth + 50
+            rect.top >= -50 && rect.left >= -50 && rect.bottom <= windowHeight + 50 && rect.right <= windowWidth + 50
         );
     }
 

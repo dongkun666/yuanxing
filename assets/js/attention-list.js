@@ -97,33 +97,56 @@
     }
 
     function renderCard(item, index) {
-        var gradientFrom = item.type === '逾期' ? 'from-danger/5' : item.type === '待处理' ? 'from-warning/5' : 'from-brand/5';
-        var iconGradientFrom = item.type === '逾期' ? 'from-red-100' : item.type === '待处理' ? 'from-amber-100' : 'from-brand-tint';
-        var iconGradientTo = item.type === '逾期' ? 'to-red-200' : item.type === '待处理' ? 'to-warning-tint' : 'to-brand-tint2';
-        var badgeClass = item.type === '逾期'
-            ? 'bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20'
-            : item.type === '待处理'
-                ? 'bg-gradient-to-r from-warning-tint to-amber-100 text-warning'
-                : 'bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand';
-        var borderClass = item.type === '逾期' ? 'border-l-danger' : item.type === '待处理' ? 'border-l-warning' : 'border-l-brand';
-        var btnClass = item.type === '逾期'
-            ? 'text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25'
-            : item.type === '待处理'
-                ? 'text-warning bg-warning-tint hover:bg-amber-100'
-                : 'text-brand bg-brand-tint hover:bg-brand-tint2';
-        var extraIcon = item.type === '逾期' ? 'mdi:clock-alert' : item.type === '待处理' ? 'mdi:flag' : 'mdi:clock-outline';
+        var gradientFrom =
+            item.type === '逾期' ? 'from-danger/5' : item.type === '待处理' ? 'from-warning/5' : 'from-brand/5';
+        var iconGradientFrom =
+            item.type === '逾期' ? 'from-red-100' : item.type === '待处理' ? 'from-amber-100' : 'from-brand-tint';
+        var iconGradientTo =
+            item.type === '逾期' ? 'to-red-200' : item.type === '待处理' ? 'to-warning-tint' : 'to-brand-tint2';
+        var badgeClass =
+            item.type === '逾期'
+                ? 'bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20'
+                : item.type === '待处理'
+                    ? 'bg-gradient-to-r from-warning-tint to-amber-100 text-warning'
+                    : 'bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand';
+        var borderClass =
+            item.type === '逾期' ? 'border-l-danger' : item.type === '待处理' ? 'border-l-warning' : 'border-l-brand';
+        var btnClass =
+            item.type === '逾期'
+                ? 'text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25'
+                : item.type === '待处理'
+                    ? 'text-warning bg-warning-tint hover:bg-amber-100'
+                    : 'text-brand bg-brand-tint hover:bg-brand-tint2';
+        var extraIcon =
+            item.type === '逾期' ? 'mdi:clock-alert' : item.type === '待处理' ? 'mdi:flag' : 'mdi:clock-outline';
 
         return (
-            '<div class="ws-card p-4 group cursor-pointer border-l-4 ' + borderClass + ' relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="' + (index || 0) + '" data-delay="0.2">' +
-            '<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ' + gradientFrom + ' to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>' +
+            '<div class="ws-card p-4 group cursor-pointer border-l-4 ' +
+            borderClass +
+            ' relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="' +
+            (index || 0) +
+            '" data-delay="0.2">' +
+            '<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ' +
+            gradientFrom +
+            ' to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>' +
             '<div class="relative z-10">' +
             '<div class="flex items-center gap-3">' +
-            '<div class="w-11 h-11 rounded-xl bg-gradient-to-br ' + iconGradientFrom + ' ' + iconGradientTo + ' flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
-            '<iconify-icon class="' + item.iconColor + ' text-lg" icon="' + item.icon + '"></iconify-icon>' +
+            '<div class="w-11 h-11 rounded-xl bg-gradient-to-br ' +
+            iconGradientFrom +
+            ' ' +
+            iconGradientTo +
+            ' flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
+            '<iconify-icon class="' +
+            item.iconColor +
+            ' text-lg" icon="' +
+            item.icon +
+            '"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2 mb-0.5">' +
-            '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ' + badgeClass + '">' +
+            '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ' +
+            badgeClass +
+            '">' +
             (item.type === '逾期' ? '<iconify-icon icon="mdi:alert-circle" class="text-[9px]"></iconify-icon>' : '') +
             item.type +
             '</span>' +
@@ -138,11 +161,19 @@
             '<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>' +
             '</div>' +
             '<div class="mt-3 flex items-center justify-between">' +
-            '<span class="text-[11px] ' + item.actionColor + ' font-semibold flex items-center gap-1">' +
-            '<iconify-icon icon="' + extraIcon + '" class="text-xs"></iconify-icon>' +
+            '<span class="text-[11px] ' +
+            item.actionColor +
+            ' font-semibold flex items-center gap-1">' +
+            '<iconify-icon icon="' +
+            extraIcon +
+            '" class="text-xs"></iconify-icon>' +
             item.extra +
             '</span>' +
-            '<button class="text-[11px] ' + btnClass + ' px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(' + item.id + ')">' +
+            '<button class="text-[11px] ' +
+            btnClass +
+            ' px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(' +
+            item.id +
+            ')">' +
             item.action +
             '</button>' +
             '</div>' +
@@ -169,9 +200,13 @@
                         title: '所有事项已处理完毕',
                         description: '太棒了！你已完成全部待办事项，继续保持高效工作',
                         actionText: '新建提醒',
-                        actionHandler: function () { switchView('deadline'); },
+                        actionHandler: function () {
+                            switchView('deadline');
+                        },
                         secondaryActionText: '查看日程',
-                        secondaryActionHandler: function () { switchView('schedule'); }
+                        secondaryActionHandler: function () {
+                            switchView('schedule');
+                        }
                     });
                 }
                 emptyEl.classList.remove('hidden');
@@ -210,10 +245,12 @@
                 hoverClass = 'hover:bg-bg-border';
             }
             btn.className =
-                'att-filter-btn text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary font-medium transition-all duration-200 ' + hoverClass;
+                'att-filter-btn text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary font-medium transition-all duration-200 ' +
+                hoverClass;
         });
         if (el) {
-            el.className = 'att-filter-btn text-xs px-4 py-2 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-200';
+            el.className =
+                'att-filter-btn text-xs px-4 py-2 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-200';
         }
     }
 

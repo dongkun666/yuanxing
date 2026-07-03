@@ -469,7 +469,11 @@
             '<span class="text-[10px] text-fg-tertiary mt-2 block ai-msg-time">刚刚</span>' +
             '<div class="ai-error-area hidden mt-2 text-xs text-danger bg-danger-tint/30 rounded-lg p-2 border border-danger/20"></div>' +
             '<div class="ai-retry-area hidden mt-2">' +
-            '<button class="text-xs text-brand hover:underline" onclick="retryAIMessage(\'' + aiMsgId + '\', \'' + escapeHtml(text).replace(/'/g, '\\\'') + '\')">重试</button>' +
+            '<button class="text-xs text-brand hover:underline" onclick="retryAIMessage(\'' +
+            aiMsgId +
+            '\', \'' +
+            escapeHtml(text).replace(/'/g, '\\\'') +
+            '\')">重试</button>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -507,14 +511,16 @@
                 if (res && res.ok && res.data) {
                     return res.data;
                 }
-                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+                throw new Error(
+                    res && res.data ? res.data.detail || res.data.message || 'API 请求失败' : 'API 请求失败'
+                );
             } catch (apiErr) {
                 console.warn('AI API 调用失败，降级到本地 mock:', apiErr);
             }
         }
         return {
             reply: generateMockAIReply(message),
-            conversation_id: _aiConversationId || ('mock-conv-' + Date.now())
+            conversation_id: _aiConversationId || 'mock-conv-' + Date.now()
         };
     }
 
@@ -541,18 +547,22 @@
         var errorEl = msgEl.querySelector('.ai-error-area');
         var retryEl = msgEl.querySelector('.ai-retry-area');
         var thinkingEl = msgEl.querySelector('.ai-thinking-text');
-        if (contentEl) contentEl.innerHTML = '<span class="ai-thinking-text">AI 思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></span>';
+        if (contentEl)
+            contentEl.innerHTML =
+                '<span class="ai-thinking-text">AI 思考中<span class="dot-flash">.</span><span class="dot-flash">.</span><span class="dot-flash">.</span></span>';
         if (errorEl) errorEl.classList.add('hidden');
         if (retryEl) retryEl.classList.add('hidden');
 
-        callAIChat(message).then(function (result) {
-            streamAIMessage(msgId, result.reply);
-            if (result.conversation_id) {
-                _aiConversationId = result.conversation_id;
-            }
-        }).catch(function (err) {
-            showAIError(msgId, err.message || '重试失败，请稍后再试');
-        });
+        callAIChat(message)
+            .then(function (result) {
+                streamAIMessage(msgId, result.reply);
+                if (result.conversation_id) {
+                    _aiConversationId = result.conversation_id;
+                }
+            })
+            .catch(function (err) {
+                showAIError(msgId, err.message || '重试失败，请稍后再试');
+            });
     }
 
     function streamAIMessage(msgId, fullText, onComplete) {
@@ -813,8 +823,7 @@
                 '**争议焦点**\n\n1. **合同效力问题**：案涉合同是否合法有效，双方权利义务如何认定\n2. **违约事实认定**：被告是否存在违约行为，违约程度如何\n3. **损失计算标准**：原告主张的损失金额是否有事实和法律依据\n4. **责任承担比例**：双方是否均有过错，责任如何划分',
             evidence:
                 '**证据分析**\n\n**优势证据：**\n- 书面合同原件，证明双方权利义务关系\n- 履行凭证（送货单/对账单/转账记录等），证明合同履行情况\n- 沟通记录（邮件/微信/函件），证明双方协商过程\n\n**证据薄弱点：**\n- 部分口头约定缺乏书面佐证\n- 损失计算依据需进一步补强\n- 部分证据形成时间存在疑点',
-            risk:
-                '**风险评估**\n\n**诉讼风险（中等偏高）：**\n- 事实认定风险：部分事实缺乏直接证据支持\n- 法律适用风险：相关法律条款存在解释空间\n- 执行风险：被告偿付能力需进一步调查\n\n**建议应对：**\n- 补充关键证据，形成完整证据链\n- 申请财产保全，确保判决可执行\n- 做好调解预案，降低诉讼成本',
+            risk: '**风险评估**\n\n**诉讼风险（中等偏高）：**\n- 事实认定风险：部分事实缺乏直接证据支持\n- 法律适用风险：相关法律条款存在解释空间\n- 执行风险：被告偿付能力需进一步调查\n\n**建议应对：**\n- 补充关键证据，形成完整证据链\n- 申请财产保全，确保判决可执行\n- 做好调解预案，降低诉讼成本',
             nextSteps:
                 '**下一步建议**\n\n1. **证据补强**（3日内）：补充完善关键证据，特别是损失计算依据\n2. **保全申请**（5日内）：向法院申请财产保全，查封被告银行账户及资产\n3. **庭前准备**（开庭前）：准备质证意见、代理词、答辩预案\n4. **调解策略**：在诉讼过程中保持调解渠道，争取最优解决方案\n5. **执行预案**：提前调查被告财产线索，为执行阶段做准备'
         };
@@ -1018,7 +1027,9 @@
                         nextSteps: data.next_steps || ''
                     };
                 }
-                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+                throw new Error(
+                    res && res.data ? res.data.detail || res.data.message || 'API 请求失败' : 'API 请求失败'
+                );
             } catch (apiErr) {
                 console.warn('AI 案件摘要 API 调用失败，降级到本地 mock:', apiErr);
             }
@@ -1039,7 +1050,9 @@
             '<iconify-icon icon="mdi:alert-circle-outline" class="text-3xl text-danger"></iconify-icon>' +
             '</div>' +
             '<p class="text-sm font-medium text-fg-primary mb-1">生成失败</p>' +
-            '<p class="text-xs text-fg-tertiary mb-4">' + escapeHtml(errorMsg) + '</p>' +
+            '<p class="text-xs text-fg-tertiary mb-4">' +
+            escapeHtml(errorMsg) +
+            '</p>' +
             '<button class="px-4 py-2 text-xs text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="regenerateCaseSummary()">' +
             '重新生成' +
             '</button>' +
@@ -1369,7 +1382,9 @@
 
     async function startPolish() {
         var opts = getSelectedPolishOptions();
-        var hasAny = Object.values(opts).some(function (v) { return v; });
+        var hasAny = Object.values(opts).some(function (v) {
+            return v;
+        });
         if (!hasAny) {
             Utils.showToast('请至少选择一项润色选项');
             return;
@@ -1403,7 +1418,9 @@
                 if (res && res.ok && res.data) {
                     return res.data;
                 }
-                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+                throw new Error(
+                    res && res.data ? res.data.detail || res.data.message || 'API 请求失败' : 'API 请求失败'
+                );
             } catch (apiErr) {
                 console.warn('AI 文书润色 API 调用失败，降级到本地 mock:', apiErr);
             }
@@ -1414,7 +1431,9 @@
             polished_content: polished,
             modifications: mods,
             stats: {
-                total_modifications: mods.filter(function (m) { return m.type === 'modified'; }).length
+                total_modifications: mods.filter(function (m) {
+                    return m.type === 'modified';
+                }).length
             }
         };
     }
@@ -1431,11 +1450,29 @@
         statsEl.innerHTML =
             '<div class="flex items-center gap-3 flex-wrap">' +
             '<span class="text-xs text-fg-tertiary">修改统计:</span>' +
-            '<span class="text-xs px-2 py-0.5 bg-brand-tint text-brand rounded-full">共 ' + total + ' 处</span>' +
-            (legalTerms > 0 ? '<span class="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full">法律用语 ' + legalTerms + '</span>' : '') +
-            (typos > 0 ? '<span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">错别字 ' + typos + '</span>' : '') +
-            (logic > 0 ? '<span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">逻辑优化 ' + logic + '</span>' : '') +
-            (tone > 0 ? '<span class="text-xs px-2 py-0.5 bg-amber-50 text-amber-600 rounded-full">语气调整 ' + tone + '</span>' : '') +
+            '<span class="text-xs px-2 py-0.5 bg-brand-tint text-brand rounded-full">共 ' +
+            total +
+            ' 处</span>' +
+            (legalTerms > 0
+                ? '<span class="text-xs px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full">法律用语 ' +
+                  legalTerms +
+                  '</span>'
+                : '') +
+            (typos > 0
+                ? '<span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">错别字 ' +
+                  typos +
+                  '</span>'
+                : '') +
+            (logic > 0
+                ? '<span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">逻辑优化 ' +
+                  logic +
+                  '</span>'
+                : '') +
+            (tone > 0
+                ? '<span class="text-xs px-2 py-0.5 bg-amber-50 text-amber-600 rounded-full">语气调整 ' +
+                  tone +
+                  '</span>'
+                : '') +
             '</div>';
     }
 
@@ -1452,7 +1489,9 @@
             '<iconify-icon icon="mdi:alert-circle-outline" class="text-3xl text-danger"></iconify-icon>' +
             '</div>' +
             '<p class="text-sm font-medium text-fg-primary mb-1">润色失败</p>' +
-            '<p class="text-xs text-fg-tertiary mb-4">' + escapeHtml(errorMsg) + '</p>' +
+            '<p class="text-xs text-fg-tertiary mb-4">' +
+            escapeHtml(errorMsg) +
+            '</p>' +
             '<button class="px-4 py-2 text-xs text-white bg-brand hover:bg-brand/90 rounded-lg transition-colors" onclick="retryPolish()">' +
             '重新润色' +
             '</button>' +
@@ -1518,7 +1557,11 @@
             var typeInfo = typeLabelMap[item.type] || typeLabelMap.modified;
             html +=
                 '<div class="flex items-start gap-2 p-2 bg-bg-subtle rounded-lg">' +
-                '<span class="text-[10px] px-1.5 py-0.5 bg-' + typeInfo.color + '-tint text-' + typeInfo.color + ' rounded flex-shrink-0 mt-0.5">' +
+                '<span class="text-[10px] px-1.5 py-0.5 bg-' +
+                typeInfo.color +
+                '-tint text-' +
+                typeInfo.color +
+                ' rounded flex-shrink-0 mt-0.5">' +
                 typeInfo.label +
                 '</span>' +
                 '<div class="flex-1 min-w-0 space-y-1">' +
@@ -1539,15 +1582,9 @@
         });
 
         if (count === 0) {
-            html =
-                '<div class="text-center py-4 text-xs text-fg-tertiary">' +
-                '未检测到明显修改' +
-                '</div>';
+            html = '<div class="text-center py-4 text-xs text-fg-tertiary">' + '未检测到明显修改' + '</div>';
         } else if (count > 20) {
-            html +=
-                '<div class="text-center text-xs text-fg-tertiary pt-2">' +
-                '仅显示前 20 条修改' +
-                '</div>';
+            html += '<div class="text-center text-xs text-fg-tertiary pt-2">' + '仅显示前 20 条修改' + '</div>';
         }
 
         listEl.innerHTML = html;
@@ -1624,14 +1661,18 @@
                 if (res && res.ok && res.data) {
                     return res.data;
                 }
-                throw new Error(res && res.data ? (res.data.detail || res.data.message || 'API 请求失败') : 'API 请求失败');
+                throw new Error(
+                    res && res.data ? res.data.detail || res.data.message || 'API 请求失败' : 'API 请求失败'
+                );
             } catch (apiErr) {
                 console.warn('AI 智能填空 API 调用失败，降级到本地 mock:', apiErr);
             }
         }
         return {
             filled_fields: caseInfo,
-            filled_count: Object.keys(caseInfo).filter(function (k) { return caseInfo[k]; }).length
+            filled_count: Object.keys(caseInfo).filter(function (k) {
+                return caseInfo[k];
+            }).length
         };
     }
 
@@ -1661,7 +1702,9 @@
     function applyAutoFill(data) {
         var count = 0;
         if (!data) return count;
-        var inputs = document.querySelectorAll('.template-var-input, [data-template-var], #ai-doc-form-fields input, #ai-doc-form-fields textarea');
+        var inputs = document.querySelectorAll(
+            '.template-var-input, [data-template-var], #ai-doc-form-fields input, #ai-doc-form-fields textarea'
+        );
         inputs.forEach(function (input) {
             var varName = input.getAttribute('data-template-var') || input.id;
             if (!varName) return;
@@ -1680,7 +1723,9 @@
 
     function openAutoFillSuggest() {
         var data = collectCaseInfoForFill();
-        var dataCount = Object.keys(data).filter(function (k) { return data[k]; }).length;
+        var dataCount = Object.keys(data).filter(function (k) {
+            return data[k];
+        }).length;
 
         var content =
             '<div class="ai-autofill-panel">' +
@@ -1916,30 +1961,102 @@
         switch (page) {
         case 'case':
             actions = [
-                { label: 'AI 案件摘要', desc: '一键生成案件分析报告', icon: 'mdi:file-document-outline', color: 'brand', action: 'openCaseSummaryModal()' },
-                { label: '一键提取要点', desc: '智能提取案件关键信息', icon: 'mdi:select-drag', color: 'wiki', action: 'openAIExtractModal()' },
-                { label: '生成起诉状', desc: '基于案件信息自动起草', icon: 'mdi:gavel', color: 'success', action: 'switchView(\'ai-doc\'); closeFloatingAI()' }
+                {
+                    label: 'AI 案件摘要',
+                    desc: '一键生成案件分析报告',
+                    icon: 'mdi:file-document-outline',
+                    color: 'brand',
+                    action: 'openCaseSummaryModal()'
+                },
+                {
+                    label: '一键提取要点',
+                    desc: '智能提取案件关键信息',
+                    icon: 'mdi:select-drag',
+                    color: 'wiki',
+                    action: 'openAIExtractModal()'
+                },
+                {
+                    label: '生成起诉状',
+                    desc: '基于案件信息自动起草',
+                    icon: 'mdi:gavel',
+                    color: 'success',
+                    action: 'switchView(\'ai-doc\'); closeFloatingAI()'
+                }
             ];
             break;
         case 'ai-doc':
             actions = [
-                { label: 'AI 文书润色', desc: '优化法律用语和逻辑', icon: 'mdi:auto-fix', color: 'wiki', action: 'openPolishPanel()' },
-                { label: '智能填空', desc: '从案件信息自动填充', icon: 'mdi:magic-staff', color: 'brand', action: 'openAutoFillSuggest()' },
-                { label: '生成答辩状', desc: '切换文书类型为答辩状', icon: 'mdi:shield-check-outline', color: 'success', action: 'selectAIDocType(\'defense\', document.querySelector(\'[data-type="defense"]\')); closeFloatingAI()' }
+                {
+                    label: 'AI 文书润色',
+                    desc: '优化法律用语和逻辑',
+                    icon: 'mdi:auto-fix',
+                    color: 'wiki',
+                    action: 'openPolishPanel()'
+                },
+                {
+                    label: '智能填空',
+                    desc: '从案件信息自动填充',
+                    icon: 'mdi:magic-staff',
+                    color: 'brand',
+                    action: 'openAutoFillSuggest()'
+                },
+                {
+                    label: '生成答辩状',
+                    desc: '切换文书类型为答辩状',
+                    icon: 'mdi:shield-check-outline',
+                    color: 'success',
+                    action: 'selectAIDocType(\'defense\', document.querySelector(\'[data-type="defense"]\')); closeFloatingAI()'
+                }
             ];
             break;
         case 'template':
             actions = [
-                { label: 'AI 智能填空', desc: '自动填充模板变量', icon: 'mdi:magic-staff', color: 'brand', action: 'openAutoFillSuggest()' },
-                { label: '搜索模板', desc: '快速找到需要的模板', icon: 'mdi:file-search-outline', color: 'wiki', action: 'closeFloatingAI()' },
-                { label: '上传模板', desc: '上传您的个人模板', icon: 'mdi:cloud-upload-outline', color: 'success', action: 'openUploadTemplateModal(); closeFloatingAI()' }
+                {
+                    label: 'AI 智能填空',
+                    desc: '自动填充模板变量',
+                    icon: 'mdi:magic-staff',
+                    color: 'brand',
+                    action: 'openAutoFillSuggest()'
+                },
+                {
+                    label: '搜索模板',
+                    desc: '快速找到需要的模板',
+                    icon: 'mdi:file-search-outline',
+                    color: 'wiki',
+                    action: 'closeFloatingAI()'
+                },
+                {
+                    label: '上传模板',
+                    desc: '上传您的个人模板',
+                    icon: 'mdi:cloud-upload-outline',
+                    color: 'success',
+                    action: 'openUploadTemplateModal(); closeFloatingAI()'
+                }
             ];
             break;
         default:
             actions = [
-                { label: 'AI 对话', desc: '随时提问法律问题', icon: 'mdi:message-text-outline', color: 'brand', action: 'switchView(\'ai\'); closeFloatingAI()' },
-                { label: '文书生成', desc: 'AI 起草法律文书', icon: 'mdi:file-document-edit-outline', color: 'wiki', action: 'switchView(\'ai-doc\'); closeFloatingAI()' },
-                { label: '类案检索', desc: '查找相似判例', icon: 'mdi:book-search-outline', color: 'success', action: 'switchView(\'knowledge\'); closeFloatingAI()' }
+                {
+                    label: 'AI 对话',
+                    desc: '随时提问法律问题',
+                    icon: 'mdi:message-text-outline',
+                    color: 'brand',
+                    action: 'switchView(\'ai\'); closeFloatingAI()'
+                },
+                {
+                    label: '文书生成',
+                    desc: 'AI 起草法律文书',
+                    icon: 'mdi:file-document-edit-outline',
+                    color: 'wiki',
+                    action: 'switchView(\'ai-doc\'); closeFloatingAI()'
+                },
+                {
+                    label: '类案检索',
+                    desc: '查找相似判例',
+                    icon: 'mdi:book-search-outline',
+                    color: 'success',
+                    action: 'switchView(\'knowledge\'); closeFloatingAI()'
+                }
             ];
         }
         return actions;
@@ -2047,13 +2164,17 @@
         initFloatingAI();
 
         if (typeof Utils !== 'undefined' && typeof Utils.registerShortcut === 'function') {
-            Utils.registerShortcut('ctrl+/', function () {
-                toggleFloatingAI();
-            }, {
-                description: '唤起 AI 助手',
-                category: 'action',
-                allowInInput: true
-            });
+            Utils.registerShortcut(
+                'ctrl+/',
+                function () {
+                    toggleFloatingAI();
+                },
+                {
+                    description: '唤起 AI 助手',
+                    category: 'action',
+                    allowInInput: true
+                }
+            );
         }
     }
 

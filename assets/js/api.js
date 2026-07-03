@@ -58,11 +58,13 @@
                 if (!el) {
                     el = document.createElement('div');
                     el.id = 'global-loading';
-                    el.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;' +
+                    el.style.cssText =
+                        'position:fixed;top:0;left:0;width:100%;height:100%;' +
                         'background:rgba(0,0,0,0.3);z-index:9999;display:none;' +
                         'align-items:center;justify-content:center;' +
                         'color:#fff;font-size:14px;';
-                    el.innerHTML = '<div style="background:rgba(0,0,0,0.7);padding:16px 24px;' +
+                    el.innerHTML =
+                        '<div style="background:rgba(0,0,0,0.7);padding:16px 24px;' +
                         'border-radius:8px;">加载中...</div>';
                     document.body.appendChild(el);
                 }
@@ -199,8 +201,10 @@
         isRetryable: function (status, method) {
             var retryableStatuses = [0, 408, 429, 500, 502, 503, 504];
             var idempotentMethods = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS'];
-            return retryableStatuses.indexOf(status) >= 0 &&
-                idempotentMethods.indexOf((method || 'GET').toUpperCase()) >= 0;
+            return (
+                retryableStatuses.indexOf(status) >= 0 &&
+                idempotentMethods.indexOf((method || 'GET').toUpperCase()) >= 0
+            );
         }
     };
 
@@ -345,9 +349,13 @@
                             var retryData = null;
                             var retryCt = retryRes.headers.get('content-type') || '';
                             if (retryCt.indexOf('application/json') >= 0) {
-                                retryData = await retryRes.json().catch(function () { return null; });
+                                retryData = await retryRes.json().catch(function () {
+                                    return null;
+                                });
                             } else {
-                                retryData = await retryRes.text().catch(function () { return null; });
+                                retryData = await retryRes.text().catch(function () {
+                                    return null;
+                                });
                             }
                             return { ok: true, status: retryRes.status, data: retryData };
                         }
@@ -390,7 +398,7 @@
         } catch (err) {
             clearTimeout(timeoutId);
             var errorType = err.name === 'AbortError' ? 'timeout' : 'network';
-            var errorMsg = err.name === 'AbortError' ? '请求超时' : (err.message || '网络错误');
+            var errorMsg = err.name === 'AbortError' ? '请求超时' : err.message || '网络错误';
 
             if (options.showError !== false) {
                 ErrorHandler.showError(errorMsg, err);
@@ -503,9 +511,13 @@
                             var retryData = null;
                             var retryCt = retryRes.headers.get('content-type') || '';
                             if (retryCt.indexOf('application/json') >= 0) {
-                                retryData = await retryRes.json().catch(function () { return null; });
+                                retryData = await retryRes.json().catch(function () {
+                                    return null;
+                                });
                             } else {
-                                retryData = await retryRes.text().catch(function () { return null; });
+                                retryData = await retryRes.text().catch(function () {
+                                    return null;
+                                });
                             }
                             return { ok: true, status: retryRes.status, data: retryData };
                         }
@@ -541,7 +553,7 @@
             return { ok: res.ok, status: res.status, data: data };
         } catch (err) {
             clearTimeout(timeoutId);
-            var errorMsg = err.name === 'AbortError' ? '上传超时' : (err.message || '网络错误');
+            var errorMsg = err.name === 'AbortError' ? '上传超时' : err.message || '网络错误';
 
             if (opts.showError !== false) {
                 ErrorHandler.showError(errorMsg, err);
@@ -741,10 +753,7 @@
              */
             cases: function (query, params, opts) {
                 params = params || {};
-                return this.search(
-                    Object.assign({ query: query, index: 'cases' }, params),
-                    opts
-                );
+                return this.search(Object.assign({ query: query, index: 'cases' }, params), opts);
             },
 
             /**
@@ -752,10 +761,7 @@
              */
             laws: function (query, params, opts) {
                 params = params || {};
-                return this.search(
-                    Object.assign({ query: query, index: 'laws' }, params),
-                    opts
-                );
+                return this.search(Object.assign({ query: query, index: 'laws' }, params), opts);
             },
 
             /**
@@ -763,10 +769,7 @@
              */
             companies: function (query, params, opts) {
                 params = params || {};
-                return this.search(
-                    Object.assign({ query: query, index: 'companies' }, params),
-                    opts
-                );
+                return this.search(Object.assign({ query: query, index: 'companies' }, params), opts);
             }
         },
 
@@ -1026,10 +1029,13 @@
             reviewText: function (text, contractType, options, opts) {
                 opts = opts || {};
                 options = options || {};
-                var body = Object.assign({
-                    contract_type: contractType,
-                    contract_text: text
-                }, options);
+                var body = Object.assign(
+                    {
+                        contract_type: contractType,
+                        contract_text: text
+                    },
+                    options
+                );
                 return post('/api/contract-review/upload', body, Object.assign({ service: 'aiService' }, opts));
             },
 
@@ -1063,10 +1069,13 @@
             exportReport: function (reviewId, format, options, opts) {
                 opts = opts || {};
                 options = options || {};
-                var body = Object.assign({
-                    review_id: reviewId,
-                    format: format || 'markdown'
-                }, options);
+                var body = Object.assign(
+                    {
+                        review_id: reviewId,
+                        format: format || 'markdown'
+                    },
+                    options
+                );
                 return post('/api/contract-review/export', body, Object.assign({ service: 'aiService' }, opts));
             },
 
@@ -1358,7 +1367,10 @@
              */
             get: function (clientId, opts) {
                 opts = opts || {};
-                return get('/api/clients/' + encodeURIComponent(clientId), Object.assign({ service: 'aiService' }, opts));
+                return get(
+                    '/api/clients/' + encodeURIComponent(clientId),
+                    Object.assign({ service: 'aiService' }, opts)
+                );
             },
 
             /**
@@ -1379,7 +1391,11 @@
              */
             update: function (clientId, data, opts) {
                 opts = opts || {};
-                return put('/api/clients/' + encodeURIComponent(clientId), data, Object.assign({ service: 'aiService' }, opts));
+                return put(
+                    '/api/clients/' + encodeURIComponent(clientId),
+                    data,
+                    Object.assign({ service: 'aiService' }, opts)
+                );
             },
 
             /**
@@ -1389,7 +1405,10 @@
              */
             delete: function (clientId, opts) {
                 opts = opts || {};
-                return del('/api/clients/' + encodeURIComponent(clientId), Object.assign({ service: 'aiService' }, opts));
+                return del(
+                    '/api/clients/' + encodeURIComponent(clientId),
+                    Object.assign({ service: 'aiService' }, opts)
+                );
             },
 
             /**
@@ -1399,7 +1418,11 @@
              */
             conflictCheck: function (clientId, opts) {
                 opts = opts || {};
-                return post('/api/clients/' + encodeURIComponent(clientId) + '/conflict-check', {}, Object.assign({ service: 'aiService' }, opts));
+                return post(
+                    '/api/clients/' + encodeURIComponent(clientId) + '/conflict-check',
+                    {},
+                    Object.assign({ service: 'aiService' }, opts)
+                );
             },
 
             /**

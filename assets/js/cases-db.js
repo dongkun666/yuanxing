@@ -1,11 +1,12 @@
 /**
- * 案例数据库 - 交互模块 (2026-07-02)
+ * 案例数据库 - 交互模块 (2026-07-03)
  *
  * 视图: templates/views/cases-db.html
- * 功能: 多条件检索 (关键词/案由/法院/裁判年份) + 排序 (相关度/裁判日期/法院层级)
- *       + 分页 (每页 10 条) + 结果计数 + 空态 + loading + 详情
+ * 功能: 多条件检索 + 排序 + 分页 + 结果计数 + 空态 + loading + 详情
+ *       + 案件状态流转 + 状态变更记录 + 案件时间线
  * 依赖: showToast (script.js)
  * 暴露: initCasesDb, searchCases, changeCasesPage, openCaseDetail, changeCasesSort
+ *       changeCaseStatus, getCaseTimeline
  */
 
 (function () {
@@ -16,6 +17,24 @@
         侵权责任纠纷: 'bg-gradient-to-r from-red-50 to-red-100 text-red-600 border border-red-200/50',
         劳动争议: 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-600 border border-amber-200/50',
         知识产权纠纷: 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-600 border border-purple-200/50'
+    };
+
+    var CASE_STATUSES = {
+        pending: { label: '待处理', color: 'bg-gray-100 text-gray-600' },
+        reviewing: { label: '审查中', color: 'bg-blue-100 text-blue-600' },
+        matching: { label: '匹配中', color: 'bg-purple-100 text-purple-600' },
+        in_progress: { label: '进行中', color: 'bg-green-100 text-green-600' },
+        closed: { label: '结案', color: 'bg-amber-100 text-amber-600' },
+        archived: { label: '归档', color: 'bg-gray-200 text-gray-500' }
+    };
+
+    var STATUS_FLOW = {
+        pending: ['reviewing'],
+        reviewing: ['matching', 'pending'],
+        matching: ['in_progress', 'reviewing'],
+        in_progress: ['closed', 'matching'],
+        closed: ['archived', 'in_progress'],
+        archived: []
     };
 
     // ===== Mock 案例数据集 (16 条, 覆盖 4 案由 / 4 级法院 / 4 年份) =====
@@ -350,7 +369,11 @@
                     '</div>';
             }
         } else {
-            container.innerHTML = slice.map(function(c, idx) { return renderCaseItem(c, start + idx); }).join('');
+            container.innerHTML = slice
+                .map(function (c, idx) {
+                    return renderCaseItem(c, start + idx);
+                })
+                .join('');
         }
 
         renderPagination(pager, totalPages);
@@ -365,12 +388,16 @@
         var levelIconMap = { 1: 'mdi:crown', 2: 'mdi:shield-star', 3: 'mdi:scale-balance', 4: 'mdi:gavel' };
         var levelIcon = levelIconMap[c.courtLevel] || 'mdi:gavel';
         return (
-            '<div class="p-4 md:p-5 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="cases-list" data-stagger-index="' + idx + '" data-delay="0.05" onclick="openCaseDetail(\'' +
+            '<div class="p-4 md:p-5 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="cases-list" data-stagger-index="' +
+            idx +
+            '" data-delay="0.05" onclick="openCaseDetail(\'' +
             c.id +
             '\')">' +
             '<div class="flex items-start gap-3 md:gap-4">' +
             '<div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
-            '<iconify-icon class="text-lg md:text-xl text-blue-500" icon="' + levelIcon + '"></iconify-icon>' +
+            '<iconify-icon class="text-lg md:text-xl text-blue-500" icon="' +
+            levelIcon +
+            '"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-start justify-between gap-3 mb-1.5">' +
@@ -431,7 +458,9 @@
                 var active = p === state.page;
                 html +=
                     '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
-                    (active ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white text-fg-secondary hover:text-blue-600') +
+                    (active
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20'
+                        : 'hover:bg-white text-fg-secondary hover:text-blue-600') +
                     ' transition-all duration-200" onclick="changeCasesPage(' +
                     p +
                     ')">' +
@@ -529,7 +558,7 @@
         var summary = c.summary || c.parties || c.full_text || c.legal_basis || '';
         if (summary && summary.length > 240) summary = summary.slice(0, 240) + '…';
         return {
-            id: c.doc_id || c.id || ('api-' + Math.random().toString(36).slice(2)),
+            id: c.doc_id || c.id || 'api-' + Math.random().toString(36).slice(2),
             title: c.case_name || c.title || '',
             court: court,
             courtLevel: c.courtLevel || deriveCourtLevel(court),
@@ -569,7 +598,9 @@
         }
         return API.caseLaw.list(params || { limit: 50 }, { showError: false }).then(function (res) {
             if (res && res.ok && Array.isArray(res.data)) {
-                var list = res.data.map(normalizeCase).filter(function (x) { return x; });
+                var list = res.data.map(normalizeCase).filter(function (x) {
+                    return x;
+                });
                 if (list.length > 0) return list;
             }
             throw new Error('API response invalid');
@@ -588,7 +619,9 @@
                 else if (Array.isArray(res.data)) items = res.data;
             }
             if (!items || items.length === 0) throw new Error('search empty or invalid');
-            return items.map(normalizeCase).filter(function (x) { return x; });
+            return items.map(normalizeCase).filter(function (x) {
+                return x;
+            });
         });
     }
 
@@ -636,13 +669,15 @@
             });
         }
 
-        apiPromise.then(function (list) {
-            _casesData = list;
-            renderLocal();
-        }).catch(function (err) {
-            fallbackToMockCases(err && err.message ? err.message : err);
-            renderLocal();
-        });
+        apiPromise
+            .then(function (list) {
+                _casesData = list;
+                renderLocal();
+            })
+            .catch(function (err) {
+                fallbackToMockCases(err && err.message ? err.message : err);
+                renderLocal();
+            });
     }
 
     // 切换排序: 读取排序下拉, 重新排序并回到第 1 页
@@ -788,6 +823,205 @@
         }
     }
 
+    // ===== 案件状态流转 =====
+    function getCaseStatus(caseId) {
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(caseId)) {
+                return _casesData[i].status || 'pending';
+            }
+        }
+        return 'pending';
+    }
+
+    function getCaseTitle(caseId) {
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(caseId)) {
+                return _casesData[i].title || '未命名案件';
+            }
+        }
+        return '未命名案件';
+    }
+
+    async function changeCaseStatus(caseId, toStatus, reason) {
+        var currentStatus = getCaseStatus(caseId);
+        var allowed = STATUS_FLOW[currentStatus] || [];
+
+        if (allowed.indexOf(toStatus) === -1) {
+            if (typeof showToast === 'function') {
+                showToast('状态流转不允许: ' + CASE_STATUSES[currentStatus].label + ' -> ' + CASE_STATUSES[toStatus].label, 'error');
+            }
+            return false;
+        }
+
+        try {
+            var resp = await fetch('/api/cases/' + caseId + '/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to_status: toStatus,
+                    reason: reason,
+                    actor_name: '系统用户'
+                })
+            });
+
+            if (!resp.ok) {
+                var err = await resp.json();
+                if (typeof showToast === 'function') {
+                    showToast(err.detail || '状态变更失败', 'error');
+                }
+                return false;
+            }
+
+            await resp.json();
+
+            for (var i = 0; i < _casesData.length; i++) {
+                if (String(_casesData[i].id) === String(caseId)) {
+                    _casesData[i].status = toStatus;
+                    break;
+                }
+            }
+
+            if (typeof showToast === 'function') {
+                showToast('案件状态已变更为: ' + CASE_STATUSES[toStatus].label, 'success');
+            }
+
+            return true;
+        } catch (err) {
+            console.error('[cases-db] changeCaseStatus failed', err);
+            if (typeof showToast === 'function') {
+                showToast('状态变更失败: ' + err.message, 'error');
+            }
+            return false;
+        }
+    }
+
+    // ===== 案件时间线 =====
+    async function getCaseTimeline(caseId) {
+        try {
+            var resp = await fetch('/api/cases/' + caseId + '/timeline');
+            if (!resp.ok) {
+                console.warn('[cases-db] getCaseTimeline failed:', resp.status);
+                return [];
+            }
+            var result = await resp.json();
+            return result.timeline || [];
+        } catch (err) {
+            console.error('[cases-db] getCaseTimeline failed', err);
+            return [];
+        }
+    }
+
+    function renderTimeline(timeline) {
+        if (!timeline || timeline.length === 0) {
+            return '<p class="text-xs text-fg-tertiary text-center py-4">暂无时间线记录</p>';
+        }
+
+        var html = '<div class="relative pl-4 border-l-2 border-bg-border space-y-4">';
+        timeline.forEach(function(event) {
+            var icon = event.type === 'status' ? 'mdi:refresh' : 'mdi:note';
+            var colorClass = event.type === 'status' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600';
+            var timeStr = '';
+            try {
+                timeStr = new Date(event.created_at).toLocaleString('zh-CN');
+            } catch (e) {
+                timeStr = event.created_at;
+            }
+
+            html += '<div class="relative">' +
+                '<div class="absolute -left-[25px] w-5 h-5 rounded-full ' + colorClass + ' flex items-center justify-center">' +
+                '<iconify-icon icon="' + icon + '" class="text-xs"></iconify-icon>' +
+                '</div>' +
+                '<div class="bg-white border border-bg-border rounded-lg p-3">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-sm font-medium text-fg-primary">' + escapeHtml(event.title) + '</span>' +
+                '<span class="text-[10px] text-fg-tertiary">' + timeStr + '</span>' +
+                '</div>';
+
+            if (event.description) {
+                html += '<p class="text-xs text-fg-secondary">' + escapeHtml(event.description) + '</p>';
+            }
+
+            if (event.actor_name) {
+                html += '<p class="text-[10px] text-fg-tertiary mt-1">操作人: ' + escapeHtml(event.actor_name) + '</p>';
+            }
+
+            html += '</div></div>';
+        });
+        html += '</div>';
+
+        return html;
+    }
+
+    function openStatusChangeModal(caseId) {
+        var currentStatus = getCaseStatus(caseId);
+        var allowedTransitions = STATUS_FLOW[currentStatus] || [];
+
+        if (allowedTransitions.length === 0) {
+            if (typeof showToast === 'function') {
+                showToast('当前状态不允许变更', 'warning');
+            }
+            return;
+        }
+
+        var selectHtml = '<select id="status-change-select" class="w-full h-9 px-3 bg-bg-subtle border border-bg-border rounded-md text-sm">' +
+            allowedTransitions.map(function(status) {
+                return '<option value="' + status + '">' + CASE_STATUSES[status].label + '</option>';
+            }).join('') +
+            '</select>';
+
+        var content =
+            '<div class="space-y-4">' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">当前状态</p>' +
+            '<span class="inline-block px-2 py-1 text-[11px] font-medium rounded-full ' + CASE_STATUSES[currentStatus].color + '">' +
+            CASE_STATUSES[currentStatus].label +
+            '</span>' +
+            '</div>' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">目标状态</p>' +
+            selectHtml +
+            '</div>' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">变更原因</p>' +
+            '<textarea id="status-change-reason" class="w-full h-24 px-3 py-2 bg-bg-subtle border border-bg-border rounded-md text-sm resize-none" placeholder="请输入变更原因..."></textarea>' +
+            '</div>' +
+            '</div>';
+
+        var footer =
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeStatusChangeModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="confirmStatusChange(\'' + caseId + '\')">确认变更</button>';
+
+        if (_closeCaseDetail) _closeCaseDetail();
+        _closeCaseDetail = Utils.showModal({
+            id: 'status-change-modal',
+            title: '变更案件状态',
+            icon: 'mdi:refresh',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
+    }
+
+    function closeStatusChangeModal() {
+        if (_closeCaseDetail) {
+            _closeCaseDetail();
+            _closeCaseDetail = null;
+        }
+    }
+
+    async function confirmStatusChange(caseId) {
+        var select = document.getElementById('status-change-select');
+        var reasonInput = document.getElementById('status-change-reason');
+        var toStatus = select ? select.value : '';
+        var reason = reasonInput ? reasonInput.value.trim() : '';
+
+        var success = await changeCaseStatus(caseId, toStatus, reason);
+        if (success) {
+            closeStatusChangeModal();
+            searchCases();
+        }
+    }
+
     // 初始化: 重置筛选/排序, 先渲染 mock, 再尝试从 API 加载覆盖 (失败保持 mock)
     function initCasesDb() {
         state.page = 1;
@@ -815,19 +1049,21 @@
         // 尝试从 API 加载真实数据覆盖
         if (!_casesApiFailed && typeof API !== 'undefined' && API.caseLaw && API.caseLaw.list) {
             showLoading();
-            loadCasesFromAPI({ limit: 50 }).then(function (list) {
-                _casesData = list;
-                applyFilters();
-                applySort();
-                renderResults();
-            }).catch(function (err) {
-                console.warn('[cases-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
-                _casesApiFailed = true;
-                // 保持已渲染的 mock 数据
-                applyFilters();
-                applySort();
-                renderResults();
-            });
+            loadCasesFromAPI({ limit: 50 })
+                .then(function (list) {
+                    _casesData = list;
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                })
+                .catch(function (err) {
+                    console.warn('[cases-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                    _casesApiFailed = true;
+                    // 保持已渲染的 mock 数据
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                });
         }
     }
 
@@ -840,4 +1076,10 @@
     globalThis.changeCasesSort = changeCasesSort;
     globalThis.quickSearchCause = quickSearchCause;
     globalThis.resetCasesDb = resetCasesDb;
+    globalThis.changeCaseStatus = changeCaseStatus;
+    globalThis.getCaseTimeline = getCaseTimeline;
+    globalThis.renderTimeline = renderTimeline;
+    globalThis.openStatusChangeModal = openStatusChangeModal;
+    globalThis.closeStatusChangeModal = closeStatusChangeModal;
+    globalThis.confirmStatusChange = confirmStatusChange;
 })();

@@ -65,7 +65,7 @@
         var typeFilter = document.getElementById('archiveTypeFilter');
 
         var searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
-        var yearValue = yearFilter ? yearFilter.value : (_currentYearFilter === 'all' ? '' : _currentYearFilter);
+        var yearValue = yearFilter ? yearFilter.value : _currentYearFilter === 'all' ? '' : _currentYearFilter;
         var typeValue = typeFilter ? typeFilter.value : '';
 
         return _archiveData.filter(function (item) {
@@ -93,7 +93,9 @@
         return (
             '<tr class="archive-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group" data-year="' +
             item.year +
-            '" data-animate="fade-in-up" data-stagger-group="archive-rows" data-stagger-index="' + staggerIndex + '" data-delay="0.05">' +
+            '" data-animate="fade-in-up" data-stagger-group="archive-rows" data-stagger-index="' +
+            staggerIndex +
+            '" data-delay="0.05">' +
             '<td class="py-4 px-5">' +
             '<input type="checkbox" class="archive-checkbox w-4 h-4 rounded border-bg-border cursor-pointer"/>' +
             '</td>' +
@@ -102,37 +104,53 @@
             '<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-wiki-tint to-purple-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
             '<iconify-icon icon="mdi:archive-outline" class="text-wiki text-base"></iconify-icon>' +
             '</div>' +
-            '<span class="text-sm font-medium text-brand truncate font-mono cursor-pointer hover:underline" title="' + escapeHtml(item.caseNum) + '" onclick="openArchiveDetail(' +
+            '<span class="text-sm font-medium text-brand truncate font-mono cursor-pointer hover:underline" title="' +
+            escapeHtml(item.caseNum) +
+            '" onclick="openArchiveDetail(' +
             item.id +
             ')">' +
             escapeHtml(item.caseNum) +
             '</span>' +
             '</div>' +
             '</td>' +
-            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.cause) + '">' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' +
+            escapeHtml(item.cause) +
+            '">' +
             escapeHtml(item.cause) +
             '</td>' +
-            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.plaintiff) + '">' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' +
+            escapeHtml(item.plaintiff) +
+            '">' +
             escapeHtml(item.plaintiff) +
             '</td>' +
-            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' + escapeHtml(item.defendant) + '">' +
+            '<td class="py-4 px-5 text-sm text-fg-secondary truncate" title="' +
+            escapeHtml(item.defendant) +
+            '">' +
             escapeHtml(item.defendant) +
             '</td>' +
             '<td class="text-center py-4 px-5 whitespace-nowrap">' +
             '<div class="inline-flex items-center gap-1.5 text-xs text-fg-tertiary">' +
             '<iconify-icon icon="mdi:calendar-check-outline" class="text-base text-success"></iconify-icon>' +
-            '<span>' + item.archiveDate + '</span>' +
+            '<span>' +
+            item.archiveDate +
+            '</span>' +
             '</div>' +
             '</td>' +
             '<td class="text-center py-4 px-5 whitespace-nowrap">' +
             '<div class="flex items-center justify-center gap-1">' +
-            '<button class="table-action-btn table-action-btn-primary" onclick="openArchiveDetail(' + item.id + ')">' +
+            '<button class="table-action-btn table-action-btn-primary" onclick="openArchiveDetail(' +
+            item.id +
+            ')">' +
             '<iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>查看' +
             '</button>' +
-            '<button class="table-action-btn table-action-btn-default" onclick="restoreArchive(' + item.id + ')">' +
+            '<button class="table-action-btn table-action-btn-default" onclick="restoreArchive(' +
+            item.id +
+            ')">' +
             '<iconify-icon icon="mdi:restore" class="text-xs"></iconify-icon>还原' +
             '</button>' +
-            '<button class="table-action-btn table-action-btn-danger" onclick="deleteArchive(' + item.id + ')">' +
+            '<button class="table-action-btn table-action-btn-danger" onclick="deleteArchive(' +
+            item.id +
+            ')">' +
             '<iconify-icon icon="mdi:trash-outline" class="text-xs"></iconify-icon>删除' +
             '</button>' +
             '</div>' +
@@ -145,7 +163,7 @@
         var statsContainer = document.getElementById('archive-stats-cards');
         if (!statsContainer) return;
 
-        var yearCounts = { all: _archiveData.length, '2026': 0, '2025': 0, '2024': 0 };
+        var yearCounts = { all: _archiveData.length, 2026: 0, 2025: 0, 2024: 0 };
         _archiveData.forEach(function (item) {
             if (yearCounts[item.year] !== undefined) {
                 yearCounts[item.year]++;
@@ -199,18 +217,30 @@
                         type: hasSearch ? 'search' : 'default',
                         icon: 'mdi:archive-search-outline',
                         title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
-                        description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
+                        description: hasSearch
+                            ? '没有匹配的归档案件，请尝试其他关键词'
+                            : '归档已完成或关闭的案件，方便以后查阅',
                         actionText: hasSearch ? '重置筛选' : '查看案件列表',
-                        actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); }
+                        actionHandler: hasSearch
+                            ? resetArchiveFilters
+                            : function () {
+                                switchToList('case-list', null);
+                            }
                     });
                 } else if (typeof Utils !== 'undefined' && Utils.createEmptyState) {
                     Utils.createEmptyState({
                         preset: hasSearch ? 'no-result' : 'empty-list',
                         icon: 'mdi:archive-search-outline',
                         title: hasSearch ? '没有找到匹配的归档案件' : '暂无归档案件',
-                        description: hasSearch ? '没有匹配的归档案件，请尝试其他关键词' : '归档已完成或关闭的案件，方便以后查阅',
+                        description: hasSearch
+                            ? '没有匹配的归档案件，请尝试其他关键词'
+                            : '归档已完成或关闭的案件，方便以后查阅',
                         actionText: hasSearch ? '重置筛选' : '查看案件列表',
-                        actionHandler: hasSearch ? resetArchiveFilters : function () { switchToList('case-list', null); },
+                        actionHandler: hasSearch
+                            ? resetArchiveFilters
+                            : function () {
+                                switchToList('case-list', null);
+                            },
                         container: emptyState
                     });
                 }
@@ -242,7 +272,8 @@
             paginationBtns.innerHTML = '';
             if (_currentPage > 1) {
                 var prevBtn = document.createElement('button');
-                prevBtn.className = 'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
+                prevBtn.className =
+                    'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
                 prevBtn.innerHTML = '<iconify-icon icon="mdi:chevron-left"></iconify-icon>';
                 prevBtn.onclick = function () {
                     _currentPage--;
@@ -268,7 +299,8 @@
             }
             if (_currentPage < totalPages) {
                 var nextBtn = document.createElement('button');
-                nextBtn.className = 'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
+                nextBtn.className =
+                    'w-8 h-8 rounded-xl hover:bg-bg-subtle flex items-center justify-center text-xs text-fg-tertiary hover:text-brand transition-all hover:-translate-y-0.5';
                 nextBtn.innerHTML = '<iconify-icon icon="mdi:chevron-right"></iconify-icon>';
                 nextBtn.onclick = function () {
                     _currentPage++;
@@ -342,7 +374,9 @@
             '<p class="text-xs text-fg-tertiary mt-0.5">' +
             escapeHtml(item.cause) +
             '</p>' +
-            '<span class="inline-block mt-1.5 archive-type-badge ' + getTypeBadgeClass(item.type) + '">' +
+            '<span class="inline-block mt-1.5 archive-type-badge ' +
+            getTypeBadgeClass(item.type) +
+            '">' +
             escapeHtml(item.type) +
             '</span>' +
             '</div>' +

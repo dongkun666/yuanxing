@@ -66,7 +66,14 @@ function switchKnowledgeMainTab(name, el) {
     var tabs = document.querySelectorAll('#view-knowledge [id^="kb-tab-"]');
     tabs.forEach(function (t) {
         // 移除激活态样式
-        t.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+        t.classList.remove(
+            'bg-gradient-to-r',
+            'from-brand',
+            'to-brand-hover',
+            'text-white',
+            'shadow-md',
+            'shadow-brand/20'
+        );
         t.classList.add('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:-translate-y-0.5');
         // badge 样式重置
         var badge = t.querySelector('span:last-child');
@@ -93,7 +100,14 @@ function switchKnowledgeMainTab(name, el) {
     // 当前 tab 的 badge 样式
     var activeBadge = el.querySelector('span:last-child');
     if (activeBadge) {
-        activeBadge.classList.remove('bg-bg', 'text-fg-secondary', 'bg-urgent-tint', 'text-urgent', 'bg-purple-100', 'text-purple-700');
+        activeBadge.classList.remove(
+            'bg-bg',
+            'text-fg-secondary',
+            'bg-urgent-tint',
+            'text-urgent',
+            'bg-purple-100',
+            'text-purple-700'
+        );
         activeBadge.classList.add('bg-white/20', 'text-white');
     }
 
@@ -291,7 +305,9 @@ function viewCompileProgress(btn) {
     var content =
         '<p class="text-sm text-fg-secondary mb-2">AI 编译进度:</p>' +
         '<div class="bg-bg-subtle p-3 rounded-lg text-xs text-fg-secondary space-y-1">' +
-        '<p><strong>资料:</strong> ' + Utils.escapeHtml(name) + '</p>' +
+        '<p><strong>资料:</strong> ' +
+        Utils.escapeHtml(name) +
+        '</p>' +
         '<p><strong>阶段:</strong> 阅读原文 → 提取关键概念 → 检索相关 Wiki 页 → 更新/新建页面 → 写入反向链接</p>' +
         '<p><strong>预估剩余:</strong> 2 分钟</p>' +
         '</div>';

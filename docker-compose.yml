@@ -1,22 +1,132 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lexprime-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/cases-crawler/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command: ["postgres", "-c", "max_connections=200", "-c", "shared_buffers=512MB"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lexprime}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "4G"
+        reservations:
+          cpus: "0.5"
+          memory: "512M"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+        tag: "{{.Name}}/{{.ID}}"
+
+  redis:
+    image: redis:7-alpine
+    container_name: lexprime-redis
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "1gb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "2G"
+        reservations:
+          cpus: "0.25"
+          memory: "256M"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+        tag: "{{.Name}}/{{.ID}}"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+    container_name: lexprime-elasticsearch
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "${ES_PORT:-9200}:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: true
+      ELASTIC_PASSWORD: ${ES_PASSWORD:-elastic_prod_pwd}
+      ES_JAVA_OPTS: "-Xms2g -Xmx2g"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:${ES_PASSWORD:-elastic_prod_pwd} http://localhost:9200/_cluster/health | grep -q '\"status\":\"\\(green\\|yellow\\)\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: "8G"
+        reservations:
+          cpus: "1.0"
+          memory: "2G"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        tag: "{{.Name}}/{{.ID}}"
+
   backend:
     build:
       context: ./backend/cases-crawler
       dockerfile: Dockerfile
     container_name: lexprime-backend
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
+    env_file:
+      - .env.production
     environment:
       - PYTHONPATH=/app
       - APP_ENV=production
-      - API_HOST=0.0.0.0
-      - API_PORT=8000
-      - API_DEBUG=false
-      - API_CORS_ORIGINS=http://localhost,http://localhost:80
     networks:
       - lexprime-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - backend_data:/app/data
+      - backend_logs:/app/logs
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()"]
@@ -28,10 +138,16 @@ services:
       resources:
         limits:
           cpus: "2.0"
-          memory: "2G"
+          memory: "4G"
         reservations:
           cpus: "0.5"
-          memory: "512M"
+          memory: "1G"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        tag: "{{.Name}}/{{.ID}}"
 
   frontend:
     build:
@@ -39,12 +155,19 @@ services:
       dockerfile: Dockerfile.frontend
     container_name: lexprime-frontend
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT:-80}:80"
+      - "${FRONTEND_SSL_PORT:-443}:443"
+    env_file:
+      - .env.production
     networks:
       - lexprime-network
     depends_on:
       backend:
         condition: service_healthy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - frontend_logs:/var/log/nginx
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost/"]
@@ -56,11 +179,31 @@ services:
       resources:
         limits:
           cpus: "1.0"
-          memory: "512M"
+          memory: "1G"
         reservations:
           cpus: "0.25"
-          memory: "128M"
+          memory: "256M"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        tag: "{{.Name}}/{{.ID}}"
 
 networks:
   lexprime-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  es_data:
+    driver: local
+  backend_data:
+    driver: local
+  backend_logs:
+    driver: local
+  frontend_logs:
+    driver: local

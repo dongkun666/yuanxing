@@ -179,25 +179,28 @@
      */
     function registerServiceWorker() {
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
-                    swRegistration = registration;
-                    checkSWUpdate(registration);
+            window.addEventListener('load', function () {
+                navigator.serviceWorker
+                    .register('./service-worker.js')
+                    .then(function (registration) {
+                        swRegistration = registration;
+                        checkSWUpdate(registration);
 
-                    registration.addEventListener('updatefound', function() {
-                        var newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', function() {
-                            if (newWorker.state === 'installed') {
-                                if (navigator.serviceWorker.controller) {
-                                    updateAvailable = true;
-                                    showUpdateNotification();
+                        registration.addEventListener('updatefound', function () {
+                            var newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function () {
+                                if (newWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        updateAvailable = true;
+                                        showUpdateNotification();
+                                    }
                                 }
-                            }
+                            });
                         });
+                    })
+                    .catch(function (error) {
+                        console.warn('Service Worker 注册失败:', error);
                     });
-                }).catch(function(error) {
-                    console.warn('Service Worker 注册失败:', error);
-                });
             });
         }
     }
@@ -233,13 +236,13 @@
      */
     function initOnlineStatus() {
         if (typeof navigator !== 'undefined') {
-            window.addEventListener('online', function() {
+            window.addEventListener('online', function () {
                 if (typeof showToast === 'function') {
                     showToast('网络连接已恢复');
                 }
             });
 
-            window.addEventListener('offline', function() {
+            window.addEventListener('offline', function () {
                 if (typeof showToast === 'function') {
                     showToast('网络连接已断开，已切换至离线模式');
                 }

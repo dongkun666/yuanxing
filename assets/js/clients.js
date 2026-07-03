@@ -6,17 +6,57 @@
  */
 
 // ===== 客户列表缓存 + API 对接 (W31 phase6-clients-backend) =====
-var _clientsCache = [];           // 缓存 list API 返回 (含 client_id, 供 openClientDetail 取 ID)
-var _clientsLoaded = false;       // 是否已成功加载 (避免切换视图重复请求)
+var _clientsCache = []; // 缓存 list API 返回 (含 client_id, 供 openClientDetail 取 ID)
+var _clientsLoaded = false; // 是否已成功加载 (避免切换视图重复请求)
 var _currentDetailClientId = null; // 当前打开详情的客户 client_id
 
 // 内置 mock (与后端 _MOCK_CLIENTS 对齐, 后端不可达时兜底)
 var _BUILTIN_MOCK_CLIENTS = [
-    { client_id: 'CL-001', name: '李明', client_type: 'personal', grade: 'A', phone: '138****1234', status: '活跃', cases: '3' },
-    { client_id: 'CL-002', name: '王华', client_type: 'personal', grade: 'B', phone: '139****5678', status: '活跃', cases: '2' },
-    { client_id: 'CL-003', name: '某科技有限公司', client_type: 'enterprise', grade: 'A', phone: '010-8888****', status: '活跃', cases: '5' },
-    { client_id: 'CL-004', name: '赵六', client_type: 'personal', grade: 'C', phone: '136****9012', status: '待回访', cases: '1' },
-    { client_id: 'CL-005', name: '张三', client_type: 'personal', grade: 'C', phone: '137****3456', status: '静默', cases: '1' }
+    {
+        client_id: 'CL-001',
+        name: '李明',
+        client_type: 'personal',
+        grade: 'A',
+        phone: '138****1234',
+        status: '活跃',
+        cases: '3'
+    },
+    {
+        client_id: 'CL-002',
+        name: '王华',
+        client_type: 'personal',
+        grade: 'B',
+        phone: '139****5678',
+        status: '活跃',
+        cases: '2'
+    },
+    {
+        client_id: 'CL-003',
+        name: '某科技有限公司',
+        client_type: 'enterprise',
+        grade: 'A',
+        phone: '010-8888****',
+        status: '活跃',
+        cases: '5'
+    },
+    {
+        client_id: 'CL-004',
+        name: '赵六',
+        client_type: 'personal',
+        grade: 'C',
+        phone: '136****9012',
+        status: '待回访',
+        cases: '1'
+    },
+    {
+        client_id: 'CL-005',
+        name: '张三',
+        client_type: 'personal',
+        grade: 'C',
+        phone: '137****3456',
+        status: '静默',
+        cases: '1'
+    }
 ];
 
 function _escapeHtml(s) {
@@ -39,32 +79,65 @@ function _renderClientRow(c, idx) {
     var avatar = c.name ? c.name.charAt(0) : '?';
     var phone = c.phone || '—';
     var dateStr = c.created_at ? String(c.created_at).substring(0, 10) : '—';
-    var gradeClass = grade === 'A' ? 'grade-a' : (grade === 'B' ? 'grade-b' : 'grade-c');
+    var gradeClass = grade === 'A' ? 'grade-a' : grade === 'B' ? 'grade-b' : 'grade-c';
     var gradeIcon = grade === 'A' ? 'mdi:crown' : 'mdi:star-outline';
     var avatarCell;
     if (type === 'enterprise') {
-        avatarCell = '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint3 to-brand-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
+        avatarCell =
+            '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint3 to-brand-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
             '<iconify-icon icon="mdi:office-building-outline" class="text-brand text-base"></iconify-icon></div>';
     } else {
-        avatarCell = '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
-            '<span class="text-sm font-bold text-brand">' + _escapeHtml(avatar) + '</span></div>';
+        avatarCell =
+            '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">' +
+            '<span class="text-sm font-bold text-brand">' +
+            _escapeHtml(avatar) +
+            '</span></div>';
     }
-    return '<tr class="client-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group" ' +
-        'data-grade="' + grade + '" data-type="' + type + '" data-status="active" ' +
-        'data-row-idx="' + idx + '" data-client-id="' + _escapeHtml(c.client_id) + '">' +
-        '<td class="py-4 px-5"><div class="flex items-center gap-3">' + avatarCell +
-        '<div class="flex-1 min-w-0"><span class="text-sm font-medium text-fg-primary truncate block" title="' + _escapeHtml(c.name) + '">' + _escapeHtml(c.name) + '</span>' +
-        '<div class="flex items-center gap-1 mt-0.5"><span class="inline-flex items-center gap-0.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:account-outline" class="text-[9px]"></iconify-icon>' + typeLabel + '</span></div></div></div></td>' +
-        '<td class="py-4 px-5 text-sm text-fg-secondary"><div class="flex items-center gap-1.5"><iconify-icon icon="mdi:phone-outline" class="text-fg-tertiary text-xs"></iconify-icon><span>' + _escapeHtml(phone) + '</span></div></td>' +
+    return (
+        '<tr class="client-table-row hover:bg-brand-tint3/40 transition-all duration-200 cursor-default group" ' +
+        'data-grade="' +
+        grade +
+        '" data-type="' +
+        type +
+        '" data-status="active" ' +
+        'data-row-idx="' +
+        idx +
+        '" data-client-id="' +
+        _escapeHtml(c.client_id) +
+        '">' +
+        '<td class="py-4 px-5"><div class="flex items-center gap-3">' +
+        avatarCell +
+        '<div class="flex-1 min-w-0"><span class="text-sm font-medium text-fg-primary truncate block" title="' +
+        _escapeHtml(c.name) +
+        '">' +
+        _escapeHtml(c.name) +
+        '</span>' +
+        '<div class="flex items-center gap-1 mt-0.5"><span class="inline-flex items-center gap-0.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:account-outline" class="text-[9px]"></iconify-icon>' +
+        typeLabel +
+        '</span></div></div></div></td>' +
+        '<td class="py-4 px-5 text-sm text-fg-secondary"><div class="flex items-center gap-1.5"><iconify-icon icon="mdi:phone-outline" class="text-fg-tertiary text-xs"></iconify-icon><span>' +
+        _escapeHtml(phone) +
+        '</span></div></td>' +
         '<td class="text-center py-4 px-5"><span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-lg bg-bg-subtle text-sm font-semibold text-fg-primary kb-tabular-nums">—</span></td>' +
-        '<td class="text-center py-4 px-5 whitespace-nowrap"><span class="client-grade-badge ' + gradeClass + ' inline-flex items-center gap-1"><iconify-icon icon="' + gradeIcon + '" class="text-[10px]"></iconify-icon>' + grade + ' 级</span></td>' +
-        '<td class="text-center py-4 px-5 text-sm text-fg-secondary"><div class="flex items-center justify-center gap-1.5"><iconify-icon icon="mdi:calendar-clock-outline" class="text-fg-tertiary text-base"></iconify-icon><span>' + dateStr + '</span></div></td>' +
+        '<td class="text-center py-4 px-5 whitespace-nowrap"><span class="client-grade-badge ' +
+        gradeClass +
+        ' inline-flex items-center gap-1"><iconify-icon icon="' +
+        gradeIcon +
+        '" class="text-[10px]"></iconify-icon>' +
+        grade +
+        ' 级</span></td>' +
+        '<td class="text-center py-4 px-5 text-sm text-fg-secondary"><div class="flex items-center justify-center gap-1.5"><iconify-icon icon="mdi:calendar-clock-outline" class="text-fg-tertiary text-base"></iconify-icon><span>' +
+        dateStr +
+        '</span></div></td>' +
         '<td class="text-center py-4 px-5 whitespace-nowrap"><span class="client-status-badge status-active inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>活跃</span></td>' +
         '<td class="text-center py-4 px-5 whitespace-nowrap"><div class="flex items-center justify-center gap-1">' +
-        '<button class="table-action-btn table-action-btn-primary" onclick="openClientDetail(' + idx + ')"><iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>详情</button>' +
+        '<button class="table-action-btn table-action-btn-primary" onclick="openClientDetail(' +
+        idx +
+        ')"><iconify-icon icon="mdi:eye-outline" class="text-xs"></iconify-icon>详情</button>' +
         '<button class="table-action-btn table-action-btn-default" onclick="alert(\'编辑客户\')"><iconify-icon icon="mdi:pencil-outline" class="text-xs"></iconify-icon>编辑</button>' +
         '</div></td>' +
-        '</tr>';
+        '</tr>'
+    );
 }
 
 /**
@@ -95,7 +168,7 @@ function _populateClientDetail(c) {
     }
     if (statusEl) statusEl.textContent = c.status || '活跃';
     if (phoneEl) phoneEl.textContent = c.phone || '—';
-    if (casesEl) casesEl.textContent = (c.cases !== undefined && c.cases !== null) ? String(c.cases) : '—';
+    if (casesEl) casesEl.textContent = c.cases !== undefined && c.cases !== null ? String(c.cases) : '—';
 }
 
 /**
@@ -113,10 +186,12 @@ function initClientsView() {
 
     // 保留原内置 mock 行, 失败时回退
     var originalHtml = tbody.innerHTML;
-    tbody.innerHTML = '<tr id="client-loading-row" class="client-table-row"><td colspan="7" class="py-8 text-center text-sm text-fg-tertiary">' +
+    tbody.innerHTML =
+        '<tr id="client-loading-row" class="client-table-row"><td colspan="7" class="py-8 text-center text-sm text-fg-tertiary">' +
         '<iconify-icon icon="mdi:loading" class="animate-spin text-base align-middle mr-1"></iconify-icon>加载客户列表中...</td></tr>';
 
-    API.clients.list({ page: 1, page_size: 50 })
+    API.clients
+        .list({ page: 1, page_size: 50 })
         .then(function (res) {
             if (res && res.ok && res.data && res.data.items && res.data.items.length > 0) {
                 _clientsCache = res.data.items;
@@ -265,7 +340,8 @@ function openClientDetail(index) {
 
     // 异步调 API 刷新完整详情, 失败保留缓存/mock 数据
     if (typeof API !== 'undefined' && API.clients && API.clients.get) {
-        API.clients.get(clientId)
+        API.clients
+            .get(clientId)
             .then(function (res) {
                 if (res && res.ok && res.data) {
                     _populateClientDetail(res.data);
@@ -436,7 +512,10 @@ function submitNewClient() {
         var btns = modal.querySelectorAll('button');
         var saveBtn = null;
         for (var i = 0; i < btns.length; i++) {
-            if (btns[i].textContent.indexOf('保存') >= 0) { saveBtn = btns[i]; break; }
+            if (btns[i].textContent.indexOf('保存') >= 0) {
+                saveBtn = btns[i];
+                break;
+            }
         }
         if (saveBtn) {
             saveBtn.disabled = true;
@@ -444,7 +523,8 @@ function submitNewClient() {
             saveBtn.textContent = '保存中...';
         }
 
-        API.clients.create(payload)
+        API.clients
+            .create(payload)
             .then(function (res) {
                 if (res && res.ok) {
                     if (typeof showToast === 'function') {
@@ -493,11 +573,13 @@ function runNewClientConflictCheck() {
 
     if (result) {
         result.classList.remove('hidden');
-        result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon><span>检索中...</span></div>';
+        result.innerHTML =
+            '<div class="flex items-center gap-1.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon><span>检索中...</span></div>';
     }
 
     if (typeof API !== 'undefined' && API.clients && API.clients.list) {
-        API.clients.list({ search: name, page_size: 50 })
+        API.clients
+            .list({ search: name, page_size: 50 })
             .then(function (res) {
                 var html = '';
                 if (res && res.ok && res.data && res.data.items) {
@@ -511,33 +593,51 @@ function runNewClientConflictCheck() {
                         }
                     }
                     if (matches.length === 0) {
-                        html = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
+                        html =
+                            '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
                     } else {
                         var hasExact = false;
                         for (var k = 0; k < matches.length; k++) {
-                            if (matches[k].exact) { hasExact = true; break; }
+                            if (matches[k].exact) {
+                                hasExact = true;
+                                break;
+                            }
                         }
                         var riskLabel = hasExact ? '高风险' : '中风险';
                         var riskClass = hasExact ? 'text-danger' : 'text-urgent';
-                        html = '<div class="flex items-center gap-1.5 text-[10px] ' + riskClass + '"><iconify-icon icon="mdi:alert-circle"></iconify-icon><span>发现 ' + matches.length + ' 条疑似冲突 (' + riskLabel + ')</span></div>';
+                        html =
+                            '<div class="flex items-center gap-1.5 text-[10px] ' +
+                            riskClass +
+                            '"><iconify-icon icon="mdi:alert-circle"></iconify-icon><span>发现 ' +
+                            matches.length +
+                            ' 条疑似冲突 (' +
+                            riskLabel +
+                            ')</span></div>';
                         for (var j = 0; j < matches.length; j++) {
-                            html += '<div class="text-[10px] text-fg-tertiary mt-0.5">• ' + _escapeHtml(matches[j].name) + (matches[j].exact ? ' (同名)' : ' (名称近似)') + '</div>';
+                            html +=
+                                '<div class="text-[10px] text-fg-tertiary mt-0.5">• ' +
+                                _escapeHtml(matches[j].name) +
+                                (matches[j].exact ? ' (同名)' : ' (名称近似)') +
+                                '</div>';
                         }
                     }
                 } else {
-                    html = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突 (本地, 后端未连接)</span></div>';
+                    html =
+                        '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突 (本地, 后端未连接)</span></div>';
                 }
                 if (result) result.innerHTML = html;
             })
             .catch(function (err) {
                 console.warn('[clients] conflict-check API 异常, 回退本地:', err);
                 if (result) {
-                    result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突 (本地, 后端异常)</span></div>';
+                    result.innerHTML =
+                        '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突 (本地, 后端异常)</span></div>';
                 }
             });
     } else {
         if (result) {
-            result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
+            result.innerHTML =
+                '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
         }
     }
 }
@@ -546,41 +646,63 @@ function runConflictCheck() {
     var result = document.getElementById('conflict-result');
     if (result) {
         result.classList.remove('hidden');
-        result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon><span>审查中...</span></div>';
+        result.innerHTML =
+            '<div class="flex items-center gap-1.5 text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon><span>审查中...</span></div>';
     }
 
     var clientId = _currentDetailClientId;
     if (clientId && typeof API !== 'undefined' && API.clients && API.clients.conflictCheck) {
-        API.clients.conflictCheck(clientId)
+        API.clients
+            .conflictCheck(clientId)
             .then(function (res) {
                 var html = '';
                 if (res && res.ok && res.data) {
                     var data = res.data;
                     if (data.has_conflict) {
-                        var riskMap = { high: ['text-danger', '高风险'], medium: ['text-urgent', '中风险'], low: ['text-warning', '低风险'] };
+                        var riskMap = {
+                            high: ['text-danger', '高风险'],
+                            medium: ['text-urgent', '中风险'],
+                            low: ['text-warning', '低风险']
+                        };
                         var rk = riskMap[data.risk_level] || ['text-urgent', '中风险'];
-                        html = '<div class="flex items-center gap-1.5 text-[10px] ' + rk[0] + '"><iconify-icon icon="mdi:alert-circle"></iconify-icon><span>发现 ' + data.conflicts.length + ' 条冲突 (' + rk[1] + ')</span></div>';
+                        html =
+                            '<div class="flex items-center gap-1.5 text-[10px] ' +
+                            rk[0] +
+                            '"><iconify-icon icon="mdi:alert-circle"></iconify-icon><span>发现 ' +
+                            data.conflicts.length +
+                            ' 条冲突 (' +
+                            rk[1] +
+                            ')</span></div>';
                         for (var i = 0; i < data.conflicts.length; i++) {
                             var cf = data.conflicts[i];
-                            html += '<div class="text-[10px] text-fg-tertiary mt-0.5">• ' + _escapeHtml(cf.name || '') + ' - ' + _escapeHtml(cf.reason || '') + '</div>';
+                            html +=
+                                '<div class="text-[10px] text-fg-tertiary mt-0.5">• ' +
+                                _escapeHtml(cf.name || '') +
+                                ' - ' +
+                                _escapeHtml(cf.reason || '') +
+                                '</div>';
                         }
                     } else {
-                        html = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
+                        html =
+                            '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>未发现冲突</span></div>';
                     }
                 } else {
-                    html = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成 (本地, 后端未连接)</span></div>';
+                    html =
+                        '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成 (本地, 后端未连接)</span></div>';
                 }
                 if (result) result.innerHTML = html;
             })
             .catch(function (err) {
                 console.warn('[clients] conflict-check API 异常, 回退本地:', err);
                 if (result) {
-                    result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成 (本地, 后端异常)</span></div>';
+                    result.innerHTML =
+                        '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成 (本地, 后端异常)</span></div>';
                 }
             });
     } else {
         if (result) {
-            result.innerHTML = '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成</span></div>';
+            result.innerHTML =
+                '<div class="flex items-center gap-1.5 text-[10px] text-success"><iconify-icon icon="mdi:check-circle"></iconify-icon><span>利益冲突审查完成</span></div>';
         }
     }
 }

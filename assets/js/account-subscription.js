@@ -131,7 +131,7 @@
         });
         document.getElementById('view-payment').classList.remove('hidden');
 
-        setTimeout(function() {
+        setTimeout(function () {
             if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
                 Animations.initPageAnimations(document.getElementById('view-payment'));
             }
@@ -154,7 +154,7 @@
             overlay.classList.remove('hidden');
         }
 
-        setTimeout(function() {
+        setTimeout(function () {
             if (overlay) {
                 overlay.classList.add('hidden');
             }
@@ -184,7 +184,7 @@
             message.classList.remove('hidden');
         }
 
-        setTimeout(function() {
+        setTimeout(function () {
             if (code.toUpperCase() === 'NEWUSER' || code.toUpperCase() === 'LEXPRIME') {
                 var discount = 50;
                 var totalEl = document.getElementById('payment-total');
@@ -295,7 +295,7 @@
         });
         document.getElementById('view-payment-success').classList.remove('hidden');
 
-        setTimeout(function() {
+        setTimeout(function () {
             if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
                 Animations.initPageAnimations(document.getElementById('view-payment-success'));
             }

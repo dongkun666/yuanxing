@@ -487,34 +487,61 @@ def compute_match_score(
 ) -> LawyerMatchScore:
     """律师推荐算法多维度评分
 
-    维度:
-    1. specialty_match     - 专业领域匹配广度
-    2. specialty_depth     - 专业领域匹配深度 (该领域办案数量)
-    3. experience_score    - 执业经验
-    4. win_rate            - 胜诉率
-    5. geography_score     - 地域就近匹配
-    6. response_speed      - 响应速度
-    7. availability_score  - 可接案状态
-    8. rating_score        - 客户评价
+    该算法是 Marketplace 核心推荐引擎，基于 8 个维度对律师进行综合评分。
+
+    评分维度 (权重可配置):
+    1. specialty_match (25%) - 专业领域匹配广度，计算律师专业与需求的交集比例
+    2. specialty_depth (10%) - 专业领域匹配深度，基于该领域办案数量计算
+    3. experience_score (12%) - 执业经验，按 15 年满分计算
+    4. win_rate (8%) - 胜诉率，直接使用律师胜诉率数据
+    5. geography_score (10%) - 地域就近匹配，同城 > 同省 > 跨省
+    6. response_speed (8%) - 响应速度，按小时区间分级
+    7. availability_score (7%) - 可接案状态，available/busy/unavailable
+    8. rating_score (10%) - 客户评价，结合评分和评价数量计算置信度
 
     加分项:
-    - cross_domain_bonus   - 跨领域能力 (拥有多个不相关专业领域)
-    - cross_border_bonus   - 跨境能力
+    - cross_domain_bonus (5%) - 跨领域能力，拥有 3 个以上专业领域加分
+    - cross_border_bonus (5%) - 跨境能力，支持跨境案件加分
 
-    总分 0-1, > 0.6 推荐候选, > 0.8 强推荐
+    惩罚项:
+    - 跨境案件需求但律师无跨境能力时，扣除 20% 基础分
+
+    评分标准:
+    - 总分范围: 0-1
+    - > 0.8: 强推荐，高度匹配需求
+    - > 0.6: 推荐候选，基本匹配需求
+    - < 0.3: 不推荐，匹配度较低
+
+    Args:
+        lawyer: 律师画像对象
+        required_specialties: 需求专业领域列表
+        required_jurisdictions: 跨境案件所需司法管辖区
+        required_languages: 跨境案件所需语言
+        required_region: 地域要求 (省级)
+        required_city: 城市要求
+        cross_border: 是否跨境案件
+        weights: 权重配置，默认为 DEFAULT_MATCH_WEIGHTS
+        include_explanation: 是否生成详细解释
+
+    Returns:
+        LawyerMatchScore: 包含各维度得分和综合评分的对象
     """
     if weights is None:
         weights = DEFAULT_MATCH_WEIGHTS
 
     overlap = set()
-    # 维度 1: specialty_match (专业领域匹配广度)
+
+    # 维度 1: specialty_match (专业领域匹配广度) - 权重 25%
+    # 计算律师专业领域与需求领域的交集比例
     if required_specialties:
         overlap = set(lawyer.specialties) & set(required_specialties)
         specialty_match = len(overlap) / len(required_specialties) if required_specialties else 0.0
     else:
-        specialty_match = 0.5
+        specialty_match = 0.5  # 无专业要求时默认中等
 
-    # 维度 2: specialty_depth_score (专业领域匹配深度)
+    # 维度 2: specialty_depth_score (专业领域匹配深度) - 权重 10%
+    # 基于律师在匹配领域的办案数量计算深度得分
+    # 最多 50 个案件为满分，超过 50 个案件按比例递减
     specialty_depth_score = 0.0
     if required_specialties and lawyer.specialty_depth:
         total_depth = 0
@@ -526,14 +553,17 @@ def compute_match_score(
     elif not required_specialties:
         specialty_depth_score = 0.5
 
-    # 维度 3: experience_score (执业经验)
+    # 维度 3: experience_score (执业经验) - 权重 12%
+    # 15 年执业经验为满分，超过 15 年按满分计算
     experience_score = min(1.0, lawyer.experience_years / 15.0)
 
-    # 维度 4: win_rate_score (胜诉率)
+    # 维度 4: win_rate_score (胜诉率) - 权重 8%
+    # 直接使用律师胜诉率，无数据时默认 0.5
     win_rate_score = lawyer.win_rate if lawyer.win_rate > 0 else 0.5
     win_rate_score = max(0.0, min(1.0, win_rate_score))
 
-    # 维度 5: geography_score (地域就近匹配)
+    # 维度 5: geography_score (地域就近匹配) - 权重 10%
+    # 匹配优先级: 同城(1.0) > 同省(0.7) > 同省前2字匹配(0.5) > 跨省(0.2)
     geography_score = 0.5
     if required_city and lawyer.city:
         if required_city == lawyer.city:
@@ -552,7 +582,8 @@ def compute_match_score(
         else:
             geography_score = 0.3
 
-    # 维度 6: response_speed_score (响应速度)
+    # 维度 6: response_speed_score (响应速度) - 权重 8%
+    # 按响应时间区间分级: <=2h(1.0) > <=6h(0.8) > <=12h(0.6) > <=24h(0.4) > <=48h(0.2) > >48h(0.1)
     if lawyer.response_speed_hours <= 2:
         response_speed_score = 1.0
     elif lawyer.response_speed_hours <= 6:
@@ -566,24 +597,31 @@ def compute_match_score(
     else:
         response_speed_score = 0.1
 
-    # 维度 7: availability_score (可接案状态)
+    # 维度 7: availability_score (可接案状态) - 权重 7%
+    # available(1.0) > busy(0.4) > unavailable(0.0)
+    # 非 Marketplace 活跃用户直接得 0 分
     availability_map = {"available": 1.0, "busy": 0.4, "unavailable": 0.0}
     availability_score = availability_map.get(lawyer.availability, 0.5)
     if not lawyer.marketplace_active:
         availability_score = 0.0
 
-    # 维度 8: rating_score (客户评价)
+    # 维度 8: rating_score (客户评价) - 权重 10%
+    # 基础分 = 评分 / 5，结合评价数量计算置信度
+    # 评价数 >= 20 条时置信度为 1，评价数越少置信度越低
     rating_score = lawyer.rating / 5.0 if lawyer.rating > 0 else 0.5
     if lawyer.client_review_count > 0:
         review_confidence = min(1.0, lawyer.client_review_count / 20.0)
         rating_score = 0.5 * rating_score + 0.5 * (rating_score * review_confidence + 0.5 * (1 - review_confidence))
 
-    # 跨领域能力加分
+    # 跨领域能力加分 - 权重 5%
+    # 拥有 3 个以上专业领域时加分，最多加 5 分 (对应权重 5%)
     cross_domain_score = 0.0
     if len(lawyer.specialties) >= 3:
         cross_domain_score = min(1.0, (len(lawyer.specialties) - 2) / 5.0)
 
-    # 跨境能力
+    # 跨境能力 - 权重 5%
+    # 基础分 0.6，语言匹配加 0-0.4，司法管辖区匹配调整最终得分
+    # 无跨境能力且需求跨境时得 -1.0（触发惩罚）
     cross_border_score = 0.0
     if cross_border:
         if lawyer.cross_border_capable:
@@ -599,7 +637,8 @@ def compute_match_score(
         else:
             cross_border_score = -1.0
 
-    # 加权总分
+    # 加权总分计算
+    # 基础分 = 各维度得分 × 对应权重
     base_score = (
         specialty_match * weights.specialty_match
         + specialty_depth_score * weights.specialty_depth
@@ -611,15 +650,18 @@ def compute_match_score(
         + rating_score * weights.rating_score
     )
 
+    # 加分项 = 跨领域加分 + 跨境加分（负值不计入）
     bonus = (
         cross_domain_score * weights.cross_domain_bonus
         + max(0.0, cross_border_score) * weights.cross_border_bonus
     )
 
+    # 惩罚项: 跨境案件需求但律师无跨境能力时扣除 20%
     penalty = 0.0
     if cross_border and not lawyer.cross_border_capable:
         penalty = 0.2
 
+    # 总分 = max(0, min(1, 基础分 + 加分 - 惩罚))
     total_score = max(0.0, min(1.0, base_score + bonus - penalty))
 
     # 匹配理由

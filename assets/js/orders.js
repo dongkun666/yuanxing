@@ -187,7 +187,9 @@
         return (
             '<div class="order-card p-4 rounded-xl border border-bg-border bg-white hover:shadow-md hover:border-gray-200 transition-all duration-300 hover:-translate-y-0.5 ' +
             opacityCls +
-            '" style="animation: fadeInUp 0.5s ease-out ' + animDelay + 's backwards;">' +
+            '" style="animation: fadeInUp 0.5s ease-out ' +
+            animDelay +
+            's backwards;">' +
             '<div class="flex items-center justify-between">' +
             '<div class="flex items-center gap-3">' +
             '<div class="w-10 h-10 rounded-xl ' +

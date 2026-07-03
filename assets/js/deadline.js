@@ -622,16 +622,20 @@
             var urgencyBadge = '';
             var urgencyClass = '';
             if (status === 'overdue' || status === 'today') {
-                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-red-500 to-danger shadow-sm shadow-red-200/50"><iconify-icon icon="mdi:fire" class="text-[10px]"></iconify-icon>高危</span>';
+                urgencyBadge =
+                    '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-red-500 to-danger shadow-sm shadow-red-200/50"><iconify-icon icon="mdi:fire" class="text-[10px]"></iconify-icon>高危</span>';
                 urgencyClass = 'deadline-card-high';
             } else if (status === 'urgent' || status === 'critical') {
-                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-orange-500 to-urgent shadow-sm shadow-orange-200/50"><iconify-icon icon="mdi:alert-circle" class="text-[10px]"></iconify-icon>中危</span>';
+                urgencyBadge =
+                    '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-orange-500 to-urgent shadow-sm shadow-orange-200/50"><iconify-icon icon="mdi:alert-circle" class="text-[10px]"></iconify-icon>中危</span>';
                 urgencyClass = 'deadline-card-medium';
             } else if (status === 'warning') {
-                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm shadow-blue-200/50"><iconify-icon icon="mdi:clock-outline" class="text-[10px]"></iconify-icon>低危</span>';
+                urgencyBadge =
+                    '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-sm shadow-blue-200/50"><iconify-icon icon="mdi:clock-outline" class="text-[10px]"></iconify-icon>低危</span>';
                 urgencyClass = 'deadline-card-low';
             } else {
-                urgencyBadge = '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-green-500 to-success shadow-sm shadow-green-200/50"><iconify-icon icon="mdi:check-circle" class="text-[10px]"></iconify-icon>远期</span>';
+                urgencyBadge =
+                    '<span class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold text-white rounded-full bg-gradient-to-r from-green-500 to-success shadow-sm shadow-green-200/50"><iconify-icon icon="mdi:check-circle" class="text-[10px]"></iconify-icon>远期</span>';
                 urgencyClass = 'deadline-card-normal';
             }
 
@@ -663,7 +667,7 @@
                 ' p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group deadline-card ' +
                 urgencyClass +
                 '" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ' +
-                (idx * 0.06) +
+                idx * 0.06 +
                 's">' +
                 '<div class="absolute left-0 top-0 bottom-0 w-1.5 ' +
                 leftBarColor +
@@ -748,7 +752,7 @@
             }).length;
             html +=
                 '<div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-br from-purple-50/60 to-white border border-purple-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ' +
-                (idx * 0.08) +
+                idx * 0.08 +
                 's">' +
                 '<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center flex-shrink-0 shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">' +
                 '<iconify-icon class="text-white text-base" icon="mdi:book-open-variant"></iconify-icon>' +
@@ -759,7 +763,8 @@
                 '</div>' +
                 '<div class="text-[10px] text-fg-tertiary mt-0.5 flex items-center gap-1">' +
                 '<iconify-icon icon="mdi:file-document-outline" class="text-xs"></iconify-icon>' +
-                count + ' 项相关期限' +
+                count +
+                ' 项相关期限' +
                 '</div>' +
                 '</div>' +
                 '<div class="flex-shrink-0 px-2 py-1 rounded-md bg-wiki/10 text-wiki text-[10px] font-bold">' +

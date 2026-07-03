@@ -279,7 +279,10 @@
         Utils.showModal({
             id: 'device-manager-modal',
             title: '设备管理',
-            content: '<pre class="text-xs text-fg-secondary whitespace-pre-wrap font-mono bg-bg-subtle p-3 rounded-lg">' + Utils.escapeHtml(deviceInfo) + '</pre>',
+            content:
+                '<pre class="text-xs text-fg-secondary whitespace-pre-wrap font-mono bg-bg-subtle p-3 rounded-lg">' +
+                Utils.escapeHtml(deviceInfo) +
+                '</pre>',
             size: 'md',
             icon: 'mdi:devices'
         });
@@ -292,7 +295,10 @@
         if (step1) {
             var step2 = await Utils.showPrompt('请输入「确认注销」以继续操作：', '');
             if (step2 === '确认注销') {
-                Utils.showToast('success', '您的账号注销申请已提交。系统将在 7 天冷静期后执行注销。在此期间重新登录可取消注销。');
+                Utils.showToast(
+                    'success',
+                    '您的账号注销申请已提交。系统将在 7 天冷静期后执行注销。在此期间重新登录可取消注销。'
+                );
             } else {
                 Utils.showToast('error', '输入不正确，注销操作已取消。');
             }
@@ -410,7 +416,14 @@
 
         var navItems = document.querySelectorAll('.settings-nav-item');
         navItems.forEach(function (item) {
-            item.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            item.classList.remove(
+                'bg-gradient-to-r',
+                'from-brand',
+                'to-brand-hover',
+                'text-white',
+                'shadow-md',
+                'shadow-brand/20'
+            );
             item.classList.add('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
             var icon = item.querySelector('iconify-icon');
             if (icon) {
@@ -421,7 +434,14 @@
 
         if (navBtn) {
             navBtn.classList.remove('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
-            navBtn.classList.add('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            navBtn.classList.add(
+                'bg-gradient-to-r',
+                'from-brand',
+                'to-brand-hover',
+                'text-white',
+                'shadow-md',
+                'shadow-brand/20'
+            );
             var activeIcon = navBtn.querySelector('iconify-icon');
             if (activeIcon) {
                 activeIcon.classList.remove('group-hover:text-brand', 'transition-colors');

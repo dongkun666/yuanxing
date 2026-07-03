@@ -148,7 +148,12 @@
         try {
             var res = await API.auth.refresh(refreshToken);
             if (res.ok && res.data && res.data.token) {
-                saveSession(res.data.token, res.data.user || Auth.currentUser(), res.data.refresh_token, res.data.expires_in);
+                saveSession(
+                    res.data.token,
+                    res.data.user || Auth.currentUser(),
+                    res.data.refresh_token,
+                    res.data.expires_in
+                );
                 if (typeof Utils !== 'undefined' && Utils.showToast) {
                     Utils.showToast('登录已自动续期', 'success');
                 }

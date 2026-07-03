@@ -226,7 +226,13 @@
 
     function getStatusBadge(status) {
         var style = STATUS_STYLES[status] || 'bg-gray-50 text-gray-500 border border-gray-200/50';
-        return '<span class="text-[10px] font-semibold ' + style + ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' + escapeHtml(status) + '</span>';
+        return (
+            '<span class="text-[10px] font-semibold ' +
+            style +
+            ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' +
+            escapeHtml(status) +
+            '</span>'
+        );
     }
 
     function applyFilters() {
@@ -239,7 +245,8 @@
         var industryActive = industry && industry !== '全部行业';
 
         state.filtered = _companiesData.filter(function (c) {
-            var matchKw = !keyword ||
+            var matchKw =
+                !keyword ||
                 (c.name || '').toLowerCase().indexOf(keyword) > -1 ||
                 (c.creditCode || '').toLowerCase().indexOf(keyword) > -1;
             var matchLegal = !legal || (c.legalRep || '').toLowerCase().indexOf(legal) > -1;
@@ -267,7 +274,9 @@
 
     function renderCompanyCard(company, idx) {
         return (
-            '<div class="p-4 md:p-5 hover:bg-orange-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="companies-list" data-stagger-index="' + idx + '" data-delay="0.05" onclick="openCompanyDetail(' +
+            '<div class="p-4 md:p-5 hover:bg-orange-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="companies-list" data-stagger-index="' +
+            idx +
+            '" data-delay="0.05" onclick="openCompanyDetail(' +
             company.id +
             ')">' +
             '<div class="flex items-start gap-3 md:gap-4">' +
@@ -293,15 +302,21 @@
             '<div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 text-[10px] md:text-xs mb-2.5">' +
             '<div class="flex items-center gap-1.5 text-fg-tertiary">' +
             '<iconify-icon class="text-[11px]" icon="mdi:account-outline"></iconify-icon>' +
-            '<span class="text-fg-secondary">' + escapeHtml(company.legalRep) + '</span>' +
+            '<span class="text-fg-secondary">' +
+            escapeHtml(company.legalRep) +
+            '</span>' +
             '</div>' +
             '<div class="flex items-center gap-1.5 text-fg-tertiary">' +
             '<iconify-icon class="text-[11px]" icon="mdi:cash-multiple"></iconify-icon>' +
-            '<span class="text-fg-secondary">' + escapeHtml(company.registeredCapital) + '</span>' +
+            '<span class="text-fg-secondary">' +
+            escapeHtml(company.registeredCapital) +
+            '</span>' +
             '</div>' +
             '<div class="flex items-center gap-1.5 text-fg-tertiary col-span-2 md:col-span-1">' +
             '<iconify-icon class="text-[11px]" icon="mdi:calendar-star"></iconify-icon>' +
-            '<span class="text-fg-secondary">' + escapeHtml(company.establishDate) + '</span>' +
+            '<span class="text-fg-secondary">' +
+            escapeHtml(company.establishDate) +
+            '</span>' +
             '</div>' +
             '</div>' +
             '<div class="flex items-center gap-3 md:gap-4 flex-wrap">' +
@@ -358,7 +373,11 @@
                 '</button>' +
                 '</div>';
         } else {
-            container.innerHTML = slice.map(function(c, idx) { return renderCompanyCard(c, start + idx); }).join('');
+            container.innerHTML = slice
+                .map(function (c, idx) {
+                    return renderCompanyCard(c, start + idx);
+                })
+                .join('');
         }
 
         renderPagination(pager, totalPages);
@@ -371,7 +390,8 @@
     function renderPagination(pager, totalPages) {
         if (!pager) return;
         if (totalPages <= 1) {
-            pager.innerHTML = '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
+            pager.innerHTML =
+                '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
             return;
         }
 
@@ -390,7 +410,9 @@
                 var active = p === state.page;
                 html +=
                     '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
-                    (active ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/20' : 'hover:bg-white text-fg-secondary hover:text-orange-600') +
+                    (active
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/20'
+                        : 'hover:bg-white text-fg-secondary hover:text-orange-600') +
                     ' transition-all duration-200" onclick="changeCompaniesPage(' +
                     p +
                     ')">' +
@@ -411,9 +433,23 @@
 
     function pageBtn(enabled, inner, target, cls) {
         if (!enabled) {
-            return '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' + cls + ' opacity-40 cursor-not-allowed">' + inner + '</button>';
+            return (
+                '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' +
+                cls +
+                ' opacity-40 cursor-not-allowed">' +
+                inner +
+                '</button>'
+            );
         }
-        return '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' + cls + '" onclick="changeCompaniesPage(' + target + ')">' + inner + '</button>';
+        return (
+            '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' +
+            cls +
+            '" onclick="changeCompaniesPage(' +
+            target +
+            ')">' +
+            inner +
+            '</button>'
+        );
     }
 
     function buildPageList(current, total) {
@@ -428,7 +464,9 @@
         add(1);
         for (var i = current - window; i <= current + window; i++) add(i);
         add(total);
-        nums.sort(function (a, b) { return a - b; });
+        nums.sort(function (a, b) {
+            return a - b;
+        });
 
         var result = [];
         for (var j = 0; j < nums.length; j++) {
@@ -474,7 +512,7 @@
         var name = c.company_name || c.name || '';
         var ic = pickCompanyIcon(name);
         return {
-            id: (c.id !== undefined && c.id !== null) ? c.id : c.unified_id,
+            id: c.id !== undefined && c.id !== null ? c.id : c.unified_id,
             name: name,
             creditCode: c.unified_id || c.credit_code || c.creditCode || '',
             legalRep: c.legal_rep || c.legalRep || '—',
@@ -497,7 +535,9 @@
         }
         return API.companies.list(params || { limit: 50 }, { showError: false }).then(function (res) {
             if (res && res.ok && Array.isArray(res.data)) {
-                var list = res.data.map(normalizeCompany).filter(function (x) { return x; });
+                var list = res.data.map(normalizeCompany).filter(function (x) {
+                    return x;
+                });
                 if (list.length > 0) return list;
             }
             throw new Error('API response invalid');
@@ -536,13 +576,15 @@
         var params = { limit: 100 };
         if (kw) params.name = kw;
 
-        loadCompaniesFromAPI(params).then(function (list) {
-            _companiesData = list;
-            renderLocal();
-        }).catch(function (err) {
-            fallbackToMockCompanies(err && err.message ? err.message : err);
-            renderLocal();
-        });
+        loadCompaniesFromAPI(params)
+            .then(function (list) {
+                _companiesData = list;
+                renderLocal();
+            })
+            .catch(function (err) {
+                fallbackToMockCompanies(err && err.message ? err.message : err);
+                renderLocal();
+            });
     }
 
     function quickSearchIndustry(keyword) {
@@ -590,7 +632,9 @@
     }
 
     function openCompanyDetail(id) {
-        var company = _companiesData.find(function (c) { return c.id === id; });
+        var company = _companiesData.find(function (c) {
+            return c.id === id;
+        });
         if (!company) {
             showToastMsg('未找到企业 #' + id);
             return;
@@ -601,15 +645,23 @@
             '<div class="relative overflow-hidden p-4 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-xl">' +
             '<div class="absolute top-0 right-0 w-32 h-32 bg-orange-200/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>' +
             '<div class="relative z-10 flex items-center gap-4">' +
-            '<div class="w-16 h-16 rounded-2xl ' + company.iconBg + ' flex items-center justify-center flex-shrink-0 shadow-lg">' +
-            '<iconify-icon class="text-3xl ' + company.iconColor + '" icon="mdi:office-building"></iconify-icon>' +
+            '<div class="w-16 h-16 rounded-2xl ' +
+            company.iconBg +
+            ' flex items-center justify-center flex-shrink-0 shadow-lg">' +
+            '<iconify-icon class="text-3xl ' +
+            company.iconColor +
+            '" icon="mdi:office-building"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2 mb-1">' +
-            '<h4 class="text-base font-semibold text-fg-primary">' + escapeHtml(company.name) + '</h4>' +
+            '<h4 class="text-base font-semibold text-fg-primary">' +
+            escapeHtml(company.name) +
+            '</h4>' +
             getStatusBadge(company.status) +
             '</div>' +
-            '<p class="text-xs text-fg-tertiary font-mono">' + escapeHtml(company.creditCode) + '</p>' +
+            '<p class="text-xs text-fg-tertiary font-mono">' +
+            escapeHtml(company.creditCode) +
+            '</p>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -618,13 +670,17 @@
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:account-outline"></iconify-icon> 法定代表人' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-semibold">' + escapeHtml(company.legalRep) + '</p>' +
+            '<p class="text-sm text-fg-primary font-semibold">' +
+            escapeHtml(company.legalRep) +
+            '</p>' +
             '</div>' +
             '<div class="p-3.5 bg-bg-subtle rounded-xl border border-bg-border/60 hover:border-orange-200/50 transition-colors">' +
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:cash-multiple"></iconify-icon> 注册资本' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-semibold">' + escapeHtml(company.registeredCapital) + '</p>' +
+            '<p class="text-sm text-fg-primary font-semibold">' +
+            escapeHtml(company.registeredCapital) +
+            '</p>' +
             '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-3 text-sm">' +
@@ -632,13 +688,17 @@
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:calendar-star"></iconify-icon> 成立日期' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-semibold">' + escapeHtml(company.establishDate) + '</p>' +
+            '<p class="text-sm text-fg-primary font-semibold">' +
+            escapeHtml(company.establishDate) +
+            '</p>' +
             '</div>' +
             '<div class="p-3.5 bg-bg-subtle rounded-xl border border-bg-border/60 hover:border-orange-200/50 transition-colors">' +
             '<p class="text-[11px] text-fg-tertiary mb-1.5 flex items-center gap-1">' +
             '<iconify-icon class="text-xs" icon="mdi:domain"></iconify-icon> 所属行业' +
             '</p>' +
-            '<p class="text-sm text-fg-primary font-semibold">' + escapeHtml(company.industry) + '</p>' +
+            '<p class="text-sm text-fg-primary font-semibold">' +
+            escapeHtml(company.industry) +
+            '</p>' +
             '</div>' +
             '</div>' +
             '<div class="p-4 bg-bg-subtle rounded-xl">' +
@@ -650,21 +710,27 @@
             '<div class="w-10 h-10 mx-auto rounded-full bg-red-100/80 flex items-center justify-center mb-2">' +
             '<iconify-icon class="text-red-500 text-lg" icon="mdi:alert-circle-outline"></iconify-icon>' +
             '</div>' +
-            '<p class="text-xl font-bold text-red-500 kb-tabular-nums">' + company.legalRisk + '</p>' +
+            '<p class="text-xl font-bold text-red-500 kb-tabular-nums">' +
+            company.legalRisk +
+            '</p>' +
             '<p class="text-[10px] text-fg-tertiary mt-0.5">法律风险</p>' +
             '</div>' +
             '<div class="text-center p-3 bg-gradient-to-b from-amber-50 to-white rounded-xl border border-amber-100/50 hover:scale-105 transition-transform cursor-pointer">' +
             '<div class="w-10 h-10 mx-auto rounded-full bg-amber-100/80 flex items-center justify-center mb-2">' +
             '<iconify-icon class="text-amber-500 text-lg" icon="mdi:alert-outline"></iconify-icon>' +
             '</div>' +
-            '<p class="text-xl font-bold text-amber-500 kb-tabular-nums">' + company.operatingRisk + '</p>' +
+            '<p class="text-xl font-bold text-amber-500 kb-tabular-nums">' +
+            company.operatingRisk +
+            '</p>' +
             '<p class="text-[10px] text-fg-tertiary mt-0.5">经营风险</p>' +
             '</div>' +
             '<div class="text-center p-3 bg-gradient-to-b from-blue-50 to-white rounded-xl border border-blue-100/50 hover:scale-105 transition-transform cursor-pointer">' +
             '<div class="w-10 h-10 mx-auto rounded-full bg-blue-100/80 flex items-center justify-center mb-2">' +
             '<iconify-icon class="text-blue-500 text-lg" icon="mdi:lightbulb-outline"></iconify-icon>' +
             '</div>' +
-            '<p class="text-xl font-bold text-blue-500 kb-tabular-nums">' + company.ipCount.toLocaleString() + '</p>' +
+            '<p class="text-xl font-bold text-blue-500 kb-tabular-nums">' +
+            company.ipCount.toLocaleString() +
+            '</p>' +
             '<p class="text-[10px] text-fg-tertiary mt-0.5">知识产权</p>' +
             '</div>' +
             '</div>' +
@@ -707,18 +773,23 @@
         // 尝试从 API 加载真实数据覆盖 (失败保持 mock)
         if (!_companiesApiFailed && typeof API !== 'undefined' && API.companies && API.companies.list) {
             renderLoading();
-            loadCompaniesFromAPI({ limit: 50 }).then(function (list) {
-                _companiesData = list;
-                applyFilters();
-                applySort();
-                renderResults();
-            }).catch(function (err) {
-                console.warn('[companies-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
-                _companiesApiFailed = true;
-                applyFilters();
-                applySort();
-                renderResults();
-            });
+            loadCompaniesFromAPI({ limit: 50 })
+                .then(function (list) {
+                    _companiesData = list;
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                })
+                .catch(function (err) {
+                    console.warn(
+                        '[companies-db] 初始化 API 加载失败, 使用 mock:',
+                        err && err.message ? err.message : err
+                    );
+                    _companiesApiFailed = true;
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                });
         }
     }
 

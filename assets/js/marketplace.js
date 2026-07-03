@@ -814,9 +814,12 @@
 
                 if (filters.specialties && filters.specialties.length > 0) {
                     filtered = filtered.filter(function (l) {
-                        return l.specialties && filters.specialties.some(function (s) {
-                            return l.specialties.indexOf(s) >= 0;
-                        });
+                        return (
+                            l.specialties &&
+                            filters.specialties.some(function (s) {
+                                return l.specialties.indexOf(s) >= 0;
+                            })
+                        );
                     });
                 }
                 if (filters.min_experience_years !== undefined) {
@@ -1005,7 +1008,9 @@
         return new Promise(function (resolve) {
             loadLawyerPool(function (err, pool) {
                 if (err) pool = DEMO_LAWYERS;
-                var lawyer = pool.find(function (l) { return l.lawyer_id === lawyerId; });
+                var lawyer = pool.find(function (l) {
+                    return l.lawyer_id === lawyerId;
+                });
                 if (!lawyer) {
                     resolve({ ok: false, error: '律师不存在' });
                     return;
@@ -1015,7 +1020,7 @@
 
                 var dims = [
                     { name: '专业匹配', key: 'specialty', weight: 0.35, desc: '专业领域契合度' },
-                    { name: '经验资历', key: 'experience', weight: 0.20, desc: '执业年限与办案量' },
+                    { name: '经验资历', key: 'experience', weight: 0.2, desc: '执业年限与办案量' },
                     { name: '地域匹配', key: 'geography', weight: 0.15, desc: '所在地区契合度' },
                     { name: '可接案状态', key: 'availability', weight: 0.15, desc: '当前接案能力' },
                     { name: '客户评分', key: 'rating', weight: 0.15, desc: '历史客户评价' }
@@ -1124,7 +1129,10 @@
         var matchScore = lawyer.match_score || {};
         var totalScore = matchScore.total_score !== undefined ? matchScore.total_score : 0;
         var scorePct = Math.round(totalScore * 100);
-        var availability = AVAILABILITY.find(function (a) { return a.value === lawyer.availability; }) || AVAILABILITY[0];
+        var availability =
+            AVAILABILITY.find(function (a) {
+                return a.value === lawyer.availability;
+            }) || AVAILABILITY[0];
 
         var scoreBadge = '';
         if (totalScore >= 0.85) {
@@ -1132,59 +1140,107 @@
         } else if (totalScore >= 0.65) {
             scoreBadge = '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded block mb-1">推荐</span>';
         } else if (totalScore >= 0.45) {
-            scoreBadge = '<span class="text-[10px] px-1.5 py-0.5 rounded block mb-1 bg-bg-subtle text-fg-secondary">候选</span>';
+            scoreBadge =
+                '<span class="text-[10px] px-1.5 py-0.5 rounded block mb-1 bg-bg-subtle text-fg-secondary">候选</span>';
         }
 
         var reasonTags = '';
         if (lawyer.match_reasons && lawyer.match_reasons.length > 0) {
-            reasonTags = lawyer.match_reasons.slice(0, 3).map(function (r) {
-                return '<span class="text-[10px] px-1.5 py-0.5 rounded bg-brand-tint text-brand">' + esc(r) + '</span>';
-            }).join('');
+            reasonTags = lawyer.match_reasons
+                .slice(0, 3)
+                .map(function (r) {
+                    return (
+                        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-brand-tint text-brand">' + esc(r) + '</span>'
+                    );
+                })
+                .join('');
         }
 
         return (
             '<div class="mp-lawyer-card mp-fade-in bg-white rounded-lg p-4 mb-3 hover:shadow-md transition-shadow" data-lawyer-id="' +
             esc(lawyer.lawyer_id) +
-            '" style="animation-delay:' + (index * 50) + 'ms">' +
+            '" style="animation-delay:' +
+            index * 50 +
+            'ms">' +
             '<div class="flex items-start gap-3">' +
-            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-base font-semibold flex-shrink-0 cursor-pointer" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-brand to-wiki flex items-center justify-center text-white text-base font-semibold flex-shrink-0 cursor-pointer" onclick="MarketplaceFn.openLawyerDetail(\'' +
+            esc(lawyer.lawyer_id) +
+            '\')">' +
             esc(lawyer.name ? lawyer.name.substring(0, 1) : '?') +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-2 flex-wrap mb-1">' +
-            '<h3 class="text-sm font-semibold text-fg-primary truncate cursor-pointer hover:text-brand transition-colors" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            '<h3 class="text-sm font-semibold text-fg-primary truncate cursor-pointer hover:text-brand transition-colors" onclick="MarketplaceFn.openLawyerDetail(\'' +
+            esc(lawyer.lawyer_id) +
+            '\')">' +
             esc(lawyer.name) +
             '</h3>' +
-            '<span class="text-[11px] text-fg-tertiary">' + esc(lawyer.firm_id || '独立律师') + '</span>' +
-            (lawyer.cross_border_capable ? '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded">跨境</span>' : '') +
+            '<span class="text-[11px] text-fg-tertiary">' +
+            esc(lawyer.firm_id || '独立律师') +
+            '</span>' +
+            (lawyer.cross_border_capable
+                ? '<span class="mp-badge-recommend text-[10px] px-1.5 py-0.5 rounded">跨境</span>'
+                : '') +
             '</div>' +
             '<div class="flex flex-wrap gap-1 mb-2">' +
-            (lawyer.specialties || []).slice(0, 4).map(function (s) {
-                var t = CASE_TYPES.find(function (c) { return c.value === s; });
-                return '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' + esc(t ? t.label : s) + '</span>';
-            }).join('') +
+            (lawyer.specialties || [])
+                .slice(0, 4)
+                .map(function (s) {
+                    var t = CASE_TYPES.find(function (c) {
+                        return c.value === s;
+                    });
+                    return (
+                        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-bg-subtle text-fg-secondary">' +
+                        esc(t ? t.label : s) +
+                        '</span>'
+                    );
+                })
+                .join('') +
             '</div>' +
             '<div class="flex items-center gap-3 text-[11px] text-fg-tertiary mb-2">' +
-            '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' + esc(lawyer.region || '未填') + (lawyer.city ? ' · ' + esc(lawyer.city) : '') + '</span>' +
-            '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' + (lawyer.experience_years || 0) + ' 年</span>' +
-            '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' + (lawyer.rating || 0).toFixed(1) + '</span>' +
-            '<span class="flex items-center gap-1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + availability.dot + '"></span> ' + availability.label + '</span>' +
-            (lawyer.price_per_hour > 0 ? '<span><iconify-icon icon="mdi:cash" class="text-xs"></iconify-icon> ¥' + lawyer.price_per_hour + '/h</span>' : '') +
+            '<span><iconify-icon icon="mdi:map-marker-outline" class="text-xs"></iconify-icon> ' +
+            esc(lawyer.region || '未填') +
+            (lawyer.city ? ' · ' + esc(lawyer.city) : '') +
+            '</span>' +
+            '<span><iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon> ' +
+            (lawyer.experience_years || 0) +
+            ' 年</span>' +
+            '<span><iconify-icon icon="mdi:star" class="text-xs text-urgent"></iconify-icon> ' +
+            (lawyer.rating || 0).toFixed(1) +
+            '</span>' +
+            '<span class="flex items-center gap-1"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' +
+            availability.dot +
+            '"></span> ' +
+            availability.label +
+            '</span>' +
+            (lawyer.price_per_hour > 0
+                ? '<span><iconify-icon icon="mdi:cash" class="text-xs"></iconify-icon> ¥' +
+                  lawyer.price_per_hour +
+                  '/h</span>'
+                : '') +
             '</div>' +
             (reasonTags ? '<div class="flex flex-wrap gap-1 mb-2">' + reasonTags + '</div>' : '') +
             '</div>' +
             '<div class="text-right flex-shrink-0">' +
-            '<div class="mp-score-big text-2xl font-bold text-brand">' + scorePct + '</div>' +
+            '<div class="mp-score-big text-2xl font-bold text-brand">' +
+            scorePct +
+            '</div>' +
             '<div class="text-[10px] text-fg-tertiary mb-2">匹配度</div>' +
             scoreBadge +
-            '<button class="mp-btn mp-btn-primary mp-btn-sm w-full" onclick="MarketplaceFn.openMatchDetail(\'' + esc(lawyer.lawyer_id) + '\')">' +
+            '<button class="mp-btn mp-btn-primary mp-btn-sm w-full" onclick="MarketplaceFn.openMatchDetail(\'' +
+            esc(lawyer.lawyer_id) +
+            '\')">' +
             '<iconify-icon icon="mdi:chart-bar" class="text-xs"></iconify-icon> 匹配详情' +
             '</button>' +
             '<div class="flex gap-1 mt-1">' +
-            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="create-referral" data-lawyer-id="' + esc(lawyer.lawyer_id) + '">' +
+            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="create-referral" data-lawyer-id="' +
+            esc(lawyer.lawyer_id) +
+            '">' +
             '<iconify-icon icon="mdi:share-variant" class="text-xs"></iconify-icon>' +
             '</button>' +
-            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="invite-co-counsel" data-lawyer-id="' + esc(lawyer.lawyer_id) + '">' +
+            '<button class="mp-btn mp-btn-secondary mp-btn-sm flex-1" data-mp-action="invite-co-counsel" data-lawyer-id="' +
+            esc(lawyer.lawyer_id) +
+            '">' +
             '<iconify-icon icon="mdi:account-multiple-plus-outline" class="text-xs"></iconify-icon>' +
             '</button>' +
             '</div>' +
@@ -1223,12 +1279,28 @@
             var angle2 = startAngle + j * angleStep;
             var x2 = center + radius * Math.cos(angle2);
             var y2 = center + radius * Math.sin(angle2);
-            axisLines += '<line x1="' + center + '" y1="' + center + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="#e5e7eb" stroke-width="1"/>';
+            axisLines +=
+                '<line x1="' +
+                center +
+                '" y1="' +
+                center +
+                '" x2="' +
+                x2.toFixed(1) +
+                '" y2="' +
+                y2.toFixed(1) +
+                '" stroke="#e5e7eb" stroke-width="1"/>';
 
             var labelR = radius + 18;
             var lx = center + labelR * Math.cos(angle2);
             var ly = center + labelR * Math.sin(angle2);
-            labels += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" fill="#6b7280" font-size="11px">' + esc(dimensions[j].name) + '</text>';
+            labels +=
+                '<text x="' +
+                lx.toFixed(1) +
+                '" y="' +
+                ly.toFixed(1) +
+                '" text-anchor="middle" dominant-baseline="middle" fill="#6b7280" font-size="11px">' +
+                esc(dimensions[j].name) +
+                '</text>';
         }
 
         var dataPoints = [];
@@ -1242,14 +1314,22 @@
         }
 
         return (
-            '<svg viewBox="0 0 ' + size + ' ' + size + '" class="w-full max-w-[200px] mx-auto">' +
+            '<svg viewBox="0 0 ' +
+            size +
+            ' ' +
+            size +
+            '" class="w-full max-w-[200px] mx-auto">' +
             gridLines +
             axisLines +
-            '<polygon points="' + dataPoints.join(' ') + '" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"/>' +
-            dataPoints.map(function (p) {
-                var coords = p.split(',');
-                return '<circle cx="' + coords[0] + '" cy="' + coords[1] + '" r="3" fill="#3b82f6"/>';
-            }).join('') +
+            '<polygon points="' +
+            dataPoints.join(' ') +
+            '" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"/>' +
+            dataPoints
+                .map(function (p) {
+                    var coords = p.split(',');
+                    return '<circle cx="' + coords[0] + '" cy="' + coords[1] + '" r="3" fill="#3b82f6"/>';
+                })
+                .join('') +
             labels +
             '</svg>'
         );
@@ -1259,21 +1339,35 @@
         var html = '<div class="space-y-3">';
         dimensions.forEach(function (d) {
             var pct = Math.round((d.score || 0) * 100);
-            var barColor = d.is_strength ? 'linear-gradient(90deg, #10b981, #059669)'
-                : d.is_weakness ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
+            var barColor = d.is_strength
+                ? 'linear-gradient(90deg, #10b981, #059669)'
+                : d.is_weakness
+                    ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
                     : 'linear-gradient(90deg, #3b82f6, #6366f1)';
             var labelClass = d.is_strength ? 'text-success' : d.is_weakness ? 'text-warning' : 'text-fg-secondary';
 
             html +=
                 '<div class="match-dim-row">' +
                 '<div class="flex justify-between items-center mb-1">' +
-                '<span class="text-xs font-medium ' + labelClass + '">' + esc(d.name) + '</span>' +
-                '<span class="text-xs font-semibold text-fg-primary">' + pct + '分</span>' +
+                '<span class="text-xs font-medium ' +
+                labelClass +
+                '">' +
+                esc(d.name) +
+                '</span>' +
+                '<span class="text-xs font-semibold text-fg-primary">' +
+                pct +
+                '分</span>' +
                 '</div>' +
                 '<div class="match-dim-track h-2 bg-bg-subtle rounded-full overflow-hidden">' +
-                '<div class="match-dim-fill h-full rounded-full transition-all duration-500" style="width:' + pct + '%;background:' + barColor + '"></div>' +
+                '<div class="match-dim-fill h-full rounded-full transition-all duration-500" style="width:' +
+                pct +
+                '%;background:' +
+                barColor +
+                '"></div>' +
                 '</div>' +
-                '<div class="text-[10px] text-fg-tertiary mt-1">' + esc(d.description) + '</div>' +
+                '<div class="text-[10px] text-fg-tertiary mt-1">' +
+                esc(d.description) +
+                '</div>' +
                 '</div>';
         });
         html += '</div>';
@@ -1286,16 +1380,28 @@
 
         var strengthTags = '';
         if (data.strengths && data.strengths.length > 0) {
-            strengthTags = data.strengths.map(function (s) {
-                return '<span class="inline-block text-xs px-2 py-1 rounded-full bg-success/10 text-success mr-2 mb-1">✓ ' + esc(s) + '</span>';
-            }).join('');
+            strengthTags = data.strengths
+                .map(function (s) {
+                    return (
+                        '<span class="inline-block text-xs px-2 py-1 rounded-full bg-success/10 text-success mr-2 mb-1">✓ ' +
+                        esc(s) +
+                        '</span>'
+                    );
+                })
+                .join('');
         }
 
         var weaknessTags = '';
         if (data.weaknesses && data.weaknesses.length > 0) {
-            weaknessTags = data.weaknesses.map(function (w) {
-                return '<span class="inline-block text-xs px-2 py-1 rounded-full bg-warning/10 text-warning mr-2 mb-1">⚠ ' + esc(w) + '</span>';
-            }).join('');
+            weaknessTags = data.weaknesses
+                .map(function (w) {
+                    return (
+                        '<span class="inline-block text-xs px-2 py-1 rounded-full bg-warning/10 text-warning mr-2 mb-1">⚠ ' +
+                        esc(w) +
+                        '</span>'
+                    );
+                })
+                .join('');
         }
 
         var suggestionsHtml = '';
@@ -1316,8 +1422,12 @@
             esc(data.lawyer_name ? data.lawyer_name.substring(0, 1) : '?') +
             '</div>' +
             '<div>' +
-            '<h3 class="text-base font-semibold text-fg-primary">' + esc(data.lawyer_name) + ' · 匹配详情</h3>' +
-            '<p class="text-xs text-fg-tertiary">综合匹配度: <span class="text-brand font-semibold">' + totalPct + '分</span></p>' +
+            '<h3 class="text-base font-semibold text-fg-primary">' +
+            esc(data.lawyer_name) +
+            ' · 匹配详情</h3>' +
+            '<p class="text-xs text-fg-tertiary">综合匹配度: <span class="text-brand font-semibold">' +
+            totalPct +
+            '分</span></p>' +
             '</div>' +
             '</div>' +
             '<button class="text-fg-tertiary hover:text-fg-primary transition-colors text-xl" onclick="MarketplaceFn.closeMatchDetail()">×</button>' +
@@ -1331,20 +1441,32 @@
             '<h4 class="text-sm font-semibold text-fg-primary mb-3">各维度得分</h4>' +
             renderMatchDimensionBars(data.dimensions || []) +
             '</div>' +
-            (strengthTags || weaknessTags ?
-                '<div class="mb-4">' +
-                '<h4 class="text-sm font-semibold text-fg-primary mb-2">优劣势分析</h4>' +
-                (strengthTags ? '<div class="mb-2"><div class="text-xs text-success font-medium mb-1">强项</div>' + strengthTags + '</div>' : '') +
-                (weaknessTags ? '<div><div class="text-xs text-warning font-medium mb-1">待提升</div>' + weaknessTags + '</div>' : '') +
-                '</div>' : '') +
-            (suggestionsHtml ?
-                '<div>' +
-                '<h4 class="text-sm font-semibold text-fg-primary mb-2">改进建议</h4>' +
-                '<div class="bg-bg-subtle rounded-lg p-3">' + suggestionsHtml + '</div>' +
-                '</div>' : '') +
+            (strengthTags || weaknessTags
+                ? '<div class="mb-4">' +
+                  '<h4 class="text-sm font-semibold text-fg-primary mb-2">优劣势分析</h4>' +
+                  (strengthTags
+                      ? '<div class="mb-2"><div class="text-xs text-success font-medium mb-1">强项</div>' +
+                        strengthTags +
+                        '</div>'
+                      : '') +
+                  (weaknessTags
+                      ? '<div><div class="text-xs text-warning font-medium mb-1">待提升</div>' + weaknessTags + '</div>'
+                      : '') +
+                  '</div>'
+                : '') +
+            (suggestionsHtml
+                ? '<div>' +
+                  '<h4 class="text-sm font-semibold text-fg-primary mb-2">改进建议</h4>' +
+                  '<div class="bg-bg-subtle rounded-lg p-3">' +
+                  suggestionsHtml +
+                  '</div>' +
+                  '</div>'
+                : '') +
             '<div class="mt-4 pt-4 border-t border-bg-border flex gap-2">' +
             '<button class="mp-btn mp-btn-secondary flex-1" onclick="MarketplaceFn.closeMatchDetail()">关闭</button>' +
-            '<button class="mp-btn mp-btn-primary flex-1" onclick="MarketplaceFn.openLawyerDetail(\'' + esc(data.lawyer_id) + '\');MarketplaceFn.closeMatchDetail();">查看完整资料</button>' +
+            '<button class="mp-btn mp-btn-primary flex-1" onclick="MarketplaceFn.openLawyerDetail(\'' +
+            esc(data.lawyer_id) +
+            '\');MarketplaceFn.closeMatchDetail();">查看完整资料</button>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -1410,38 +1532,48 @@
             '<label class="mp-label">专业领域</label>' +
             '<select id="mp-filter-specialty" class="mp-input text-sm">' +
             '<option value="">全部领域</option>' +
-            specialtyOptions.map(function (opt) {
-                var selected = (criteria.required_specialties || []).indexOf(opt.value) >= 0 ? ' selected' : '';
-                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
-            }).join('') +
+            specialtyOptions
+                .map(function (opt) {
+                    var selected = (criteria.required_specialties || []).indexOf(opt.value) >= 0 ? ' selected' : '';
+                    return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+                })
+                .join('') +
             '</select>' +
             '</div>' +
             '<div class="flex-1 min-w-[150px]">' +
             '<label class="mp-label">地区</label>' +
             '<select id="mp-filter-region" class="mp-input text-sm">' +
             '<option value="">全部地区</option>' +
-            regionOptions.map(function (opt) {
-                var selected = criteria.required_region === opt.value ? ' selected' : '';
-                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
-            }).join('') +
+            regionOptions
+                .map(function (opt) {
+                    var selected = criteria.required_region === opt.value ? ' selected' : '';
+                    return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+                })
+                .join('') +
             '</select>' +
             '</div>' +
             '<div class="flex-1 min-w-[120px]">' +
             '<label class="mp-label">排序方式</label>' +
             '<select id="mp-filter-sort" class="mp-input text-sm">' +
-            sortOptions.map(function (opt) {
-                var selected = criteria.sort_by === opt.value ? ' selected' : '';
-                return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
-            }).join('') +
+            sortOptions
+                .map(function (opt) {
+                    var selected = criteria.sort_by === opt.value ? ' selected' : '';
+                    return '<option value="' + esc(opt.value) + '"' + selected + '>' + esc(opt.label) + '</option>';
+                })
+                .join('') +
             '</select>' +
             '</div>' +
             '<div class="w-24">' +
             '<label class="mp-label">最低分</label>' +
-            '<input id="mp-filter-minrating" type="number" step="0.5" min="0" max="5" class="mp-input text-sm" placeholder="评分" value="' + ((criteria.filters && criteria.filters.min_rating) || '') + '">' +
+            '<input id="mp-filter-minrating" type="number" step="0.5" min="0" max="5" class="mp-input text-sm" placeholder="评分" value="' +
+            ((criteria.filters && criteria.filters.min_rating) || '') +
+            '">' +
             '</div>' +
             '<div class="w-24">' +
             '<label class="mp-label">最低年限</label>' +
-            '<input id="mp-filter-minexperience" type="number" min="0" class="mp-input text-sm" placeholder="年限" value="' + ((criteria.filters && criteria.filters.min_experience_years) || '') + '">' +
+            '<input id="mp-filter-minexperience" type="number" min="0" class="mp-input text-sm" placeholder="年限" value="' +
+            ((criteria.filters && criteria.filters.min_experience_years) || '') +
+            '">' +
             '</div>' +
             '<button id="mp-filter-submit" class="mp-btn mp-btn-primary text-sm">' +
             '<iconify-icon icon="mdi:magnify" class="text-sm"></iconify-icon> 筛选' +
@@ -1449,11 +1581,17 @@
             '</div>' +
             '<div class="mt-3 flex items-center gap-2 text-xs text-fg-tertiary flex-wrap">' +
             '<label class="flex items-center gap-1 cursor-pointer">' +
-            '<input type="checkbox" id="mp-filter-crossborder" class="rounded" ' + ((criteria.filters && criteria.filters.cross_border_only) ? 'checked' : '') + '>' +
+            '<input type="checkbox" id="mp-filter-crossborder" class="rounded" ' +
+            (criteria.filters && criteria.filters.cross_border_only ? 'checked' : '') +
+            '>' +
             '仅跨境律师' +
             '</label>' +
             '<span class="text-bg-border">|</span>' +
-            '<span id="mp-match-source" class="text-fg-tertiary">数据源: ' + (MatchV2State.useBackend ? '<span class="text-success">后端</span>' : '<span class="text-warning">前端降级</span>') + '</span>' +
+            '<span id="mp-match-source" class="text-fg-tertiary">数据源: ' +
+            (MatchV2State.useBackend
+                ? '<span class="text-success">后端</span>'
+                : '<span class="text-warning">前端降级</span>') +
+            '</span>' +
             '<span class="text-bg-border">|</span>' +
             '<span id="mp-match-count" class="text-fg-tertiary">共 0 位律师</span>' +
             '</div>' +
@@ -1505,7 +1643,8 @@
         var showFilters = opts.showFilters !== false;
 
         if (showFilters) {
-            container.innerHTML = renderMatchFilters(criteria) +
+            container.innerHTML =
+                renderMatchFilters(criteria) +
                 '<div id="mp-match-results-list"></div>' +
                 '<div id="mp-match-pagination" class="mt-4 text-center"></div>';
         } else {
@@ -1533,7 +1672,9 @@
                     '<div class="mp-empty">' +
                     '<iconify-icon icon="mdi:alert-outline" class="mp-empty-icon text-warning"></iconify-icon>' +
                     '<div>匹配失败</div>' +
-                    '<div class="text-[11px] mt-1 text-fg-tertiary">' + esc(result.error || '请稍后重试') + '</div>' +
+                    '<div class="text-[11px] mt-1 text-fg-tertiary">' +
+                    esc(result.error || '请稍后重试') +
+                    '</div>' +
                     '<button class="mp-btn mp-btn-primary mt-3" onclick="MarketplaceFn.retryMatchSearch()">重试</button>' +
                     '</div>';
                 return;
@@ -1544,7 +1685,11 @@
 
             var sourceEl = document.getElementById('mp-match-source');
             if (sourceEl) {
-                sourceEl.innerHTML = '数据源: ' + (result.source === 'backend' ? '<span class="text-success">后端</span>' : '<span class="text-warning">前端降级</span>');
+                sourceEl.innerHTML =
+                    '数据源: ' +
+                    (result.source === 'backend'
+                        ? '<span class="text-success">后端</span>'
+                        : '<span class="text-warning">前端降级</span>');
             }
 
             var countEl = document.getElementById('mp-match-count');
@@ -1563,9 +1708,11 @@
                 return;
             }
 
-            resultsList.innerHTML = data.lawyers.map(function (l, i) {
-                return renderMatchResultCard(l, i);
-            }).join('');
+            resultsList.innerHTML = data.lawyers
+                .map(function (l, i) {
+                    return renderMatchResultCard(l, i);
+                })
+                .join('');
 
             resultsList.querySelectorAll('[data-mp-action]').forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
@@ -1575,12 +1722,16 @@
                     if (action === 'create-referral') {
                         if (typeof window.switchView === 'function') {
                             window.switchView('marketplace-referrals');
-                            setTimeout(function () { openCreateReferralModal(lawyerId); }, 100);
+                            setTimeout(function () {
+                                openCreateReferralModal(lawyerId);
+                            }, 100);
                         }
                     } else if (action === 'invite-co-counsel') {
                         if (typeof window.switchView === 'function') {
                             window.switchView('marketplace-cases');
-                            setTimeout(function () { openCreateCaseModal(lawyerId); }, 100);
+                            setTimeout(function () {
+                                openCreateCaseModal(lawyerId);
+                            }, 100);
                         }
                     }
                 });
@@ -1591,17 +1742,34 @@
                 var totalPages = data.total_pages;
                 var paginationHtml = '<div class="inline-flex items-center gap-1">';
 
-                paginationHtml += '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + (page - 1) + ')" ' + (page <= 1 ? 'disabled style="opacity:0.5"' : '') + '>' +
+                paginationHtml +=
+                    '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' +
+                    (page - 1) +
+                    ')" ' +
+                    (page <= 1 ? 'disabled style="opacity:0.5"' : '') +
+                    '>' +
                     '<iconify-icon icon="mdi:chevron-left" class="text-sm"></iconify-icon></button>';
 
                 var startPage = Math.max(1, page - 2);
                 var endPage = Math.min(totalPages, page + 2);
                 for (var p = startPage; p <= endPage; p++) {
                     var btnClass = p === page ? 'mp-btn-primary' : 'mp-btn-secondary';
-                    paginationHtml += '<button class="mp-btn ' + btnClass + ' mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + p + ')">' + p + '</button>';
+                    paginationHtml +=
+                        '<button class="mp-btn ' +
+                        btnClass +
+                        ' mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' +
+                        p +
+                        ')">' +
+                        p +
+                        '</button>';
                 }
 
-                paginationHtml += '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' + (page + 1) + ')" ' + (page >= totalPages ? 'disabled style="opacity:0.5"' : '') + '>' +
+                paginationHtml +=
+                    '<button class="mp-btn mp-btn-secondary mp-btn-sm" onclick="MarketplaceFn.goToMatchPage(' +
+                    (page + 1) +
+                    ')" ' +
+                    (page >= totalPages ? 'disabled style="opacity:0.5"' : '') +
+                    '>' +
                     '<iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon></button>';
 
                 paginationHtml += '</div>';

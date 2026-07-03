@@ -1,20 +1,29 @@
 """
-LexPrime 简易 API (FastAPI)
-2026-06-28 · 给前端 LexPrime 主系统用
+LexPrime API - 法律智能服务平台核心接口
+============================================
 
-端点:
-- GET  /api/cases                    判例列表 (带筛选)
-- GET  /api/cases/{doc_id}           判例详情
-- POST /api/cases/search             全文搜索
-- GET  /api/laws                     法规列表
-- GET  /api/laws/{law_id}            法规详情
-- GET  /api/companies                企业列表
-- GET  /api/companies/{unified_id}   企业详情
-- POST /api/cases/{doc_id}/favorite  收藏
-- POST /api/firm/lawyers             律所律师列表
-- POST /api/firm/time-entries        工时记录
-- GET  /api/health                   健康检查
-- POST /api/logs                     前端日志上报 (错误 + 性能)
+LexPrime 是一款面向律师和律所的法律智能服务平台，提供类案检索、合同审查、
+文书生成、律师协作等全流程法律业务支持。
+
+本 API 服务作为 LexPrime 的核心后端接口层，基于 FastAPI 构建，
+提供自动生成的 OpenAPI 文档，支持 RESTful 风格。
+
+API 版本: 0.1.0
+文档地址: /docs (Swagger UI) | /redoc (ReDoc)
+服务地址: http://127.0.0.1:3847
+
+主要功能模块:
+- 判例检索: 获取法院判例数据，支持筛选和全文搜索
+- 法规查询: 获取法律法规数据
+- 企业查询: 获取企业工商信息
+- 合同审查: AI 驱动的合同风险审查
+- 文书生成: 智能法律文书生成
+- Marketplace: 律师协作与转介绍平台
+- AI 服务: 案件分析、文书润色、智能填空
+- 日程管理: 律师日程安排
+- 客户管理: 客户信息管理
+
+认证方式: Bearer Token (JWT)
 """
 import os
 import json
@@ -55,69 +64,170 @@ def _write_log_entry(entry_type: str, data: dict):
 
 
 # ========== Pydantic 模型 ==========
+
 class CaseOut(BaseModel):
-    id: int
-    doc_id: Optional[str]
-    case_id: Optional[str]
-    case_name: Optional[str]
-    court: Optional[str]
-    cause: Optional[str]
-    cause_category: Optional[str]
-    cause_color: Optional[str]
-    judgment_date: Optional[str]
-    year: Optional[int]
-    lex_score: Optional[int]
-    view_count: int
-    favorite_count: int
+    """判例输出模型 (精简版)
+
+    用于判例列表展示，包含案件基本信息和评分数据。
+    """
+    id: int = Field(..., description="数据库主键")
+    doc_id: Optional[str] = Field(None, description="文档唯一标识")
+    case_id: Optional[str] = Field(None, description="案件编号")
+    case_name: Optional[str] = Field(None, description="案件名称")
+    court: Optional[str] = Field(None, description="审理法院")
+    cause: Optional[str] = Field(None, description="案由")
+    cause_category: Optional[str] = Field(None, description="案由分类")
+    cause_color: Optional[str] = Field(None, description="案由颜色标记")
+    judgment_date: Optional[str] = Field(None, description="判决日期 (ISO 8601)")
+    year: Optional[int] = Field(None, description="判决年份")
+    lex_score: Optional[int] = Field(None, description="LexPrime 评分 (0-100)")
+    view_count: int = Field(..., description="查看次数")
+    favorite_count: int = Field(..., description="收藏次数")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 12345,
+                "doc_id": "case-abc123",
+                "case_id": "(2026)京01民初123号",
+                "case_name": "张三诉李四借款合同纠纷案",
+                "court": "北京市第一中级人民法院",
+                "cause": "借款合同纠纷",
+                "cause_category": "合同纠纷",
+                "cause_color": "#ef4444",
+                "judgment_date": "2026-03-15",
+                "year": 2026,
+                "lex_score": 85,
+                "view_count": 156,
+                "favorite_count": 12
+            }
+        }
 
 
 class CaseDetail(CaseOut):
-    parties: Optional[str]
-    legal_basis: Optional[str]
-    full_text: Optional[str]
-    source: str
-    source_url: Optional[str]
-    keywords: Optional[List[str]]
+    """判例详情模型
+
+    在精简版基础上增加完整案件信息，用于案件详情页展示。
+    """
+    parties: Optional[str] = Field(None, description="当事人信息")
+    legal_basis: Optional[str] = Field(None, description="法律依据")
+    full_text: Optional[str] = Field(None, description="判决书全文")
+    source: str = Field(..., description="数据来源")
+    source_url: Optional[str] = Field(None, description="来源链接")
+    keywords: Optional[List[str]] = Field(None, description="关键词列表")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 12345,
+                "doc_id": "case-abc123",
+                "case_name": "张三诉李四借款合同纠纷案",
+                "court": "北京市第一中级人民法院",
+                "cause": "借款合同纠纷",
+                "parties": "原告：张三；被告：李四",
+                "legal_basis": "《民法典》第五百七十七条",
+                "full_text": "原告张三与被告李四于2025年3月签订借款合同...",
+                "source": "中国裁判文书网",
+                "source_url": "http://wenshu.court.gov.cn/xxx",
+                "keywords": ["借款", "合同", "违约"]
+            }
+        }
 
 
 class LawOut(BaseModel):
-    id: int
-    law_id: str
-    title: str
-    law_type: str
-    status: Optional[str]
-    issue_date: Optional[str]
-    effective_date: Optional[str]
-    level: Optional[int]
+    """法规输出模型"""
+    id: int = Field(..., description="数据库主键")
+    law_id: str = Field(..., description="法规编号")
+    title: str = Field(..., description="法规名称")
+    law_type: str = Field(..., description="法规类型")
+    status: Optional[str] = Field(None, description="效力状态")
+    issue_date: Optional[str] = Field(None, description="发布日期")
+    effective_date: Optional[str] = Field(None, description="生效日期")
+    level: Optional[int] = Field(None, description="效力层级")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 1001,
+                "law_id": "民法典",
+                "title": "中华人民共和国民法典",
+                "law_type": "法律",
+                "status": "现行有效",
+                "issue_date": "2020-05-28",
+                "effective_date": "2021-01-01",
+                "level": 1
+            }
+        }
 
 
 class CompanyOut(BaseModel):
-    id: int
-    unified_id: str
-    company_name: str
-    legal_rep: Optional[str]
-    business_status: Optional[str]
-    industry: Optional[str]
-    region: Optional[str]
-    is_zxgk: bool
+    """企业信息输出模型"""
+    id: int = Field(..., description="数据库主键")
+    unified_id: str = Field(..., description="统一社会信用代码")
+    company_name: str = Field(..., description="企业名称")
+    legal_rep: Optional[str] = Field(None, description="法定代表人")
+    business_status: Optional[str] = Field(None, description="经营状态")
+    industry: Optional[str] = Field(None, description="所属行业")
+    region: Optional[str] = Field(None, description="所属地区")
+    is_zxgk: bool = Field(..., description="是否在执行公开名单")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 2001,
+                "unified_id": "91110101MA01ABCDEF",
+                "company_name": "北京示例科技有限公司",
+                "legal_rep": "王五",
+                "business_status": "存续",
+                "industry": "软件和信息技术服务业",
+                "region": "北京市",
+                "is_zxgk": False
+            }
+        }
 
 
 class SearchRequest(BaseModel):
-    query: str = Field(..., min_length=2, max_length=200)
-    index: str = Field("cases", pattern="^(cases|laws|companies)$")
-    page: int = 1
-    size: int = 20
-    filters: Optional[dict] = None
+    """全文搜索请求模型"""
+    query: str = Field(..., min_length=2, max_length=200, description="搜索关键词 (至少2个字符)")
+    index: str = Field("cases", pattern="^(cases|laws|companies)$", description="搜索索引 (cases/laws/companies)")
+    page: int = Field(1, ge=1, description="页码")
+    size: int = Field(20, ge=1, le=100, description="每页数量")
+    filters: Optional[dict] = Field(None, description="额外过滤条件")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "query": "借款合同 违约",
+                "index": "cases",
+                "page": 1,
+                "size": 20,
+                "filters": {"cause_category": "合同纠纷"}
+            }
+        }
 
 
 class TimeEntryIn(BaseModel):
-    lawyer_id: str
-    case_id: Optional[int] = None
-    entry_date: str
-    hours: float
-    description: Optional[str] = None
-    billable: bool = True
-    rate: Optional[float] = None
+    """工时记录输入模型"""
+    lawyer_id: str = Field(..., description="律师 ID")
+    case_id: Optional[int] = Field(None, description="关联案件 ID")
+    entry_date: str = Field(..., description="工作日期 (YYYY-MM-DD)")
+    hours: float = Field(..., ge=0, le=24, description="工时数")
+    description: Optional[str] = Field(None, description="工作描述")
+    billable: bool = Field(True, description="是否可计费")
+    rate: Optional[float] = Field(None, ge=0, description="小时费率")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "lawyer_id": "L001",
+                "case_id": 12345,
+                "entry_date": "2026-03-15",
+                "hours": 4.5,
+                "description": "起草起诉状",
+                "billable": True,
+                "rate": 800.0
+            }
+        }
 
 
 # ========== App lifespan ==========
@@ -136,9 +246,69 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="LexPrime API",
-    description="LexPrime 自建数据基础设施 API · 律所版 0.1",
+    description="""
+# LexPrime API - 法律智能服务平台
+
+LexPrime 是一款面向律师和律所的法律智能服务平台，提供全流程法律业务支持。
+
+## 核心功能模块
+
+### 📚 判例检索
+- 获取法院判例数据
+- 支持多维度筛选
+- Elasticsearch 全文搜索
+
+### 📖 法规查询
+- 法律法规数据查询
+- 按类型/状态筛选
+
+### 🏢 企业查询
+- 企业工商信息
+- 执行公开状态查询
+
+### 📋 合同审查
+- AI 驱动的合同风险审查
+- OCR 图片合同识别
+- 规则引擎审查
+
+### 📝 文书生成
+- 智能法律文书生成
+- 多模板支持
+
+### 👥 Marketplace
+- 律师协作平台
+- 转介绍系统
+- 跨境文件服务
+
+### 🤖 AI 服务
+- 案件分析摘要
+- 文书润色
+- 智能填空
+
+## 快速开始
+
+```bash
+# 启动服务
+uvicorn api.main:app --host 0.0.0.0 --port 3847
+
+# 访问文档
+# Swagger UI: http://localhost:3847/docs
+# ReDoc: http://localhost:3847/redoc
+```
+
+## 认证
+
+所有 API 接口需要在请求头中携带 Bearer Token:
+
+```
+Authorization: Bearer <your_token>
+```
+""",
     version="0.1.0",
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
 )
 
 # CORS
@@ -299,11 +469,47 @@ try:
 except Exception as e:
     logger.warning(f"schedule_router 加载失败: {e}")
 
+# 用户管理 API
+# 端点: GET/PUT/DELETE /api/users, GET /api/users/{id}, POST /api/users/batch-status
+try:
+    from api.users_router import router as users_router
+    app.include_router(users_router)
+    logger.info("用户管理 users_router registered")
+except Exception as e:
+    logger.warning(f"users_router 加载失败: {e}")
+
+# 系统设置 API
+# 端点: GET/PUT /api/settings
+try:
+    from api.settings_router import router as settings_router
+    app.include_router(settings_router)
+    logger.info("系统设置 settings_router registered")
+except Exception as e:
+    logger.warning(f"settings_router 加载失败: {e}")
+
+# 案件管理 API
+# 端点: POST /api/cases/{case_id}/status, GET /api/cases/{case_id}/timeline, POST /api/cases/{case_id}/note
+try:
+    from api.case_router import router as case_router
+    app.include_router(case_router)
+    logger.info("案件管理 case_router registered")
+except Exception as e:
+    logger.warning(f"case_router 加载失败: {e}")
+
+# 数据导入导出 API
+# 端点: POST /api/import/cases, POST /api/export/cases, POST /api/export/report
+try:
+    from api.import_export_router import router as import_export_router
+    app.include_router(import_export_router)
+    logger.info("数据导入导出 import_export_router registered")
+except Exception as e:
+    logger.warning(f"import_export_router 加载失败: {e}")
+
 
 # ========== 端点 ==========
-@app.get("/api/health")
+
+@app.get("/api/health", summary="健康检查", description="检查数据库、Elasticsearch、Neo4j 的连接状态和延迟")
 async def health():
-    """增强健康检查 - 检查数据库连接、ES、Neo4j"""
     import time
     
     db_status = {
@@ -373,31 +579,33 @@ async def health():
 
 
 class FrontendError(BaseModel):
-    timestamp: str
-    user: dict = {}
-    browser: dict = {}
-    page: dict = {}
-    error: dict = {}
-    type: str = "frontend_error"
+    """前端错误日志模型"""
+    timestamp: str = Field(..., description="错误发生时间")
+    user: dict = Field({}, description="用户信息")
+    browser: dict = Field({}, description="浏览器信息")
+    page: dict = Field({}, description="页面信息")
+    error: dict = Field({}, description="错误详情")
+    type: str = Field("frontend_error", description="日志类型")
 
 
 class FrontendPerformance(BaseModel):
-    timestamp: str
-    user: dict = {}
-    browser: dict = {}
-    page: dict = {}
-    performance: dict = {}
-    type: str = "frontend_performance"
+    """前端性能日志模型"""
+    timestamp: str = Field(..., description="记录时间")
+    user: dict = Field({}, description="用户信息")
+    browser: dict = Field({}, description="浏览器信息")
+    page: dict = Field({}, description="页面信息")
+    performance: dict = Field({}, description="性能数据")
+    type: str = Field("frontend_performance", description="日志类型")
 
 
 class LogsRequest(BaseModel):
-    errors: Optional[List[FrontendError]] = None
-    performance: Optional[List[FrontendPerformance]] = None
+    """前端日志请求模型"""
+    errors: Optional[List[FrontendError]] = Field(None, description="错误日志列表")
+    performance: Optional[List[FrontendPerformance]] = Field(None, description="性能日志列表")
 
 
-@app.post("/api/logs")
+@app.post("/api/logs", summary="接收前端日志", description="接收前端上报的错误日志和性能数据，用于监控和分析")
 async def receive_frontend_logs(req: LogsRequest, request: Request):
-    """接收前端错误和性能日志"""
     client_ip = request.client.host if request.client else "unknown"
     
     if req.errors:
@@ -420,17 +628,17 @@ async def receive_frontend_logs(req: LogsRequest, request: Request):
 
 
 # --- 判例 ---
-@app.get("/api/cases")
+
+@app.get("/api/cases", summary="获取判例列表", description="获取判例列表，支持按案由、案由分类、年份、法院筛选，默认返回精简数据")
 async def list_cases(
-    cause: Optional[str] = None,
-    cause_category: Optional[str] = None,
-    year: Optional[int] = None,
-    court: Optional[str] = None,
-    limit: int = Query(50, le=500),
-    offset: int = 0,
-    full: bool = Query(False, description="包含完整字段 (full_text, legal_basis, lex_tags, source 等)"),
+    cause: Optional[str] = Query(None, description="案由关键词"),
+    cause_category: Optional[str] = Query(None, description="案由分类"),
+    year: Optional[int] = Query(None, description="判决年份"),
+    court: Optional[str] = Query(None, description="法院名称"),
+    limit: int = Query(50, le=500, description="每页数量"),
+    offset: int = Query(0, ge=0, description="偏移量"),
+    full: bool = Query(False, description="是否返回完整字段"),
 ):
-    """判例列表 (默认精简, ?full=true 返完整)"""
     async with Database.session() as session:
         from sqlalchemy import select
         stmt = select(Case).order_by(Case.lex_score.desc(), Case.judgment_date.desc())
@@ -469,9 +677,8 @@ async def list_cases(
             ) for c in cases]
 
 
-@app.get("/api/cases/{doc_id}", response_model=CaseDetail)
+@app.get("/api/cases/{doc_id}", response_model=CaseDetail, summary="获取判例详情", description="根据文档ID获取判例完整信息，包含判决书全文、法律依据等")
 async def get_case(doc_id: str):
-    """判例详情"""
     async with Database.session() as session:
         from sqlalchemy import select
         stmt = select(Case).where(Case.doc_id == doc_id)
@@ -496,9 +703,9 @@ async def get_case(doc_id: str):
 
 
 # --- 搜索 (ES 全文检索) ---
-@app.post("/api/search")
+
+@app.post("/api/search", summary="全文搜索", description="通过 Elasticsearch 进行判例、法规、企业的全文搜索，支持分页和过滤")
 async def search(req: SearchRequest):
-    """全文搜索"""
     es = ESClient.get()
     index_name = {
         "cases": settings.es_index_cases,
@@ -543,11 +750,12 @@ async def search(req: SearchRequest):
 
 
 # --- 法规 ---
-@app.get("/api/laws", response_model=List[LawOut])
+
+@app.get("/api/laws", response_model=List[LawOut], summary="获取法规列表", description="获取法律法规列表，支持按类型和效力状态筛选")
 async def list_laws(
-    law_type: Optional[str] = None,
-    status: Optional[str] = None,
-    limit: int = Query(50, le=200),
+    law_type: Optional[str] = Query(None, description="法规类型"),
+    status: Optional[str] = Query(None, description="效力状态"),
+    limit: int = Query(50, le=200, description="每页数量"),
 ):
     async with Database.session() as session:
         from sqlalchemy import select
@@ -568,12 +776,13 @@ async def list_laws(
 
 
 # --- 企业 ---
-@app.get("/api/companies", response_model=List[CompanyOut])
+
+@app.get("/api/companies", response_model=List[CompanyOut], summary="获取企业列表", description="获取企业工商信息列表，支持按名称、地区和执行公开状态筛选")
 async def list_companies(
-    name: Optional[str] = None,
-    is_zxgk: Optional[bool] = None,
-    region: Optional[str] = None,
-    limit: int = Query(50, le=200),
+    name: Optional[str] = Query(None, description="企业名称关键词"),
+    is_zxgk: Optional[bool] = Query(None, description="是否在执行公开名单"),
+    region: Optional[str] = Query(None, description="所属地区"),
+    limit: int = Query(50, le=200, description="每页数量"),
 ):
     async with Database.session() as session:
         from sqlalchemy import select
@@ -595,9 +804,9 @@ async def list_companies(
 
 
 # --- 律所版 0.1 ---
-@app.get("/api/firm/lawyers")
-async def list_firm_lawyers(firm_id: str, role: Optional[str] = None):
-    """律所律师列表"""
+
+@app.get("/api/firm/lawyers", summary="获取律所律师列表", description="根据律所ID获取该律所的律师列表，支持按角色筛选")
+async def list_firm_lawyers(firm_id: str = Query(..., description="律所ID"), role: Optional[str] = Query(None, description="角色筛选")):
     async with Database.session() as session:
         from sqlalchemy import select
         stmt = select(Lawyer).where(Lawyer.firm_id == firm_id, Lawyer.is_active == True)
@@ -611,9 +820,8 @@ async def list_firm_lawyers(firm_id: str, role: Optional[str] = None):
         } for l in lawyers]
 
 
-@app.post("/api/firm/time-entries")
-async def create_time_entry(entry: TimeEntryIn, firm_id: str):
-    """创建工时记录"""
+@app.post("/api/firm/time-entries", summary="创建工时记录", description="为律所律师创建工时记录，包含工作日期、工时数、费率等信息")
+async def create_time_entry(entry: TimeEntryIn, firm_id: str = Query(..., description="律所ID")):
     async with Database.session() as session:
         from decimal import Decimal
         record = FirmTimeEntry(
@@ -632,9 +840,8 @@ async def create_time_entry(entry: TimeEntryIn, firm_id: str):
         return {"id": record.id, "status": "created"}
 
 
-@app.get("/api/firm/stats")
-async def firm_stats(firm_id: str):
-    """律所统计"""
+@app.get("/api/firm/stats", summary="获取律所统计", description="获取律所的律师数量和本月工时统计")
+async def firm_stats(firm_id: str = Query(..., description="律所ID")):
     from sqlalchemy import select, func
     async with Database.session() as session:
         # 律师数

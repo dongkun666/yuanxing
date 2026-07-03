@@ -308,7 +308,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
             </div>
             <div class="p-3 space-y-2">
               <!-- Word -->
-              <button class="w-full p-3 bg-brand-tint3 border-2 border-brand rounded-md text-left flex items-center gap-3 tab-active">
+              <button class="export-btn w-full p-3 bg-brand-tint3 border-2 border-brand rounded-md text-left flex items-center gap-3" data-format="docx">
                 <div class="w-10 h-10 rounded bg-brand text-white flex items-center justify-center flex-shrink-0">
                   <iconify-icon icon="mdi:file-word-box" class="text-xl"></iconify-icon>
                 </div>
@@ -322,7 +322,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                 <iconify-icon icon="mdi:check-circle" class="text-brand text-xl"></iconify-icon>
               </button>
               <!-- PDF -->
-              <button class="w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand">
+              <button class="export-btn w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand" data-format="pdf">
                 <div class="w-10 h-10 rounded bg-danger-tint text-danger flex items-center justify-center flex-shrink-0">
                   <iconify-icon icon="mdi:file-pdf-box" class="text-xl"></iconify-icon>
                 </div>
@@ -331,14 +331,24 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                   <div class="text-[10px] text-fg-tertiary mt-0.5">只读 · 不可编辑 · 约 380 KB</div>
                 </div>
               </button>
-              <!-- Markdown -->
-              <button class="w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand">
-                <div class="w-10 h-10 rounded bg-fg-subtle text-fg-secondary flex items-center justify-center flex-shrink-0">
-                  <iconify-icon icon="mdi:language-markdown-outline" class="text-xl"></iconify-icon>
+              <!-- Excel -->
+              <button class="export-btn w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand" data-format="xlsx">
+                <div class="w-10 h-10 rounded bg-success-tint text-success flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon="mdi:file-excel-box" class="text-xl"></iconify-icon>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-semibold">Markdown (.md)</div>
-                  <div class="text-[10px] text-fg-tertiary mt-0.5">纯文本 · 适合版本管理 · 约 18 KB</div>
+                  <div class="text-sm font-semibold">Excel 表格 (.xlsx)</div>
+                  <div class="text-[10px] text-fg-tertiary mt-0.5">数据透视 · 便于分析 · 约 50 KB</div>
+                </div>
+              </button>
+              <!-- JSON -->
+              <button class="export-btn w-full p-3 bg-white border border-bg-border rounded-md text-left flex items-center gap-3 hover:border-brand" data-format="json">
+                <div class="w-10 h-10 rounded bg-fg-subtle text-fg-secondary flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon="mdi:code-json" class="text-xl"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-semibold">JSON 数据 (.json)</div>
+                  <div class="text-[10px] text-fg-tertiary mt-0.5">结构化数据 · API 兼容 · 约 25 KB</div>
                 </div>
               </button>
             </div>
@@ -377,6 +387,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
                 <input type="checkbox" class="w-4 h-4 accent-brand">
                 <span>水印 (含律师姓名)</span>
               </label>
+            </div>
+          </div>
+
+          <!-- 数据导入 -->
+          <div class="bg-white rounded-md shadow-card" data-animate="fade-in-up" data-delay="0.18">
+            <div class="px-4 py-3 border-b border-bg-border">
+              <h4 class="font-semibold text-sm flex items-center gap-2">
+                <iconify-icon class="text-brand" icon="mdi:import-variant"></iconify-icon>
+                导入数据
+              </h4>
+            </div>
+            <div class="p-3 space-y-2">
+              <div class="border-2 border-dashed border-bg-border rounded-md p-4 text-center hover:border-brand transition-colors cursor-pointer" id="import-drop-area">
+                <iconify-icon icon="mdi:upload" class="text-fg-tertiary text-2xl mb-2"></iconify-icon>
+                <p class="text-xs text-fg-secondary">点击或拖拽文件到此处</p>
+                <p class="text-[10px] text-fg-tertiary mt-1">支持 Excel (.xlsx)、CSV (.csv) 格式</p>
+                <input type="file" id="import-file" class="hidden" accept=".xlsx,.xls,.csv">
+              </div>
+              <button class="w-full h-8 bg-brand text-white rounded-md text-xs font-medium flex items-center justify-center gap-1" id="import-btn" disabled>
+                <iconify-icon icon="mdi:database-import"></iconify-icon>
+                开始导入
+              </button>
+              <div id="import-status" class="hidden text-[10px] text-fg-tertiary text-center py-2">
+                准备导入...
+              </div>
             </div>
           </div>
 
@@ -430,9 +465,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 
           <!-- 主操作 -->
           <div class="space-y-2" data-animate="fade-in-up" data-delay="0.25">
-            <button class="w-full h-11 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center justify-center gap-1.5 shadow-sm">
+            <button class="w-full h-11 bg-brand hover:bg-brand-hover text-white rounded-md text-sm font-medium flex items-center justify-center gap-1.5 shadow-sm" id="export-btn">
               <iconify-icon icon="mdi:download" class="text-lg"></iconify-icon>
-              下载 Word 报告
+              下载报告
             </button>
             <button class="w-full h-10 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand flex items-center justify-center gap-1.5">
               <iconify-icon icon="mdi:email-send-outline"></iconify-icon>
@@ -478,4 +513,127 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 
 <!-- 设计水印 -->
 
+<script>
+(function() {
+  'use strict';
+
+  var selectedFormat = 'docx';
+
+  var exportBtns = document.querySelectorAll('.export-btn');
+  exportBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      exportBtns.forEach(function(b) {
+        b.classList.remove('bg-brand-tint3', 'border-2', 'border-brand');
+        b.classList.add('bg-white', 'border', 'border-bg-border');
+        var checkIcon = b.querySelector('iconify-icon[data-icon="mdi:check-circle"]');
+        if (checkIcon) checkIcon.style.display = 'none';
+      });
+
+      btn.classList.remove('bg-white', 'border', 'border-bg-border');
+      btn.classList.add('bg-brand-tint3', 'border-2', 'border-brand');
+      var checkIcon = btn.querySelector('iconify-icon[data-icon="mdi:check-circle"]');
+      if (checkIcon) checkIcon.style.display = 'block';
+
+      selectedFormat = btn.getAttribute('data-format');
+    });
+  });
+
+  document.getElementById('export-btn').addEventListener('click', function() {
+    var formatMap = {
+      'docx': 'Word',
+      'pdf': 'PDF',
+      'xlsx': 'Excel',
+      'json': 'JSON'
+    };
+
+    if (typeof showToast === 'function') {
+      showToast('正在生成 ' + formatMap[selectedFormat] + ' 报告...');
+    }
+
+    setTimeout(function() {
+      if (typeof showToast === 'function') {
+        showToast(formatMap[selectedFormat] + ' 报告已生成，开始下载', 'success');
+      }
+    }, 1500);
+  });
+
+  var dropArea = document.getElementById('import-drop-area');
+  var fileInput = document.getElementById('import-file');
+  var importBtn = document.getElementById('import-btn');
+  var importStatus = document.getElementById('import-status');
+
+  dropArea.addEventListener('click', function() {
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', function(e) {
+    handleFile(e.target.files[0]);
+  });
+
+  dropArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    dropArea.classList.add('border-brand', 'bg-brand-tint');
+  });
+
+  dropArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    dropArea.classList.remove('border-brand', 'bg-brand-tint');
+  });
+
+  dropArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropArea.classList.remove('border-brand', 'bg-brand-tint');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  function handleFile(file) {
+    if (!file) return;
+
+    var allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'text/csv'];
+    if (allowedTypes.indexOf(file.type) === -1 && !file.name.match(/\.(xlsx|xls|csv)$/i)) {
+      if (typeof showToast === 'function') {
+        showToast('不支持的文件格式，仅支持 Excel 和 CSV', 'error');
+      }
+      return;
+    }
+
+    importBtn.disabled = false;
+    importBtn.classList.remove('opacity-50');
+    importStatus.classList.remove('hidden');
+    importStatus.textContent = '已选择文件: ' + file.name;
+
+    importBtn.addEventListener('click', function importClick() {
+      importBtn.removeEventListener('click', importClick);
+      importBtn.disabled = true;
+      importStatus.textContent = '正在导入...';
+
+      var formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/api/import/cases', {
+        method: 'POST',
+        body: formData
+      })
+      .then(function(resp) {
+        if (!resp.ok) throw new Error('导入失败');
+        return resp.json();
+      })
+      .then(function(result) {
+        importStatus.textContent = '导入完成: ' + result.success_count + ' 成功, ' + result.failed_count + ' 失败';
+        if (typeof showToast === 'function') {
+          showToast('导入完成: ' + result.success_count + ' 条数据', 'success');
+        }
+      })
+      .catch(function(err) {
+        importStatus.textContent = '导入失败: ' + err.message;
+        if (typeof showToast === 'function') {
+          showToast('导入失败', 'error');
+        }
+      });
+    });
+  }
+})();
+</script>
+
+</div>
 </div>

@@ -18,7 +18,14 @@
 
         var navItems = document.querySelectorAll('.member-nav-item');
         navItems.forEach(function (item) {
-            item.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            item.classList.remove(
+                'bg-gradient-to-r',
+                'from-brand',
+                'to-brand-hover',
+                'text-white',
+                'shadow-md',
+                'shadow-brand/20'
+            );
             item.classList.add('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
             var icon = item.querySelector('iconify-icon');
             if (icon) {
@@ -29,7 +36,14 @@
 
         if (navBtn) {
             navBtn.classList.remove('text-fg-secondary', 'hover:bg-bg-subtle', 'hover:text-fg-primary', 'group');
-            navBtn.classList.add('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-md', 'shadow-brand/20');
+            navBtn.classList.add(
+                'bg-gradient-to-r',
+                'from-brand',
+                'to-brand-hover',
+                'text-white',
+                'shadow-md',
+                'shadow-brand/20'
+            );
             var activeIcon = navBtn.querySelector('iconify-icon');
             if (activeIcon) {
                 activeIcon.classList.remove('group-hover:text-brand', 'transition-colors');

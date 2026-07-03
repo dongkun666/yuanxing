@@ -70,8 +70,9 @@ from core.pii import sanitize_for_review, PiiReport
 router = APIRouter(prefix="/api/contract-review", tags=["skill:contract-review"])
 
 
-# ===== 内存级 review 缓存 (W5 dev/demo 简化) =====
-# 生产应存 Redis/SQLite, W5 dev 先内存级足够
+# ===== 内存级 review 缓存 =====
+# 开发/演示环境使用内存缓存，生产环境应替换为 Redis/SQLite
+# 键: review_id, 值: 完整审查结果字典
 _REVIEW_CACHE: dict = {}
 
 
@@ -126,10 +127,33 @@ class ExportRequest(BaseModel):
 async def upload_contract(req: UploadRequest):
     """合同上传 + 审查入口
 
-    3 种模式:
-    1. 真实文本: contract_text 非空 → 走 reviewer.run_skill()
-    2. Demo 模式: fixture_id 提供 → 走 fixture loader
-    3. 自动 demo: 都为空 → 提示前端引导选 fixture
+    支持 3 种审查模式:
+
+    1. **真实文本审查**: contract_text 非空且 ≥ 50 字
+       - 调用 reviewer.run_skill() 执行完整审查流程
+       - 支持规则引擎 + LLM 双路召回
+       - 返回完整审查结果（条款审查、风险摘要、谈判策略）
+
+    2. **Demo 模式**: 提供 fixture_id
+       - 加载预设的示范合同数据
+       - 用于演示和测试
+       - 不调用真实审查引擎
+
+    3. **自动引导**: 两者都为空
+       - 返回 400 错误，提示前端引导用户选择 fixture
+
+    审查流程:
+    - 校验输入参数
+    - 根据模式选择执行路径
+    - 执行审查逻辑
+    - 将结果存入缓存
+    - 返回 review_id 和下一步查询地址
+
+    Args:
+        req: UploadRequest 包含合同类型、文本、立场等参数
+
+    Returns:
+        UploadResponse: 包含 review_id、审查状态、延迟时间等
     """
     t0 = time.time()
     review_id = f"cr-{uuid.uuid4().hex[:12]}"
@@ -200,9 +224,23 @@ async def upload_contract(req: UploadRequest):
 
 @router.get("/result/{review_id}")
 async def get_result(review_id: str):
-    """返回完整审查结果 (clause_reviews + summary + strategy + UI hints)
+    """获取审查结果详情
 
-    给前端 02-review-result 页面用
+    根据 review_id 从缓存中获取完整的审查结果，包括：
+    - clause_reviews: 各条款审查详情（风险等级、问题描述、修改建议）
+    - risk_summary: 风险摘要统计
+    - negotiation_strategy: 谈判策略建议
+    - ui_hints: 前端 UI 提示信息
+    - query_meta: 查询元数据（合同类型、立场等）
+
+    Args:
+        review_id: 审查 ID，由 upload 接口返回
+
+    Returns:
+        dict: 完整审查结果字典
+
+    Raises:
+        HTTPException(404): review_id 不存在或已过期
     """
     if review_id not in _REVIEW_CACHE:
         raise HTTPException(404, f"review_id 不存在: {review_id} (可能已过期或未上传)")
@@ -215,9 +253,27 @@ async def get_result(review_id: str):
 
 @router.post("/negotiation")
 async def get_negotiation_strategy(req: NegotiationRequest):
-    """谈判策略 — 可基于 review_id 切换立场重新生成
+    """获取谈判策略（支持立场切换）
 
-    给前端 04-negotiation 弹窗用
+    基于已有的审查结果，获取或重新生成谈判策略建议。
+    支持切换立场后重新调整策略，无需重新执行完整审查。
+
+    主要功能:
+    1. 获取现有谈判策略
+    2. 切换立场时调整立场特定建议
+    3. 合并律师额外关注的优先条款
+
+    立场切换逻辑:
+    - 甲方: 重点利用付款条件与质保金作为谈判筹码
+    - 乙方: 重点争取解除条件对等、违约金调减
+    - 丙方: 严格限制担保责任范围与期限
+    - 审查方: 客观列出双方风险点，不偏向任何一方
+
+    Args:
+        req: NegotiationRequest 包含 review_id、立场、额外优先条款
+
+    Returns:
+        dict: 包含 review_id、当前立场、谈判策略、免责声明
     """
     if req.review_id not in _REVIEW_CACHE:
         raise HTTPException(404, f"review_id 不存在: {req.review_id}")
@@ -282,9 +338,25 @@ def _adjust_strategy_for_stance(strategy: dict, new_stance: str) -> dict:
 
 @router.post("/export")
 async def export_report(req: ExportRequest):
-    """导出报告 (Markdown / HTML / Word 占位 / PDF 占位)
+    """导出审查报告
 
-    W5 dev: 完整 Markdown + HTML, Word/PDF 占位返回 base64 占位说明
+    支持多种导出格式：
+    - Markdown: 纯文本格式，适合保存和分享
+    - HTML: 带样式的网页格式，适合在线预览
+    - Word/PDF: W5 开发阶段占位，返回 Markdown 作为 fallback
+
+    可选过滤选项:
+    - include_strategy: 是否包含谈判策略
+    - include_history: 是否包含审查历史
+    - include_diff: 是否包含版本比对
+    - include_footer: 是否包含页脚
+    - include_watermark: 是否包含水印
+
+    Args:
+        req: ExportRequest 包含 review_id、导出格式、过滤选项
+
+    Returns:
+        dict: 包含 review_id、格式、媒体类型、文件名、内容、大小等
     """
     if req.review_id not in _REVIEW_CACHE:
         raise HTTPException(404, f"review_id 不存在: {req.review_id}")

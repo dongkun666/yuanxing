@@ -655,15 +655,45 @@
     // 风险等级颜色映射
     var SEVERITY_COLORS = {
         high: { bg: 'bg-danger', text: 'text-danger', tint: 'bg-danger-tint', border: 'border-danger', label: '高危' },
-        medium: { bg: 'bg-warning', text: 'text-warning', tint: 'bg-warning-tint', border: 'border-warning', label: '中危' },
-        low: { bg: 'bg-yellow-500', text: 'text-yellow-600', tint: 'bg-yellow-50', border: 'border-yellow-400', label: '低危' },
+        medium: {
+            bg: 'bg-warning',
+            text: 'text-warning',
+            tint: 'bg-warning-tint',
+            border: 'border-warning',
+            label: '中危'
+        },
+        low: {
+            bg: 'bg-yellow-500',
+            text: 'text-yellow-600',
+            tint: 'bg-yellow-50',
+            border: 'border-yellow-400',
+            label: '低危'
+        },
         info: { bg: 'bg-brand', text: 'text-brand', tint: 'bg-brand-tint', border: 'border-brand', label: '提示' }
     };
 
     var RISK_LEVEL_COLORS = {
-        safe: { bg: 'bg-green-500', text: 'text-green-600', tint: 'bg-green-50', border: 'border-green-400', label: '安全' },
-        low: { bg: 'bg-blue-500', text: 'text-blue-600', tint: 'bg-blue-50', border: 'border-blue-400', label: '低风险' },
-        medium: { bg: 'bg-orange-500', text: 'text-orange-600', tint: 'bg-orange-50', border: 'border-orange-400', label: '中风险' },
+        safe: {
+            bg: 'bg-green-500',
+            text: 'text-green-600',
+            tint: 'bg-green-50',
+            border: 'border-green-400',
+            label: '安全'
+        },
+        low: {
+            bg: 'bg-blue-500',
+            text: 'text-blue-600',
+            tint: 'bg-blue-50',
+            border: 'border-blue-400',
+            label: '低风险'
+        },
+        medium: {
+            bg: 'bg-orange-500',
+            text: 'text-orange-600',
+            tint: 'bg-orange-50',
+            border: 'border-orange-400',
+            label: '中风险'
+        },
         high: { bg: 'bg-red-500', text: 'text-red-600', tint: 'bg-red-50', border: 'border-red-400', label: '高风险' }
     };
 
@@ -696,7 +726,7 @@
 
         showReviewLoading();
 
-        var api = (typeof API !== 'undefined' && API.contractReview) ? API.contractReview : null;
+        var api = typeof API !== 'undefined' && API.contractReview ? API.contractReview : null;
 
         if (api) {
             api.reviewText(contractText, contractType, { stance: CR.currentStance })
@@ -729,7 +759,9 @@
                     stance: CR.currentStance
                 })
             })
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    return r.json();
+                })
                 .then(function (data) {
                     CR.ruleEngine.isLoading = false;
                     if (data.detail) throw new Error(data.detail);
@@ -779,17 +811,29 @@
             '  <div class="bg-white rounded-lg shadow-card p-6 border border-bg-border">' +
             '    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">' +
             '      <div class="flex items-center gap-4">' +
-            '        <div class="w-20 h-20 rounded-full flex items-center justify-center ' + levelInfo.tint + ' border-2 ' + levelInfo.border + '">' +
-            '          <span class="text-2xl font-bold ' + levelInfo.text + '">' + (summary.total_score || 0) + '</span>' +
+            '        <div class="w-20 h-20 rounded-full flex items-center justify-center ' +
+            levelInfo.tint +
+            ' border-2 ' +
+            levelInfo.border +
+            '">' +
+            '          <span class="text-2xl font-bold ' +
+            levelInfo.text +
+            '">' +
+            (summary.total_score || 0) +
+            '</span>' +
             '        </div>' +
             '        <div>' +
             '          <div class="flex items-center gap-2 mb-1">' +
-            '            <span class="px-3 py-1 rounded-full text-white text-sm font-semibold ' + levelInfo.bg + '">' +
+            '            <span class="px-3 py-1 rounded-full text-white text-sm font-semibold ' +
+            levelInfo.bg +
+            '">' +
             (summary.risk_level_name || levelInfo.label) +
             '            </span>' +
             '            <span class="text-fg-tertiary text-xs">综合风险评分</span>' +
             '          </div>' +
-            '          <p class="text-fg-secondary text-sm">共发现 <span class="font-semibold text-fg-primary">' + data.match_count + '</span> 个风险点</p>' +
+            '          <p class="text-fg-secondary text-sm">共发现 <span class="font-semibold text-fg-primary">' +
+            data.match_count +
+            '</span> 个风险点</p>' +
             '        </div>' +
             '      </div>' +
             '      <div class="flex gap-2">' +
@@ -853,8 +897,14 @@
         var info = SEVERITY_COLORS[severity] || SEVERITY_COLORS.info;
         return (
             '<div class="bg-white rounded-lg border border-bg-border p-4 text-center">' +
-            '  <div class="text-3xl font-bold ' + info.text + ' mb-1">' + count + '</div>' +
-            '  <div class="text-xs text-fg-tertiary">' + info.label + '</div>' +
+            '  <div class="text-3xl font-bold ' +
+            info.text +
+            ' mb-1">' +
+            count +
+            '</div>' +
+            '  <div class="text-xs text-fg-tertiary">' +
+            info.label +
+            '</div>' +
             '</div>'
         );
     }
@@ -868,10 +918,10 @@
         if (max === 0) max = 1;
 
         var colorMap = {
-            '高危': 'bg-danger',
-            '中危': 'bg-warning',
-            '低危': 'bg-yellow-500',
-            '提示': 'bg-brand'
+            高危: 'bg-danger',
+            中危: 'bg-warning',
+            低危: 'bg-yellow-500',
+            提示: 'bg-brand'
         };
 
         var bars = '';
@@ -883,11 +933,19 @@
             bars +=
                 '<div class="mb-3 last:mb-0">' +
                 '  <div class="flex justify-between text-xs mb-1">' +
-                '    <span class="text-fg-secondary">' + label + '</span>' +
-                '    <span class="text-fg-tertiary">' + value + '</span>' +
+                '    <span class="text-fg-secondary">' +
+                label +
+                '</span>' +
+                '    <span class="text-fg-tertiary">' +
+                value +
+                '</span>' +
                 '  </div>' +
                 '  <div class="h-2 bg-bg-border rounded-full overflow-hidden">' +
-                '    <div class="h-full ' + color + ' rounded-full transition-all" style="width: ' + pct + '%"></div>' +
+                '    <div class="h-full ' +
+                color +
+                ' rounded-full transition-all" style="width: ' +
+                pct +
+                '%"></div>' +
                 '  </div>' +
                 '</div>';
         }
@@ -911,11 +969,17 @@
             bars +=
                 '<div class="mb-3 last:mb-0">' +
                 '  <div class="flex justify-between text-xs mb-1">' +
-                '    <span class="text-fg-secondary">' + label + '</span>' +
-                '    <span class="text-fg-tertiary">' + value + '</span>' +
+                '    <span class="text-fg-secondary">' +
+                label +
+                '</span>' +
+                '    <span class="text-fg-tertiary">' +
+                value +
+                '</span>' +
                 '  </div>' +
                 '  <div class="h-2 bg-bg-border rounded-full overflow-hidden">' +
-                '    <div class="h-full bg-brand rounded-full transition-all" style="width: ' + pct + '%"></div>' +
+                '    <div class="h-full bg-brand rounded-full transition-all" style="width: ' +
+                pct +
+                '%"></div>' +
                 '  </div>' +
                 '</div>';
         }
@@ -934,20 +998,34 @@
             html +=
                 '<div class="p-4 hover:bg-bg-secondary/30 transition-colors">' +
                 '  <div class="flex items-start gap-3">' +
-                '    <div class="flex-shrink-0 w-6 h-6 rounded-full ' + sevInfo.bg + ' text-white text-xs font-bold flex items-center justify-center">' +
+                '    <div class="flex-shrink-0 w-6 h-6 rounded-full ' +
+                sevInfo.bg +
+                ' text-white text-xs font-bold flex items-center justify-center">' +
                 (idx + 1) +
                 '    </div>' +
                 '    <div class="flex-1 min-w-0">' +
                 '      <div class="flex items-center gap-2 mb-1">' +
-                '        <span class="text-sm font-medium text-fg-primary truncate">' + esc(item.rule_name) + '</span>' +
-                '        <span class="px-1.5 py-0.5 text-[10px] rounded ' + sevInfo.tint + ' ' + sevInfo.text + ' font-medium">' +
+                '        <span class="text-sm font-medium text-fg-primary truncate">' +
+                esc(item.rule_name) +
+                '</span>' +
+                '        <span class="px-1.5 py-0.5 text-[10px] rounded ' +
+                sevInfo.tint +
+                ' ' +
+                sevInfo.text +
+                ' font-medium">' +
                 (item.severity_name || sevInfo.label) +
                 '        </span>' +
-                '        <span class="text-[10px] text-fg-tertiary">' + esc(item.category_name || '') + '</span>' +
+                '        <span class="text-[10px] text-fg-tertiary">' +
+                esc(item.category_name || '') +
+                '</span>' +
                 '      </div>' +
-                '      <p class="text-xs text-fg-secondary line-clamp-2 mb-2">' + esc(item.problem_description || '') + '</p>' +
+                '      <p class="text-xs text-fg-secondary line-clamp-2 mb-2">' +
+                esc(item.problem_description || '') +
+                '</p>' +
                 '      <div class="flex items-center gap-2">' +
-                '        <button class="cr-copy-suggestion text-[11px] text-brand hover:underline" data-suggestion="' + esc(item.modification_suggestion || '') + '">' +
+                '        <button class="cr-copy-suggestion text-[11px] text-brand hover:underline" data-suggestion="' +
+                esc(item.modification_suggestion || '') +
+                '">' +
                 '          <iconify-icon icon="mdi:content-copy" class="mr-0.5"></iconify-icon>复制建议' +
                 '        </button>' +
                 '        <button class="cr-view-detail text-[11px] text-fg-tertiary hover:text-fg-secondary">' +
@@ -987,11 +1065,19 @@
 
             html +=
                 '<div class="bg-white rounded-lg shadow-card border border-bg-border overflow-hidden mb-4 last:mb-0">' +
-                '  <button class="cr-category-toggle w-full px-6 py-4 flex items-center justify-between hover:bg-bg-secondary/30 transition-colors" data-category="' + esc(catName) + '" aria-expanded="' + isOpen + '">' +
+                '  <button class="cr-category-toggle w-full px-6 py-4 flex items-center justify-between hover:bg-bg-secondary/30 transition-colors" data-category="' +
+                esc(catName) +
+                '" aria-expanded="' +
+                isOpen +
+                '">' +
                 '    <div class="flex items-center gap-3">' +
                 '      <iconify-icon icon="mdi:folder-outline" class="text-brand text-lg"></iconify-icon>' +
-                '      <span class="font-semibold text-fg-primary">' + esc(catName) + '</span>' +
-                '      <span class="text-xs text-fg-tertiary bg-bg-secondary px-2 py-0.5 rounded-full">' + group.length + ' 项</span>' +
+                '      <span class="font-semibold text-fg-primary">' +
+                esc(catName) +
+                '</span>' +
+                '      <span class="text-xs text-fg-tertiary bg-bg-secondary px-2 py-0.5 rounded-full">' +
+                group.length +
+                ' 项</span>' +
                 '      <div class="flex gap-1 ml-2">' +
                 (sevCounts.high > 0 ? '<span class="w-2 h-2 rounded-full bg-danger" title="高危"></span>' : '') +
                 (sevCounts.medium > 0 ? '<span class="w-2 h-2 rounded-full bg-warning" title="中危"></span>' : '') +
@@ -999,9 +1085,15 @@
                 (sevCounts.info > 0 ? '<span class="w-2 h-2 rounded-full bg-brand" title="提示"></span>' : '') +
                 '      </div>' +
                 '    </div>' +
-                '    <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary transition-transform ' + (isOpen ? 'rotate-180' : '') + ' cr-category-icon"></iconify-icon>' +
+                '    <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary transition-transform ' +
+                (isOpen ? 'rotate-180' : '') +
+                ' cr-category-icon"></iconify-icon>' +
                 '  </button>' +
-                '  <div class="cr-category-content ' + (isOpen ? '' : 'hidden') + '" data-category-content="' + esc(catName) + '">' +
+                '  <div class="cr-category-content ' +
+                (isOpen ? '' : 'hidden') +
+                '" data-category-content="' +
+                esc(catName) +
+                '">' +
                 '    <div class="border-t border-bg-border divide-y divide-bg-border">' +
                 group.map(renderMatchItem).join('') +
                 '    </div>' +
@@ -1015,58 +1107,85 @@
     function renderMatchItem(match) {
         var sevInfo = SEVERITY_COLORS[match.severity] || SEVERITY_COLORS.info;
         return (
-            '<div class="p-4 hover:bg-bg-secondary/20 transition-colors cr-match-item" data-rule-id="' + esc(match.rule_id || '') + '">' +
+            '<div class="p-4 hover:bg-bg-secondary/20 transition-colors cr-match-item" data-rule-id="' +
+            esc(match.rule_id || '') +
+            '">' +
             '  <div class="flex items-start gap-3">' +
             '    <div class="flex-shrink-0 mt-0.5">' +
-            '      <span class="w-2 h-2 rounded-full ' + sevInfo.bg + ' inline-block"></span>' +
+            '      <span class="w-2 h-2 rounded-full ' +
+            sevInfo.bg +
+            ' inline-block"></span>' +
             '    </div>' +
             '    <div class="flex-1 min-w-0">' +
             '      <div class="flex items-center gap-2 mb-2 flex-wrap">' +
-            '        <span class="text-sm font-medium text-fg-primary">' + esc(match.rule_name || '') + '</span>' +
-            '        <span class="px-2 py-0.5 text-[10px] rounded font-medium ' + sevInfo.tint + ' ' + sevInfo.text + '">' +
+            '        <span class="text-sm font-medium text-fg-primary">' +
+            esc(match.rule_name || '') +
+            '</span>' +
+            '        <span class="px-2 py-0.5 text-[10px] rounded font-medium ' +
+            sevInfo.tint +
+            ' ' +
+            sevInfo.text +
+            '">' +
             (match.severity_name || sevInfo.label) +
             '        </span>' +
             '      </div>' +
             // 原文
-            (match.original_text ?
-                '<div class="mb-2 p-2 bg-bg-secondary/50 rounded text-xs text-fg-secondary font-mono break-all">' +
-                '  <span class="text-fg-tertiary text-[10px] block mb-1">原文:</span>' +
-                esc(match.original_text) +
-                '</div>' : '') +
+            (match.original_text
+                ? '<div class="mb-2 p-2 bg-bg-secondary/50 rounded text-xs text-fg-secondary font-mono break-all">' +
+                  '  <span class="text-fg-tertiary text-[10px] block mb-1">原文:</span>' +
+                  esc(match.original_text) +
+                  '</div>'
+                : '') +
             // 问题描述
-            '      <p class="text-xs text-fg-secondary mb-2">' + esc(match.problem_description || '') + '</p>' +
+            '      <p class="text-xs text-fg-secondary mb-2">' +
+            esc(match.problem_description || '') +
+            '</p>' +
             // 修改建议
-            (match.modification_suggestion ?
-                '<div class="p-3 bg-green-50 border border-green-200 rounded mb-2">' +
-                '  <div class="flex items-center gap-1 mb-1">' +
-                '    <iconify-icon icon="mdi:lightbulb-on" class="text-green-600 text-xs"></iconify-icon>' +
-                '    <span class="text-xs font-medium text-green-700">修改建议</span>' +
-                '  </div>' +
-                '  <p class="text-xs text-green-800">' + esc(match.modification_suggestion) + '</p>' +
-                '</div>' : '') +
+            (match.modification_suggestion
+                ? '<div class="p-3 bg-green-50 border border-green-200 rounded mb-2">' +
+                  '  <div class="flex items-center gap-1 mb-1">' +
+                  '    <iconify-icon icon="mdi:lightbulb-on" class="text-green-600 text-xs"></iconify-icon>' +
+                  '    <span class="text-xs font-medium text-green-700">修改建议</span>' +
+                  '  </div>' +
+                  '  <p class="text-xs text-green-800">' +
+                  esc(match.modification_suggestion) +
+                  '</p>' +
+                  '</div>'
+                : '') +
             // 操作按钮
             '      <div class="flex items-center gap-3 mt-2">' +
-            (match.one_click_fix ?
-                '<button class="cr-one-click-fix text-xs text-brand hover:underline flex items-center gap-1" data-fix="' + esc(match.one_click_fix || '') + '">' +
-                '  <iconify-icon icon="mdi:auto-fix"></iconify-icon>一键修复' +
-                '</button>' : '') +
-            '        <button class="cr-copy-suggestion text-xs text-fg-tertiary hover:text-fg-secondary flex items-center gap-1" data-suggestion="' + esc(match.modification_suggestion || '') + '">' +
+            (match.one_click_fix
+                ? '<button class="cr-one-click-fix text-xs text-brand hover:underline flex items-center gap-1" data-fix="' +
+                  esc(match.one_click_fix || '') +
+                  '">' +
+                  '  <iconify-icon icon="mdi:auto-fix"></iconify-icon>一键修复' +
+                  '</button>'
+                : '') +
+            '        <button class="cr-copy-suggestion text-xs text-fg-tertiary hover:text-fg-secondary flex items-center gap-1" data-suggestion="' +
+            esc(match.modification_suggestion || '') +
+            '">' +
             '          <iconify-icon icon="mdi:content-copy"></iconify-icon>复制建议' +
             '        </button>' +
-            (match.legal_basis && match.legal_basis.length > 0 ?
-                '<button class="cr-legal-basis-toggle text-xs text-fg-tertiary hover:text-fg-secondary flex items-center gap-1">' +
-                '  <iconify-icon icon="mdi:scale-balance"></iconify-icon>法律依据' +
-                '  <iconify-icon icon="mdi:chevron-down" class="text-[10px]"></iconify-icon>' +
-                '</button>' : '') +
+            (match.legal_basis && match.legal_basis.length > 0
+                ? '<button class="cr-legal-basis-toggle text-xs text-fg-tertiary hover:text-fg-secondary flex items-center gap-1">' +
+                  '  <iconify-icon icon="mdi:scale-balance"></iconify-icon>法律依据' +
+                  '  <iconify-icon icon="mdi:chevron-down" class="text-[10px]"></iconify-icon>' +
+                  '</button>'
+                : '') +
             '      </div>' +
             // 法律依据（可折叠）
-            (match.legal_basis && match.legal_basis.length > 0 ?
-                '<div class="cr-legal-basis-content hidden mt-2 p-2 bg-blue-50 rounded text-xs text-blue-800">' +
-                '  <div class="font-medium mb-1">相关法律依据:</div>' +
-                '  <ul class="list-disc list-inside space-y-0.5">' +
-                match.legal_basis.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') +
-                '  </ul>' +
-                '</div>' : '') +
+            (match.legal_basis && match.legal_basis.length > 0
+                ? '<div class="cr-legal-basis-content hidden mt-2 p-2 bg-blue-50 rounded text-xs text-blue-800">' +
+                  '  <div class="font-medium mb-1">相关法律依据:</div>' +
+                  '  <ul class="list-disc list-inside space-y-0.5">' +
+                  match.legal_basis
+                      .map(function (b) {
+                          return '<li>' + esc(b) + '</li>';
+                      })
+                      .join('') +
+                  '  </ul>' +
+                  '</div>'
+                : '') +
             '    </div>' +
             '  </div>' +
             '</div>'
@@ -1211,8 +1330,14 @@
         Object.keys(groups).forEach(function (cat) {
             md += '### ' + cat + '\n\n';
             groups[cat].forEach(function (m, idx) {
-                md += '#### ' + (idx + 1) + '. ' + (m.rule_name || '未知规则') +
-                    ' (' + (m.severity_name || m.severity) + ')\n\n';
+                md +=
+                    '#### ' +
+                    (idx + 1) +
+                    '. ' +
+                    (m.rule_name || '未知规则') +
+                    ' (' +
+                    (m.severity_name || m.severity) +
+                    ')\n\n';
                 if (m.original_text) {
                     md += '**原文**: ' + m.original_text + '\n\n';
                 }
@@ -1256,7 +1381,7 @@
             return;
         }
 
-        var api = (typeof API !== 'undefined' && API.contractReview) ? API.contractReview : null;
+        var api = typeof API !== 'undefined' && API.contractReview ? API.contractReview : null;
 
         if (api) {
             api.applyFix(CR.ruleEngine.currentContractText, result.matches, null)
@@ -1280,7 +1405,9 @@
                     matches: result.matches
                 })
             })
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    return r.json();
+                })
                 .then(function (data) {
                     handleFixResult(data);
                 })
@@ -1370,7 +1497,7 @@
         var content = document.getElementById('cr-rules-content');
         if (!content) return;
 
-        var api = (typeof API !== 'undefined' && API.contractReview) ? API.contractReview : null;
+        var api = typeof API !== 'undefined' && API.contractReview ? API.contractReview : null;
 
         var onSuccess = function (data) {
             CR.ruleEngine.rules = data.rules || [];
@@ -1390,11 +1517,14 @@
                 })
                 .catch(function (err) {
                     console.error('加载规则失败:', err);
-                    content.innerHTML = '<p class="text-danger text-center py-4">加载规则失败: ' + esc(err.message) + '</p>';
+                    content.innerHTML =
+                        '<p class="text-danger text-center py-4">加载规则失败: ' + esc(err.message) + '</p>';
                 });
         } else {
             fetch(CR.apiBase + '/rules')
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    return r.json();
+                })
                 .then(function (data) {
                     onSuccess(data);
                 })
@@ -1417,30 +1547,47 @@
             // 统计概览
             '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">' +
             '  <div class="bg-bg-secondary/50 rounded-lg p-4 text-center">' +
-            '    <div class="text-2xl font-bold text-fg-primary mb-1">' + (stats.total || 0) + '</div>' +
+            '    <div class="text-2xl font-bold text-fg-primary mb-1">' +
+            (stats.total || 0) +
+            '</div>' +
             '    <div class="text-xs text-fg-tertiary">总规则数</div>' +
             '  </div>' +
             '  <div class="bg-green-50 rounded-lg p-4 text-center">' +
-            '    <div class="text-2xl font-bold text-green-600 mb-1">' + (stats.enabled || 0) + '</div>' +
+            '    <div class="text-2xl font-bold text-green-600 mb-1">' +
+            (stats.enabled || 0) +
+            '</div>' +
             '    <div class="text-xs text-fg-tertiary">已启用</div>' +
             '  </div>' +
             '  <div class="bg-gray-100 rounded-lg p-4 text-center">' +
-            '    <div class="text-2xl font-bold text-gray-600 mb-1">' + (stats.disabled || 0) + '</div>' +
+            '    <div class="text-2xl font-bold text-gray-600 mb-1">' +
+            (stats.disabled || 0) +
+            '</div>' +
             '    <div class="text-xs text-fg-tertiary">已禁用</div>' +
             '  </div>' +
             '  <div class="bg-brand-tint rounded-lg p-4 text-center">' +
-            '    <div class="text-2xl font-bold text-brand mb-1">' + categories.length + '</div>' +
+            '    <div class="text-2xl font-bold text-brand mb-1">' +
+            categories.length +
+            '</div>' +
             '    <div class="text-xs text-fg-tertiary">分类数</div>' +
             '  </div>' +
             '</div>' +
             // 分类筛选 Tab
             '<div class="flex flex-wrap gap-2 mb-4 border-b border-bg-border pb-4">' +
             '  <button class="cr-rule-cat-tab px-3 py-1.5 text-sm rounded-md bg-brand text-white" data-cat="all">全部</button>' +
-            categories.map(function (cat) {
-                return '<button class="cr-rule-cat-tab px-3 py-1.5 text-sm rounded-md bg-bg-secondary text-fg-secondary hover:bg-bg-tertiary" data-cat="' + esc(cat.value) + '">' +
-                    esc(cat.label) + ' (' + cat.count + ')' +
-                    '</button>';
-            }).join('') +
+            categories
+                .map(function (cat) {
+                    return (
+                        '<button class="cr-rule-cat-tab px-3 py-1.5 text-sm rounded-md bg-bg-secondary text-fg-secondary hover:bg-bg-tertiary" data-cat="' +
+                        esc(cat.value) +
+                        '">' +
+                        esc(cat.label) +
+                        ' (' +
+                        cat.count +
+                        ')' +
+                        '</button>'
+                    );
+                })
+                .join('') +
             '</div>' +
             // 规则列表
             '<div class="space-y-3" id="cr-rules-list">' +
@@ -1489,38 +1636,66 @@
             return '<p class="text-fg-tertiary text-center py-8">暂无规则</p>';
         }
 
-        return filtered.map(function (rule) {
-            var sevInfo = SEVERITY_COLORS[rule.severity] || SEVERITY_COLORS.info;
-            return (
-                '<div class="bg-white border border-bg-border rounded-lg p-4 hover:shadow-md transition-shadow" data-rule-id="' + esc(rule.rule_id) + '">' +
-                '  <div class="flex items-start justify-between gap-4">' +
-                '    <div class="flex-1 min-w-0">' +
-                '      <div class="flex items-center gap-2 mb-2 flex-wrap">' +
-                '        <span class="font-medium text-fg-primary text-sm">' + esc(rule.name) + '</span>' +
-                '        <span class="px-2 py-0.5 text-[10px] rounded font-medium ' + sevInfo.tint + ' ' + sevInfo.text + '">' +
-                (sevInfo.label) +
-                '        </span>' +
-                '        <span class="text-[10px] text-fg-tertiary bg-bg-secondary px-2 py-0.5 rounded-full">' + esc(rule.rule_id) + '</span>' +
-                '      </div>' +
-                '      <p class="text-xs text-fg-secondary mb-2">' + esc(rule.description || '') + '</p>' +
-                '      <div class="flex items-center gap-3 text-[11px] text-fg-tertiary">' +
-                '        <span>分类: ' + esc(rule.category || '') + '</span>' +
-                '        <span>权重: ' + (rule.weight || 1.0) + '</span>' +
-                (rule.applicable_contract_types ?
-                    '<span>适用: ' + (Array.isArray(rule.applicable_contract_types) ?
-                        rule.applicable_contract_types.join(', ') : rule.applicable_contract_types) + '</span>' : '') +
-                '      </div>' +
-                '    </div>' +
-                '    <div class="flex-shrink-0 flex items-center gap-2">' +
-                '      <label class="relative inline-flex items-center cursor-pointer">' +
-                '        <input type="checkbox" class="sr-only peer cr-rule-toggle" ' + (rule.enabled ? 'checked' : '') + ' data-rule-id="' + esc(rule.rule_id) + '">' +
-                '        <div class="w-9 h-5 bg-bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[' + '\'\'' + '] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>' +
-                '      </label>' +
-                '    </div>' +
-                '  </div>' +
-                '</div>'
-            );
-        }).join('');
+        return filtered
+            .map(function (rule) {
+                var sevInfo = SEVERITY_COLORS[rule.severity] || SEVERITY_COLORS.info;
+                return (
+                    '<div class="bg-white border border-bg-border rounded-lg p-4 hover:shadow-md transition-shadow" data-rule-id="' +
+                    esc(rule.rule_id) +
+                    '">' +
+                    '  <div class="flex items-start justify-between gap-4">' +
+                    '    <div class="flex-1 min-w-0">' +
+                    '      <div class="flex items-center gap-2 mb-2 flex-wrap">' +
+                    '        <span class="font-medium text-fg-primary text-sm">' +
+                    esc(rule.name) +
+                    '</span>' +
+                    '        <span class="px-2 py-0.5 text-[10px] rounded font-medium ' +
+                    sevInfo.tint +
+                    ' ' +
+                    sevInfo.text +
+                    '">' +
+                    sevInfo.label +
+                    '        </span>' +
+                    '        <span class="text-[10px] text-fg-tertiary bg-bg-secondary px-2 py-0.5 rounded-full">' +
+                    esc(rule.rule_id) +
+                    '</span>' +
+                    '      </div>' +
+                    '      <p class="text-xs text-fg-secondary mb-2">' +
+                    esc(rule.description || '') +
+                    '</p>' +
+                    '      <div class="flex items-center gap-3 text-[11px] text-fg-tertiary">' +
+                    '        <span>分类: ' +
+                    esc(rule.category || '') +
+                    '</span>' +
+                    '        <span>权重: ' +
+                    (rule.weight || 1.0) +
+                    '</span>' +
+                    (rule.applicable_contract_types
+                        ? '<span>适用: ' +
+                          (Array.isArray(rule.applicable_contract_types)
+                              ? rule.applicable_contract_types.join(', ')
+                              : rule.applicable_contract_types) +
+                          '</span>'
+                        : '') +
+                    '      </div>' +
+                    '    </div>' +
+                    '    <div class="flex-shrink-0 flex items-center gap-2">' +
+                    '      <label class="relative inline-flex items-center cursor-pointer">' +
+                    '        <input type="checkbox" class="sr-only peer cr-rule-toggle" ' +
+                    (rule.enabled ? 'checked' : '') +
+                    ' data-rule-id="' +
+                    esc(rule.rule_id) +
+                    '">' +
+                    '        <div class="w-9 h-5 bg-bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[' +
+                    '\'\'' +
+                    '] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>' +
+                    '      </label>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '</div>'
+                );
+            })
+            .join('');
     }
 
     function bindRuleItemEvents() {
@@ -1529,7 +1704,7 @@
                 var ruleId = toggle.getAttribute('data-rule-id');
                 var enabled = toggle.checked;
 
-                var api = (typeof API !== 'undefined' && API.contractReview) ? API.contractReview : null;
+                var api = typeof API !== 'undefined' && API.contractReview ? API.contractReview : null;
 
                 if (api) {
                     api.updateRule(ruleId, { enabled: enabled })
@@ -1538,7 +1713,9 @@
                                 toast('规则已' + (enabled ? '启用' : '禁用'), 'success');
                                 appendAudit((enabled ? '启用' : '禁用') + '规则: ' + ruleId);
                                 // 更新本地规则状态
-                                var rule = CR.ruleEngine.rules.find(function (r) { return r.rule_id === ruleId; });
+                                var rule = CR.ruleEngine.rules.find(function (r) {
+                                    return r.rule_id === ruleId;
+                                });
                                 if (rule) rule.enabled = enabled;
                             } else {
                                 toast('操作失败', 'error');
@@ -1556,11 +1733,15 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ enabled: enabled })
                     })
-                        .then(function (r) { return r.json(); })
+                        .then(function (r) {
+                            return r.json();
+                        })
                         .then(function (data) {
                             if (data.success) {
                                 toast('规则已' + (enabled ? '启用' : '禁用'), 'success');
-                                var rule = CR.ruleEngine.rules.find(function (r) { return r.rule_id === ruleId; });
+                                var rule = CR.ruleEngine.rules.find(function (r) {
+                                    return r.rule_id === ruleId;
+                                });
                                 if (rule) rule.enabled = enabled;
                             } else {
                                 toast('操作失败', 'error');

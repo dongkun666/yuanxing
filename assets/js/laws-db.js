@@ -254,7 +254,9 @@
                         : '<span class="inline-flex items-center gap-1 text-[10px] text-success"><iconify-icon icon="mdi:check-circle-outline" class="text-[10px]"></iconify-icon> 现行有效</span>';
                 return (
                     '' +
-                    '<div class="p-4 md:p-5 hover:bg-emerald-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="laws-list" data-stagger-index="' + idx + '" data-delay="0.1" onclick="openLawDetail(\'' +
+                    '<div class="p-4 md:p-5 hover:bg-emerald-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="laws-list" data-stagger-index="' +
+                    idx +
+                    '" data-delay="0.1" onclick="openLawDetail(\'' +
                     law.id +
                     '\')">' +
                     '<div class="flex items-start gap-3 md:gap-4">' +
@@ -301,7 +303,8 @@
     function renderPagination(pager, totalPages) {
         if (!pager) return;
         if (totalPages <= 1) {
-            pager.innerHTML = '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
+            pager.innerHTML =
+                '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
             return;
         }
 
@@ -320,7 +323,9 @@
                 var active = p === state.page;
                 html +=
                     '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
-                    (active ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20' : 'hover:bg-white text-fg-secondary hover:text-emerald-600') +
+                    (active
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20'
+                        : 'hover:bg-white text-fg-secondary hover:text-emerald-600') +
                     ' transition-all duration-200" onclick="changeLawsPage(' +
                     p +
                     ')">' +
@@ -341,9 +346,23 @@
 
     function pageBtn(enabled, inner, target, cls) {
         if (!enabled) {
-            return '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' + cls + ' opacity-40 cursor-not-allowed">' + inner + '</button>';
+            return (
+                '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' +
+                cls +
+                ' opacity-40 cursor-not-allowed">' +
+                inner +
+                '</button>'
+            );
         }
-        return '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' + cls + '" onclick="changeLawsPage(' + target + ')">' + inner + '</button>';
+        return (
+            '<button class="w-8 h-8 rounded-lg hover:bg-white flex items-center justify-center text-xs ' +
+            cls +
+            '" onclick="changeLawsPage(' +
+            target +
+            ')">' +
+            inner +
+            '</button>'
+        );
     }
 
     function buildPageList(current, total) {
@@ -358,7 +377,9 @@
         add(1);
         for (var i = current - window; i <= current + window; i++) add(i);
         add(total);
-        nums.sort(function (a, b) { return a - b; });
+        nums.sort(function (a, b) {
+            return a - b;
+        });
 
         var result = [];
         for (var j = 0; j < nums.length; j++) {
@@ -421,10 +442,10 @@
             var parts = [];
             if (l.issue_date) parts.push(String(l.issue_date).slice(0, 10) + ' 公布');
             if (l.effective_date) parts.push(String(l.effective_date).slice(0, 10) + ' 施行');
-            publishInfo = parts.join(' · ') || (l.title || '');
+            publishInfo = parts.join(' · ') || l.title || '';
         }
         return {
-            id: l.law_id || ('api-' + l.id),
+            id: l.law_id || 'api-' + l.id,
             name: l.title || l.name || '',
             publishInfo: publishInfo,
             level: mapLawLevel(l.law_type || l.level),
@@ -440,7 +461,9 @@
         }
         return API.laws.list(params || { limit: 50 }, { showError: false }).then(function (res) {
             if (res && res.ok && Array.isArray(res.data)) {
-                var list = res.data.map(normalizeLaw).filter(function (x) { return x; });
+                var list = res.data.map(normalizeLaw).filter(function (x) {
+                    return x;
+                });
                 if (list.length > 0) return list;
             }
             throw new Error('API response invalid');
@@ -472,13 +495,15 @@
         }
 
         // API list 仅支持 law_type/status 过滤, 关键词/机关在本地 getFilteredLaws 二次过滤
-        loadLawsFromAPI({ limit: 100 }).then(function (list) {
-            _lawsData = list;
-            renderLocal();
-        }).catch(function (err) {
-            fallbackToMockLaws(err && err.message ? err.message : err);
-            renderLocal();
-        });
+        loadLawsFromAPI({ limit: 100 })
+            .then(function (list) {
+                _lawsData = list;
+                renderLocal();
+            })
+            .catch(function (err) {
+                fallbackToMockLaws(err && err.message ? err.message : err);
+                renderLocal();
+            });
     }
 
     // ===== 分类卡片筛选 =====
@@ -617,14 +642,16 @@
         // 尝试从 API 加载真实数据覆盖 (失败保持 mock)
         if (!_lawsApiFailed && typeof API !== 'undefined' && API.laws && API.laws.list) {
             showLoading();
-            loadLawsFromAPI({ limit: 100 }).then(function (list) {
-                _lawsData = list;
-                renderLaws(getFilteredLaws());
-            }).catch(function (err) {
-                console.warn('[laws-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
-                _lawsApiFailed = true;
-                renderLaws(getFilteredLaws());
-            });
+            loadLawsFromAPI({ limit: 100 })
+                .then(function (list) {
+                    _lawsData = list;
+                    renderLaws(getFilteredLaws());
+                })
+                .catch(function (err) {
+                    console.warn('[laws-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                    _lawsApiFailed = true;
+                    renderLaws(getFilteredLaws());
+                });
         }
     }
 

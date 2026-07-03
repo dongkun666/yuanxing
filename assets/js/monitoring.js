@@ -183,7 +183,7 @@
     function _handleUnhandledRejection(event) {
         var reason = event.reason;
         var errorData = {
-            message: reason ? (reason.message || String(reason)) : 'Unhandled Promise rejection',
+            message: reason ? reason.message || String(reason) : 'Unhandled Promise rejection',
             source: '',
             line: 0,
             column: 0,
@@ -272,7 +272,7 @@
             dnsLookup: timing.domainLookupEnd - timing.domainLookupStart,
             tcpConnect: timing.connectEnd - timing.connectStart,
             requestTime: timing.responseEnd - timing.requestStart,
-            navigationType: navigation.type === 0 ? 'navigate' : (navigation.type === 1 ? 'reload' : 'back_forward'),
+            navigationType: navigation.type === 0 ? 'navigate' : navigation.type === 1 ? 'reload' : 'back_forward',
             pageLoadTime: Date.now() - _pageStartTime
         };
 
@@ -288,39 +288,41 @@
             var startTime = Date.now();
             var requestId = 'req_' + startTime + '_' + Math.random().toString(36).substr(2, 9);
 
-            return originalRequest(url, options).then(function (result) {
-                var duration = Date.now() - startTime;
-                _apiRequestTimings[requestId] = {
-                    url: url,
-                    method: (options && options.method) || 'GET',
-                    status: result.status,
-                    duration: duration,
-                    ok: result.ok
-                };
-
-                if (duration > 2000) {
-                    _addPerformance({
-                        metric: 'slow_api',
+            return originalRequest(url, options)
+                .then(function (result) {
+                    var duration = Date.now() - startTime;
+                    _apiRequestTimings[requestId] = {
                         url: url,
                         method: (options && options.method) || 'GET',
                         status: result.status,
                         duration: duration,
                         ok: result.ok
-                    });
-                }
+                    };
 
-                return result;
-            }).catch(function (error) {
-                var duration = Date.now() - startTime;
-                _addPerformance({
-                    metric: 'api_error',
-                    url: url,
-                    method: (options && options.method) || 'GET',
-                    duration: duration,
-                    error: error.message || String(error)
+                    if (duration > 2000) {
+                        _addPerformance({
+                            metric: 'slow_api',
+                            url: url,
+                            method: (options && options.method) || 'GET',
+                            status: result.status,
+                            duration: duration,
+                            ok: result.ok
+                        });
+                    }
+
+                    return result;
+                })
+                .catch(function (error) {
+                    var duration = Date.now() - startTime;
+                    _addPerformance({
+                        metric: 'api_error',
+                        url: url,
+                        method: (options && options.method) || 'GET',
+                        duration: duration,
+                        error: error.message || String(error)
+                    });
+                    throw error;
                 });
-                throw error;
-            });
         }
 
         if (typeof apiFetch === 'function') {
@@ -381,9 +383,9 @@
         captureError: function (error, context) {
             var errorData = {
                 message: error.message || String(error),
-                source: context && context.source || '',
-                line: context && context.line || 0,
-                column: context && context.column || 0,
+                source: (context && context.source) || '',
+                line: (context && context.line) || 0,
+                column: (context && context.column) || 0,
                 stack: error.stack || '',
                 name: error.name || 'Error',
                 context: context || {}

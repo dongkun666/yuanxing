@@ -37,24 +37,28 @@ def _serialize_log_record(record):
 
 
 def configure_loguru():
-    """配置 loguru 日志系统 - 结构化 JSON 输出"""
+    """配置 loguru 日志系统 - 根据配置动态设置"""
     logger.remove()
     
-    logger.add(
-        sys.stderr,
-        format="{message}",
-        filter=lambda record: record["level"].name != "DEBUG",
-        level="INFO",
-        serialize=_serialize_log_record,
-        colorize=False,
-    )
+    settings = get_settings()
+    
+    log_level = settings.log_level.upper()
+    
+    if settings.log_format == "json":
+        console_format = "{message}"
+        file_format = "{message}"
+        serialize_func = _serialize_log_record
+    else:
+        console_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+        file_format = "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - {message}"
+        serialize_func = None
     
     logger.add(
         sys.stderr,
-        format="{message}",
-        level="DEBUG",
-        serialize=_serialize_log_record,
-        colorize=False,
+        format=console_format,
+        level=log_level,
+        serialize=serialize_func,
+        colorize=True,
     )
     
     log_dir = Path(__file__).resolve().parent.parent / "logs"
@@ -62,12 +66,24 @@ def configure_loguru():
     
     logger.add(
         log_dir / "app_{time:YYYY-MM-DD}.log",
-        format="{message}",
-        level="DEBUG",
-        serialize=_serialize_log_record,
-        rotation="1 day",
-        retention="7 days",
+        format=file_format,
+        level=log_level,
+        serialize=serialize_func,
+        rotation=settings.log_max_size,
+        retention=settings.log_max_files,
         compression="zip",
+        enqueue=True,
+    )
+    
+    logger.add(
+        log_dir / "error_{time:YYYY-MM-DD}.log",
+        format=file_format,
+        level="ERROR",
+        serialize=serialize_func,
+        rotation=settings.log_max_size,
+        retention=settings.log_max_files,
+        compression="zip",
+        enqueue=True,
     )
 
 
@@ -172,6 +188,47 @@ class Settings(BaseSettings):
     cache_lawyer_matching_ttl: int = 1800        # 律师匹配结果缓存过期时间 (秒)
     cache_contract_template_ttl: int = 7200      # 合同模板缓存过期时间 (秒)
     cache_cases_ttl: int = 1200                  # 案例缓存过期时间 (秒)
+
+    # 监控配置
+    monitor_enabled: bool = False                # 是否启用监控
+    monitor_prometheus_enabled: bool = False     # 是否启用 Prometheus 指标
+    monitor_prometheus_port: int = 9090          # Prometheus 指标端口
+    monitor_metrics_path: str = "/metrics"       # 指标暴露路径
+
+    # 日志级别配置
+    log_level: str = "INFO"                      # 日志级别: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    log_file: str = "./logs/crawler.log"         # 日志文件路径
+    log_max_size: str = "100MB"                  # 单个日志文件最大大小
+    log_max_files: int = 30                      # 保留日志文件数量
+    log_format: str = "json"                     # 日志格式: json, text
+
+    # 告警配置
+    alert_enabled: bool = False                  # 是否启用告警
+    alert_email_enabled: bool = False            # 是否启用邮件告警
+    alert_email_smtp_server: str = "smtp.example.com"
+    alert_email_smtp_port: int = 587
+    alert_email_smtp_user: str = ""
+    alert_email_smtp_password: str = ""
+    alert_email_recipients: str = ""
+    alert_email_from: str = "alerts@lexprime.com"
+
+    alert_slack_enabled: bool = False            # 是否启用 Slack 告警
+    alert_slack_webhook_url: str = ""
+    alert_slack_channel: str = "#alerts"
+
+    alert_pagerduty_enabled: bool = False        # 是否启用 PagerDuty 告警
+    alert_pagerduty_api_key: str = ""
+
+    # 告警阈值
+    alert_cpu_threshold: float = 80.0            # CPU 使用率告警阈值 (%)
+    alert_memory_threshold: float = 85.0         # 内存使用率告警阈值 (%)
+    alert_disk_threshold: float = 90.0           # 磁盘使用率告警阈值 (%)
+    alert_error_rate_threshold: float = 10.0      # 错误率告警阈值 (%)
+    alert_response_time_threshold: float = 5.0    # 响应时间告警阈值 (秒)
+
+    # Sentry 错误追踪
+    sentry_dsn: str = ""                         # Sentry DSN
+    sentry_environment: str = "production"       # Sentry 环境
 
     class Config:
         env_file = ".env"

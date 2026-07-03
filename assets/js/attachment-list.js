@@ -388,7 +388,9 @@
     function renderGridCard(f, index) {
         var staggerIndex = index !== undefined ? index : 0;
         return (
-            '<div class="attachment-card bg-white rounded-2xl border border-bg-border p-4 hover:shadow-xl hover:shadow-brand/5 transition-all duration-300 cursor-pointer group hover:-translate-y-1" data-animate="scale-in" data-stagger-group="attachment-cards" data-stagger-index="' + staggerIndex + '" data-delay="0.05">' +
+            '<div class="attachment-card bg-white rounded-2xl border border-bg-border p-4 hover:shadow-xl hover:shadow-brand/5 transition-all duration-300 cursor-pointer group hover:-translate-y-1" data-animate="scale-in" data-stagger-group="attachment-cards" data-stagger-index="' +
+            staggerIndex +
+            '" data-delay="0.05">' +
             '<div class="flex items-start justify-between mb-3">' +
             '<div class="w-12 h-12 rounded-xl ' +
             f.iconBg +
@@ -408,15 +410,23 @@
             ')"><iconify-icon icon="mdi:trash-outline" class="text-sm"></iconify-icon></button>' +
             '</div>' +
             '</div>' +
-            '<p class="text-sm font-semibold text-fg-primary truncate mb-1.5 group-hover:text-brand transition-colors" title="' + escapeHtml(f.name) + '">' +
+            '<p class="text-sm font-semibold text-fg-primary truncate mb-1.5 group-hover:text-brand transition-colors" title="' +
+            escapeHtml(f.name) +
+            '">' +
             escapeHtml(f.name) +
             '</p>' +
             '<div class="flex items-center gap-1.5 mb-3">' +
-            '<span class="file-type-badge ' + f.tagClass + '">' + getFileTypeLabel(f.fileType) + '</span>' +
+            '<span class="file-type-badge ' +
+            f.tagClass +
+            '">' +
+            getFileTypeLabel(f.fileType) +
+            '</span>' +
             '</div>' +
             '<p class="text-xs text-fg-tertiary mb-2 flex items-center gap-1">' +
             '<iconify-icon icon="mdi:briefcase-outline" class="text-[10px]"></iconify-icon>' +
-            '<span class="truncate">' + escapeHtml(f.caseName) + '</span>' +
+            '<span class="truncate">' +
+            escapeHtml(f.caseName) +
+            '</span>' +
             '</p>' +
             '<div class="flex items-center justify-between pt-2 border-t border-bg-border/50">' +
             '<span class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
@@ -435,7 +445,9 @@
     function renderListItem(f, index) {
         var staggerIndex = index !== undefined ? index : 0;
         return (
-            '<div class="attachment-list-item bg-white rounded-xl border border-bg-border p-3 md:p-4 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300 cursor-pointer flex items-center gap-3 md:gap-4 group hover:-translate-y-0.5" data-animate="fade-in-up" data-stagger-group="attachment-list-items" data-stagger-index="' + staggerIndex + '" data-delay="0.03">' +
+            '<div class="attachment-list-item bg-white rounded-xl border border-bg-border p-3 md:p-4 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300 cursor-pointer flex items-center gap-3 md:gap-4 group hover:-translate-y-0.5" data-animate="fade-in-up" data-stagger-group="attachment-list-items" data-stagger-index="' +
+            staggerIndex +
+            '" data-delay="0.03">' +
             '<div class="w-11 h-11 md:w-12 md:h-12 rounded-xl ' +
             f.iconBg +
             ' flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm">' +
@@ -446,16 +458,26 @@
             '"></iconify-icon>' +
             '</div>' +
             '<div class="flex-1 min-w-0">' +
-            '<p class="text-sm font-semibold text-fg-primary truncate group-hover:text-brand transition-colors" title="' + escapeHtml(f.name) + '">' +
+            '<p class="text-sm font-semibold text-fg-primary truncate group-hover:text-brand transition-colors" title="' +
+            escapeHtml(f.name) +
+            '">' +
             escapeHtml(f.name) +
             '</p>' +
             '<div class="flex items-center gap-2 md:gap-3 mt-1 flex-wrap">' +
-            '<span class="file-type-badge ' + f.tagClass + '">' + getFileTypeLabel(f.fileType) + '</span>' +
+            '<span class="file-type-badge ' +
+            f.tagClass +
+            '">' +
+            getFileTypeLabel(f.fileType) +
+            '</span>' +
             '<span class="text-[11px] text-fg-tertiary flex items-center gap-1">' +
             '<iconify-icon icon="mdi:briefcase-outline" class="text-[10px]"></iconify-icon>' +
-            '<span class="truncate max-w-[120px]">' + escapeHtml(f.caseName) + '</span>' +
+            '<span class="truncate max-w-[120px]">' +
+            escapeHtml(f.caseName) +
             '</span>' +
-            '<span class="text-[11px] text-fg-tertiary hidden sm:inline">' + f.type + '</span>' +
+            '</span>' +
+            '<span class="text-[11px] text-fg-tertiary hidden sm:inline">' +
+            f.type +
+            '</span>' +
             '</div>' +
             '</div>' +
             '<div class="flex items-center gap-3 md:gap-6 flex-shrink-0">' +
@@ -501,7 +523,9 @@
                 Utils.createEmptyState({
                     preset: _searchKeyword ? 'no-result' : 'empty-list',
                     title: _searchKeyword ? '没有找到匹配的文件' : '暂无附件文件',
-                    description: _searchKeyword ? '请尝试其他搜索关键词或调整筛选条件' : '还没有上传任何文件，点击上传按钮开始管理您的文件',
+                    description: _searchKeyword
+                        ? '请尝试其他搜索关键词或调整筛选条件'
+                        : '还没有上传任何文件，点击上传按钮开始管理您的文件',
                     actionText: '上传文件',
                     actionHandler: openBatchUploadModal,
                     secondaryActionText: _searchKeyword ? '重置筛选' : undefined,
@@ -580,7 +604,8 @@
 
         var pagDiv = document.createElement('div');
         pagDiv.id = 'attachment-pagination';
-        pagDiv.className = 'col-span-full flex items-center justify-center gap-1.5 mt-6 pt-4 border-t border-bg-border/50';
+        pagDiv.className =
+            'col-span-full flex items-center justify-center gap-1.5 mt-6 pt-4 border-t border-bg-border/50';
 
         var html = '';
         if (_currentPage > 1) {
@@ -717,7 +742,13 @@
             }
             if (inactiveBtn) {
                 inactiveBtn.classList.add('bg-white', 'text-fg-secondary', 'hover:bg-bg-subtle');
-                inactiveBtn.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'shadow-sm');
+                inactiveBtn.classList.remove(
+                    'bg-gradient-to-r',
+                    'from-brand',
+                    'to-brand-hover',
+                    'text-white',
+                    'shadow-sm'
+                );
             }
         }
 

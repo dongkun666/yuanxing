@@ -42,7 +42,8 @@
         var elements = document.querySelectorAll(selector);
         if (!elements.length) return;
 
-        gsap.fromTo(elements,
+        gsap.fromTo(
+            elements,
             {
                 opacity: 0,
                 y: opts.y
@@ -64,7 +65,8 @@
         var elements = document.querySelectorAll(selector);
         if (!elements.length) return;
 
-        gsap.fromTo(elements,
+        gsap.fromTo(
+            elements,
             {
                 opacity: 0,
                 y: opts.y
@@ -87,7 +89,8 @@
         var elements = document.querySelectorAll(selector);
         if (!elements.length) return;
 
-        gsap.fromTo(elements,
+        gsap.fromTo(
+            elements,
             {
                 opacity: 0,
                 scale: opts.scale
@@ -109,7 +112,8 @@
         var elements = document.querySelectorAll(selector);
         if (!elements.length) return;
 
-        gsap.fromTo(elements,
+        gsap.fromTo(
+            elements,
             {
                 opacity: 0,
                 x: -opts.x
@@ -131,7 +135,8 @@
         var elements = document.querySelectorAll(selector);
         if (!elements.length) return;
 
-        gsap.fromTo(elements,
+        gsap.fromTo(
+            elements,
             {
                 opacity: 0,
                 x: opts.x
@@ -157,7 +162,8 @@
 
         var animationMap = {
             'fade-in-up': function (el, opts) {
-                gsap.fromTo(el,
+                gsap.fromTo(
+                    el,
                     { opacity: 0, y: opts.y },
                     {
                         opacity: 1,
@@ -169,7 +175,8 @@
                 );
             },
             'scale-in': function (el, opts) {
-                gsap.fromTo(el,
+                gsap.fromTo(
+                    el,
                     { opacity: 0, scale: opts.scale },
                     {
                         opacity: 1,
@@ -181,7 +188,8 @@
                 );
             },
             'slide-in-left': function (el, opts) {
-                gsap.fromTo(el,
+                gsap.fromTo(
+                    el,
                     { opacity: 0, x: -opts.x },
                     {
                         opacity: 1,
@@ -193,7 +201,8 @@
                 );
             },
             'slide-in-right': function (el, opts) {
-                gsap.fromTo(el,
+                gsap.fromTo(
+                    el,
                     { opacity: 0, x: opts.x },
                     {
                         opacity: 1,
