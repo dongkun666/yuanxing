@@ -1,80 +1,91 @@
-/**
- * Login 页面 - W3 login.html 重构为 React 组件 + TypeScript
- *
- * 保留功能 (5 大价值主张 + 6 大模块保持不变):
- *  - 登录 / 注册 Tab 切换
- *  - 邮箱 + 密码 + (注册姓名)
- *  - Demo 模式 (MVP_USER_ID=u-1 免登录)
- *  - 全屏 fixed 盖住 sidebar
- *
- * 重构点:
- *  - HTML 静态 + inline onclick → React state + onChange/onClick
- *  - DOM ID 选择器 → useState hooks
- *  - 全局 switchView → React Router useNavigate
- */
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store';
+import { authApi } from '../api';
+import type { User } from '../types';
 
 type Tab = 'login' | 'register';
 
 export default function Login() {
   const navigate = useNavigate();
+  const login = useUserStore((state) => state.login);
   const [tab, setTab] = useState<Tab>('login');
 
-  // 登录表单
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  // 注册表单
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerError, setRegisterError] = useState('');
+  const [registerLoading, setRegisterLoading] = useState(false);
 
-  function handleLogin(e: FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoginError('');
+    setLoginLoading(true);
 
     if (!loginEmail || !loginPassword) {
       setLoginError('请填写邮箱和密码');
+      setLoginLoading(false);
       return;
     }
 
-    // Phase 5.1 placeholder: 走 FastAPI /api/auth/login (W7 已就位, lex-coder W3)
-    // 此处保留登录接口契约, 真实 fetch 留给 W20 接入
-    console.info('[Phase 5.1] 登录请求:', { email: loginEmail });
-    navigate('/workstation');
+    try {
+      const response = await authApi.login(loginEmail, loginPassword);
+      login(response.user, response.access_token, response.refresh_token);
+      navigate('/workstation');
+    } catch (error) {
+      console.error('Login failed:', error);
+      setLoginError('登录失败，请检查邮箱和密码');
+    } finally {
+      setLoginLoading(false);
+    }
   }
 
-  function handleRegister(e: FormEvent<HTMLFormElement>) {
+  async function handleRegister(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setRegisterError('');
+    setRegisterLoading(true);
 
     if (!registerName || !registerEmail || !registerPassword) {
       setRegisterError('请填写姓名 / 邮箱 / 密码');
+      setRegisterLoading(false);
       return;
     }
     if (registerPassword.length < 6) {
       setRegisterError('密码至少 6 位');
+      setRegisterLoading(false);
       return;
     }
 
-    // Phase 5.1 placeholder: 走 FastAPI /api/auth/register
-    console.info('[Phase 5.1] 注册请求:', { name: registerName, email: registerEmail });
-    navigate('/workstation');
+    try {
+      const response = await authApi.register(registerName, registerEmail, registerPassword);
+      login(response.user, response.access_token, response.refresh_token);
+      navigate('/workstation');
+    } catch (error) {
+      console.error('Register failed:', error);
+      setRegisterError('注册失败，请重试');
+    } finally {
+      setRegisterLoading(false);
+    }
   }
 
   function handleDemoLogin() {
-    // Demo 模式 (MVP_USER_ID=u-1) — 跟 vanilla 版一致
-    console.info('[Phase 5.1] Demo 模式进入');
+    const demoUser: User = {
+      id: 'u-1',
+      name: '张律师',
+      email: 'demo@lexprime.cn',
+    };
+    login(demoUser, 'demo-token', 'demo-refresh-token');
     navigate('/workstation');
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-subtle">
       <div className="w-full max-w-md px-4">
-        {/* Logo + 品牌 */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand text-white text-3xl mb-4">
             ⚖
@@ -88,9 +99,7 @@ export default function Login() {
           </p>
         </div>
 
-        {/* 登录卡片 */}
         <div className="bg-white rounded-2xl border border-bg-border p-8 shadow-xl shadow-fg-primary/5">
-          {/* Tab 切换 */}
           <div className="flex items-center gap-1 mb-6 bg-bg-subtle rounded-xl p-1">
             <button
               type="button"
@@ -120,7 +129,6 @@ export default function Login() {
             </button>
           </div>
 
-          {/* 登录表单 */}
           {tab === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4" aria-label="登录表单">
               <div>
@@ -156,13 +164,12 @@ export default function Login() {
               {loginError && (
                 <div className="text-xs text-danger" role="alert">{loginError}</div>
               )}
-              <button type="submit" className="btn-primary w-full">
-                登录
+              <button type="submit" className="btn-primary w-full" disabled={loginLoading}>
+                {loginLoading ? '登录中...' : '登录'}
               </button>
             </form>
           )}
 
-          {/* 注册表单 */}
           {tab === 'register' && (
             <form onSubmit={handleRegister} className="space-y-4" aria-label="注册表单">
               <div>
@@ -213,20 +220,18 @@ export default function Login() {
               {registerError && (
                 <div className="text-xs text-danger" role="alert">{registerError}</div>
               )}
-              <button type="submit" className="btn-primary w-full">
-                注册并登录
+              <button type="submit" className="btn-primary w-full" disabled={registerLoading}>
+                {registerLoading ? '注册中...' : '注册并登录'}
               </button>
             </form>
           )}
 
-          {/* 分隔线 */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-bg-border" />
             <span className="text-xs text-fg-tertiary">或</span>
             <div className="flex-1 h-px bg-bg-border" />
           </div>
 
-          {/* Demo 模式 */}
           <button
             type="button"
             onClick={handleDemoLogin}
@@ -239,7 +244,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* 底部 */}
         <p className="text-xs text-fg-tertiary text-center mt-6">
           © 2026 LexPrime 元枢法智 · AI 辅助, 不替代律师
         </p>

@@ -1,0 +1,1 @@
+!function(){"use strict";globalThis.AppState={isYearly:!1,selectedPayment:"alipay",selectedDynamicType:"紧急",selectedExtractSource:"case",batchFiles:[],dynamicsViewData:[],autoSaveTimer:null,dynamicAttachments:[],notificationsFilter:"all",user:null,token:null,errorLog:[]}}();

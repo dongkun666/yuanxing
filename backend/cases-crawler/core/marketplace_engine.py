@@ -203,17 +203,24 @@ CROSS_BORDER_PRICING: Dict[CrossBorderDocType, Dict[Language, float]] = {
 
 @dataclass
 class LawyerProfile:
-    """Marketplace 律师画像 (5 维度评分输入)"""
+    """Marketplace 律师画像 (多维度评分输入)"""
     lawyer_id: str
     name: str
     firm_id: Optional[str] = None
     specialties: List[str] = field(default_factory=list)        # 专业领域
+    specialty_depth: Dict[str, int] = field(default_factory=dict)  # 专业领域深度 (领域→案件数)
     jurisdictions: List[str] = field(default_factory=list)     # 司法管辖区
     languages: List[str] = field(default_factory=list)         # 语言 (zh-CN / en-US)
     region: str = ""                                            # 地域 (省/市)
+    city: str = ""                                              # 城市
     experience_years: int = 0                                   # 执业年限
     rating: float = 0.0                                         # 平均评分 (0-5)
+    client_review_count: int = 0                                # 客户评价数
     completed_cases: int = 0                                    # 累计接案数
+    win_rate: float = 0.0                                       # 胜诉率 (0-1)
+    response_speed_hours: float = 24.0                          # 平均响应时间 (小时)
+    price_per_hour: float = 0.0                                 # 小时费率 (¥)
+    price_min: float = 0.0                                      # 最低收费 (¥)
     marketplace_active: bool = True                             # 是否 Marketplace 参与方
     cross_border_capable: bool = False                          # 是否支持跨境
     availability: str = "available"                             # available / busy / unavailable
@@ -224,19 +231,86 @@ class LawyerProfile:
 
 
 @dataclass
-class LawyerMatchScore:
-    """律师推荐算法 5 维度评分 (PRD § 8.1)"""
-    lawyer_id: str
-    total_score: float                  # 0-1 综合评分
-    specialty_match: float              # 0-1 专业匹配
-    experience_score: float             # 0-1 经验评分
-    geography_score: float              # 0-1 地域评分
-    availability_score: float           # 0-1 可接案评分
-    rating_score: float                 # 0-1 评分评分
-    match_reasons: List[str] = field(default_factory=list)  # 匹配理由
+class MatchDimension:
+    """单个匹配维度详情"""
+    name: str                           # 维度名称
+    score: float                        # 0-1 得分
+    weight: float                       # 权重
+    weighted_score: float               # 加权得分
+    description: str                    # 文字描述
+    is_strength: bool = False           # 是否是强项
+    is_weakness: bool = False           # 是否是弱项
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+
+@dataclass
+class MatchExplanation:
+    """匹配解释详情"""
+    total_score: float                  # 0-1 综合评分
+    dimensions: List[MatchDimension] = field(default_factory=list)  # 各维度详情
+    strengths: List[str] = field(default_factory=list)     # 强项列表
+    weaknesses: List[str] = field(default_factory=list)    # 弱项列表
+    suggestions: List[str] = field(default_factory=list)   # 改进建议
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class MatchWeights:
+    """匹配权重配置 (可配置化)"""
+    specialty_match: float = 0.25       # 专业领域匹配
+    specialty_depth: float = 0.10       # 专业领域深度
+    experience_score: float = 0.12      # 经验评分
+    win_rate: float = 0.08              # 胜诉率
+    geography_score: float = 0.10       # 地域匹配
+    response_speed: float = 0.08        # 响应速度
+    availability_score: float = 0.07    # 可接案状态
+    rating_score: float = 0.10          # 客户评分
+    cross_domain_bonus: float = 0.05    # 跨领域能力加分
+    cross_border_bonus: float = 0.05    # 跨境能力加分
+
+    def total_weight(self) -> float:
+        return sum([
+            self.specialty_match,
+            self.specialty_depth,
+            self.experience_score,
+            self.win_rate,
+            self.geography_score,
+            self.response_speed,
+            self.availability_score,
+            self.rating_score,
+        ])
+
+
+DEFAULT_MATCH_WEIGHTS = MatchWeights()
+
+
+@dataclass
+class LawyerMatchScore:
+    """律师推荐算法多维度评分"""
+    lawyer_id: str
+    total_score: float                  # 0-1 综合评分
+    specialty_match: float              # 0-1 专业匹配
+    specialty_depth_score: float        # 0-1 专业深度匹配
+    experience_score: float             # 0-1 经验评分
+    win_rate_score: float               # 0-1 胜诉率评分
+    geography_score: float              # 0-1 地域评分
+    response_speed_score: float         # 0-1 响应速度评分
+    availability_score: float           # 0-1 可接案评分
+    rating_score: float                 # 0-1 客户评分
+    cross_domain_score: float           # 0-1 跨领域能力
+    cross_border_score: float           # 0-1 跨境能力
+    match_reasons: List[str] = field(default_factory=list)  # 匹配理由
+    explanation: Optional[MatchExplanation] = None  # 详细解释
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        if self.explanation:
+            d["explanation"] = self.explanation.to_dict()
+        return d
 
 
 @dataclass
@@ -400,6 +474,239 @@ def generate_id(prefix: str = "mp") -> str:
     return f"{prefix}-{uuid.uuid4().hex[:8]}"
 
 
+def compute_match_score(
+    lawyer: LawyerProfile,
+    required_specialties: List[str],
+    required_jurisdictions: Optional[List[str]] = None,
+    required_languages: Optional[List[str]] = None,
+    required_region: str = "",
+    required_city: str = "",
+    cross_border: bool = False,
+    weights: Optional[MatchWeights] = None,
+    include_explanation: bool = True,
+) -> LawyerMatchScore:
+    """律师推荐算法多维度评分
+
+    该算法是 Marketplace 核心推荐引擎，基于 8 个维度对律师进行综合评分。
+
+    评分维度 (权重可配置):
+    1. specialty_match (25%) - 专业领域匹配广度，计算律师专业与需求的交集比例
+    2. specialty_depth (10%) - 专业领域匹配深度，基于该领域办案数量计算
+    3. experience_score (12%) - 执业经验，按 15 年满分计算
+    4. win_rate (8%) - 胜诉率，直接使用律师胜诉率数据
+    5. geography_score (10%) - 地域就近匹配，同城 > 同省 > 跨省
+    6. response_speed (8%) - 响应速度，按小时区间分级
+    7. availability_score (7%) - 可接案状态，available/busy/unavailable
+    8. rating_score (10%) - 客户评价，结合评分和评价数量计算置信度
+
+    加分项:
+    - cross_domain_bonus (5%) - 跨领域能力，拥有 3 个以上专业领域加分
+    - cross_border_bonus (5%) - 跨境能力，支持跨境案件加分
+
+    惩罚项:
+    - 跨境案件需求但律师无跨境能力时，扣除 20% 基础分
+
+    评分标准:
+    - 总分范围: 0-1
+    - > 0.8: 强推荐，高度匹配需求
+    - > 0.6: 推荐候选，基本匹配需求
+    - < 0.3: 不推荐，匹配度较低
+
+    Args:
+        lawyer: 律师画像对象
+        required_specialties: 需求专业领域列表
+        required_jurisdictions: 跨境案件所需司法管辖区
+        required_languages: 跨境案件所需语言
+        required_region: 地域要求 (省级)
+        required_city: 城市要求
+        cross_border: 是否跨境案件
+        weights: 权重配置，默认为 DEFAULT_MATCH_WEIGHTS
+        include_explanation: 是否生成详细解释
+
+    Returns:
+        LawyerMatchScore: 包含各维度得分和综合评分的对象
+    """
+    if weights is None:
+        weights = DEFAULT_MATCH_WEIGHTS
+
+    overlap = set()
+
+    # 维度 1: specialty_match (专业领域匹配广度) - 权重 25%
+    # 计算律师专业领域与需求领域的交集比例
+    if required_specialties:
+        overlap = set(lawyer.specialties) & set(required_specialties)
+        specialty_match = len(overlap) / len(required_specialties) if required_specialties else 0.0
+    else:
+        specialty_match = 0.5  # 无专业要求时默认中等
+
+    # 维度 2: specialty_depth_score (专业领域匹配深度) - 权重 10%
+    # 基于律师在匹配领域的办案数量计算深度得分
+    # 最多 50 个案件为满分，超过 50 个案件按比例递减
+    specialty_depth_score = 0.0
+    if required_specialties and lawyer.specialty_depth:
+        total_depth = 0
+        max_cases = max(lawyer.specialty_depth.values()) if lawyer.specialty_depth else 1
+        for spec in overlap:
+            depth = lawyer.specialty_depth.get(spec, 0)
+            total_depth += min(1.0, depth / max(50, max_cases * 0.5))
+        specialty_depth_score = total_depth / len(required_specialties) if required_specialties else 0.0
+    elif not required_specialties:
+        specialty_depth_score = 0.5
+
+    # 维度 3: experience_score (执业经验) - 权重 12%
+    # 15 年执业经验为满分，超过 15 年按满分计算
+    experience_score = min(1.0, lawyer.experience_years / 15.0)
+
+    # 维度 4: win_rate_score (胜诉率) - 权重 8%
+    # 直接使用律师胜诉率，无数据时默认 0.5
+    win_rate_score = lawyer.win_rate if lawyer.win_rate > 0 else 0.5
+    win_rate_score = max(0.0, min(1.0, win_rate_score))
+
+    # 维度 5: geography_score (地域就近匹配) - 权重 10%
+    # 匹配优先级: 同城(1.0) > 同省(0.7) > 同省前2字匹配(0.5) > 跨省(0.2)
+    geography_score = 0.5
+    if required_city and lawyer.city:
+        if required_city == lawyer.city:
+            geography_score = 1.0
+        elif required_region and lawyer.region and required_region == lawyer.region:
+            geography_score = 0.7
+        elif required_region and lawyer.region and required_region[:2] == lawyer.region[:2]:
+            geography_score = 0.5
+        else:
+            geography_score = 0.2
+    elif required_region and lawyer.region:
+        if required_region == lawyer.region:
+            geography_score = 1.0
+        elif required_region[:2] == lawyer.region[:2]:
+            geography_score = 0.6
+        else:
+            geography_score = 0.3
+
+    # 维度 6: response_speed_score (响应速度) - 权重 8%
+    # 按响应时间区间分级: <=2h(1.0) > <=6h(0.8) > <=12h(0.6) > <=24h(0.4) > <=48h(0.2) > >48h(0.1)
+    if lawyer.response_speed_hours <= 2:
+        response_speed_score = 1.0
+    elif lawyer.response_speed_hours <= 6:
+        response_speed_score = 0.8
+    elif lawyer.response_speed_hours <= 12:
+        response_speed_score = 0.6
+    elif lawyer.response_speed_hours <= 24:
+        response_speed_score = 0.4
+    elif lawyer.response_speed_hours <= 48:
+        response_speed_score = 0.2
+    else:
+        response_speed_score = 0.1
+
+    # 维度 7: availability_score (可接案状态) - 权重 7%
+    # available(1.0) > busy(0.4) > unavailable(0.0)
+    # 非 Marketplace 活跃用户直接得 0 分
+    availability_map = {"available": 1.0, "busy": 0.4, "unavailable": 0.0}
+    availability_score = availability_map.get(lawyer.availability, 0.5)
+    if not lawyer.marketplace_active:
+        availability_score = 0.0
+
+    # 维度 8: rating_score (客户评价) - 权重 10%
+    # 基础分 = 评分 / 5，结合评价数量计算置信度
+    # 评价数 >= 20 条时置信度为 1，评价数越少置信度越低
+    rating_score = lawyer.rating / 5.0 if lawyer.rating > 0 else 0.5
+    if lawyer.client_review_count > 0:
+        review_confidence = min(1.0, lawyer.client_review_count / 20.0)
+        rating_score = 0.5 * rating_score + 0.5 * (rating_score * review_confidence + 0.5 * (1 - review_confidence))
+
+    # 跨领域能力加分 - 权重 5%
+    # 拥有 3 个以上专业领域时加分，最多加 5 分 (对应权重 5%)
+    cross_domain_score = 0.0
+    if len(lawyer.specialties) >= 3:
+        cross_domain_score = min(1.0, (len(lawyer.specialties) - 2) / 5.0)
+
+    # 跨境能力 - 权重 5%
+    # 基础分 0.6，语言匹配加 0-0.4，司法管辖区匹配调整最终得分
+    # 无跨境能力且需求跨境时得 -1.0（触发惩罚）
+    cross_border_score = 0.0
+    if cross_border:
+        if lawyer.cross_border_capable:
+            cross_border_score = 0.6
+            if required_languages:
+                lang_overlap = set(lawyer.languages) & set(required_languages)
+                lang_match = len(lang_overlap) / len(required_languages) if required_languages else 0.0
+                cross_border_score = 0.6 + 0.4 * lang_match
+            if required_jurisdictions:
+                jur_overlap = set(lawyer.jurisdictions) & set(required_jurisdictions)
+                jur_match = len(jur_overlap) / len(required_jurisdictions) if required_jurisdictions else 0.0
+                cross_border_score = cross_border_score * 0.7 + jur_match * 0.3
+        else:
+            cross_border_score = -1.0
+
+    # 加权总分计算
+    # 基础分 = 各维度得分 × 对应权重
+    base_score = (
+        specialty_match * weights.specialty_match
+        + specialty_depth_score * weights.specialty_depth
+        + experience_score * weights.experience_score
+        + win_rate_score * weights.win_rate
+        + geography_score * weights.geography_score
+        + response_speed_score * weights.response_speed
+        + availability_score * weights.availability_score
+        + rating_score * weights.rating_score
+    )
+
+    # 加分项 = 跨领域加分 + 跨境加分（负值不计入）
+    bonus = (
+        cross_domain_score * weights.cross_domain_bonus
+        + max(0.0, cross_border_score) * weights.cross_border_bonus
+    )
+
+    # 惩罚项: 跨境案件需求但律师无跨境能力时扣除 20%
+    penalty = 0.0
+    if cross_border and not lawyer.cross_border_capable:
+        penalty = 0.2
+
+    # 总分 = max(0, min(1, 基础分 + 加分 - 惩罚))
+    total_score = max(0.0, min(1.0, base_score + bonus - penalty))
+
+    # 匹配理由
+    match_reasons = []
+    if specialty_match >= 0.8:
+        match_reasons.append(f"专业高度匹配 ({len(overlap)}/{len(required_specialties)})")
+    if specialty_depth_score >= 0.7:
+        match_reasons.append("专业领域经验丰富")
+    if experience_score >= 0.7:
+        match_reasons.append(f"资深律师 ({lawyer.experience_years} 年经验)")
+    if win_rate_score >= 0.7:
+        match_reasons.append(f"高胜诉率 ({lawyer.win_rate*100:.0f}%)")
+    if geography_score >= 0.9:
+        match_reasons.append("同城/同省律师")
+    if response_speed_score >= 0.8:
+        match_reasons.append(f"响应迅速 ({lawyer.response_speed_hours:.0f}小时内)")
+    if rating_score >= 0.8:
+        match_reasons.append(f"高评分律师 ({lawyer.rating:.1f}/5.0)")
+    if cross_domain_score >= 0.5:
+        match_reasons.append(f"跨领域能力 ({len(lawyer.specialties)}个专业领域)")
+    if cross_border and lawyer.cross_border_capable:
+        match_reasons.append("支持跨境案件")
+
+    score = LawyerMatchScore(
+        lawyer_id=lawyer.lawyer_id,
+        total_score=round(total_score, 4),
+        specialty_match=round(specialty_match, 4),
+        specialty_depth_score=round(specialty_depth_score, 4),
+        experience_score=round(experience_score, 4),
+        win_rate_score=round(win_rate_score, 4),
+        geography_score=round(geography_score, 4),
+        response_speed_score=round(response_speed_score, 4),
+        availability_score=round(availability_score, 4),
+        rating_score=round(rating_score, 4),
+        cross_domain_score=round(cross_domain_score, 4),
+        cross_border_score=round(max(0.0, cross_border_score), 4),
+        match_reasons=match_reasons,
+    )
+
+    if include_explanation:
+        score.explanation = get_match_explanation(score, lawyer, required_specialties, weights)
+
+    return score
+
+
 def lawyer_match_score(
     lawyer: LawyerProfile,
     required_specialties: List[str],
@@ -408,91 +715,155 @@ def lawyer_match_score(
     required_region: str = "",
     cross_border: bool = False,
 ) -> LawyerMatchScore:
-    """律师推荐算法 5 维度评分 (PRD § 8.1)
+    """兼容旧版函数名 (5 维度评分)
 
-    维度 1: specialty_match     (权重 0.35) - 专业匹配
-    维度 2: experience_score    (权重 0.20) - 经验 (执业年限)
-    维度 3: geography_score     (权重 0.15) - 地域匹配
-    维度 4: availability_score  (权重 0.15) - 可接案状态
-    维度 5: rating_score        (权重 0.15) - 历史评分
-
-    总分 0-1, > 0.6 推荐候选, > 0.8 强推荐
-
-    复用 W15 recruit-1000 5 维度评分模式.
+    保留原函数名以确保向后兼容, 内部调用 compute_match_score。
     """
-    # 维度 1: specialty_match
-    if required_specialties:
-        overlap = set(lawyer.specialties) & set(required_specialties)
-        specialty_match = len(overlap) / len(required_specialties) if required_specialties else 0.0
-    else:
-        specialty_match = 0.5  # 无要求, 给中等分
-
-    # 维度 2: experience_score (0-1, 5 年起算)
-    experience_score = min(1.0, lawyer.experience_years / 10.0)
-
-    # 维度 3: geography_score
-    if required_region and lawyer.region:
-        if required_region == lawyer.region:
-            geography_score = 1.0
-        elif required_region[:2] == lawyer.region[:2]:  # 同省
-            geography_score = 0.6
-        else:
-            geography_score = 0.3
-    else:
-        geography_score = 0.5
-
-    # 维度 4: availability_score
-    availability_map = {"available": 1.0, "busy": 0.4, "unavailable": 0.0}
-    availability_score = availability_map.get(lawyer.availability, 0.5)
-    if not lawyer.marketplace_active:
-        availability_score = 0.0
-
-    # 维度 5: rating_score (0-5 → 0-1)
-    rating_score = lawyer.rating / 5.0 if lawyer.rating > 0 else 0.5
-
-    # 跨境能力惩罚
-    cross_border_bonus = 0.0
-    if cross_border:
-        if lawyer.cross_border_capable:
-            cross_border_bonus = 0.1
-            if required_languages and "en-US" in required_languages and "en-US" in lawyer.languages:
-                cross_border_bonus = 0.15
-        else:
-            cross_border_bonus = -0.3  # 不支持跨境, 扣分
-
-    # 加权总分
-    total_score = (
-        specialty_match * 0.35
-        + experience_score * 0.20
-        + geography_score * 0.15
-        + availability_score * 0.15
-        + rating_score * 0.15
+    return compute_match_score(
+        lawyer=lawyer,
+        required_specialties=required_specialties,
+        required_jurisdictions=required_jurisdictions,
+        required_languages=required_languages,
+        required_region=required_region,
+        cross_border=cross_border,
     )
-    total_score = max(0.0, min(1.0, total_score + cross_border_bonus))
 
-    # 匹配理由
-    match_reasons = []
-    if specialty_match >= 0.8:
-        match_reasons.append(f"专业高度匹配 ({len(overlap)}/{len(required_specialties)})")
-    if experience_score >= 0.7:
-        match_reasons.append(f"资深律师 ({lawyer.experience_years} 年经验)")
-    if geography_score >= 0.9:
-        match_reasons.append("同城/同省律师")
-    if rating_score >= 0.8:
-        match_reasons.append(f"高评分律师 ({lawyer.rating:.1f}/5.0)")
-    if cross_border and lawyer.cross_border_capable:
-        match_reasons.append("支持跨境案件")
 
-    return LawyerMatchScore(
-        lawyer_id=lawyer.lawyer_id,
-        total_score=round(total_score, 4),
-        specialty_match=round(specialty_match, 4),
-        experience_score=round(experience_score, 4),
-        geography_score=round(geography_score, 4),
-        availability_score=round(availability_score, 4),
-        rating_score=round(rating_score, 4),
-        match_reasons=match_reasons,
+def get_match_explanation(
+    score: LawyerMatchScore,
+    lawyer: LawyerProfile,
+    required_specialties: List[str],
+    weights: Optional[MatchWeights] = None,
+) -> MatchExplanation:
+    """生成匹配解释列表
+
+    返回每个维度的得分、说明、强项弱项和改进建议
+    """
+    if weights is None:
+        weights = DEFAULT_MATCH_WEIGHTS
+
+    dimensions = []
+    strengths = []
+    weaknesses = []
+    suggestions = []
+
+    dim_configs = [
+        ("专业领域匹配", score.specialty_match, weights.specialty_match,
+         f"匹配 {int(score.specialty_match * len(required_specialties))}/{len(required_specialties)} 个专业领域"
+         if required_specialties else "无专业要求"),
+        ("专业深度匹配", score.specialty_depth_score, weights.specialty_depth,
+         "相关领域办案经验丰富" if score.specialty_depth_score >= 0.7 else "专业深度有待提升"),
+        ("执业经验", score.experience_score, weights.experience_score,
+         f"{lawyer.experience_years} 年执业经验"),
+        ("胜诉率", score.win_rate_score, weights.win_rate,
+         f"胜诉率 {lawyer.win_rate*100:.0f}%" if lawyer.win_rate > 0 else "暂无胜诉率数据"),
+        ("地域匹配", score.geography_score, weights.geography_score,
+         f"所在地区: {lawyer.city or lawyer.region or '未填写'}"),
+        ("响应速度", score.response_speed_score, weights.response_speed,
+         f"平均响应 {lawyer.response_speed_hours:.0f} 小时"),
+        ("可接案状态", score.availability_score, weights.availability_score,
+         f"状态: {lawyer.availability}"),
+        ("客户评价", score.rating_score, weights.rating_score,
+         f"评分 {lawyer.rating:.1f}/5.0 ({lawyer.client_review_count} 条评价)"
+         if lawyer.client_review_count > 0 else f"评分 {lawyer.rating:.1f}/5.0"),
+    ]
+
+    for name, s, w, desc in dim_configs:
+        weighted = s * w
+        is_strength = s >= 0.8
+        is_weakness = s < 0.4
+
+        dim = MatchDimension(
+            name=name,
+            score=round(s, 4),
+            weight=w,
+            weighted_score=round(weighted, 4),
+            description=desc,
+            is_strength=is_strength,
+            is_weakness=is_weakness,
+        )
+        dimensions.append(dim)
+
+        if is_strength:
+            strengths.append(f"{name}: {desc}")
+        if is_weakness:
+            weaknesses.append(f"{name}: {desc}")
+
+    if score.cross_domain_score >= 0.5:
+        strengths.append(f"跨领域能力: 精通 {len(lawyer.specialties)} 个专业领域")
+
+    if score.cross_border_score >= 0.7:
+        strengths.append("跨境能力: 支持跨境案件办理")
+
+    if score.specialty_match < 0.6 and required_specialties:
+        suggestions.append("建议补充相关专业领域认证，提升专业匹配度")
+    if score.experience_score < 0.5:
+        suggestions.append("可通过更多案件积累提升执业经验评分")
+    if score.win_rate_score < 0.5:
+        suggestions.append("提升胜诉率可显著提高推荐排名")
+    if score.geography_score < 0.5:
+        suggestions.append("异地律师可考虑与当地律师协作办案")
+    if score.response_speed_score < 0.5:
+        suggestions.append("提升响应速度有助于获得更多客户青睐")
+    if score.rating_score < 0.5:
+        suggestions.append("注重服务质量，积累更多客户好评")
+    if score.availability_score < 0.5:
+        suggestions.append("保持 available 状态可获得更多推荐机会")
+    if not lawyer.cross_border_capable:
+        suggestions.append("获取跨境执业资质可拓展业务范围")
+
+    return MatchExplanation(
+        total_score=score.total_score,
+        dimensions=dimensions,
+        strengths=strengths,
+        weaknesses=weaknesses,
+        suggestions=suggestions,
     )
+
+
+def rank_lawyers(
+    lawyers: List[LawyerProfile],
+    required_specialties: List[str],
+    top_k: int = 5,
+    min_score: float = 0.3,
+    required_jurisdictions: Optional[List[str]] = None,
+    required_languages: Optional[List[str]] = None,
+    required_region: str = "",
+    cross_border: bool = False,
+    weights: Optional[MatchWeights] = None,
+) -> List[LawyerMatchScore]:
+    """律师推荐 Top-K (按综合匹配度降序)
+
+    Args:
+        lawyers: 候选律师池
+        required_specialties: 必需专业领域
+        top_k: 返回前 K 个
+        min_score: 最低分阈值
+        required_jurisdictions: 必需司法管辖区 (跨境案件)
+        required_languages: 必需语言 (跨境案件)
+        required_region: 地域 (协同办案/转介绍)
+        cross_border: 是否跨境案件
+        weights: 权重配置
+
+    Returns:
+        按 total_score 降序的律师推荐列表
+    """
+    scored = []
+    for lawyer in lawyers:
+        score = compute_match_score(
+            lawyer=lawyer,
+            required_specialties=required_specialties,
+            required_jurisdictions=required_jurisdictions,
+            required_languages=required_languages,
+            required_region=required_region,
+            cross_border=cross_border,
+            weights=weights,
+        )
+        if score.total_score >= min_score:
+            scored.append(score)
+
+    scored.sort(key=lambda x: x.total_score, reverse=True)
+    return scored[:top_k]
 
 
 def recommend_lawyers(
@@ -505,36 +876,175 @@ def recommend_lawyers(
     required_region: str = "",
     cross_border: bool = False,
 ) -> List[LawyerMatchScore]:
-    """律师推荐 Top-K (按 5 维度评分降序)
+    """律师推荐 Top-K (兼容旧版函数名)
+
+    保留原函数名以确保向后兼容, 内部调用 rank_lawyers。
+    """
+    return rank_lawyers(
+        lawyers=lawyers,
+        required_specialties=required_specialties,
+        top_k=top_k,
+        min_score=min_score,
+        required_jurisdictions=required_jurisdictions,
+        required_languages=required_languages,
+        required_region=required_region,
+        cross_border=cross_border,
+    )
+
+
+class SortField(str, Enum):
+    """排序字段枚举"""
+    MATCH_SCORE = "match_score"      # 综合匹配度
+    PRICE = "price"                  # 价格
+    EXPERIENCE = "experience"        # 经验年限
+    RATING = "rating"                # 评分
+    RESPONSE_SPEED = "response_speed"  # 响应速度
+    WIN_RATE = "win_rate"            # 胜诉率
+    COMPLETED_CASES = "completed_cases"  # 办案数量
+
+
+class SortOrder(str, Enum):
+    """排序方向"""
+    ASC = "asc"       # 升序
+    DESC = "desc"     # 降序
+
+
+def sort_lawyers(
+    scored_lawyers: List[LawyerMatchScore],
+    lawyer_profiles: Optional[Dict[str, LawyerProfile]] = None,
+    sort_by: SortField = SortField.MATCH_SCORE,
+    order: SortOrder = SortOrder.DESC,
+) -> List[LawyerMatchScore]:
+    """律师智能排序
+
+    支持多种排序方式: 综合匹配、价格、经验、评分、响应速度、胜诉率、办案数
 
     Args:
-        lawyers: 候选律师池 (W15 recruit 1000 律师池)
-        required_specialties: 必需专业领域
-        top_k: 返回前 K 个
-        min_score: 最低分阈值
-        required_jurisdictions: 必需司法管辖区 (跨境案件)
-        required_languages: 必需语言 (跨境案件)
-        required_region: 地域 (协同办案/转介绍)
-        cross_border: 是否跨境案件
+        scored_lawyers: 已评分的律师列表
+        lawyer_profiles: 律师画像字典 (lawyer_id -> LawyerProfile), 用于价格等字段排序
+        sort_by: 排序字段
+        order: 排序方向 (升序/降序)
 
     Returns:
-        按 total_score 降序的律师推荐列表
+        排序后的律师列表
     """
-    scored = []
-    for lawyer in lawyers:
-        score = lawyer_match_score(
-            lawyer=lawyer,
-            required_specialties=required_specialties,
-            required_jurisdictions=required_jurisdictions,
-            required_languages=required_languages,
-            required_region=required_region,
-            cross_border=cross_border,
-        )
-        if score.total_score >= min_score:
-            scored.append(score)
+    reverse = order == SortOrder.DESC
 
-    scored.sort(key=lambda x: x.total_score, reverse=True)
-    return scored[:top_k]
+    if sort_by == SortField.MATCH_SCORE:
+        return sorted(scored_lawyers, key=lambda x: x.total_score, reverse=reverse)
+
+    if lawyer_profiles is None:
+        return sorted(scored_lawyers, key=lambda x: x.total_score, reverse=reverse)
+
+    def get_sort_key(score: LawyerMatchScore) -> float:
+        profile = lawyer_profiles.get(score.lawyer_id)
+        if profile is None:
+            return 0.0
+
+        if sort_by == SortField.PRICE:
+            return profile.price_per_hour if profile.price_per_hour > 0 else float('inf')
+        elif sort_by == SortField.EXPERIENCE:
+            return float(profile.experience_years)
+        elif sort_by == SortField.RATING:
+            return profile.rating
+        elif sort_by == SortField.RESPONSE_SPEED:
+            return profile.response_speed_hours
+        elif sort_by == SortField.WIN_RATE:
+            return profile.win_rate
+        elif sort_by == SortField.COMPLETED_CASES:
+            return float(profile.completed_cases)
+        else:
+            return score.total_score
+
+    return sorted(scored_lawyers, key=get_sort_key, reverse=reverse)
+
+
+@dataclass
+class LawyerFilters:
+    """律师过滤条件"""
+    specialties: Optional[List[str]] = None          # 专业领域 (包含任一即可)
+    specialties_all: Optional[List[str]] = None      # 专业领域 (必须全部包含)
+    min_experience_years: Optional[int] = None       # 最低经验年限
+    max_experience_years: Optional[int] = None       # 最高经验年限
+    regions: Optional[List[str]] = None              # 地区列表
+    cities: Optional[List[str]] = None               # 城市列表
+    min_price: Optional[float] = None                # 最低价格
+    max_price: Optional[float] = None                # 最高价格
+    min_rating: Optional[float] = None               # 最低评分
+    cross_border_only: bool = False                   # 仅跨境律师
+    marketplace_active_only: bool = True             # 仅活跃律师
+    availability: Optional[List[str]] = None         # 可接案状态
+
+
+def filter_lawyers(
+    lawyers: List[LawyerProfile],
+    filters: LawyerFilters,
+) -> List[LawyerProfile]:
+    """律师多条件组合过滤
+
+    支持按: 专业领域、经验年限、地区、价格区间、评分、是否跨境 等过滤
+
+    Args:
+        lawyers: 候选律师池
+        filters: 过滤条件
+
+    Returns:
+        过滤后的律师列表
+    """
+    result = []
+
+    for lawyer in lawyers:
+        if filters.marketplace_active_only and not lawyer.marketplace_active:
+            continue
+
+        if filters.cross_border_only and not lawyer.cross_border_capable:
+            continue
+
+        if filters.specialties:
+            if not set(lawyer.specialties) & set(filters.specialties):
+                continue
+
+        if filters.specialties_all:
+            if not set(filters.specialties_all).issubset(set(lawyer.specialties)):
+                continue
+
+        if filters.min_experience_years is not None:
+            if lawyer.experience_years < filters.min_experience_years:
+                continue
+
+        if filters.max_experience_years is not None:
+            if lawyer.experience_years > filters.max_experience_years:
+                continue
+
+        if filters.regions:
+            if lawyer.region not in filters.regions:
+                continue
+
+        if filters.cities:
+            if lawyer.city not in filters.cities:
+                continue
+
+        if filters.min_price is not None:
+            price = lawyer.price_per_hour if lawyer.price_per_hour > 0 else lawyer.price_min
+            if price < filters.min_price:
+                continue
+
+        if filters.max_price is not None:
+            price = lawyer.price_per_hour if lawyer.price_per_hour > 0 else lawyer.price_min
+            if price > 0 and price > filters.max_price:
+                continue
+
+        if filters.min_rating is not None:
+            if lawyer.rating < filters.min_rating:
+                continue
+
+        if filters.availability:
+            if lawyer.availability not in filters.availability:
+                continue
+
+        result.append(lawyer)
+
+    return result
 
 
 def create_co_counsel_case(

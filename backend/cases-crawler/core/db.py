@@ -8,14 +8,59 @@ LexPrime 数据库连接 (SQLite dev + PostgreSQL prod + ES in-memory)
 3. PostgreSQL (prod) → 需要 docker-compose
 4. ES: 本地文件 / 内存 mock (dev) + 真 ES (prod)
 5. Neo4j: 可选, 没有时跳过图查询
+
+连接池配置:
+- PostgreSQL: pool_size=20, max_overflow=10, pool_timeout=30, pool_recycle=3600
+- SQLite: pool_size=5, max_overflow=0 (SQLite 单连接限制)
 """
 import os
 import json
+import time
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Optional
 from loguru import logger
 
 from .config import settings
+
+
+class ConnectionPoolStats:
+    """连接池监控统计"""
+    _pool_stats = {
+        "connections_created": 0,
+        "connections_checked_out": 0,
+        "connections_checked_in": 0,
+        "connections_errors": 0,
+        "peak_connections": 0,
+        "last_reset": time.time(),
+    }
+
+    @classmethod
+    def increment(cls, key: str):
+        cls._pool_stats[key] = cls._pool_stats.get(key, 0) + 1
+        if key == "connections_checked_out":
+            current = cls._pool_stats["connections_checked_out"] - cls._pool_stats["connections_checked_in"]
+            if current > cls._pool_stats["peak_connections"]:
+                cls._pool_stats["peak_connections"] = current
+
+    @classmethod
+    def get_stats(cls) -> dict:
+        stats = cls._pool_stats.copy()
+        stats["current_connections"] = (
+            stats["connections_checked_out"] - stats["connections_checked_in"]
+        )
+        stats["uptime_seconds"] = int(time.time() - stats["last_reset"])
+        return stats
+
+    @classmethod
+    def reset(cls):
+        cls._pool_stats = {
+            "connections_created": 0,
+            "connections_checked_out": 0,
+            "connections_checked_in": 0,
+            "connections_errors": 0,
+            "peak_connections": 0,
+            "last_reset": time.time(),
+        }
 
 
 def detect_db_backend() -> str:
@@ -80,7 +125,10 @@ class Database:
         cls._engine = create_async_engine(
             url,
             echo=settings.api_debug,
-            pool_pre_ping=False,  # SQLite 不需要
+            pool_pre_ping=False,
+            pool_size=5,
+            max_overflow=0,
+            pool_timeout=10,
         )
         cls._session_factory = async_sessionmaker(
             cls._engine,
@@ -88,6 +136,7 @@ class Database:
             expire_on_commit=False,
         )
         logger.info(f"✓ SQLite engine initialized: {url}")
+        logger.info(f"  Pool config: pool_size=5, max_overflow=0, pool_timeout=10")
 
     @classmethod
     async def _init_postgres(cls):
@@ -98,6 +147,8 @@ class Database:
             echo=settings.api_debug,
             pool_size=20,
             max_overflow=10,
+            pool_timeout=30,
+            pool_recycle=3600,
             pool_pre_ping=True,
         )
         cls._session_factory = async_sessionmaker(
@@ -106,6 +157,7 @@ class Database:
             expire_on_commit=False,
         )
         logger.info(f"✓ PostgreSQL engine initialized: {settings.postgres_host}:{settings.postgres_port}/{settings.postgres_db}")
+        logger.info(f"  Pool config: pool_size=20, max_overflow=10, pool_timeout=30, pool_recycle=3600, pool_pre_ping=True")
 
     @classmethod
     async def close(cls):
@@ -120,12 +172,30 @@ class Database:
         if cls._session_factory is None:
             await cls.init()
         async with cls._session_factory() as session:
+            ConnectionPoolStats.increment("connections_checked_out")
             try:
                 yield session
                 await session.commit()
             except Exception:
+                ConnectionPoolStats.increment("connections_errors")
                 await session.rollback()
                 raise
+            finally:
+                ConnectionPoolStats.increment("connections_checked_in")
+
+    @classmethod
+    def get_pool_stats(cls) -> dict:
+        """获取连接池统计信息"""
+        stats = ConnectionPoolStats.get_stats()
+        if cls._engine:
+            try:
+                pool = cls._engine.pool
+                if pool:
+                    stats["pool_size"] = pool.size()
+                    stats["pool_overflow"] = pool.overflow()
+            except Exception:
+                pass
+        return stats
 
 
 # ========== Elasticsearch 抽象层 (含 in-memory fallback) ==========

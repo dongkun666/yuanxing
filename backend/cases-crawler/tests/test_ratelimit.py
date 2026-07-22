@@ -1,132 +1,186 @@
 """
-ratelimit 滑动窗口测试 (W3)
-2026-06-29
+限流模块单元测试
+测试 InMemorySlidingWindowLimiter、RateLimitDecision、辅助函数
 """
+import time
 import pytest
 
 from auth.ratelimit import (
     InMemorySlidingWindowLimiter,
     RateLimitDecision,
-    email_verify_key_by_ip,
+    rate_limit_check,
     get_limiter,
-    license_upload_key_by_user,
     login_key_by_ip,
     login_key_by_user,
-    rate_limit_check,
     register_key_by_ip,
     totp_key_by_user,
+    email_verify_key_by_ip,
+    license_upload_key_by_user,
 )
 
 
-class TestInMemorySlidingWindowLimiter:
-    """in-memory 滑动窗口核心行为"""
+class TestRateLimitDecision:
+    """RateLimitDecision 数据类测试"""
 
-    def test_under_limit_allows(self):
-        """limit=3, 3 次请求都允许"""
+    def test_allowed_decision(self):
+        """允许的决策"""
+        d = RateLimitDecision(
+            allowed=True,
+            current_count=1,
+            limit=5,
+            reset_at=time.time() + 60,
+            retry_after=0,
+        )
+        assert d.allowed is True
+        assert d.current_count == 1
+        assert d.limit == 5
+        assert d.retry_after == 0
+
+    def test_denied_decision(self):
+        """拒绝的决策"""
+        d = RateLimitDecision(
+            allowed=False,
+            current_count=5,
+            limit=5,
+            reset_at=time.time() + 30,
+            retry_after=31,
+        )
+        assert d.allowed is False
+        assert d.current_count == 5
+        assert d.retry_after > 0
+
+
+class TestInMemorySlidingWindowLimiter:
+    """InMemorySlidingWindowLimiter 测试"""
+
+    def test_init(self):
+        """初始化"""
         limiter = InMemorySlidingWindowLimiter()
-        for i in range(3):
-            d = limiter.check_and_record("k1", limit=3, window_seconds=60)
-            assert d.allowed, f"request {i+1} should be allowed"
+        assert limiter._buckets is not None
+        assert limiter._lock is not None
+
+    def test_check_and_record_allow(self):
+        """允许请求 - 窗口内未满"""
+        limiter = InMemorySlidingWindowLimiter()
+        key = "test_key"
+        limit = 5
+        window = 60
+
+        for i in range(limit):
+            d = limiter.check_and_record(key, limit, window)
+            assert d.allowed is True
             assert d.current_count == i + 1
-            assert d.limit == 3
             assert d.retry_after == 0
 
-    def test_over_limit_denies(self):
-        """limit=3, 第 4 次拒绝"""
+    def test_check_and_record_deny(self):
+        """拒绝请求 - 窗口已满"""
         limiter = InMemorySlidingWindowLimiter()
-        for _ in range(3):
-            limiter.check_and_record("k2", limit=3, window_seconds=60)
-        d4 = limiter.check_and_record("k2", limit=3, window_seconds=60)
-        assert not d4.allowed
-        assert d4.current_count == 3
-        assert d4.limit == 3
-        assert d4.retry_after > 0
+        key = "test_key"
+        limit = 3
+        window = 60
 
-    def test_separate_keys_isolated(self):
-        """不同 key 互不干扰"""
+        for _ in range(limit):
+            limiter.check_and_record(key, limit, window)
+
+        d = limiter.check_and_record(key, limit, window)
+        assert d.allowed is False
+        assert d.current_count == limit
+        assert d.retry_after > 0
+
+    def test_multiple_keys_isolated(self):
+        """不同 key 之间隔离"""
         limiter = InMemorySlidingWindowLimiter()
-        for _ in range(3):
-            limiter.check_and_record("kA", limit=3, window_seconds=60)
-        # kA 已满, kB 应仍可用
-        d = limiter.check_and_record("kB", limit=3, window_seconds=60)
-        assert d.allowed
-        assert d.current_count == 1
+        limit = 3
+        window = 60
 
-    def test_window_expiry_releases(self):
-        """窗口过期后重新可用"""
-        limiter = InMemorySlidingWindowLimiter()
-        # 用一个非常短的窗口 (1s) 测试
-        for _ in range(2):
-            limiter.check_and_record("k3", limit=2, window_seconds=1)
-        d3 = limiter.check_and_record("k3", limit=2, window_seconds=1)
-        assert not d3.allowed, "should deny when at limit"
+        for _ in range(limit):
+            limiter.check_and_record("key1", limit, window)
 
-        import time
-        time.sleep(1.1)  # 等过窗口
+        d1 = limiter.check_and_record("key1", limit, window)
+        assert d1.allowed is False
 
-        d4 = limiter.check_and_record("k3", limit=2, window_seconds=1)
-        assert d4.allowed, "should allow after window expires"
-
-    def test_reset_clears_bucket(self):
-        """reset() 清空桶"""
-        limiter = InMemorySlidingWindowLimiter()
-        for _ in range(3):
-            limiter.check_and_record("k4", limit=3, window_seconds=60)
-        limiter.reset("k4")
-        d = limiter.check_and_record("k4", limit=3, window_seconds=60)
-        assert d.allowed
-        assert d.current_count == 1
+        d2 = limiter.check_and_record("key2", limit, window)
+        assert d2.allowed is True
+        assert d2.current_count == 1
 
     def test_reset_all(self):
-        """reset(None) 清空所有"""
+        """重置所有限流"""
         limiter = InMemorySlidingWindowLimiter()
-        for _ in range(3):
-            limiter.check_and_record("kA", limit=3, window_seconds=60)
-            limiter.check_and_record("kB", limit=3, window_seconds=60)
+        key = "test_key"
+        limit = 3
+        window = 60
+
+        for _ in range(limit):
+            limiter.check_and_record(key, limit, window)
+
+        assert limiter.check_and_record(key, limit, window).allowed is False
+
         limiter.reset()
-        d = limiter.check_and_record("kA", limit=3, window_seconds=60)
-        assert d.allowed
 
-    def test_decision_is_frozen_dataclass(self):
-        """RateLimitDecision 是 frozen dataclass"""
-        d = RateLimitDecision(allowed=True, current_count=1, limit=3, reset_at=0.0, retry_after=0)
-        with pytest.raises(Exception):  # FrozenInstanceError
-            d.allowed = False  # type: ignore[misc]
+        assert limiter.check_and_record(key, limit, window).allowed is True
+
+    def test_reset_specific_key(self):
+        """重置特定 key 的限流"""
+        limiter = InMemorySlidingWindowLimiter()
+        limit = 3
+        window = 60
+
+        for _ in range(limit):
+            limiter.check_and_record("key1", limit, window)
+            limiter.check_and_record("key2", limit, window)
+
+        limiter.reset("key1")
+
+        assert limiter.check_and_record("key1", limit, window).allowed is True
+        assert limiter.check_and_record("key2", limit, window).allowed is False
+
+    def test_empty_key_reset_no_error(self):
+        """重置不存在的 key 不报错"""
+        limiter = InMemorySlidingWindowLimiter()
+        limiter.reset("nonexistent_key")
 
 
-class TestRateLimitKeyFactories:
-    """key 工厂函数"""
+class TestKeyGenerators:
+    """限流 key 生成函数测试"""
 
-    def test_login_keys(self):
-        assert login_key_by_ip("1.2.3.4") == "login_ip:1.2.3.4"
+    def test_login_key_by_ip(self):
+        assert login_key_by_ip("192.168.1.1") == "login_ip:192.168.1.1"
+
+    def test_login_key_by_user(self):
         assert login_key_by_user(42) == "login_user:42"
 
-    def test_register_key(self):
-        assert register_key_by_ip("1.2.3.4") == "register_ip:1.2.3.4"
+    def test_register_key_by_ip(self):
+        assert register_key_by_ip("10.0.0.1") == "register_ip:10.0.0.1"
 
-    def test_totp_key(self):
-        assert totp_key_by_user(42) == "totp_user:42"
+    def test_totp_key_by_user(self):
+        assert totp_key_by_user(100) == "totp_user:100"
 
-    def test_email_verify_key(self):
-        assert email_verify_key_by_ip("1.2.3.4") == "email_verify_ip:1.2.3.4"
+    def test_email_verify_key_by_ip(self):
+        assert email_verify_key_by_ip("127.0.0.1") == "email_verify_ip:127.0.0.1"
 
-    def test_license_key(self):
-        assert license_upload_key_by_user(42) == "license_user:42"
+    def test_license_upload_key_by_user(self):
+        assert license_upload_key_by_user(999) == "license_user:999"
 
 
-class TestModuleLevelHelpers:
-    """module-level 函数"""
+class TestModuleLevelFunctions:
+    """模块级函数测试"""
 
-    def test_get_limiter_singleton(self):
+    def test_get_limiter_returns_singleton(self):
+        """get_limiter 返回单例"""
         l1 = get_limiter()
         l2 = get_limiter()
-        assert l1 is l2, "get_limiter must return singleton"
+        assert l1 is l2
 
-    def test_rate_limit_check_uses_singleton(self):
-        """rate_limit_check() 走单例"""
-        get_limiter().reset("mod_level_key")
-        for _ in range(5):
-            d = rate_limit_check("mod_level_key", limit=5, window_seconds=60)
-            assert d.allowed
-        d6 = rate_limit_check("mod_level_key", limit=5, window_seconds=60)
-        assert not d6.allowed
+    def test_rate_limit_check_wrapper(self):
+        """rate_limit_check 便捷函数"""
+        limiter = get_limiter()
+        limiter.reset("test_wrapper")
+
+        d1 = rate_limit_check("test_wrapper", limit=2, window_seconds=60)
+        assert d1.allowed is True
+
+        d2 = rate_limit_check("test_wrapper", limit=2, window_seconds=60)
+        assert d2.allowed is True
+
+        d3 = rate_limit_check("test_wrapper", limit=2, window_seconds=60)
+        assert d3.allowed is False

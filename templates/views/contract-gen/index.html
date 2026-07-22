@@ -1,0 +1,765 @@
+<!--
+  智能合同生成 - 前端视图
+  基于需求描述智能匹配和生成合同模板
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto bg-bg" id="view-contract-gen" data-view-source="contract-gen/index.html">
+<style>
+  .contract-template-card {
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .contract-template-card:hover {
+    border-color: rgba(22, 93, 255, 0.3);
+    transform: translateY(-2px);
+  }
+  .contract-template-card.selected {
+    border-color: #165DFF;
+    background: rgba(22, 93, 255, 0.03);
+  }
+  .contract-preview {
+    font-family: "SimSun", "Songti SC", "STSong", serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #1D2129;
+  }
+  .contract-preview h1 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  .contract-preview h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .contract-preview p {
+    text-indent: 2em;
+    margin-bottom: 10px;
+  }
+  .contract-preview .signature-section {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .complexity-low { color: #00B42A; background: #E8F5E9; }
+  .complexity-medium { color: #FF7D00; background: #FFF7E8; }
+  .complexity-high { color: #F53F3F; background: #FCE4E4; }
+</style>
+
+<div class="flex flex-col min-h-full">
+  <!-- 顶部 header -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:file-document-plus-outline" class="text-success text-lg md:text-xl"></iconify-icon>
+            <span>智能合同生成</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">AI 智能生成</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate">根据需求智能生成专业合同文本</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体内容 -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+    <!-- 步骤指示器 -->
+    <div class="flex items-center justify-center mb-6" data-animate="fade-in-up">
+      <div class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-sm font-bold shadow-md shadow-brand/20 contract-step-indicator" data-step="1">1</div>
+          <span class="text-xs text-fg-primary mt-1 font-medium">选择类型</span>
+        </div>
+        <div class="w-16 md:w-24 h-0.5 bg-bg-border mx-2 contract-step-line" data-line="1"></div>
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full bg-bg-border text-fg-tertiary flex items-center justify-center text-sm font-bold contract-step-indicator" data-step="2">2</div>
+          <span class="text-xs text-fg-tertiary mt-1">填写需求</span>
+        </div>
+        <div class="w-16 md:w-24 h-0.5 bg-bg-border mx-2 contract-step-line" data-line="2"></div>
+        <div class="flex flex-col items-center">
+          <div class="w-8 h-8 rounded-full bg-bg-border text-fg-tertiary flex items-center justify-center text-sm font-bold contract-step-indicator" data-step="3">3</div>
+          <span class="text-xs text-fg-tertiary mt-1">生成预览</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤1: 选择合同类型 -->
+    <div id="contractStep1" data-animate="fade-in-up">
+      <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5 mb-5">
+        <h3 class="text-sm font-bold text-fg-primary mb-4 flex items-center gap-2">
+          <iconify-icon icon="mdi:grid-view-outline" class="text-brand"></iconify-icon>
+          选择合同类型
+        </h3>
+
+        <!-- 分类筛选 -->
+        <div class="flex flex-wrap gap-2 mb-4" id="contractCategoryFilter">
+          <button class="px-3 py-1.5 text-xs font-medium text-white bg-brand rounded-lg transition-all contract-category-btn active" data-category="all" onclick="filterContractTemplates('all')">
+            全部
+          </button>
+          <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all contract-category-btn" data-category="租赁类" onclick="filterContractTemplates('租赁类')">
+            租赁类
+          </button>
+          <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all contract-category-btn" data-category="买卖类" onclick="filterContractTemplates('买卖类')">
+            买卖类
+          </button>
+          <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all contract-category-btn" data-category="借贷类" onclick="filterContractTemplates('借贷类')">
+            借贷类
+          </button>
+          <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all contract-category-btn" data-category="服务类" onclick="filterContractTemplates('服务类')">
+            服务类
+          </button>
+          <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all contract-category-btn" data-category="劳动类" onclick="filterContractTemplates('劳动类')">
+            劳动类
+          </button>
+        </div>
+
+        <!-- 模板网格 -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3" id="contractTemplatesGrid">
+          <!-- 模板卡片由 JS 动态生成 -->
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button id="contractStep1Next" class="gen-btn" onclick="goToContractStep(2)" disabled>
+          <span>下一步：填写需求</span>
+          <iconify-icon icon="mdi:arrow-right" class="text-base"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- 步骤2: 填写需求 -->
+    <div id="contractStep2" class="hidden" data-animate="fade-in-up">
+      <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5 mb-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-fg-primary flex items-center gap-2">
+            <iconify-icon icon="mdi:form-textbox" class="text-brand"></iconify-icon>
+            填写合同需求
+          </h3>
+          <span class="text-[11px] px-2 py-1 bg-brand-tint text-brand rounded-lg font-medium" id="selectedContractType">
+            已选：房屋租赁合同
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="field-label field-required">需求描述</label>
+            <textarea id="contractDescription" class="field-textarea" rows="5" placeholder="请详细描述您的合同需求，包括：&#10;1. 合同的主要内容和目的&#10;2. 双方的主要权利义务&#10;3. 关键条款和特殊要求&#10;4. 其他需要特别说明的事项"></textarea>
+            <p class="field-hint">描述越详细，生成的合同越精准</p>
+          </div>
+
+          <div>
+            <label class="field-label">甲方（一方）名称</label>
+            <input id="partyAName" type="text" class="field-input" placeholder="如：张三 / 北京某科技有限公司"/>
+          </div>
+          <div>
+            <label class="field-label">乙方（另一方）名称</label>
+            <input id="partyBName" type="text" class="field-input" placeholder="如：李四 / 上海某贸易公司"/>
+          </div>
+
+          <div>
+            <label class="field-label">合同金额</label>
+            <input id="contractAmount" type="text" class="field-input" placeholder="如：50万元 / 5000元/月"/>
+          </div>
+          <div>
+            <label class="field-label">合同期限</label>
+            <input id="contractTerm" type="text" class="field-input" placeholder="如：1年 / 自2026年1月1日至12月31日"/>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-bg-border">
+          <p class="text-xs font-semibold text-fg-primary mb-3">生成选项</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked id="optRiskWarning" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">风险提示</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked id="optFullClauses" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">完整条款</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="optSimplified" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">简易版本</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="optLocalization" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">本地化适配</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between">
+        <button class="px-5 py-2.5 bg-white border border-bg-border text-fg-secondary hover:border-brand hover:text-brand rounded-xl transition-all text-sm font-medium flex items-center gap-1.5" onclick="goToContractStep(1)">
+          <iconify-icon icon="mdi:arrow-left" class="text-base"></iconify-icon>
+          <span>上一步</span>
+        </button>
+        <button id="contractGenerateBtn" class="gen-btn" onclick="generateContract()">
+          <iconify-icon icon="mdi:sparkles" class="text-base"></iconify-icon>
+          <span>生成合同</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 步骤3: 预览结果 -->
+    <div id="contractStep3" class="hidden" data-animate="fade-in-up">
+      <!-- 风险提示 -->
+      <div id="contractWarnings" class="bg-urgent/5 border border-urgent/20 rounded-2xl p-4 mb-5 hidden">
+        <h4 class="text-sm font-semibold text-urgent mb-2 flex items-center gap-1.5">
+          <iconify-icon icon="mdi:alert-outline" class="text-base"></iconify-icon>
+          风险提示
+        </h4>
+        <ul class="text-xs text-fg-secondary space-y-1" id="contractWarningsList">
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- 合同预览 -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-card border border-bg-border p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-fg-primary flex items-center gap-2">
+              <iconify-icon icon="mdi:file-document-outline" class="text-brand"></iconify-icon>
+              合同预览
+            </h3>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all flex items-center gap-1" onclick="toggleContractEdit()">
+                <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                <span id="editBtnText">编辑</span>
+              </button>
+              <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all flex items-center gap-1" onclick="printContract()">
+                <iconify-icon icon="mdi:printer-outline" class="text-sm"></iconify-icon>
+                <span>打印</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="contractPreview" class="contract-preview bg-bg-subtle/50 rounded-xl p-6 max-h-[600px] overflow-y-auto">
+            <!-- 合同内容由 JS 动态生成 -->
+          </div>
+
+          <div id="contractEditor" class="hidden">
+            <textarea id="contractEditTextarea" class="w-full min-h-[400px] p-4 border border-bg-border rounded-xl text-sm font-mono leading-relaxed focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10" oninput="updateContractPreview()"></textarea>
+          </div>
+        </div>
+
+        <!-- 右侧操作区 -->
+        <div class="space-y-5">
+          <!-- 合同信息 -->
+          <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5">
+            <h4 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:information-outline" class="text-brand"></iconify-icon>
+              合同信息
+            </h4>
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-fg-tertiary">合同类型</span>
+                <span class="text-xs text-fg-primary font-medium" id="infoContractType">房屋租赁合同</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-fg-tertiary">使用模板</span>
+                <span class="text-xs text-fg-primary font-medium" id="infoTemplate">tpl-rent-house</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-fg-tertiary">条款数量</span>
+                <span class="text-xs text-fg-primary font-medium" id="infoClauseCount">11条</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-fg-tertiary">字数统计</span>
+                <span class="text-xs text-fg-primary font-medium" id="infoWordCount">约2000字</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 导出下载 -->
+          <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5">
+            <h4 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:download-outline" class="text-success"></iconify-icon>
+              导出下载
+            </h4>
+            <div class="space-y-2">
+              <button class="w-full py-2.5 text-xs font-medium text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5" onclick="downloadContract('docx')">
+                <iconify-icon icon="mdi:file-word-outline" class="text-base"></iconify-icon>
+                下载 Word 文档
+              </button>
+              <button class="w-full py-2.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="downloadContract('pdf')">
+                <iconify-icon icon="mdi:file-pdf-box" class="text-base text-urgent"></iconify-icon>
+                下载 PDF
+              </button>
+              <button class="w-full py-2.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="downloadContract('txt')">
+                <iconify-icon icon="mdi:file-document-outline" class="text-base text-fg-tertiary"></iconify-icon>
+                下载纯文本
+              </button>
+            </div>
+          </div>
+
+          <!-- 分享 -->
+          <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5">
+            <h4 class="text-sm font-semibold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:share-variant-outline" class="text-wiki"></iconify-icon>
+              分享合同
+            </h4>
+            <div class="space-y-2">
+              <button class="w-full py-2.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="shareContract('link')">
+                <iconify-icon icon="mdi:link-variant" class="text-base text-brand"></iconify-icon>
+                生成分享链接
+              </button>
+              <button class="w-full py-2.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="shareContract('email')">
+                <iconify-icon icon="mdi:email-outline" class="text-base text-wiki"></iconify-icon>
+                邮件发送
+              </button>
+            </div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="flex flex-col gap-2">
+            <button class="w-full py-3 text-xs font-medium text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5" onclick="regenerateContract()">
+              <iconify-icon icon="mdi:refresh" class="text-base"></iconify-icon>
+              重新生成
+            </button>
+            <button class="w-full py-2.5 text-xs font-medium text-fg-secondary bg-white border border-bg-border hover:border-brand hover:text-brand rounded-xl transition-all flex items-center justify-center gap-1.5" onclick="goToContractStep(2)">
+              <iconify-icon icon="mdi:arrow-left" class="text-sm"></iconify-icon>
+              返回修改
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var selectedTemplate = null;
+    var currentContractData = null;
+    var isEditing = false;
+
+    var templates = [
+        { id: 'tpl-rent-house', name: '房屋租赁合同', category: '租赁类', description: '住宅、商业用房租赁', icon: 'mdi:home', complexity: 'low' },
+        { id: 'tpl-rent-office', name: '写字楼租赁合同', category: '租赁类', description: '办公室、写字楼租赁', icon: 'mdi:office-building', complexity: 'medium' },
+        { id: 'tpl-sales-goods', name: '货物买卖合同', category: '买卖类', description: '一般货物买卖交易', icon: 'mdi:cart-outline', complexity: 'medium' },
+        { id: 'tpl-sales-house', name: '房屋买卖合同', category: '买卖类', description: '商品房、二手房买卖', icon: 'mdi:home-city', complexity: 'high' },
+        { id: 'tpl-labor', name: '劳动合同', category: '劳动类', description: '全日制劳动合同', icon: 'mdi:briefcase-outline', complexity: 'medium' },
+        { id: 'tpl-labor-parttime', name: '劳务合同', category: '劳动类', description: '兼职、劳务外包', icon: 'mdi:account-group-outline', complexity: 'low' },
+        { id: 'tpl-loan', name: '借款合同', category: '借贷类', description: '民间借贷、企业拆借', icon: 'mdi:currency-cny', complexity: 'low' },
+        { id: 'tpl-guarantee', name: '保证合同', category: '借贷类', description: '担保、保证协议', icon: 'mdi:shield-check-outline', complexity: 'medium' },
+        { id: 'tpl-service', name: '服务合同', category: '服务类', description: '专业服务提供', icon: 'mdi:account-tie-outline', complexity: 'medium' },
+        { id: 'tpl-consulting', name: '咨询服务合同', category: '服务类', description: '咨询、顾问服务', icon: 'mdi:comment-question-outline', complexity: 'medium' }
+    ];
+
+    function getComplexityLabel(c) {
+        if (c === 'low') {
+            return '简单';
+        } else if (c === 'high') {
+            return '复杂';
+        }
+        return '中等';
+    }
+
+    function renderContractTemplates(category) {
+        var grid = document.getElementById('contractTemplatesGrid');
+        if (!grid) {
+            return;
+        }
+        grid.innerHTML = '';
+
+        var filtered = templates;
+        if (category && category !== 'all') {
+            filtered = templates.filter(function (t) { return t.category === category; });
+        }
+
+        for (var i = 0; i < filtered.length; i++) {
+            var t = filtered[i];
+            var complexityClass = 'complexity-' + t.complexity;
+            var card = document.createElement('div');
+            card.className = 'contract-template-card bg-bg-subtle rounded-2xl p-4 cursor-pointer transition-all';
+            card.dataset.id = t.id;
+            card.dataset.name = t.name;
+            card.dataset.category = t.category;
+            card.onclick = function () { selectContractTemplate(this); };
+            card.innerHTML = '<div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center mb-3">' +
+                '<iconify-icon icon="' + t.icon + '" class="text-xl text-brand"></iconify-icon>' +
+                '</div>' +
+                '<h4 class="text-xs font-semibold text-fg-primary mb-1 truncate">' + t.name + '</h4>' +
+                '<p class="text-[10px] text-fg-tertiary mb-2 line-clamp-2">' + t.description + '</p>' +
+                '<span class="inline-block text-[9px] px-1.5 py-0.5 rounded font-medium ' + complexityClass + '">' + getComplexityLabel(t.complexity) + '</span>';
+            grid.appendChild(card);
+        }
+    }
+
+    function selectContractTemplate(el) {
+        var cards = document.querySelectorAll('.contract-template-card');
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].classList.remove('selected');
+        }
+        el.classList.add('selected');
+        selectedTemplate = {
+            id: el.dataset.id,
+            name: el.dataset.name,
+            category: el.dataset.category
+        };
+
+        var nextBtn = document.getElementById('contractStep1Next');
+        if (nextBtn) {
+            nextBtn.disabled = false;
+        }
+
+        var typeEl = document.getElementById('selectedContractType');
+        if (typeEl) {
+            typeEl.textContent = '已选：' + selectedTemplate.name;
+        }
+    }
+
+    window.filterContractTemplates = function (category) {
+        var btns = document.querySelectorAll('.contract-category-btn');
+        for (var i = 0; i < btns.length; i++) {
+            if (btns[i].dataset.category === category) {
+                btns[i].classList.add('active', 'bg-brand', 'text-white');
+                btns[i].classList.remove('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            } else {
+                btns[i].classList.remove('active', 'bg-brand', 'text-white');
+                btns[i].classList.add('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            }
+        }
+        renderContractTemplates(category);
+    };
+
+    window.goToContractStep = function (step) {
+        for (var i = 1; i <= 3; i++) {
+            var stepEl = document.getElementById('contractStep' + i);
+            if (stepEl) {
+                if (i === step) {
+                    stepEl.classList.remove('hidden');
+                } else {
+                    stepEl.classList.add('hidden');
+                }
+            }
+        }
+
+        var indicators = document.querySelectorAll('.contract-step-indicator');
+        for (var j = 0; j < indicators.length; j++) {
+            var s = parseInt(indicators[j].dataset.step, 10);
+            if (s <= step) {
+                indicators[j].classList.add('bg-brand', 'text-white', 'shadow-md', 'shadow-brand/20');
+                indicators[j].classList.remove('bg-bg-border', 'text-fg-tertiary');
+            } else {
+                indicators[j].classList.remove('bg-brand', 'text-white', 'shadow-md', 'shadow-brand/20');
+                indicators[j].classList.add('bg-bg-border', 'text-fg-tertiary');
+            }
+        }
+
+        var lines = document.querySelectorAll('.contract-step-line');
+        for (var k = 0; k < lines.length; k++) {
+            var l = parseInt(lines[k].dataset.line, 10);
+            if (l < step) {
+                lines[k].classList.add('bg-brand');
+                lines[k].classList.remove('bg-bg-border');
+            } else {
+                lines[k].classList.remove('bg-brand');
+                lines[k].classList.add('bg-bg-border');
+            }
+        }
+
+        var labels = document.querySelectorAll('.flex.flex-col.items-center > span:last-child');
+        for (var m = 0; m < labels.length; m++) {
+            if (m < step) {
+                labels[m].classList.add('text-fg-primary', 'font-medium');
+                labels[m].classList.remove('text-fg-tertiary');
+            } else {
+                labels[m].classList.remove('text-fg-primary', 'font-medium');
+                labels[m].classList.add('text-fg-tertiary');
+            }
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    function generateContractRequest() {
+        var desc = document.getElementById('contractDescription') ? document.getElementById('contractDescription').value : '';
+        var partyA = document.getElementById('partyAName') ? document.getElementById('partyAName').value : '';
+        var partyB = document.getElementById('partyBName') ? document.getElementById('partyBName').value : '';
+        var amount = document.getElementById('contractAmount') ? document.getElementById('contractAmount').value : '';
+        var term = document.getElementById('contractTerm') ? document.getElementById('contractTerm').value : '';
+
+        var body = {
+            template_id: selectedTemplate ? selectedTemplate.id : null,
+            contract_type: selectedTemplate ? selectedTemplate.name : null,
+            description: desc,
+            parties: [
+                { name: partyA, role: '甲方' },
+                { name: partyB, role: '乙方' }
+            ],
+            key_terms: {
+                amount: amount,
+                term: term
+            }
+        };
+
+        return body;
+    }
+
+    window.generateContract = function () {
+        var btn = document.getElementById('contractGenerateBtn');
+        if (btn) {
+            btn.disabled = true;
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<iconify-icon icon="mdi:loading" class="text-base animate-spin"></iconify-icon><span>生成中...</span>';
+        }
+
+        var body = generateContractRequest();
+
+        fetch('/api/contract/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                currentContractData = data;
+                renderContractResult(data);
+                goToContractStep(3);
+            })
+            .catch(function () {
+                var mock = getMockContract();
+                currentContractData = mock;
+                renderContractResult(mock);
+                goToContractStep(3);
+            })
+            .finally(function () {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+    };
+
+    function getMockContract() {
+        var title = '房屋租赁合同';
+        var clauses = [
+            { title: '第一条 合同当事人', content: '出租方（以下简称甲方）：__________\n身份证号：__________\n联系地址：__________\n联系电话：__________\n\n承租方（以下简称乙方）：__________\n身份证号：__________\n联系地址：__________\n联系电话：__________' },
+            { title: '第二条 租赁房屋', content: '1. 甲方将其合法拥有的坐落于__________的房屋（以下简称"该房屋"）出租给乙方使用。\n2. 该房屋建筑面积约__________平方米，房屋用途为__________。' },
+            { title: '第三条 租赁期限', content: '1. 租赁期限自____年__月__日起至____年__月__日止，共计__个月。\n2. 租赁期满，甲方有权收回该房屋，乙方应如期交还。' },
+            { title: '第四条 租金及支付方式', content: '1. 该房屋月租金为人民币__________元（大写：__________元整）。\n2. 租金支付方式：按□月/□季/□半年/□年支付。' },
+            { title: '第五条 押金', content: '1. 乙方应于本合同签订之日向甲方支付押金人民币__________元。\n2. 租赁期满或合同解除后，押金除抵扣应由乙方承担的费用外，剩余部分应如数返还。' },
+            { title: '第六条 相关费用', content: '租赁期间，因使用该房屋所产生的水费、电费、燃气费、供暖费、物业管理费等由乙方承担。' },
+            { title: '第七条 房屋使用及维护', content: '1. 乙方应合理使用并爱护该房屋及其附属设施。\n2. 乙方不得擅自改变房屋结构，不得擅自拆改、变动房屋内部设施。' },
+            { title: '第八条 合同的解除', content: '1. 经甲乙双方协商一致，可以解除本合同。\n2. 乙方有下列情形之一的，甲方有权单方解除合同，收回该房屋。' },
+            { title: '第九条 违约责任', content: '1. 乙方逾期支付租金的，每逾期一日，应按日租金的__%向甲方支付违约金。\n2. 租赁期内，任何一方需提前解除合同的，应提前__日通知对方。' },
+            { title: '第十条 争议解决', content: '本合同项下发生的争议，由双方协商解决；协商不成的，依法向该房屋所在地人民法院起诉。' },
+            { title: '第十一条 其他约定事项', content: '1. 本合同未尽事宜，双方可另行签订补充协议。\n2. 本合同一式两份，甲乙双方各执一份，自双方签字（或盖章）之日起生效。' }
+        ];
+
+        var fullText = title + '\n\n';
+        for (var i = 0; i < clauses.length; i++) {
+            fullText += clauses[i].title + '\n\n' + clauses[i].content + '\n\n';
+        }
+
+        return {
+            contract_id: 'contract-' + Date.now(),
+            title: title,
+            contract_type: title,
+            clauses: clauses,
+            full_text: fullText,
+            template_used: 'tpl-rent-house',
+            warnings: [
+                '建议核实房屋产权证明，确保甲方享有合法出租权',
+                '建议明确约定押金返还的具体条件和时间',
+                '建议在合同中详细列明房屋附属设施清单'
+            ]
+        };
+    }
+
+    function renderContractResult(data) {
+        var infoType = document.getElementById('infoContractType');
+        var infoTemplate = document.getElementById('infoTemplate');
+        var infoClauses = document.getElementById('infoClauseCount');
+        var infoWords = document.getElementById('infoWordCount');
+
+        if (infoType) {
+            infoType.textContent = data.contract_type;
+        }
+        if (infoTemplate) {
+            infoTemplate.textContent = data.template_used;
+        }
+        if (infoClauses) {
+            infoClauses.textContent = data.clauses.length + '条';
+        }
+        if (infoWords) {
+            var count = data.full_text ? data.full_text.length : 0;
+            infoWords.textContent = '约' + Math.round(count / 100) * 100 + '字';
+        }
+
+        var preview = document.getElementById('contractPreview');
+        if (preview && data.clauses) {
+            var html = '<h1>' + data.title + '</h1>';
+            for (var i = 0; i < data.clauses.length; i++) {
+                var clause = data.clauses[i];
+                var contentHtml = clause.content.replace(/\n/g, '<br/>');
+                html += '<h2>' + clause.title + '</h2>';
+                html += '<p>' + contentHtml + '</p>';
+            }
+            preview.innerHTML = html;
+        }
+
+        var editTextarea = document.getElementById('contractEditTextarea');
+        if (editTextarea) {
+            editTextarea.value = data.full_text || '';
+        }
+
+        var warningsEl = document.getElementById('contractWarnings');
+        var warningsList = document.getElementById('contractWarningsList');
+        if (warningsEl && warningsList && data.warnings && data.warnings.length > 0) {
+            warningsEl.classList.remove('hidden');
+            warningsList.innerHTML = '';
+            for (var j = 0; j < data.warnings.length; j++) {
+                var li = document.createElement('li');
+                li.className = 'flex items-start gap-1.5';
+                li.innerHTML = '<span class="text-urgent mt-0.5 flex-shrink-0">•</span><span>' + data.warnings[j] + '</span>';
+                warningsList.appendChild(li);
+            }
+        }
+    }
+
+    window.toggleContractEdit = function () {
+        var preview = document.getElementById('contractPreview');
+        var editor = document.getElementById('contractEditor');
+        var btnText = document.getElementById('editBtnText');
+
+        if (isEditing) {
+            if (preview) {
+                preview.classList.remove('hidden');
+            }
+            if (editor) {
+                editor.classList.add('hidden');
+            }
+            if (btnText) {
+                btnText.textContent = '编辑';
+            }
+        } else {
+            if (preview) {
+                preview.classList.add('hidden');
+            }
+            if (editor) {
+                editor.classList.remove('hidden');
+            }
+            if (btnText) {
+                btnText.textContent = '预览';
+            }
+        }
+        isEditing = !isEditing;
+    };
+
+    window.updateContractPreview = function () {
+        var textarea = document.getElementById('contractEditTextarea');
+        var preview = document.getElementById('contractPreview');
+        if (textarea && preview) {
+            var text = textarea.value;
+            currentContractData.full_text = text;
+            var lines = text.split('\n');
+            var html = '';
+            var inClause = false;
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line.indexOf('第') === 0 && line.indexOf('条') >= 0) {
+                    if (inClause) {
+                        html += '</p>';
+                    }
+                    html += '<h2>' + line + '</h2><p>';
+                    inClause = true;
+                } else if (line === '') {
+                    if (inClause) {
+                        html += '</p><p>';
+                    }
+                } else {
+                    if (!inClause) {
+                        html += '<h1>' + line + '</h1>';
+                        inClause = true;
+                    } else {
+                        html += line + '<br/>';
+                    }
+                }
+            }
+            if (inClause) {
+                html += '</p>';
+            }
+            preview.innerHTML = html;
+        }
+    };
+
+    window.downloadContract = function (format) {
+        if (!currentContractData) {
+            return;
+        }
+        var content = currentContractData.full_text || '';
+        var filename = currentContractData.title || 'contract';
+        var mimeType = 'text/plain';
+
+        if (format === 'docx') {
+            alert('Word 文档下载功能开发中');
+            return;
+        } else if (format === 'pdf') {
+            alert('PDF 下载功能开发中');
+            return;
+        }
+
+        var blob = new Blob([content], { type: mimeType });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename + '.' + format;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    window.shareContract = function (type) {
+        if (type === 'link') {
+            alert('分享链接功能开发中');
+        } else if (type === 'email') {
+            var subject = currentContractData ? encodeURIComponent(currentContractData.title) : '';
+            window.location.href = 'mailto:?subject=' + subject;
+        }
+    };
+
+    window.printContract = function () {
+        var preview = document.getElementById('contractPreview');
+        if (preview) {
+            var printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.write('<html><head><title>' + (currentContractData.title || '合同') + '</title>');
+                printWindow.document.write('<style>body { font-family: "SimSun", serif; padding: 40px; line-height: 1.8; } h1 { text-align: center; } h2 { margin-top: 20px; }</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(preview.innerHTML);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+    };
+
+    window.regenerateContract = function () {
+        generateContract();
+    };
+
+    function init() {
+        renderContractTemplates('all');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        setTimeout(init, 100);
+    }
+})();
+</script>

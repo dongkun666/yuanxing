@@ -1,70 +1,305 @@
-<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-notifications">
-<div class="max-w-4xl mx-auto w-full space-y-5">
-<!-- 标题 + 返回 + 「···」菜单 -->
-<div class="flex items-center justify-between">
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-notifications">
+<div class="max-w-4xl mx-auto w-full space-y-3 md:space-y-4">
+<!-- 标题 + 返回 + 操作 -->
+<div class="flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
 <div class="flex items-center gap-3">
-<button class="flex items-center gap-1 text-xs text-fg-secondary hover:text-brand transition-colors" onclick="switchView('workstation')">
-<iconify-icon icon="mdi:arrow-left"></iconify-icon>
-<span>返回</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-fg-tertiary transition-colors" onclick="switchView('workstation')">
+<iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
-<span class="text-bg-border">|</span>
-<h3 class="text-base font-semibold text-fg-primary">全部通知</h3>
+<div>
+<h3 class="text-lg font-bold text-fg-primary">通知中心</h3>
+<p class="text-[11px] text-fg-tertiary">掌握所有重要消息和提醒</p>
+</div>
 </div>
 <div class="flex items-center gap-2">
-<button class="px-3 py-1.5 text-xs rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors flex items-center gap-1" onclick="markAllNotifications()">
-<iconify-icon icon="mdi:check-all"></iconify-icon>
-<span>全部已读</span>
-</button>
-<!-- 「···」菜单 (全部已读 / 清空通知) -->
+<div class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-tint3 rounded-full">
+<iconify-icon class="text-brand text-sm" icon="mdi:bell-ring-outline"></iconify-icon>
+<span id="notifications-count" class="text-xs font-semibold text-brand"></span>
+</div>
 <div class="relative">
-<button class="px-2 py-1.5 text-xs rounded-lg text-fg-secondary hover:bg-bg-subtle transition-colors" onclick="toggleNotifMoreMenu(event)" title="更多操作">
-<iconify-icon icon="mdi:dots-horizontal" class="text-base"></iconify-icon>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-fg-tertiary transition-colors" onclick="toggleNotifMoreMenu(event)" title="更多操作">
+<iconify-icon icon="mdi:dots-vertical" class="text-base"></iconify-icon>
 </button>
-<div id="notifMoreMenu" class="hidden absolute right-0 top-full mt-1 w-44 bg-white rounded-lg border border-bg-border shadow-lg overflow-hidden z-[60]">
-<button class="w-full text-left px-3 py-2 text-xs text-fg-primary hover:bg-bg-subtle flex items-center gap-2" onclick="markAllNotifications(); toggleNotifMoreMenu(event);">
-<iconify-icon icon="mdi:check-all"></iconify-icon>
-<span>全部已读</span>
+<div id="notifMoreMenu" class="hidden absolute right-0 top-full mt-1 w-44 bg-white rounded-xl border border-bg-border shadow-xl overflow-hidden z-[60]">
+<button class="w-full text-left px-4 py-2.5 text-xs text-fg-primary hover:bg-bg-subtle flex items-center gap-2 transition-colors" onclick="markAllNotifications(); toggleNotifMoreMenu(event);">
+<iconify-icon icon="mdi:check-all" class="text-brand"></iconify-icon>
+<span>全部标记已读</span>
 </button>
-<div class="border-t border-bg-border"></div>
-<button class="w-full text-left px-3 py-2 text-xs text-danger hover:bg-danger-tint flex items-center gap-2" onclick="clearAllNotifications(); toggleNotifMoreMenu(event);">
+<div class="border-t border-bg-border/60"></div>
+<button class="w-full text-left px-4 py-2.5 text-xs text-danger hover:bg-danger-tint flex items-center gap-2 transition-colors" onclick="clearAllNotifications(); toggleNotifMoreMenu(event);">
 <iconify-icon icon="mdi:trash-can-outline"></iconify-icon>
-<span>清空通知</span>
+<span>清空所有通知</span>
 </button>
 </div>
 </div>
 </div>
 </div>
-<!-- 三态 filter (状态维度) -->
-<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-3 flex-wrap">
-<iconify-icon class="text-fg-tertiary text-base" icon="mdi:filter-variant"></iconify-icon>
-<span class="text-xs text-fg-secondary font-medium">状态</span>
-<button data-filter="all" onclick="setNotificationsFilter('all')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium">全部</button>
-<button data-filter="unread" onclick="setNotificationsFilter('unread')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">未读</button>
-<button data-filter="read" onclick="setNotificationsFilter('read')" class="notif-filter-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium">已读</button>
-<span class="text-[10px] text-fg-tertiary ml-auto" id="notifications-count"></span>
+
+<!-- Tab 切换 -->
+<div class="ws-card overflow-hidden" data-animate="fade-in-up" data-delay="0.08">
+<div class="p-4 md:p-5">
+<!-- 状态 Tab -->
+<div class="flex items-center gap-1.5 mb-4 pb-4 border-b border-bg-border/60">
+<span class="text-xs text-fg-tertiary mr-1 flex items-center gap-1">
+<iconify-icon icon="mdi:eye-outline" class="text-sm"></iconify-icon>
+状态：
+</span>
+<button data-filter="all" onclick="setNotificationsFilter('all')" class="notif-filter-tab text-xs px-4 py-2 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-200">全部</button>
+<button data-filter="unread" onclick="setNotificationsFilter('unread')" class="notif-filter-tab text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1.5">
+<iconify-icon icon="mdi:email-mark-as-unread" class="text-sm"></iconify-icon>
+未读
+</button>
+<button data-filter="read" onclick="setNotificationsFilter('read')" class="notif-filter-tab text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1.5">
+<iconify-icon icon="mdi:email-check-outline" class="text-sm"></iconify-icon>
+已读
+</button>
 </div>
-<!-- 类型 filter (主题维度, 独立于三态叠加生效) -->
-<div class="bg-white rounded-xl border border-bg-border p-4 flex items-center gap-2 flex-wrap">
-<iconify-icon class="text-fg-tertiary text-base" icon="mdi:tag-outline"></iconify-icon>
-<span class="text-xs text-fg-secondary font-medium">类型</span>
-<button data-type="all" onclick="setNotificationsType('all')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-brand text-white font-medium">全部类型</button>
-<button data-type="document" onclick="setNotificationsType('document')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
-<iconify-icon icon="mdi:file-document-outline" class="text-sm"></iconify-icon>文档
-</button>
-<button data-type="deadline" onclick="setNotificationsType('deadline')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
-<iconify-icon icon="mdi:clock-alert-outline" class="text-sm"></iconify-icon>截止
-</button>
-<button data-type="case" onclick="setNotificationsType('case')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
-<iconify-icon icon="mdi:gavel" class="text-sm"></iconify-icon>案件
-</button>
-<button data-type="member" onclick="setNotificationsType('member')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
-<iconify-icon icon="mdi:account-star-outline" class="text-sm"></iconify-icon>会员
-</button>
-<button data-type="system" onclick="setNotificationsType('system')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-bg font-medium flex items-center gap-1">
+<!-- 类型 Tab -->
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-xs text-fg-tertiary mr-1 flex items-center gap-1">
+<iconify-icon icon="mdi:tag-outline" class="text-sm"></iconify-icon>
+类型：
+</span>
+<button data-type="all" onclick="setNotificationsType('all')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-200">全部类型</button>
+<button data-type="system" onclick="setNotificationsType('system')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1">
 <iconify-icon icon="mdi:cog-outline" class="text-sm"></iconify-icon>系统
 </button>
+<button data-type="document" onclick="setNotificationsType('document')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1">
+<iconify-icon icon="mdi:file-document-outline" class="text-sm"></iconify-icon>文档
+</button>
+<button data-type="deadline" onclick="setNotificationsType('deadline')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1">
+<iconify-icon icon="mdi:clock-alert-outline" class="text-sm"></iconify-icon>截止
+</button>
+<button data-type="case" onclick="setNotificationsType('case')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1">
+<iconify-icon icon="mdi:gavel" class="text-sm"></iconify-icon>案件
+</button>
+<button data-type="member" onclick="setNotificationsType('member')" class="notif-type-tab text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1">
+<iconify-icon icon="mdi:account-star-outline" class="text-sm"></iconify-icon>会员
+</button>
 </div>
+</div>
+<!-- 操作栏 -->
+<div class="px-4 md:px-5 py-3 bg-bg-subtle/50 border-t border-bg-border/60 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors" onclick="markAllNotifications()">
+<iconify-icon icon="mdi:check-all" class="text-sm"></iconify-icon>
+全部已读
+</button>
+<span class="text-bg-border">|</span>
+<button class="text-xs text-fg-tertiary hover:text-fg-secondary font-medium flex items-center gap-1 transition-colors" onclick="switchView('account-settings')">
+<iconify-icon icon="mdi:cog-outline" class="text-sm"></iconify-icon>
+通知设置
+</button>
+</div>
+<span class="text-[11px] text-fg-tertiary" id="notifications-summary"></span>
+</div>
+</div>
+
 <!-- 通知列表 -->
-<div class="space-y-3" id="notifications-list"></div>
+<div class="space-y-3" id="notifications-list" data-animate="fade-in-up" data-delay="0.16">
+<!-- 未读通知示例 1 - 系统通知 -->
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-brand relative overflow-hidden" onclick="openNotification('sys-001', event)">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-brand text-lg" icon="mdi:cog-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-start gap-2 mb-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+系统
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">系统升级通知</span>
+</div>
+</div>
+<span class="flex items-center gap-1 flex-shrink-0 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary leading-relaxed">系统将于今晚 23:00-02:00 进行版本升级，期间可能短暂无法访问，请提前保存您的工作内容。</p>
+<div class="flex items-center justify-between mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+10 分钟前
+</span>
+<div class="flex items-center gap-1">
+<button class="text-[10px] text-brand bg-brand-tint hover:bg-brand-tint2 px-2.5 py-1 rounded-md font-medium transition-all" onclick="event.stopPropagation();">查看详情</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand px-2.5 py-1 rounded-md transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markNotificationRead('sys-001')">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+已读
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 未读通知示例 2 - 截止提醒 -->
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-danger relative overflow-hidden" onclick="openNotification('dead-001', event)">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-danger/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-danger text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-start gap-2 mb-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20">
+<iconify-icon icon="mdi:alert-circle" class="text-[9px]"></iconify-icon>
+截止提醒
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">证据提交即将截止</span>
+</div>
+</div>
+<span class="flex items-center gap-1 flex-shrink-0 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-danger animate-pulse"></span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary leading-relaxed">李明诉XX公司买卖合同纠纷案的证据提交期限还剩 2 天，请及时准备并提交相关证据材料。</p>
+<div class="flex items-center justify-between mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+30 分钟前
+</span>
+<div class="flex items-center gap-1">
+<button class="text-[10px] text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25 px-2.5 py-1 rounded-md font-medium transition-all" onclick="event.stopPropagation();">去处理</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand px-2.5 py-1 rounded-md transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markNotificationRead('dead-001')">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+已读
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 未读通知示例 3 - 文档通知 -->
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-wiki relative overflow-hidden" onclick="openNotification('doc-001', event)">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wiki/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-100 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-wiki text-lg" icon="mdi:file-document-check-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-start gap-2 mb-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-wiki-tint to-purple-100 text-wiki">
+文档
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">AI 文书已生成</span>
+</div>
+</div>
+<span class="flex items-center gap-1 flex-shrink-0 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-wiki"></span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary leading-relaxed">您委托的「王华借贷纠纷答辩状」已由 AI 生成完成，点击查看详情并进行编辑调整。</p>
+<div class="flex items-center justify-between mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+1 小时前
+</span>
+<div class="flex items-center gap-1">
+<button class="text-[10px] text-wiki bg-wiki-tint hover:bg-purple-100 px-2.5 py-1 rounded-md font-medium transition-all" onclick="event.stopPropagation();">查看文档</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand px-2.5 py-1 rounded-md transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markNotificationRead('doc-001')">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+已读
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 已读通知示例 4 - 案件通知 -->
+<div class="ws-card p-4 group cursor-pointer relative overflow-hidden opacity-90" onclick="openNotification('case-001', event)">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-success/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-green-100 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-success text-lg" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-start gap-2 mb-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-success-tint to-green-100 text-success">
+案件
+</span>
+<span class="font-medium text-sm text-fg-primary group-hover:text-brand transition-colors">案件状态已更新</span>
+</div>
+</div>
+<span class="text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded flex-shrink-0 mt-0.5">已读</span>
+</div>
+<p class="text-xs text-fg-tertiary leading-relaxed">张三合同纠纷案状态已更新为「已归档」，全部卷宗已完成归档工作。</p>
+<div class="flex items-center justify-between mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 14:30
+</span>
+<button class="text-[10px] text-success bg-success-tint hover:bg-green-100 px-2.5 py-1 rounded-md font-medium transition-all" onclick="event.stopPropagation();">查看案件</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 已读通知示例 5 - 会员通知 -->
+<div class="ws-card p-4 group cursor-pointer relative overflow-hidden opacity-90" onclick="openNotification('mem-001', event)">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-100 to-warning-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-warning text-lg" icon="mdi:account-star-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-start gap-2 mb-1">
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-warning-tint to-amber-100 text-warning">
+会员
+</span>
+<span class="font-medium text-sm text-fg-primary group-hover:text-brand transition-colors">会员即将到期</span>
+</div>
+</div>
+<span class="text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded flex-shrink-0 mt-0.5">已读</span>
+</div>
+<p class="text-xs text-fg-tertiary leading-relaxed">您的专业版会员将于 2026-08-15 到期，为避免影响您的使用，请及时续费。</p>
+<div class="flex items-center justify-between mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+2 天前
+</span>
+<button class="text-[10px] text-warning bg-warning-tint hover:bg-amber-100 px-2.5 py-1 rounded-md font-medium transition-all" onclick="event.stopPropagation();">立即续费</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 空状态（默认隐藏，JS 控制显示） -->
+<div id="notifications-empty" class="hidden">
+<div class="ws-card p-10 md:p-16">
+<div class="flex flex-col items-center justify-center text-center">
+<div class="w-24 h-24 rounded-full bg-gradient-to-br from-bg-subtle to-bg flex items-center justify-center mb-5">
+<iconify-icon icon="mdi:bell-check-outline" class="text-5xl text-fg-disabled"></iconify-icon>
+</div>
+<h4 class="text-base font-semibold text-fg-primary mb-2">暂无通知</h4>
+<p class="text-sm text-fg-tertiary mb-6 max-w-xs">您目前没有任何通知，所有消息都已处理完毕</p>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="setNotificationsFilter('all'); setNotificationsType('all');">
+<iconify-icon icon="mdi:refresh" class="text-base"></iconify-icon>
+刷新通知
+</button>
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-white border border-bg-border text-fg-secondary hover:border-brand hover:text-brand hover:bg-brand-tint3 transition-all duration-300 flex items-center gap-1.5" onclick="switchView('account-settings')">
+<iconify-icon icon="mdi:cog-outline" class="text-base"></iconify-icon>
+通知设置
+</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
 </div>
 </div>

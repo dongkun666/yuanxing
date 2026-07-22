@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LexPrime 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="options-container">
+    <header class="options-header">
+      <div class="header-logo">
+        <span class="logo-icon">⚖️</span>
+        <h1>LexPrime 设置</h1>
+      </div>
+      <p class="header-desc">配置 LexPrime 浏览器扩展</p>
+    </header>
+
+    <main class="options-main">
+      <section class="setting-section">
+        <h2 class="section-title">账户设置</h2>
+        <div class="setting-card">
+          <div class="setting-item">
+            <label class="setting-label">
+              <span class="label-text">API Key</span>
+              <span class="label-desc">输入您的 LexPrime API Key 以使用全部功能</span>
+            </label>
+            <div class="setting-input-group">
+              <input 
+                type="password" 
+                id="apiKey" 
+                placeholder="输入 API Key"
+                class="setting-input"
+              />
+              <button id="toggleApiKey" class="input-icon-btn">👁️</button>
+            </div>
+          </div>
+          <div class="setting-item">
+            <button id="saveApiKey" class="btn btn-primary">保存 API Key</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="setting-section">
+        <h2 class="section-title">功能设置</h2>
+        <div class="setting-card">
+          <div class="setting-item toggle-item">
+            <label class="setting-label">
+              <span class="label-text">自动法律条文高亮</span>
+              <span class="label-desc">在网页上自动检测并高亮法律条文</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoHighlight" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item toggle-item">
+            <label class="setting-label">
+              <span class="label-text">右键菜单</span>
+              <span class="label-desc">在右键菜单中显示 LexPrime 选项</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="contextMenu" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item toggle-item">
+            <label class="setting-label">
+              <span class="label-text">桌面通知</span>
+              <span class="label-desc">允许 LexPrime 发送桌面通知</span>
+            </label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notifications" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="setting-section">
+        <h2 class="section-title">外观设置</h2>
+        <div class="setting-card">
+          <div class="setting-item">
+            <label class="setting-label">
+              <span class="label-text">高亮颜色</span>
+              <span class="label-desc">选择法律条文高亮的颜色</span>
+            </label>
+            <div class="color-options">
+              <div class="color-option yellow active" data-color="yellow"></div>
+              <div class="color-option green" data-color="green"></div>
+              <div class="color-option blue" data-color="blue"></div>
+              <div class="color-option pink" data-color="pink"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="setting-section">
+        <h2 class="section-title">关于</h2>
+        <div class="setting-card">
+          <div class="about-info">
+            <div class="about-row">
+              <span class="about-label">版本</span>
+              <span class="about-value">1.0.0</span>
+            </div>
+            <div class="about-row">
+              <span class="about-label">官方网站</span>
+              <a href="https://lexprime.com" target="_blank" class="about-link">lexprime.com</a>
+            </div>
+            <div class="about-row">
+              <span class="about-label">隐私政策</span>
+              <a href="https://lexprime.com/privacy" target="_blank" class="about-link">查看隐私政策</a>
+            </div>
+            <div class="about-row">
+              <span class="about-label">用户协议</span>
+              <a href="https://lexprime.com/terms" target="_blank" class="about-link">查看用户协议</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="actions-bar">
+        <button id="resetSettings" class="btn btn-outline">重置设置</button>
+        <button id="saveSettings" class="btn btn-primary">保存设置</button>
+      </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

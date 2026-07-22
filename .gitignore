@@ -27,8 +27,11 @@ Thumbs.db
 npm-debug.log*
 
 # 编译产物（保留）
-# assets/css/tailwind.css  # 编译后的 CSS，需要提�?
-# assets/css/tailwind-input.css  # �?CSS，需要提�?
+# assets/css/tailwind.css  # 编译后的 CSS，需要提交
+# assets/css/tailwind-input.css  # 源 CSS，需要提交
+
+# 生产 HTML 产物 (npm run build 生成, 部署时用)
+index.prod.html
 
 # Git worktrees（隔离工作区，与 .worktrees/ 配合 using-git-worktrees skill�?
 .worktrees/

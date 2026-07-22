@@ -1,234 +1,617 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-case-dynamics">
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4" id="view-case-dynamics">
 <!-- 头部 -->
-<div class="flex-none flex items-center justify-between">
+<div class="flex-none flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
 <div class="flex items-center gap-3">
 <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary transition-colors" onclick="switchView('workstation')">
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
+<div>
 <h2 class="text-lg font-bold text-fg-primary">案件动态</h2>
-<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 16 条</span>
+<p class="text-[11px] text-fg-tertiary">实时掌握案件最新进展</p>
+</div>
 </div>
 <div class="flex items-center gap-2">
-<!-- 视图切换 -->
-<div class="flex items-center border border-bg-border rounded-lg overflow-hidden">
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-brand text-white transition-colors" id="dyn-view-list" onclick="switchDynamicsView('list')">
-<iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
-</button>
-<button class="flex items-center gap-1 h-8 px-2.5 text-xs bg-white text-fg-secondary hover:bg-gray-50 transition-colors" id="dyn-view-timeline" onclick="switchDynamicsView('timeline')">
-<iconify-icon icon="mdi:timeline"></iconify-icon>
-</button>
+<div class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-tint3 rounded-full">
+<iconify-icon class="text-brand text-sm" icon="mdi:bell-ring-outline"></iconify-icon>
+<span id="dynamics-count" class="text-xs font-semibold text-brand">共 16 条</span>
 </div>
-<!-- 发布动态 -->
-<button class="flex items-center gap-1 h-8 px-3 text-xs font-medium text-white bg-brand hover:bg-brand-tint30 rounded-lg transition-colors" onclick="openNewDynamicModal()">
-<iconify-icon icon="mdi:plus"></iconify-icon>
-                发布动态
-            </button>
-<!-- 搜索 -->
+</div>
+</div>
+
+<!-- 搜索与筛选区域 -->
+<div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.08">
+<div class="flex items-center gap-3 flex-wrap">
+<div class="relative flex-1 min-w-[200px] group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<iconify-icon class="text-fg-tertiary group-focus-within:text-brand transition-colors" icon="mdi:magnify"></iconify-icon>
+</div>
+<input id="dynamics-search-input" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all duration-200 placeholder:text-fg-disabled" placeholder="搜索动态标题、内容、关联案件..." type="text" oninput="searchDynamics()"/>
+</div>
 <div class="relative">
-<input class="w-44 h-8 text-xs pl-8 pr-3 border border-bg-border rounded-lg bg-white text-fg-secondary placeholder-gray-400 focus:outline-none focus:border-brand" id="dynamics-search-input" oninput="searchDynamics()" placeholder="搜索动态..." type="text"/>
-<iconify-icon class="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
-</div>
-<select class="text-xs border border-bg-border rounded-lg px-2 py-1.5 focus:outline-none focus:border-brand bg-white">
-<option>全部类型</option>
-<option>文书</option>
-<option>开庭</option>
-<option>归档</option>
-<option>提醒</option>
+<select id="dynamics-type-filter" class="appearance-none bg-bg-subtle border border-bg-border rounded-xl px-4 py-2.5 pr-9 text-sm text-fg-secondary focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all duration-200 cursor-pointer hover:border-brand/40">
+<option value="all">全部类型</option>
+<option value="文书">文书</option>
+<option value="开庭">开庭</option>
+<option value="归档">归档</option>
+<option value="提醒">提醒</option>
+<option value="紧急">紧急</option>
 </select>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<iconify-icon class="text-fg-tertiary text-xs" icon="mdi:chevron-down"></iconify-icon>
 </div>
 </div>
-<!-- 筛选标签 -->
-<div class="flex-none flex items-center gap-2">
-<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" onclick="filterDynamics('all', this)">全部</button>
-<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterDynamics('文书', this)">文书</button>
-<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterDynamics('开庭', this)">开庭</button>
-<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterDynamics('归档', this)">归档</button>
-<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterDynamics('提醒', this)">提醒</button>
+<div class="flex items-center gap-1.5 ml-auto order-last md:order-none">
+<div class="flex items-center border border-bg-border rounded-xl overflow-hidden bg-white">
+<button class="flex items-center gap-1 h-9 px-3 text-xs bg-gradient-to-r from-brand to-brand-hover text-white transition-all shadow-sm shadow-brand/20" id="dyn-view-list" onclick="switchDynamicsView('list')">
+<iconify-icon icon="mdi:format-list-bulleted" class="text-sm"></iconify-icon>
+<span class="hidden sm:inline">列表</span>
+</button>
+<button class="flex items-center gap-1 h-9 px-3 text-xs bg-white text-fg-secondary hover:bg-bg-subtle transition-colors" id="dyn-view-timeline" onclick="switchDynamicsView('timeline')">
+<iconify-icon icon="mdi:timeline" class="text-sm"></iconify-icon>
+<span class="hidden sm:inline">时间轴</span>
+</button>
 </div>
+</div>
+<button class="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/25 transition-all duration-300 hover:-translate-y-0.5" onclick="openNewDynamicModal()">
+<iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+发布动态
+</button>
+</div>
+<!-- 快捷筛选标签 -->
+<div class="flex items-center gap-2 mt-4 pt-4 border-t border-bg-border/60">
+<span class="text-xs text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:filter-variant" class="text-sm"></iconify-icon>
+快捷筛选：
+</span>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20" onclick="filterDynamics('all', this)">全部</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-all duration-200" onclick="filterDynamics('紧急', this)">
+<span class="inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-danger animate-pulse"></span>
+紧急
+</span>
+</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-all duration-200" onclick="filterDynamics('文书', this)">文书</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-all duration-200" onclick="filterDynamics('开庭', this)">开庭</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-all duration-200" onclick="filterDynamics('归档', this)">归档</button>
+<button class="dyn-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand transition-all duration-200" onclick="filterDynamics('提醒', this)">提醒</button>
+<div class="ml-auto flex items-center gap-2">
+<button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1" onclick="markAllDynamicsRead()">
+<iconify-icon icon="mdi:check-all" class="text-sm"></iconify-icon>
+全部已读
+</button>
+</div>
+</div>
+</div>
+
 <!-- 动态列表 -->
-<div class="flex-1 min-h-0 overflow-y-auto">
-<div class="space-y-2" id="dynamics-list-view">
+<div class="flex-1 min-h-0">
+<div class="space-y-3" id="dynamics-list-view" data-animate="fade-in-up" data-delay="0.16">
 <!-- 动态项 1 - 紧急 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-red-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-red-500 text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-danger relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="0" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-danger/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-danger text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-red-100 text-red-700 font-medium px-1.5 py-0.5 rounded-full">紧急</span>
-<span class="font-medium text-sm text-fg-primary">证据提交即将截止</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20">
+<iconify-icon icon="mdi:alert-circle" class="text-[9px]"></iconify-icon>
+紧急
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">证据提交即将截止</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-danger animate-pulse"></span>
+<span class="text-[10px] text-danger font-medium">未读</span>
+</span>
 </div>
-<p class="text-xs text-fg-tertiary">案件：李明诉XX公司买卖合同纠纷 · 剩余 2 天</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 今天 10:30</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+<p class="text-xs text-fg-secondary">李明诉XX公司买卖合同纠纷 · 剩余 2 天</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+今天 10:30
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(0)">去处理</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(0)">去处理</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markDynamicRead(0)">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+标记已读
+</button>
 </div>
 </div>
+</div>
+
 <!-- 动态项 2 - 文书 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-blue-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-brand relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="1" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
 <iconify-icon class="text-brand text-lg" icon="mdi:file-document-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">文书</span>
-<span class="font-medium text-sm text-fg-primary">起诉状已完成</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+文书
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">起诉状已完成</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
 </div>
-<p class="text-xs text-fg-tertiary">李明诉XX公司买卖合同纠纷 · 民事起诉状已由AI生成并保存</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 今天 10:30</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+<p class="text-xs text-fg-secondary">李明诉XX公司买卖合同纠纷 · 民事起诉状已由AI生成并保存</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+今天 10:30
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(1)">查看</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-brand bg-brand-tint hover:bg-brand-tint2 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(1)">查看</button>
 </div>
 </div>
+</div>
+
 <!-- 动态项 3 - 开庭 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-purple-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-purple-500 text-lg" icon="mdi:gavel"></iconify-icon>
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-wiki relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="2" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wiki/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-wiki text-lg" icon="mdi:gavel"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-wiki-tint text-wiki font-medium px-1.5 py-0.5 rounded-full">开庭</span>
-<span class="font-medium text-sm text-fg-primary">开庭日期已确定</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-wiki-tint to-purple-100 text-wiki">
+开庭
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">开庭日期已确定</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-wiki"></span>
+<span class="text-[10px] text-wiki font-medium">未读</span>
+</span>
 </div>
-<p class="text-xs text-fg-tertiary">王华借贷纠纷 · 2026-08-28 14:00 第5法庭</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 16:00</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 李律师</span>
+<p class="text-xs text-fg-secondary">王华借贷纠纷 · 2026-08-28 14:00 第5法庭</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 16:00
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+李律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(2)">查看日程</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-wiki bg-wiki-tint hover:bg-purple-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(2)">查看日程</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markDynamicRead(2)">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+标记已读
+</button>
 </div>
 </div>
+</div>
+
 <!-- 动态项 4 - 归档 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-green-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-green-500 text-lg" icon="mdi:check-circle-outline"></iconify-icon>
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-success relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="3" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-success/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-100 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-success text-lg" icon="mdi:check-circle-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-success-tint text-success font-medium px-1.5 py-0.5 rounded-full">归档</span>
-<span class="font-medium text-sm text-fg-primary">案件已归档</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-success-tint to-green-100 text-success">
+归档
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">案件已归档</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
 </div>
-<p class="text-xs text-fg-tertiary">张三合同纠纷 · 全部卷宗已完成归档</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 14:30</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+<p class="text-xs text-fg-secondary">张三合同纠纷 · 全部卷宗已完成归档</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 14:30
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(3)">查看归档</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-success bg-success-tint hover:bg-green-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(3)">查看归档</button>
 </div>
 </div>
+</div>
+
 <!-- 动态项 5 - 提醒 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-amber-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-amber-500 text-lg" icon="mdi:calendar-check-outline"></iconify-icon>
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-warning relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="4" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-100 to-warning-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-warning text-lg" icon="mdi:calendar-check-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-amber-100 text-amber-700 font-medium px-1.5 py-0.5 rounded-full">提醒</span>
-<span class="font-medium text-sm text-fg-primary">续约提醒</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-warning-tint to-amber-100 text-warning">
+提醒
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">续约提醒</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-warning"></span>
+<span class="text-[10px] text-warning font-medium">未读</span>
+</span>
 </div>
-<p class="text-xs text-fg-tertiary">某科技公司法律顾问合同即将到期（2026-09-30）</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 昨天 09:00</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 系统</span>
+<p class="text-xs text-fg-secondary">某科技公司法律顾问合同即将到期（2026-09-30）</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 09:00
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+系统
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联客户
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(4)">去处理</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-warning bg-warning-tint hover:bg-amber-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(4)">去处理</button>
+<button class="text-[10px] text-fg-tertiary hover:text-brand transition-colors flex items-center gap-0.5" onclick="event.stopPropagation(); markDynamicRead(4)">
+<iconify-icon icon="mdi:check-circle-outline" class="text-xs"></iconify-icon>
+标记已读
+</button>
 </div>
 </div>
+</div>
+
 <!-- 动态项 6 - 文书 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-blue-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-brand relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="5" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
 <iconify-icon class="text-brand text-lg" icon="mdi:file-compare"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">文书</span>
-<span class="font-medium text-sm text-fg-primary">证据目录已更新</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+文书
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">证据目录已更新</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
 </div>
-<p class="text-xs text-fg-tertiary">某科技公司股权纠纷 · 新增3份补充证据</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 2天前 11:20</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 王律师</span>
-</div>
-</div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(5)">查看</button>
-</div>
-</div>
-<!-- 动态项 7 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-purple-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-purple-500 text-lg" icon="mdi:account-group-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-wiki-tint text-wiki font-medium px-1.5 py-0.5 rounded-full">开庭</span>
-<span class="font-medium text-sm text-fg-primary">合议庭组成已确定</span>
-</div>
-<p class="text-xs text-fg-tertiary">赵六劳动争议仲裁 · 审判长：王法官</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 3天前 09:45</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 系统</span>
+<p class="text-xs text-fg-secondary">某科技公司股权纠纷 · 新增3份补充证据</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+2天前 11:20
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+王律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(6)">详情</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-brand bg-brand-tint hover:bg-brand-tint2 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(5)">查看</button>
 </div>
 </div>
-<!-- 动态项 8 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-sm transition-shadow border-l-4 border-l-green-500">
-<div class="flex items-start gap-3">
-<div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-green-500 text-lg" icon="mdi:file-document-check-outline"></iconify-icon>
+</div>
+
+<!-- 动态项 7 - 开庭 -->
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-wiki relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="6" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wiki/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-wiki text-lg" icon="mdi:account-group-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-1">
-<span class="text-[10px] bg-success-tint text-success font-medium px-1.5 py-0.5 rounded-full">归档</span>
-<span class="font-medium text-sm text-fg-primary">判决书已上传</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-wiki-tint to-purple-100 text-wiki">
+开庭
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">合议庭组成已确定</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
 </div>
-<p class="text-xs text-fg-tertiary">王华借贷纠纷 · 一审判决书已归档</p>
-<div class="flex items-center gap-3 mt-2">
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:clock-outline"></iconify-icon> 3天前 16:20</span>
-<span class="text-[10px] text-fg-tertiary"><iconify-icon class="inline" icon="mdi:account-outline"></iconify-icon> 张律师</span>
+<p class="text-xs text-fg-secondary">赵六劳动争议仲裁 · 审判长：王法官</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+3天前 09:45
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+系统
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
 </div>
 </div>
-<button class="text-[10px] text-brand hover:underline flex-shrink-0 mt-1" onclick="openCaseDynamicDetail(7)">查看</button>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-wiki bg-wiki-tint hover:bg-purple-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(6)">详情</button>
 </div>
 </div>
+</div>
+
+<!-- 动态项 8 - 归档 -->
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-success relative overflow-hidden" data-animate="fade-in-up" data-stagger-group="dyn-list" data-stagger-index="7" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-success/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10 flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-100 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-success text-lg" icon="mdi:file-document-check-outline"></iconify-icon>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-success-tint to-green-100 text-success">
+归档
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">判决书已上传</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
+</div>
+<p class="text-xs text-fg-secondary">王华借贷纠纷 · 一审判决书已归档</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+3天前 16:20
+</span>
+<span class="text-[11px] text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+<span class="text-[11px] text-brand-tint flex items-center gap-1">
+<iconify-icon icon="mdi:briefcase-outline" class="text-xs"></iconify-icon>
+关联案件
+</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2 flex-shrink-0">
+<button class="text-[11px] text-success bg-success-tint hover:bg-green-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); openCaseDynamicDetail(7)">查看</button>
+</div>
+</div>
+</div>
+
 <!-- 底部分隔 -->
-<div class="text-center py-4">
-<span class="text-[10px] text-gray-300">— 没有更多动态 —</span>
+<div class="text-center py-6">
+<span class="text-[11px] text-fg-disabled flex items-center justify-center gap-2">
+<span class="w-12 h-px bg-bg-border"></span>
+没有更多动态
+<span class="w-12 h-px bg-bg-border"></span>
+</span>
 </div>
 </div>
+
 <!-- 动态搜索无结果空状态 -->
-<div class="hidden flex flex-col items-center justify-center py-12 text-fg-tertiary" id="dynamics-empty-state">
-<iconify-icon class="text-4xl mb-3" icon="mdi:inbox-outline"></iconify-icon>
-<p class="text-sm text-fg-tertiary">暂无匹配的动态</p>
-<p class="text-xs text-fg-tertiary mt-1">尝试调整筛选条件或搜索关键词</p>
+<div class="hidden flex flex-col items-center justify-center py-16" id="dynamics-empty-state">
+<div class="w-24 h-24 rounded-full bg-gradient-to-br from-bg-subtle to-bg flex items-center justify-center mb-5">
+<iconify-icon icon="mdi:inbox-outline" class="text-5xl text-fg-disabled"></iconify-icon>
 </div>
+<h4 class="text-base font-semibold text-fg-primary mb-2">暂无匹配的动态</h4>
+<p class="text-sm text-fg-tertiary mb-6 text-center max-w-xs">尝试调整筛选条件或搜索关键词，看看有没有新的发现</p>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="resetDynamicsFilters()">
+<iconify-icon icon="mdi:refresh" class="text-base"></iconify-icon>
+重置筛选
+</button>
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-white border border-bg-border text-fg-secondary hover:border-brand hover:text-brand hover:bg-brand-tint3 transition-all duration-300 flex items-center gap-1.5" onclick="openNewDynamicModal()">
+<iconify-icon icon="mdi:plus" class="text-base"></iconify-icon>
+发布动态
+</button>
+</div>
+</div>
+
 <!-- 时间轴视图 -->
-<div class="hidden space-y-0" id="dynamics-timeline-view">
-<div class="relative pl-8 ml-4 space-y-0">
-<!-- 时间轴线 -->
-<div class="absolute left-3 top-3 bottom-3 w-0.5 bg-bg-border"></div>
-<!-- 8条时间轴节点将通过 JS 动态生成 -->
-</div>
-</div>
-</div>
-</div>
-<!-- 附件列表 -->
+<div class="hidden" id="dynamics-timeline-view" data-animate="fade-in-up" data-delay="0.16">
+<div class="ws-card p-4 md:p-5">
+<div class="relative pl-10 md:pl-12 space-y-0">
+<div class="absolute left-5 md:left-6 top-3 bottom-3 w-0.5 bg-gradient-to-b from-brand via-wiki to-success rounded-full"></div>
 
+<div class="relative pb-8" data-animate="fade-in-up" data-stagger-group="dyn-timeline" data-stagger-index="0" data-delay="0.2">
+<div class="absolute -left-10 md:-left-12 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-red-100 to-red-200 border-4 border-white flex items-center justify-center z-10 shadow-lg shadow-danger/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-danger text-base md:text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
+</div>
+<div class="ws-card p-4 ml-2 group cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-danger overflow-hidden relative">
+<div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-danger/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20">
+紧急
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">证据提交即将截止</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-danger animate-pulse"></span>
+<span class="text-[10px] text-danger font-medium">未读</span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary mb-3">李明诉XX公司买卖合同纠纷 · 剩余 2 天</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-[11px] text-fg-tertiary">
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+今天 10:30
+</span>
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+</div>
+<button class="text-[11px] text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25 px-3 py-1.5 rounded-lg font-medium transition-all duration-300" onclick="event.stopPropagation(); openCaseDynamicDetail(0)">去处理</button>
+</div>
+</div>
+</div>
+</div>
 
+<div class="relative pb-8" data-animate="fade-in-up" data-stagger-group="dyn-timeline" data-stagger-index="1" data-delay="0.2">
+<div class="absolute -left-10 md:-left-12 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-brand-tint to-brand-tint2 border-4 border-white flex items-center justify-center z-10 shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-brand text-base md:text-lg" icon="mdi:file-document-outline"></iconify-icon>
+</div>
+<div class="ws-card p-4 ml-2 group cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-brand overflow-hidden relative">
+<div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+文书
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">起诉状已完成</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
+</div>
+<p class="text-xs text-fg-secondary mb-3">李明诉XX公司买卖合同纠纷 · 民事起诉状已由AI生成并保存</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-[11px] text-fg-tertiary">
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+今天 10:30
+</span>
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+</div>
+<button class="text-[11px] text-brand bg-brand-tint hover:bg-brand-tint2 px-3 py-1.5 rounded-lg font-medium transition-all duration-300" onclick="event.stopPropagation(); openCaseDynamicDetail(1)">查看</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="relative pb-8" data-animate="fade-in-up" data-stagger-group="dyn-timeline" data-stagger-index="2" data-delay="0.2">
+<div class="absolute -left-10 md:-left-12 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-purple-100 to-wiki-tint border-4 border-white flex items-center justify-center z-10 shadow-lg shadow-wiki/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-wiki text-base md:text-lg" icon="mdi:gavel"></iconify-icon>
+</div>
+<div class="ws-card p-4 ml-2 group cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-wiki overflow-hidden relative">
+<div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-wiki/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-wiki-tint to-purple-100 text-wiki">
+开庭
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">开庭日期已确定</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-wiki"></span>
+<span class="text-[10px] text-wiki font-medium">未读</span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary mb-3">王华借贷纠纷 · 2026-08-28 14:00 第5法庭</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-[11px] text-fg-tertiary">
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 16:00
+</span>
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+李律师
+</span>
+</div>
+<button class="text-[11px] text-wiki bg-wiki-tint hover:bg-purple-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300" onclick="event.stopPropagation(); openCaseDynamicDetail(2)">查看日程</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="relative pb-8" data-animate="fade-in-up" data-stagger-group="dyn-timeline" data-stagger-index="3" data-delay="0.2">
+<div class="absolute -left-10 md:-left-12 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-green-100 to-success-tint border-4 border-white flex items-center justify-center z-10 shadow-lg shadow-success/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-success text-base md:text-lg" icon="mdi:check-circle-outline"></iconify-icon>
+</div>
+<div class="ws-card p-4 ml-2 group cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-success overflow-hidden relative">
+<div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-success/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-success-tint to-green-100 text-success">
+归档
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">案件已归档</span>
+<span class="ml-auto text-[10px] text-fg-disabled bg-bg-subtle px-2 py-0.5 rounded">已读</span>
+</div>
+<p class="text-xs text-fg-secondary mb-3">张三合同纠纷 · 全部卷宗已完成归档</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-[11px] text-fg-tertiary">
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 14:30
+</span>
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+张律师
+</span>
+</div>
+<button class="text-[11px] text-success bg-success-tint hover:bg-green-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300" onclick="event.stopPropagation(); openCaseDynamicDetail(3)">查看归档</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="relative" data-animate="fade-in-up" data-stagger-group="dyn-timeline" data-stagger-index="4" data-delay="0.2">
+<div class="absolute -left-10 md:-left-12 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-amber-100 to-warning-tint border-4 border-white flex items-center justify-center z-10 shadow-lg shadow-warning/20 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-warning text-base md:text-lg" icon="mdi:calendar-check-outline"></iconify-icon>
+</div>
+<div class="ws-card p-4 ml-2 group cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-warning overflow-hidden relative">
+<div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-warning/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-warning-tint to-amber-100 text-warning">
+提醒
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors">续约提醒</span>
+<span class="ml-auto flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-warning"></span>
+<span class="text-[10px] text-warning font-medium">未读</span>
+</span>
+</div>
+<p class="text-xs text-fg-secondary mb-3">某科技公司法律顾问合同即将到期（2026-09-30）</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-[11px] text-fg-tertiary">
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+昨天 09:00
+</span>
+<span class="flex items-center gap-1">
+<iconify-icon icon="mdi:account-outline" class="text-xs"></iconify-icon>
+系统
+</span>
+</div>
+<button class="text-[11px] text-warning bg-warning-tint hover:bg-amber-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300" onclick="event.stopPropagation(); openCaseDynamicDetail(4)">去处理</button>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>

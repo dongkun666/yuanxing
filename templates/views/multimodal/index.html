@@ -1,0 +1,701 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-hidden bg-bg" id="view-multimodal">
+  <!-- 顶部标题栏 -->
+  <div class="bg-white border-b border-bg-border px-6 py-4 flex items-center justify-between flex-none">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-md shadow-cyan-500/20">
+        <iconify-icon class="text-xl text-white" icon="mdi:image-multiple"></iconify-icon>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-fg-primary">多模态处理中心</h2>
+        <p class="text-xs text-fg-tertiary">OCR 识别 · 文档解析 · 语音交互 · 图片理解</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary hover:text-brand hover:bg-bg-subtle rounded-lg transition-colors flex items-center gap-1.5" onclick="refreshMultimodalData()">
+        <iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>
+        刷新
+      </button>
+    </div>
+  </div>
+
+  <!-- 主内容区 -->
+  <div class="flex-1 overflow-y-auto p-6">
+    <div class="max-w-7xl mx-auto">
+      <!-- Tab 导航 -->
+      <div class="bg-white rounded-2xl border border-bg-border mb-6">
+        <div class="flex border-b border-bg-border px-2 overflow-x-auto">
+          <button class="mm-tab-btn px-4 py-3 text-xs font-semibold text-brand border-b-2 border-brand flex items-center gap-1.5 flex-shrink-0" data-tab="ocr" onclick="switchMMTab('ocr')">
+            <iconify-icon class="text-sm" icon="mdi:file-scan"></iconify-icon>
+            OCR 识别
+          </button>
+          <button class="mm-tab-btn px-4 py-3 text-xs font-semibold text-fg-secondary hover:text-brand border-b-2 border-transparent flex items-center gap-1.5 flex-shrink-0" data-tab="document" onclick="switchMMTab('document')">
+            <iconify-icon class="text-sm" icon="mdi:file-document-outline"></iconify-icon>
+            文档解析
+          </button>
+          <button class="mm-tab-btn px-4 py-3 text-xs font-semibold text-fg-secondary hover:text-brand border-b-2 border-transparent flex items-center gap-1.5 flex-shrink-0" data-tab="table" onclick="switchMMTab('table')">
+            <iconify-icon class="text-sm" icon="mdi:table"></iconify-icon>
+            表格识别
+          </button>
+          <button class="mm-tab-btn px-4 py-3 text-xs font-semibold text-fg-secondary hover:text-brand border-b-2 border-transparent flex items-center gap-1.5 flex-shrink-0" data-tab="voice" onclick="switchMMTab('voice')">
+            <iconify-icon class="text-sm" icon="mdi:microphone"></iconify-icon>
+            语音交互
+          </button>
+          <button class="mm-tab-btn px-4 py-3 text-xs font-semibold text-fg-secondary hover:text-brand border-b-2 border-transparent flex items-center gap-1.5 flex-shrink-0" data-tab="image" onclick="switchMMTab('image')">
+            <iconify-icon class="text-sm" icon="mdi:image-edit"></iconify-icon>
+            图片理解
+          </button>
+        </div>
+
+        <!-- OCR 识别 -->
+        <div class="mm-tab-content p-6" id="mm-tab-ocr">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">图片上传</h3>
+              <div class="border-2 border-dashed border-bg-border rounded-2xl p-8 text-center hover:border-brand/50 hover:bg-bg-subtle/50 transition-all cursor-pointer" onclick="document.getElementById('ocrImageInput').click()">
+                <input type="file" id="ocrImageInput" class="hidden" accept="image/*" onchange="handleOCRImageUpload(event)"/>
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center">
+                  <iconify-icon class="text-3xl text-brand" icon="mdi:cloud-upload"></iconify-icon>
+                </div>
+                <p class="text-sm font-semibold text-fg-primary mb-1">点击或拖拽上传图片</p>
+                <p class="text-xs text-fg-tertiary">支持 JPG、PNG、BMP、TIFF 格式</p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-xs font-semibold text-fg-secondary mb-2">识别模式</h4>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="ocr-mode-btn p-3 border-2 border-brand bg-brand-tint rounded-xl text-left transition-all" data-mode="general" onclick="selectOCRMode('general')">
+                    <iconify-icon class="text-xl text-brand mb-1" icon="mdi:format-text"></iconify-icon>
+                    <p class="text-xs font-semibold text-fg-primary">通用识别</p>
+                    <p class="text-[10px] text-fg-tertiary">普通文字识别</p>
+                  </button>
+                  <button class="ocr-mode-btn p-3 border border-bg-border hover:border-brand/50 hover:bg-bg-subtle rounded-xl text-left transition-all" data-mode="table" onclick="selectOCRMode('table')">
+                    <iconify-icon class="text-xl text-wiki mb-1" icon="mdi:table"></iconify-icon>
+                    <p class="text-xs font-semibold text-fg-primary">表格识别</p>
+                    <p class="text-[10px] text-fg-tertiary">表格结构提取</p>
+                  </button>
+                  <button class="ocr-mode-btn p-3 border border-bg-border hover:border-brand/50 hover:bg-bg-subtle rounded-xl text-left transition-all" data-mode="seal" onclick="selectOCRMode('seal')">
+                    <iconify-icon class="text-xl text-success mb-1" icon="mdi:stamp"></iconify-icon>
+                    <p class="text-xs font-semibold text-fg-primary">印章识别</p>
+                    <p class="text-[10px] text-fg-tertiary">印章检测与验证</p>
+                  </button>
+                  <button class="ocr-mode-btn p-3 border border-bg-border hover:border-brand/50 hover:bg-bg-subtle rounded-xl text-left transition-all" data-mode="handwriting" onclick="selectOCRMode('handwriting')">
+                    <iconify-icon class="text-xl text-urgent mb-1" icon="mdi:draw"></iconify-icon>
+                    <p class="text-xs font-semibold text-fg-primary">手写识别</p>
+                    <p class="text-[10px] text-fg-tertiary">手写文字识别</p>
+                  </button>
+                </div>
+              </div>
+
+              <button class="mt-4 w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-md hover:shadow-cyan-500/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="runOCR()">
+                <iconify-icon class="text-base" icon="mdi:scan-helper"></iconify-icon>
+                开始识别
+              </button>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">识别结果</h3>
+              <div class="bg-bg rounded-2xl p-4 min-h-[400px]" id="ocrResult">
+                <div class="text-center py-16 text-fg-tertiary text-xs">
+                  <iconify-icon class="text-4xl mb-3 opacity-50" icon="mdi:file-scan"></iconify-icon>
+                  <p>上传图片后点击开始识别</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 文档解析 -->
+        <div class="mm-tab-content p-6 hidden" id="mm-tab-document">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">文档上传</h3>
+              <div class="border-2 border-dashed border-bg-border rounded-2xl p-8 text-center hover:border-brand/50 hover:bg-bg-subtle/50 transition-all cursor-pointer" onclick="document.getElementById('docFileInput').click()">
+                <input type="file" id="docFileInput" class="hidden" accept=".pdf,.doc,.docx" onchange="handleDocUpload(event)"/>
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center">
+                  <iconify-icon class="text-3xl text-wiki" icon="mdi:file-document-plus"></iconify-icon>
+                </div>
+                <p class="text-sm font-semibold text-fg-primary mb-1">上传文档进行解析</p>
+                <p class="text-xs text-fg-tertiary">支持 PDF、Word 格式</p>
+              </div>
+
+              <div class="mt-4 space-y-3">
+                <div class="p-3 bg-bg rounded-xl">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                      <iconify-icon class="text-lg text-red-500" icon="mdi:file-pdf-box"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-semibold text-fg-primary truncate">合同示例.pdf</p>
+                      <p class="text-[10px] text-fg-tertiary">5 页 · 1.2 MB</p>
+                    </div>
+                    <button class="text-xs text-brand font-medium" onclick="parseSampleDoc()">解析</button>
+                  </div>
+                </div>
+                <div class="p-3 bg-bg rounded-xl">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                      <iconify-icon class="text-lg text-blue-500" icon="mdi:microsoft-word"></iconify-icon>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-semibold text-fg-primary truncate">起诉状模板.docx</p>
+                      <p class="text-[10px] text-fg-tertiary">3 页 · 256 KB</p>
+                    </div>
+                    <button class="text-xs text-brand font-medium" onclick="parseSampleDoc()">解析</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">解析结果</h3>
+              <div class="bg-bg rounded-2xl p-4 min-h-[400px]" id="docResult">
+                <div class="text-center py-16 text-fg-tertiary text-xs">
+                  <iconify-icon class="text-4xl mb-3 opacity-50" icon="mdi:file-document-outline"></iconify-icon>
+                  <p>上传文档或选择示例进行解析</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 表格识别 -->
+        <div class="mm-tab-content p-6 hidden" id="mm-tab-table">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">表格图片</h3>
+              <div class="border-2 border-dashed border-bg-border rounded-2xl p-8 text-center hover:border-brand/50 hover:bg-bg-subtle/50 transition-all cursor-pointer">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center">
+                  <iconify-icon class="text-3xl text-success" icon="mdi:table-large"></iconify-icon>
+                </div>
+                <p class="text-sm font-semibold text-fg-primary mb-1">上传表格图片</p>
+                <p class="text-xs text-fg-tertiary">支持表格结构识别和数据提取</p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-xs font-semibold text-fg-secondary mb-2">示例表格</h4>
+                <button class="w-full p-3 bg-bg rounded-xl hover:bg-bg-subtle transition-colors text-left" onclick="showSampleTable()">
+                  <div class="flex items-center gap-3">
+                    <iconify-icon class="text-xl text-success" icon="mdi:table"></iconify-icon>
+                    <div>
+                      <p class="text-xs font-semibold text-fg-primary">费用明细表</p>
+                      <p class="text-[10px] text-fg-tertiary">4 行 3 列 · 包含表头</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">识别结果</h3>
+              <div class="bg-bg rounded-2xl p-4 min-h-[400px]" id="tableResult">
+                <div class="text-center py-16 text-fg-tertiary text-xs">
+                  <iconify-icon class="text-4xl mb-3 opacity-50" icon="mdi:table"></iconify-icon>
+                  <p>上传表格图片进行识别</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 语音交互 -->
+        <div class="mm-tab-content p-6 hidden" id="mm-tab-voice">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">语音转文字 (ASR)</h3>
+              <div class="bg-bg rounded-2xl p-6 text-center">
+                <button class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500 to-pink-500 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 hover:scale-105 flex items-center justify-center" id="recordBtn" onclick="toggleRecording()">
+                  <iconify-icon class="text-3xl text-white" icon="mdi:microphone"></iconify-icon>
+                </button>
+                <p class="text-sm font-semibold text-fg-primary mb-1" id="recordStatus">点击开始录音</p>
+                <p class="text-xs text-fg-tertiary" id="recordTime">00:00</p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-xs font-semibold text-fg-secondary mb-2">语音指令示例</h4>
+                <div class="space-y-2">
+                  <button class="w-full p-2.5 bg-bg rounded-xl hover:bg-bg-subtle transition-colors text-left text-xs text-fg-secondary" onclick="simulateVoiceCommand('帮我检索一下最近的民间借贷案例')">
+                    <iconify-icon class="text-sm text-brand mr-1.5" icon="mdi:microphone"></iconify-icon>
+                    帮我检索一下最近的民间借贷案例
+                  </button>
+                  <button class="w-full p-2.5 bg-bg rounded-xl hover:bg-bg-subtle transition-colors text-left text-xs text-fg-secondary" onclick="simulateVoiceCommand('帮我审查这份合同有没有风险')">
+                    <iconify-icon class="text-sm text-brand mr-1.5" icon="mdi:microphone"></iconify-icon>
+                    帮我审查这份合同有没有风险
+                  </button>
+                  <button class="w-full p-2.5 bg-bg rounded-xl hover:bg-bg-subtle transition-colors text-left text-xs text-fg-secondary" onclick="simulateVoiceCommand('明天下午三点有个开庭提醒')">
+                    <iconify-icon class="text-sm text-brand mr-1.5" icon="mdi:microphone"></iconify-icon>
+                    明天下午三点有个开庭提醒
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">识别结果</h3>
+              <div class="bg-bg rounded-2xl p-4 min-h-[300px] mb-4" id="asrResult">
+                <div class="text-center py-12 text-fg-tertiary text-xs">
+                  <iconify-icon class="text-4xl mb-3 opacity-50" icon="mdi:waveform"></iconify-icon>
+                  <p>开始录音后显示识别结果</p>
+                </div>
+              </div>
+
+              <h4 class="text-sm font-bold text-fg-primary mb-3">文字转语音 (TTS)</h4>
+              <div class="bg-bg rounded-2xl p-4">
+                <textarea class="w-full px-3 py-2 text-sm rounded-xl border border-bg-border bg-white text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand transition-all resize-none" rows="3" placeholder="输入要转换的文字..." id="ttsInput">这是一段语音合成测试，LexPrime 多模态语音交互功能。</textarea>
+                <div class="flex items-center gap-2 mt-3">
+                  <select class="flex-1 px-2 py-1.5 text-xs rounded-lg border border-bg-border bg-white text-fg-primary focus:outline-none focus:border-brand transition-colors" id="ttsVoice">
+                    <option value="xiaoxiao">晓晓（女声）</option>
+                    <option value="yunxi">云希（男声）</option>
+                  </select>
+                  <button class="px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-md hover:shadow-cyan-500/20 rounded-lg transition-all flex items-center gap-1.5" onclick="runTTS()">
+                    <iconify-icon class="text-sm" icon="mdi:volume-high"></iconify-icon>
+                    播放
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 图片理解 -->
+        <div class="mm-tab-content p-6 hidden" id="mm-tab-image">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">图片上传</h3>
+              <div class="border-2 border-dashed border-bg-border rounded-2xl p-8 text-center hover:border-brand/50 hover:bg-bg-subtle/50 transition-all cursor-pointer">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-50 to-warning-tint flex items-center justify-center">
+                  <iconify-icon class="text-3xl text-urgent" icon="mdi:image-outline"></iconify-icon>
+                </div>
+                <p class="text-sm font-semibold text-fg-primary mb-1">上传图片进行理解</p>
+                <p class="text-xs text-fg-tertiary">支持图片内容描述和分析</p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-xs font-semibold text-fg-secondary mb-2">分析类型</h4>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 p-2.5 bg-bg rounded-xl cursor-pointer hover:bg-bg-subtle transition-colors">
+                    <input type="checkbox" class="w-4 h-4 accent-brand" checked/>
+                    <span class="text-xs text-fg-secondary">图片内容描述</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2.5 bg-bg rounded-xl cursor-pointer hover:bg-bg-subtle transition-colors">
+                    <input type="checkbox" class="w-4 h-4 accent-brand" checked/>
+                    <span class="text-xs text-fg-secondary">文字提取 (OCR)</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2.5 bg-bg rounded-xl cursor-pointer hover:bg-bg-subtle transition-colors">
+                    <input type="checkbox" class="w-4 h-4 accent-brand"/>
+                    <span class="text-xs text-fg-secondary">图表数据提取</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2.5 bg-bg rounded-xl cursor-pointer hover:bg-bg-subtle transition-colors">
+                    <input type="checkbox" class="w-4 h-4 accent-brand"/>
+                    <span class="text-xs text-fg-secondary">法律要素识别</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="mt-4 w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:shadow-md hover:shadow-amber-500/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="runImageUnderstanding()">
+                <iconify-icon class="text-base" icon="mdi:image-filter-center-focus"></iconify-icon>
+                开始分析
+              </button>
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-fg-primary mb-4">分析结果</h3>
+              <div class="bg-bg rounded-2xl p-4 min-h-[400px]" id="imageResult">
+                <div class="text-center py-16 text-fg-tertiary text-xs">
+                  <iconify-icon class="text-4xl mb-3 opacity-50" icon="mdi:image-edit"></iconify-icon>
+                  <p>上传图片进行理解分析</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentMMTab = 'ocr';
+var currentOCRMode = 'general';
+var isRecording = false;
+var recordSeconds = 0;
+var recordInterval = null;
+
+function switchMMTab(tab) {
+  currentMMTab = tab;
+  var btns = document.querySelectorAll('.mm-tab-btn');
+  var contents = document.querySelectorAll('.mm-tab-content');
+
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-tab') === tab) {
+      btns[i].classList.add('text-brand', 'border-brand');
+      btns[i].classList.remove('text-fg-secondary', 'border-transparent');
+    } else {
+      btns[i].classList.remove('text-brand', 'border-brand');
+      btns[i].classList.add('text-fg-secondary', 'border-transparent');
+    }
+  }
+
+  for (var i = 0; i < contents.length; i++) {
+    var id = 'mm-tab-' + tab;
+    if (contents[i].id === id) {
+      contents[i].classList.remove('hidden');
+    } else {
+      contents[i].classList.add('hidden');
+    }
+  }
+}
+
+function selectOCRMode(mode) {
+  currentOCRMode = mode;
+  var btns = document.querySelectorAll('.ocr-mode-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-mode') === mode) {
+      btns[i].classList.add('border-brand', 'bg-brand-tint', 'border-2');
+      btns[i].classList.remove('border-bg-border', 'hover:border-brand/50', 'hover:bg-bg-subtle');
+    } else {
+      btns[i].classList.remove('border-brand', 'bg-brand-tint', 'border-2');
+      btns[i].classList.add('border-bg-border', 'hover:border-brand/50', 'hover:bg-bg-subtle');
+    }
+  }
+}
+
+function handleOCRImageUpload(event) {
+  showToast('图片已上传，点击开始识别', 'success');
+}
+
+function handleDocUpload(event) {
+  showToast('文档已上传', 'success');
+}
+
+function runOCR() {
+  var resultEl = document.getElementById('ocrResult');
+  resultEl.innerHTML = '<div class="flex flex-col items-center justify-center py-16">' +
+    '<div class="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin mb-4"></div>' +
+    '<p class="text-xs text-fg-secondary">正在识别中...</p>' +
+  '</div>';
+
+  setTimeout(function() {
+    var resultHtml = '';
+
+    if (currentOCRMode === 'table') {
+      resultHtml = '<div class="space-y-4">' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-semibold text-fg-primary">识别结果</span>' +
+          '<span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full">置信度 92%</span>' +
+        '</div>' +
+        '<div class="bg-white rounded-xl overflow-hidden border border-bg-border">' +
+          '<table class="w-full text-xs">' +
+            '<thead class="bg-bg-subtle">' +
+              '<tr>' +
+                '<th class="px-3 py-2 text-left font-semibold text-fg-secondary">序号</th>' +
+                '<th class="px-3 py-2 text-left font-semibold text-fg-secondary">项目</th>' +
+                '<th class="px-3 py-2 text-right font-semibold text-fg-secondary">金额（元）</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+              '<tr class="border-t border-bg-border"><td class="px-3 py-2">1</td><td class="px-3 py-2">借款本金</td><td class="px-3 py-2 text-right">500,000.00</td></tr>' +
+              '<tr class="border-t border-bg-border"><td class="px-3 py-2">2</td><td class="px-3 py-2">利息</td><td class="px-3 py-2 text-right">69,000.00</td></tr>' +
+              '<tr class="border-t border-bg-border"><td class="px-3 py-2">3</td><td class="px-3 py-2">合计</td><td class="px-3 py-2 text-right font-semibold text-brand">569,000.00</td></tr>' +
+            '</tbody>' +
+          '</table>' +
+        '</div>' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border">' +
+          '<p class="text-[10px] text-fg-tertiary mb-1">表格信息</p>' +
+          '<div class="grid grid-cols-3 gap-2 text-center text-[10px]">' +
+            '<div><p class="font-semibold text-fg-primary">4 行</p><p class="text-fg-tertiary">行数</p></div>' +
+            '<div><p class="font-semibold text-fg-primary">3 列</p><p class="text-fg-tertiary">列数</p></div>' +
+            '<div><p class="font-semibold text-fg-primary">0.92</p><p class="text-fg-tertiary">置信度</p></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    } else if (currentOCRMode === 'seal') {
+      resultHtml = '<div class="space-y-4">' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-semibold text-fg-primary">印章检测结果</span>' +
+          '<span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full">找到 1 个印章</span>' +
+        '</div>' +
+        '<div class="p-4 bg-white rounded-xl border border-bg-border">' +
+          '<div class="flex items-start gap-3">' +
+            '<div class="w-16 h-16 rounded-full border-2 border-red-500 flex items-center justify-center flex-shrink-0">' +
+              '<span class="text-[8px] text-red-500 text-center leading-tight">北京某某<br/>科技有限公司</span>' +
+            '</div>' +
+            '<div class="flex-1">' +
+              '<p class="text-sm font-semibold text-fg-primary mb-1">公司公章</p>' +
+              '<p class="text-xs text-fg-secondary mb-2">北京某某科技有限公司</p>' +
+              '<div class="flex items-center gap-4 text-[10px] text-fg-tertiary">' +
+                '<span>位置: (450, 1200)</span>' +
+                '<span>大小: 100x100</span>' +
+              '</div>' +
+              '<div class="mt-2 flex items-center gap-1.5">' +
+                '<span class="text-[10px] font-semibold text-success">✓ 印章有效</span>' +
+                '<span class="text-[10px] text-fg-tertiary">置信度 95%</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    } else if (currentOCRMode === 'handwriting') {
+      resultHtml = '<div class="space-y-4">' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-semibold text-fg-primary">手写识别结果</span>' +
+          '<span class="text-[10px] text-urgent bg-warning-tint px-2 py-0.5 rounded-full">置信度 78%</span>' +
+        '</div>' +
+        '<div class="p-4 bg-white rounded-xl border border-bg-border space-y-3">' +
+          '<div class="p-3 bg-bg rounded-lg">' +
+            '<p class="text-[10px] text-fg-tertiary mb-1">位置: (100, 800)</p>' +
+            '<p class="text-sm text-fg-primary">以上笔录我看过，与我说的一致</p>' +
+          '</div>' +
+          '<div class="p-3 bg-bg rounded-lg">' +
+            '<p class="text-[10px] text-fg-tertiary mb-1">位置: (400, 850)</p>' +
+            '<p class="text-sm text-fg-primary font-semibold">张三</p>' +
+          '</div>' +
+        '</div>' +
+        '<p class="text-[10px] text-fg-tertiary">* 手写识别置信度较低，建议人工复核</p>' +
+      '</div>';
+    } else {
+      resultHtml = '<div class="space-y-3">' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-semibold text-fg-primary">识别结果</span>' +
+          '<span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full">置信度 95%</span>' +
+        '</div>' +
+        '<div class="p-4 bg-white rounded-xl border border-bg-border max-h-80 overflow-y-auto">' +
+          '<pre class="text-xs text-fg-secondary whitespace-pre-wrap font-sans leading-relaxed">民事起诉状
+
+原告：张三，男，1985年1月15日出生，汉族，住北京市朝阳区XX路XX号。
+被告：李四，男，1982年3月20日出生，汉族，住北京市海淀区XX路XX号。
+
+诉讼请求：
+1. 判令被告返还借款本金人民币50万元；
+2. 判令被告支付借款利息（按年利率13.8%计算，自2025年1月1日起至实际给付之日止）；
+3. 本案诉讼费用由被告承担。
+
+事实与理由：
+原被告系朋友关系。2025年1月1日，被告因经营需要向原告借款人民币50万元，
+双方签订了借款合同，约定借款期限一年，年利率15%。借款到期后，
+原告多次催要，被告至今未还。为维护原告合法权益，特向贵院提起诉讼，
+请求依法判决。
+
+此致
+北京市朝阳区人民法院
+
+具状人：张三
+2026年1月15日</pre>' +
+        '</div>' +
+        '<div class="grid grid-cols-4 gap-2 text-center text-[10px]">' +
+          '<div class="p-2 bg-white rounded-lg border border-bg-border"><p class="font-semibold text-fg-primary">1</p><p class="text-fg-tertiary">页数</p></div>' +
+          '<div class="p-2 bg-white rounded-lg border border-bg-border"><p class="font-semibold text-fg-primary">386</p><p class="text-fg-tertiary">字数</p></div>' +
+          '<div class="p-2 bg-white rounded-lg border border-bg-border"><p class="font-semibold text-fg-primary">0.95</p><p class="text-fg-tertiary">置信度</p></div>' +
+          '<div class="p-2 bg-white rounded-lg border border-bg-border"><p class="font-semibold text-fg-primary">420ms</p><p class="text-fg-tertiary">耗时</p></div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    resultEl.innerHTML = resultHtml;
+  }, 1500);
+}
+
+function parseSampleDoc() {
+  var resultEl = document.getElementById('docResult');
+  resultEl.innerHTML = '<div class="flex flex-col items-center justify-center py-16">' +
+    '<div class="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin mb-4"></div>' +
+    '<p class="text-xs text-fg-secondary">正在解析文档...</p>' +
+  '</div>';
+
+  setTimeout(function() {
+    resultEl.innerHTML = '<div class="space-y-4">' +
+      '<div class="p-4 bg-white rounded-xl border border-bg-border">' +
+        '<div class="flex items-center gap-3 mb-3">' +
+          '<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">' +
+            '<iconify-icon class="text-lg text-red-500" icon="mdi:file-pdf-box"></iconify-icon>' +
+          '</div>' +
+          '<div class="flex-1">' +
+            '<p class="text-sm font-semibold text-fg-primary">法律服务合同</p>' +
+            '<p class="text-[10px] text-fg-tertiary">5 页 · 5,000 字 · 1.2 MB</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div>' +
+        '<p class="text-xs font-semibold text-fg-primary mb-2">文档结构</p>' +
+        '<div class="space-y-1.5">' +
+          '<div class="p-2.5 bg-white rounded-lg border border-bg-border flex items-center gap-2">' +
+            '<span class="text-[10px] font-semibold text-brand">H1</span>' +
+            '<span class="text-xs text-fg-secondary">第一条 合同双方</span>' +
+            '<span class="ml-auto text-[10px] text-fg-tertiary">第1页</span>' +
+          '</div>' +
+          '<div class="p-2.5 bg-white rounded-lg border border-bg-border flex items-center gap-2">' +
+            '<span class="text-[10px] font-semibold text-brand">H1</span>' +
+            '<span class="text-xs text-fg-secondary">第二条 服务内容</span>' +
+            '<span class="ml-auto text-[10px] text-fg-tertiary">第1页</span>' +
+          '</div>' +
+          '<div class="p-2.5 bg-white rounded-lg border border-bg-border flex items-center gap-2">' +
+            '<span class="text-[10px] font-semibold text-brand">H1</span>' +
+            '<span class="text-xs text-fg-secondary">第三条 服务费用</span>' +
+            '<span class="ml-auto text-[10px] text-fg-tertiary">第2页</span>' +
+          '</div>' +
+          '<div class="p-2.5 bg-white rounded-lg border border-bg-border flex items-center gap-2">' +
+            '<span class="text-[10px] font-semibold text-brand">H1</span>' +
+            '<span class="text-xs text-fg-secondary">第四条 违约责任</span>' +
+            '<span class="ml-auto text-[10px] text-fg-tertiary">第2页</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="grid grid-cols-2 gap-3">' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border text-center">' +
+          '<p class="text-lg font-bold text-wiki">1</p>' +
+          '<p class="text-[10px] text-fg-tertiary">表格数量</p>' +
+        '</div>' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border text-center">' +
+          '<p class="text-lg font-bold text-success">1</p>' +
+          '<p class="text-[10px] text-fg-tertiary">图片数量</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }, 1500);
+}
+
+function showSampleTable() {
+  var resultEl = document.getElementById('tableResult');
+  resultEl.innerHTML = '<div class="space-y-4">' +
+    '<div class="flex items-center justify-between">' +
+      '<span class="text-xs font-semibold text-fg-primary">费用明细表</span>' +
+      '<span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full">4行 × 3列</span>' +
+    '</div>' +
+    '<div class="bg-white rounded-xl overflow-hidden border border-bg-border">' +
+      '<table class="w-full text-xs">' +
+        '<thead class="bg-bg-subtle">' +
+          '<tr>' +
+            '<th class="px-3 py-2 text-left font-semibold text-fg-secondary">序号</th>' +
+            '<th class="px-3 py-2 text-left font-semibold text-fg-secondary">项目</th>' +
+            '<th class="px-3 py-2 text-right font-semibold text-fg-secondary">金额（元）</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+          '<tr class="border-t border-bg-border"><td class="px-3 py-2">1</td><td class="px-3 py-2">律师费</td><td class="px-3 py-2 text-right">30,000.00</td></tr>' +
+          '<tr class="border-t border-bg-border"><td class="px-3 py-2">2</td><td class="px-3 py-2">诉讼费</td><td class="px-3 py-2 text-right">8,800.00</td></tr>' +
+          '<tr class="border-t border-bg-border"><td class="px-3 py-2">3</td><td class="px-3 py-2">保全费</td><td class="px-3 py-2 text-right">3,020.00</td></tr>' +
+          '<tr class="border-t border-bg-border bg-bg-subtle/50"><td class="px-3 py-2 font-semibold">合计</td><td class="px-3 py-2 font-semibold">三项费用合计</td><td class="px-3 py-2 text-right font-bold text-brand">41,820.00</td></tr>' +
+        '</tbody>' +
+      '</table>' +
+    '</div>' +
+  '</div>';
+}
+
+function toggleRecording() {
+  var btn = document.getElementById('recordBtn');
+  var statusEl = document.getElementById('recordStatus');
+  var timeEl = document.getElementById('recordTime');
+
+  if (!isRecording) {
+    isRecording = true;
+    recordSeconds = 0;
+    statusEl.textContent = '正在录音...';
+    btn.classList.add('animate-pulse');
+
+    recordInterval = setInterval(function() {
+      recordSeconds++;
+      var mins = Math.floor(recordSeconds / 60);
+      var secs = recordSeconds % 60;
+      timeEl.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }, 1000);
+
+    setTimeout(function() {
+      if (isRecording) {
+        stopRecording();
+      }
+    }, 5000);
+  } else {
+    stopRecording();
+  }
+}
+
+function stopRecording() {
+  isRecording = false;
+  if (recordInterval) {
+    clearInterval(recordInterval);
+    recordInterval = null;
+  }
+
+  var btn = document.getElementById('recordBtn');
+  var statusEl = document.getElementById('recordStatus');
+  btn.classList.remove('animate-pulse');
+  statusEl.textContent = '点击开始录音';
+
+  simulateVoiceCommand('帮我检索一下最近的民间借贷案例');
+}
+
+function simulateVoiceCommand(text) {
+  var resultEl = document.getElementById('asrResult');
+
+  resultEl.innerHTML = '<div class="space-y-3">' +
+    '<div class="flex items-center justify-between">' +
+      '<span class="text-xs font-semibold text-fg-primary">识别结果</span>' +
+      '<span class="text-[10px] text-success bg-success-tint px-2 py-0.5 rounded-full">置信度 92%</span>' +
+    '</div>' +
+    '<div class="p-3 bg-white rounded-xl border border-bg-border">' +
+      '<p class="text-sm text-fg-primary">' + text + '</p>' +
+      '<p class="text-[10px] text-fg-tertiary mt-2">时长：2.0s · 语言：中文</p>' +
+    '</div>' +
+    '<div>' +
+      '<p class="text-xs font-semibold text-fg-secondary mb-2">指令解析</p>' +
+      '<div class="p-3 bg-brand-tint/30 rounded-xl border border-brand/20">' +
+        '<div class="flex items-center gap-2 mb-2">' +
+          '<iconify-icon class="text-brand" icon="mdi:robot"></iconify-icon>' +
+          '<span class="text-xs font-semibold text-brand">案例检索指令</span>' +
+        '</div>' +
+        '<div class="space-y-1 text-[11px] text-fg-secondary">' +
+          '<p>• 意图：search_cases</p>' +
+          '<p>• 案由：民间借贷</p>' +
+          '<p>• 时间范围：最近</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function runTTS() {
+  showToast('语音合成成功（Mock）', 'success');
+}
+
+function runImageUnderstanding() {
+  var resultEl = document.getElementById('imageResult');
+  resultEl.innerHTML = '<div class="flex flex-col items-center justify-center py-16">' +
+    '<div class="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin mb-4"></div>' +
+    '<p class="text-xs text-fg-secondary">正在分析图片...</p>' +
+  '</div>';
+
+  setTimeout(function() {
+    resultEl.innerHTML = '<div class="space-y-4">' +
+      '<div>' +
+        '<p class="text-xs font-semibold text-fg-primary mb-2">图片内容描述</p>' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border">' +
+          '<p class="text-xs text-fg-secondary">这是一份民事起诉状的扫描件，包含原告、被告信息，诉讼请求，事实与理由等内容。文档排版规范，字迹清晰。</p>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<p class="text-xs font-semibold text-fg-primary mb-2">提取的文字 (OCR)</p>' +
+        '<div class="p-3 bg-bg rounded-xl max-h-32 overflow-y-auto">' +
+          '<p class="text-[11px] text-fg-secondary">民事起诉状\n原告：张三\n被告：李四\n诉讼请求：1. 判令被告返还借款本金50万元...</p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="grid grid-cols-2 gap-3">' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border text-center">' +
+          '<iconify-icon class="text-xl text-brand mb-1" icon="mdi:file-document"></iconify-icon>' +
+          '<p class="text-xs font-semibold text-fg-primary">法律文书</p>' +
+          '<p class="text-[10px] text-fg-tertiary">文档类型</p>' +
+        '</div>' +
+        '<div class="p-3 bg-white rounded-xl border border-bg-border text-center">' +
+          '<iconify-icon class="text-xl text-success mb-1" icon="mdi:check-circle"></iconify-icon>' +
+          '<p class="text-xs font-semibold text-fg-primary">清晰可读</p>' +
+          '<p class="text-[10px] text-fg-tertiary">质量评估</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }, 2000);
+}
+
+function refreshMultimodalData() {
+  showToast('数据已刷新', 'success');
+}
+</script>

@@ -6,7 +6,14 @@
   "scripts": {
     "test": "node --test \"tests/**/*.test.cjs\"",
     "test:watch": "node --test --watch \"tests/**/*.test.cjs\"",
-    "tdd:demo": "node --test tests/formatDeadline.test.cjs"
+    "tdd:demo": "node --test tests/formatDeadline.test.cjs",
+    "lint": "npx eslint assets/js/*.js --quiet",
+    "lint:fix": "npx eslint assets/js/*.js --fix --quiet",
+    "format": "npx prettier --write assets/js/*.js assets/css/*.css",
+    "format:check": "npx prettier --check assets/js/*.js assets/css/*.css",
+    "build": "node scripts/build.js",
+    "start": "bash scripts/start-frontend.sh",
+    "deploy": "bash scripts/deploy.sh"
   },
   "repository": {
     "type": "git",
@@ -21,6 +28,11 @@
   },
   "homepage": "https://github.com/dongkun666/yuanxing#readme",
   "devDependencies": {
-    "tailwindcss": "^3.4.19"
+    "clean-css": "^5.4.2",
+    "eslint": "^10.8.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.2",
+    "tailwindcss": "^3.4.14",
+    "terser": "^5.34.1"
   }
 }

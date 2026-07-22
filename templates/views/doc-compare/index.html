@@ -1,0 +1,854 @@
+<!--
+  多文档摘要和对比 - 前端视图
+  支持多文档上传、对比分析、综合摘要
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto bg-bg" id="view-doc-compare" data-view-source="doc-compare/index.html">
+<style>
+  .doc-upload-area {
+    border: 2px dashed #C9CDD4;
+    border-radius: 16px;
+    background: #FAFBFC;
+    transition: all 0.2s ease;
+  }
+  .doc-upload-area:hover,
+  .doc-upload-area.dragover {
+    border-color: #165DFF;
+    background: rgba(22, 93, 255, 0.03);
+  }
+  .diff-same {
+    background: rgba(0, 180, 42, 0.08);
+    border-left: 3px solid #00B42A;
+  }
+  .diff-add {
+    background: rgba(0, 180, 42, 0.1);
+    border-left: 3px solid #00B42A;
+  }
+  .diff-remove {
+    background: rgba(245, 63, 63, 0.08);
+    border-left: 3px solid #F53F3F;
+  }
+  .diff-modify {
+    background: rgba(255, 125, 0, 0.08);
+    border-left: 3px solid #FF7D00;
+  }
+  .severity-high {
+    background: #FCE4E4;
+    color: #C62828;
+  }
+  .severity-medium {
+    background: #FFF7E8;
+    color: #D25400;
+  }
+  .severity-low {
+    background: #E8F5E9;
+    color: #2E7D32;
+  }
+  .tab-btn {
+    position: relative;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #86909C;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover {
+    color: #165DFF;
+  }
+  .tab-btn.active {
+    color: #165DFF;
+    border-bottom-color: #165DFF;
+  }
+  .file-item {
+    transition: all 0.2s ease;
+  }
+  .file-item:hover {
+    background: #F2F3F5;
+  }
+</style>
+
+<div class="flex flex-col min-h-full">
+  <!-- 顶部 header -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:file-compare" class="text-wiki text-lg md:text-xl"></iconify-icon>
+            <span>多文档摘要与对比</span>
+          </h1>
+          <span class="inline-flex items-center gap-0.5 text-[10px] text-ai font-medium px-1.5 py-0.5 bg-ai-tint rounded-sm flex-shrink-0">
+            <iconify-icon icon="mdi:sparkles" class="text-xs"></iconify-icon>
+            <span class="hidden sm:inline">AI 智能分析</span>
+          </span>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate">支持多文档对比分析和综合摘要</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体内容 -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-7xl mx-auto w-full">
+    <!-- 文档上传区 -->
+    <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5 mb-5" data-animate="fade-in-up">
+      <h3 class="text-sm font-bold text-fg-primary mb-4 flex items-center gap-2">
+        <iconify-icon icon="mdi:cloud-upload-outline" class="text-brand"></iconify-icon>
+        上传文档
+      </h3>
+
+      <div class="doc-upload-area p-8 text-center cursor-pointer mb-4" id="docUploadArea" onclick="document.getElementById('docFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="w-14 h-14 rounded-2xl bg-brand-tint flex items-center justify-center mx-auto mb-3">
+          <iconify-icon icon="mdi:upload" class="text-2xl text-brand"></iconify-icon>
+        </div>
+        <p class="text-sm text-fg-primary font-medium mb-1">拖拽文件到此处，或点击上传</p>
+        <p class="text-xs text-fg-tertiary">支持 PDF、Word、TXT 格式，最多可上传 10 份文档</p>
+        <input type="file" id="docFileInput" class="hidden" multiple accept=".pdf,.docx,.doc,.txt" onchange="handleFileSelect(event)"/>
+      </div>
+
+      <!-- 已上传文件列表 -->
+      <div id="docListContainer" class="hidden">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-fg-secondary">已上传文档</p>
+          <button class="text-xs text-urgent hover:underline" onclick="clearAllDocs()">清空全部</button>
+        </div>
+        <div class="space-y-2" id="docFileList">
+          <!-- 文件列表由 JS 动态生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作选项 -->
+    <div class="bg-white rounded-2xl shadow-card border border-bg-border p-5 mb-5" data-animate="fade-in-up" data-delay="0.05">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- 功能选择 -->
+        <div>
+          <h4 class="text-xs font-semibold text-fg-primary mb-3">选择功能</h4>
+          <div class="flex gap-2">
+            <button class="flex-1 py-2.5 text-xs font-medium text-white bg-brand rounded-xl transition-all doc-func-btn active" data-func="compare" onclick="switchDocFunc('compare')">
+              <iconify-icon icon="mdi:swap-horizontal" class="text-base block mx-auto mb-1"></iconify-icon>
+              文档对比
+            </button>
+            <button class="flex-1 py-2.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-xl transition-all doc-func-btn" data-func="summarize" onclick="switchDocFunc('summarize')">
+              <iconify-icon icon="mdi:text-short" class="text-base block mx-auto mb-1"></iconify-icon>
+              综合摘要
+            </button>
+          </div>
+        </div>
+
+        <!-- 高级选项 -->
+        <div>
+          <h4 class="text-xs font-semibold text-fg-primary mb-3">高级选项</h4>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked id="optCompareDetail" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">详细对比分析</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked id="optDisputePoints" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">识别争议焦点</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="optLegalBasis" class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+              <span class="text-xs text-fg-secondary">标注法律依据</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button id="docAnalyzeBtn" class="gen-btn" onclick="analyzeDocuments()" disabled>
+          <iconify-icon icon="mdi:chart-line" class="text-base"></iconify-icon>
+          <span>开始分析</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 分析结果 -->
+    <div id="docResultSection" class="hidden">
+      <!-- 结果标签页 -->
+      <div class="bg-white rounded-t-2xl border border-b-0 border-bg-border px-4 flex items-center gap-1 overflow-x-auto" data-animate="fade-in-up">
+        <button class="tab-btn active" data-tab="summary" onclick="switchDocResultTab('summary')">
+          <iconify-icon icon="mdi:text-box-outline" class="text-sm inline mr-1"></iconify-icon>
+          分析摘要
+        </button>
+        <button class="tab-btn" data-tab="compare" onclick="switchDocResultTab('compare')" id="compareTabBtn">
+          <iconify-icon icon="mdi:swap-horizontal" class="text-sm inline mr-1"></iconify-icon>
+          详细对比
+        </button>
+        <button class="tab-btn" data-tab="dispute" onclick="switchDocResultTab('dispute')" id="disputeTabBtn">
+          <iconify-icon icon="mdi:alert-circle-outline" class="text-sm inline mr-1"></iconify-icon>
+          争议焦点
+        </button>
+        <button class="tab-btn" data-tab="summary-individual" onclick="switchDocResultTab('summary-individual')" id="individualTabBtn">
+          <iconify-icon icon="mdi:file-document-outline" class="text-sm inline mr-1"></iconify-icon>
+          各文档摘要
+        </button>
+      </div>
+
+      <!-- 结果内容区 -->
+      <div class="bg-white rounded-b-2xl shadow-card border border-t-0 border-bg-border p-5 mb-5">
+        <!-- 摘要 -->
+        <div id="docTabSummary" class="doc-result-tab">
+          <div class="mb-5">
+            <h4 class="text-sm font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:text-box-outline" class="text-brand"></iconify-icon>
+              综合分析摘要
+            </h4>
+            <div class="bg-bg-subtle rounded-xl p-4" id="docSummaryContent">
+              <!-- 摘要内容由 JS 动态生成 -->
+            </div>
+          </div>
+
+          <!-- 核心发现 -->
+          <div>
+            <h4 class="text-sm font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:lightbulb-on-outline" class="text-amber-500"></iconify-icon>
+              核心发现
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="docKeyFindings">
+              <!-- 核心发现由 JS 动态生成 -->
+            </div>
+          </div>
+
+          <!-- 统计数据 -->
+          <div class="mt-5 pt-5 border-t border-bg-border">
+            <h4 class="text-sm font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:chart-bar" class="text-wiki"></iconify-icon>
+              对比统计
+            </h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="docCompareStats">
+              <!-- 统计数据由 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 详细对比 -->
+        <div id="docTabCompare" class="doc-result-tab hidden">
+          <!-- 相同点 -->
+          <div class="mb-6">
+            <h4 class="text-sm font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:check-circle-outline" class="text-success"></iconify-icon>
+              相同点
+              <span class="text-xs font-normal text-fg-tertiary ml-1" id="sameCount">(0项)</span>
+            </h4>
+            <div class="space-y-3" id="docSimilarities">
+              <!-- 相同点由 JS 动态生成 -->
+            </div>
+          </div>
+
+          <!-- 不同点 -->
+          <div>
+            <h4 class="text-sm font-bold text-fg-primary mb-3 flex items-center gap-1.5">
+              <iconify-icon icon="mdi:minus-circle-outline" class="text-urgent"></iconify-icon>
+              不同点
+              <span class="text-xs font-normal text-fg-tertiary ml-1" id="diffCount">(0项)</span>
+            </h4>
+
+            <!-- 筛选 -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button class="px-3 py-1 text-xs font-medium text-white bg-brand rounded-lg transition-all diff-filter-btn active" data-severity="all" onclick="filterDiffBySeverity('all')">
+                全部
+              </button>
+              <button class="px-3 py-1 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all diff-filter-btn" data-severity="high" onclick="filterDiffBySeverity('high')">
+                高风险
+              </button>
+              <button class="px-3 py-1 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all diff-filter-btn" data-severity="medium" onclick="filterDiffBySeverity('medium')">
+                中风险
+              </button>
+              <button class="px-3 py-1 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-subtle rounded-lg transition-all diff-filter-btn" data-severity="low" onclick="filterDiffBySeverity('low')">
+                低风险
+              </button>
+            </div>
+
+            <div class="space-y-3" id="docDifferences">
+              <!-- 不同点由 JS 动态生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 争议焦点 -->
+        <div id="docTabDispute" class="doc-result-tab hidden">
+          <div class="space-y-4" id="docDisputePoints">
+            <!-- 争议焦点由 JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 各文档摘要 -->
+        <div id="docTabIndividual" class="doc-result-tab hidden">
+          <div class="space-y-4" id="docIndividualSummaries">
+            <!-- 各文档摘要由 JS 动态生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var uploadedFiles = [];
+    var currentFunc = 'compare';
+    var currentResult = null;
+    var currentDiffFilter = 'all';
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) {
+            return bytes + ' B';
+        } else if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + ' KB';
+        } else {
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+    }
+
+    function getFileIcon(type) {
+        if (type === 'pdf') {
+            return 'mdi:file-pdf-box';
+        } else if (type === 'docx' || type === 'doc') {
+            return 'mdi:file-word-outline';
+        } else if (type === 'txt') {
+            return 'mdi:file-document-outline';
+        }
+        return 'mdi:file-outline';
+    }
+
+    function getFileColor(type) {
+        if (type === 'pdf') {
+            return 'text-urgent';
+        } else if (type === 'docx' || type === 'doc') {
+            return 'text-brand';
+        } else if (type === 'txt') {
+            return 'text-fg-tertiary';
+        }
+        return 'text-fg-secondary';
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        var area = document.getElementById('docUploadArea');
+        if (area) {
+            area.classList.add('dragover');
+        }
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        var area = document.getElementById('docUploadArea');
+        if (area) {
+            area.classList.remove('dragover');
+        }
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        var area = document.getElementById('docUploadArea');
+        if (area) {
+            area.classList.remove('dragover');
+        }
+        if (e.dataTransfer && e.dataTransfer.files) {
+            addFiles(e.dataTransfer.files);
+        }
+    }
+
+    function handleFileSelect(e) {
+        if (e.target.files) {
+            addFiles(e.target.files);
+        }
+    }
+
+    function addFiles(fileList) {
+        for (var i = 0; i < fileList.length; i++) {
+            var file = fileList[i];
+            var ext = file.name.split('.').pop().toLowerCase();
+            var fileObj = {
+                id: 'doc-' + Date.now() + '-' + i,
+                name: file.name,
+                size: file.size,
+                type: ext,
+                file: file
+            };
+            uploadedFiles.push(fileObj);
+        }
+        renderDocList();
+        updateAnalyzeButton();
+    }
+
+    function removeDoc(id) {
+        uploadedFiles = uploadedFiles.filter(function (f) { return f.id !== id; });
+        renderDocList();
+        updateAnalyzeButton();
+    }
+
+    function clearAllDocs() {
+        uploadedFiles = [];
+        renderDocList();
+        updateAnalyzeButton();
+    }
+
+    function renderDocList() {
+        var container = document.getElementById('docListContainer');
+        var list = document.getElementById('docFileList');
+
+        if (!container || !list) {
+            return;
+        }
+
+        if (uploadedFiles.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        list.innerHTML = '';
+
+        for (var i = 0; i < uploadedFiles.length; i++) {
+            var f = uploadedFiles[i];
+            var icon = getFileIcon(f.type);
+            var color = getFileColor(f.type);
+            var div = document.createElement('div');
+            div.className = 'file-item flex items-center gap-3 p-3 bg-bg rounded-xl';
+            div.innerHTML = '<div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                '<iconify-icon icon="' + icon + '" class="text-lg ' + color + '"></iconify-icon>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                '<p class="text-xs font-medium text-fg-primary truncate">' + f.name + '</p>' +
+                '<p class="text-[10px] text-fg-tertiary">' + formatFileSize(f.size) + ' · ' + f.type.toUpperCase() + '</p>' +
+                '</div>' +
+                '<button class="w-7 h-7 rounded-lg hover:bg-urgent/10 flex items-center justify-center text-fg-tertiary hover:text-urgent transition-colors flex-shrink-0" onclick="removeDoc(\'' + f.id + '\')" title="删除">' +
+                '<iconify-icon icon="mdi:close" class="text-sm"></iconify-icon>' +
+                '</button>';
+            list.appendChild(div);
+        }
+    }
+
+    function updateAnalyzeButton() {
+        var btn = document.getElementById('docAnalyzeBtn');
+        if (!btn) {
+            return;
+        }
+        var minFiles = currentFunc === 'compare' ? 2 : 1;
+        btn.disabled = uploadedFiles.length < minFiles;
+    }
+
+    window.switchDocFunc = function (func) {
+        currentFunc = func;
+        var btns = document.querySelectorAll('.doc-func-btn');
+        for (var i = 0; i < btns.length; i++) {
+            if (btns[i].dataset.func === func) {
+                btns[i].classList.add('active', 'bg-brand', 'text-white');
+                btns[i].classList.remove('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            } else {
+                btns[i].classList.remove('active', 'bg-brand', 'text-white');
+                btns[i].classList.add('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            }
+        }
+
+        var compareTabBtn = document.getElementById('compareTabBtn');
+        var disputeTabBtn = document.getElementById('disputeTabBtn');
+        var individualTabBtn = document.getElementById('individualTabBtn');
+
+        if (func === 'compare') {
+            if (compareTabBtn) {
+                compareTabBtn.classList.remove('hidden');
+            }
+            if (disputeTabBtn) {
+                disputeTabBtn.classList.remove('hidden');
+            }
+            if (individualTabBtn) {
+                individualTabBtn.classList.add('hidden');
+            }
+        } else {
+            if (compareTabBtn) {
+                compareTabBtn.classList.add('hidden');
+            }
+            if (disputeTabBtn) {
+                disputeTabBtn.classList.add('hidden');
+            }
+            if (individualTabBtn) {
+                individualTabBtn.classList.remove('hidden');
+            }
+        }
+
+        updateAnalyzeButton();
+    };
+
+    function analyzeDocuments() {
+        var btn = document.getElementById('docAnalyzeBtn');
+        if (btn) {
+            btn.disabled = true;
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<iconify-icon icon="mdi:loading" class="text-base animate-spin"></iconify-icon><span>分析中...</span>';
+        }
+
+        var docs = uploadedFiles.map(function (f) {
+            return {
+                id: f.id,
+                name: f.name,
+                type: f.type,
+                size: f.size
+            };
+        });
+
+        var body = {
+            documents: docs
+        };
+
+        var url = currentFunc === 'compare' ? '/api/doc/compare' : '/api/doc/summarize-multi';
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                currentResult = data;
+                renderDocResult(data);
+                var resultSection = document.getElementById('docResultSection');
+                if (resultSection) {
+                    resultSection.classList.remove('hidden');
+                }
+            })
+            .catch(function () {
+                var mock = getMockResult();
+                currentResult = mock;
+                renderDocResult(mock);
+                var resultSection = document.getElementById('docResultSection');
+                if (resultSection) {
+                    resultSection.classList.remove('hidden');
+                }
+            })
+            .finally(function () {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+    }
+
+    function getMockResult() {
+        if (currentFunc === 'compare') {
+            return {
+                doc1_name: uploadedFiles[0] ? uploadedFiles[0].name : '合同版本A',
+                doc2_name: uploadedFiles[1] ? uploadedFiles[1].name : '合同版本B',
+                similarities: [
+                    { section: '合同主体', content: '双方均对甲乙双方的主体信息进行了约定。', description: '主体条款基本一致。' },
+                    { section: '保密义务', content: '双方均负有保密义务。', description: '保密义务范围基本一致。' },
+                    { section: '争议解决', content: '均约定通过诉讼方式解决。', description: '争议解决方式相同。' }
+                ],
+                differences: [
+                    { section: '合同金额', type: 'price', doc1_content: '合同总金额为人民币 50 万元整。', doc2_content: '合同总金额为人民币 55 万元整。', severity: 'high', description: '金额增加 5 万元，增幅 10%。' },
+                    { section: '付款方式', type: 'payment', doc1_content: '预付款 30%，验收后付 65%，质保金 5%。', doc2_content: '预付款 50%，验收后付 45%，质保金 5%。', severity: 'medium', description: '预付款比例提高。' },
+                    { section: '交付期限', type: 'time', doc1_content: '合同签订后 30 日内交付。', doc2_content: '合同签订后 45 日内交付。', severity: 'medium', description: '交付期限延长 15 天。' },
+                    { section: '违约金比例', type: 'penalty', doc1_content: '每日按合同总金额的 0.1% 支付违约金。', doc2_content: '每日按合同总金额的 0.05% 支付违约金。', severity: 'high', description: '违约金比例降低 50%。' },
+                    { section: '质保期', type: 'warranty', doc1_content: '质保期 12 个月。', doc2_content: '质保期 24 个月。', severity: 'medium', description: '质保期延长一倍。' },
+                    { section: '管辖法院', type: 'jurisdiction', doc1_content: '由甲方所在地法院管辖。', doc2_content: '由合同签订地法院管辖。', severity: 'low', description: '管辖约定有所变化。' }
+                ],
+                dispute_points: [
+                    { title: '合同价款变更', description: '两份合同在总金额上存在 5 万元差异。', relevance: 0.95, related_clauses: ['第一条', '第二条'] },
+                    { title: '付款条件调整', description: '预付款比例从 30% 提高到 50%。', relevance: 0.85, related_clauses: ['第三条'] },
+                    { title: '违约责任不对等', description: '违约金比例降低，违约成本下降。', relevance: 0.90, related_clauses: ['第七条'] }
+                ],
+                summary: '## 对比分析摘要\n\n经对比分析，两份合同在整体结构上基本一致，但在合同金额、付款方式、违约责任等方面存在重要差异。',
+                stats: {
+                    total_sections_compared: 15,
+                    same_sections: 8,
+                    different_sections: 5,
+                    high_risk_diffs: 2,
+                    medium_risk_diffs: 3,
+                    low_risk_diffs: 1,
+                    similarity_score: 72.5
+                }
+            };
+        } else {
+            return {
+                comprehensive_summary: '## 多文档综合摘要\n\n本次共分析 ' + uploadedFiles.length + ' 份法律文书，均涉及合同纠纷类案件。',
+                individual_summaries: uploadedFiles.map(function (f, i) {
+                    return {
+                        doc_id: f.id,
+                        doc_name: f.name,
+                        summary: '《' + f.name + '》一案，法院经审理查明相关事实...',
+                        key_points: ['事实认定清楚', '适用法律正确', '原告主要诉求获支持', '被告承担违约责任']
+                    };
+                }),
+                common_themes: ['合同违约责任认定', '损害赔偿计算标准', '合同履行抗辩权', '证据认定规则'],
+                key_findings: ['两份判决均支持了原告的主要诉讼请求', '违约金调整均以实际损失为基础']
+            };
+        }
+    }
+
+    function renderDocResult(data) {
+        if (currentFunc === 'compare') {
+            renderCompareResult(data);
+        } else {
+            renderSummarizeResult(data);
+        }
+    }
+
+    function renderCompareResult(data) {
+        var summaryContent = document.getElementById('docSummaryContent');
+        if (summaryContent) {
+            summaryContent.innerHTML = '<div class="text-sm text-fg-secondary leading-relaxed">' +
+                data.summary.replace(/\n/g, '<br/>') +
+                '</div>';
+        }
+
+        var keyFindings = document.getElementById('docKeyFindings');
+        if (keyFindings) {
+            keyFindings.innerHTML = '';
+            var findings = data.dispute_points || [];
+            var icons = ['mdi:alert-decagram-outline', 'mdi:cash-multiple', 'mdi:calendar-clock'];
+            var colors = ['text-urgent', 'text-brand', 'text-wiki'];
+            for (var i = 0; i < Math.min(findings.length, 4); i++) {
+                var f = findings[i];
+                var div = document.createElement('div');
+                div.className = 'p-3 bg-bg-subtle rounded-xl';
+                div.innerHTML = '<div class="flex items-start gap-2.5">' +
+                    '<div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                    '<iconify-icon icon="' + (icons[i % icons.length]) + '" class="text-base ' + (colors[i % colors.length]) + '"></iconify-icon>' +
+                    '</div>' +
+                    '<div>' +
+                    '<p class="text-xs font-semibold text-fg-primary mb-1">' + f.title + '</p>' +
+                    '<p class="text-[11px] text-fg-secondary line-clamp-2">' + f.description + '</p>' +
+                    '</div>' +
+                    '</div>';
+                keyFindings.appendChild(div);
+            }
+        }
+
+        var stats = document.getElementById('docCompareStats');
+        if (stats && data.stats) {
+            stats.innerHTML = '';
+            var statItems = [
+                { label: '相似度', value: data.stats.similarity_score + '%', color: 'text-success', icon: 'mdi:percent' },
+                { label: '相同条款', value: data.stats.same_sections + '项', color: 'text-brand', icon: 'mdi:check' },
+                { label: '差异条款', value: data.stats.different_sections + '项', color: 'text-urgent', icon: 'mdi:minus' },
+                { label: '高风险差异', value: data.stats.high_risk_diffs + '项', color: 'text-urgent', icon: 'mdi:alert' }
+            ];
+            for (var j = 0; j < statItems.length; j++) {
+                var s = statItems[j];
+                var div2 = document.createElement('div');
+                div2.className = 'bg-bg-subtle rounded-xl p-3 text-center';
+                div2.innerHTML = '<iconify-icon icon="' + s.icon + '" class="text-xl ' + s.color + ' mb-1"></iconify-icon>' +
+                    '<p class="text-lg font-bold text-fg-primary">' + s.value + '</p>' +
+                    '<p class="text-[10px] text-fg-tertiary">' + s.label + '</p>';
+                stats.appendChild(div2);
+            }
+        }
+
+        var sameCount = document.getElementById('sameCount');
+        if (sameCount && data.similarities) {
+            sameCount.textContent = '(' + data.similarities.length + '项)';
+        }
+        var diffCount = document.getElementById('diffCount');
+        if (diffCount && data.differences) {
+            diffCount.textContent = '(' + data.differences.length + '项)';
+        }
+
+        var similarities = document.getElementById('docSimilarities');
+        if (similarities && data.similarities) {
+            similarities.innerHTML = '';
+            for (var k = 0; k < data.similarities.length; k++) {
+                var sim = data.similarities[k];
+                var div3 = document.createElement('div');
+                div3.className = 'diff-same p-3 rounded-r-xl';
+                div3.innerHTML = '<p class="text-xs font-semibold text-fg-primary mb-1">' + sim.section + '</p>' +
+                    '<p class="text-[11px] text-fg-secondary mb-1">' + sim.content + '</p>' +
+                    '<p class="text-[10px] text-success">' + sim.description + '</p>';
+                similarities.appendChild(div3);
+            }
+        }
+
+        var differences = document.getElementById('docDifferences');
+        if (differences && data.differences) {
+            renderDifferences(data.differences, 'all');
+        }
+
+        var disputePoints = document.getElementById('docDisputePoints');
+        if (disputePoints && data.dispute_points) {
+            disputePoints.innerHTML = '';
+            for (var m = 0; m < data.dispute_points.length; m++) {
+                var dp = data.dispute_points[m];
+                var div4 = document.createElement('div');
+                div4.className = 'bg-bg-subtle rounded-xl p-4';
+                var relPercent = Math.round(dp.relevance * 100);
+                div4.innerHTML = '<div class="flex items-start justify-between mb-2">' +
+                    '<h5 class="text-sm font-semibold text-fg-primary">' + dp.title + '</h5>' +
+                    '<span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-tint text-brand font-medium flex-shrink-0 ml-2">关联度 ' + relPercent + '%</span>' +
+                    '</div>' +
+                    '<p class="text-xs text-fg-secondary mb-3">' + dp.description + '</p>' +
+                    '<div class="flex items-center gap-2">' +
+                    '<span class="text-[10px] text-fg-tertiary">相关条款：</span>' +
+                    '<span class="text-[10px] text-fg-secondary">' + dp.related_clauses.join('、') + '</span>' +
+                    '</div>';
+                disputePoints.appendChild(div4);
+            }
+        }
+    }
+
+    function renderDifferences(diffs, filter) {
+        var container = document.getElementById('docDifferences');
+        if (!container) {
+            return;
+        }
+        container.innerHTML = '';
+
+        var filtered = diffs;
+        if (filter !== 'all') {
+            filtered = diffs.filter(function (d) { return d.severity === filter; });
+        }
+
+        for (var i = 0; i < filtered.length; i++) {
+            var diff = filtered[i];
+            var sevClass = 'severity-' + diff.severity;
+            var sevLabel = diff.severity === 'high' ? '高风险' : (diff.severity === 'medium' ? '中风险' : '低风险');
+            var diffClass = diff.severity === 'high' ? 'diff-remove' : 'diff-modify';
+            var div = document.createElement('div');
+            div.className = diffClass + ' p-4 rounded-r-xl';
+            div.innerHTML = '<div class="flex items-center justify-between mb-3">' +
+                '<h5 class="text-sm font-semibold text-fg-primary">' + diff.section + '</h5>' +
+                '<span class="text-[10px] px-2 py-0.5 rounded-full ' + sevClass + ' font-medium flex-shrink-0 ml-2">' + sevLabel + '</span>' +
+                '</div>' +
+                '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">' +
+                '<div class="bg-white/60 rounded-lg p-2.5">' +
+                '<p class="text-[10px] text-fg-tertiary mb-1 font-medium">文档一</p>' +
+                '<p class="text-xs text-fg-secondary">' + diff.doc1_content + '</p>' +
+                '</div>' +
+                '<div class="bg-white/60 rounded-lg p-2.5">' +
+                '<p class="text-[10px] text-fg-tertiary mb-1 font-medium">文档二</p>' +
+                '<p class="text-xs text-fg-secondary">' + diff.doc2_content + '</p>' +
+                '</div>' +
+                '</div>' +
+                '<p class="text-[11px] text-fg-secondary"><span class="font-medium">说明：</span>' + diff.description + '</p>';
+            container.appendChild(div);
+        }
+    }
+
+    function renderSummarizeResult(data) {
+        var summaryContent = document.getElementById('docSummaryContent');
+        if (summaryContent) {
+            summaryContent.innerHTML = '<div class="text-sm text-fg-secondary leading-relaxed">' +
+                data.comprehensive_summary.replace(/\n/g, '<br/>') +
+                '</div>';
+        }
+
+        var keyFindings = document.getElementById('docKeyFindings');
+        if (keyFindings && data.key_findings) {
+            keyFindings.innerHTML = '';
+            var icons = ['mdi:check-circle-outline', 'mdi:scale-balance', 'mdi:gavel', 'mdi:file-document-outline'];
+            for (var i = 0; i < Math.min(data.key_findings.length, 4); i++) {
+                var f = data.key_findings[i];
+                var div = document.createElement('div');
+                div.className = 'p-3 bg-bg-subtle rounded-xl';
+                div.innerHTML = '<div class="flex items-start gap-2.5">' +
+                    '<div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                    '<iconify-icon icon="' + (icons[i % icons.length]) + '" class="text-base text-brand"></iconify-icon>' +
+                    '</div>' +
+                    '<p class="text-xs text-fg-secondary pt-1 flex-1">' + f + '</p>' +
+                    '</div>';
+                keyFindings.appendChild(div);
+            }
+        }
+
+        var stats = document.getElementById('docCompareStats');
+        if (stats) {
+            stats.innerHTML = '';
+            var statItems = [
+                { label: '文档数量', value: data.individual_summaries ? data.individual_summaries.length + '份' : '0份', color: 'text-brand', icon: 'mdi:file-multiple-outline' },
+                { label: '共同主题', value: data.common_themes ? data.common_themes.length + '个' : '0个', color: 'text-wiki', icon: 'mdi:tag-multiple-outline' },
+                { label: '核心发现', value: data.key_findings ? data.key_findings.length + '项' : '0项', color: 'text-success', icon: 'mdi:lightbulb-on-outline' },
+                { label: '总字数', value: '约5000字', color: 'text-urgent', icon: 'mdi:format-text' }
+            ];
+            for (var j = 0; j < statItems.length; j++) {
+                var s = statItems[j];
+                var div2 = document.createElement('div');
+                div2.className = 'bg-bg-subtle rounded-xl p-3 text-center';
+                div2.innerHTML = '<iconify-icon icon="' + s.icon + '" class="text-xl ' + s.color + ' mb-1"></iconify-icon>' +
+                    '<p class="text-lg font-bold text-fg-primary">' + s.value + '</p>' +
+                    '<p class="text-[10px] text-fg-tertiary">' + s.label + '</p>';
+                stats.appendChild(div2);
+            }
+        }
+
+        var individualSummaries = document.getElementById('docIndividualSummaries');
+        if (individualSummaries && data.individual_summaries) {
+            individualSummaries.innerHTML = '';
+            for (var k = 0; k < data.individual_summaries.length; k++) {
+                var sum = data.individual_summaries[k];
+                var div3 = document.createElement('div');
+                div3.className = 'bg-bg-subtle rounded-xl p-4';
+                div3.innerHTML = '<div class="flex items-center gap-3 mb-3">' +
+                    '<div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">' +
+                    '<iconify-icon icon="mdi:file-document-outline" class="text-lg text-brand"></iconify-icon>' +
+                    '</div>' +
+                    '<div class="flex-1 min-w-0">' +
+                    '<h5 class="text-sm font-semibold text-fg-primary truncate">' + sum.doc_name + '</h5>' +
+                    '<p class="text-[10px] text-fg-tertiary">文档摘要</p>' +
+                    '</div>' +
+                    '</div>' +
+                    '<p class="text-xs text-fg-secondary leading-relaxed mb-3">' + sum.summary + '</p>' +
+                    '<div class="flex flex-wrap gap-1.5">' +
+                    (sum.key_points || []).map(function (kp) {
+                        return '<span class="text-[10px] px-2 py-0.5 bg-white rounded-full text-fg-secondary">• ' + kp + '</span>';
+                    }).join('') +
+                    '</div>';
+                individualSummaries.appendChild(div3);
+            }
+        }
+    }
+
+    window.switchDocResultTab = function (tab) {
+        var tabs = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].dataset.tab === tab) {
+                tabs[i].classList.add('active');
+            } else {
+                tabs[i].classList.remove('active');
+            }
+        }
+
+        var tabContents = document.querySelectorAll('.doc-result-tab');
+        for (var j = 0; j < tabContents.length; j++) {
+            tabContents[j].classList.add('hidden');
+        }
+
+        var content = document.getElementById('docTab' + tab.charAt(0).toUpperCase() + tab.slice(1).replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }));
+        if (content) {
+            content.classList.remove('hidden');
+        }
+    };
+
+    window.filterDiffBySeverity = function (severity) {
+        currentDiffFilter = severity;
+        var btns = document.querySelectorAll('.diff-filter-btn');
+        for (var i = 0; i < btns.length; i++) {
+            if (btns[i].dataset.severity === severity) {
+                btns[i].classList.add('active', 'bg-brand', 'text-white');
+                btns[i].classList.remove('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            } else {
+                btns[i].classList.remove('active', 'bg-brand', 'text-white');
+                btns[i].classList.add('bg-bg', 'text-fg-secondary', 'hover:bg-bg-subtle');
+            }
+        }
+
+        if (currentResult && currentResult.differences) {
+            renderDifferences(currentResult.differences, severity);
+        }
+    };
+
+    window.handleDragOver = handleDragOver;
+    window.handleDragLeave = handleDragLeave;
+    window.handleDrop = handleDrop;
+    window.handleFileSelect = handleFileSelect;
+    window.removeDoc = removeDoc;
+    window.clearAllDocs = clearAllDocs;
+    window.analyzeDocuments = analyzeDocuments;
+})();
+</script>

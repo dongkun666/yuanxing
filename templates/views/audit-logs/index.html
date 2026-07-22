@@ -1,0 +1,1237 @@
+<!--
+  审计日志页面 (lex-coder · 2026-07-03)
+  数据源: GET /api/audit/logs, /api/audit/stats, /api/audit/report (audit_router.py)
+  
+  功能模块:
+  - 审计日志列表 (筛选/搜索/分页)
+  - 日志详情
+  - 导出功能 (Excel/CSV/PDF)
+  - 统计图表
+  - 审计报告
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-audit-logs" data-view-source="audit-logs/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  
+  .al-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  
+  .al-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .al-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D2129;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .al-breadcrumb {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 16px;
+  }
+  
+  .al-breadcrumb a { color: #165DFF; cursor: pointer; }
+  .al-breadcrumb span { margin: 0 8px; }
+  
+  .al-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .al-stat-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  
+  .al-stat-label {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 8px;
+  }
+  
+  .al-stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1D2129;
+    font-feature-settings: "tnum";
+  }
+  
+  .al-stat-value.info { color: #165DFF; }
+  .al-stat-value.success { color: #00B42A; }
+  .al-stat-value.warning { color: #FF7D00; }
+  .al-stat-value.danger { color: #F53F3F; }
+  
+  .al-stat-trend {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+  }
+  
+  .al-stat-trend.up { color: #00B42A; }
+  .al-stat-trend.down { color: #F53F3F; }
+  
+  .al-charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .al-chart-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .al-chart-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 16px;
+  }
+  
+  .al-chart-container {
+    height: 250px;
+    position: relative;
+  }
+  
+  .al-bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 200px;
+    padding: 0 10px;
+    border-bottom: 1px solid #E5E6EB;
+  }
+  
+  .al-bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    margin: 0 4px;
+  }
+  
+  .al-bar {
+    width: 100%;
+    max-width: 32px;
+    background: linear-gradient(180deg, #165DFF 0%, #4080FF 100%);
+    border-radius: 4px 4px 0 0;
+    transition: height 300ms ease;
+    min-height: 4px;
+  }
+  
+  .al-bar-label {
+    font-size: 11px;
+    color: #86909C;
+    margin-top: 8px;
+  }
+  
+  .al-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .al-legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  
+  .al-legend-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .al-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  
+  .al-legend-name { color: #4E5969; }
+  .al-legend-value { color: #1D2129; font-weight: 500; }
+  
+  .al-toolbar {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px 8px 0 0;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .al-search {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  
+  .al-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 36px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+    box-sizing: border-box;
+  }
+  
+  .al-search-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .al-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #86909C;
+    font-size: 16px;
+  }
+  
+  .al-filter-select {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+    min-width: 120px;
+  }
+  
+  .al-filter-date {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+  }
+  
+  .al-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    transition: all 150ms;
+  }
+  
+  .al-btn-primary {
+    background: #165DFF;
+    color: white;
+    border-color: #165DFF;
+  }
+  
+  .al-btn-primary:hover {
+    background: #0E42D2;
+    border-color: #0E42D2;
+  }
+  
+  .al-btn-default {
+    background: white;
+    color: #4E5969;
+    border-color: #E5E6EB;
+  }
+  
+  .al-btn-default:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+  }
+  
+  .al-table-wrap {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow-x: auto;
+  }
+  
+  .al-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .al-table th {
+    background: #FAFBFC;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4E5969;
+    border-bottom: 1px solid #E5E6EB;
+    white-space: nowrap;
+  }
+  
+  .al-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F2F3F5;
+    font-size: 13px;
+    color: #1D2129;
+    vertical-align: middle;
+  }
+  
+  .al-table tr:hover { background: #F7F8FA; }
+  .al-table tr:last-child td { border-bottom: none; }
+  
+  .al-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .al-tag.info { background: #E8F3FF; color: #165DFF; }
+  .al-tag.success { background: #E8FFEA; color: #00B42A; }
+  .al-tag.warning { background: #FFF7E8; color: #FF7D00; }
+  .al-tag.danger { background: #FFECE8; color: #F53F3F; }
+  .al-tag.high { background: #FFECE8; color: #F53F3F; }
+  .al-tag.medium { background: #FFF7E8; color: #FF7D00; }
+  .al-tag.low { background: #E8F3FF; color: #165DFF; }
+  
+  .al-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .al-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #E8F3FF;
+    color: #165DFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .al-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .al-user-name { font-size: 13px; color: #1D2129; font-weight: 500; }
+  .al-user-ip { font-size: 11px; color: #86909C; }
+  
+  .al-action-btn {
+    background: none;
+    border: none;
+    color: #165DFF;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+  }
+  
+  .al-action-btn:hover { text-decoration: underline; }
+  
+  .al-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .al-page-info {
+    font-size: 13px;
+    color: #86909C;
+  }
+  
+  .al-page-buttons {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .al-page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #E5E6EB;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #4E5969;
+    transition: all 150ms;
+  }
+  
+  .al-page-btn:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+  }
+  
+  .al-page-btn.active {
+    background: #165DFF;
+    color: white;
+    border-color: #165DFF;
+  }
+  
+  .al-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .al-detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .al-detail-modal.active { display: flex; }
+  
+  .al-detail-content {
+    background: white;
+    border-radius: 8px;
+    width: 680px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .al-detail-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #E5E6EB;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .al-detail-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  
+  .al-detail-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #86909C;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  
+  .al-detail-close:hover {
+    background: #F2F3F5;
+    color: #1D2129;
+  }
+  
+  .al-detail-body {
+    padding: 24px;
+  }
+  
+  .al-detail-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #F2F3F5;
+  }
+  
+  .al-detail-row:last-child { border-bottom: none; }
+  
+  .al-detail-label {
+    width: 120px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: #86909C;
+  }
+  
+  .al-detail-value {
+    flex: 1;
+    font-size: 13px;
+    color: #1D2129;
+    word-break: break-all;
+  }
+  
+  .al-detail-value code {
+    background: #F7F8FA;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+  }
+  
+  .al-export-dropdown {
+    position: relative;
+  }
+  
+  .al-export-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 4px 0;
+    min-width: 140px;
+    z-index: 100;
+    display: none;
+  }
+  
+  .al-export-menu.show { display: block; }
+  
+  .al-export-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #4E5969;
+    cursor: pointer;
+    transition: background 150ms;
+  }
+  
+  .al-export-item:hover {
+    background: #F7F8FA;
+    color: #165DFF;
+  }
+  
+  .al-top-users {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .al-top-user-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .al-top-rank {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    background: #F2F3F5;
+    color: #86909C;
+  }
+  
+  .al-top-rank.rank-1 { background: #FFF1E8; color: #FF7D00; }
+  .al-top-rank.rank-2 { background: #E8F3FF; color: #165DFF; }
+  .al-top-rank.rank-3 { background: #FFECE8; color: #F53F3F; }
+  
+  .al-top-user-info { flex: 1; }
+  .al-top-user-name { font-size: 13px; color: #1D2129; font-weight: 500; }
+  .al-top-user-count { font-size: 12px; color: #86909C; }
+  
+  .al-top-bar-bg {
+    width: 80px;
+    height: 6px;
+    background: #F2F3F5;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .al-top-bar-fill {
+    height: 100%;
+    background: #165DFF;
+    border-radius: 3px;
+  }
+</style>
+
+<div class="al-container fade-in">
+  <div class="al-breadcrumb">
+    <a onclick="showView('settings')">设置</a>
+    <span>/</span>
+    <span>审计日志</span>
+  </div>
+  
+  <div class="al-header">
+    <div class="al-title">
+      <span>📋</span>
+      <span>审计日志</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="al-btn al-btn-default" onclick="alGenerateReport()">
+        <span>📊</span> 生成报告
+      </button>
+      <div class="al-export-dropdown">
+        <button class="al-btn al-btn-primary" onclick="alToggleExportMenu()">
+          <span>📥</span> 导出
+        </button>
+        <div class="al-export-menu" id="alExportMenu">
+          <div class="al-export-item" onclick="alExport('xlsx')">导出 Excel (.xlsx)</div>
+          <div class="al-export-item" onclick="alExport('csv')">导出 CSV</div>
+          <div class="al-export-item" onclick="alExport('pdf')">导出 PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 统计卡片 -->
+  <div class="al-stats-row">
+    <div class="al-stat-card fade-in">
+      <div class="al-stat-label">总日志数</div>
+      <div class="al-stat-value info">12,580</div>
+      <div class="al-stat-trend up">↑ 12.5% 较上周</div>
+    </div>
+    <div class="al-stat-card fade-in">
+      <div class="al-stat-label">今日操作</div>
+      <div class="al-stat-value success">245</div>
+      <div class="al-stat-trend up">↑ 8.3% 较昨日</div>
+    </div>
+    <div class="al-stat-card fade-in">
+      <div class="al-stat-label">登录次数</div>
+      <div class="al-stat-value warning">320</div>
+      <div class="al-stat-trend down">↓ 3.2% 较上周</div>
+    </div>
+    <div class="al-stat-card fade-in">
+      <div class="al-stat-label">失败登录</div>
+      <div class="al-stat-value danger">8</div>
+      <div class="al-stat-trend up">↑ 2 次 较昨日</div>
+    </div>
+  </div>
+  
+  <!-- 图表区域 -->
+  <div class="al-charts-row">
+    <div class="al-chart-card fade-in">
+      <div class="al-chart-title">操作趋势 (近 7 天)</div>
+      <div class="al-chart-container">
+        <div class="al-bar-chart" id="alBarChart">
+          <!-- 动态渲染柱状图 -->
+        </div>
+      </div>
+    </div>
+    <div class="al-chart-card fade-in">
+      <div class="al-chart-title">操作类型分布</div>
+      <div class="al-chart-container">
+        <div class="al-pie-legend" id="alPieLegend">
+          <!-- 动态渲染 -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 活跃用户 -->
+  <div class="al-chart-card fade-in" style="margin-bottom: 20px;">
+    <div class="al-chart-title">最活跃用户 (今日)</div>
+    <div class="al-top-users" id="alTopUsers">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+  
+  <!-- 筛选工具栏 -->
+  <div class="al-toolbar">
+    <div class="al-search">
+      <span class="al-search-icon">🔍</span>
+      <input type="text" class="al-search-input" placeholder="搜索操作描述、用户名..." oninput="alSearch(this.value)">
+    </div>
+    <select class="al-filter-select" id="alActionType" onchange="alFilterChange()">
+      <option value="">全部操作</option>
+      <option value="login">登录</option>
+      <option value="logout">登出</option>
+      <option value="create">创建</option>
+      <option value="update">更新</option>
+      <option value="delete">删除</option>
+      <option value="view">查看</option>
+      <option value="search">搜索</option>
+      <option value="export">导出</option>
+      <option value="generate">生成</option>
+    </select>
+    <select class="al-filter-select" id="alCategory" onchange="alFilterChange()">
+      <option value="">全部分类</option>
+      <option value="auth">认证授权</option>
+      <option value="user_management">用户管理</option>
+      <option value="case_search">案例检索</option>
+      <option value="case_view">案例查看</option>
+      <option value="data_export">数据导出</option>
+      <option value="system_config">系统配置</option>
+    </select>
+    <select class="al-filter-select" id="alLevel" onchange="alFilterChange()">
+      <option value="">全部级别</option>
+      <option value="info">信息</option>
+      <option value="warning">警告</option>
+      <option value="high">高危</option>
+      <option value="critical">严重</option>
+    </select>
+    <select class="al-filter-select" id="alStatus" onchange="alFilterChange()">
+      <option value="">全部状态</option>
+      <option value="success">成功</option>
+      <option value="failed">失败</option>
+    </select>
+    <input type="date" class="al-filter-date" id="alStartDate" onchange="alFilterChange()">
+    <span style="color: #86909C;">至</span>
+    <input type="date" class="al-filter-date" id="alEndDate" onchange="alFilterChange()">
+  </div>
+  
+  <!-- 日志列表 -->
+  <div class="al-table-wrap">
+    <table class="al-table">
+      <thead>
+        <tr>
+          <th style="width: 180px;">时间</th>
+          <th style="width: 180px;">用户</th>
+          <th style="width: 100px;">操作类型</th>
+          <th style="width: 120px;">分类</th>
+          <th style="width: 80px;">级别</th>
+          <th>操作描述</th>
+          <th style="width: 80px;">状态</th>
+          <th style="width: 80px;">操作</th>
+        </tr>
+      </thead>
+      <tbody id="alLogTableBody">
+        <!-- 动态渲染 -->
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- 分页 -->
+  <div class="al-pagination">
+    <div class="al-page-info">共 <span id="alTotalCount">12580</span> 条记录</div>
+    <div class="al-page-buttons" id="alPagination">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="al-detail-modal" id="alDetailModal">
+  <div class="al-detail-content">
+    <div class="al-detail-header">
+      <div class="al-detail-title">审计日志详情</div>
+      <button class="al-detail-close" onclick="alCloseDetail()">×</button>
+    </div>
+    <div class="al-detail-body" id="alDetailBody">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+</div>
+
+<script>
+var alLogs = [
+  {
+    log_id: "audit_001",
+    time: "2026-07-03 09:00:00",
+    user_id: 1,
+    username: "admin",
+    name: "系统管理员",
+    ip: "192.168.1.100",
+    action_type: "login",
+    action_name: "登录",
+    category: "auth",
+    category_name: "认证授权",
+    level: "info",
+    description: "用户登录成功",
+    status: "success",
+    duration: 150,
+    details: { login_method: "password", mfa_enabled: true, user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+  },
+  {
+    log_id: "audit_002",
+    time: "2026-07-03 09:15:00",
+    user_id: 1,
+    username: "admin",
+    name: "系统管理员",
+    ip: "192.168.1.100",
+    action_type: "create",
+    action_name: "创建",
+    category: "user_management",
+    category_name: "用户管理",
+    level: "info",
+    description: "创建新用户: lawyer01",
+    status: "success",
+    duration: 85,
+    details: { email: "lawyer01@example.com", role: "lawyer", department: "法务部" }
+  },
+  {
+    log_id: "audit_003",
+    time: "2026-07-03 10:00:00",
+    user_id: 2,
+    username: "lawyer_zhang",
+    name: "张律师",
+    ip: "192.168.1.101",
+    action_type: "search",
+    action_name: "搜索",
+    category: "case_search",
+    category_name: "案例检索",
+    level: "info",
+    description: "搜索案例: 合同纠纷",
+    status: "success",
+    duration: 320,
+    details: { query: "合同纠纷", result_count: 256, search_time_ms: 280 }
+  },
+  {
+    log_id: "audit_004",
+    time: "2026-07-03 10:05:00",
+    user_id: 2,
+    username: "lawyer_zhang",
+    name: "张律师",
+    ip: "192.168.1.101",
+    action_type: "view",
+    action_name: "查看",
+    category: "case_view",
+    category_name: "案例查看",
+    level: "info",
+    description: "查看案例详情: 某某合同纠纷案",
+    status: "success",
+    duration: 45,
+    details: { case_id: "case_001", case_title: "某某合同纠纷案" }
+  },
+  {
+    log_id: "audit_005",
+    time: "2026-07-03 11:30:00",
+    user_id: 2,
+    username: "lawyer_zhang",
+    name: "张律师",
+    ip: "192.168.1.101",
+    action_type: "export",
+    action_name: "导出",
+    category: "data_export",
+    category_name: "数据导出",
+    level: "warning",
+    description: "导出案例数据 50 条",
+    status: "success",
+    duration: 1500,
+    details: { export_format: "xlsx", record_count: 50, file_size: "2.3MB" }
+  },
+  {
+    log_id: "audit_006",
+    time: "2026-07-03 12:00:00",
+    user_id: null,
+    username: null,
+    name: "未知用户",
+    ip: "203.0.113.50",
+    action_type: "login_failed",
+    action_name: "登录失败",
+    category: "auth",
+    category_name: "认证授权",
+    level: "warning",
+    description: "登录失败 - 密码错误",
+    status: "failed",
+    duration: 90,
+    details: { username: "hacker@example.com", failure_reason: "invalid_password" }
+  },
+  {
+    log_id: "audit_007",
+    time: "2026-07-03 14:00:00",
+    user_id: 1,
+    username: "admin",
+    name: "系统管理员",
+    ip: "192.168.1.100",
+    action_type: "update",
+    action_name: "更新",
+    category: "system_config",
+    category_name: "系统配置",
+    level: "warning",
+    description: "修改系统配置: 最大登录尝试次数",
+    status: "success",
+    duration: 60,
+    details: { config_key: "max_login_attempts", old_value: 5, new_value: 10 }
+  },
+  {
+    log_id: "audit_008",
+    time: "2026-07-03 15:00:00",
+    user_id: 1,
+    username: "admin",
+    name: "系统管理员",
+    ip: "192.168.1.100",
+    action_type: "delete",
+    action_name: "删除",
+    category: "user_management",
+    category_name: "用户管理",
+    level: "high",
+    description: "删除用户: old_user",
+    status: "success",
+    duration: 75,
+    details: { email: "old_user@example.com", deleted_by: "admin" }
+  },
+  {
+    log_id: "audit_009",
+    time: "2026-07-03 16:00:00",
+    user_id: 3,
+    username: "para_chen",
+    name: "陈助理",
+    ip: "192.168.1.102",
+    action_type: "generate",
+    action_name: "生成",
+    category: "document_generation",
+    category_name: "文档生成",
+    level: "info",
+    description: "生成法律文书: 起诉状",
+    status: "success",
+    duration: 2500,
+    details: { doc_type: "起诉状", template: "civil_complaint", tokens_used: 850 }
+  },
+  {
+    log_id: "audit_010",
+    time: "2026-07-03 17:00:00",
+    user_id: 2,
+    username: "lawyer_zhang",
+    name: "张律师",
+    ip: "192.168.1.101",
+    action_type: "logout",
+    action_name: "登出",
+    category: "auth",
+    category_name: "认证授权",
+    level: "info",
+    description: "用户登出",
+    status: "success",
+    duration: 30,
+    details: { session_duration_minutes: 420 }
+  }
+];
+
+var alPage = 1;
+var alPageSize = 20;
+var alFilterKeyword = "";
+var alFilterActionType = "";
+var alFilterCategory = "";
+var alFilterLevel = "";
+var alFilterStatus = "";
+
+function alInit() {
+  alRenderBarChart();
+  alRenderPieLegend();
+  alRenderTopUsers();
+  alRenderTable();
+  alRenderPagination();
+  
+  document.addEventListener("click", function(e) {
+    var menu = document.getElementById("alExportMenu");
+    if (menu && !e.target.closest(".al-export-dropdown")) {
+      menu.classList.remove("show");
+    }
+  });
+}
+
+function alRenderBarChart() {
+  var chart = document.getElementById("alBarChart");
+  if (!chart) return;
+  
+  var data = [
+    { date: "06-27", value: 1680 },
+    { date: "06-28", value: 1520 },
+    { date: "06-29", value: 1890 },
+    { date: "06-30", value: 2100 },
+    { date: "07-01", value: 1950 },
+    { date: "07-02", value: 2195 },
+    { date: "07-03", value: 1245 }
+  ];
+  
+  var max = Math.max.apply(null, data.map(function(d) { return d.value; }));
+  
+  var html = "";
+  for (var i = 0; i < data.length; i++) {
+    var height = (data[i].value / max) * 100;
+    html += '<div class="al-bar-item">' +
+      '<div class="al-bar" style="height: ' + height + '%;" title="' + data[i].value + ' 次"></div>' +
+      '<div class="al-bar-label">' + data[i].date + '</div>' +
+    '</div>';
+  }
+  
+  chart.innerHTML = html;
+}
+
+function alRenderPieLegend() {
+  var legend = document.getElementById("alPieLegend");
+  if (!legend) return;
+  
+  var data = [
+    { name: "查看/搜索", value: 8770, color: "#165DFF" },
+    { name: "创建/更新", value: 1130, color: "#00B42A" },
+    { name: "登录/登出", value: 618, color: "#722ED1" },
+    { name: "导出/下载", value: 540, color: "#FF7D00" },
+    { name: "删除操作", value: 35, color: "#F53F3F" },
+    { name: "其他操作", value: 1487, color: "#86909C" }
+  ];
+  
+  var html = "";
+  for (var i = 0; i < data.length; i++) {
+    html += '<div class="al-legend-item">' +
+      '<div class="al-legend-left">' +
+        '<span class="al-legend-dot" style="background: ' + data[i].color + ';"></span>' +
+        '<span class="al-legend-name">' + data[i].name + '</span>' +
+      '</div>' +
+      '<span class="al-legend-value">' + data[i].value.toLocaleString() + '</span>' +
+    '</div>';
+  }
+  
+  legend.innerHTML = html;
+}
+
+function alRenderTopUsers() {
+  var container = document.getElementById("alTopUsers");
+  if (!container) return;
+  
+  var users = [
+    { rank: 1, name: "张律师", count: 89 },
+    { rank: 2, name: "李律师", count: 72 },
+    { rank: 3, name: "王律师", count: 56 },
+    { rank: 4, name: "陈助理", count: 45 },
+    { rank: 5, name: "刘律师", count: 38 }
+  ];
+  
+  var max = users[0].count;
+  
+  var html = "";
+  for (var i = 0; i < users.length; i++) {
+    var width = (users[i].count / max) * 100;
+    html += '<div class="al-top-user-item">' +
+      '<span class="al-top-rank rank-' + users[i].rank + '">' + users[i].rank + '</span>' +
+      '<div class="al-top-user-info">' +
+        '<div class="al-top-user-name">' + users[i].name + '</div>' +
+        '<div class="al-top-user-count">' + users[i].count + ' 次操作</div>' +
+      '</div>' +
+      '<div class="al-top-bar-bg">' +
+        '<div class="al-top-bar-fill" style="width: ' + width + '%;"></div>' +
+      '</div>' +
+    '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function alGetFilteredLogs() {
+  return alLogs.filter(function(log) {
+    if (alFilterKeyword) {
+      var kw = alFilterKeyword.toLowerCase();
+      var desc = (log.description || "").toLowerCase();
+      var name = (log.name || "").toLowerCase();
+      if (desc.indexOf(kw) === -1 && name.indexOf(kw) === -1) return false;
+    }
+    if (alFilterActionType && log.action_type !== alFilterActionType) return false;
+    if (alFilterCategory && log.category !== alFilterCategory) return false;
+    if (alFilterLevel && log.level !== alFilterLevel) return false;
+    if (alFilterStatus && log.status !== alFilterStatus) return false;
+    return true;
+  });
+}
+
+function alRenderTable() {
+  var tbody = document.getElementById("alLogTableBody");
+  if (!tbody) return;
+  
+  var filtered = alGetFilteredLogs();
+  var start = (alPage - 1) * alPageSize;
+  var pageData = filtered.slice(start, start + alPageSize);
+  
+  if (pageData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #86909C;">暂无数据</td></tr>';
+    return;
+  }
+  
+  var html = "";
+  for (var i = 0; i < pageData.length; i++) {
+    var log = pageData[i];
+    var levelClass = log.level === "high" || log.level === "critical" ? "danger" : log.level === "warning" ? "warning" : "info";
+    var statusClass = log.status === "success" ? "success" : "danger";
+    
+    html += '<tr class="fade-in">' +
+      '<td style="color: #86909C; white-space: nowrap;">' + log.time + '</td>' +
+      '<td>' +
+        '<div class="al-user-cell">' +
+          '<div class="al-avatar">' + (log.name ? log.name.charAt(0) : "?") + '</div>' +
+          '<div class="al-user-info">' +
+            '<span class="al-user-name">' + (log.name || "未知用户") + '</span>' +
+            '<span class="al-user-ip">' + log.ip + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</td>' +
+      '<td><span class="al-tag ' + levelClass + '">' + log.action_name + '</span></td>' +
+      '<td style="color: #4E5969;">' + log.category_name + '</td>' +
+      '<td><span class="al-tag ' + levelClass + '">' + (log.level === "info" ? "信息" : log.level === "warning" ? "警告" : log.level === "high" ? "高危" : log.level) + '</span></td>' +
+      '<td>' + log.description + '</td>' +
+      '<td><span class="al-tag ' + statusClass + '">' + (log.status === "success" ? "成功" : "失败") + '</span></td>' +
+      '<td><button class="al-action-btn" onclick="alShowDetail(\'' + log.log_id + '\')">详情</button></td>' +
+    '</tr>';
+  }
+  
+  tbody.innerHTML = html;
+}
+
+function alRenderPagination() {
+  var container = document.getElementById("alPagination");
+  var totalEl = document.getElementById("alTotalCount");
+  if (!container) return;
+  
+  var filtered = alGetFilteredLogs();
+  var total = filtered.length;
+  var totalPages = Math.ceil(total / alPageSize) || 1;
+  
+  if (totalEl) totalEl.textContent = total.toLocaleString();
+  
+  var html = "";
+  html += '<button class="al-page-btn" onclick="alGoPage(' + (alPage - 1) + ')" ' + (alPage <= 1 ? "disabled" : "") + '>上一页</button>';
+  
+  var start = Math.max(1, alPage - 2);
+  var end = Math.min(totalPages, alPage + 2);
+  
+  if (start > 1) {
+    html += '<button class="al-page-btn" onclick="alGoPage(1)">1</button>';
+    if (start > 2) html += '<span style="padding: 0 4px; color: #86909C;">...</span>';
+  }
+  
+  for (var p = start; p <= end; p++) {
+    html += '<button class="al-page-btn ' + (p === alPage ? "active" : "") + '" onclick="alGoPage(' + p + ')">' + p + '</button>';
+  }
+  
+  if (end < totalPages) {
+    if (end < totalPages - 1) html += '<span style="padding: 0 4px; color: #86909C;">...</span>';
+    html += '<button class="al-page-btn" onclick="alGoPage(' + totalPages + ')">' + totalPages + '</button>';
+  }
+  
+  html += '<button class="al-page-btn" onclick="alGoPage(' + (alPage + 1) + ')" ' + (alPage >= totalPages ? "disabled" : "") + '>下一页</button>';
+  
+  container.innerHTML = html;
+}
+
+function alGoPage(page) {
+  var filtered = alGetFilteredLogs();
+  var totalPages = Math.ceil(filtered.length / alPageSize) || 1;
+  if (page < 1 || page > totalPages) return;
+  alPage = page;
+  alRenderTable();
+  alRenderPagination();
+}
+
+function alSearch(keyword) {
+  alFilterKeyword = keyword;
+  alPage = 1;
+  alRenderTable();
+  alRenderPagination();
+}
+
+function alFilterChange() {
+  alFilterActionType = document.getElementById("alActionType").value;
+  alFilterCategory = document.getElementById("alCategory").value;
+  alFilterLevel = document.getElementById("alLevel").value;
+  alFilterStatus = document.getElementById("alStatus").value;
+  alPage = 1;
+  alRenderTable();
+  alRenderPagination();
+}
+
+function alShowDetail(logId) {
+  var log = alLogs.find(function(l) { return l.log_id === logId; });
+  if (!log) return;
+  
+  var detailsHtml = "";
+  if (log.details) {
+    detailsHtml = JSON.stringify(log.details, null, 2);
+  }
+  
+  var body = document.getElementById("alDetailBody");
+  body.innerHTML = '<div class="al-detail-row">' +
+      '<div class="al-detail-label">日志 ID</div>' +
+      '<div class="al-detail-value"><code>' + log.log_id + '</code></div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">操作时间</div>' +
+      '<div class="al-detail-value">' + log.time + '</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">操作用户</div>' +
+      '<div class="al-detail-value">' + (log.name || "未知用户") + ' (' + (log.username || "-") + ')</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">IP 地址</div>' +
+      '<div class="al-detail-value"><code>' + log.ip + '</code></div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">操作类型</div>' +
+      '<div class="al-detail-value">' + log.action_name + ' (' + log.action_type + ')</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">日志分类</div>' +
+      '<div class="al-detail-value">' + log.category_name + '</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">日志级别</div>' +
+      '<div class="al-detail-value"><span class="al-tag ' + (log.level === "high" ? "danger" : log.level === "warning" ? "warning" : "info") + '">' + log.level + '</span></div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">操作状态</div>' +
+      '<div class="al-detail-value"><span class="al-tag ' + (log.status === "success" ? "success" : "danger") + '">' + (log.status === "success" ? "成功" : "失败") + '</span></div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">耗时</div>' +
+      '<div class="al-detail-value">' + log.duration + ' ms</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">操作描述</div>' +
+      '<div class="al-detail-value">' + log.description + '</div>' +
+    '</div>' +
+    '<div class="al-detail-row">' +
+      '<div class="al-detail-label">详细信息</div>' +
+      '<div class="al-detail-value"><pre style="margin: 0; background: #F7F8FA; padding: 12px; border-radius: 6px; font-size: 12px; overflow-x: auto;">' + detailsHtml + '</pre></div>' +
+    '</div>';
+  
+  document.getElementById("alDetailModal").classList.add("active");
+}
+
+function alCloseDetail() {
+  document.getElementById("alDetailModal").classList.remove("active");
+}
+
+function alToggleExportMenu() {
+  var menu = document.getElementById("alExportMenu");
+  menu.classList.toggle("show");
+}
+
+function alExport(format) {
+  var formatNames = { xlsx: "Excel", csv: "CSV", pdf: "PDF" };
+  alert("正在生成 " + formatNames[format] + " 格式的审计日志导出文件...\n\n(框架性实现)");
+  document.getElementById("alExportMenu").classList.remove("show");
+}
+
+function alGenerateReport() {
+  alert("正在生成审计报告...\n\n报告将包含:\n- 操作统计概览\n- 安全事件分析\n- 用户活跃度排名\n- 风险评估与建议\n\n(框架性实现)");
+}
+
+alInit();
+</script>
+</div>

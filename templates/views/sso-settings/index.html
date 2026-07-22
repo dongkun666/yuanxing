@@ -1,0 +1,1024 @@
+<!--
+  SSO 配置页面 (lex-coder · 2026-07-03)
+  数据源: GET/POST/PUT/DELETE /api/sso/providers (sso_router.py)
+  
+  功能模块:
+  - SSO 提供商列表
+  - SAML 配置
+  - OIDC 配置
+  - LDAP 配置
+  - 用户映射设置
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-sso-settings" data-view-source="sso-settings/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  
+  .sso-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  
+  .sso-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .sso-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D2129;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .sso-breadcrumb {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 16px;
+  }
+  
+  .sso-breadcrumb a { color: #165DFF; cursor: pointer; }
+  .sso-breadcrumb span { margin: 0 8px; }
+  
+  .sso-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #E5E6EB;
+    margin-bottom: 20px;
+  }
+  
+  .sso-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #4E5969;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 150ms;
+  }
+  
+  .sso-tab:hover { color: #165DFF; }
+  
+  .sso-tab.active {
+    color: #165DFF;
+    border-bottom-color: #165DFF;
+    font-weight: 500;
+  }
+  
+  .sso-tab-content { display: none; }
+  .sso-tab-content.active { display: block; }
+  
+  .sso-provider-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .sso-provider-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 150ms;
+  }
+  
+  .sso-provider-card:hover {
+    border-color: #165DFF;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.1);
+  }
+  
+  .sso-provider-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .sso-provider-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .sso-provider-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  
+  .sso-provider-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #86909C;
+  }
+  
+  .sso-provider-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  
+  .sso-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .sso-tag.active { background: #E8FFEA; color: #00B42A; }
+  .sso-tag.inactive { background: #F2F3F5; color: #86909C; }
+  .sso-tag.testing { background: #FFF7E8; color: #FF7D00; }
+  .sso-tag.saml { background: #E8F3FF; color: #165DFF; }
+  .sso-tag.oidc { background: #F2E8FF; color: #722ED1; }
+  .sso-tag.ldap { background: #FFECE8; color: #F53F3F; }
+  
+  .sso-provider-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .sso-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid transparent;
+    transition: all 150ms;
+  }
+  
+  .sso-btn-primary {
+    background: #165DFF;
+    color: white;
+    border-color: #165DFF;
+  }
+  
+  .sso-btn-primary:hover {
+    background: #0E42D2;
+    border-color: #0E42D2;
+  }
+  
+  .sso-btn-default {
+    background: white;
+    color: #4E5969;
+    border-color: #E5E6EB;
+  }
+  
+  .sso-btn-default:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+  }
+  
+  .sso-btn-danger {
+    background: white;
+    color: #F53F3F;
+    border-color: #FFECE8;
+  }
+  
+  .sso-btn-danger:hover {
+    background: #F53F3F;
+    color: white;
+    border-color: #F53F3F;
+  }
+  
+  .sso-form-section {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .sso-form-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F2F3F5;
+  }
+  
+  .sso-form-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  
+  .sso-form-label {
+    font-size: 14px;
+    color: #4E5969;
+    text-align: right;
+  }
+  
+  .sso-form-label .required { color: #F53F3F; margin-left: 2px; }
+  
+  .sso-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+    box-sizing: border-box;
+  }
+  
+  .sso-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .sso-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  
+  .sso-textarea:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .sso-select {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+    box-sizing: border-box;
+  }
+  
+  .sso-form-tip {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+  }
+  
+  .sso-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  
+  .sso-switch input { opacity: 0; width: 0; height: 0; }
+  
+  .sso-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #E5E6EB;
+    transition: .3s;
+    border-radius: 24px;
+  }
+  
+  .sso-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .sso-slider { background-color: #165DFF; }
+  input:checked + .sso-slider:before { transform: translateX(20px); }
+  
+  .sso-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #86909C;
+  }
+  
+  .sso-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  
+  .sso-empty-text { font-size: 14px; }
+  
+  .sso-mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .sso-mapping-table th,
+  .sso-mapping-table td {
+    padding: 10px 12px;
+    border: 1px solid #E5E6EB;
+    text-align: left;
+    font-size: 13px;
+  }
+  
+  .sso-mapping-table th {
+    background: #FAFBFC;
+    font-weight: 500;
+    color: #4E5969;
+  }
+  
+  .sso-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .sso-toolbar-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .sso-search {
+    position: relative;
+    width: 280px;
+  }
+  
+  .sso-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 36px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    box-sizing: border-box;
+  }
+  
+  .sso-search-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .sso-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #86909C;
+    font-size: 16px;
+  }
+</style>
+
+<div class="sso-container fade-in">
+  <div class="sso-breadcrumb">
+    <a onclick="showView('settings')">设置</a>
+    <span>/</span>
+    <span>SSO 单点登录</span>
+  </div>
+  
+  <div class="sso-header">
+    <div class="sso-title">
+      <span>🔐</span>
+      <span>SSO 单点登录配置</span>
+    </div>
+  </div>
+  
+  <div class="sso-tabs">
+    <div class="sso-tab active" data-tab="providers" onclick="ssoSwitchTab('providers')">SSO 提供商</div>
+    <div class="sso-tab" data-tab="saml" onclick="ssoSwitchTab('saml')">SAML 配置</div>
+    <div class="sso-tab" data-tab="oidc" onclick="ssoSwitchTab('oidc')">OIDC 配置</div>
+    <div class="sso-tab" data-tab="ldap" onclick="ssoSwitchTab('ldap')">LDAP 配置</div>
+    <div class="sso-tab" data-tab="mapping" onclick="ssoSwitchTab('mapping')">用户映射</div>
+  </div>
+  
+  <!-- 提供商列表 -->
+  <div class="sso-tab-content active" id="sso-tab-providers">
+    <div class="sso-toolbar">
+      <div class="sso-toolbar-left">
+        <div class="sso-search">
+          <span class="sso-search-icon">🔍</span>
+          <input type="text" class="sso-search-input" placeholder="搜索 SSO 提供商..." oninput="ssoFilterProviders(this.value)">
+        </div>
+        <select class="sso-select" style="width: 140px;" onchange="ssoFilterByType(this.value)">
+          <option value="">全部类型</option>
+          <option value="saml">SAML 2.0</option>
+          <option value="oidc">OIDC</option>
+          <option value="ldap">LDAP</option>
+        </select>
+        <select class="sso-select" style="width: 140px;" onchange="ssoFilterByStatus(this.value)">
+          <option value="">全部状态</option>
+          <option value="active">已启用</option>
+          <option value="inactive">已停用</option>
+          <option value="testing">测试中</option>
+        </select>
+      </div>
+      <button class="sso-btn sso-btn-primary" onclick="ssoShowAddModal()">
+        <span>+</span> 添加提供商
+      </button>
+    </div>
+    
+    <div class="sso-provider-list" id="ssoProviderList">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+  
+  <!-- SAML 配置 -->
+  <div class="sso-tab-content" id="sso-tab-saml">
+    <div class="sso-form-section">
+      <div class="sso-form-title">SP 服务提供商配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">Entity ID / Issuer</label>
+        <div>
+          <input type="text" class="sso-input" value="https://app.lexprime.cn/saml/metadata" readonly>
+          <div class="sso-form-tip">SP 的唯一标识, 需要提供给 IdP</div>
+        </div>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">ACS URL (断言消费)</label>
+        <div>
+          <input type="text" class="sso-input" value="https://app.lexprime.cn/api/sso/callback/saml" readonly>
+          <div class="sso-form-tip">IdP 发送 SAML 响应的地址</div>
+        </div>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">Single Logout URL</label>
+        <input type="text" class="sso-input" value="https://app.lexprime.cn/api/sso/slo/saml">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">SP 元数据 URL</label>
+        <div>
+          <input type="text" class="sso-input" value="https://app.lexprime.cn/api/sso/saml/metadata" readonly>
+          <button class="sso-btn sso-btn-default" style="margin-top: 8px;">下载元数据 XML</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">IdP 身份提供商配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> IdP Entity ID</label>
+        <input type="text" class="sso-input" placeholder="https://idp.example.com/entity">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> SSO 登录 URL</label>
+        <input type="text" class="sso-input" placeholder="https://idp.example.com/sso">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">SLO 登出 URL</label>
+        <input type="text" class="sso-input" placeholder="https://idp.example.com/slo">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> IdP 证书</label>
+        <div>
+          <textarea class="sso-textarea" placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"></textarea>
+          <div class="sso-form-tip">粘贴 IdP 的 x.509 证书, 用于验证 SAML 断言签名</div>
+        </div>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">NameID 格式</label>
+        <select class="sso-select">
+          <option value="emailAddress">邮箱地址 (urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress)</option>
+          <option value="unspecified">未指定 (urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified)</option>
+          <option value="transient">临时 ID (urn:oasis:names:tc:SAML:2.0:nameid-format:transient)</option>
+          <option value="persistent">持久 ID (urn:oasis:names:tc:SAML:2.0:nameid-format:persistent)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">高级配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">签名认证请求</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">要求断言签名</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">加密断言</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <!-- OIDC 配置 -->
+  <div class="sso-tab-content" id="sso-tab-oidc">
+    <div class="sso-form-section">
+      <div class="sso-form-title">客户端配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> Issuer URL</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> Client ID</label>
+        <input type="text" class="sso-input" placeholder="client_id">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> Client Secret</label>
+        <input type="password" class="sso-input" placeholder="client_secret">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">Redirect URI</label>
+        <div>
+          <input type="text" class="sso-input" value="https://app.lexprime.cn/api/sso/callback/oidc" readonly>
+          <div class="sso-form-tip">需要在 OIDC 提供商处配置此回调地址</div>
+        </div>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">Scopes</label>
+        <input type="text" class="sso-input" value="openid email profile">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">响应类型</label>
+        <select class="sso-select">
+          <option value="code">授权码模式 (code)</option>
+          <option value="id_token">ID Token</option>
+          <option value="id_token token">隐式模式</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">端点配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">从发现 URL 自动发现</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">授权端点</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com/authorize">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">Token 端点</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com/token">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">UserInfo 端点</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com/userinfo">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">JWKS 端点</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com/.well-known/jwks.json">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">登出端点</label>
+        <input type="text" class="sso-input" placeholder="https://oidc.example.com/logout">
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">安全配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">使用 PKCE</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">验证 State</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">验证 Nonce</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <!-- LDAP 配置 -->
+  <div class="sso-tab-content" id="sso-tab-ldap">
+    <div class="sso-form-section">
+      <div class="sso-form-title">连接配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> LDAP 服务器地址</label>
+        <input type="text" class="sso-input" placeholder="ldap.example.com">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> 端口</label>
+        <select class="sso-select" style="width: 200px;">
+          <option value="389">389 (默认)</option>
+          <option value="636">636 (SSL)</option>
+          <option value="3268">3268 (Global Catalog)</option>
+          <option value="3269">3269 (GC SSL)</option>
+        </select>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">启用 SSL</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">启用 StartTLS</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> Bind DN</label>
+        <input type="text" class="sso-input" placeholder="CN=admin,DC=example,DC=com">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> Bind 密码</label>
+        <input type="password" class="sso-input" placeholder="密码">
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">用户查询配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label"><span class="required">*</span> 用户基础 DN</label>
+        <input type="text" class="sso-input" placeholder="OU=Users,DC=example,DC=com">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">用户过滤器</label>
+        <input type="text" class="sso-input" value="(objectClass=user)">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">用户名属性</label>
+        <input type="text" class="sso-input" value="sAMAccountName">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">邮箱属性</label>
+        <input type="text" class="sso-input" value="mail">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">姓名属性</label>
+        <input type="text" class="sso-input" value="displayName">
+      </div>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">同步配置</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">启用用户同步</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">同步间隔 (小时)</label>
+        <input type="number" class="sso-input" value="6" style="width: 120px;">
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">启用组织架构同步</label>
+        <label class="sso-switch">
+          <input type="checkbox">
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">测试连接</label>
+        <button class="sso-btn sso-btn-default">测试 LDAP 连接</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 用户映射 -->
+  <div class="sso-tab-content" id="sso-tab-mapping">
+    <div class="sso-form-section">
+      <div class="sso-form-title">属性映射配置</div>
+      <table class="sso-mapping-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">LexPrime 字段</th>
+            <th style="width: 30%;">SSO 属性</th>
+            <th style="width: 20%;">默认值</th>
+            <th style="width: 20%;">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>用户名 (username)</td>
+            <td><input type="text" class="sso-input" value="email"></td>
+            <td>-</td>
+            <td>用户登录名</td>
+          </tr>
+          <tr>
+            <td>邮箱 (email)</td>
+            <td><input type="text" class="sso-input" value="email"></td>
+            <td>-</td>
+            <td>用户邮箱地址</td>
+          </tr>
+          <tr>
+            <td>姓名 (name)</td>
+            <td><input type="text" class="sso-input" value="name"></td>
+            <td>-</td>
+            <td>用户显示名称</td>
+          </tr>
+          <tr>
+            <td>工号 (employee_id)</td>
+            <td><input type="text" class="sso-input" value="employeeNumber"></td>
+            <td>-</td>
+            <td>员工编号</td>
+          </tr>
+          <tr>
+            <td>部门 (department)</td>
+            <td><input type="text" class="sso-input" value="department"></td>
+            <td>-</td>
+            <td>所属部门</td>
+          </tr>
+          <tr>
+            <td>职位 (title)</td>
+            <td><input type="text" class="sso-input" value="title"></td>
+            <td>-</td>
+            <td>职位名称</td>
+          </tr>
+          <tr>
+            <td>头像 (avatar)</td>
+            <td><input type="text" class="sso-input" value="picture"></td>
+            <td>-</td>
+            <td>头像 URL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">角色映射配置</div>
+      <table class="sso-mapping-table">
+        <thead>
+          <tr>
+            <th style="width: 40%;">SSO 角色/组</th>
+            <th style="width: 40%;">LexPrime 角色</th>
+            <th style="width: 20%;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>admin</td>
+            <td>
+              <select class="sso-select">
+                <option value="admin">管理员</option>
+                <option value="lawyer">律师</option>
+                <option value="paralegal">律师助理</option>
+              </select>
+            </td>
+            <td><button class="sso-btn sso-btn-danger" style="height: 28px;">删除</button></td>
+          </tr>
+          <tr>
+            <td>lawyers</td>
+            <td>
+              <select class="sso-select">
+                <option value="lawyer">律师</option>
+                <option value="admin">管理员</option>
+                <option value="paralegal">律师助理</option>
+              </select>
+            </td>
+            <td><button class="sso-btn sso-btn-danger" style="height: 28px;">删除</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="sso-btn sso-btn-default" style="margin-top: 12px;">+ 添加角色映射</button>
+    </div>
+    
+    <div class="sso-form-section">
+      <div class="sso-form-title">自动用户创建</div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">首次登录自动创建用户</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">自动更新用户信息</label>
+        <label class="sso-switch">
+          <input type="checkbox" checked>
+          <span class="sso-slider"></span>
+        </label>
+      </div>
+      <div class="sso-form-row">
+        <label class="sso-form-label">新用户默认角色</label>
+        <select class="sso-select" style="width: 200px;">
+          <option value="lawyer">律师</option>
+          <option value="paralegal">律师助理</option>
+          <option value="guest">访客</option>
+        </select>
+      </div>
+    </div>
+    
+    <div style="text-align: right; padding: 20px 0;">
+      <button class="sso-btn sso-btn-default" style="margin-right: 12px;">取消</button>
+      <button class="sso-btn sso-btn-primary" onclick="ssoSaveSettings()">保存配置</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ssoProviders = [
+  {
+    provider_id: "sso_okta",
+    name: "Okta SSO",
+    description: "通过 Okta 身份平台登录",
+    provider_type: "oidc",
+    status: "active",
+    is_primary: true,
+    user_count: 120,
+    color: "#007DC1"
+  },
+  {
+    provider_id: "sso_azure_ad",
+    name: "Azure AD",
+    description: "通过 Azure Active Directory 登录",
+    provider_type: "saml",
+    status: "active",
+    is_primary: false,
+    user_count: 85,
+    color: "#00A4EF"
+  },
+  {
+    provider_id: "sso_ad",
+    name: "企业 AD",
+    description: "通过内部 Active Directory 登录",
+    provider_type: "ldap",
+    status: "testing",
+    is_primary: false,
+    user_count: 200,
+    color: "#722ED1"
+  }
+];
+
+var ssoFilterKeyword = "";
+var ssoFilterType = "";
+var ssoFilterStatus = "";
+
+function ssoInit() {
+  ssoRenderProviders();
+}
+
+function ssoSwitchTab(tab) {
+  var tabs = document.querySelectorAll(".sso-tab");
+  var contents = document.querySelectorAll(".sso-tab-content");
+  
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove("active");
+  }
+  for (var i = 0; i < contents.length; i++) {
+    contents[i].classList.remove("active");
+  }
+  
+  var activeTab = document.querySelector('.sso-tab[data-tab="' + tab + '"]');
+  var activeContent = document.getElementById("sso-tab-" + tab);
+  if (activeTab) activeTab.classList.add("active");
+  if (activeContent) activeContent.classList.add("active");
+}
+
+function ssoRenderProviders() {
+  var container = document.getElementById("ssoProviderList");
+  if (!container) return;
+  
+  var filtered = ssoProviders.filter(function(p) {
+    if (ssoFilterKeyword && p.name.toLowerCase().indexOf(ssoFilterKeyword.toLowerCase()) === -1) return false;
+    if (ssoFilterType && p.provider_type !== ssoFilterType) return false;
+    if (ssoFilterStatus && p.status !== ssoFilterStatus) return false;
+    return true;
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="sso-empty"><div class="sso-empty-icon">🔐</div><div class="sso-empty-text">暂无 SSO 提供商</div></div>';
+    return;
+  }
+  
+  var html = "";
+  for (var i = 0; i < filtered.length; i++) {
+    var p = filtered[i];
+    var typeNames = { saml: "SAML 2.0", oidc: "OIDC", ldap: "LDAP" };
+    var typeName = typeNames[p.provider_type] || p.provider_type;
+    var statusNames = { active: "已启用", inactive: "已停用", testing: "测试中" };
+    var statusName = statusNames[p.status] || p.status;
+    
+    var initial = p.name.charAt(0).toUpperCase();
+    
+    html += '<div class="sso-provider-card fade-in">' +
+      '<div class="sso-provider-left">' +
+        '<div class="sso-provider-icon" style="background: ' + p.color + ';">' + initial + '</div>' +
+        '<div>' +
+          '<div class="sso-provider-info">' +
+            '<h3>' + p.name + (p.is_primary ? ' <span class="sso-tag active" style="margin-left: 8px;">主登录方式</span>' : '') + '</h3>' +
+            '<p>' + p.description + '</p>' +
+          '</div>' +
+          '<div class="sso-provider-meta">' +
+            '<span class="sso-tag ' + p.provider_type + '">' + typeName + '</span>' +
+            '<span class="sso-tag ' + p.status + '">' + statusName + '</span>' +
+            '<span style="font-size: 12px; color: #86909C;">' + p.user_count + ' 个用户</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="sso-provider-actions">' +
+        '<button class="sso-btn sso-btn-default" onclick="ssoTestProvider(\'' + p.provider_id + '\')">测试连接</button>' +
+        '<button class="sso-btn sso-btn-default" onclick="ssoEditProvider(\'' + p.provider_id + '\')">配置</button>' +
+        '<button class="sso-btn sso-btn-danger" onclick="ssoDeleteProvider(\'' + p.provider_id + '\')">删除</button>' +
+      '</div>' +
+    '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function ssoFilterProviders(keyword) {
+  ssoFilterKeyword = keyword;
+  ssoRenderProviders();
+}
+
+function ssoFilterByType(type) {
+  ssoFilterType = type;
+  ssoRenderProviders();
+}
+
+function ssoFilterByStatus(status) {
+  ssoFilterStatus = status;
+  ssoRenderProviders();
+}
+
+function ssoShowAddModal() {
+  alert("添加 SSO 提供商 - 框架性实现");
+}
+
+function ssoEditProvider(id) {
+  var p = ssoProviders.find(function(x) { return x.provider_id === id; });
+  if (p) {
+    if (p.provider_type === "saml") {
+      ssoSwitchTab("saml");
+    } else if (p.provider_type === "oidc") {
+      ssoSwitchTab("oidc");
+    } else if (p.provider_type === "ldap") {
+      ssoSwitchTab("ldap");
+    }
+  }
+}
+
+function ssoDeleteProvider(id) {
+  if (confirm("确定要删除此 SSO 提供商吗?")) {
+    ssoProviders = ssoProviders.filter(function(p) { return p.provider_id !== id; });
+    ssoRenderProviders();
+  }
+}
+
+function ssoTestProvider(id) {
+  var p = ssoProviders.find(function(x) { return x.provider_id === id; });
+  if (p) {
+    alert("测试 " + p.name + " 连接成功!\n\n连接时间: 45ms\n用户数: " + p.user_count);
+  }
+}
+
+function ssoSaveSettings() {
+  alert("配置已保存 - 框架性实现");
+}
+
+ssoInit();
+</script>
+</div>

@@ -1,0 +1,196 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-marketplace-metrics">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 rounded-xl p-6 text-white" data-animate="fade-in-up" data-delay="0">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">运营数据看板</h1>
+                <p class="text-sm text-white/70 mt-1">Marketplace 平台运营数据实时监控</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <select class="bg-white/10 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none">
+                    <option>今日</option>
+                    <option>本周</option>
+                    <option selected>本月</option>
+                    <option>本年</option>
+                </select>
+                <button class="px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
+                    <iconify-icon class="inline" icon="mdi:refresh"></iconify-icon> 刷新
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-animate-container>
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="scale-in" data-stagger-group="metrics-stats" data-stagger-index="0" data-delay="0.15">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-fg-tertiary">入驻律师</span>
+                <iconify-icon class="text-brand" icon="mdi:account-tie"></iconify-icon>
+            </div>
+            <p class="text-2xl font-bold text-fg-primary">1,286</p>
+            <div class="flex items-center gap-1 mt-1">
+                <iconify-icon class="text-green-500 text-xs" icon="mdi:trending-up"></iconify-icon>
+                <span class="text-[10px] text-green-600">+12.5%</span>
+                <span class="text-[10px] text-fg-tertiary">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="scale-in" data-stagger-group="metrics-stats" data-stagger-index="1" data-delay="0.15">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-fg-tertiary">合作案件</span>
+                <iconify-icon class="text-emerald-500" icon="mdi:briefcase"></iconify-icon>
+            </div>
+            <p class="text-2xl font-bold text-fg-primary">324</p>
+            <div class="flex items-center gap-1 mt-1">
+                <iconify-icon class="text-green-500 text-xs" icon="mdi:trending-up"></iconify-icon>
+                <span class="text-[10px] text-green-600">+8.3%</span>
+                <span class="text-[10px] text-fg-tertiary">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="scale-in" data-stagger-group="metrics-stats" data-stagger-index="2" data-delay="0.15">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-fg-tertiary">交易总额</span>
+                <iconify-icon class="text-amber-500" icon="mdi:cash-multiple"></iconify-icon>
+            </div>
+            <p class="text-2xl font-bold text-fg-primary">¥586万</p>
+            <div class="flex items-center gap-1 mt-1">
+                <iconify-icon class="text-green-500 text-xs" icon="mdi:trending-up"></iconify-icon>
+                <span class="text-[10px] text-green-600">+23.1%</span>
+                <span class="text-[10px] text-fg-tertiary">较上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="scale-in" data-stagger-group="metrics-stats" data-stagger-index="3" data-delay="0.15">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-fg-tertiary">平台收入</span>
+                <iconify-icon class="text-purple-500" icon="mdi:chart-line"></iconify-icon>
+            </div>
+            <p class="text-2xl font-bold text-fg-primary">¥58.6万</p>
+            <div class="flex items-center gap-1 mt-1">
+                <iconify-icon class="text-green-500 text-xs" icon="mdi:trending-up"></iconify-icon>
+                <span class="text-[10px] text-green-600">+15.7%</span>
+                <span class="text-[10px] text-fg-tertiary">较上月</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="fade-in-up" data-delay="0.35">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-fg-primary">交易趋势</h3>
+                <div class="flex items-center gap-2 text-[10px]">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand"></span>交易金额</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>订单数</span>
+                </div>
+            </div>
+            <div class="h-64 flex items-end justify-between gap-2 px-2">
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 40%"></div>
+                    <span class="text-[9px] text-fg-tertiary">1月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 55%"></div>
+                    <span class="text-[9px] text-fg-tertiary">2月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 45%"></div>
+                    <span class="text-[9px] text-fg-tertiary">3月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 70%"></div>
+                    <span class="text-[9px] text-fg-tertiary">4月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 65%"></div>
+                    <span class="text-[9px] text-fg-tertiary">5月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 85%"></div>
+                    <span class="text-[9px] text-fg-tertiary">6月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 100%"></div>
+                    <span class="text-[9px] text-fg-tertiary">7月</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-brand rounded-t" style="height: 90%"></div>
+                    <span class="text-[9px] text-fg-tertiary">8月</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="fade-in-up" data-delay="0.4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-fg-primary">业务分布</h3>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs text-fg-secondary">律师协作</span>
+                        <span class="text-xs font-medium text-fg-primary">45%</span>
+                    </div>
+                    <div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+                        <div class="h-full bg-brand rounded-full" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs text-fg-secondary">协同办案</span>
+                        <span class="text-xs font-medium text-fg-primary">30%</span>
+                    </div>
+                    <div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: 30%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs text-fg-secondary">转介绍</span>
+                        <span class="text-xs font-medium text-fg-primary">15%</span>
+                    </div>
+                    <div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 rounded-full" style="width: 15%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs text-fg-secondary">跨境服务</span>
+                        <span class="text-xs font-medium text-fg-primary">10%</span>
+                    </div>
+                    <div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+                        <div class="h-full bg-violet-500 rounded-full" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-5" data-animate="fade-in-up" data-delay="0.5">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-fg-primary">热门专长领域</h3>
+            <button class="text-xs text-brand hover:underline">查看全部</button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4" data-animate-container>
+            <div class="text-center p-4 bg-bg-subtle rounded-lg" data-animate="fade-in-up" data-stagger-group="metrics-hot" data-stagger-index="0" data-delay="0.55">
+                <p class="text-xl font-bold text-fg-primary">328</p>
+                <p class="text-xs text-fg-tertiary mt-1">民商事诉讼</p>
+            </div>
+            <div class="text-center p-4 bg-bg-subtle rounded-lg" data-animate="fade-in-up" data-stagger-group="metrics-hot" data-stagger-index="1" data-delay="0.55">
+                <p class="text-xl font-bold text-fg-primary">186</p>
+                <p class="text-xs text-fg-tertiary mt-1">公司法务</p>
+            </div>
+            <div class="text-center p-4 bg-bg-subtle rounded-lg" data-animate="fade-in-up" data-stagger-group="metrics-hot" data-stagger-index="2" data-delay="0.55">
+                <p class="text-xl font-bold text-fg-primary">156</p>
+                <p class="text-xs text-fg-tertiary mt-1">知识产权</p>
+            </div>
+            <div class="text-center p-4 bg-bg-subtle rounded-lg" data-animate="fade-in-up" data-stagger-group="metrics-hot" data-stagger-index="3" data-delay="0.55">
+                <p class="text-xl font-bold text-fg-primary">142</p>
+                <p class="text-xs text-fg-tertiary mt-1">刑事辩护</p>
+            </div>
+            <div class="text-center p-4 bg-bg-subtle rounded-lg" data-animate="fade-in-up" data-stagger-group="metrics-hot" data-stagger-index="4" data-delay="0.55">
+                <p class="text-xl font-bold text-fg-primary">128</p>
+                <p class="text-xs text-fg-tertiary mt-1">劳动争议</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

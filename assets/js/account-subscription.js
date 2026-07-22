@@ -9,7 +9,7 @@
  * 加载顺序: 在 account-notifications.js 之后, account-profile.js 之前
  */
 
-(function() {
+(function () {
     'use strict';
 
     // 右上角用户菜单 toggle
@@ -19,7 +19,7 @@
         if (!menu) return;
         if (menu.classList.contains('hidden')) {
             menu.classList.remove('hidden');
-            setTimeout(function() {
+            setTimeout(function () {
                 setupOutsideClickClose('userMenu', '[onclick*="toggleUserMenu"]');
             }, 0);
         } else {
@@ -34,22 +34,22 @@
 
         switchSidebarTab('work');
 
-        document.querySelectorAll('.sidebar-item').forEach(function(item) {
+        document.querySelectorAll('.sidebar-item').forEach(function (item) {
             item.classList.remove('active');
         });
 
         var target = document.getElementById('view-subscription');
         if (target) {
-            document.querySelectorAll('.view-content').forEach(function(v) {
+            document.querySelectorAll('.view-content').forEach(function (v) {
                 v.classList.add('hidden');
             });
             target.classList.remove('hidden');
         } else {
-            loadView('subscription', function(html) {
+            loadView('subscription', function (html) {
                 document.getElementById('main-content').insertAdjacentHTML('beforeend', html);
                 var newTarget = document.getElementById('view-subscription');
                 if (newTarget) {
-                    document.querySelectorAll('.view-content').forEach(function(v) {
+                    document.querySelectorAll('.view-content').forEach(function (v) {
                         v.classList.add('hidden');
                     });
                     newTarget.classList.remove('hidden');
@@ -98,23 +98,23 @@
     // 跳到支付页
     function showPayment(plan) {
         var planNames = {
-            'free': '免费版',
-            'professional': '专业版',
-            'enterprise': '企业版'
+            free: '免费版',
+            professional: '专业版',
+            enterprise: '企业版'
         };
         var planDesc = {
-            'free': '基础功能体验',
-            'professional': '最适合个人律师',
-            'enterprise': '适合律所及团队'
+            free: '基础功能体验',
+            professional: '最适合个人律师',
+            enterprise: '适合律所及团队'
         };
         var planPrice = {
-            'free': '¥0',
-            'professional': AppState.isYearly ? '¥2,399' : '¥299',
-            'enterprise': AppState.isYearly ? '¥7,199' : '¥899'
+            free: '¥0',
+            professional: AppState.isYearly ? '¥2,399' : '¥299',
+            enterprise: AppState.isYearly ? '¥7,199' : '¥899'
         };
 
         if (plan === 'free') {
-            alert('免费版无需支付，可直接使用。如需要更多功能，请选择专业版或企业版。');
+            Utils.showToast('info', '免费版无需支付，可直接使用。如需要更多功能，请选择专业版或企业版。');
             return;
         }
 
@@ -126,15 +126,109 @@
         document.getElementById('payment-total').textContent = planPrice[plan];
         document.getElementById('pay-button-amount').textContent = planPrice[plan];
 
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-payment').classList.remove('hidden');
+
+        setTimeout(function () {
+            if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+                Animations.initPageAnimations(document.getElementById('view-payment'));
+            }
+        }, 50);
+    }
+
+    // 处理支付
+    function handlePayment() {
+        var agreeTerms = document.getElementById('agree-terms');
+        if (agreeTerms && !agreeTerms.checked) {
+            Utils.showToast('warning', '请先阅读并同意服务协议');
+            return;
+        }
+
+        var payBtn = document.getElementById('pay-button');
+        Utils.setButtonLoading(payBtn, '支付处理中...');
+
+        var overlay = document.getElementById('payment-loading-overlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
+
+        setTimeout(function () {
+            if (overlay) {
+                overlay.classList.add('hidden');
+            }
+            Utils.setButtonNormal(payBtn);
+            paySuccess();
+        }, 2000);
+    }
+
+    // 应用优惠券
+    function applyCoupon() {
+        var input = document.getElementById('coupon-input');
+        var message = document.getElementById('coupon-message');
+        var code = input ? input.value.trim() : '';
+
+        if (!code) {
+            if (message) {
+                message.textContent = '请输入优惠码';
+                message.className = 'mt-2 text-xs text-warning';
+                message.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (message) {
+            message.textContent = '验证中...';
+            message.className = 'mt-2 text-xs text-fg-tertiary';
+            message.classList.remove('hidden');
+        }
+
+        setTimeout(function () {
+            if (code.toUpperCase() === 'NEWUSER' || code.toUpperCase() === 'LEXPRIME') {
+                var discount = 50;
+                var totalEl = document.getElementById('payment-total');
+                var subtotalEl = document.getElementById('payment-subtotal');
+                var discountEl = document.getElementById('payment-discount');
+                var btnAmountEl = document.getElementById('pay-button-amount');
+
+                if (totalEl && subtotalEl && discountEl) {
+                    var subtotalText = subtotalEl.textContent.replace(/[¥,]/g, '');
+                    var subtotal = parseFloat(subtotalText) || 299;
+                    var newTotal = Math.max(0, subtotal - discount);
+                    discountEl.textContent = '-¥' + discount;
+                    totalEl.textContent = '¥' + newTotal;
+                    if (btnAmountEl) {
+                        btnAmountEl.textContent = '¥' + newTotal;
+                    }
+                }
+
+                if (message) {
+                    message.textContent = '🎉 优惠码已应用，立减 ¥' + discount;
+                    message.className = 'mt-2 text-xs text-success font-medium';
+                }
+            } else {
+                if (message) {
+                    message.textContent = '优惠码无效，请检查后重试';
+                    message.className = 'mt-2 text-xs text-danger';
+                }
+            }
+        }, 800);
+    }
+
+    // 继续浏览
+    function continueBrowsing() {
+        switchView('workstation');
+    }
+
+    // 升级到年度版
+    function upgradeToYearly() {
+        Utils.showToast('info', '升级功能即将上线，敬请期待~');
     }
 
     // 返回订阅页
     function backToSubscription() {
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-subscription').classList.remove('hidden');
@@ -143,26 +237,23 @@
     // 支付方式选择
     function selectPaymentMethod(el, method) {
         AppState.selectedPayment = method;
-        document.querySelectorAll('.payment-method').forEach(function(btn) {
-            btn.classList.remove('border-[#165DFF]', 'bg-[#F2F7FF]');
-            btn.classList.add('border-[#E5E6EB]');
-            var dot = btn.querySelector('.w-5.h-5');
+        document.querySelectorAll('.payment-method-card').forEach(function (card) {
+            card.classList.remove('border-brand', 'bg-gradient-to-r', 'from-brand-tint3/50', 'to-brand-tint/30');
+            card.classList.add('border-bg-border');
+            var dot = card.querySelector('.w-5');
             if (dot) {
-                dot.classList.remove('border-[#165DFF]');
-                dot.classList.add('border-[#E5E6EB]');
-                var inner = dot.querySelector('.w-2\\.5');
-                if (inner) inner.remove();
+                dot.classList.remove('border-brand');
+                dot.classList.add('border-bg-border');
+                dot.innerHTML = '';
             }
         });
-        el.classList.remove('border-[#E5E6EB]');
-        el.classList.add('border-[#165DFF]', 'bg-[#F2F7FF]');
-        var dot = el.querySelector('.w-5.h-5');
+        el.classList.remove('border-bg-border');
+        el.classList.add('border-brand', 'bg-gradient-to-r', 'from-brand-tint3/50', 'to-brand-tint/30');
+        var dot = el.querySelector('.w-5');
         if (dot) {
-            dot.classList.remove('border-[#E5E6EB]');
-            dot.classList.add('border-[#165DFF]');
-            var inner = document.createElement('div');
-            inner.className = 'w-2.5 h-2.5 rounded-full bg-[#165DFF]';
-            dot.appendChild(inner);
+            dot.classList.remove('border-bg-border');
+            dot.classList.add('border-brand');
+            dot.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-brand to-brand-hover"></div>';
         }
     }
 
@@ -173,7 +264,7 @@
         var planName = planEl ? planEl.textContent : '专业版 · 月付';
         var amount = amountEl ? amountEl.textContent : '¥299';
 
-        var methodNames = {'alipay': '支付宝', 'wechat': '微信支付', 'unionpay': '银联支付'};
+        var methodNames = { alipay: '支付宝', wechat: '微信支付', unionpay: '银联支付' };
         var methodName = methodNames[AppState.selectedPayment] || '支付宝';
 
         document.getElementById('success-plan-info').textContent = planName + ' 已生效';
@@ -182,22 +273,33 @@
         document.getElementById('success-payment-method').textContent = methodName;
 
         var now = new Date();
-        var orderNo = 'LP' + now.getFullYear() +
-            String(now.getMonth()+1).padStart(2,'0') +
-            String(now.getDate()).padStart(2,'0') + '001';
+        var orderNo =
+            'LP' +
+            now.getFullYear() +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            String(now.getDate()).padStart(2, '0') +
+            '001';
         document.getElementById('success-order-no').textContent = orderNo;
 
         var expiry = new Date(now);
         expiry.setMonth(expiry.getMonth() + 1);
         document.getElementById('success-expiry').textContent =
-            expiry.getFullYear() + '-' +
-            String(expiry.getMonth()+1).padStart(2,'0') + '-' +
-            String(expiry.getDate()).padStart(2,'0');
+            expiry.getFullYear() +
+            '-' +
+            String(expiry.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(expiry.getDate()).padStart(2, '0');
 
-        document.querySelectorAll('.view-content').forEach(function(v) {
+        document.querySelectorAll('.view-content').forEach(function (v) {
             v.classList.add('hidden');
         });
         document.getElementById('view-payment-success').classList.remove('hidden');
+
+        setTimeout(function () {
+            if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+                Animations.initPageAnimations(document.getElementById('view-payment-success'));
+            }
+        }, 50);
     }
 
     function goToSubscription() {
@@ -238,6 +340,10 @@
     globalThis.backToSubscription = backToSubscription;
     globalThis.selectPaymentMethod = selectPaymentMethod;
     globalThis.paySuccess = paySuccess;
+    globalThis.handlePayment = handlePayment;
+    globalThis.applyCoupon = applyCoupon;
+    globalThis.continueBrowsing = continueBrowsing;
+    globalThis.upgradeToYearly = upgradeToYearly;
     globalThis.goToSubscription = goToSubscription;
     globalThis.goToWorkstation = goToWorkstation;
     globalThis.switchToOrders = switchToOrders;

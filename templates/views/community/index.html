@@ -1,0 +1,519 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-community">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl p-6 text-white" data-animate="fade-in-up" data-delay="0">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">社区</h1>
+                <p class="text-sm text-white/80 mt-1">法律人交流分享，共同成长</p>
+            </div>
+            <button class="px-4 py-2 bg-white text-rose-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm" onclick="openCreatePostModal()">
+                <iconify-icon icon="mdi:pencil-outline" class="inline mr-1"></iconify-icon>发布帖子
+            </button>
+        </div>
+    </div>
+
+    <div class="flex gap-5">
+        <div class="flex-1 min-w-0">
+            <div class="bg-white rounded-xl border border-bg-border p-3 mb-4" data-animate="fade-in-up" data-delay="0.1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-tint3 flex items-center justify-center flex-none">
+                        <span class="text-sm font-medium text-brand">张</span>
+                    </div>
+                    <input type="text" placeholder="分享你的想法、问题或经验..." class="flex-1 bg-bg-subtle border border-bg-border rounded-full px-4 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors" onclick="openCreatePostModal()" readonly/>
+                    <div class="flex gap-2">
+                        <button class="p-2 text-fg-tertiary hover:text-brand hover:bg-brand-tint3 rounded-lg transition-colors" title="图片">
+                            <iconify-icon icon="mdi:image-outline" class="text-xl"></iconify-icon>
+                        </button>
+                        <button class="p-2 text-fg-tertiary hover:text-brand hover:bg-brand-tint3 rounded-lg transition-colors" title="投票">
+                            <iconify-icon icon="mdi:chart-bar" class="text-xl"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+                <div class="flex items-center border-b border-bg-border px-4">
+                    <button class="px-4 py-3 text-sm font-medium text-brand border-b-2 border-brand community-tab active" data-tab="latest" onclick="switchCommunityTab('latest', this)">
+                        最新
+                    </button>
+                    <button class="px-4 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent community-tab" data-tab="hot" onclick="switchCommunityTab('hot', this)">
+                        热门
+                    </button>
+                    <button class="px-4 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent community-tab" data-tab="following" onclick="switchCommunityTab('following', this)">
+                        关注
+                    </button>
+                </div>
+
+                <div class="divide-y divide-bg-border" id="community-posts">
+                    <div class="p-5 hover:bg-bg-subtle/30 transition-colors cursor-pointer" onclick="openPostDetail('1')">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-none">
+                                <span class="text-sm font-medium text-emerald-600">李</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-medium text-fg-primary">李律师</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                                    <span class="text-xs text-fg-tertiary">· 2 小时前</span>
+                                    <span class="text-xs text-fg-tertiary ml-auto">合同纠纷板块</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-2">关于民间借贷利息计算的几个实务问题</h4>
+                                <p class="text-xs text-fg-secondary mb-3 line-clamp-3">近期处理了几个民间借贷案件，发现很多当事人对利息计算存在误解。今天整理一下常见的几个问题：1. LPR 的适用时间点；2. 复利是否受法律保护；3. 逾期利息与违约金能否同时主张...</p>
+                                <div class="flex items-center gap-6 text-xs text-fg-tertiary">
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors" onclick="event.stopPropagation(); likePost('1', this)">
+                                        <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                                        <span>128</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                                        <span>36</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                                        <span>分享</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors ml-auto">
+                                        <iconify-icon icon="mdi:bookmark-outline"></iconify-icon>
+                                        <span>收藏</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 hover:bg-bg-subtle/30 transition-colors cursor-pointer" onclick="openPostDetail('2')">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-none">
+                                <span class="text-sm font-medium text-purple-600">王</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-medium text-fg-primary">王律师</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                                    <span class="text-xs text-fg-tertiary">· 5 小时前</span>
+                                    <span class="text-xs text-fg-tertiary ml-auto">诉讼技巧板块</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-2">开庭时如何有效质证？分享我的质证方法论</h4>
+                                <p class="text-xs text-fg-secondary mb-3 line-clamp-3">质证是庭审中非常重要的环节，直接影响案件结果。这些年我总结了一套质证方法，今天分享给大家：三查三问法。三查：查真实性、查合法性、查关联性；三问：问来源、问内容、问证明目的...</p>
+                                <div class="flex items-center gap-6 text-xs text-fg-tertiary">
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors" onclick="event.stopPropagation(); likePost('2', this)">
+                                        <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                                        <span>256</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                                        <span>58</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                                        <span>分享</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors ml-auto">
+                                        <iconify-icon icon="mdi:bookmark-outline"></iconify-icon>
+                                        <span>收藏</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 hover:bg-bg-subtle/30 transition-colors cursor-pointer" onclick="openPostDetail('3')">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-none">
+                                <span class="text-sm font-medium text-blue-600">赵</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-medium text-fg-primary">赵法务</span>
+                                    <span class="text-xs text-fg-tertiary">· 昨天</span>
+                                    <span class="text-xs text-fg-tertiary ml-auto">公司法务板块</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-2">刚入职互联网公司法务，求问日常工作重点？</h4>
+                                <p class="text-xs text-fg-secondary mb-3 line-clamp-3">各位前辈好，我刚入职一家互联网公司做法务，之前是做诉讼的，对非诉业务不太熟悉。想请教一下，公司法务日常工作的重点有哪些？合同审核需要注意什么？希望大家不吝赐教，谢谢！</p>
+                                <div class="flex items-center gap-6 text-xs text-fg-tertiary">
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors" onclick="event.stopPropagation(); likePost('3', this)">
+                                        <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                                        <span>89</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                                        <span>42</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                                        <span>分享</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors ml-auto">
+                                        <iconify-icon icon="mdi:bookmark-outline"></iconify-icon>
+                                        <span>收藏</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 hover:bg-bg-subtle/30 transition-colors cursor-pointer" onclick="openPostDetail('4')">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-none">
+                                <span class="text-sm font-medium text-amber-600">刘</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-medium text-fg-primary">刘律师</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                                    <span class="text-xs text-fg-tertiary">· 2 天前</span>
+                                    <span class="text-xs text-fg-tertiary ml-auto">婚姻家事板块</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-2">离婚案件中房产分割的常见情形总结</h4>
+                                <p class="text-xs text-fg-secondary mb-3 line-clamp-3">房产是离婚案件中最主要的财产争议点。我把实务中常见的房产分割情形做了一个总结：1. 婚前全款买房；2. 婚前贷款婚后共同还贷；3. 婚后双方出资买房；4. 父母出资购房...</p>
+                                <div class="flex items-center gap-6 text-xs text-fg-tertiary">
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors" onclick="event.stopPropagation(); likePost('4', this)">
+                                        <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                                        <span>342</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                                        <span>76</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                                        <span>分享</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors ml-auto">
+                                        <iconify-icon icon="mdi:bookmark"></iconify-icon>
+                                        <span>已收藏</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 hover:bg-bg-subtle/30 transition-colors cursor-pointer" onclick="openPostDetail('5')">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center flex-none">
+                                <span class="text-sm font-medium text-rose-600">陈</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-medium text-fg-primary">陈律师</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                                    <span class="text-xs text-fg-tertiary">· 3 天前</span>
+                                    <span class="text-xs text-fg-tertiary ml-auto">职业发展板块</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-2">授薪转独立两年，聊聊我的感受和建议</h4>
+                                <p class="text-xs text-fg-secondary mb-3 line-clamp-3">从授薪律师转独立律师刚好两年了，这两年经历了很多，也成长了很多。今天想聊聊我的感受，也给想转独立的朋友一些建议。先说结论：独立不是适合所有人，但如果你想好了，就勇敢去做...</p>
+                                <div class="flex items-center gap-6 text-xs text-fg-tertiary">
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors" onclick="event.stopPropagation(); likePost('5', this)">
+                                        <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                                        <span>521</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                                        <span>128</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors">
+                                        <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                                        <span>分享</span>
+                                    </button>
+                                    <button class="flex items-center gap-1 hover:text-brand transition-colors ml-auto">
+                                        <iconify-icon icon="mdi:bookmark-outline"></iconify-icon>
+                                        <span>收藏</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 border-t border-bg-border text-center">
+                    <button class="text-xs text-brand hover:text-brand-hover font-medium">加载更多</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-72 flex-none space-y-4">
+            <div class="bg-white rounded-xl border border-bg-border p-4" data-animate="fade-in-up" data-delay="0.2">
+                <h4 class="text-sm font-semibold text-fg-primary mb-3">热门话题</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle -mx-2 px-2 py-1 rounded transition-colors">
+                        <span class="text-sm font-bold text-rose-500 w-5">1</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-fg-primary font-medium truncate">#民法典司法解释新变化</p>
+                            <p class="text-[10px] text-fg-tertiary">2.3 万讨论</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle -mx-2 px-2 py-1 rounded transition-colors">
+                        <span class="text-sm font-bold text-orange-500 w-5">2</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-fg-primary font-medium truncate">#青年律师成长</p>
+                            <p class="text-[10px] text-fg-tertiary">1.8 万讨论</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle -mx-2 px-2 py-1 rounded transition-colors">
+                        <span class="text-sm font-bold text-amber-500 w-5">3</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-fg-primary font-medium truncate">#AI 与法律实务</p>
+                            <p class="text-[10px] text-fg-tertiary">1.5 万讨论</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle -mx-2 px-2 py-1 rounded transition-colors">
+                        <span class="text-sm font-medium text-fg-tertiary w-5">4</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-fg-secondary truncate">#公司法修改解读</p>
+                            <p class="text-[10px] text-fg-tertiary">8 千讨论</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-bg-subtle -mx-2 px-2 py-1 rounded transition-colors">
+                        <span class="text-sm font-medium text-fg-tertiary w-5">5</span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs text-fg-secondary truncate">#执行实务经验</p>
+                            <p class="text-[10px] text-fg-tertiary">6 千讨论</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border p-4" data-animate="fade-in-up" data-delay="0.25">
+                <h4 class="text-sm font-semibold text-fg-primary mb-3">板块分类</h4>
+                <div class="space-y-1">
+                    <button class="w-full text-left px-3 py-2 text-xs text-white bg-brand rounded-lg font-medium flex items-center justify-between">
+                        <span>全部板块</span>
+                        <span class="text-white/80">1.2 万帖</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>合同纠纷</span>
+                        <span class="text-fg-tertiary">2,345</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>婚姻家事</span>
+                        <span class="text-fg-tertiary">1,892</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>诉讼技巧</span>
+                        <span class="text-fg-tertiary">1,567</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>公司法务</span>
+                        <span class="text-fg-tertiary">1,234</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>知识产权</span>
+                        <span class="text-fg-tertiary">987</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-between">
+                        <span>职业发展</span>
+                        <span class="text-fg-tertiary">876</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border p-4" data-animate="fade-in-up" data-delay="0.3">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-sm font-semibold text-fg-primary">活跃用户</h4>
+                    <button class="text-xs text-brand hover:text-brand-hover">查看更多</button>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-none">
+                            <span class="text-xs font-medium text-emerald-600">李</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-medium text-fg-primary truncate">李律师</p>
+                            <p class="text-[10px] text-fg-tertiary truncate">民商事诉讼专家</p>
+                        </div>
+                        <button class="text-[10px] px-2 py-1 text-brand border border-brand/30 rounded-full hover:bg-brand-tint3 transition-colors">
+                            关注
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center flex-none">
+                            <span class="text-xs font-medium text-purple-600">王</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-medium text-fg-primary truncate">王律师</p>
+                            <p class="text-[10px] text-fg-tertiary truncate">刑辩律师</p>
+                        </div>
+                        <button class="text-[10px] px-2 py-1 text-brand border border-brand/30 rounded-full hover:bg-brand-tint3 transition-colors">
+                            关注
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-none">
+                            <span class="text-xs font-medium text-blue-600">张</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-medium text-fg-primary truncate">张律师</p>
+                            <p class="text-[10px] text-fg-tertiary truncate">知识产权律师</p>
+                        </div>
+                        <button class="text-[10px] px-2 py-1 text-fg-tertiary border border-bg-border rounded-full hover:bg-bg-subtle transition-colors">
+                            已关注
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="create-post-modal">
+    <div class="bg-white rounded-xl w-[600px] max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border sticky top-0 bg-white z-10">
+            <h3 class="text-base font-semibold text-fg-primary">发布帖子</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeCreatePostModal()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">选择板块</label>
+                <select class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors">
+                    <option>请选择板块</option>
+                    <option>合同纠纷</option>
+                    <option>婚姻家事</option>
+                    <option>诉讼技巧</option>
+                    <option>公司法务</option>
+                    <option>知识产权</option>
+                    <option>职业发展</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">标题</label>
+                <input type="text" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors" placeholder="请输入帖子标题"/>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">正文</label>
+                <textarea rows="6" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors resize-none" placeholder="分享你的想法、问题或经验..."></textarea>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 text-fg-tertiary hover:text-brand hover:bg-brand-tint3 rounded-lg transition-colors">
+                    <iconify-icon icon="mdi:image-outline" class="text-lg"></iconify-icon>
+                </button>
+                <button class="p-2 text-fg-tertiary hover:text-brand hover:bg-brand-tint3 rounded-lg transition-colors">
+                    <iconify-icon icon="mdi:link-variant" class="text-lg"></iconify-icon>
+                </button>
+                <button class="p-2 text-fg-tertiary hover:text-brand hover:bg-brand-tint3 rounded-lg transition-colors">
+                    <iconify-icon icon="mdi:hashtag" class="text-lg"></iconify-icon>
+                </button>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-bg-border">
+            <button class="px-4 py-2 text-sm text-fg-secondary bg-bg hover:bg-bg-border rounded-lg transition-colors" onclick="closeCreatePostModal()">取消</button>
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="submitPost()">发布</button>
+        </div>
+    </div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="post-detail-modal">
+    <div class="bg-white rounded-xl w-[680px] max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border sticky top-0 bg-white z-10">
+            <h3 class="text-base font-semibold text-fg-primary">帖子详情</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closePostDetail()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5">
+            <div class="flex items-start gap-3 mb-5">
+                <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-none">
+                    <span class="text-base font-medium text-emerald-600">李</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-sm font-semibold text-fg-primary">李律师</span>
+                        <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                        <button class="text-[10px] px-2 py-0.5 text-brand border border-brand/30 rounded-full hover:bg-brand-tint3 transition-colors ml-2">
+                            + 关注
+                        </button>
+                    </div>
+                    <p class="text-xs text-fg-tertiary">2 小时前 · 合同纠纷板块</p>
+                </div>
+            </div>
+
+            <h2 class="text-lg font-bold text-fg-primary mb-3">关于民间借贷利息计算的几个实务问题</h2>
+            <div class="text-sm text-fg-secondary leading-relaxed mb-5 space-y-3">
+                <p>近期处理了几个民间借贷案件，发现很多当事人对利息计算存在误解。今天整理一下常见的几个问题，供大家参考。</p>
+                <p><strong>一、LPR 的适用时间点</strong></p>
+                <p>根据新的司法解释，2019年8月20日之前的利息，按照银行同期贷款利率计算；之后的利息，按照LPR计算。这里要注意的是，LPR是每月20日公布的，要适用借款发生时的LPR，而不是起诉时的LPR。</p>
+                <p><strong>二、复利是否受法律保护</strong></p>
+                <p>很多人以为复利是不受法律保护的，其实不然。根据司法解释，借贷双方对前期借款本息结算后将利息计入后期借款本金并重新出具债权凭证，如果前期利率没有超过合同成立时一年期贷款市场报价利率四倍，重新出具的债权凭证载明的金额可认定为后期借款本金。</p>
+                <p><strong>三、逾期利息与违约金能否同时主张</strong></p>
+                <p>答案是可以的，但总计不得超过合同成立时一年期贷款市场报价利率四倍。也就是说，逾期利息、违约金、其他费用加起来，不能超过LPR的四倍。</p>
+                <p>以上是我的一些总结，欢迎大家补充讨论。</p>
+            </div>
+
+            <div class="flex items-center gap-6 py-3 border-y border-bg-border mb-5">
+                <button class="flex items-center gap-1.5 text-sm text-fg-secondary hover:text-brand transition-colors" onclick="likePost('1', this)">
+                    <iconify-icon icon="mdi:thumb-up-outline"></iconify-icon>
+                    <span>128 赞</span>
+                </button>
+                <button class="flex items-center gap-1.5 text-sm text-fg-secondary hover:text-brand transition-colors">
+                    <iconify-icon icon="mdi:comment-outline"></iconify-icon>
+                    <span>36 评论</span>
+                </button>
+                <button class="flex items-center gap-1.5 text-sm text-fg-secondary hover:text-brand transition-colors">
+                    <iconify-icon icon="mdi:share-variant-outline"></iconify-icon>
+                    <span>分享</span>
+                </button>
+                <button class="flex items-center gap-1.5 text-sm text-fg-secondary hover:text-brand transition-colors ml-auto">
+                    <iconify-icon icon="mdi:bookmark-outline"></iconify-icon>
+                    <span>收藏</span>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="text-sm font-semibold text-fg-primary mb-3">评论 (36)</h4>
+                <div class="flex gap-3 mb-5">
+                    <div class="w-9 h-9 rounded-full bg-brand-tint3 flex items-center justify-center flex-none">
+                        <span class="text-xs font-medium text-brand">张</span>
+                    </div>
+                    <div class="flex-1">
+                        <textarea rows="2" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors resize-none" placeholder="写下你的评论..."></textarea>
+                        <div class="flex justify-end mt-2">
+                            <button class="px-3 py-1 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">发表</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex gap-3">
+                        <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center flex-none">
+                            <span class="text-xs font-medium text-purple-600">王</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-medium text-fg-primary">王律师</span>
+                                <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint3 text-brand rounded">认证律师</span>
+                                <span class="text-[10px] text-fg-tertiary">· 1 小时前</span>
+                            </div>
+                            <p class="text-xs text-fg-secondary mb-2">总结得很好！补充一点：关于"砍头息"的问题，根据民法典规定，借款的利息不得预先在本金中扣除。利息预先在本金中扣除的，应当按照实际借款数额返还借款并计算利息。</p>
+                            <div class="flex items-center gap-4 text-[10px] text-fg-tertiary">
+                                <button class="hover:text-brand transition-colors">回复</button>
+                                <button class="hover:text-brand transition-colors">
+                                    <iconify-icon icon="mdi:thumb-up-outline" class="inline"></iconify-icon> 45
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-none">
+                            <span class="text-xs font-medium text-amber-600">赵</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-medium text-fg-primary">赵法务</span>
+                                <span class="text-[10px] text-fg-tertiary">· 30 分钟前</span>
+                            </div>
+                            <p class="text-xs text-fg-secondary mb-2">请问李律师，如果借贷双方没有约定利息，但是借款人逾期还款了，能主张逾期利息吗？</p>
+                            <div class="flex items-center gap-4 text-[10px] text-fg-tertiary">
+                                <button class="hover:text-brand transition-colors">回复</button>
+                                <button class="hover:text-brand transition-colors">
+                                    <iconify-icon icon="mdi:thumb-up-outline" class="inline"></iconify-icon> 12
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

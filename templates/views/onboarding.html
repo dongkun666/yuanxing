@@ -1,267 +1,362 @@
-﻿<!--
-    Onboarding 5 步引导模板 (W5 Day 3)
-    Track D · 试用 onboarding 组件
-    设计: 跟 W1 设计系统一致 (居中卡片 + 半透明遮罩 + 品牌色主按钮)
-    配套: docs/w5/onboarding-flow.md · docs/w5/trial-registration-flow.md
+<!--
+    Onboarding 引导模板 (升级版本)
+    设计: 精致卡片 + 渐变装饰 + 微交互动画
+    步骤: 4 步 (选择身份 → 基本信息 → 偏好设置 → 完成)
 -->
 <div class="view-content hidden fixed inset-0 z-[900]" id="view-onboarding">
-  <!-- 半透明遮罩 (深底色, 不模糊, 保证可读性) -->
-  <div class="absolute inset-0 bg-fg-primary/60"></div>
+  <!-- 半透明遮罩 -->
+  <div class="absolute inset-0 bg-fg-primary/60 backdrop-blur-sm"></div>
 
   <!-- 居中卡片容器 -->
-  <div class="absolute inset-0 flex items-center justify-center p-6 overflow-y-auto">
-    <div class="bg-white rounded-2xl shadow-2xl w-[640px] max-h-[90vh] flex flex-col">
+  <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[640px] max-h-[90vh] flex flex-col overflow-hidden relative">
+      
+      <!-- 顶部渐变装饰条 -->
+      <div class="h-1.5 w-full bg-gradient-to-r from-brand via-wiki to-ai onboarding-progress-track">
+        <div class="h-full bg-gradient-to-r from-brand to-wiki onboarding-progress-bar transition-all duration-500 ease-out" id="onboarding-progress-bar" style="width: 25%"></div>
+      </div>
 
-      <!-- ============== 顶部进度条 + 跳过 ============== -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-bg-border">
-        <div class="flex items-center gap-1.5" id="onboarding-progress">
-          <span class="w-2 h-2 rounded-full bg-brand"></span>
-          <span class="w-2 h-2 rounded-full bg-fg-disabled"></span>
-          <span class="w-2 h-2 rounded-full bg-fg-disabled"></span>
-          <span class="w-2 h-2 rounded-full bg-fg-disabled"></span>
-          <span class="w-2 h-2 rounded-full bg-fg-disabled"></span>
+      <!-- ============== 顶部：Logo + 进度 + 跳过 ============== -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-bg-border/50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md shadow-brand/20">
+            <iconify-icon icon="mdi:scale-balance" class="text-white text-sm"></iconify-icon>
+          </div>
+          <div>
+            <span class="text-sm font-bold text-fg-primary">LexPrime</span>
+            <span class="text-[10px] text-fg-tertiary ml-1">元枢法智</span>
+          </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-[10px] text-fg-tertiary" id="onboarding-step-text">1 / 5</span>
+          <div class="flex items-center gap-1.5" id="onboarding-progress-dots">
+            <span class="w-2 h-2 rounded-full bg-brand transition-all duration-300"></span>
+            <span class="w-2 h-2 rounded-full bg-fg-disabled transition-all duration-300"></span>
+            <span class="w-2 h-2 rounded-full bg-fg-disabled transition-all duration-300"></span>
+            <span class="w-2 h-2 rounded-full bg-fg-disabled transition-all duration-300"></span>
+          </div>
+          <span class="text-[10px] text-fg-tertiary font-medium" id="onboarding-step-text">1 / 4</span>
           <button class="text-xs text-fg-tertiary hover:text-fg-secondary transition-colors" onclick="exitOnboarding()">
-            跳过引导 ×
+            跳过 ×
           </button>
         </div>
       </div>
 
       <!-- ============== 步骤内容 (动态切换) ============== -->
-      <div class="flex-1 overflow-y-auto p-8" id="onboarding-content">
+      <div class="flex-1 overflow-y-auto p-6 md:p-8" id="onboarding-content">
 
-        <!-- 步骤 1: 上传首个案件 (默认显示) -->
+        <!-- 步骤 1: 选择身份/角色 -->
         <div class="onboarding-step" id="step-1">
-          <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-tint text-brand mb-4">
-              <iconify-icon icon="mdi:briefcase-upload-outline" class="text-3xl"></iconify-icon>
+          <div class="text-center mb-6" data-animate="fade-in-up" data-delay="0">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-tint to-brand-tint2 text-brand mb-4 relative">
+              <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand/10 to-wiki/10 animate-pulse-soft"></div>
+              <iconify-icon icon="mdi:account-heart-outline" class="text-3xl relative z-10"></iconify-icon>
             </div>
-            <h2 class="text-xl font-bold text-fg-primary">上传您的首个案件</h2>
+            <h2 class="text-xl font-bold text-fg-primary">欢迎使用 LexPrime</h2>
             <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
-              律师 80% 时间在案牍. 5 秒搞定一个案件, AI 自动提取 15 个字段 (原告/被告/案由/标的金额...).
+              请选择您的身份，我们将为您提供更贴合的使用体验
             </p>
           </div>
 
-          <!-- 拖拽上传区 -->
-          <div class="border-2 border-dashed border-bg-border rounded-xl p-8 text-center hover:border-brand transition-colors cursor-pointer bg-bg-subtle/30"
-               onclick="document.getElementById('onboard-file-input').click()">
-            <iconify-icon class="text-4xl text-fg-disabled" icon="mdi:cloud-upload-outline"></iconify-icon>
-            <p class="mt-3 text-sm text-fg-secondary">拖拽 PDF / Word / 图片到这里</p>
-            <p class="mt-1 text-xs text-fg-tertiary">或 <span class="text-brand font-medium">点击选择文件</span></p>
-            <input class="hidden" id="onboard-file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" type="file"/>
-          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" data-animate="fade-in-up" data-delay="0.1">
+            <label class="role-card relative p-4 rounded-xl border-2 border-brand bg-gradient-to-br from-brand-tint3/50 to-brand-tint/30 cursor-pointer group transition-all duration-300 hover:shadow-lg hover:shadow-brand/10" onclick="selectRole(this, 'lawyer')">
+              <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-brand/5 to-wiki/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:gavel" class="text-xl text-white"></iconify-icon>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 border-brand flex items-center justify-center flex-shrink-0">
+                    <div class="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-brand to-brand-hover"></div>
+                  </div>
+                </div>
+                <h3 class="text-sm font-bold text-fg-primary">执业律师</h3>
+                <p class="text-xs text-fg-tertiary mt-1">我是执业律师，需要案件管理和AI辅助</p>
+                <div class="flex flex-wrap gap-1 mt-3">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-brand-tint text-brand rounded font-medium">案件管理</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded font-medium">AI助手</span>
+                </div>
+              </div>
+            </label>
 
-          <div class="mt-4 flex items-center gap-2 text-xs text-fg-tertiary">
-            <iconify-icon icon="mdi:information-outline"></iconify-icon>
-            <span>💡 您也可以先建空案件, 稍后再上传材料</span>
+            <label class="role-card relative p-4 rounded-xl border-2 border-bg-border hover:border-brand/50 cursor-pointer group transition-all duration-300 hover:shadow-lg hover:shadow-brand/5" onclick="selectRole(this, 'inhouse')">
+              <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-brand/5 to-wiki/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-wiki to-purple-500 flex items-center justify-center shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:office-building-outline" class="text-xl text-white"></iconify-icon>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 border-bg-border flex items-center justify-center flex-shrink-0 group-hover:border-brand/50 transition-colors"></div>
+                </div>
+                <h3 class="text-sm font-bold text-fg-primary">企业法务</h3>
+                <p class="text-xs text-fg-tertiary mt-1">我是企业法务，需要合同审查和合规支持</p>
+                <div class="flex flex-wrap gap-1 mt-3">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-wiki-tint text-wiki rounded font-medium">合同审查</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-ai-tint text-ai rounded font-medium">合规管理</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="role-card relative p-4 rounded-xl border-2 border-bg-border hover:border-brand/50 cursor-pointer group transition-all duration-300 hover:shadow-lg hover:shadow-brand/5" onclick="selectRole(this, 'student')">
+              <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-brand/5 to-wiki/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-success to-green-500 flex items-center justify-center shadow-md shadow-success/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:school-outline" class="text-xl text-white"></iconify-icon>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 border-bg-border flex items-center justify-center flex-shrink-0 group-hover:border-brand/50 transition-colors"></div>
+                </div>
+                <h3 class="text-sm font-bold text-fg-primary">法学生/学者</h3>
+                <p class="text-xs text-fg-tertiary mt-1">我是法律学习者，需要学习和研究工具</p>
+                <div class="flex flex-wrap gap-1 mt-3">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-success-tint text-success rounded font-medium">法条检索</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded font-medium">案例学习</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="role-card relative p-4 rounded-xl border-2 border-bg-border hover:border-brand/50 cursor-pointer group transition-all duration-300 hover:shadow-lg hover:shadow-brand/5" onclick="selectRole(this, 'other')">
+              <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-brand/5 to-wiki/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20 group-hover:scale-110 transition-transform">
+                    <iconify-icon icon="mdi:account-outline" class="text-xl text-white"></iconify-icon>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 border-bg-border flex items-center justify-center flex-shrink-0 group-hover:border-brand/50 transition-colors"></div>
+                </div>
+                <h3 class="text-sm font-bold text-fg-primary">其他用户</h3>
+                <p class="text-xs text-fg-tertiary mt-1">我对法律感兴趣，想了解法律知识</p>
+                <div class="flex flex-wrap gap-1 mt-3">
+                  <span class="text-[10px] px-1.5 py-0.5 bg-warning-tint text-warning rounded font-medium">法律咨询</span>
+                  <span class="text-[10px] px-1.5 py-0.5 bg-danger-tint text-danger rounded font-medium">自助服务</span>
+                </div>
+              </div>
+            </label>
           </div>
         </div>
 
-        <!-- 步骤 2: 跑类案检索 -->
+        <!-- 步骤 2: 基本信息填写 -->
         <div class="onboarding-step hidden" id="step-2">
-          <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-wiki-tint text-wiki mb-4">
-              <iconify-icon icon="mdi:scale-balance" class="text-3xl"></iconify-icon>
+          <div class="text-center mb-6" data-animate="fade-in-up" data-delay="0">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-wiki-tint to-purple-100 text-wiki mb-4 relative">
+              <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-wiki/10 to-ai/10 animate-pulse-soft"></div>
+              <iconify-icon icon="mdi:form-select" class="text-3xl relative z-10"></iconify-icon>
             </div>
-            <h2 class="text-xl font-bold text-fg-primary">跑类案检索</h2>
+            <h2 class="text-xl font-bold text-fg-primary">完善基本信息</h2>
             <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
-              传统检索: 30 分钟 (裁判文书网 + 关键词组合)<br>
-              <span class="text-brand font-medium">LexPrime: 30 秒</span> (AI 理解案件 + 全库语义检索)
+              填写您的基本信息，帮助我们更好地为您服务
             </p>
           </div>
 
-          <div class="bg-bg-subtle rounded-xl p-5">
-            <div class="text-xs text-fg-tertiary mb-3">您的案件</div>
-            <div class="bg-white rounded-lg p-4 border border-bg-border">
-              <div class="flex items-center justify-between">
-                <div>
-                  <div class="text-sm font-medium text-fg-primary" id="onboard-case-name">张三诉李四买卖合同纠纷</div>
-                  <div class="text-xs text-fg-tertiary mt-1">标的: ¥50 万 · 立案: 朝阳区法院</div>
-                </div>
-                <button id="onboard-skill-1-btn" class="px-3 py-1.5 rounded-lg bg-brand text-white text-xs font-medium hover:bg-brand-hover transition-colors"
-                        onclick="triggerOnboardSkill1()">
-                  <iconify-icon icon="mdi:magnify" class="text-sm"></iconify-icon>
-                  类案检索
+          <div class="space-y-4 max-w-md mx-auto" data-animate="fade-in-up" data-delay="0.1">
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-1.5">姓名 <span class="text-danger">*</span></label>
+              <div class="relative">
+                <iconify-icon icon="mdi:badge-account-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                <input type="text" class="form-input w-full pl-9 pr-3" id="onboard-name" placeholder="请输入您的姓名" value="张律师"/>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-1.5">手机号 <span class="text-danger">*</span></label>
+              <div class="relative">
+                <iconify-icon icon="mdi:phone-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                <input type="tel" class="form-input w-full pl-9 pr-3" id="onboard-phone" placeholder="请输入手机号" value="138****6688"/>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-1.5">所在城市</label>
+              <div class="relative">
+                <iconify-icon icon="mdi:map-marker-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                <select class="form-input w-full pl-9 pr-3 appearance-none" id="onboard-city">
+                  <option value="beijing">北京市</option>
+                  <option value="shanghai">上海市</option>
+                  <option value="guangzhou">广州市</option>
+                  <option value="shenzhen">深圳市</option>
+                  <option value="hangzhou">杭州市</option>
+                  <option value="other">其他城市</option>
+                </select>
+                <iconify-icon icon="mdi:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm pointer-events-none"></iconify-icon>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-1.5">执业机构/单位</label>
+              <div class="relative">
+                <iconify-icon icon="mdi:office-building-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                <input type="text" class="form-input w-full pl-9 pr-3" id="onboard-firm" placeholder="请输入律所或公司名称" value="元枢律师事务所"/>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+              <input checked class="w-4 h-4 accent-brand rounded" id="onboard-agree" type="checkbox"/>
+              <label class="text-xs text-fg-tertiary" for="onboard-agree">
+                我同意接收产品更新和功能推荐
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步骤 3: 偏好设置 -->
+        <div class="onboarding-step hidden" id="step-3">
+          <div class="text-center mb-6" data-animate="fade-in-up" data-delay="0">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-ai-tint to-purple-100 text-ai mb-4 relative">
+              <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-ai/10 to-brand/10 animate-pulse-soft"></div>
+              <iconify-icon icon="mdi:tune-variant" class="text-3xl relative z-10"></iconify-icon>
+            </div>
+            <h2 class="text-xl font-bold text-fg-primary">个性化设置</h2>
+            <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
+              选择您常用的功能和偏好，打造专属工作空间
+            </p>
+          </div>
+
+          <div class="space-y-4 max-w-md mx-auto" data-animate="fade-in-up" data-delay="0.1">
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-2">您最常处理的领域（可多选）</label>
+              <div class="flex flex-wrap gap-2">
+                <button class="px-3 py-1.5 text-xs rounded-lg bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-300 hover:-translate-y-0.5" onclick="togglePrefTag(this)">民商事诉讼</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">合同纠纷</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">劳动争议</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">知识产权</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">公司法</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">婚姻家事</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">刑事辩护</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg border border-bg-border text-fg-secondary hover:border-brand/50 hover:text-brand transition-all duration-300" onclick="togglePrefTag(this)">行政诉讼</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-2">界面主题</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button class="p-3 rounded-xl border-2 border-brand bg-brand-tint3/30 text-center transition-all duration-300" onclick="selectTheme(this, 'light')">
+                  <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-white to-bg border border-bg-border flex items-center justify-center">
+                    <iconify-icon icon="mdi:white-balance-sunny" class="text-brand text-sm"></iconify-icon>
+                  </div>
+                  <span class="text-xs font-medium text-brand">浅色</span>
+                </button>
+                <button class="p-3 rounded-xl border-2 border-bg-border hover:border-brand/50 text-center transition-all duration-300" onclick="selectTheme(this, 'dark')">
+                  <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                    <iconify-icon icon="mdi:weather-night" class="text-yellow-300 text-sm"></iconify-icon>
+                  </div>
+                  <span class="text-xs font-medium text-fg-secondary">深色</span>
+                </button>
+                <button class="p-3 rounded-xl border-2 border-bg-border hover:border-brand/50 text-center transition-all duration-300" onclick="selectTheme(this, 'auto')">
+                  <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-gradient-to-br from-white to-gray-700 flex items-center justify-center">
+                    <iconify-icon icon="mdi:theme-light-dark" class="text-fg-tertiary text-sm"></iconify-icon>
+                  </div>
+                  <span class="text-xs font-medium text-fg-secondary">跟随系统</span>
                 </button>
               </div>
             </div>
 
-            <!-- 检索结果 (默认隐藏, 体验后展示) -->
-            <div class="hidden mt-4 space-y-2" id="onboard-skill-1-result">
-              <div class="flex items-center gap-2 text-xs text-success">
-                <iconify-icon icon="mdi:check-circle"></iconify-icon>
-                <span>找到 23 个相关类案</span>
+            <div>
+              <label class="text-xs font-medium text-fg-secondary block mb-2">通知偏好</label>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-brand-tint flex items-center justify-center">
+                      <iconify-icon icon="mdi:bell-outline" class="text-brand text-sm"></iconify-icon>
+                    </div>
+                    <div>
+                      <p class="text-xs font-medium text-fg-primary">案件动态提醒</p>
+                      <p class="text-[10px] text-fg-tertiary">新进展、截止日期等</p>
+                    </div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                    <div class="toggle-knob"></div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-success-tint flex items-center justify-center">
+                      <iconify-icon icon="mdi:email-outline" class="text-success text-sm"></iconify-icon>
+                    </div>
+                    <div>
+                      <p class="text-xs font-medium text-fg-primary">邮件周报</p>
+                      <p class="text-[10px] text-fg-tertiary">每周工作汇总报告</p>
+                    </div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                    <div class="toggle-knob"></div>
+                  </div>
+                </div>
               </div>
-              <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="bg-white rounded-lg p-2 border border-bg-border">
-                  <div class="text-lg font-bold text-fg-primary">8</div>
-                  <div class="text-[10px] text-fg-tertiary">最高法</div>
-                </div>
-                <div class="bg-white rounded-lg p-2 border border-bg-border">
-                  <div class="text-lg font-bold text-fg-primary">11</div>
-                  <div class="text-[10px] text-fg-tertiary">高院</div>
-                </div>
-                <div class="bg-white rounded-lg p-2 border border-bg-border">
-                  <div class="text-lg font-bold text-fg-primary">4</div>
-                  <div class="text-[10px] text-fg-tertiary">中院</div>
-                </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步骤 4: 完成/开始使用 -->
+        <div class="onboarding-step hidden text-center" id="step-4">
+          <div class="mb-6" data-animate="scale-in" data-delay="0">
+            <div class="relative inline-block">
+              <div class="absolute inset-0 bg-gradient-to-br from-success/30 to-green-400/30 rounded-full blur-2xl animate-pulse-soft"></div>
+              <div class="relative w-20 h-20 rounded-full bg-gradient-to-br from-success to-green-500 flex items-center justify-center mx-auto shadow-2xl shadow-success/30 success-icon-bounce">
+                <iconify-icon icon="mdi:check-circle" class="text-5xl text-white"></iconify-icon>
+              </div>
+              <div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg success-confetti" style="animation-delay: 0.3s;">
+                <iconify-icon icon="mdi:star" class="text-white text-xs"></iconify-icon>
+              </div>
+              <div class="absolute -bottom-1 -left-2 w-5 h-5 rounded-full bg-brand flex items-center justify-center shadow-lg success-confetti" style="animation-delay: 0.5s;">
+                <iconify-icon icon="mdi:sparkles" class="text-white text-[10px]"></iconify-icon>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 步骤 3: 跑合同审查 -->
-        <div class="onboarding-step hidden" id="step-3">
-          <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ai-tint text-ai mb-4">
-              <iconify-icon icon="mdi:file-document-edit-outline" class="text-3xl"></iconify-icon>
-            </div>
-            <h2 class="text-xl font-bold text-fg-primary">跑合同审查</h2>
-            <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
-              律师 1 份合同平均花 <span class="text-fg-tertiary line-through">2 小时</span> 人工审.
-              <span class="text-ai font-medium">LexPrime 5 分钟</span> 标红高风险条款, 律师只审签字.
+          <div data-animate="fade-in-up" data-delay="0.2">
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-brand to-wiki bg-clip-text text-transparent">设置完成！</h2>
+            <p class="mt-2 text-sm text-fg-secondary">
+              您的 LexPrime 专属工作空间已准备就绪
             </p>
           </div>
 
-          <div class="border-2 border-dashed border-ai/30 rounded-xl p-8 text-center hover:border-ai transition-colors cursor-pointer bg-ai-tint/30"
-               onclick="document.getElementById('onboard-contract-input').click()">
-            <iconify-icon class="text-4xl text-ai" icon="mdi:file-search-outline"></iconify-icon>
-            <p class="mt-3 text-sm text-fg-primary">拖拽合同文件 (PDF / Word) 到这里</p>
-            <p class="mt-1 text-xs text-fg-tertiary">AI 自动识别: 付款条款 / 违约责任 / 管辖权 / 不可抗力</p>
-            <input class="hidden" id="onboard-contract-input" accept=".pdf,.doc,.docx" type="file"/>
-          </div>
-
-          <div class="mt-4 flex items-center gap-2 text-xs text-success bg-success-tint rounded-lg px-3 py-2">
-            <iconify-icon icon="mdi:shield-lock-outline"></iconify-icon>
-            <span>数据完全留在本地, 不上传云端 (LexPrime 数据本地化原则)</span>
-          </div>
-        </div>
-
-        <!-- 步骤 4: 邀请同行 -->
-        <div class="onboarding-step hidden" id="step-4">
-          <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-success-tint text-success mb-4">
-              <iconify-icon icon="mdi:account-multiple-plus-outline" class="text-3xl"></iconify-icon>
-            </div>
-            <h2 class="text-xl font-bold text-fg-primary">邀请同行</h2>
-            <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
-              邀请 1 位同行, <span class="text-success font-medium">您和他都获得 30 天延长</span>.
-              律师圈子小, 一起用更高效.
-            </p>
-          </div>
-
-          <!-- 专属链接 -->
-          <div class="bg-bg-subtle rounded-xl p-5">
-            <div class="text-xs text-fg-tertiary mb-2">您的专属链接</div>
-            <div class="flex items-center gap-2">
-              <input class="flex-1 h-9 px-3 text-sm bg-white border border-bg-border rounded-lg" id="onboard-ref-link" readonly value="https://yuanxing.app/r/WANG2026" type="text"/>
-              <button class="px-3 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover transition-colors" onclick="copyOnboardLink()">
-                <iconify-icon icon="mdi:content-copy"></iconify-icon>
-                复制
-              </button>
-            </div>
-          </div>
-
-          <!-- 二维码 -->
-          <div class="mt-4 flex items-center gap-4 p-4 bg-bg-subtle rounded-xl">
-            <div class="w-24 h-24 rounded-lg bg-white border border-bg-border flex items-center justify-center">
-              <iconify-icon icon="mdi:qrcode" class="text-6xl text-fg-tertiary"></iconify-icon>
-            </div>
-            <div class="flex-1 text-xs text-fg-secondary">
-              <div class="font-medium text-fg-primary">扫码发给朋友</div>
-              <div class="mt-1 text-fg-tertiary">已邀请 <strong class="text-fg-primary">0</strong> 人 · 已延长 <strong class="text-fg-primary">0</strong> 天</div>
-              <div class="mt-1 text-fg-tertiary">💡 邀请奖励将在 W6 上线</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 步骤 5: 关注公众号 + 完成 -->
-        <div class="onboarding-step hidden" id="step-5">
-          <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-wechat text-white mb-4">
-              <iconify-icon icon="mdi:wechat" class="text-3xl"></iconify-icon>
-            </div>
-            <h2 class="text-xl font-bold text-fg-primary">关注公众号</h2>
-            <p class="mt-2 text-sm text-fg-secondary max-w-md mx-auto">
-              公众号「LexPrime 元枢法智」:
-              每周 1 篇法律 AI 实战案例 · 律师社群入口 · 产品功能更新优先通知
-            </p>
-          </div>
-
-          <!-- 二维码 -->
-          <div class="flex items-center gap-4 p-5 bg-bg-subtle rounded-xl">
-            <div class="w-32 h-32 rounded-lg bg-white border border-bg-border flex items-center justify-center flex-shrink-0">
-              <iconify-icon icon="mdi:qrcode" class="text-7xl text-wechat"></iconify-icon>
-            </div>
-            <div class="flex-1 text-xs text-fg-secondary">
-              <div class="font-medium text-fg-primary text-sm mb-2">扫码关注</div>
-              <ul class="space-y-1.5">
-                <li class="flex items-center gap-1.5">
-                  <iconify-icon icon="mdi:check" class="text-success"></iconify-icon>
-                  <span>每周法律 AI 实战案例</span>
+          <div class="mt-6 bg-gradient-to-br from-brand-tint3/50 via-wiki/10 to-ai-tint/30 rounded-xl p-5 text-left max-w-md mx-auto relative overflow-hidden" data-animate="fade-in-up" data-delay="0.3">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wiki/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10">
+              <div class="text-xs font-semibold text-fg-tertiary mb-3 flex items-center gap-1.5">
+                <iconify-icon icon="mdi:gift-outline" class="text-warning"></iconify-icon>
+                您的新用户福利
+              </div>
+              <ul class="space-y-2.5 text-sm">
+                <li class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-full bg-brand-tint flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:check" class="text-brand text-[10px]"></iconify-icon>
+                  </div>
+                  <span class="text-fg-primary">全部 AI 功能免费试用 <span class="font-bold text-brand">30 天</span></span>
                 </li>
-                <li class="flex items-center gap-1.5">
-                  <iconify-icon icon="mdi:check" class="text-success"></iconify-icon>
-                  <span>200+ 律师私域社群入口</span>
+                <li class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-full bg-brand-tint flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:check" class="text-brand text-[10px]"></iconify-icon>
+                  </div>
+                  <span class="text-fg-primary">1 对 1 专属客服支持（4 小时响应）</span>
                 </li>
-                <li class="flex items-center gap-1.5">
-                  <iconify-icon icon="mdi:check" class="text-success"></iconify-icon>
-                  <span>产品功能更新优先通知</span>
+                <li class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-full bg-warning-tint flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:crown" class="text-warning text-[10px]"></iconify-icon>
+                  </div>
+                  <span class="text-fg-primary">创始体验官资格（前 100 名）</span>
                 </li>
               </ul>
             </div>
           </div>
-        </div>
 
-        <!-- 完成庆祝页 (5 步全完成或跳过 ≥2 步后显示) -->
-        <div class="onboarding-step hidden text-center" id="step-complete">
-          <div class="mb-6">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-success-tint text-success mb-4">
-              <iconify-icon icon="mdi:check-circle-outline" class="text-5xl"></iconify-icon>
-            </div>
-            <h2 class="text-2xl font-bold text-fg-primary">🎉 恭喜完成引导!</h2>
-            <p class="mt-2 text-base text-fg-secondary">
-              你已解锁 LexPrime 核心功能
-            </p>
-          </div>
-
-          <div class="bg-gradient-to-br from-brand-tint3 to-ai-tint rounded-xl p-6 text-left max-w-md mx-auto">
-            <div class="text-xs font-semibold text-fg-tertiary mb-3">您的福利</div>
-            <ul class="space-y-2.5 text-sm">
-              <li class="flex items-center gap-2">
-                <iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon>
-                <span class="text-fg-primary">4 大 Skill 全部开放 30 天</span>
-              </li>
-              <li class="flex items-center gap-2">
-                <iconify-icon icon="mdi:check-circle" class="text-brand"></iconify-icon>
-                <span class="text-fg-primary">1 对 1 客服优先响应 (4h)</span>
-              </li>
-              <li class="flex items-center gap-2">
-                <iconify-icon icon="mdi:crown" class="text-warning"></iconify-icon>
-                <span class="text-fg-primary">创始体验官申请资格 (前 100 名)</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="mt-6 text-xs text-fg-tertiary">
-            💡 您可以随时点工作台右上角「?」重看引导
+          <div class="mt-5 text-[11px] text-fg-tertiary" data-animate="fade-in-up" data-delay="0.4">
+            💡 您可以随时在设置中调整这些偏好
           </div>
         </div>
       </div>
 
       <!-- ============== 底部按钮 ============== -->
-      <div class="flex items-center justify-between px-6 py-4 border-t border-bg-border">
+      <div class="flex items-center justify-between px-6 py-4 border-t border-bg-border/50 bg-bg-subtle/30">
         <button class="text-xs text-fg-tertiary hover:text-fg-secondary transition-colors" id="onboard-skip-btn" onclick="skipCurrentStep()">
           跳过本步
         </button>
         <div class="flex items-center gap-2">
-          <button class="px-4 py-2 text-sm text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors hidden" id="onboard-prev-btn" onclick="prevStep()">
+          <button class="px-4 py-2 text-sm text-fg-secondary hover:bg-bg rounded-lg transition-colors hidden" id="onboard-prev-btn" onclick="prevStep()">
             ← 上一步
           </button>
-          <button class="px-5 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover transition-colors" id="onboard-next-btn" onclick="nextStep()">
-            下一步 →
+          <button class="px-5 py-2.5 bg-gradient-to-r from-brand to-brand-hover text-white rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden group" id="onboard-next-btn" onclick="nextStep()">
+            <span class="relative z-10">下一步 →</span>
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-hover to-wiki opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </button>
         </div>
       </div>
@@ -271,17 +366,20 @@
 </div>
 
 <!-- ============== 跳过二次确认弹窗 ============== -->
-<div class="fixed inset-0 z-[1100] bg-black/40 flex items-center justify-center hidden" id="onboard-exit-confirm" onclick="closeExitConfirm()">
-  <div class="bg-white rounded-xl shadow-2xl w-[420px]" onclick="event.stopPropagation()">
-    <div class="px-6 py-4 border-b border-bg-border">
-      <h3 class="text-base font-bold text-fg-primary">确定跳过引导?</h3>
+<div class="fixed inset-0 z-[1100] bg-black/40 flex items-center justify-center p-4 hidden" id="onboard-exit-confirm" onclick="closeExitConfirm()">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onclick="event.stopPropagation()" data-animate="scale-in" data-delay="0">
+    <div class="px-6 py-4 border-b border-bg-border/50">
+      <h3 class="text-base font-bold text-fg-primary flex items-center gap-2">
+        <iconify-icon icon="mdi:help-circle-outline" class="text-warning"></iconify-icon>
+        确定跳过引导？
+      </h3>
     </div>
-    <div class="p-6 text-sm text-fg-secondary">
-      您可以随时点工作台右上角「?」重看引导. 跳过不会影响功能使用, 但完成引导的律师 30 天留存率高出 2 倍.
+    <div class="p-6 text-sm text-fg-secondary leading-relaxed">
+      您可以随时点工作台右上角「?」重看引导。跳过不会影响功能使用，但完成引导的用户 30 天留存率高出 2 倍。
     </div>
-    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-bg-border">
-      <button class="px-4 py-2 text-sm text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="closeExitConfirm()">继续引导</button>
-      <button class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="confirmExitOnboarding()">确认跳过</button>
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-bg-border/50 bg-bg-subtle/30">
+      <button class="px-4 py-2 text-sm font-medium text-fg-secondary hover:bg-bg rounded-lg transition-colors" onclick="closeExitConfirm()">继续引导</button>
+      <button class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-lg transition-all duration-300 hover:-translate-y-0.5" onclick="confirmExitOnboarding()">确认跳过</button>
     </div>
   </div>
 </div>
@@ -289,42 +387,55 @@
 <script>
 // ============== Onboarding 状态机 ==============
 let onboardStep = 1;
-const ONBOARDING_TOTAL_STEPS = 5;
+const ONBOARDING_TOTAL_STEPS = 4;
+let selectedRole = 'lawyer';
 
 function showOnboardStep(stepNo) {
-  // 隐藏所有步骤
   document.querySelectorAll('.onboarding-step').forEach(el => el.classList.add('hidden'));
-  // 显示目标步骤
-  const target = stepNo === 'complete' ? document.getElementById('step-complete') : document.getElementById(`step-${stepNo}`);
-  if (target) target.classList.remove('hidden');
+  const target = document.getElementById(`step-${stepNo}`);
+  if (target) {
+    target.classList.remove('hidden');
+    setTimeout(function() {
+      if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+        Animations.initPageAnimations(target);
+      }
+    }, 50);
+  }
 
-  // 进度条
-  const dots = document.querySelectorAll('#onboarding-progress > span');
+  const dots = document.querySelectorAll('#onboarding-progress-dots > span');
   dots.forEach((dot, idx) => {
-    if (stepNo === 'complete' || idx + 1 <= stepNo) {
+    if (idx + 1 <= stepNo) {
       dot.classList.remove('bg-fg-disabled');
       dot.classList.add('bg-brand');
+      dot.style.transform = 'scale(1.1)';
     } else {
       dot.classList.remove('bg-brand');
       dot.classList.add('bg-fg-disabled');
+      dot.style.transform = 'scale(1)';
     }
   });
 
-  // 步骤文本
-  const stepText = document.getElementById('onboarding-step-text');
-  if (stepNo === 'complete') {
-    stepText.textContent = '✓ 完成';
-    document.getElementById('onboard-next-btn').textContent = '进入工作台 →';
-    document.getElementById('onboard-skip-btn').classList.add('hidden');
-    document.getElementById('onboard-prev-btn').classList.add('hidden');
-  } else {
-    stepText.textContent = `${stepNo} / ${ONBOARDING_TOTAL_STEPS}`;
-    document.getElementById('onboard-next-btn').innerHTML = stepNo === ONBOARDING_TOTAL_STEPS ? '完成 ✓' : '下一步 →';
-    document.getElementById('onboard-skip-btn').classList.remove('hidden');
-    document.getElementById('onboard-prev-btn').classList.toggle('hidden', stepNo === 1);
+  const progressBar = document.getElementById('onboarding-progress-bar');
+  if (progressBar) {
+    progressBar.style.width = (stepNo / ONBOARDING_TOTAL_STEPS * 100) + '%';
   }
 
-  // 触发埋点
+  const stepText = document.getElementById('onboarding-step-text');
+  stepText.textContent = `${stepNo} / ${ONBOARDING_TOTAL_STEPS}`;
+
+  const nextBtn = document.getElementById('onboard-next-btn');
+  const skipBtn = document.getElementById('onboard-skip-btn');
+  const prevBtn = document.getElementById('onboard-prev-btn');
+
+  if (stepNo === ONBOARDING_TOTAL_STEPS) {
+    nextBtn.innerHTML = '<span class="relative z-10">开始使用 🚀</span><div class="absolute inset-0 bg-gradient-to-r from-brand-hover to-wiki opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>';
+    skipBtn.classList.add('hidden');
+  } else {
+    nextBtn.innerHTML = '<span class="relative z-10">下一步 →</span><div class="absolute inset-0 bg-gradient-to-r from-brand-hover to-wiki opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>';
+    skipBtn.classList.remove('hidden');
+  }
+  prevBtn.classList.toggle('hidden', stepNo === 1);
+
   if (typeof trackEvent === 'function') {
     trackEvent('onboarding_step_show', { step: stepNo });
   }
@@ -335,11 +446,10 @@ function nextStep() {
     onboardStep++;
     showOnboardStep(onboardStep);
   } else {
-    // 完成
-    showOnboardStep('complete');
     if (typeof trackEvent === 'function') {
-      trackEvent('onboarding_complete', { total_steps: ONBOARDING_TOTAL_STEPS });
+      trackEvent('onboarding_complete', { total_steps: ONBOARDING_TOTAL_STEPS, role: selectedRole });
     }
+    closeOnboarding();
   }
 }
 
@@ -375,42 +485,65 @@ function confirmExitOnboarding() {
 
 function closeOnboarding() {
   document.getElementById('view-onboarding').classList.add('hidden');
-  // 打开工作台
   if (window.app && window.app.openView) {
     window.app.openView('workstation');
   }
 }
 
 // ============== 步骤内交互 ==============
-function triggerOnboardSkill1() {
-  // 模拟检索
-  const btn = document.getElementById('onboard-skill-1-btn');
-  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="text-sm animate-spin"></iconify-icon> 检索中...';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    document.getElementById('onboard-skill-1-result').classList.remove('hidden');
-    btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> 已体验';
-    btn.classList.remove('bg-brand');
-    btn.classList.add('bg-success', 'pointer-events-none');
-    if (typeof trackEvent === 'function') {
-      trackEvent('onboarding_skill_1_used', { step: 2 });
+function selectRole(el, role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-card').forEach(card => {
+    card.classList.remove('border-brand', 'bg-gradient-to-br', 'from-brand-tint3/50', 'to-brand-tint/30');
+    card.classList.add('border-bg-border');
+    const radio = card.querySelector('.w-5');
+    if (radio) {
+      radio.classList.remove('border-brand');
+      radio.classList.add('border-bg-border');
+      radio.innerHTML = '';
     }
-  }, 1200);
+  });
+  el.classList.remove('border-bg-border');
+  el.classList.add('border-brand', 'bg-gradient-to-br', 'from-brand-tint3/50', 'to-brand-tint/30');
+  const radio = el.querySelector('.w-5');
+  if (radio) {
+    radio.classList.remove('border-bg-border');
+    radio.classList.add('border-brand');
+    radio.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-brand to-brand-hover"></div>';
+  }
 }
 
-function copyOnboardLink() {
-  const input = document.getElementById('onboard-ref-link');
-  input.select();
-  document.execCommand('copy');
-  if (typeof trackEvent === 'function') {
-    trackEvent('onboarding_ref_link_copied', { step: 4 });
+function togglePrefTag(el) {
+  if (el.classList.contains('bg-gradient-to-r')) {
+    el.classList.remove('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'font-medium', 'shadow-sm', 'shadow-brand/20');
+    el.classList.add('border', 'border-bg-border', 'text-fg-secondary', 'hover:border-brand/50', 'hover:text-brand');
+  } else {
+    el.classList.remove('border', 'border-bg-border', 'text-fg-secondary', 'hover:border-brand/50', 'hover:text-brand');
+    el.classList.add('bg-gradient-to-r', 'from-brand', 'to-brand-hover', 'text-white', 'font-medium', 'shadow-sm', 'shadow-brand/20');
   }
-  // 视觉反馈
-  const btn = event.currentTarget;
-  const original = btn.innerHTML;
-  btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> 已复制';
-  setTimeout(() => btn.innerHTML = original, 1500);
+}
+
+function selectTheme(el, theme) {
+  el.parentElement.querySelectorAll('button').forEach(btn => {
+    btn.classList.remove('border-brand', 'bg-brand-tint3/30');
+    btn.classList.add('border-bg-border');
+    const text = btn.querySelector('span');
+    if (text) {
+      text.classList.remove('text-brand');
+      text.classList.add('text-fg-secondary');
+    }
+  });
+  el.classList.remove('border-bg-border');
+  el.classList.add('border-brand', 'bg-brand-tint3/30');
+  const text = el.querySelector('span');
+  if (text) {
+    text.classList.remove('text-fg-secondary');
+    text.classList.add('text-brand');
+  }
+}
+
+function toggleSwitch(el) {
+  el.classList.toggle('active');
 }
 
 // ============== 全局入口: 启动 onboarding ==============

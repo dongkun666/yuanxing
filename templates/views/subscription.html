@@ -1,309 +1,384 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-subscription">
-<div class="max-w-5xl mx-auto w-full space-y-5">
-<!-- 当前订阅概览 -->
-<div class="bg-gradient-to-r from-[#165DFF] to-[#6C5CE7] rounded-xl p-6 text-white">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-xs font-medium text-white/70 mb-1">当前方案</p>
-<h2 class="text-2xl font-bold">专业版</h2>
-<p class="text-sm text-white/80 mt-1">享受全部AI法律协办功能</p>
+﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto bg-bg" id="view-subscription">
+<div class="max-w-5xl mx-auto w-full p-4 md:p-6 space-y-4 md:space-y-5">
+
+<!-- 页面标题 -->
+<div class="flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
+    <div>
+        <h2 class="text-xl font-bold text-fg-primary">订阅管理</h2>
+        <p class="text-xs text-fg-tertiary mt-1">选择适合您的套餐，解锁全部功能</p>
+    </div>
+    <div class="hidden md:flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-orange-200/50">
+            <iconify-icon icon="mdi:crown" class="text-white text-lg"></iconify-icon>
+        </div>
+    </div>
 </div>
-<div class="text-right">
-<p class="text-2xl font-bold">¥299<span class="text-sm font-normal text-white/70">/月</span></p>
-<p class="text-xs text-white/70 mt-0.5">到期时间：2026-08-21</p>
+
+<!-- 当前套餐卡片 -->
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand via-brand to-wiki p-5 md:p-6 text-white shadow-xl shadow-brand/20" data-animate="fade-in-up" data-delay="0.1">
+    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+    <div class="absolute bottom-0 left-1/4 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 blur-xl"></div>
+    <div class="absolute top-4 right-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-bold flex items-center gap-1">
+        <iconify-icon icon="mdi:star" class="text-xs"></iconify-icon>
+        当前套餐
+    </div>
+    <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <iconify-icon icon="mdi:crown" class="text-xl text-white"></iconify-icon>
+                    </div>
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-bold">专业版</h3>
+                        <p class="text-xs text-white/70">最适合个人律师</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 mt-3 text-xs text-white/80">
+                    <span class="flex items-center gap-1">
+                        <iconify-icon icon="mdi:calendar-check-outline" class="text-sm"></iconify-icon>
+                        有效期至 2027-06-30
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <iconify-icon icon="mdi:clock-outline" class="text-sm"></iconify-icon>
+                        剩余 362 天
+                    </span>
+                </div>
+            </div>
+            <div class="text-left md:text-right">
+                <p class="text-3xl md:text-4xl font-bold">¥299<span class="text-sm font-normal text-white/70">/月</span></p>
+                <p class="text-xs text-white/60 mt-1">已节省 ¥1,189</p>
+            </div>
+        </div>
+
+        <!-- 使用量进度条 -->
+        <div class="mt-5 pt-5 border-t border-white/20 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="sub-usage-item">
+                <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="text-white/80 flex items-center gap-1">
+                        <iconify-icon icon="mdi:briefcase-outline" class="text-sm"></iconify-icon>
+                        案件管理
+                    </span>
+                    <span class="font-semibold text-white">12/50</span>
+                </div>
+                <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-white to-white/80 rounded-full progress-bar-animate" style="width: 24%"></div>
+                </div>
+                <p class="text-[10px] text-white/60 mt-1">已使用 24%</p>
+            </div>
+            <div class="sub-usage-item">
+                <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="text-white/80 flex items-center gap-1">
+                        <iconify-icon icon="mdi:file-document-edit-outline" class="text-sm"></iconify-icon>
+                        文书生成
+                    </span>
+                    <span class="font-semibold text-white">86/∞</span>
+                </div>
+                <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-green-300 to-emerald-400 rounded-full progress-bar-animate" style="width: 100%"></div>
+                </div>
+                <p class="text-[10px] text-white/60 mt-1">不限次数</p>
+            </div>
+            <div class="sub-usage-item">
+                <div class="flex items-center justify-between text-xs mb-2">
+                    <span class="text-white/80 flex items-center gap-1">
+                        <iconify-icon icon="mdi:book-search-outline" class="text-sm"></iconify-icon>
+                        类案检索
+                    </span>
+                    <span class="font-semibold text-white">45/∞</span>
+                </div>
+                <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-purple-300 to-pink-400 rounded-full progress-bar-animate" style="width: 100%"></div>
+                </div>
+                <p class="text-[10px] text-white/60 mt-1">不限次数</p>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+            <button class="px-5 py-2.5 text-xs font-bold bg-white text-brand hover:bg-white/90 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-1.5 hover:-translate-y-0.5" onclick="showPayment('professional')">
+                <iconify-icon icon="mdi:autorenew" class="text-sm"></iconify-icon>
+                立即续费
+            </button>
+            <button class="px-5 py-2.5 text-xs font-semibold bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white rounded-xl transition-all duration-300 border border-white/20 flex items-center gap-1.5 hover:-translate-y-0.5" onclick="showPayment('enterprise')">
+                <iconify-icon icon="mdi:arrow-up-bold" class="text-sm"></iconify-icon>
+                升级企业版
+            </button>
+            <button class="px-5 py-2.5 text-xs font-medium text-white/70 hover:text-white rounded-xl transition-all duration-300 flex items-center gap-1.5 hover:-translate-y-0.5" onclick="cancelSubscription()">
+                <iconify-icon icon="mdi:cancel" class="text-sm"></iconify-icon>
+                取消订阅
+            </button>
+        </div>
+    </div>
 </div>
-</div>
-<div class="mt-4 pt-4 border-t border-white/20 flex items-center gap-6">
-<div class="flex items-center gap-2">
-<iconify-icon class="text-green-300" icon="mdi:check-circle"></iconify-icon>
-<span class="text-xs text-white/90">AI文书生成</span>
-</div>
-<div class="flex items-center gap-2">
-<iconify-icon class="text-green-300" icon="mdi:check-circle"></iconify-icon>
-<span class="text-xs text-white/90">类案检索</span>
-</div>
-<div class="flex items-center gap-2">
-<iconify-icon class="text-green-300" icon="mdi:check-circle"></iconify-icon>
-<span class="text-xs text-white/90">证据管理</span>
-</div>
-<div class="flex items-center gap-2">
-<iconify-icon class="text-green-300" icon="mdi:check-circle"></iconify-icon>
-<span class="text-xs text-white/90">日程管理</span>
-</div>
-</div>
-</div>
+
 <!-- 月/年付切换 -->
-<div class="flex items-center justify-center gap-3 mb-4">
-<span class="text-sm font-medium text-fg-primary" id="monthly-label">月付</span>
-<button class="relative w-12 h-6 rounded-full bg-brand transition-colors" id="billing-toggle" onclick="toggleBilling()">
-<span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform" id="billing-knob"></span>
-</button>
-<span class="text-sm font-medium text-fg-tertiary" id="yearly-label">年付</span>
-<span class="text-[10px] bg-brand-tint text-brand font-semibold px-2 py-0.5 rounded ml-1">省 2 个月</span>
+<div class="flex items-center justify-center gap-3" data-animate="fade-in-up" data-delay="0.2">
+    <span class="text-sm font-medium text-fg-primary" id="monthly-label">月付</span>
+    <button class="relative w-12 h-6 rounded-full bg-brand transition-colors" id="billing-toggle" onclick="toggleBilling()">
+        <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform" id="billing-knob"></span>
+    </button>
+    <span class="text-sm font-medium text-fg-tertiary" id="yearly-label">年付</span>
+    <span class="text-[10px] bg-success-tint text-success font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+        <iconify-icon icon="mdi:gift-outline" class="text-[10px]"></iconify-icon>
+        省 ¥1,189
+    </span>
 </div>
+
 <!-- 套餐选择 -->
-<h3 class="text-base font-semibold text-fg-primary mb-1">选择方案</h3>
-<div class="grid grid-cols-3 gap-4">
-<!-- 免费版 -->
-<div class="bg-white rounded-xl border border-bg-border p-5 hover:border-brand transition-all cursor-pointer flex flex-col">
-<div class="text-center flex-shrink-0">
-<div class="w-12 h-12 rounded-full bg-bg flex items-center justify-center mx-auto mb-3">
-<iconify-icon class="text-2xl text-fg-tertiary" icon="mdi:account-outline"></iconify-icon>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="plans-container">
+    <!-- 免费版 -->
+    <div class="ws-card p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col" data-animate="scale-in" data-stagger-group="plans" data-stagger-index="0" data-delay="0.25">
+        <div class="text-center flex-shrink-0">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-gray-100 to-bg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
+                <iconify-icon icon="mdi:seed-outline" class="text-2xl text-fg-tertiary"></iconify-icon>
+            </div>
+            <h4 class="text-base font-bold text-fg-primary">免费版</h4>
+            <p class="text-[11px] text-fg-tertiary mt-1">基础功能体验</p>
+        </div>
+        <div class="text-center my-4">
+            <span class="text-3xl font-bold text-fg-primary">¥0</span>
+            <span class="text-xs text-fg-tertiary">/月</span>
+        </div>
+        <ul class="space-y-2 mb-5 flex-1">
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                每日 3 次 AI 对话
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                基础案件管理（3个）
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                基础日程管理
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-disabled">
+                <iconify-icon icon="mdi:close-circle" class="text-sm flex-shrink-0"></iconify-icon>
+                类案检索
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-disabled">
+                <iconify-icon icon="mdi:close-circle" class="text-sm flex-shrink-0"></iconify-icon>
+                AI 文书生成
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-disabled">
+                <iconify-icon icon="mdi:close-circle" class="text-sm flex-shrink-0"></iconify-icon>
+                合同审查
+            </li>
+        </ul>
+        <button class="w-full py-2.5 text-xs font-semibold rounded-xl border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-300 flex-shrink-0" onclick="showPayment('free')">
+            当前使用
+        </button>
+    </div>
+
+    <!-- 专业版（推荐） -->
+    <div class="ws-card p-5 relative bg-gradient-to-b from-brand/5 to-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group flex flex-col border-brand/30" data-animate="scale-in" data-stagger-group="plans" data-stagger-index="1" data-delay="0.25" style="transform: translateY(-4px);">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-brand to-brand-hover text-white text-[10px] font-bold rounded-full shadow-lg shadow-brand/30 flex items-center gap-1">
+            <iconify-icon icon="mdi:star" class="text-xs"></iconify-icon>
+            推荐
+        </div>
+        <div class="text-center flex-shrink-0 pt-1">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md shadow-brand/30">
+                <iconify-icon icon="mdi:crown" class="text-2xl text-white"></iconify-icon>
+            </div>
+            <h4 class="text-base font-bold text-fg-primary">专业版</h4>
+            <p class="text-[11px] text-fg-tertiary mt-1" id="pro-tip">最适合个人律师</p>
+        </div>
+        <div class="text-center my-4">
+            <span class="text-3xl font-bold text-brand" id="pro-price">¥299</span>
+            <span class="text-xs text-fg-tertiary" id="pro-period">/月</span>
+        </div>
+        <ul class="space-y-2 mb-5 flex-1">
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                无限 AI 对话
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                无限案件管理
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                智能类案检索
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                AI 文书生成
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                合同审查
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                证据管理 & 证据册
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                智能费用计算器
+            </li>
+        </ul>
+        <button class="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 flex-shrink-0" onclick="showPayment('professional')">
+            <iconify-icon icon="mdi:autorenew" class="text-sm"></iconify-icon>
+            立即续费
+        </button>
+    </div>
+
+    <!-- 企业版 -->
+    <div class="ws-card p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col" data-animate="scale-in" data-stagger-group="plans" data-stagger-index="2" data-delay="0.25">
+        <div class="text-center flex-shrink-0">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-md shadow-wiki/30">
+                <iconify-icon icon="mdi:domain" class="text-2xl text-white"></iconify-icon>
+            </div>
+            <h4 class="text-base font-bold text-fg-primary">企业版</h4>
+            <p class="text-[11px] text-fg-tertiary mt-1" id="enterprise-tip">适合律所及团队</p>
+        </div>
+        <div class="text-center my-4">
+            <span class="text-3xl font-bold text-fg-primary" id="enterprise-price">¥899</span>
+            <span class="text-xs text-fg-tertiary" id="enterprise-period">/月</span>
+        </div>
+        <ul class="space-y-2 mb-5 flex-1">
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                专业版全部功能
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                多人协作（10人）
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                团队知识库
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                数据统计分析
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                自定义 SOP 工作流
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                专属客户成功经理
+            </li>
+            <li class="flex items-center gap-2 text-xs text-fg-secondary">
+                <iconify-icon icon="mdi:check-circle" class="text-success text-sm flex-shrink-0"></iconify-icon>
+                专属客服支持
+            </li>
+        </ul>
+        <button class="w-full py-2.5 text-xs font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300 flex items-center justify-center gap-1.5 flex-shrink-0" onclick="showPayment('enterprise')">
+            <iconify-icon icon="mdi:arrow-up-bold" class="text-sm"></iconify-icon>
+            升级企业版
+        </button>
+    </div>
 </div>
-<h4 class="text-base font-semibold text-fg-primary">免费版</h4>
-<p class="text-3xl font-bold text-fg-primary mt-2">¥0</p>
-<p class="text-xs text-fg-tertiary mt-1">基础功能体验</p>
+
+<!-- 订阅历史 -->
+<div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.5">
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center">
+                <iconify-icon icon="mdi:history" class="text-brand text-sm"></iconify-icon>
+            </div>
+            <div>
+                <h3 class="font-bold text-sm text-fg-primary">订阅历史</h3>
+                <p class="text-[10px] text-fg-tertiary">查看您的所有订阅记录</p>
+            </div>
+        </div>
+    </div>
+    <div id="subscription-history-list" class="space-y-2">
+        <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:star" class="text-brand text-base"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-fg-primary">专业版 · 年付</p>
+                    <p class="text-xs text-fg-tertiary">2026-06-30 14:30 · 支付宝支付</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold text-fg-primary tabular-nums">¥2,399</p>
+                <span class="order-status-badge status-completed text-[10px] mt-0.5 inline-flex">生效中</span>
+            </div>
+        </div>
+        <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:star" class="text-brand text-base"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-fg-primary">专业版 · 月付</p>
+                    <p class="text-xs text-fg-tertiary">2026-05-30 10:15 · 微信支付</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold text-fg-primary tabular-nums">¥299</p>
+                <span class="order-status-badge status-completed text-[10px] mt-0.5 inline-flex">已到期</span>
+            </div>
+        </div>
+        <div class="p-3 rounded-xl bg-bg-subtle/50 hover:bg-bg-subtle transition-colors flex items-center justify-between group opacity-70">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-gray-100 to-bg flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="mdi:domain" class="text-fg-tertiary text-base"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-fg-primary">企业版 · 年付</p>
+                    <p class="text-xs text-fg-tertiary">2026-04-15 16:45 · 支付宝支付</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm font-bold text-fg-disabled tabular-nums">¥7,199</p>
+                <span class="order-status-badge status-cancelled text-[10px] mt-0.5 inline-flex">已取消</span>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="mt-4 space-y-2 flex-1">
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>基础文书模板 5个</span>
+
+<!-- 常见问题 -->
+<div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.6">
+    <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-100 to-wiki-tint flex items-center justify-center">
+            <iconify-icon icon="mdi:help-circle-outline" class="text-wiki text-sm"></iconify-icon>
+        </div>
+        <div>
+            <h3 class="font-bold text-sm text-fg-primary">常见问题</h3>
+            <p class="text-[10px] text-fg-tertiary">关于订阅的常见问题解答</p>
+        </div>
+    </div>
+    <div class="space-y-2">
+        <div class="p-3 rounded-xl hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-fg-primary">如何升级或降级套餐？</span>
+                <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary group-hover:text-brand transition-colors"></iconify-icon>
+            </div>
+        </div>
+        <div class="p-3 rounded-xl hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-fg-primary">支持哪些支付方式？</span>
+                <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary group-hover:text-brand transition-colors"></iconify-icon>
+            </div>
+        </div>
+        <div class="p-3 rounded-xl hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-fg-primary">可以开发票吗？</span>
+                <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary group-hover:text-brand transition-colors"></iconify-icon>
+            </div>
+        </div>
+        <div class="p-3 rounded-xl hover:bg-bg-subtle/50 transition-colors cursor-pointer group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-fg-primary">如何取消订阅？</span>
+                <iconify-icon icon="mdi:chevron-down" class="text-fg-tertiary group-hover:text-brand transition-colors"></iconify-icon>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>案件管理 3个</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>基础日程管理</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>数据导出</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-disabled">
-<iconify-icon icon="mdi:close"></iconify-icon>
-<span>AI 文书生成</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-disabled">
-<iconify-icon icon="mdi:close"></iconify-icon>
-<span>类案检索</span>
-</div>
-</div>
-<button class="w-full mt-4 py-2.5 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors upgrade-btn" onclick="showPayment('free')">立即升级</button>
-</div>
-<!-- 专业版（推荐） -->
-<div class="bg-white rounded-xl border-2 border-brand p-5 relative hover:shadow-lg transition-all cursor-pointer flex flex-col">
-<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-brand text-white text-[10px] font-bold px-3 py-0.5 rounded-full">推荐</div>
-<div class="text-center flex-shrink-0">
-<div class="w-12 h-12 rounded-full bg-brand-tint3 flex items-center justify-center mx-auto mb-3">
-<iconify-icon class="text-2xl text-brand" icon="mdi:star"></iconify-icon>
-</div>
-<h4 class="text-base font-semibold text-fg-primary">专业版</h4>
-<p class="text-3xl font-bold text-brand mt-2">
-<span id="pro-price">¥299</span>
-<span class="text-base font-normal text-fg-tertiary" id="pro-period">/月</span>
-</p>
-<p class="text-xs text-fg-tertiary mt-1" id="pro-tip">最适合个人律师</p>
-</div>
-<div class="mt-4 space-y-2 flex-1">
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>不限文书模板</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>案件管理 50个</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>AI 文书自动生成</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>类案检索与策略分析</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>证据管理 &amp; 证据册</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>模板管理与法律体检</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>智能费用计算器</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>完整日程管理</span>
-</div>
-</div>
-<button class="w-full mt-4 py-2.5 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors" onclick="showPayment('professional')">续费</button>
-</div>
-<!-- 企业版 -->
-<div class="bg-white rounded-xl border border-bg-border p-5 hover:border-brand transition-all cursor-pointer flex flex-col">
-<div class="text-center flex-shrink-0">
-<div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-3">
-<iconify-icon class="text-2xl text-ai" icon="mdi:domain"></iconify-icon>
-</div>
-<h4 class="text-base font-semibold text-fg-primary">企业版</h4>
-<p class="text-3xl font-bold text-fg-primary mt-2">
-<span id="enterprise-price">¥899</span>
-<span class="text-base font-normal text-fg-tertiary" id="enterprise-period">/月</span>
-</p>
-<p class="text-xs text-fg-tertiary mt-1" id="enterprise-tip">适合律所及团队</p>
-</div>
-<div class="mt-4 space-y-2 flex-1">
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>包含专业版所有功能</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>团队协作 &amp; 任务看板</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>不限团队成员数</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>自定义 SOP 工作流</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>专属客户管理 CRM</span>
-</div>
-<div class="flex items-center gap-2 text-xs text-fg-secondary">
-<iconify-icon class="text-green-500" icon="mdi:check"></iconify-icon>
-<span>专属客户成功经理</span>
-</div>
-</div>
-<button class="w-full mt-4 py-2.5 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-hover transition-colors upgrade-btn" onclick="showPayment('enterprise')">立即升级</button>
-</div>
-</div>
-<!-- 功能对比 -->
-<h3 class="text-base font-semibold text-fg-primary">功能对比</h3>
-<div class="bg-white rounded-xl border border-bg-border overflow-hidden">
-<table class="w-full text-sm">
-<colgroup>
-<col class="w-[36%]"/>
-<col class="w-[21%]"/>
-<col class="w-[22%] bg-brand-tint3"/>
-<col class="w-[21%]"/>
-</colgroup>
-<thead>
-<tr class="bg-bg-subtle border-b border-bg-border">
-<th class="text-left py-3.5 px-4 text-xs font-semibold text-fg-secondary">功能</th>
-<th class="text-center py-3.5 px-4 text-xs font-semibold text-fg-tertiary">免费版</th>
-<th class="text-center py-3.5 px-4 text-xs font-semibold text-brand bg-brand-tint">专业版</th>
-<th class="text-center py-3.5 px-4 text-xs font-semibold text-ai">企业版</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-bg">
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">案件管理数量</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">3个</td>
-<td class="text-center py-3 px-4 text-xs text-brand font-medium bg-brand-tint3">50个</td>
-<td class="text-center py-3 px-4 text-xs text-brand font-medium">不限</td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">AI 文书自动生成</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">文书模板库</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">5个</td>
-<td class="text-center py-3 px-4 text-xs text-brand font-medium bg-brand-tint3">不限</td>
-<td class="text-center py-3 px-4 text-xs text-brand font-medium">不限</td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">模板管理系统（占位符/自映射）</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">法律体检（模板合规检查）</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">类案检索与裁判参考</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">案情摘要与诉讼策略分析</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">智能费用计算器</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">签约前策略看板（脱敏展示）</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">证据管理 &amp; 证据册</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">日程管理</td>
-<td class="text-center py-3 px-4 text-xs text-fg-tertiary">基础</td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">客户管理 CRM</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled bg-brand-tint3"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">团队协作 &amp; 任务看板</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled bg-brand-tint3"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">自定义 SOP 工作流</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled bg-brand-tint3"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">数据导出与本地知识库删除</td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success bg-brand-tint3"><iconify-icon icon="mdi:check"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-<tr class="hover:bg-bg-subtle">
-<td class="py-3 px-4 text-xs text-fg-secondary">专属客户成功经理</td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-fg-disabled bg-brand-tint3"><iconify-icon icon="mdi:close"></iconify-icon></td>
-<td class="text-center py-3 px-4 text-xs text-success"><iconify-icon icon="mdi:check"></iconify-icon></td>
-</tr>
-</tbody>
-</table>
-</div>
-<!-- 立即升级横幅 -->
-<div class="bg-gradient-to-r from-[#165DFF] to-[#6C5CE7] rounded-xl p-6 text-white flex items-center justify-between">
-<div>
-<h3 class="text-lg font-bold">选择适合您的方案，开启智能法律服务</h3>
-<p class="text-sm text-white/80 mt-1">所有方案均支持 7 天无理由退款 · 随时升级或降级</p>
-</div>
-<button class="flex-shrink-0 bg-white text-brand font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors" onclick="showPayment('professional')">立即升级</button>
-</div>
+
 <!-- 底部提示 -->
-<p class="text-xs text-fg-tertiary text-center pb-4">以上价格均为含税价格 · 支持支付宝/微信支付 · 可随时取消订阅</p>
+<p class="text-xs text-fg-tertiary text-center pb-2">
+    以上价格均为含税价格 · 支持支付宝/微信支付 · 7 天无理由退款 · 可随时取消订阅
+</p>
+
 </div>
 </div>
-<!-- 支付确认 -->
-
-

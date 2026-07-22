@@ -1,0 +1,34 @@
+[run]
+source = .
+omit =
+    */tests/*
+    */__pycache__/*
+    *.pyc
+    *.pyo
+    */migrations/*
+    */alembic/*
+    */node_modules/*
+    */venv/*
+    */.venv/*
+    */tests/**/*
+    */test_*.py
+
+[report]
+show_missing = True
+skip_covered = False
+fail_under = 80
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    pass
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
+
+[json]
+output = coverage.json

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LexPrime</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span class="logo-text">LexPrime</span>
+      </div>
+      <button id="optionsBtn" class="icon-btn" title="设置">
+        ⚙️
+      </button>
+    </header>
+
+    <div class="search-section">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="搜索判例、法规、企业..."
+        />
+        <button id="searchBtn" class="search-btn">🔍</button>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="action-btn" data-action="contract-review">
+        <span class="action-icon">📋</span>
+        <span class="action-text">合同审查</span>
+      </button>
+      <button class="action-btn" data-action="case-search">
+        <span class="action-icon">📚</span>
+        <span class="action-text">判例检索</span>
+      </button>
+      <button class="action-btn" data-action="ai-chat">
+        <span class="action-icon">🤖</span>
+        <span class="action-text">AI 咨询</span>
+      </button>
+      <button class="action-btn" data-action="favorites">
+        <span class="action-icon">⭐</span>
+        <span class="action-text">我的收藏</span>
+      </button>
+    </div>
+
+    <div id="contentArea" class="content-area">
+      <div class="welcome-section">
+        <h3>欢迎使用 LexPrime</h3>
+        <p>智能法律助手，让法律触手可及</p>
+        <ul class="feature-list">
+          <li>📖 网页法律条文自动标注</li>
+          <li>📋 一键合同风险审查</li>
+          <li>🔍 快速判例检索</li>
+          <li>⭐ 收藏法律条文</li>
+          <li>🌐 翻译和解释</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="popup-footer">
+      <span class="version">v1.0.0</span>
+      <a href="https://lexprime.com" target="_blank" class="link">访问官网</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -51,20 +51,33 @@ from marketplace_engine import (  # noqa: E402
     Jurisdiction,
     Language,
     ReferralStatus,
+    SortField,
+    SortOrder,
     # 数据类
     CommissionRecord,
     LawyerProfile,
+    LawyerMatchScore,
+    MatchDimension,
+    MatchExplanation,
+    MatchWeights,
+    DEFAULT_MATCH_WEIGHTS,
+    LawyerFilters,
     MARKETPLACE_DISCLAIMER,
     MARKETPLACE_DISCLAIMER_SHORT,
     compute_marketplace_metrics,
+    compute_match_score,
     create_co_counsel_case,
     create_cross_border_job,
     create_referral,
+    filter_lawyers,
+    get_match_explanation,
     get_state_transitionable_targets,
     lawyer_match_score,
     measure_latency_ms,
     parse_legal_basis,
+    rank_lawyers,
     recommend_lawyers,
+    sort_lawyers,
     validate_lawyer_profile,
 )
 
@@ -778,6 +791,498 @@ class TestComplianceAndPerformance:
         for case_type in CASE_TYPES:
             basis = parse_legal_basis(case_type)
             assert len(basis) > 5, f"{case_type.value} 法条依据缺失"
+
+
+# ============================================================================
+# Test 11: 增强版匹配算法 (多维度评分)
+# ============================================================================
+
+class TestEnhancedMatchAlgorithm:
+    """增强版匹配算法: 专业深度、胜诉率、响应速度、跨领域能力等"""
+
+    def test_compute_match_score_new_dimensions(self):
+        """compute_match_score 包含新维度字段"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract_dispute", "tort", "family"],
+            specialty_depth={"contract_dispute": 100, "tort": 50, "family": 30},
+            experience_years=10,
+            win_rate=0.75,
+            response_speed_hours=4,
+            rating=4.8,
+            client_review_count=50,
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract_dispute"])
+        assert hasattr(score, "specialty_depth_score")
+        assert hasattr(score, "win_rate_score")
+        assert hasattr(score, "response_speed_score")
+        assert hasattr(score, "cross_domain_score")
+        assert score.total_score > 0
+
+    def test_specialty_depth_scoring(self):
+        """专业深度匹配: 办案数量多的得分更高"""
+        lawyer_deep = LawyerProfile(
+            lawyer_id="L1", name="深律师",
+            specialties=["contract_dispute"],
+            specialty_depth={"contract_dispute": 200},
+        )
+        lawyer_shallow = LawyerProfile(
+            lawyer_id="L2", name="浅律师",
+            specialties=["contract_dispute"],
+            specialty_depth={"contract_dispute": 10},
+        )
+        score_deep = compute_match_score(lawyer_deep, required_specialties=["contract_dispute"])
+        score_shallow = compute_match_score(lawyer_shallow, required_specialties=["contract_dispute"])
+        assert score_deep.specialty_depth_score > score_shallow.specialty_depth_score
+
+    def test_win_rate_scoring(self):
+        """胜诉率维度: 高胜诉率得分更高"""
+        lawyer_high = LawyerProfile(
+            lawyer_id="L1", name="高胜诉",
+            specialties=["contract"],
+            win_rate=0.9,
+        )
+        lawyer_low = LawyerProfile(
+            lawyer_id="L2", name="低胜诉",
+            specialties=["contract"],
+            win_rate=0.3,
+        )
+        score_high = compute_match_score(lawyer_high, required_specialties=["contract"])
+        score_low = compute_match_score(lawyer_low, required_specialties=["contract"])
+        assert score_high.win_rate_score > score_low.win_rate_score
+
+    def test_response_speed_scoring(self):
+        """响应速度维度: 响应快的得分更高"""
+        lawyer_fast = LawyerProfile(
+            lawyer_id="L1", name="快响应",
+            specialties=["contract"],
+            response_speed_hours=1,
+        )
+        lawyer_slow = LawyerProfile(
+            lawyer_id="L2", name="慢响应",
+            specialties=["contract"],
+            response_speed_hours=48,
+        )
+        score_fast = compute_match_score(lawyer_fast, required_specialties=["contract"])
+        score_slow = compute_match_score(lawyer_slow, required_specialties=["contract"])
+        assert score_fast.response_speed_score > score_slow.response_speed_score
+
+    def test_cross_domain_bonus(self):
+        """跨领域能力加分: 多专业领域律师有额外加分"""
+        lawyer_multi = LawyerProfile(
+            lawyer_id="L1", name="多领域",
+            specialties=["contract", "tort", "family", "ip", "labor", "corporate"],
+        )
+        lawyer_single = LawyerProfile(
+            lawyer_id="L2", name="单领域",
+            specialties=["contract"],
+        )
+        score_multi = compute_match_score(lawyer_multi, required_specialties=["contract"])
+        score_single = compute_match_score(lawyer_single, required_specialties=["contract"])
+        assert score_multi.cross_domain_score > 0
+        assert score_multi.cross_domain_score > score_single.cross_domain_score
+
+    def test_city_level_geography_match(self):
+        """城市级地域匹配: 同城 > 同省 > 异地"""
+        lawyer_shanghai_pudong = LawyerProfile(
+            lawyer_id="L1", name="上海浦东",
+            specialties=["contract"],
+            region="上海",
+            city="浦东新区",
+        )
+        score_same_city = compute_match_score(
+            lawyer_shanghai_pudong,
+            required_specialties=["contract"],
+            required_region="上海",
+            required_city="浦东新区",
+        )
+        score_same_province = compute_match_score(
+            lawyer_shanghai_pudong,
+            required_specialties=["contract"],
+            required_region="上海",
+            required_city="黄浦区",
+        )
+        assert score_same_city.geography_score > score_same_province.geography_score
+        assert score_same_city.geography_score == 1.0
+
+    def test_configurable_weights(self):
+        """权重可配置化: 调整权重影响总分"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract"],
+            experience_years=2,
+            rating=4.9,
+        )
+        default_score = compute_match_score(lawyer, required_specialties=["contract"])
+
+        heavy_experience_weights = MatchWeights(
+            specialty_match=0.2,
+            specialty_depth=0.1,
+            experience_score=0.4,
+            win_rate=0.05,
+            geography_score=0.05,
+            response_speed=0.05,
+            availability_score=0.05,
+            rating_score=0.1,
+        )
+        heavy_exp_score = compute_match_score(
+            lawyer, required_specialties=["contract"],
+            weights=heavy_experience_weights,
+        )
+        assert default_score.total_score != heavy_exp_score.total_score
+
+    def test_lawyer_match_score_backward_compatible(self):
+        """旧版函数名 lawyer_match_score 向后兼容"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract_dispute", "tort"],
+        )
+        score = lawyer_match_score(lawyer, required_specialties=["contract_dispute"])
+        assert score.lawyer_id == "L1"
+        assert score.specialty_match == 1.0
+        assert isinstance(score, LawyerMatchScore)
+
+
+# ============================================================================
+# Test 12: 推荐解释可视化
+# ============================================================================
+
+class TestMatchExplanation:
+    """推荐解释: 各维度得分说明、强项弱项、改进建议"""
+
+    def test_explanation_dimensions_present(self):
+        """匹配解释包含 8 个核心维度"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract"],
+            experience_years=5,
+            rating=4.0,
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract"])
+        assert score.explanation is not None
+        assert len(score.explanation.dimensions) >= 8
+        dim_names = [d.name for d in score.explanation.dimensions]
+        assert "专业领域匹配" in dim_names
+        assert "执业经验" in dim_names
+        assert "客户评价" in dim_names
+        assert "地域匹配" in dim_names
+
+    def test_explanation_strengths_and_weaknesses(self):
+        """强项和弱项分别展示"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="极端律师",
+            specialties=["contract", "tort", "family"],
+            experience_years=20,
+            win_rate=0.9,
+            rating=4.9,
+            client_review_count=100,
+            response_speed_hours=1,
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract"])
+        exp = score.explanation
+        assert exp is not None
+        assert len(exp.strengths) >= 2
+        assert isinstance(exp.weaknesses, list)
+        assert isinstance(exp.suggestions, list)
+
+    def test_explanation_improvement_suggestions(self):
+        """改进建议: 弱项对应改进建议"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="新手律师",
+            specialties=["contract"],
+            experience_years=1,
+            rating=3.0,
+            response_speed_hours=72,
+            cross_border_capable=False,
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract"])
+        exp = score.explanation
+        assert exp is not None
+        assert len(exp.suggestions) > 0
+        suggestion_text = " ".join(exp.suggestions)
+        has_relevant_suggestion = any(
+            kw in suggestion_text
+            for kw in ["经验", "响应", "好评", "跨境", "专业"]
+        )
+        assert has_relevant_suggestion
+
+    def test_explanation_weighted_scores(self):
+        """每个维度包含加权得分"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract"],
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract"])
+        exp = score.explanation
+        assert exp is not None
+        for dim in exp.dimensions:
+            assert hasattr(dim, "weighted_score")
+            assert dim.weighted_score >= 0
+            assert dim.weighted_score <= dim.weight + 0.001
+
+    def test_get_match_explanation_direct_call(self):
+        """get_match_explanation 可独立调用"""
+        lawyer = LawyerProfile(
+            lawyer_id="L1", name="王律师",
+            specialties=["contract"],
+        )
+        score = compute_match_score(lawyer, required_specialties=["contract"], include_explanation=False)
+        assert score.explanation is None
+
+        explanation = get_match_explanation(score, lawyer, ["contract"])
+        assert isinstance(explanation, MatchExplanation)
+        assert explanation.total_score == score.total_score
+        assert len(explanation.dimensions) >= 8
+
+
+# ============================================================================
+# Test 13: 智能排序
+# ============================================================================
+
+class TestLawyerSorting:
+    """智能排序: 多种排序方式"""
+
+    def _make_test_lawyers(self):
+        lawyers = [
+            LawyerProfile(lawyer_id="L1", name="高价资深",
+                          specialties=["contract"], experience_years=20,
+                          rating=4.5, price_per_hour=2000, win_rate=0.85,
+                          response_speed_hours=24, completed_cases=500),
+            LawyerProfile(lawyer_id="L2", name="低价新手",
+                          specialties=["contract"], experience_years=2,
+                          rating=4.0, price_per_hour=300, win_rate=0.5,
+                          response_speed_hours=2, completed_cases=20),
+            LawyerProfile(lawyer_id="L3", name="中价高评",
+                          specialties=["contract"], experience_years=8,
+                          rating=4.9, price_per_hour=800, win_rate=0.7,
+                          response_speed_hours=6, completed_cases=150),
+        ]
+        return lawyers
+
+    def test_sort_by_match_score_default(self):
+        """默认按综合匹配度降序"""
+        lawyers = self._make_test_lawyers()
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored)
+        assert sorted_list[0].total_score >= sorted_list[-1].total_score
+
+    def test_sort_by_price_asc(self):
+        """按价格升序 (从低到高)"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.PRICE, order=SortOrder.ASC)
+        prices = [profiles[s.lawyer_id].price_per_hour for s in sorted_list]
+        assert prices == sorted(prices)
+
+    def test_sort_by_price_desc(self):
+        """按价格降序 (从高到低)"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.PRICE, order=SortOrder.DESC)
+        prices = [profiles[s.lawyer_id].price_per_hour for s in sorted_list]
+        assert prices == sorted(prices, reverse=True)
+
+    def test_sort_by_experience(self):
+        """按经验年限排序"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.EXPERIENCE, order=SortOrder.DESC)
+        assert sorted_list[0].lawyer_id == "L1"
+
+    def test_sort_by_rating(self):
+        """按评分排序"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.RATING, order=SortOrder.DESC)
+        assert sorted_list[0].lawyer_id == "L3"
+
+    def test_sort_by_response_speed(self):
+        """按响应速度排序"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.RESPONSE_SPEED, order=SortOrder.ASC)
+        assert sorted_list[0].lawyer_id == "L2"
+
+    def test_sort_by_win_rate(self):
+        """按胜诉率排序"""
+        lawyers = self._make_test_lawyers()
+        profiles = {l.lawyer_id: l for l in lawyers}
+        scored = [compute_match_score(l, ["contract"]) for l in lawyers]
+        sorted_list = sort_lawyers(scored, profiles, sort_by=SortField.WIN_RATE, order=SortOrder.DESC)
+        assert sorted_list[0].lawyer_id == "L1"
+
+    def test_rank_lawyers_function(self):
+        """rank_lawyers 函数可用 (保留兼容)"""
+        lawyers = self._make_test_lawyers()
+        ranked = rank_lawyers(lawyers, required_specialties=["contract"], top_k=2)
+        assert len(ranked) == 2
+        assert ranked[0].total_score >= ranked[1].total_score
+
+
+# ============================================================================
+# Test 14: 过滤增强
+# ============================================================================
+
+class TestLawyerFiltering:
+    """过滤增强: 多条件组合过滤"""
+
+    def _make_test_lawyers(self):
+        return [
+            LawyerProfile(lawyer_id="L1", name="上海合同律师",
+                          specialties=["contract_dispute", "tort"],
+                          region="上海", city="浦东新区",
+                          experience_years=10, rating=4.5,
+                          price_per_hour=1000,
+                          cross_border_capable=True,
+                          marketplace_active=True,
+                          availability="available"),
+            LawyerProfile(lawyer_id="L2", name="北京知产律师",
+                          specialties=["intellectual_property", "contract"],
+                          region="北京", city="朝阳区",
+                          experience_years=5, rating=4.8,
+                          price_per_hour=1500,
+                          cross_border_capable=True,
+                          marketplace_active=True,
+                          availability="busy"),
+            LawyerProfile(lawyer_id="L3", name="广州家事律师",
+                          specialties=["family", "labor_arbitration"],
+                          region="广东", city="广州",
+                          experience_years=3, rating=4.0,
+                          price_per_hour=500,
+                          cross_border_capable=False,
+                          marketplace_active=True,
+                          availability="available"),
+            LawyerProfile(lawyer_id="L4", name="深圳 inactive",
+                          specialties=["contract"],
+                          region="广东", city="深圳",
+                          experience_years=15, rating=4.2,
+                          price_per_hour=800,
+                          cross_border_capable=False,
+                          marketplace_active=False,
+                          availability="unavailable"),
+        ]
+
+    def test_filter_by_specialty(self):
+        """按专业领域过滤 (包含任一)"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(specialties=["intellectual_property"])
+        result = filter_lawyers(lawyers, filters)
+        assert len(result) == 1
+        assert result[0].lawyer_id == "L2"
+
+    def test_filter_by_specialties_all(self):
+        """按专业领域过滤 (必须全部包含)"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(specialties_all=["contract_dispute", "tort"])
+        result = filter_lawyers(lawyers, filters)
+        assert len(result) == 1
+        assert result[0].lawyer_id == "L1"
+
+    def test_filter_by_experience_range(self):
+        """按经验年限范围过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(
+            min_experience_years=4,
+            max_experience_years=12,
+            marketplace_active_only=False,
+        )
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L2" in ids
+        assert "L3" not in ids
+
+    def test_filter_by_region(self):
+        """按地区过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(regions=["上海", "北京"], marketplace_active_only=False)
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L2" in ids
+        assert "L3" not in ids
+
+    def test_filter_by_city(self):
+        """按城市过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(cities=["浦东新区"], marketplace_active_only=False)
+        result = filter_lawyers(lawyers, filters)
+        assert len(result) == 1
+        assert result[0].lawyer_id == "L1"
+
+    def test_filter_by_price_range(self):
+        """按价格区间过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(
+            min_price=600,
+            max_price=1200,
+            marketplace_active_only=False,
+        )
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L4" in ids
+        assert "L2" not in ids
+        assert "L3" not in ids
+
+    def test_filter_by_min_rating(self):
+        """按最低评分过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(min_rating=4.5, marketplace_active_only=False)
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L2" in ids
+        assert "L3" not in ids
+
+    def test_filter_cross_border_only(self):
+        """仅跨境律师"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(cross_border_only=True, marketplace_active_only=False)
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L2" in ids
+        assert "L3" not in ids
+
+    def test_filter_marketplace_active_only_default(self):
+        """默认仅 marketplace_active 律师"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters()
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L4" not in ids
+        assert len(result) == 3
+
+    def test_filter_by_availability(self):
+        """按可接案状态过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(availability=["available"], marketplace_active_only=False)
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L3" in ids
+        assert "L2" not in ids
+
+    def test_filter_multiple_conditions_combined(self):
+        """多条件组合过滤"""
+        lawyers = self._make_test_lawyers()
+        filters = LawyerFilters(
+            specialties=["contract_dispute", "intellectual_property"],
+            min_experience_years=5,
+            min_rating=4.0,
+            cross_border_only=True,
+        )
+        result = filter_lawyers(lawyers, filters)
+        ids = [r.lawyer_id for r in result]
+        assert "L1" in ids
+        assert "L2" in ids
+        assert "L3" not in ids
 
 
 # ============================================================================

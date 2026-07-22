@@ -1,0 +1,169 @@
+.container {
+  padding-bottom: 40rpx;
+}
+
+.case-header {
+  margin-top: 24rpx;
+}
+
+.case-title-row {
+  margin-bottom: 24rpx;
+}
+
+.case-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.case-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  padding: 20rpx;
+  background: #f8fafc;
+  border-radius: 12rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.meta-label {
+  font-size: 26rpx;
+  color: #64748b;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.meta-value {
+  font-size: 26rpx;
+  color: #1e293b;
+  flex: 1;
+}
+
+.case-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f1f5f9;
+}
+
+.score-box {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.score-label {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.score-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.stats-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.stat {
+  font-size: 24rpx;
+  color: #94a3b8;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 24rpx;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.action-icon {
+  font-size: 40rpx;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.section {
+  margin-top: 24rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 16rpx;
+}
+
+.section-header .section-title {
+  margin-bottom: 0;
+}
+
+.toggle-btn {
+  font-size: 26rpx;
+  color: #1e40af;
+}
+
+.section-content {
+  font-size: 28rpx;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.keyword-tag {
+  padding: 8rpx 20rpx;
+  background: #e0e7ff;
+  color: #4338ca;
+  border-radius: 9999rpx;
+  font-size: 24rpx;
+}
+
+.full-text {
+  font-size: 28rpx;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.full-text.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.full-text.expanded {
+  max-height: none;
+}

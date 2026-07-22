@@ -1,127 +1,241 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 space-y-3" id="view-attention-list">
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-attention-list">
+<div class="max-w-4xl mx-auto w-full space-y-3 md:space-y-4">
 <!-- 头部 -->
-<div class="flex-none flex items-center justify-between">
+<div class="flex items-center justify-between" data-animate="fade-in-up" data-delay="0">
 <div class="flex items-center gap-3">
-<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg text-fg-tertiary transition-colors" onclick="switchView('workstation')">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-fg-tertiary transition-colors" onclick="switchView('workstation')">
 <iconify-icon class="text-lg" icon="mdi:arrow-left"></iconify-icon>
 </button>
+<div>
 <h2 class="text-lg font-bold text-fg-primary">需要关注</h2>
-<span class="text-xs text-fg-tertiary bg-bg px-2 py-0.5 rounded-full">共 5 项</span>
+<p class="text-[11px] text-fg-tertiary">重要事项一览，及时处理不遗漏</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 px-3 py-1.5 bg-danger-tint rounded-full">
+<iconify-icon class="text-danger text-sm" icon="mdi:alert-circle-outline"></iconify-icon>
+<span id="attention-count" class="text-xs font-semibold text-danger">共 5 项</span>
+</div>
+</div>
+</div>
+
+<!-- 搜索与筛选区域 -->
+<div class="ws-card p-4 md:p-5" data-animate="fade-in-up" data-delay="0.08">
+<div class="flex items-center gap-3 flex-wrap mb-4">
+<div class="relative flex-1 min-w-[200px] group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<iconify-icon class="text-fg-tertiary group-focus-within:text-brand transition-colors" icon="mdi:magnify"></iconify-icon>
+</div>
+<input id="attention-search" class="w-full bg-bg-subtle border border-bg-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all duration-200 placeholder:text-fg-disabled" placeholder="搜索关注事项..." type="text"/>
+</div>
+<div class="flex items-center gap-1.5 ml-auto order-last md:order-none">
+<button class="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/25 transition-all duration-300 hover:-translate-y-0.5" onclick="switchView('deadline')">
+<iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+新建提醒
+</button>
 </div>
 </div>
 <!-- 筛选标签 -->
-<div class="flex-none flex items-center gap-2">
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-brand text-white" onclick="filterAttention('all', this)">全部</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('待处理', this)">待处理</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('逾期', this)">逾期</button>
-<button class="att-filter-btn text-xs px-3 py-1.5 rounded-full bg-bg text-fg-secondary hover:bg-bg-border" onclick="filterAttention('提醒', this)">提醒</button>
+<div class="flex items-center gap-2 flex-wrap pt-4 border-t border-bg-border/60">
+<span class="text-xs text-fg-tertiary flex items-center gap-1">
+<iconify-icon icon="mdi:filter-variant" class="text-sm"></iconify-icon>
+筛选：
+</span>
+<button class="att-filter-btn text-xs px-4 py-2 rounded-full bg-gradient-to-r from-brand to-brand-hover text-white font-medium shadow-sm shadow-brand/20 transition-all duration-200" onclick="filterAttention('all', this)">全部</button>
+<button class="att-filter-btn text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary hover:bg-danger-tint hover:text-danger font-medium transition-all duration-200 flex items-center gap-1.5" onclick="filterAttention('逾期', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-danger animate-pulse"></span>
+逾期
+</button>
+<button class="att-filter-btn text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary hover:bg-warning-tint hover:text-warning font-medium transition-all duration-200 flex items-center gap-1.5" onclick="filterAttention('待处理', this)">
+<iconify-icon icon="mdi:clock-outline" class="text-sm"></iconify-icon>
+待处理
+</button>
+<button class="att-filter-btn text-xs px-4 py-2 rounded-full bg-bg-subtle text-fg-secondary hover:bg-brand-tint hover:text-brand font-medium transition-all duration-200 flex items-center gap-1.5" onclick="filterAttention('提醒', this)">
+<iconify-icon icon="mdi:bell-outline" class="text-sm"></iconify-icon>
+提醒
+</button>
+<div class="ml-auto flex items-center gap-2">
+<button class="text-xs text-brand hover:text-brand-hover font-medium flex items-center gap-1 transition-colors" onclick="markAllAttentionDone()">
+<iconify-icon icon="mdi:check-all" class="text-sm"></iconify-icon>
+全部已完成
+</button>
 </div>
+</div>
+</div>
+
 <!-- 关注列表 - 网格卡片布局 -->
-<div class="flex-none">
+<div class="flex-none" id="attention-list-container" data-animate="fade-in-up" data-delay="0.16">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 <!-- 卡片 1: 逾期 - 举证期限即将截止 -->
-<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-red-500 min-h-[140px]">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-danger relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="0" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-danger/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-red-500 text-xl" icon="mdi:clock-alert-outline"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-danger text-lg" icon="mdi:clock-alert-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-red-100 text-red-700 font-medium px-1.5 py-0.5 rounded-full">逾期</span>
-<span class="font-medium text-sm text-fg-primary truncate">举证期限即将截止</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-danger to-red-500 text-white shadow-sm shadow-danger/20">
+<iconify-icon icon="mdi:alert-circle" class="text-[9px]"></iconify-icon>
+逾期
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors truncate">举证期限即将截止</span>
 </div>
 <p class="text-xs text-fg-tertiary truncate">案件：张三合同纠纷 · 截止日期：2026-06-20</p>
 </div>
-<iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-red-500 font-medium">已逾期 3 天</span>
-<button class="text-[10px] text-brand hover:underline">去处理</button>
+<span class="text-[11px] text-danger font-semibold flex items-center gap-1">
+<iconify-icon icon="mdi:clock-alert" class="text-xs"></iconify-icon>
+已逾期 3 天
+</span>
+<button class="text-[11px] text-white bg-gradient-to-r from-danger to-red-500 hover:shadow-lg hover:shadow-danger/25 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(1)">去处理</button>
 </div>
 </div>
+</div>
+
 <!-- 卡片 2: 待处理 - 王华借贷纠纷上诉状待审核 -->
-<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-warning relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="1" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-warning-tint flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-orange-500 text-xl" icon="mdi:file-document-edit-outline"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-100 to-warning-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-warning text-lg" icon="mdi:file-document-edit-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-warning-tint text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
-<span class="font-medium text-sm text-fg-primary truncate">王华借贷纠纷上诉状待审核</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-warning-tint to-amber-100 text-warning">
+待处理
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors truncate">王华借贷纠纷上诉状待审核</span>
 </div>
 <p class="text-xs text-fg-tertiary truncate">提交人：李律师 · 已等待 2 天</p>
 </div>
-<iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-orange-500 font-medium">优先级：高</span>
-<button class="text-[10px] text-brand hover:underline">去处理</button>
+<span class="text-[11px] text-warning font-semibold flex items-center gap-1">
+<iconify-icon icon="mdi:flag" class="text-xs"></iconify-icon>
+优先级：高
+</span>
+<button class="text-[11px] text-warning bg-warning-tint hover:bg-amber-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(2)">去处理</button>
 </div>
 </div>
+</div>
+
 <!-- 卡片 3: 提醒 - 明日开庭提醒 -->
-<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-brand relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="2" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-brand text-xl" icon="mdi:calendar-check-outline"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-brand text-lg" icon="mdi:calendar-check-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">提醒</span>
-<span class="font-medium text-sm text-fg-primary truncate">明日开庭提醒</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+提醒
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors truncate">明日开庭提醒</span>
 </div>
 <p class="text-xs text-fg-tertiary truncate">李明诉XX公司买卖合同纠纷 · 朝阳法院 09:00</p>
 </div>
-<iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-brand font-medium">距离开庭 18h</span>
-<button class="text-[10px] text-brand hover:underline">查看详情</button>
+<span class="text-[11px] text-brand font-semibold flex items-center gap-1">
+<iconify-icon icon="mdi:clock-outline" class="text-xs"></iconify-icon>
+距离开庭 18h
+</span>
+<button class="text-[11px] text-brand bg-brand-tint hover:bg-brand-tint2 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(3)">查看详情</button>
 </div>
 </div>
+</div>
+
 <!-- 卡片 4: 待处理 - 某科技公司案代理费发票待开具 -->
-<div class="bg-white rounded-xl border border-bg-border shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500 min-h-[140px]">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-warning relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="3" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-warning-tint flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-orange-500 text-xl" icon="mdi:account-cash-outline"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-100 to-warning-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-warning text-lg" icon="mdi:account-cash-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-warning-tint text-orange-700 font-medium px-1.5 py-0.5 rounded-full">待处理</span>
-<span class="font-medium text-sm text-fg-primary truncate">某科技公司案代理费发票待开具</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-warning-tint to-amber-100 text-warning">
+待处理
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors truncate">某科技公司案代理费发票待开具</span>
 </div>
 <p class="text-xs text-fg-tertiary truncate">金额：¥50,000 · 客户要求本周内提供</p>
 </div>
-<iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-orange-500 font-medium">截止：本周五</span>
-<button class="text-[10px] text-brand hover:underline">去处理</button>
+<span class="text-[11px] text-warning font-semibold flex items-center gap-1">
+<iconify-icon icon="mdi:calendar-clock" class="text-xs"></iconify-icon>
+截止：本周五
+</span>
+<button class="text-[11px] text-warning bg-warning-tint hover:bg-amber-100 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(4)">去处理</button>
 </div>
 </div>
+</div>
+
 <!-- 卡片5: 提醒 - 某劳动争议案调解方案待确认 -->
-<div class="bg-white rounded-xl border border-bg-border p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500 min-h-[140px]">
+<div class="ws-card p-4 group cursor-pointer border-l-4 border-l-brand relative overflow-hidden min-h-[140px]" data-animate="fade-in-up" data-stagger-group="att-list" data-stagger-index="4" data-delay="0.2">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-brand/5 to-transparent rounded-bl-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500"></div>
+<div class="relative z-10">
 <div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-brand-tint3 flex items-center justify-center flex-shrink-0">
-<iconify-icon class="text-brand text-xl" icon="mdi:handshake-outline"></iconify-icon>
+<div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+<iconify-icon class="text-brand text-lg" icon="mdi:handshake-outline"></iconify-icon>
 </div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center gap-2 mb-0.5">
-<span class="text-[10px] bg-brand-tint text-brand font-medium px-1.5 py-0.5 rounded-full">提醒</span>
-<span class="font-medium text-sm text-fg-primary truncate">某劳动争议案调解方案待确认</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-brand-tint to-brand-tint2 text-brand">
+提醒
+</span>
+<span class="font-semibold text-sm text-fg-primary group-hover:text-brand transition-colors truncate">某劳动争议案调解方案待确认</span>
 </div>
 <p class="text-xs text-fg-tertiary truncate">对方已同意调解 · 建议方案已生成 · 请尽快确认</p>
 </div>
-<iconify-icon class="text-gray-300 text-lg flex-shrink-0" icon="mdi:chevron-right"></iconify-icon>
+<iconify-icon class="text-gray-300 text-lg flex-shrink-0 group-hover:text-brand group-hover:translate-x-0.5 transition-all" icon="mdi:chevron-right"></iconify-icon>
 </div>
 <div class="mt-3 flex items-center justify-between">
-<span class="text-[10px] text-brand font-medium">待回复：2 天</span>
-<button class="text-[10px] text-brand hover:underline">确认方案</button>
+<span class="text-[11px] text-brand font-semibold flex items-center gap-1">
+<iconify-icon icon="mdi:message-reply-outline" class="text-xs"></iconify-icon>
+待回复：2 天
+</span>
+<button class="text-[11px] text-brand bg-brand-tint hover:bg-brand-tint2 px-3 py-1.5 rounded-lg font-medium transition-all duration-300 hover:-translate-y-0.5" onclick="event.stopPropagation(); handleAttentionAction(5)">确认方案</button>
 </div>
 </div>
 </div>
 </div>
 </div>
-<!-- 案件管理主页 -->
 
+<!-- 空状态（默认隐藏，JS 控制显示） -->
+<div id="attention-empty" class="hidden">
+<div class="ws-card p-10 md:p-16">
+<div class="flex flex-col items-center justify-center text-center">
+<div class="w-24 h-24 rounded-full bg-gradient-to-br from-success-tint to-green-100 flex items-center justify-center mb-5">
+<iconify-icon icon="mdi:check-circle-outline" class="text-5xl text-success"></iconify-icon>
+</div>
+<h4 class="text-base font-semibold text-fg-primary mb-2">所有事项已处理完毕</h4>
+<p class="text-sm text-fg-tertiary mb-6 max-w-xs">太棒了！你已完成全部待办事项，继续保持高效工作</p>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1.5" onclick="switchView('deadline')">
+<iconify-icon icon="mdi:plus" class="text-base"></iconify-icon>
+新建提醒
+</button>
+<button class="px-5 py-2.5 text-sm font-medium rounded-xl bg-white border border-bg-border text-fg-secondary hover:border-brand hover:text-brand hover:bg-brand-tint3 transition-all duration-300 flex items-center gap-1.5" onclick="switchView('schedule')">
+<iconify-icon icon="mdi:calendar-outline" class="text-base"></iconify-icon>
+查看日程
+</button>
+</div>
+</div>
+</div>
+</div>
 
+</div>
+</div>

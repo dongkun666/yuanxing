@@ -1,0 +1,64 @@
+<view class="container">
+  <view class="profile-header">
+    <view class="user-section" bindtap="onAvatarTap">
+      <block wx:if="{{isLoggedIn && userInfo}}">
+        <image src="{{userInfo.avatarUrl}}" class="avatar" mode="aspectFill" />
+        <view class="user-info">
+          <text class="user-name">{{userInfo.nickName || '用户'}}</text>
+          <text class="user-email">{{userInfo.email || ''}}</text>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="avatar-placeholder">👤</view>
+        <view class="user-info">
+          <text class="user-name">点击登录</text>
+          <text class="user-subtitle">登录后享受更多功能</text>
+        </view>
+      </block>
+      <text class="arrow">›</text>
+    </view>
+
+    <view class="stats-row" wx:if="{{isLoggedIn}}">
+      <view class="stat-item">
+        <text class="stat-number">{{stats.favoriteCount}}</text>
+        <text class="stat-label">收藏</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{stats.reviewCount}}</text>
+        <text class="stat-label">审查</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{stats.caseCount}}</text>
+        <text class="stat-label">判例</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-section" wx:for="{{menuGroups}}" wx:for-item="group" wx:key="title">
+    <text class="group-title">{{group.title}}</text>
+    <view class="menu-list card">
+      <view 
+        class="menu-item" 
+        wx:for="{{group.items}}" 
+        wx:for-item="item" 
+        wx:key="label"
+        data-page="{{item.page}}"
+        bindtap="onMenuTap"
+      >
+        <text class="menu-icon">{{item.icon}}</text>
+        <text class="menu-label">{{item.label}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="logout-section" wx:if="{{isLoggedIn}}">
+    <button class="logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+
+  <view class="footer">
+    <text class="version">LexPrime v1.0.0</text>
+  </view>
+</view>

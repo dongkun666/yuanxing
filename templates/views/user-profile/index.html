@@ -1,0 +1,492 @@
+<div id="view-user-profile" class="view-content hidden flex-1 overflow-auto bg-bg">
+    <div class="max-w-5xl mx-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-xl font-bold text-fg-primary">个人数据概览</h2>
+                <p class="text-sm text-fg-secondary mt-1">查看您的使用数据和画像分析</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 text-xs font-medium text-fg-secondary bg-bg hover:bg-bg-hover rounded-lg transition-colors" onclick="refreshUserProfile()">
+                    <iconify-icon icon="mdi:refresh" class="text-sm mr-1"></iconify-icon>刷新
+                </button>
+                <button class="px-3 py-1.5 text-xs font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="exportProfileData()">
+                    <iconify-icon icon="mdi:download" class="text-sm mr-1"></iconify-icon>导出数据
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-xl p-4 border border-bg-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-fg-secondary">用户等级</span>
+                    <div class="w-8 h-8 bg-brand/10 rounded-lg flex items-center justify-center">
+                        <iconify-icon icon="mdi:crown" class="text-brand"></iconify-icon>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-fg-primary" id="profile-tier">新手用户</div>
+                <div class="text-xs text-fg-tertiary mt-1" id="profile-tier-desc">开始探索 LexPrime</div>
+            </div>
+
+            <div class="bg-white rounded-xl p-4 border border-bg-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-fg-secondary">活跃天数</span>
+                    <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                        <iconify-icon icon="mdi:calendar-check" class="text-green-500"></iconify-icon>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-fg-primary"><span id="profile-days-active">0</span> 天</div>
+                <div class="text-xs text-fg-tertiary mt-1">累计使用天数</div>
+            </div>
+
+            <div class="bg-white rounded-xl p-4 border border-bg-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-fg-secondary">总登录次数</span>
+                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <iconify-icon icon="mdi:login" class="text-blue-500"></iconify-icon>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-fg-primary"><span id="profile-total-logins">0</span> 次</div>
+                <div class="text-xs text-fg-tertiary mt-1">登录总次数</div>
+            </div>
+
+            <div class="bg-white rounded-xl p-4 border border-bg-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-fg-secondary">最后活跃</span>
+                    <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center">
+                        <iconify-icon icon="mdi:clock-outline" class="text-amber-500"></iconify-icon>
+                    </div>
+                </div>
+                <div class="text-base font-semibold text-fg-primary" id="profile-last-active">-</div>
+                <div class="text-xs text-fg-tertiary mt-1">最近活跃时间</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-2 bg-white rounded-xl border border-bg-border overflow-hidden">
+                <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-fg-primary">功能偏好分析</h3>
+                    <span class="text-xs text-fg-tertiary">按使用频率排序</span>
+                </div>
+                <div class="p-4" id="profile-feature-usage">
+                    <div class="empty-state py-8">
+                        <div class="empty-state-icon">
+                            <iconify-icon icon="mdi:chart-bar"></iconify-icon>
+                        </div>
+                        <div class="empty-state-title">暂无数据</div>
+                        <div class="empty-state-desc">使用更多功能后将显示分析</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+                <div class="px-4 py-3 border-b border-bg-border">
+                    <h3 class="text-sm font-semibold text-fg-primary">兴趣标签</h3>
+                </div>
+                <div class="p-4" id="profile-interest-tags">
+                    <div class="empty-state py-8">
+                        <div class="empty-state-icon">
+                            <iconify-icon icon="mdi:tag-multiple"></iconify-icon>
+                        </div>
+                        <div class="empty-state-title">暂无标签</div>
+                        <div class="empty-state-desc">使用后将自动生成标签</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+                <div class="px-4 py-3 border-b border-bg-border">
+                    <h3 class="text-sm font-semibold text-fg-primary">使用习惯 - 时段分布</h3>
+                </div>
+                <div class="p-4" id="profile-hour-distribution">
+                    <div class="empty-state py-8">
+                        <div class="empty-state-icon">
+                            <iconify-icon icon="mdi:clock-time-four"></iconify-icon>
+                        </div>
+                        <div class="empty-state-title">暂无数据</div>
+                        <div class="empty-state-desc">积累更多使用数据后显示</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+                <div class="px-4 py-3 border-b border-bg-border">
+                    <h3 class="text-sm font-semibold text-fg-primary">使用习惯 - 周分布</h3>
+                </div>
+                <div class="p-4" id="profile-weekday-distribution">
+                    <div class="empty-state py-8">
+                        <div class="empty-state-icon">
+                            <iconify-icon icon="mdi:calendar-week"></iconify-icon>
+                        </div>
+                        <div class="empty-state-title">暂无数据</div>
+                        <div class="empty-state-desc">积累更多使用数据后显示</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-bg-border">
+                <h3 class="text-sm font-semibold text-fg-primary">行为统计</h3>
+            </div>
+            <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4" id="profile-behavior-stats">
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-bg-border overflow-hidden">
+            <div class="px-4 py-3 border-b border-bg-border flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-fg-primary">推荐设置</h3>
+                <span class="text-xs text-fg-tertiary">基于您的画像</span>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
+                            <iconify-icon icon="mdi:lightbulb-outline" class="text-brand"></iconify-icon>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-fg-primary">个性化推荐</div>
+                            <div class="text-xs text-fg-secondary">根据您的兴趣推荐相关内容</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked id="setting-personalized">
+                        <div class="w-11 h-6 bg-bg rounded-full peer peer-checked:bg-brand transition-colors"></div>
+                        <div class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                            <iconify-icon icon="mdi:email-newsletter" class="text-green-500"></iconify-icon>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-fg-primary">周报推送</div>
+                            <div class="text-xs text-fg-secondary">每周发送使用统计和推荐</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" id="setting-weekly-report">
+                        <div class="w-11 h-6 bg-bg rounded-full peer peer-checked:bg-brand transition-colors"></div>
+                        <div class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
+                            <iconify-icon icon="mdi:chart-line" class="text-amber-500"></iconify-icon>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-fg-primary">使用数据统计</div>
+                            <div class="text-xs text-fg-secondary">收集使用数据以优化体验</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked id="setting-analytics">
+                        <div class="w-11 h-6 bg-bg rounded-full peer peer-checked:bg-brand transition-colors"></div>
+                        <div class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    function initUserProfileView() {
+        loadUserProfile();
+    }
+
+    function loadUserProfile() {
+        var profileData = getMockProfileData();
+        renderUserProfile(profileData);
+    }
+
+    function getMockProfileData() {
+        return {
+            tier: 'active',
+            total_logins: 45,
+            days_active: 23,
+            last_active: '2026-07-03 14:30',
+            registration_date: '2026-05-15',
+            feature_usage: {
+                'case_search': 35.2,
+                'contract_review': 22.5,
+                'law_search': 15.8,
+                'doc_generation': 12.3,
+                'ai_consultation': 8.5,
+                'schedule_management': 5.7
+            },
+            interest_tags: [
+                { tag: '借款合同纠纷', weight: 0.95, category: '案由', count: 28 },
+                { tag: '买卖合同纠纷', weight: 0.72, category: '案由', count: 18 },
+                { tag: '合同纠纷', weight: 0.68, category: '案由分类', count: 45 },
+                { tag: '合同审查', weight: 0.55, category: '功能', count: 15 },
+                { tag: '民商事诉讼', weight: 0.48, category: '领域', count: 12 }
+            ],
+            hour_distribution: {
+                0: 2, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0,
+                6: 1, 7: 3, 8: 8, 9: 12, 10: 15, 11: 10,
+                12: 5, 13: 6, 14: 14, 15: 18, 16: 12, 17: 8,
+                18: 5, 19: 6, 20: 9, 21: 7, 22: 4, 23: 3
+            },
+            weekday_distribution: {
+                '周一': 15, '周二': 18, '周三': 12, '周四': 16, '周五': 14, '周六': 6, '周日': 4
+            },
+            behavior_summary: {
+                'search': 85,
+                'case_view': 62,
+                'case_favorite': 15,
+                'law_view': 34,
+                'contract_review': 12,
+                'doc_generate': 8,
+                'login': 45
+            }
+        };
+    }
+
+    function renderUserProfile(data) {
+        var tierMap = {
+            'newbie': { name: '新手用户', desc: '开始探索 LexPrime' },
+            'active': { name: '活跃用户', desc: '持续使用中' },
+            'expert': { name: '资深用户', desc: '深度用户' }
+        };
+        var tierInfo = tierMap[data.tier] || tierMap['newbie'];
+        document.getElementById('profile-tier').textContent = tierInfo.name;
+        document.getElementById('profile-tier-desc').textContent = tierInfo.desc;
+
+        document.getElementById('profile-days-active').textContent = data.days_active;
+        document.getElementById('profile-total-logins').textContent = data.total_logins;
+        document.getElementById('profile-last-active').textContent = data.last_active;
+
+        renderFeatureUsage(data.feature_usage);
+        renderInterestTags(data.interest_tags);
+        renderHourDistribution(data.hour_distribution);
+        renderWeekdayDistribution(data.weekday_distribution);
+        renderBehaviorStats(data.behavior_summary);
+    }
+
+    function renderFeatureUsage(featureUsage) {
+        var container = document.getElementById('profile-feature-usage');
+        if (!featureUsage || Object.keys(featureUsage).length === 0) {
+            return;
+        }
+
+        var featureNames = {
+            'case_search': '案例检索',
+            'law_search': '法规查询',
+            'company_search': '企业查询',
+            'contract_review': '合同审查',
+            'doc_generation': '文书生成',
+            'ai_consultation': 'AI咨询',
+            'schedule_management': '日程管理',
+            'client_management': '客户管理',
+            'case_management': '案件管理',
+            'knowledge_base': '知识库'
+        };
+
+        var html = '';
+        var features = Object.entries(featureUsage).slice(0, 8);
+        var maxUsage = features.length > 0 ? features[0][1] : 100;
+
+        features.forEach(function (item) {
+            var key = item[0];
+            var value = item[1];
+            var name = featureNames[key] || key;
+            var percentage = (value / maxUsage) * 100;
+
+            html += '<div class="mb-3 last:mb-0">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-xs text-fg-primary">' + name + '</span>' +
+                '<span class="text-xs text-fg-tertiary">' + value + '%</span>' +
+                '</div>' +
+                '<div class="h-2 bg-bg rounded-full overflow-hidden">' +
+                '<div class="h-full bg-brand rounded-full" style="width: ' + percentage + '%"></div>' +
+                '</div>' +
+                '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderInterestTags(tags) {
+        var container = document.getElementById('profile-interest-tags');
+        if (!tags || tags.length === 0) {
+            return;
+        }
+
+        var html = '<div class="flex flex-wrap gap-2">';
+        tags.forEach(function (tag) {
+            var opacity = 0.4 + tag.weight * 0.6;
+            html += '<span class="inline-flex items-center px-2.5 py-1 bg-brand/10 text-brand text-xs rounded-full" style="opacity: ' + opacity + '">' +
+                '<iconify-icon icon="mdi:tag" class="text-[10px] mr-1"></iconify-icon>' +
+                Utils.escapeHtml(tag.tag) +
+                '</span>';
+        });
+        html += '</div>';
+
+        if (tags.length > 0) {
+            html += '<div class="mt-4 pt-4 border-t border-bg-border">' +
+                '<div class="text-xs text-fg-tertiary mb-2">分类</div>' +
+                '<div class="flex flex-wrap gap-1.5">';
+            var categories = {};
+            tags.forEach(function (tag) {
+                if (tag.category) {
+                    categories[tag.category] = (categories[tag.category] || 0) + 1;
+                }
+            });
+            Object.entries(categories).forEach(function (cat) {
+                html += '<span class="text-xs px-2 py-0.5 bg-bg text-fg-secondary rounded">' +
+                    Utils.escapeHtml(cat[0]) + ' · ' + cat[1] +
+                    '</span>';
+            });
+            html += '</div></div>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    function renderHourDistribution(distribution) {
+        var container = document.getElementById('profile-hour-distribution');
+        if (!distribution) {
+            return;
+        }
+
+        var maxValue = 0;
+        var values = [];
+        for (var h = 0; h < 24; h++) {
+            var val = distribution['hour_' + h] || distribution[h] || 0;
+            values.push(val);
+            if (val > maxValue) maxValue = val;
+        }
+
+        if (maxValue === 0) {
+            return;
+        }
+
+        var html = '<div class="flex items-end justify-between h-32 gap-0.5">';
+        for (var i = 0; i < 24; i++) {
+            var height = (values[i] / maxValue) * 100;
+            var isActive = values[i] > maxValue * 0.5;
+            html += '<div class="flex-1 flex flex-col items-center">' +
+                '<div class="w-full rounded-t ' + (isActive ? 'bg-brand' : 'bg-brand/30') + '" style="height: ' + height + '%"></div>' +
+                '</div>';
+        }
+        html += '</div>';
+
+        html += '<div class="flex justify-between mt-2 text-[10px] text-fg-tertiary">' +
+            '<span>0时</span><span>6时</span><span>12时</span><span>18时</span><span>23时</span>' +
+            '</div>';
+
+        container.innerHTML = html;
+    }
+
+    function renderWeekdayDistribution(distribution) {
+        var container = document.getElementById('profile-weekday-distribution');
+        if (!distribution) {
+            return;
+        }
+
+        var weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+        var maxValue = 0;
+        weekdays.forEach(function (day) {
+            if ((distribution[day] || 0) > maxValue) {
+                maxValue = distribution[day] || 0;
+            }
+        });
+
+        if (maxValue === 0) {
+            return;
+        }
+
+        var html = '<div class="flex items-end justify-between h-32 gap-2">';
+        weekdays.forEach(function (day) {
+            var value = distribution[day] || 0;
+            var height = (value / maxValue) * 100;
+            var isWeekend = day === '周六' || day === '周日';
+
+            html += '<div class="flex-1 flex flex-col items-center">' +
+                '<div class="w-full max-w-[40px] rounded-t ' +
+                (isWeekend ? 'bg-amber-400/70' : 'bg-blue-500/70') +
+                '" style="height: ' + height + '%"></div>' +
+                '<span class="text-[10px] text-fg-tertiary mt-2">' + day + '</span>' +
+                '</div>';
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+    }
+
+    function renderBehaviorStats(stats) {
+        var container = document.getElementById('profile-behavior-stats');
+        if (!stats || Object.keys(stats).length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-4 text-sm text-fg-tertiary">暂无行为统计</div>';
+            return;
+        }
+
+        var statLabels = {
+            'search': { label: '搜索次数', icon: 'mdi:magnify', color: 'bg-blue-50 text-blue-500' },
+            'case_view': { label: '查看案例', icon: 'mdi:file-document', color: 'bg-green-50 text-green-500' },
+            'case_favorite': { label: '收藏案例', icon: 'mdi:heart', color: 'bg-red-50 text-red-500' },
+            'law_view': { label: '查看法规', icon: 'mdi:book-open-variant', color: 'bg-purple-50 text-purple-500' },
+            'contract_review': { label: '合同审查', icon: 'mdi:file-check', color: 'bg-amber-50 text-amber-500' },
+            'doc_generate': { label: '文书生成', icon: 'mdi:file-plus', color: 'bg-cyan-50 text-cyan-500' },
+            'login': { label: '登录次数', icon: 'mdi:login', color: 'bg-gray-50 text-gray-500' }
+        };
+
+        var html = '';
+        Object.entries(stats).forEach(function (item) {
+            var key = item[0];
+            var value = item[1];
+            var info = statLabels[key] || { label: key, icon: 'mdi:circle', color: 'bg-gray-50 text-gray-500' };
+
+            html += '<div class="flex items-center gap-3 p-3 bg-bg rounded-lg">' +
+                '<div class="w-10 h-10 ' + info.color + ' rounded-lg flex items-center justify-center">' +
+                '<iconify-icon icon="' + info.icon + '"></iconify-icon>' +
+                '</div>' +
+                '<div>' +
+                '<div class="text-lg font-bold text-fg-primary">' + value + '</div>' +
+                '<div class="text-xs text-fg-secondary">' + info.label + '</div>' +
+                '</div>' +
+                '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    function refreshUserProfile() {
+        loadUserProfile();
+        if (typeof Utils !== 'undefined' && typeof Utils.showToast === 'function') {
+            Utils.showToast('success', '画像数据已刷新');
+        }
+    }
+
+    function exportProfileData() {
+        var profileData = getMockProfileData();
+        var dataStr = JSON.stringify(profileData, null, 2);
+        var blob = new Blob([dataStr], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'user-profile-' + Date.now() + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (typeof Utils !== 'undefined' && typeof Utils.showToast === 'function') {
+            Utils.showToast('success', '画像数据已导出');
+        }
+    }
+
+    window.refreshUserProfile = refreshUserProfile;
+    window.exportProfileData = exportProfileData;
+    window.initUserProfileView = initUserProfileView;
+})();
+</script>

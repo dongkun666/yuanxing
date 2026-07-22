@@ -1,0 +1,1121 @@
+<!--
+  法规库管理 - 前端视图
+  提供数据概览、分类管理、版本管理、引用图谱、导入导出等功能
+-->
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-law-db-admin" data-view-source="law-db-admin/index.html">
+<style>
+  .ldb-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #E5E6EB;
+    transition: all 0.2s;
+  }
+  .ldb-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+  .ldb-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ldb-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1D2129;
+    line-height: 1.2;
+  }
+  .ldb-stat-label {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+  }
+  .ldb-tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #4E5969;
+  }
+  .ldb-tab-btn.active {
+    background: #722ED1;
+    color: white;
+  }
+  .ldb-tab-btn:not(.active):hover {
+    background: #F2F3F5;
+  }
+  .ldb-section-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E6EB;
+    overflow: hidden;
+  }
+  .ldb-section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ldb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  .ldb-section-body {
+    padding: 20px;
+  }
+  .ldb-category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .ldb-category-item:hover {
+    background: #F7F8FA;
+  }
+  .ldb-category-item.active {
+    background: #F9F5FF;
+    border: 1px solid #E9DDFF;
+  }
+  .ldb-category-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ldb-version-item {
+    padding: 16px;
+    border-left: 3px solid #722ED1;
+    background: #F9F5FF;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 12px;
+  }
+  .ldb-version-item.repealed {
+    border-left-color: #86909C;
+    background: #F7F8FA;
+  }
+  .ldb-version-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .ldb-law-item {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #E5E6EB;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .ldb-law-item:hover {
+    border-color: #722ED1;
+    box-shadow: 0 2px 8px rgba(114, 46, 209, 0.1);
+  }
+  .ldb-chart-pie {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+  }
+  .ldb-chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .ldb-ref-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #F2F3F5;
+    border-radius: 16px;
+    font-size: 12px;
+    margin: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ldb-ref-node:hover {
+    background: #E9DDFF;
+    color: #722ED1;
+  }
+  .ldb-level-bar {
+    height: 8px;
+    background: #F2F3F5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .ldb-level-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .ldb-import-area {
+    border: 2px dashed #C9CDD4;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .ldb-import-area:hover {
+    border-color: #722ED1;
+    background: #F9F5FF;
+  }
+  .ldb-structure-item {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .ldb-structure-item:hover {
+    background: #F7F8FA;
+  }
+  .ldb-structure-expand {
+    display: inline-block;
+    width: 16px;
+    text-align: center;
+    color: #86909C;
+  }
+</style>
+
+<div class="max-w-7xl mx-auto w-full space-y-4">
+  <!-- 头部区域 -->
+  <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0">
+    <div class="ldb-section-header">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-md shadow-purple-500/20">
+          <iconify-icon class="text-xl text-white" icon="mdi:bookshelf"></iconify-icon>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-fg-primary">法规库管理</h1>
+          <p class="text-[11px] text-fg-tertiary">法规层级结构、版本管理、引用关系分析</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="refreshLawDbStats()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-fg-secondary hover:text-brand hover:bg-brand/5 rounded-lg transition-all">
+          <iconify-icon icon="mdi:refresh"></iconify-icon>
+          <span>刷新</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+    <div class="ldb-stat-card" data-animate="scale-in" data-stagger-group="ldb-stats" data-stagger-index="0" data-delay="0.05">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="ldb-stat-value">1,270</div>
+          <div class="ldb-stat-label">法规总数</div>
+        </div>
+        <div class="ldb-stat-icon" style="background: #F9F0FF; color: #722ED1;">
+          <iconify-icon icon="mdi:book-open-variant" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="ldb-stat-card" data-animate="scale-in" data-stagger-group="ldb-stats" data-stagger-index="1" data-delay="0.1">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="ldb-stat-value">56,800</div>
+          <div class="ldb-stat-label">法条总数</div>
+        </div>
+        <div class="ldb-stat-icon" style="background: #E8F3FF; color: #165DFF;">
+          <iconify-icon icon="mdi:format-list-numbered" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="ldb-stat-card" data-animate="scale-in" data-stagger-group="ldb-stats" data-stagger-index="2" data-delay="0.15">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="ldb-stat-value">8,900+</div>
+          <div class="ldb-stat-label">引用关系</div>
+        </div>
+        <div class="ldb-stat-icon" style="background: #FFF7E8; color: #FF7D00;">
+          <iconify-icon icon="mdi:link-variant" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <div class="ldb-stat-card" data-animate="scale-in" data-stagger-group="ldb-stats" data-stagger-index="3" data-delay="0.2">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="ldb-stat-value">98.7万</div>
+          <div class="ldb-stat-label">相关案例</div>
+        </div>
+        <div class="ldb-stat-icon" style="background: #E8FFEA; color: #00B42A;">
+          <iconify-icon icon="mdi:file-document-multiple" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 功能标签页 -->
+  <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.25">
+    <div class="ldb-section-header">
+      <div class="flex items-center gap-1 bg-bg rounded-xl p-1">
+        <div class="ldb-tab-btn active" data-tab="overview" onclick="switchLdbTab('overview')">数据概览</div>
+        <div class="ldb-tab-btn" data-tab="categories" onclick="switchLdbTab('categories')">分类管理</div>
+        <div class="ldb-tab-btn" data-tab="versions" onclick="switchLdbTab('versions')">版本管理</div>
+        <div class="ldb-tab-btn" data-tab="references" onclick="switchLdbTab('references')">引用图谱</div>
+        <div class="ldb-tab-btn" data-tab="import" onclick="switchLdbTab('import')">导入导出</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 数据概览面板 -->
+  <div id="ldb-tab-overview" class="ldb-tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 效力层级分布 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">效力层级分布</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="space-y-3">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">法律</span>
+                <span class="text-xs font-medium text-fg-primary">295 部</span>
+              </div>
+              <div class="ldb-level-bar">
+                <div class="ldb-level-fill" style="width: 85%; background: #D91AD9;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">行政法规</span>
+                <span class="text-xs font-medium text-fg-primary">680 部</span>
+              </div>
+              <div class="ldb-level-bar">
+                <div class="ldb-level-fill" style="width: 100%; background: #722ED1;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">部门规章</span>
+                <span class="text-xs font-medium text-fg-primary">2,340 部</span>
+              </div>
+              <div class="ldb-level-bar">
+                <div class="ldb-level-fill" style="width: 70%; background: #165DFF;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">司法解释</span>
+                <span class="text-xs font-medium text-fg-primary">456 部</span>
+              </div>
+              <div class="ldb-level-bar">
+                <div class="ldb-level-fill" style="width: 45%; background: #00B42A;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs text-fg-secondary">地方性法规</span>
+                <span class="text-xs font-medium text-fg-primary">1,200 部</span>
+              </div>
+              <div class="ldb-level-bar">
+                <div class="ldb-level-fill" style="width: 55%; background: #FF7D00;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类分布 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">分类分布</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #165DFF;"></div>
+                <span class="text-sm text-fg-primary">民商法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">268 部</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #FF7D00;"></div>
+                <span class="text-sm text-fg-primary">经济法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">324 部</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #FF7D00;"></div>
+                <span class="text-sm text-fg-primary">行政法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">186 部</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #00B42A;"></div>
+                <span class="text-sm text-fg-primary">社会法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">98 部</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #F53F3F;"></div>
+                <span class="text-sm text-fg-primary">刑法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">45 部</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #722ED1;"></div>
+                <span class="text-sm text-fg-primary">知识产权法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">76 部</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 效力状态 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">效力状态</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="ldb-chart-pie" style="background: conic-gradient(#00B42A 0deg 302deg, #F7BA1E 302deg 335deg, #F53F3F 335deg 352deg, #86909C 352deg 360deg);">
+            <div class="ldb-chart-center">
+              <div class="text-xl font-bold text-fg-primary">10,500</div>
+              <div class="text-[10px] text-fg-tertiary">现行有效</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-green-500"></div>
+              <span class="text-xs text-fg-secondary">现行有效</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <span class="text-xs text-fg-secondary">已修正</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <span class="text-xs text-fg-secondary">已废止</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+              <span class="text-xs text-fg-secondary">草案</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门法规 -->
+      <div class="lg:col-span-2 ldb-section-card" data-animate="fade-in-up" data-delay="0.45">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">热门法规</h3>
+          <span class="text-xs text-fg-tertiary">按浏览量排序</span>
+        </div>
+        <div class="ldb-section-body">
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-700 rounded-md">法律</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">中华人民共和国民法典</h4>
+                </div>
+                <p class="text-xs text-fg-tertiary line-clamp-1">民法典是新中国第一部以法典命名的法律，共7编、1260条...</p>
+              </div>
+              <span class="text-xs font-medium text-purple-600 whitespace-nowrap ml-3">12.5万 浏览</span>
+            </div>
+          </div>
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-red-100 text-red-700 rounded-md">刑法</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">中华人民共和国刑法</h4>
+                </div>
+                <p class="text-xs text-fg-tertiary line-clamp-1">刑法是规定犯罪和刑罚的法律，是中国法律体系中的基本法律之一。</p>
+              </div>
+              <span class="text-xs font-medium text-purple-600 whitespace-nowrap ml-3">9.8万 浏览</span>
+            </div>
+          </div>
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-blue-100 text-blue-700 rounded-md">民商</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">中华人民共和国公司法</h4>
+                </div>
+                <p class="text-xs text-fg-tertiary line-clamp-1">公司法规定了公司的设立、组织、运营、变更、解散等事项。</p>
+              </div>
+              <span class="text-xs font-medium text-purple-600 whitespace-nowrap ml-3">8.9万 浏览</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 发布机关 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.5">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">发布机关</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:government" class="text-red-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">全国人大</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">45 部</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:domain" class="text-blue-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">国务院</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">680 部</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:scale-balance" class="text-purple-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">最高法</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">320 部</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:gavel" class="text-green-600 text-sm"></iconify-icon>
+                </div>
+                <span class="text-sm text-fg-primary">最高检</span>
+              </div>
+              <span class="text-xs font-medium text-fg-secondary">136 部</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分类管理面板 -->
+  <div id="ldb-tab-categories" class="ldb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <!-- 分类列表 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">法律部门</h3>
+        </div>
+        <div class="ldb-section-body p-2">
+          <div class="space-y-1">
+            <div class="ldb-category-item active" onclick="selectLawCategory('civil')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #165DFF;"></div>
+                <span class="text-sm font-medium text-fg-primary">民商法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">268</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('economic')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #FF7D00;"></div>
+                <span class="text-sm text-fg-primary">经济法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">324</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('administrative')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #F7BA1E;"></div>
+                <span class="text-sm text-fg-primary">行政法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">186</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('social')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #00B42A;"></div>
+                <span class="text-sm text-fg-primary">社会法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">98</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('criminal')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #F53F3F;"></div>
+                <span class="text-sm text-fg-primary">刑法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">45</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('ip')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #722ED1;"></div>
+                <span class="text-sm text-fg-primary">知识产权法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">76</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('environmental')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #14C9C9;"></div>
+                <span class="text-sm text-fg-primary">环境法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">54</span>
+            </div>
+            <div class="ldb-category-item" onclick="selectLawCategory('procedural')">
+              <div class="flex items-center gap-2">
+                <div class="ldb-category-dot" style="background: #86909C;"></div>
+                <span class="text-sm text-fg-primary">诉讼与非诉讼程序法</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">67</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类详情 -->
+      <div class="lg:col-span-3 ldb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title" id="ldb-category-title">民商法类法规</h3>
+          <div class="flex items-center gap-2">
+            <button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-all">
+              <iconify-icon icon="mdi:plus"></iconify-icon>
+              <span>新增分类</span>
+            </button>
+          </div>
+        </div>
+        <div class="ldb-section-body">
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-700 rounded-md">法律</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">中华人民共和国民法典</h4>
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded-md">现行有效</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">2020年5月28日颁布 · 2021年1月1日施行 · 7编1260条</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>12.5万</span>
+                  <span><iconify-icon icon="mdi:link-variant" class="inline mr-1"></iconify-icon>引用 28,900 次</span>
+                  <span><iconify-icon icon="mdi:file-document-outline" class="inline mr-1"></iconify-icon>相关案例 12.5万</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 ml-3">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-700 rounded-md">法律</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">中华人民共和国公司法</h4>
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded-md">现行有效</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">2023年12月29日修订 · 2024年7月1日施行 · 4版修订</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>8.9万</span>
+                  <span><iconify-icon icon="mdi:link-variant" class="inline mr-1"></iconify-icon>引用 15,600 次</span>
+                  <span><iconify-icon icon="mdi:file-document-outline" class="inline mr-1"></iconify-icon>相关案例 7.8万</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 ml-3">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="ldb-law-item">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-blue-100 text-blue-700 rounded-md">司法解释</span>
+                  <h4 class="text-sm font-semibold text-fg-primary">民法典合同编通则解释</h4>
+                  <span class="px-2 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded-md">现行有效</span>
+                </div>
+                <p class="text-xs text-fg-tertiary mb-2">最高人民法院 · 2023年12月5日施行</p>
+                <div class="flex items-center gap-4 text-[11px] text-fg-tertiary">
+                  <span><iconify-icon icon="mdi:eye-outline" class="inline mr-1"></iconify-icon>3.4万</span>
+                  <span><iconify-icon icon="mdi:link-variant" class="inline mr-1"></iconify-icon>引用 12,300 次</span>
+                  <span><iconify-icon icon="mdi:file-document-outline" class="inline mr-1"></iconify-icon>相关案例 5.6万</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 ml-3">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 版本管理面板 -->
+  <div id="ldb-tab-versions" class="ldb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 法规选择 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">选择法规</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="relative mb-3">
+            <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
+            <input placeholder="搜索法规..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all" type="text"/>
+          </div>
+          <div class="space-y-2">
+            <div class="ldb-law-item cursor-pointer" onclick="selectLawForVersion('law-002')">
+              <h4 class="text-sm font-semibold text-fg-primary">公司法</h4>
+              <p class="text-xs text-fg-tertiary">4个版本 · 现行有效</p>
+            </div>
+            <div class="ldb-law-item cursor-pointer" onclick="selectLawForVersion('law-003')">
+              <h4 class="text-sm font-semibold text-fg-primary">专利法</h4>
+              <p class="text-xs text-fg-tertiary">4个版本 · 现行有效</p>
+            </div>
+            <div class="ldb-law-item cursor-pointer" onclick="selectLawForVersion('law-004')">
+              <h4 class="text-sm font-semibold text-fg-primary">刑法</h4>
+              <p class="text-xs text-fg-tertiary">12个版本 · 现行有效</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 版本时间线 -->
+      <div class="lg:col-span-2 ldb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">中华人民共和国公司法 - 版本历史</h3>
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all">
+            <iconify-icon icon="mdi:compare"></iconify-icon>
+            <span>版本对比</span>
+          </button>
+        </div>
+        <div class="ldb-section-body">
+          <div class="ldb-version-item">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="ldb-version-badge bg-green-100 text-green-700">现行有效</span>
+                <h4 class="text-sm font-semibold text-fg-primary">第四次修正</h4>
+              </div>
+              <span class="text-xs text-fg-tertiary">2024-07-01 施行</span>
+            </div>
+            <p class="text-xs text-fg-secondary mb-2">2023年12月29日第十四届全国人民代表大会常务委员会第七次会议修订，完善公司治理结构，强化股东权益保护。</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded-md">第1条 修改</span>
+              <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded-md">第23条 修改</span>
+              <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded-md">第46条 修改</span>
+              <span class="px-2 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded-md">第142条 修改</span>
+            </div>
+          </div>
+          <div class="ldb-version-item repealed">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="ldb-version-badge bg-gray-200 text-gray-600">已废止</span>
+                <h4 class="text-sm font-medium text-fg-secondary">第三次修正</h4>
+              </div>
+              <span class="text-xs text-fg-tertiary">2018-10-26 ~ 2024-06-30</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">2018年10月26日第十三届全国人民代表大会常务委员会第六次会议修正。</p>
+          </div>
+          <div class="ldb-version-item repealed">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="ldb-version-badge bg-gray-200 text-gray-600">已废止</span>
+                <h4 class="text-sm font-medium text-fg-secondary">第二次修正</h4>
+              </div>
+              <span class="text-xs text-fg-tertiary">2013-12-28 ~ 2018-10-25</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">2013年12月28日第十二届全国人民代表大会常务委员会第六次会议修正。</p>
+          </div>
+          <div class="ldb-version-item repealed">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="ldb-version-badge bg-gray-200 text-gray-600">已废止</span>
+                <h4 class="text-sm font-medium text-fg-secondary">首次颁布</h4>
+              </div>
+              <span class="text-xs text-fg-tertiary">2006-01-01 ~ 2013-12-27</span>
+            </div>
+            <p class="text-xs text-fg-tertiary">2005年10月27日第十届全国人民代表大会常务委员会第十八次会议修订通过。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引用图谱面板 -->
+  <div id="ldb-tab-references" class="ldb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 引用关系概览 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">引用关系</h3>
+        </div>
+        <div class="ldb-section-body text-center">
+          <div class="ldb-chart-pie mb-4" style="background: conic-gradient(#165DFF 0deg 180deg, #722ED1 180deg 360deg);">
+            <div class="ldb-chart-center">
+              <div class="text-xl font-bold text-fg-primary">8,900+</div>
+              <div class="text-[10px] text-fg-tertiary">总引用数</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-3 rounded-xl bg-blue-50">
+              <div class="text-lg font-bold text-blue-600">5,600+</div>
+              <div class="text-[10px] text-blue-500">主动引用</div>
+            </div>
+            <div class="p-3 rounded-xl bg-purple-50">
+              <div class="text-lg font-bold text-purple-600">3,300+</div>
+              <div class="text-[10px] text-purple-500">被引用</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 引用网络 -->
+      <div class="lg:col-span-2 ldb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">引用网络 - 民法典</h3>
+          <div class="flex items-center gap-2">
+            <select class="bg-bg border border-bg-border rounded-lg px-2 py-1 text-xs text-fg-secondary focus:outline-none">
+              <option>民法典</option>
+              <option>公司法</option>
+              <option>刑法</option>
+            </select>
+          </div>
+        </div>
+        <div class="ldb-section-body">
+          <div class="text-center mb-4">
+            <div class="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl font-semibold text-sm shadow-lg">
+              中华人民共和国民法典
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            <div>
+              <p class="text-xs font-medium text-fg-secondary mb-2">引用的法规</p>
+              <div class="flex flex-wrap gap-1">
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-top-right" class="text-xs text-blue-500"></iconify-icon>
+                  <span>公司法</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-top-right" class="text-xs text-blue-500"></iconify-icon>
+                  <span>民事诉讼法</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-top-right" class="text-xs text-blue-500"></iconify-icon>
+                  <span>劳动合同法</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-top-right" class="text-xs text-blue-500"></iconify-icon>
+                  <span>证券法</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-fg-secondary mb-2">被引用的法规</p>
+              <div class="flex flex-wrap gap-1">
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-bottom-left" class="text-xs text-purple-500"></iconify-icon>
+                  <span>民法典合同编解释</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-bottom-left" class="text-xs text-purple-500"></iconify-icon>
+                  <span>民法典物权编解释</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-bottom-left" class="text-xs text-purple-500"></iconify-icon>
+                  <span>民法典婚姻家庭编解释</span>
+                </div>
+                <div class="ldb-ref-node">
+                  <iconify-icon icon="mdi:arrow-bottom-left" class="text-xs text-purple-500"></iconify-icon>
+                  <span>民法典继承编解释</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入导出面板 -->
+  <div id="ldb-tab-import" class="ldb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- 批量导入 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">批量导入</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="ldb-import-area" onclick="document.getElementById('ldb-import-file').click()">
+            <input type="file" id="ldb-import-file" class="hidden" accept=".json,.csv,.xlsx" onchange="handleLawImportFile(this)"/>
+            <iconify-icon icon="mdi:cloud-upload-outline" class="text-4xl text-fg-tertiary mb-3"></iconify-icon>
+            <p class="text-sm font-medium text-fg-primary mb-1">点击或拖拽文件到此处</p>
+            <p class="text-xs text-fg-tertiary">支持 JSON、CSV、Excel 格式</p>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">解析层级结构</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">自动关联引用</span>
+              </label>
+            </div>
+            <button onclick="startLawImport()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:upload"></iconify-icon>
+              <span>开始导入</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导出数据 -->
+      <div class="ldb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">数据导出</h3>
+        </div>
+        <div class="ldb-section-body">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">导出格式</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10">
+                <option>JSON 格式</option>
+                <option>CSV 格式</option>
+                <option>Excel 格式</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">数据范围</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10">
+                <option>全部法规</option>
+                <option>按分类筛选</option>
+                <option>按效力层级</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">包含内容</label>
+              <div class="flex flex-wrap gap-2">
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  基本信息
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  法条全文
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  版本历史
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  引用关系
+                </label>
+              </div>
+            </div>
+            <button onclick="startLawExport()" class="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:download"></iconify-icon>
+              <span>导出数据</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 索引管理 -->
+      <div class="lg:col-span-2 ldb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="ldb-section-header">
+          <h3 class="ldb-section-title">索引管理</h3>
+          <button onclick="reindexLawDb()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-all">
+            <iconify-icon icon="mdi:refresh"></iconify-icon>
+            <span>重建全部索引</span>
+          </button>
+        </div>
+        <div class="ldb-section-body">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:format-text" class="text-purple-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">全文索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">1,270</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:file-document-outline" class="text-blue-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">标题索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">1,270</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:format-list-numbered" class="text-green-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">法条内容</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">56,800</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:folder-outline" class="text-orange-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">分类索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">1,270</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:shield-star-outline" class="text-red-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">效力层级</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">1,270</p>
+              <p class="text-[10px] text-green-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                正常
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-bg">
+              <div class="flex items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:tag-multiple-outline" class="text-pink-600"></iconify-icon>
+                <span class="text-sm font-medium text-fg-primary">标签索引</span>
+              </div>
+              <p class="text-lg font-bold text-fg-primary">1,270</p>
+              <p class="text-[10px] text-yellow-600 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                同步中
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var currentLdbTab = 'overview';
+
+function switchLdbTab(tabName) {
+  currentLdbTab = tabName;
+  var tabBtns = document.querySelectorAll('.ldb-tab-btn');
+  for (var i = 0; i < tabBtns.length; i++) {
+    if (tabBtns[i].getAttribute('data-tab') === tabName) {
+      tabBtns[i].classList.add('active');
+    } else {
+      tabBtns[i].classList.remove('active');
+    }
+  }
+  var panels = document.querySelectorAll('.ldb-tab-panel');
+  for (var j = 0; j < panels.length; j++) {
+    panels[j].classList.add('hidden');
+  }
+  var targetPanel = document.getElementById('ldb-tab-' + tabName);
+  if (targetPanel) {
+    targetPanel.classList.remove('hidden');
+  }
+}
+
+function selectLawCategory(category) {
+  var items = document.querySelectorAll('#ldb-tab-categories .ldb-category-item');
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.remove('active');
+  }
+  event.currentTarget.classList.add('active');
+  var names = {
+    civil: '民商法类法规',
+    economic: '经济法类法规',
+    administrative: '行政法类法规',
+    social: '社会法类法规',
+    criminal: '刑法类法规',
+    ip: '知识产权法类法规',
+    environmental: '环境法类法规',
+    procedural: '诉讼与非诉讼程序法类法规'
+  };
+  var titleEl = document.getElementById('ldb-category-title');
+  if (titleEl) {
+    titleEl.innerText = names[category] || '法规列表';
+  }
+}
+
+function selectLawForVersion(lawId) {
+  showToast('加载版本历史...', 'info');
+}
+
+function refreshLawDbStats() {
+  showToast('刷新中...', 'info');
+  setTimeout(function() {
+    showToast('数据已更新', 'success');
+  }, 800);
+}
+
+function handleLawImportFile(input) {
+  if (input.files && input.files.length > 0) {
+    showToast('已选择文件: ' + input.files[0].name, 'info');
+  }
+}
+
+function startLawImport() {
+  showToast('开始导入...', 'info');
+  setTimeout(function() {
+    showToast('导入完成：成功 892 条，失败 8 条', 'success');
+  }, 1500);
+}
+
+function startLawExport() {
+  showToast('正在生成导出文件...', 'info');
+  setTimeout(function() {
+    showToast('导出完成，文件已准备好下载', 'success');
+  }, 1000);
+}
+
+function reindexLawDb() {
+  showToast('正在重建索引...', 'info');
+  setTimeout(function() {
+    showToast('索引重建完成', 'success');
+  }, 2000);
+}
+</script>

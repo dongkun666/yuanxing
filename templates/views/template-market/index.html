@@ -1,0 +1,388 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-template-market">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 text-white" data-animate="fade-in-up" data-delay="0">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">模板市场</h1>
+                <p class="text-sm text-white/80 mt-1">海量优质法律文书模板，一键下载使用</p>
+            </div>
+            <button class="px-4 py-2 bg-white text-emerald-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm" onclick="openUploadTemplateMarketModal()">
+                <iconify-icon icon="mdi:cloud-upload-outline" class="inline mr-1"></iconify-icon>上传模板
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border p-4" data-animate="fade-in-up" data-delay="0.1">
+        <div class="flex items-center gap-3">
+            <div class="relative flex-1 max-w-md">
+                <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-tertiary" icon="mdi:magnify"></iconify-icon>
+                <input type="text" id="tpl-market-search" placeholder="搜索模板..." class="w-full bg-bg-subtle border border-bg-border rounded-lg pl-9 pr-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-brand focus:bg-white transition-colors" oninput="filterTemplateMarket(this.value)"/>
+            </div>
+            <select id="tpl-market-category" class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors" onchange="filterTemplateMarketByCategory(this.value)">
+                <option value="all">全部分类</option>
+                <option value="contract">合同类</option>
+                <option value="pleading">诉状类</option>
+                <option value="defense">答辩类</option>
+                <option value="agreement">协议类</option>
+                <option value="notification">通知类</option>
+                <option value="other">其他</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>综合排序</option>
+                <option>下载最多</option>
+                <option>评分最高</option>
+                <option>最新上传</option>
+            </select>
+            <select class="bg-bg-subtle border border-bg-border rounded-lg px-3 py-2 text-sm text-fg-secondary focus:outline-none focus:border-brand transition-colors">
+                <option>价格不限</option>
+                <option>免费</option>
+                <option>付费</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="flex gap-5">
+        <div class="w-56 flex-none" data-animate="fade-in-up" data-delay="0.15">
+            <div class="bg-white rounded-xl border border-bg-border p-4 space-y-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-3">模板分类</h4>
+                    <div class="space-y-1">
+                        <button class="w-full text-left px-3 py-2 text-xs text-white bg-brand rounded-lg font-medium" onclick="filterTemplateMarketByCategory('all', this)">
+                            全部模板
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('contract', this)">
+                            合同类 <span class="float-right text-fg-tertiary">128</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('pleading', this)">
+                            诉状类 <span class="float-right text-fg-tertiary">86</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('defense', this)">
+                            答辩类 <span class="float-right text-fg-tertiary">54</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('agreement', this)">
+                            协议类 <span class="float-right text-fg-tertiary">92</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('notification', this)">
+                            通知类 <span class="float-right text-fg-tertiary">45</span>
+                        </button>
+                        <button class="w-full text-left px-3 py-2 text-xs text-fg-secondary hover:bg-bg-subtle rounded-lg transition-colors" onclick="filterTemplateMarketByCategory('other', this)">
+                            其他 <span class="float-right text-fg-tertiary">37</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="h-px bg-bg-border"></div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-3">热门标签</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">买卖合同</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">借款合同</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">租赁合同</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">起诉状</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">答辩状</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">离婚协议</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">劳动合同</span>
+                        <span class="text-[10px] px-2 py-1 bg-bg-subtle text-fg-secondary rounded-full cursor-pointer hover:bg-brand-tint3 hover:text-brand transition-colors">股权转让</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 min-w-0" data-animate="fade-in-up" data-delay="0.2">
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-sm text-fg-tertiary">共 <span id="tpl-market-total">442</span> 个模板</p>
+                <div class="flex items-center gap-1 bg-white rounded-lg border border-bg-border p-1">
+                    <button class="p-1.5 rounded bg-brand text-white" title="网格视图">
+                        <iconify-icon icon="mdi:view-grid-outline" class="text-sm"></iconify-icon>
+                    </button>
+                    <button class="p-1.5 rounded text-fg-tertiary hover:bg-bg-subtle" title="列表视图">
+                        <iconify-icon icon="mdi:view-list-outline" class="text-sm"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4" id="tpl-market-grid">
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('1')">
+                    <div class="h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-blue-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-emerald-500 text-white rounded-full">免费</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-fg-tertiary hover:text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('1')">
+                            <iconify-icon icon="mdi:heart-outline" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">商品房买卖合同范本</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">适用于商品房预售和现售，包含房屋基本信息、价格、付款方式、交付标准等完整条款。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.8</span>
+                                <span class="text-[10px] text-fg-tertiary">(128)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 2.3k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('2')">
+                    <div class="h-40 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-purple-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-amber-500 text-white rounded-full">¥19.9</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-fg-tertiary hover:text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('2')">
+                            <iconify-icon icon="mdi:heart-outline" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">民事起诉状模板（标准版）</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">包含原被告信息、诉讼请求、事实与理由等完整结构，适用于各类民事案件。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.9</span>
+                                <span class="text-[10px] text-fg-tertiary">(256)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 5.6k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('3')">
+                    <div class="h-40 bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-emerald-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-emerald-500 text-white rounded-full">免费</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('3')">
+                            <iconify-icon icon="mdi:heart" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">劳动合同模板（全面版）</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">符合劳动合同法规定，包含试用期、工资、社保、工作内容、违约责任等条款。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.7</span>
+                                <span class="text-[10px] text-fg-tertiary">(189)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 8.9k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('4')">
+                    <div class="h-40 bg-gradient-to-br from-rose-50 to-rose-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-rose-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-amber-500 text-white rounded-full">¥29.9</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-fg-tertiary hover:text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('4')">
+                            <iconify-icon icon="mdi:heart-outline" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">离婚协议书（财产分割版）</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">包含子女抚养、财产分割、债务承担、探望权等完整条款，律师起草审核。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.9</span>
+                                <span class="text-[10px] text-fg-tertiary">(342)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 12k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('5')">
+                    <div class="h-40 bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-amber-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-emerald-500 text-white rounded-full">免费</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-fg-tertiary hover:text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('5')">
+                            <iconify-icon icon="mdi:heart-outline" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">房屋租赁合同（标准版）</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">适用于住宅和商业租赁，包含租金、押金、租期、维修责任等完整条款。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.6</span>
+                                <span class="text-[10px] text-fg-tertiary">(156)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-date"></iconify-icon> 6.7k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-bg-border overflow-hidden hover:shadow-md transition-shadow cursor-pointer group" onclick="openTemplateMarketDetail('6')">
+                    <div class="h-40 bg-gradient-to-br from-cyan-50 to-cyan-100 flex items-center justify-center relative">
+                        <iconify-icon icon="mdi:file-document-outline" class="text-5xl text-cyan-400"></iconify-icon>
+                        <span class="absolute top-2 left-2 text-[10px] px-2 py-0.5 bg-amber-500 text-white rounded-full">¥9.9</span>
+                        <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-fg-tertiary hover:text-rose-500" onclick="event.stopPropagation(); toggleFavoriteTpl('6')">
+                            <iconify-icon icon="mdi:heart-outline" class="text-sm"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-fg-primary mb-1 line-clamp-1">民事答辩状模板</h3>
+                        <p class="text-xs text-fg-tertiary mb-3 line-clamp-2">包含答辩意见、事实陈述、证据列举等完整结构，适用于各类民事案件答辩。</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1">
+                                <iconify-icon icon="mdi:star" class="text-amber-400 text-xs"></iconify-icon>
+                                <span class="text-xs text-fg-secondary">4.8</span>
+                                <span class="text-[10px] text-fg-tertiary">(98)</span>
+                            </div>
+                            <span class="text-[10px] text-fg-tertiary"><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 3.2k</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center mt-8 gap-1">
+                <button class="px-3 py-1.5 text-xs text-fg-tertiary border border-bg-border rounded hover:bg-bg-subtle">上一页</button>
+                <button class="px-3 py-1.5 text-xs text-white bg-brand rounded">1</button>
+                <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">2</button>
+                <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">3</button>
+                <span class="px-2 text-xs text-fg-tertiary">...</span>
+                <button class="px-3 py-1.5 text-xs text-fg-secondary border border-bg-border rounded hover:bg-bg-subtle">下一页</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="tpl-market-detail-modal">
+    <div class="bg-white rounded-xl w-[720px] max-h-[85vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border sticky top-0 bg-white z-10">
+            <h3 class="text-base font-semibold text-fg-primary">模板详情</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeTemplateMarketDetail()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5">
+            <div class="flex gap-5 mb-5">
+                <div class="w-40 h-52 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg flex items-center justify-center flex-none">
+                    <iconify-icon icon="mdi:file-document-outline" class="text-6xl text-purple-400"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-[10px] px-2 py-0.5 bg-amber-500 text-white rounded-full">¥19.9</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-brand-tint3 text-brand rounded-full">合同类</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-fg-primary mb-2">民事起诉状模板（标准版）</h2>
+                    <p class="text-sm text-fg-tertiary mb-3">包含原被告信息、诉讼请求、事实与理由等完整结构，适用于各类民事案件。律师起草，已审核通过。</p>
+                    <div class="flex items-center gap-4 text-xs text-fg-tertiary mb-4">
+                        <span><iconify-icon icon="mdi:star" class="text-amber-400 inline"></iconify-icon> 4.9 (256 条评价)</span>
+                        <span><iconify-icon icon="mdi:download" class="inline"></iconify-icon> 5,623 次下载</span>
+                        <span><iconify-icon icon="mdi:eye" class="inline"></iconify-icon> 12,345 次浏览</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="px-5 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="downloadTemplateMarket()">
+                            <iconify-icon icon="mdi:download" class="inline mr-1"></iconify-icon>下载模板
+                        </button>
+                        <button class="px-4 py-2 text-sm text-fg-secondary border border-bg-border hover:border-brand hover:text-brand rounded-lg transition-colors" onclick="favoriteTemplateMarket()">
+                            <iconify-icon icon="mdi:heart-outline" class="inline mr-1"></iconify-icon>收藏
+                        </button>
+                        <button class="px-4 py-2 text-sm text-fg-secondary border border-bg-border hover:border-brand hover:text-brand rounded-lg transition-colors">
+                            <iconify-icon icon="mdi:share-variant" class="inline mr-1"></iconify-icon>分享
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-b border-bg-border mb-4">
+                <div class="flex gap-6">
+                    <button class="pb-3 text-sm font-medium text-brand border-b-2 border-brand">模板介绍</button>
+                    <button class="pb-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent">使用说明</button>
+                    <button class="pb-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent">评价 (256)</button>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">模板简介</h4>
+                    <p class="text-xs text-fg-secondary leading-relaxed">本民事起诉状模板由执业律师起草，符合《民事诉讼法》相关规定，适用于合同纠纷、侵权纠纷、婚姻家庭纠纷等各类民事案件的一审起诉。</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">模板结构</h4>
+                    <ul class="text-xs text-fg-secondary space-y-1 list-disc list-inside">
+                        <li>原告基本信息（姓名、性别、年龄、住址、联系方式等）</li>
+                        <li>被告基本信息（姓名/名称、住址/地址、联系方式等）</li>
+                        <li>诉讼请求（明确具体的诉讼请求事项）</li>
+                        <li>事实与理由（案件事实陈述和法律依据）</li>
+                        <li>证据和证据来源，证人姓名和住所</li>
+                        <li>此致人民法院、具状人签名、日期</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-fg-primary mb-2">上传者</h4>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-tint3 flex items-center justify-center">
+                            <span class="text-sm font-medium text-brand">张</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-fg-primary">张律师</p>
+                            <p class="text-xs text-fg-tertiary">认证律师 · 上传 28 个模板</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="upload-tpl-market-modal">
+    <div class="bg-white rounded-xl w-[520px] max-h-[80vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">
+            <h3 class="text-base font-semibold text-fg-primary">上传模板</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeUploadTemplateMarketModal()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">模板名称</label>
+                <input type="text" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors" placeholder="请输入模板名称"/>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">模板分类</label>
+                <select class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors">
+                    <option>请选择分类</option>
+                    <option>合同类</option>
+                    <option>诉状类</option>
+                    <option>答辩类</option>
+                    <option>协议类</option>
+                    <option>通知类</option>
+                    <option>其他</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">模板文件</label>
+                <div class="border-2 border-dashed border-bg-border rounded-lg p-6 text-center hover:border-brand transition-colors cursor-pointer">
+                    <iconify-icon icon="mdi:cloud-upload-outline" class="text-3xl text-fg-tertiary mb-2"></iconify-icon>
+                    <p class="text-sm text-fg-secondary mb-1">点击或拖拽文件到此处上传</p>
+                    <p class="text-xs text-fg-tertiary">支持 .docx, .doc, .pdf 格式，最大 10MB</p>
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">模板描述</label>
+                <textarea rows="3" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors resize-none" placeholder="请描述模板的适用场景、结构等信息"></textarea>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">定价方式</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 text-sm text-fg-primary cursor-pointer">
+                        <input type="radio" name="tpl-price" checked class="text-brand focus:ring-brand"/>
+                        免费
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-fg-primary cursor-pointer">
+                        <input type="radio" name="tpl-price" class="text-brand focus:ring-brand"/>
+                        付费
+                        <input type="number" placeholder="价格" class="w-20 px-2 py-1 text-xs border border-bg-border rounded focus:outline-none focus:border-brand"/>
+                        <span class="text-xs text-fg-tertiary">元</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-bg-border">
+            <button class="px-4 py-2 text-sm text-fg-secondary bg-bg hover:bg-bg-border rounded-lg transition-colors" onclick="closeUploadTemplateMarketModal()">取消</button>
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">提交审核</button>
+        </div>
+    </div>
+</div>

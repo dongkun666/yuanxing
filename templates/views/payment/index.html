@@ -1,0 +1,520 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-bg" id="view-payment">
+<div class="max-w-3xl mx-auto w-full space-y-4 md:space-y-5">
+
+    <!-- 返回按钮 -->
+    <button class="flex items-center gap-1 text-xs text-fg-secondary hover:text-brand transition-colors group" onclick="backToPricing()" data-animate="fade-in-up" data-delay="0">
+        <iconify-icon icon="mdi:arrow-left" class="group-hover:-translate-x-0.5 transition-transform"></iconify-icon>
+        <span>返回订阅方案</span>
+    </button>
+
+    <!-- 订单摘要 -->
+    <div class="ws-card p-5 md:p-6 relative overflow-hidden" data-animate="fade-in-up" data-delay="0.05">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-brand/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-wiki/5 to-transparent rounded-full translate-y-1/2 -translate-x-1/2"></div>
+        <div class="relative z-10">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20">
+                    <iconify-icon icon="mdi:receipt-text-outline" class="text-white text-sm"></iconify-icon>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-fg-primary">订单确认</h3>
+                    <p class="text-[11px] text-fg-tertiary">请核对您的订单信息</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 md:p-4 rounded-xl bg-gradient-to-r from-brand-tint3/50 to-wiki/5 border border-brand-tint2/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md shadow-brand/20 group-hover:scale-110 transition-transform">
+                            <iconify-icon class="text-xl text-white" icon="mdi:crown"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-fg-primary" id="payment-plan-name">专业版 · 月付</p>
+                            <p class="text-xs text-fg-tertiary" id="payment-plan-desc">最适合个人律师</p>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-tint text-brand text-[10px] font-semibold rounded">
+                                    <iconify-icon icon="mdi:check" class="text-[10px]"></iconify-icon>
+                                    全部功能
+                                </span>
+                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-success-tint text-success text-[10px] font-semibold rounded">
+                                    <iconify-icon icon="mdi:check" class="text-[10px]"></iconify-icon>
+                                    随时取消
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl md:text-2xl font-bold bg-gradient-to-r from-brand to-wiki bg-clip-text text-transparent" id="payment-amount">¥199</p>
+                        <p class="text-[10px] text-fg-tertiary" id="payment-period">/月</p>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 mt-4 border-t border-bg-border/50 space-y-2">
+                <div class="flex justify-between text-xs text-fg-secondary">
+                    <span>小计</span>
+                    <span id="payment-subtotal">¥199</span>
+                </div>
+                <div class="flex justify-between text-xs text-fg-secondary">
+                    <span>优惠</span>
+                    <span class="text-success font-medium" id="payment-discount">-¥0</span>
+                </div>
+                <div class="flex justify-between items-center pt-3 mt-2 border-t border-bg-border/50">
+                    <span class="text-sm font-semibold text-fg-primary">合计</span>
+                    <span class="text-xl font-bold bg-gradient-to-r from-brand to-wiki bg-clip-text text-transparent" id="payment-total">¥199</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付方式 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.15">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-success to-green-500 flex items-center justify-center shadow-md shadow-success/20">
+                <iconify-icon icon="mdi:credit-card-multiple-outline" class="text-white text-sm"></iconify-icon>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-fg-primary">选择支付方式</h3>
+                <p class="text-[11px] text-fg-tertiary">安全便捷的支付渠道</p>
+            </div>
+        </div>
+        <div class="space-y-2.5" id="payment-methods-container">
+            <!-- 由 JS 渲染 -->
+        </div>
+    </div>
+
+    <!-- 支付二维码区域 (默认隐藏) -->
+    <div class="ws-card p-5 md:p-6 hidden" id="qr-code-section" data-animate="fade-in-up" data-delay="0.2">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20">
+                <iconify-icon icon="mdi:qrcode" class="text-white text-sm"></iconify-icon>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-fg-primary">扫码支付</h3>
+                <p class="text-[11px] text-fg-tertiary">请使用手机扫码完成支付</p>
+            </div>
+        </div>
+        <div class="flex flex-col items-center py-6">
+            <div class="w-48 h-48 bg-white border-2 border-bg-border rounded-xl p-3 flex items-center justify-center" id="qr-code-container">
+                <div class="text-center">
+                    <iconify-icon icon="mdi:qrcode" class="text-6xl text-fg-tertiary"></iconify-icon>
+                    <p class="text-xs text-fg-tertiary mt-2">支付二维码</p>
+                </div>
+            </div>
+            <p class="mt-4 text-sm text-fg-secondary">
+                订单金额：<span class="font-bold text-brand text-lg" id="qr-amount">¥199</span>
+            </p>
+            <p class="mt-2 text-xs text-fg-tertiary">
+                请在 <span id="qr-countdown" class="text-warning font-semibold">30:00</span> 内完成支付
+            </p>
+        </div>
+    </div>
+
+    <!-- 优惠券 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.25">
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-warning to-orange-500 flex items-center justify-center shadow-md shadow-warning/20">
+                <iconify-icon icon="mdi:ticket-percent-outline" class="text-white text-sm"></iconify-icon>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-fg-primary">优惠券</h3>
+                <p class="text-[11px] text-fg-tertiary">输入优惠码享受折扣</p>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <div class="relative flex-1">
+                <iconify-icon icon="mdi:ticket-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-base"></iconify-icon>
+                <input type="text" class="form-input w-full pl-9 pr-3" id="coupon-input" placeholder="输入优惠码"/>
+            </div>
+            <button class="px-4 py-2 text-sm font-semibold rounded-xl border border-brand text-brand hover:bg-brand-tint transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-brand/10" onclick="applyCoupon()">
+                使用
+            </button>
+        </div>
+        <div id="coupon-message" class="mt-2 text-xs hidden"></div>
+    </div>
+
+    <!-- 安全提示 -->
+    <div class="flex items-start gap-2.5 p-4 rounded-xl bg-gradient-to-r from-success-tint/50 to-green-50 border border-success/10" data-animate="fade-in-up" data-delay="0.35">
+        <div class="w-7 h-7 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+            <iconify-icon icon="mdi:shield-lock-outline" class="text-success text-base"></iconify-icon>
+        </div>
+        <div class="flex-1">
+            <p class="text-xs font-semibold text-green-800">支付安全保障</p>
+            <p class="text-[11px] text-green-700 mt-0.5">您的支付信息由银行级 SSL 加密保护，我们不会存储您的银行卡信息。</p>
+        </div>
+    </div>
+
+    <!-- 确认支付 -->
+    <div class="ws-card p-5 md:p-6" data-animate="fade-in-up" data-delay="0.45">
+        <div class="flex items-start gap-3">
+            <input checked class="mt-0.5 w-4 h-4 accent-brand rounded" id="agree-terms" type="checkbox"/>
+            <label class="text-xs text-fg-secondary leading-relaxed" for="agree-terms">
+                我已阅读并同意 <a class="text-brand hover:underline font-medium" href="#" onclick="event.preventDefault(); alert('《LexPrime 服务协议》')">《服务协议》</a> 和 <a class="text-brand hover:underline font-medium" href="#" onclick="event.preventDefault(); alert('《自动续费条款》')">《自动续费条款》</a>，确认订阅后将自动续费，可随时取消。
+            </label>
+        </div>
+        <button class="payment-btn w-full mt-5 py-3.5 text-sm font-bold rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/30 transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden group" onclick="handlePayment()" id="pay-button">
+            <span class="relative z-10 flex items-center justify-center gap-2">
+                <iconify-icon icon="mdi:lock-check-outline" class="text-base"></iconify-icon>
+                确认支付 <span id="pay-button-amount" class="font-bold">¥199</span>
+            </span>
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-hover to-wiki opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </button>
+        <p class="text-center text-[10px] text-fg-tertiary mt-3 flex items-center justify-center gap-1">
+            <iconify-icon icon="mdi:lock-outline" class="text-[10px]"></iconify-icon>
+            支付安全由 <span class="font-medium text-fg-secondary">银联/支付宝/微信</span> 提供保障
+        </p>
+    </div>
+
+    <!-- 支付处理中遮罩 -->
+    <div class="fixed inset-0 z-[800] bg-black/40 backdrop-blur-sm flex items-center justify-center hidden" id="payment-loading-overlay">
+        <div class="bg-white rounded-2xl p-8 text-center max-w-sm mx-4 shadow-2xl">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center">
+                <iconify-icon icon="mdi:loading" class="text-3xl text-brand animate-spin"></iconify-icon>
+            </div>
+            <h4 class="text-base font-bold text-fg-primary mb-1">支付处理中</h4>
+            <p class="text-xs text-fg-tertiary mb-4">请稍候，正在处理您的支付...</p>
+            <div class="w-full h-2 bg-bg rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand to-wiki rounded-full progress-bar-animate" style="width: 60%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付成功遮罩 -->
+    <div class="fixed inset-0 z-[800] bg-black/40 backdrop-blur-sm flex items-center justify-center hidden" id="payment-success-overlay">
+        <div class="bg-white rounded-2xl p-8 text-center max-w-sm mx-4 shadow-2xl">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-success to-green-500 flex items-center justify-center">
+                <iconify-icon icon="mdi:check" class="text-3xl text-white"></iconify-icon>
+            </div>
+            <h4 class="text-base font-bold text-fg-primary mb-1">支付成功</h4>
+            <p class="text-xs text-fg-tertiary mb-6">感谢您的订阅，已为您开通全部功能</p>
+            <div class="flex gap-3">
+                <button onclick="closePaymentSuccess()" class="flex-1 py-2.5 text-sm font-semibold rounded-xl border border-bg-border text-fg-secondary hover:bg-bg-subtle transition-all duration-300">
+                    查看订单
+                </button>
+                <button onclick="goToSubscription()" class="flex-1 py-2.5 text-sm font-bold rounded-xl bg-gradient-to-r from-brand to-brand-hover text-white hover:shadow-lg hover:shadow-brand/30 transition-all duration-300">
+                    开始使用
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var selectedMethod = 'alipay';
+    var currentOrder = null;
+    var pollTimer = null;
+    var countdownTimer = null;
+    var countdownSeconds = 1800;
+    var loaded = false;
+    var currentPlanCode = 'pro';
+    var currentBilling = 'monthly';
+    var currentDiscount = 0;
+    var baseAmount = 199;
+
+    var planInfo = {
+        'free': { name: '免费版', desc: '基础功能体验', monthly: 0, yearly: 0, icon: 'mdi:seed-outline' },
+        'basic': { name: '个人基础版', desc: '入门体验', monthly: 99, yearly: 899, icon: 'mdi:leaf' },
+        'pro': { name: '个人专业版', desc: '最适合个人律师', monthly: 199, yearly: 1910, icon: 'mdi:crown' },
+        'enterprise': { name: '企业版', desc: '适合律所及团队', monthly: 1500, yearly: 15000, icon: 'mdi:domain' }
+    };
+
+    var paymentMethods = [
+        { code: 'alipay', name: '支付宝支付', desc: '数亿用户信赖的支付方式', icon: 'mdi:alipay', color: '#1677FF', recommended: true },
+        { code: 'wechat', name: '微信支付', desc: '便捷的移动支付方式', icon: 'mdi:wechat', color: '#07C160', recommended: false },
+        { code: 'stripe', name: 'Stripe', desc: '国际信用卡支付', icon: 'mdi:credit-card-outline', color: '#635BFF', recommended: false }
+    ];
+
+    function getApiBaseUrl() {
+        return '';
+    }
+
+    function getAuthHeaders() {
+        var token = localStorage.getItem('access_token') || '';
+        return {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    function renderPaymentMethods() {
+        var container = document.getElementById('payment-methods-container');
+        if (!container) return;
+
+        var html = '';
+        paymentMethods.forEach(function(method, index) {
+            var isSelected = method.code === selectedMethod;
+            html += '' +
+                '<label class="payment-method-card relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer payment-method group transition-all duration-300 hover:shadow-lg ' + (isSelected ? 'border-brand bg-gradient-to-r from-brand-tint3/50 to-brand-tint/30 hover:shadow-brand/10' : 'border-bg-border hover:border-brand/50 hover:shadow-brand/5') + '"' +
+                ' onclick="selectPaymentMethod(\'' + method.code + '\')">' +
+                    '<div class="absolute inset-0 rounded-xl bg-gradient-to-r from-brand/5 to-wiki/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>' +
+                    '<div class="relative z-10 w-5 h-5 rounded-full border-2 ' + (isSelected ? 'border-brand' : 'border-bg-border group-hover:border-brand/50') + ' flex items-center justify-center flex-shrink-0 transition-colors">' +
+                        (isSelected ? '<div class="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-brand to-brand-hover"></div>' : '') +
+                    '</div>' +
+                    '<div class="relative z-10 flex items-center gap-3 flex-1">' +
+                        '<div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-sm border border-bg-border/50 group-hover:scale-110 transition-transform">' +
+                            '<iconify-icon class="text-2xl" style="color:' + method.color + '" icon="' + method.icon + '"></iconify-icon>' +
+                        '</div>' +
+                        '<div>' +
+                            '<p class="text-sm font-semibold text-fg-primary">' + method.name + '</p>' +
+                            '<p class="text-xs text-fg-tertiary">' + method.desc + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    (method.recommended ? '<span class="relative z-10 ml-auto text-[10px] bg-gradient-to-r from-brand to-brand-hover text-white font-semibold px-2.5 py-1 rounded-full shadow-md shadow-brand/20">推荐</span>' : '') +
+                '</label>';
+        });
+        container.innerHTML = html;
+    }
+
+    function updateOrderDisplay() {
+        var plan = planInfo[currentPlanCode];
+        if (!plan) return;
+
+        var periodText = currentBilling === 'yearly' ? '/年' : '/月';
+        var planName = plan.name + ' · ' + (currentBilling === 'yearly' ? '年付' : '月付');
+        var amount = currentBilling === 'yearly' ? plan.yearly : plan.monthly;
+        baseAmount = amount;
+        var finalAmount = Math.round((amount - currentDiscount) * 100) / 100;
+
+        var planNameEl = document.getElementById('payment-plan-name');
+        var planDescEl = document.getElementById('payment-plan-desc');
+        var amountEl = document.getElementById('payment-amount');
+        var periodEl = document.getElementById('payment-period');
+        var subtotalEl = document.getElementById('payment-subtotal');
+        var discountEl = document.getElementById('payment-discount');
+        var totalEl = document.getElementById('payment-total');
+        var btnAmountEl = document.getElementById('pay-button-amount');
+        var qrAmountEl = document.getElementById('qr-amount');
+
+        if (planNameEl) planNameEl.textContent = planName;
+        if (planDescEl) planDescEl.textContent = plan.desc;
+        if (amountEl) amountEl.textContent = '¥' + amount;
+        if (periodEl) periodEl.textContent = periodText;
+        if (subtotalEl) subtotalEl.textContent = '¥' + amount;
+        if (discountEl) discountEl.textContent = '-¥' + currentDiscount;
+        if (totalEl) totalEl.textContent = '¥' + finalAmount;
+        if (btnAmountEl) btnAmountEl.textContent = '¥' + finalAmount;
+        if (qrAmountEl) qrAmountEl.textContent = '¥' + finalAmount;
+    }
+
+    window.selectPaymentMethod = function(methodCode) {
+        selectedMethod = methodCode;
+        renderPaymentMethods();
+
+        var qrSection = document.getElementById('qr-code-section');
+        if (qrSection) {
+            if (methodCode === 'alipay' || methodCode === 'wechat') {
+                qrSection.classList.remove('hidden');
+            } else {
+                qrSection.classList.add('hidden');
+            }
+        }
+    };
+
+    window.applyCoupon = function() {
+        var input = document.getElementById('coupon-input');
+        var message = document.getElementById('coupon-message');
+        if (!input || !message) return;
+
+        var code = input.value.trim().toUpperCase();
+        if (!code) {
+            showCouponMessage('请输入优惠码', 'warning');
+            return;
+        }
+
+        if (code === 'LEXPRIME50') {
+            currentDiscount = Math.round(baseAmount * 0.5 * 100) / 100;
+            showCouponMessage('优惠码已使用，享受 5 折优惠！', 'success');
+        } else if (code === 'LEXPRIME20') {
+            currentDiscount = Math.round(baseAmount * 0.2 * 100) / 100;
+            showCouponMessage('优惠码已使用，享受 8 折优惠！', 'success');
+        } else {
+            currentDiscount = 0;
+            showCouponMessage('优惠码无效或已过期', 'error');
+        }
+
+        updateOrderDisplay();
+    };
+
+    function showCouponMessage(text, type) {
+        var message = document.getElementById('coupon-message');
+        if (!message) return;
+        message.textContent = text;
+        message.className = 'mt-2 text-xs';
+        if (type === 'success') {
+            message.classList.add('text-success');
+        } else if (type === 'error') {
+            message.classList.add('text-danger');
+        } else {
+            message.classList.add('text-warning');
+        }
+        message.classList.remove('hidden');
+    }
+
+    window.handlePayment = function() {
+        var agreeTerms = document.getElementById('agree-terms');
+        if (agreeTerms && !agreeTerms.checked) {
+            alert('请先阅读并同意服务协议');
+            return;
+        }
+
+        var loadingOverlay = document.getElementById('payment-loading-overlay');
+        if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+        createPaymentOrder().then(function(order) {
+            currentOrder = order;
+            startCountdown();
+            startPolling(order.order_id);
+
+            setTimeout(function() {
+                mockPaymentConfirm(order.order_id);
+            }, 2000);
+        }).catch(function(err) {
+            if (loadingOverlay) loadingOverlay.classList.add('hidden');
+            alert('创建支付订单失败：' + (err.message || '未知错误'));
+        });
+    };
+
+    function createPaymentOrder() {
+        var url = getApiBaseUrl() + '/api/payment/create';
+        return fetch(url, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                plan_code: currentPlanCode,
+                billing_cycle: currentBilling,
+                payment_method: selectedMethod,
+                coupon_code: document.getElementById('coupon-input') ? document.getElementById('coupon-input').value : null
+            })
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed to create payment');
+            return res.json();
+        }).catch(function() {
+            return {
+                order_id: 'PAY' + Date.now(),
+                invoice_no: 'INV' + Date.now(),
+                amount: baseAmount - currentDiscount,
+                status: 'pending',
+                qr_code_url: '',
+                pay_url: ''
+            };
+        });
+    }
+
+    function mockPaymentConfirm(orderId) {
+        var url = getApiBaseUrl() + '/api/payment/' + orderId + '/mock-confirm';
+        return fetch(url, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed to confirm payment');
+            return res.json();
+        }).then(function() {
+            showPaymentSuccess();
+        }).catch(function() {
+            showPaymentSuccess();
+        });
+    }
+
+    function startPolling(orderId) {
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(function() {
+            checkPaymentStatus(orderId);
+        }, 3000);
+    }
+
+    function stopPolling() {
+        if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        }
+    }
+
+    function checkPaymentStatus(orderId) {
+        var url = getApiBaseUrl() + '/api/payment/' + orderId;
+        fetch(url, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        }).then(function(res) {
+            if (!res.ok) throw new Error('Failed');
+            return res.json();
+        }).then(function(data) {
+            if (data.status === 'paid') {
+                stopPolling();
+                showPaymentSuccess();
+            }
+        }).catch(function() {});
+    }
+
+    function startCountdown() {
+        countdownSeconds = 1800;
+        if (countdownTimer) clearInterval(countdownTimer);
+        updateCountdownDisplay();
+        countdownTimer = setInterval(function() {
+            countdownSeconds--;
+            if (countdownSeconds <= 0) {
+                clearInterval(countdownTimer);
+                countdownSeconds = 0;
+            }
+            updateCountdownDisplay();
+        }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+        var el = document.getElementById('qr-countdown');
+        if (!el) return;
+        var minutes = Math.floor(countdownSeconds / 60);
+        var seconds = countdownSeconds % 60;
+        el.textContent = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+    }
+
+    function showPaymentSuccess() {
+        stopPolling();
+        var loadingOverlay = document.getElementById('payment-loading-overlay');
+        var successOverlay = document.getElementById('payment-success-overlay');
+        if (loadingOverlay) loadingOverlay.classList.add('hidden');
+        if (successOverlay) successOverlay.classList.remove('hidden');
+    }
+
+    window.closePaymentSuccess = function() {
+        var successOverlay = document.getElementById('payment-success-overlay');
+        if (successOverlay) successOverlay.classList.add('hidden');
+    };
+
+    window.goToSubscription = function() {
+        closePaymentSuccess();
+        if (window.app && window.app.openView) {
+            window.app.openView('subscription');
+        }
+    };
+
+    window.backToPricing = function() {
+        if (window.app && window.app.openView) {
+            window.app.openView('pricing');
+        }
+    };
+
+    function init() {
+        if (loaded) return;
+        loaded = true;
+
+        if (window.app) {
+            if (window.app._pendingPlan) currentPlanCode = window.app._pendingPlan;
+            if (window.app._pendingBilling) currentBilling = window.app._pendingBilling;
+        }
+
+        renderPaymentMethods();
+        updateOrderDisplay();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    window._paymentInit = init;
+})();
+</script>

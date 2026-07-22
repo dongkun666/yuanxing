@@ -5,6 +5,7 @@ LexPrime Auth FastAPI 依赖注入
 提供:
 - get_current_user: 必须有有效 access_token, 否则 401
 - get_optional_user: 可选, 用于公共页面但登录态有更好体验
+- csrf_protect: CSRF 防护依赖
 
 注: refresh endpoint 不走这里, 走自己的链路 (refresh_token 单独验证)
 """
@@ -25,6 +26,8 @@ from auth.security import (
     TokenInvalidError,
     decode_token,
     extract_user_id_from_payload,
+    generate_csrf_token,
+    validate_csrf_token,
 )
 
 
@@ -121,3 +124,40 @@ async def get_current_admin(
             detail={"code": "admin_required", "message": "admin role required"},
         )
     return user
+
+
+# ========== CSRF 防护依赖 ==========
+async def csrf_protect(
+    x_csrf_token: Optional[str] = Header(default=None),
+) -> str:
+    """
+    CSRF 防护依赖
+    - 验证请求头中的 X-CSRF-Token
+    - 对于有状态请求(POST/PUT/DELETE)必须提供有效的 CSRF token
+    - 返回验证通过的 token 供后续使用
+    """
+    if not x_csrf_token:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "csrf_missing", "message": "CSRF token missing"},
+        )
+
+    if not validate_csrf_token(x_csrf_token):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": "csrf_invalid", "message": "CSRF token invalid"},
+        )
+
+    return x_csrf_token
+
+
+async def get_csrf_token(
+    current_user: User = Depends(get_current_user),
+) -> dict[str, str]:
+    """
+    获取 CSRF token (用于前端初始化)
+    - 需要先登录
+    - 返回新生成的 CSRF token
+    """
+    token = generate_csrf_token()
+    return {"csrf_token": token}

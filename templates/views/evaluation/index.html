@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型评测 - LexPrime</title>
+    <script src="/static/libs/jquery/jquery.min.js"></script>
+    <script src="/static/libs/layui/layui.js"></script>
+    <link rel="stylesheet" href="/static/libs/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        .evaluation-container {
+            padding: 20px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e9fff;
+            margin-bottom: 8px;
+        }
+        .stat-card .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .chart-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+        .comparison-bar {
+            margin-bottom: 16px;
+        }
+        .comparison-bar .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .comparison-bar .bar-track {
+            height: 24px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .comparison-bar .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+        .bar-fill.model1 {
+            background: linear-gradient(90deg, #1e9fff, #009688);
+        }
+        .bar-fill.model2 {
+            background: linear-gradient(90deg, #ffb800, #ff5722);
+        }
+        .error-item {
+            background: #f9f9f9;
+            border-left: 4px solid #ff5722;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 0 4px 4px 0;
+        }
+        .error-item .error-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .error-item .error-type {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #fff;
+        }
+        .error-type.false_negative {
+            background: #ff5722;
+        }
+        .error-type.false_positive {
+            background: #ffb800;
+        }
+        .severity-high {
+            color: #ff5722;
+        }
+        .severity-medium {
+            color: #ffb800;
+        }
+        .severity-low {
+            color: #5fb878;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .suggestion-item .suggestion-num {
+            width: 28px;
+            height: 28px;
+            background: #1e9fff;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .suggestion-item .suggestion-text {
+            line-height: 1.6;
+            color: #333;
+        }
+        .task-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .task-status.pending {
+            background: #e6e6e6;
+            color: #666;
+        }
+        .task-status.running {
+            background: #e6f7ff;
+            color: #1e9fff;
+        }
+        .task-status.completed {
+            background: #f0ffeb;
+            color: #5fb878;
+        }
+        .task-status.failed {
+            background: #fff0f0;
+            color: #ff5722;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e9fff, #009688);
+            transition: width 0.3s ease;
+        }
+        .category-tabs {
+            margin-bottom: 20px;
+        }
+        .report-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .report-summary {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .winner-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .dataset-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        .dataset-card:hover {
+            border-color: #1e9fff;
+            box-shadow: 0 4px 12px rgba(30, 159, 255, 0.15);
+        }
+        .dataset-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+        .category-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 4px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="evaluation-container">
+        <div class="layui-row" style="margin-bottom: 20px;">
+            <div class="layui-col-md12">
+                <div class="page-header">
+                    <h2>模型评测</h2>
+                    <p class="page-desc">管理法律 AI 模型评测任务，对比模型性能，生成评测报告</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="layui-tab category-tabs" lay-filter="evalTabs">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">评测任务</li>
+                        <li>评测数据集</li>
+                        <li>模型对比</li>
+                        <li>错误分析</li>
+                        <li>评测报告</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <div id="tasksView">
+                                <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="layui-btn-group">
+                                        <button class="layui-btn" id="newTaskBtn">
+                                            <i class="layui-icon layui-icon-add-1"></i>新建评测任务
+                                        </button>
+                                        <button class="layui-btn layui-btn-normal" id="refreshTasksBtn">
+                                            <i class="layui-icon layui-icon-refresh"></i>刷新
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <select id="taskStatusFilter" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                            <option value="">全部状态</option>
+                                            <option value="pending">待运行</option>
+                                            <option value="running">运行中</option>
+                                            <option value="completed">已完成</option>
+                                            <option value="failed">失败</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="tasksList">
+                                    <div style="text-align: center; padding: 40px; color: #999;">
+                                        <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 32px;"></i>
+                                        <p>加载中...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-tab-item">
+                            <div id="datasetsView">
+                                <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="layui-btn-group">
+                                        <button class="layui-btn" id="newDatasetBtn">
+                                            <i class="layui-icon layui-icon-add-1"></i>创建数据集
+                                        </button>
+                                        <button class="layui-btn layui-btn-warm" id="generateDatasetBtn">
+                                            <i class="layui-icon layui-icon-template-1"></i>自动生成
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <select id="datasetTypeFilter" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                            <option value="">全部类型</option>
+                                            <option value="case_retrieval">案例检索</option>
+                                            <option value="law_reference">法规引用</option>
+                                            <option value="contract_review">合同审查</option>
+                                            <option value="qa">法律问答</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="datasetsList">
+                                    <div style="text-align: center; padding: 40px; color: #999;">
+                                        <i class="layui-icon layui-icon-loading-1 layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 32px;"></i>
+                                        <p>加载中...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-tab-item">
+                            <div id="comparisonView">
+                                <div style="margin-bottom: 20px;">
+                                    <label>选择评测任务：</label>
+                                    <select id="compareTaskSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; min-width: 300px;">
+                                        <option value="">请选择已完成的评测任务</option>
+                                    </select>
+                                    <button class="layui-btn" id="loadComparisonBtn" style="margin-left: 12px;">
+                                        <i class="layui-icon layui-icon-chart"></i>加载对比
+                                    </button>
+                                </div>
+
+                                <div id="comparisonContent" style="display: none;">
+                                    <div class="layui-row">
+                                        <div class="layui-col-md12">
+                                            <div class="chart-container">
+                                                <div class="chart-title">模型性能对比</div>
+                                                <div id="comparisonBars"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-row" style="margin-top: 20px;">
+                                        <div class="layui-col-md6">
+                                            <div class="chart-container">
+                                                <div class="chart-title">精度指标对比</div>
+                                                <div id="precisionComparison"></div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md6">
+                                            <div class="chart-container">
+                                                <div class="chart-title">召回率指标对比</div>
+                                                <div id="recallComparison"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-row" style="margin-top: 20px;">
+                                        <div class="layui-col-md12">
+                                            <div class="chart-container">
+                                                <div class="chart-title">详细指标对比表</div>
+                                                <table class="layui-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>指标</th>
+                                                            <th id="model1Name">模型1</th>
+                                                            <th id="model2Name">模型2</th>
+                                                            <th>差距</th>
+                                                            <th>优胜</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="comparisonTableBody"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-tab-item">
+                            <div id="errorAnalysisView">
+                                <div style="margin-bottom: 20px;">
+                                    <label>选择评测任务：</label>
+                                    <select id="errorTaskSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; min-width: 300px;">
+                                        <option value="">请选择已完成的评测任务</option>
+                                    </select>
+                                    <label style="margin-left: 12px;">错误类型：</label>
+                                    <select id="errorTypeFilter" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                        <option value="">全部类型</option>
+                                        <option value="false_negative">假阴性</option>
+                                        <option value="false_positive">假阳性</option>
+                                    </select>
+                                    <button class="layui-btn" id="loadErrorsBtn" style="margin-left: 12px;">
+                                        <i class="layui-icon layui-icon-search"></i>加载错误
+                                    </button>
+                                </div>
+
+                                <div id="errorList">
+                                    <div style="text-align: center; padding: 40px; color: #999;">
+                                        请选择评测任务查看错误案例
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-tab-item">
+                            <div id="reportView">
+                                <div style="margin-bottom: 20px;">
+                                    <label>选择评测任务：</label>
+                                    <select id="reportTaskSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; min-width: 300px;">
+                                        <option value="">请选择已完成的评测任务</option>
+                                    </select>
+                                    <button class="layui-btn" id="generateReportBtn" style="margin-left: 12px;">
+                                        <i class="layui-icon layui-icon-file"></i>生成报告
+                                    </button>
+                                    <button class="layui-btn layui-btn-normal" id="exportReportBtn" style="display: none;">
+                                        <i class="layui-icon layui-icon-download-circle"></i>导出报告
+                                    </button>
+                                </div>
+
+                                <div id="reportContent" style="display: none;">
+                                    <div class="report-section">
+                                        <h3 style="margin-bottom: 16px;">评测概述</h3>
+                                        <div class="report-summary">
+                                            <p id="reportSummary" style="line-height: 1.8; font-size: 14px;"></p>
+                                            <div style="margin-top: 12px;">
+                                                <span style="color: #666;">综合优胜模型：</span>
+                                                <span class="winner-badge" id="reportWinner"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="report-section">
+                                        <h3 style="margin-bottom: 16px;">模型对比详情</h3>
+                                        <table class="layui-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>模型</th>
+                                                    <th>Precision</th>
+                                                    <th>Recall</th>
+                                                    <th>F1 Score</th>
+                                                    <th>Accuracy</th>
+                                                    <th>NDCG</th>
+                                                    <th>平均延迟</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="reportComparisonTable"></tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="report-section">
+                                        <h3 style="margin-bottom: 16px;">错误分析</h3>
+                                        <div id="reportErrorAnalysis" style="line-height: 1.8; white-space: pre-wrap;"></div>
+                                    </div>
+
+                                    <div class="report-section">
+                                        <h3 style="margin-bottom: 16px;">改进建议</h3>
+                                        <div id="reportSuggestions"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    layui.use(['element', 'layer', 'form'], function() {
+        var element = layui.element;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        var currentReportData = null;
+
+        function formatNumber(num) {
+            if (typeof num !== 'number') return '0.0000';
+            return num.toFixed(4);
+        }
+
+        function formatPercent(num) {
+            if (typeof num !== 'number') return '0%';
+            return (num * 100).toFixed(2) + '%';
+        }
+
+        function getStatusClass(status) {
+            var map = {
+                'pending': 'pending',
+                'running': 'running',
+                'completed': 'completed',
+                'failed': 'failed'
+            };
+            return map[status] || 'pending';
+        }
+
+        function getStatusText(status) {
+            var map = {
+                'pending': '待运行',
+                'running': '运行中',
+                'completed': '已完成',
+                'failed': '失败'
+            };
+            return map[status] || status;
+        }
+
+        function getTaskTypeName(type) {
+            var map = {
+                'case_retrieval': '案例检索',
+                'law_reference': '法规引用',
+                'contract_review': '合同审查',
+                'qa': '法律问答',
+                'summarization': '文本摘要',
+                'embedding': '向量嵌入'
+            };
+            return map[type] || type;
+        }
+
+        function loadTasks() {
+            var statusFilter = $('#taskStatusFilter').val();
+
+            var mockTasks = [
+                {
+                    task_id: 'task-001',
+                    name: 'Embedding 模型对比评测',
+                    description: '对比 v1.0 和 v1.1 Embedding 模型在案例检索上的表现',
+                    task_type: 'case_retrieval',
+                    model_ids: ['mv-001', 'mv-002'],
+                    dataset_id: 'ds-bench-001',
+                    status: 'completed',
+                    progress: 1.0,
+                    created_at: '2026-06-15T09:00:00',
+                    total_samples: 1000,
+                    processed_samples: 1000
+                },
+                {
+                    task_id: 'task-002',
+                    name: '合同审查模型评测',
+                    description: '评测合同审查模型的风险召回率',
+                    task_type: 'contract_review',
+                    model_ids: ['mv-003'],
+                    dataset_id: 'ds-bench-003',
+                    status: 'completed',
+                    progress: 1.0,
+                    created_at: '2026-06-20T13:00:00',
+                    total_samples: 200,
+                    processed_samples: 200
+                },
+                {
+                    task_id: 'task-003',
+                    name: 'RAG 系统效果评测',
+                    description: '评测 RAG 系统的问答准确率',
+                    task_type: 'qa',
+                    model_ids: ['rag-v1', 'rag-v2'],
+                    dataset_id: 'ds-bench-004',
+                    status: 'running',
+                    progress: 0.65,
+                    created_at: '2026-07-03T09:00:00',
+                    total_samples: 800,
+                    processed_samples: 520
+                }
+            ];
+
+            var filtered = statusFilter
+                ? mockTasks.filter(function(t) { return t.status === statusFilter; })
+                : mockTasks;
+
+            var html = '';
+            filtered.forEach(function(task) {
+                html += '<div class="dataset-card">';
+                html += '  <div style="display: flex; justify-content: space-between; align-items: flex-start;">';
+                html += '    <div>';
+                html += '      <h4 style="margin: 0 0 8px 0; color: #333;">' + task.name + '</h4>';
+                html += '      <p style="color: #666; font-size: 13px; margin-bottom: 8px;">' + task.description + '</p>';
+                html += '      <div class="dataset-meta">';
+                html += '        <span><i class="layui-icon layui-icon-database"></i> ' + getTaskTypeName(task.task_type) + '</span>';
+                html += '        <span><i class="layui-icon layui-icon-group"></i> ' + task.model_ids.length + ' 个模型</span>';
+                html += '        <span><i class="layui-icon layui-icon-file-b"></i> ' + task.total_samples + ' 样本</span>';
+                html += '        <span><i class="layui-icon layui-icon-time"></i> ' + task.created_at.split('T')[0] + '</span>';
+                html += '      </div>';
+                html += '    </div>';
+                html += '    <div style="text-align: right;">';
+                html += '      <span class="task-status ' + getStatusClass(task.status) + '">' + getStatusText(task.status) + '</span>';
+                html += '    </div>';
+                html += '  </div>';
+                html += '  <div style="margin-top: 12px;">';
+                if (task.status === 'running') {
+                    html += '    <div class="progress-bar"><div class="progress-fill" style="width: ' + (task.progress * 100) + '%;"></div></div>';
+                    html += '    <div style="margin-top: 6px; font-size: 12px; color: #999;">';
+                    html += '      进度：' + (task.progress * 100).toFixed(1) + '% (' + task.processed_samples + '/' + task.total_samples + ')';
+                    html += '    </div>';
+                }
+                html += '    <div style="margin-top: 8px;">';
+                if (task.status === 'completed') {
+                    html += '      <button class="layui-btn layui-btn-xs" onclick="viewTaskResults(\'' + task.task_id + '\')">查看结果</button>';
+                    html += '      <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="generateTaskReport(\'' + task.task_id + '\')">生成报告</button>';
+                } else if (task.status === 'pending') {
+                    html += '      <button class="layui-btn layui-btn-xs layui-btn-warm" onclick="runTask(\'' + task.task_id + '\')">开始评测</button>';
+                }
+                html += '    </div>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            if (filtered.length === 0) {
+                html = '<div style="text-align: center; padding: 40px; color: #999;">暂无评测任务</div>';
+            }
+
+            $('#tasksList').html(html);
+        }
+
+        function loadDatasets() {
+            var typeFilter = $('#datasetTypeFilter').val();
+
+            var mockDatasets = [
+                {
+                    dataset_id: 'ds-bench-001',
+                    name: 'LexBench 案例检索基准 v1.0',
+                    description: '法律案例检索标准评测数据集，包含 1000 个查询和相关案例标注',
+                    dataset_type: 'standard',
+                    task_type: 'case_retrieval',
+                    sample_count: 1000,
+                    categories: {
+                        '合同纠纷': 300,
+                        '婚姻家庭': 200,
+                        '劳动争议': 200,
+                        '知识产权': 150,
+                        '刑事辩护': 150
+                    },
+                    created_at: '2026-05-01T10:00:00',
+                    updated_at: '2026-06-01T10:00:00',
+                    status: 'ready'
+                },
+                {
+                    dataset_id: 'ds-bench-002',
+                    name: 'LexBench 法规引用基准 v1.0',
+                    description: '法律法规引用准确率评测数据集',
+                    dataset_type: 'standard',
+                    task_type: 'law_reference',
+                    sample_count: 500,
+                    categories: {
+                        '民法': 200,
+                        '刑法': 100,
+                        '行政法': 100,
+                        '商法': 100
+                    },
+                    created_at: '2026-05-15T10:00:00',
+                    updated_at: '2026-06-10T10:00:00',
+                    status: 'ready'
+                },
+                {
+                    dataset_id: 'ds-bench-003',
+                    name: 'LexBench 合同审查基准 v1.0',
+                    description: '合同风险审查召回率评测数据集',
+                    dataset_type: 'standard',
+                    task_type: 'contract_review',
+                    sample_count: 200,
+                    categories: {
+                        '买卖合同': 50,
+                        '借款合同': 40,
+                        '劳动合同': 40,
+                        '租赁合同': 35,
+                        '技术合同': 35
+                    },
+                    created_at: '2026-06-01T10:00:00',
+                    updated_at: '2026-06-20T10:00:00',
+                    status: 'ready'
+                },
+                {
+                    dataset_id: 'ds-bench-004',
+                    name: 'LexBench 法律问答基准 v1.0',
+                    description: '法律问答准确率评测数据集',
+                    dataset_type: 'standard',
+                    task_type: 'qa',
+                    sample_count: 800,
+                    categories: {
+                        '民事问答': 300,
+                        '刑事问答': 200,
+                        '行政问答': 150,
+                        '程序问答': 150
+                    },
+                    created_at: '2026-06-05T10:00:00',
+                    updated_at: '2026-06-25T10:00:00',
+                    status: 'ready'
+                }
+            ];
+
+            var filtered = typeFilter
+                ? mockDatasets.filter(function(d) { return d.task_type === typeFilter; })
+                : mockDatasets;
+
+            var html = '';
+            filtered.forEach(function(dataset) {
+                html += '<div class="dataset-card">';
+                html += '  <div style="display: flex; justify-content: space-between; align-items: flex-start;">';
+                html += '    <div style="flex: 1;">';
+                html += '      <h4 style="margin: 0 0 8px 0; color: #333;">' + dataset.name + '</h4>';
+                html += '      <p style="color: #666; font-size: 13px; margin-bottom: 8px;">' + dataset.description + '</p>';
+                html += '      <div style="margin-top: 8px;">';
+                Object.keys(dataset.categories).forEach(function(cat) {
+                    html += '<span class="category-tag">' + cat + ': ' + dataset.categories[cat] + '</span>';
+                });
+                html += '      </div>';
+                html += '    </div>';
+                html += '    <div style="text-align: right; margin-left: 20px;">';
+                html += '      <div style="font-size: 24px; font-weight: 600; color: #1e9fff;">' + dataset.sample_count + '</div>';
+                html += '      <div style="font-size: 12px; color: #999;">样本数</div>';
+                html += '    </div>';
+                html += '  </div>';
+                html += '  <div class="dataset-meta">';
+                html += '    <span><i class="layui-icon layui-icon-database"></i> ' + getTaskTypeName(dataset.task_type) + '</span>';
+                html += '    <span><i class="layui-icon layui-icon-template-1"></i> ' + (dataset.dataset_type === 'standard' ? '标准数据集' : '自定义数据集') + '</span>';
+                html += '    <span><i class="layui-icon layui-icon-time"></i> ' + dataset.updated_at.split('T')[0] + '</span>';
+                html += '    <span><i class="layui-icon layui-icon-ok-circle" style="color: #5fb878;"></i> ' + (dataset.status === 'ready' ? '就绪' : dataset.status) + '</span>';
+                html += '  </div>';
+                html += '  <div style="margin-top: 12px;">';
+                html += '    <button class="layui-btn layui-btn-xs">查看详情</button>';
+                html += '    <button class="layui-btn layui-btn-xs layui-btn-normal">用于评测</button>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            if (filtered.length === 0) {
+                html = '<div style="text-align: center; padding: 40px; color: #999;">暂无数据集</div>';
+            }
+
+            $('#datasetsList').html(html);
+        }
+
+        function loadTaskSelects() {
+            var completedTasks = [
+                { task_id: 'task-001', name: 'Embedding 模型对比评测' },
+                { task_id: 'task-002', name: '合同审查模型评测' }
+            ];
+
+            var options = '<option value="">请选择已完成的评测任务</option>';
+            completedTasks.forEach(function(task) {
+                options += '<option value="' + task.task_id + '">' + task.name + '</option>';
+            });
+
+            $('#compareTaskSelect').html(options);
+            $('#errorTaskSelect').html(options);
+            $('#reportTaskSelect').html(options);
+
+            form.render('select');
+        }
+
+        function loadComparison(taskId) {
+            if (!taskId) {
+                layer.msg('请选择评测任务');
+                return;
+            }
+
+            var mockComparison = {
+                task_id: taskId,
+                model_count: 2,
+                overall_winner: 'lexprime-embedding-v1.1',
+                comparison: [
+                    { metric: 'Precision', values: { 'lexprime-embedding-v1.0': 0.8234, 'lexprime-embedding-v1.1': 0.8912 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8912, gap: 0.0678 },
+                    { metric: 'Recall', values: { 'lexprime-embedding-v1.0': 0.7856, 'lexprime-embedding-v1.1': 0.8623 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8623, gap: 0.0767 },
+                    { metric: 'F1 Score', values: { 'lexprime-embedding-v1.0': 0.8038, 'lexprime-embedding-v1.1': 0.8765 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8765, gap: 0.0727 },
+                    { metric: 'Accuracy', values: { 'lexprime-embedding-v1.0': 0.8145, 'lexprime-embedding-v1.1': 0.8834 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8834, gap: 0.0689 },
+                    { metric: 'MRR', values: { 'lexprime-embedding-v1.0': 0.7623, 'lexprime-embedding-v1.1': 0.8456 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8456, gap: 0.0833 },
+                    { metric: 'NDCG', values: { 'lexprime-embedding-v1.0': 0.7215, 'lexprime-embedding-v1.1': 0.8123 }, winner: 'lexprime-embedding-v1.1', winner_value: 0.8123, gap: 0.0908 }
+                ]
+            };
+
+            var modelNames = Object.keys(mockComparison.comparison[0].values);
+            $('#model1Name').text(modelNames[0]);
+            $('#model2Name').text(modelNames[1]);
+
+            var barsHtml = '';
+            mockComparison.comparison.forEach(function(item) {
+                var maxVal = Math.max.apply(null, Object.values(item.values));
+                barsHtml += '<div class="comparison-bar">';
+                barsHtml += '  <div class="bar-label">';
+                barsHtml += '    <span>' + item.metric + '</span>';
+                barsHtml += '    <span>差距: ' + (item.gap * 100).toFixed(2) + '%</span>';
+                barsHtml += '  </div>';
+                barsHtml += '  <div class="bar-track">';
+                barsHtml += '    <div class="bar-fill model1" style="width: ' + (item.values[modelNames[0]] / maxVal * 100) + '%; position: absolute; left: 0; top: 0; opacity: 0.8;"></div>';
+                barsHtml += '    <div class="bar-fill model2" style="width: ' + (item.values[modelNames[1]] / maxVal * 100) + '%; position: absolute; left: 0; top: 0;"></div>';
+                barsHtml += '  </div>';
+                barsHtml += '  <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">';
+                barsHtml += '    <span style="color: #1e9fff;">' + modelNames[0] + ': ' + formatPercent(item.values[modelNames[0]]) + '</span>';
+                barsHtml += '    <span style="color: #ffb800;">' + modelNames[1] + ': ' + formatPercent(item.values[modelNames[1]]) + '</span>';
+                barsHtml += '  </div>';
+                barsHtml += '</div>';
+            });
+            $('#comparisonBars').html(barsHtml);
+
+            var tableHtml = '';
+            mockComparison.comparison.forEach(function(item) {
+                tableHtml += '<tr>';
+                tableHtml += '  <td>' + item.metric + '</td>';
+                tableHtml += '  <td>' + formatNumber(item.values[modelNames[0]]) + '</td>';
+                tableHtml += '  <td>' + formatNumber(item.values[modelNames[1]]) + '</td>';
+                tableHtml += '  <td>' + (item.gap * 100).toFixed(2) + '%</td>';
+                tableHtml += '  <td><span style="color: #5fb878; font-weight: 600;">' + item.winner + '</span></td>';
+                tableHtml += '</tr>';
+            });
+            $('#comparisonTableBody').html(tableHtml);
+
+            $('#comparisonContent').show();
+        }
+
+        function loadErrors(taskId, errorType) {
+            if (!taskId) {
+                layer.msg('请选择评测任务');
+                return;
+            }
+
+            var mockErrors = [
+                {
+                    item_id: 'err-001',
+                    query: '民间借贷利息最高可以约定多少？',
+                    expected: { case_ids: ['case-001', 'case-002'] },
+                    actual: { case_ids: ['case-003'] },
+                    error_type: 'false_negative',
+                    severity: 'high',
+                    model_name: 'lexprime-embedding-v1.0'
+                },
+                {
+                    item_id: 'err-002',
+                    query: '劳动合同到期不续签有赔偿吗？',
+                    expected: { case_ids: ['case-003', 'case-004'] },
+                    actual: { case_ids: ['case-001', 'case-005'] },
+                    error_type: 'false_positive',
+                    severity: 'medium',
+                    model_name: 'lexprime-embedding-v1.0'
+                },
+                {
+                    item_id: 'err-003',
+                    query: '夫妻共同债务如何认定？',
+                    expected: { case_ids: ['case-006', 'case-007'] },
+                    actual: { case_ids: ['case-008'] },
+                    error_type: 'false_negative',
+                    severity: 'high',
+                    model_name: 'lexprime-embedding-v1.0'
+                },
+                {
+                    item_id: 'err-004',
+                    query: '知识产权侵权赔偿标准是什么？',
+                    expected: { case_ids: ['case-009', 'case-010'] },
+                    actual: { case_ids: ['case-009', 'case-011'] },
+                    error_type: 'false_positive',
+                    severity: 'low',
+                    model_name: 'lexprime-embedding-v1.1'
+                }
+            ];
+
+            var filtered = errorType
+                ? mockErrors.filter(function(e) { return e.error_type === errorType; })
+                : mockErrors;
+
+            var html = '';
+            filtered.forEach(function(err) {
+                var typeClass = err.error_type === 'false_negative' ? 'false_negative' : 'false_positive';
+                var typeText = err.error_type === 'false_negative' ? '假阴性' : '假阳性';
+                var sevClass = 'severity-' + err.severity;
+                var sevText = err.severity === 'high' ? '严重' : (err.severity === 'medium' ? '中等' : '轻微');
+
+                html += '<div class="error-item">';
+                html += '  <div class="error-header">';
+                html += '    <div>';
+                html += '      <span class="error-type ' + typeClass + '">' + typeText + '</span>';
+                html += '      <span style="margin-left: 8px; font-size: 12px; color: #999;">' + err.model_name + '</span>';
+                html += '    </div>';
+                html += '    <span class="' + sevClass + '" style="font-size: 13px;">' + sevText + '</span>';
+                html += '  </div>';
+                html += '  <div style="margin-bottom: 8px;">';
+                html += '    <div style="font-size: 14px; color: #333; margin-bottom: 4px;"><strong>查询：</strong>' + err.query + '</div>';
+                html += '  </div>';
+                html += '  <div style="display: flex; gap: 20px; font-size: 13px;">';
+                html += '    <div style="flex: 1;">';
+                html += '      <div style="color: #5fb878; margin-bottom: 4px;"><strong>预期结果：</strong></div>';
+                html += '      <div style="color: #666;">' + JSON.stringify(err.expected) + '</div>';
+                html += '    </div>';
+                html += '    <div style="flex: 1;">';
+                html += '      <div style="color: #ff5722; margin-bottom: 4px;"><strong>实际结果：</strong></div>';
+                html += '      <div style="color: #666;">' + JSON.stringify(err.actual) + '</div>';
+                html += '    </div>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            if (filtered.length === 0) {
+                html = '<div style="text-align: center; padding: 40px; color: #999;">暂无错误案例</div>';
+            }
+
+            $('#errorList').html(html);
+        }
+
+        function generateReport(taskId) {
+            if (!taskId) {
+                layer.msg('请选择评测任务');
+                return;
+            }
+
+            var mockReport = {
+                report_id: 'report-' + Math.random().toString(36).substr(2, 8),
+                task_id: taskId,
+                task_name: 'Embedding 模型对比评测',
+                summary: '本次评测对比了 2 个模型在案例检索任务上的表现。综合各项指标，lexprime-embedding-v1.1 表现最优，在所有关键指标上均优于 v1.0 版本，整体性能提升约 8-9%。',
+                overall_winner: 'lexprime-embedding-v1.1',
+                model_comparison: [
+                    { model_name: 'lexprime-embedding-v1.1', model_id: 'mv-002', precision: 0.8912, recall: 0.8623, f1_score: 0.8765, accuracy: 0.8834, mrr: 0.8456, ndcg: 0.8123, latency_ms_avg: 120 },
+                    { model_name: 'lexprime-embedding-v1.0', model_id: 'mv-001', precision: 0.8234, recall: 0.7856, f1_score: 0.8038, accuracy: 0.8145, mrr: 0.7623, ndcg: 0.7215, latency_ms_avg: 100 }
+                ],
+                error_analysis: '错误分析显示，主要错误类型包括：\n1. 假阴性：部分相关案例未被检索到，主要原因是语义理解偏差，特别是在法律术语的多义词处理上存在不足\n2. 假阳性：部分不相关结果被返回，需要优化排序策略，提升顶部结果的准确性\n3. 长尾问题：低频法律概念的识别准确率有待提升，特别是一些细分领域的专业术语\n4. 跨领域检索：当查询涉及多个法律领域时，检索效果有所下降',
+                improvement_suggestions: [
+                    '建议增加领域预训练数据，特别是低频法律概念的语料，扩充法律术语词典',
+                    '优化重排序模型，提升排序准确性，考虑引入更多特征如权威度、时效性等',
+                    '增加同义词和法律术语词典，改善召回率，建立法律概念的同义词映射表',
+                    '针对长尾问题，可考虑引入知识图谱增强，利用法律知识图谱补充语义理解',
+                    '优化分块策略，确保关键信息不被截断，采用语义分块替代固定长度分块',
+                    '增加跨领域训练数据，提升多领域交叉查询的效果',
+                    '考虑引入查询改写模块，对用户查询进行扩展和优化'
+                ],
+                created_at: new Date().toISOString()
+            };
+
+            currentReportData = mockReport;
+
+            $('#reportSummary').text(mockReport.summary);
+            $('#reportWinner').text(mockReport.overall_winner);
+
+            var tableHtml = '';
+            mockReport.model_comparison.forEach(function(m) {
+                tableHtml += '<tr>';
+                tableHtml += '  <td>' + m.model_name + '</td>';
+                tableHtml += '  <td>' + formatNumber(m.precision) + '</td>';
+                tableHtml += '  <td>' + formatNumber(m.recall) + '</td>';
+                tableHtml += '  <td>' + formatNumber(m.f1_score) + '</td>';
+                tableHtml += '  <td>' + formatNumber(m.accuracy) + '</td>';
+                tableHtml += '  <td>' + formatNumber(m.ndcg) + '</td>';
+                tableHtml += '  <td>' + m.latency_ms_avg + 'ms</td>';
+                tableHtml += '</tr>';
+            });
+            $('#reportComparisonTable').html(tableHtml);
+
+            $('#reportErrorAnalysis').text(mockReport.error_analysis);
+
+            var sugHtml = '';
+            mockReport.improvement_suggestions.forEach(function(sug, idx) {
+                sugHtml += '<div class="suggestion-item">';
+                sugHtml += '  <div class="suggestion-num">' + (idx + 1) + '</div>';
+                sugHtml += '  <div class="suggestion-text">' + sug + '</div>';
+                sugHtml += '</div>';
+            });
+            $('#reportSuggestions').html(sugHtml);
+
+            $('#reportContent').show();
+            $('#exportReportBtn').show();
+
+            layer.msg('报告生成成功');
+        }
+
+        function exportReport() {
+            if (!currentReportData) {
+                layer.msg('请先生成报告');
+                return;
+            }
+
+            var md = '# ' + currentReportData.task_name + ' - 评测报告\n\n';
+            md += '**生成时间**: ' + currentReportData.created_at + '\n\n';
+            md += '## 概述\n\n' + currentReportData.summary + '\n\n';
+            md += '**综合优胜**: ' + currentReportData.overall_winner + '\n\n';
+            md += '## 模型对比\n\n';
+            md += '| 模型 | Precision | Recall | F1 | Accuracy | NDCG |\n';
+            md += '|------|-----------|--------|----|----------|------|\n';
+            currentReportData.model_comparison.forEach(function(m) {
+                md += '| ' + m.model_name + ' | ' + formatNumber(m.precision) + ' | ' + formatNumber(m.recall) + ' | ' + formatNumber(m.f1_score) + ' | ' + formatNumber(m.accuracy) + ' | ' + formatNumber(m.ndcg) + ' |\n';
+            });
+            md += '\n## 错误分析\n\n';
+            md += currentReportData.error_analysis + '\n\n';
+            md += '## 改进建议\n\n';
+            currentReportData.improvement_suggestions.forEach(function(s, i) {
+                md += (i + 1) + '. ' + s + '\n';
+            });
+
+            var blob = new Blob([md], { type: 'text/markdown' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = currentReportData.task_name + '-评测报告.md';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            layer.msg('报告已导出');
+        }
+
+        function showNewTaskDialog() {
+            layer.open({
+                type: 1,
+                title: '新建评测任务',
+                area: ['500px', '450px'],
+                content: '<div style="padding: 20px;">' +
+                    '<form class="layui-form">' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">任务名称</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <input type="text" id="newTaskName" placeholder="请输入任务名称" class="layui-input">' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">任务描述</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <textarea id="newTaskDesc" placeholder="请输入任务描述" class="layui-textarea"></textarea>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">评测类型</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <select id="newTaskType" class="layui-select">' +
+                    '        <option value="case_retrieval">案例检索</option>' +
+                    '        <option value="law_reference">法规引用</option>' +
+                    '        <option value="contract_review">合同审查</option>' +
+                    '        <option value="qa">法律问答</option>' +
+                    '      </select>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">数据集</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <select id="newTaskDataset" class="layui-select">' +
+                    '        <option value="ds-bench-001">LexBench 案例检索基准 v1.0</option>' +
+                    '        <option value="ds-bench-002">LexBench 法规引用基准 v1.0</option>' +
+                    '        <option value="ds-bench-003">LexBench 合同审查基准 v1.0</option>' +
+                    '        <option value="ds-bench-004">LexBench 法律问答基准 v1.0</option>' +
+                    '      </select>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">评测模型</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <input type="text" id="newTaskModels" placeholder="模型ID，多个用逗号分隔" class="layui-input" value="mv-001,mv-002">' +
+                    '    </div>' +
+                    '  </div>' +
+                    '</form>' +
+                    '</div>',
+                btn: ['创建', '取消'],
+                yes: function(index) {
+                    var name = $('#newTaskName').val();
+                    if (!name) {
+                        layer.msg('请输入任务名称');
+                        return;
+                    }
+                    layer.close(index);
+                    layer.msg('任务创建成功', { icon: 1 });
+                    loadTasks();
+                }
+            });
+        }
+
+        $('#newTaskBtn').on('click', showNewTaskDialog);
+        $('#refreshTasksBtn').on('click', loadTasks);
+        $('#taskStatusFilter').on('change', loadTasks);
+
+        $('#newDatasetBtn').on('click', function() {
+            layer.open({
+                type: 1,
+                title: '创建数据集',
+                area: ['500px', '400px'],
+                content: '<div style="padding: 20px;">' +
+                    '<form class="layui-form">' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">数据集名称</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <input type="text" id="newDatasetName" placeholder="请输入数据集名称" class="layui-input">' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">描述</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <textarea id="newDatasetDesc" placeholder="请输入描述" class="layui-textarea"></textarea>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-form-item">' +
+                    '    <label class="layui-form-label">任务类型</label>' +
+                    '    <div class="layui-input-block">' +
+                    '      <select id="newDatasetType" class="layui-select">' +
+                    '        <option value="case_retrieval">案例检索</option>' +
+                    '        <option value="law_reference">法规引用</option>' +
+                    '        <option value="contract_review">合同审查</option>' +
+                    '        <option value="qa">法律问答</option>' +
+                    '      </select>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '</form>' +
+                    '</div>',
+                btn: ['创建', '取消'],
+                yes: function(index) {
+                    var name = $('#newDatasetName').val();
+                    if (!name) {
+                        layer.msg('请输入数据集名称');
+                        return;
+                    }
+                    layer.close(index);
+                    layer.msg('数据集创建成功', { icon: 1 });
+                    loadDatasets();
+                }
+            });
+        });
+
+        $('#generateDatasetBtn').on('click', function() {
+            layer.prompt({
+                title: '生成评测用例数量',
+                value: '100'
+            }, function(value, index) {
+                layer.close(index);
+                layer.msg('已生成 ' + value + ' 条评测用例', { icon: 1 });
+            });
+        });
+
+        $('#datasetTypeFilter').on('change', loadDatasets);
+
+        $('#loadComparisonBtn').on('click', function() {
+            var taskId = $('#compareTaskSelect').val();
+            loadComparison(taskId);
+        });
+
+        $('#loadErrorsBtn').on('click', function() {
+            var taskId = $('#errorTaskSelect').val();
+            var errorType = $('#errorTypeFilter').val();
+            loadErrors(taskId, errorType);
+        });
+
+        $('#generateReportBtn').on('click', function() {
+            var taskId = $('#reportTaskSelect').val();
+            generateReport(taskId);
+        });
+
+        $('#exportReportBtn').on('click', exportReport);
+
+        window.viewTaskResults = function(taskId) {
+            element.tabChange('evalTabs', '2');
+            $('#compareTaskSelect').val(taskId);
+            form.render('select');
+            loadComparison(taskId);
+        };
+
+        window.generateTaskReport = function(taskId) {
+            element.tabChange('evalTabs', '4');
+            $('#reportTaskSelect').val(taskId);
+            form.render('select');
+            generateReport(taskId);
+        };
+
+        window.runTask = function(taskId) {
+            layer.msg('评测任务已启动', { icon: 1 });
+            loadTasks();
+        };
+
+        loadTasks();
+        loadDatasets();
+        loadTaskSelects();
+    });
+    </script>
+</body>
+</html>

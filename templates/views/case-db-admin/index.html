@@ -1,0 +1,1091 @@
+<!--
+  判例库管理 - 前端视图
+  提供数据概览、标签管理、导入导出、质量报告、索引管理等功能
+-->
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 bg-bg" id="view-case-db-admin" data-view-source="case-db-admin/index.html">
+<style>
+  .cdb-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #E5E6EB;
+    transition: all 0.2s;
+  }
+  .cdb-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+  .cdb-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cdb-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1D2129;
+    line-height: 1.2;
+  }
+  .cdb-stat-label {
+    font-size: 12px;
+    color: #86909C;
+    margin-top: 4px;
+  }
+  .cdb-tab-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #4E5969;
+  }
+  .cdb-tab-btn.active {
+    background: #165DFF;
+    color: white;
+  }
+  .cdb-tab-btn:not(.active):hover {
+    background: #F2F3F5;
+  }
+  .cdb-section-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E6EB;
+    overflow: hidden;
+  }
+  .cdb-section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F2F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cdb-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  .cdb-section-body {
+    padding: 20px;
+  }
+  .cdb-tag-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .cdb-tag-item:hover {
+    background: #F7F8FA;
+  }
+  .cdb-tag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cdb-quality-bar {
+    height: 8px;
+    background: #F2F3F5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .cdb-quality-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .cdb-progress-ring {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .cdb-issue-item {
+    padding: 10px 12px;
+    border-left: 3px solid #F53F3F;
+    background: #FFECE8;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 8px;
+  }
+  .cdb-suggestion-item {
+    padding: 10px 12px;
+    border-left: 3px solid #00B42A;
+    background: #E8FFEA;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 8px;
+  }
+  .cdb-import-area {
+    border: 2px dashed #C9CDD4;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .cdb-import-area:hover {
+    border-color: #165DFF;
+    background: #F2F6FF;
+  }
+  .cdb-index-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #F7F8FA;
+    margin-bottom: 8px;
+  }
+  .cdb-index-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .cdb-chart-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding-top: 10px;
+  }
+  .cdb-chart-bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .cdb-chart-bar-fill {
+    width: 100%;
+    background: linear-gradient(180deg, #165DFF, #4080FF);
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: height 0.5s ease;
+  }
+  .cdb-chart-bar-label {
+    font-size: 10px;
+    color: #86909C;
+  }
+</style>
+
+<div class="max-w-7xl mx-auto w-full space-y-4">
+  <!-- 头部区域 -->
+  <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0">
+    <div class="cdb-section-header">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20">
+          <iconify-icon class="text-xl text-white" icon="mdi:database-cog"></iconify-icon>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-fg-primary">判例库管理</h1>
+          <p class="text-[11px] text-fg-tertiary">数据质量监控、标签体系管理、索引维护</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="refreshCaseDbStats()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-fg-secondary hover:text-brand hover:bg-brand/5 rounded-lg transition-all">
+          <iconify-icon icon="mdi:refresh"></iconify-icon>
+          <span>刷新</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" id="cdb-stats-cards">
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="0" data-delay="0.05">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value" id="cdb-total-cases">35,000</div>
+          <div class="cdb-stat-label">案件总数</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #E8F3FF; color: #165DFF;">
+          <iconify-icon icon="mdi:file-document-multiple-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100 flex items-center gap-1 text-[11px] text-green-600">
+        <iconify-icon icon="mdi:trending-up" class="text-xs"></iconify-icon>
+        <span>较上月 +12.5%</span>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="1" data-delay="0.1">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value" id="cdb-total-tags">28</div>
+          <div class="cdb-stat-label">标签数量</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #F9F0FF; color: #722ED1;">
+          <iconify-icon icon="mdi:tag-multiple-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100 flex items-center gap-1 text-[11px] text-fg-tertiary">
+        <span>4种标签类型</span>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="2" data-delay="0.15">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value" id="cdb-avg-quality">88.3</div>
+          <div class="cdb-stat-label">平均质量分</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #E8FFEA; color: #00B42A;">
+          <iconify-icon icon="mdi:star-check-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100">
+        <div class="cdb-quality-bar">
+          <div class="cdb-quality-fill" style="width: 88.3%; background: linear-gradient(90deg, #00B42A, #23C343);"></div>
+        </div>
+      </div>
+    </div>
+    <div class="cdb-stat-card" data-animate="scale-in" data-stagger-group="cdb-stats" data-stagger-index="3" data-delay="0.2">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="cdb-stat-value" id="cdb-high-quality">24,500</div>
+          <div class="cdb-stat-label">高质量数据</div>
+        </div>
+        <div class="cdb-stat-icon" style="background: #FFF7E8; color: #FF7D00;">
+          <iconify-icon icon="mdi:award-outline" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-100 flex items-center gap-1 text-[11px] text-fg-tertiary">
+        <span>占比 70%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 功能标签页 -->
+  <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.25">
+    <div class="cdb-section-header">
+      <div class="flex items-center gap-1 bg-bg rounded-xl p-1">
+        <div class="cdb-tab-btn active" data-tab="overview" onclick="switchCdbTab('overview')">数据概览</div>
+        <div class="cdb-tab-btn" data-tab="tags" onclick="switchCdbTab('tags')">标签管理</div>
+        <div class="cdb-tab-btn" data-tab="import" onclick="switchCdbTab('import')">导入导出</div>
+        <div class="cdb-tab-btn" data-tab="quality" onclick="switchCdbTab('quality')">质量报告</div>
+        <div class="cdb-tab-btn" data-tab="index" onclick="switchCdbTab('index')">索引管理</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 数据概览面板 -->
+  <div id="cdb-tab-overview" class="cdb-tab-panel">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- 案由分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">案由分布</h3>
+          <span class="text-xs text-fg-tertiary">Top 6</span>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3" id="cdb-cause-distribution">
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">合同纠纷</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 100%; background: #165DFF;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">12,580</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">劳动争议</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 78%; background: #00B42A;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">9,870</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">侵权纠纷</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 71%; background: #F53F3F;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">8,920</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">婚姻家庭</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 52%; background: #14C9C9;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">6,540</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">公司纠纷</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 45%; background: #FF7D00;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">5,670</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-fg-secondary w-24 flex-shrink-0">知识产权</span>
+              <div class="flex-1 cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 27%; background: #722ED1;"></div>
+              </div>
+              <span class="text-xs font-medium text-fg-primary w-16 text-right">3,450</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 年份分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">年份分布</h3>
+          <span class="text-xs text-fg-tertiary">近4年</span>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-chart-bar" id="cdb-year-chart">
+            <div class="cdb-chart-bar-item">
+              <div class="cdb-chart-bar-fill" style="height: 65%;"></div>
+              <span class="cdb-chart-bar-label">2023</span>
+            </div>
+            <div class="cdb-chart-bar-item">
+              <div class="cdb-chart-bar-fill" style="height: 80%;"></div>
+              <span class="cdb-chart-bar-label">2024</span>
+            </div>
+            <div class="cdb-chart-bar-item">
+              <div class="cdb-chart-bar-fill" style="height: 100%;"></div>
+              <span class="cdb-chart-bar-label">2025</span>
+            </div>
+            <div class="cdb-chart-bar-item">
+              <div class="cdb-chart-bar-fill" style="height: 71%;"></div>
+              <span class="cdb-chart-bar-label">2026</span>
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-4 gap-2 text-center">
+            <div>
+              <div class="text-sm font-bold text-fg-primary">4,030</div>
+              <div class="text-[10px] text-fg-tertiary">2023</div>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-fg-primary">9,870</div>
+              <div class="text-[10px] text-fg-tertiary">2024</div>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-fg-primary">12,340</div>
+              <div class="text-[10px] text-fg-tertiary">2025</div>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-fg-primary">8,760</div>
+              <div class="text-[10px] text-fg-tertiary">2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 法院层级分布 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">法院层级分布</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="grid grid-cols-5 gap-2 text-center">
+            <div class="p-3 rounded-xl bg-blue-50">
+              <div class="text-lg font-bold text-blue-600">156</div>
+              <div class="text-[10px] text-blue-500 mt-1">最高院</div>
+            </div>
+            <div class="p-3 rounded-xl bg-purple-50">
+              <div class="text-lg font-bold text-purple-600">2,340</div>
+              <div class="text-[10px] text-purple-500 mt-1">高院</div>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50">
+              <div class="text-lg font-bold text-green-600">12,580</div>
+              <div class="text-[10px] text-green-500 mt-1">中院</div>
+            </div>
+            <div class="p-3 rounded-xl bg-orange-50">
+              <div class="text-lg font-bold text-orange-600">18,760</div>
+              <div class="text-[10px] text-orange-500 mt-1">基层</div>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-50">
+              <div class="text-lg font-bold text-pink-600">1,164</div>
+              <div class="text-[10px] text-pink-500 mt-1">专门</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 数据来源 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.45">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">数据来源</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:web" class="text-blue-600 text-sm"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">中国裁判文书网</div>
+                  <div class="text-[10px] text-fg-tertiary">官方数据源</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-fg-primary">28,760</div>
+                <div class="text-[10px] text-fg-tertiary">82.2%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:book-open-variant" class="text-purple-600 text-sm"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">北大法宝</div>
+                  <div class="text-[10px] text-fg-tertiary">商业数据库</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-fg-primary">4,230</div>
+                <div class="text-[10px] text-fg-tertiary">12.1%</div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                  <iconify-icon icon="mdi:scale-balance" class="text-green-600 text-sm"></iconify-icon>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">威科先行</div>
+                  <div class="text-[10px] text-fg-tertiary">商业数据库</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-fg-primary">2,010</div>
+                <div class="text-[10px] text-fg-tertiary">5.7%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签管理面板 -->
+  <div id="cdb-tab-tags" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 标签分类 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">标签分类</h3>
+        </div>
+        <div class="cdb-section-body p-2">
+          <div class="space-y-1">
+            <div class="cdb-tag-item cursor-pointer bg-blue-50" onclick="selectTagType('cause')">
+              <div class="flex items-center gap-2">
+                <div class="cdb-tag-dot" style="background: #165DFF;"></div>
+                <span class="text-sm text-fg-primary font-medium">案由标签</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">12个</span>
+            </div>
+            <div class="cdb-tag-item cursor-pointer" onclick="selectTagType('procedure')">
+              <div class="flex items-center gap-2">
+                <div class="cdb-tag-dot" style="background: #00B42A;"></div>
+                <span class="text-sm text-fg-primary">程序标签</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">4个</span>
+            </div>
+            <div class="cdb-tag-item cursor-pointer" onclick="selectTagType('document')">
+              <div class="flex items-center gap-2">
+                <div class="cdb-tag-dot" style="background: #722ED1;"></div>
+                <span class="text-sm text-fg-primary">文书标签</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">4个</span>
+            </div>
+            <div class="cdb-tag-item cursor-pointer" onclick="selectTagType('custom')">
+              <div class="flex items-center gap-2">
+                <div class="cdb-tag-dot" style="background: #D91AD9;"></div>
+                <span class="text-sm text-fg-primary">自定义标签</span>
+              </div>
+              <span class="text-xs text-fg-tertiary">3个</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 标签列表 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title" id="cdb-tag-list-title">案由标签</h3>
+          <button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all">
+            <iconify-icon icon="mdi:plus"></iconify-icon>
+            <span>新建标签</span>
+          </button>
+        </div>
+        <div class="cdb-section-body" id="cdb-tag-list">
+          <div class="space-y-1">
+            <div class="cdb-tag-item border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="cdb-tag-dot" style="background: #165DFF;"></div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">合同纠纷</div>
+                  <div class="text-[10px] text-fg-tertiary">一级案由 · 12,580 案件</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cdb-tag-item border border-gray-100 ml-4">
+              <div class="flex items-center gap-3">
+                <div class="cdb-tag-dot" style="background: #165DFF; opacity: 0.7;"></div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">借款合同纠纷</div>
+                  <div class="text-[10px] text-fg-tertiary">二级案由 · 3,450 案件</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cdb-tag-item border border-gray-100 ml-8">
+              <div class="flex items-center gap-3">
+                <div class="cdb-tag-dot" style="background: #165DFF; opacity: 0.5;"></div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">民间借贷纠纷</div>
+                  <div class="text-[10px] text-fg-tertiary">三级案由 · 2,100 案件</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cdb-tag-item border border-gray-100 ml-8">
+              <div class="flex items-center gap-3">
+                <div class="cdb-tag-dot" style="background: #165DFF; opacity: 0.5;"></div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">金融借款合同纠纷</div>
+                  <div class="text-[10px] text-fg-tertiary">三级案由 · 1,350 案件</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cdb-tag-item border border-gray-100 ml-4">
+              <div class="flex items-center gap-3">
+                <div class="cdb-tag-dot" style="background: #165DFF; opacity: 0.7;"></div>
+                <div>
+                  <div class="text-sm font-medium text-fg-primary">买卖合同纠纷</div>
+                  <div class="text-[10px] text-fg-tertiary">二级案由 · 2,890 案件</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="p-1.5 hover:bg-gray-100 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:pencil-outline" class="text-fg-tertiary text-sm"></iconify-icon>
+                </button>
+                <button class="p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                  <iconify-icon icon="mdi:trash-outline" class="text-red-500 text-sm"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入导出面板 -->
+  <div id="cdb-tab-import" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- 批量导入 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">批量导入</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-import-area" onclick="document.getElementById('cdb-import-file').click()">
+            <input type="file" id="cdb-import-file" class="hidden" accept=".json,.csv,.xlsx" onchange="handleImportFile(this)"/>
+            <iconify-icon icon="mdi:cloud-upload-outline" class="text-4xl text-fg-tertiary mb-3"></iconify-icon>
+            <p class="text-sm font-medium text-fg-primary mb-1">点击或拖拽文件到此处</p>
+            <p class="text-xs text-fg-tertiary">支持 JSON、CSV、Excel 格式</p>
+          </div>
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">自动去重</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-bg-border text-brand focus:ring-brand/20"/>
+                <span class="text-sm text-fg-secondary">结构化解析</span>
+              </label>
+            </div>
+            <button onclick="startImport()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:upload"></iconify-icon>
+              <span>开始导入</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导出数据 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">数据导出</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">导出格式</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10">
+                <option>JSON 格式</option>
+                <option>CSV 格式</option>
+                <option>Excel 格式</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">数据范围</label>
+              <select class="w-full bg-bg border border-bg-border rounded-xl px-3 py-2 text-sm text-fg-primary focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10">
+                <option>全部数据</option>
+                <option>按筛选条件</option>
+                <option>指定时间段</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-fg-secondary mb-1.5">包含字段</label>
+              <div class="flex flex-wrap gap-2">
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  基本信息
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  当事人
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" checked class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  裁判结果
+                </label>
+                <label class="flex items-center gap-1.5 px-2.5 py-1 bg-bg rounded-lg cursor-pointer text-xs text-fg-secondary">
+                  <input type="checkbox" class="w-3.5 h-3.5 rounded border-bg-border text-brand"/>
+                  全文
+                </label>
+              </div>
+            </div>
+            <button onclick="startExport()" class="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:download"></iconify-icon>
+              <span>导出数据</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 导入历史 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">导入历史</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-xs text-fg-tertiary border-b border-gray-100">
+                  <th class="pb-3 font-medium">文件名</th>
+                  <th class="pb-3 font-medium">格式</th>
+                  <th class="pb-3 font-medium">总数</th>
+                  <th class="pb-3 font-medium">成功</th>
+                  <th class="pb-3 font-medium">失败</th>
+                  <th class="pb-3 font-medium">状态</th>
+                  <th class="pb-3 font-medium">时间</th>
+                </tr>
+              </thead>
+              <tbody class="text-xs">
+                <tr class="border-b border-gray-50">
+                  <td class="py-3 text-fg-primary">cases_2026_03.json</td>
+                  <td class="py-3 text-fg-secondary">JSON</td>
+                  <td class="py-3 text-fg-primary">1,250</td>
+                  <td class="py-3 text-green-600">1,238</td>
+                  <td class="py-3 text-red-500">12</td>
+                  <td class="py-3"><span class="cdb-index-status bg-green-100 text-green-700">已完成</span></td>
+                  <td class="py-3 text-fg-tertiary">2026-03-15 14:30</td>
+                </tr>
+                <tr class="border-b border-gray-50">
+                  <td class="py-3 text-fg-primary">cases_batch_02.csv</td>
+                  <td class="py-3 text-fg-secondary">CSV</td>
+                  <td class="py-3 text-fg-primary">856</td>
+                  <td class="py-3 text-green-600">856</td>
+                  <td class="py-3 text-red-500">0</td>
+                  <td class="py-3"><span class="cdb-index-status bg-green-100 text-green-700">已完成</span></td>
+                  <td class="py-3 text-fg-tertiary">2026-03-10 09:15</td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-fg-primary">ip_cases.xlsx</td>
+                  <td class="py-3 text-fg-secondary">Excel</td>
+                  <td class="py-3 text-fg-primary">340</td>
+                  <td class="py-3 text-green-600">328</td>
+                  <td class="py-3 text-red-500">12</td>
+                  <td class="py-3"><span class="cdb-index-status bg-green-100 text-green-700">已完成</span></td>
+                  <td class="py-3 text-fg-tertiary">2026-03-05 16:45</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 质量报告面板 -->
+  <div id="cdb-tab-quality" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 质量总览 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">质量总览</h3>
+        </div>
+        <div class="cdb-section-body text-center">
+          <div class="cdb-progress-ring mx-auto mb-4" style="background: conic-gradient(#00B42A 0deg 318deg, #F2F3F5 318deg 360deg);">
+            <div class="w-[90px] h-[90px] rounded-full bg-white flex flex-col items-center justify-center">
+              <span class="text-2xl font-bold text-fg-primary">88.3</span>
+              <span class="text-[10px] text-fg-tertiary">平均分</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-green-50">
+              <div class="text-base font-bold text-green-600">70%</div>
+              <div class="text-[10px] text-green-500">优秀</div>
+            </div>
+            <div class="p-2 rounded-lg bg-yellow-50">
+              <div class="text-base font-bold text-yellow-600">25%</div>
+              <div class="text-[10px] text-yellow-500">良好</div>
+            </div>
+            <div class="p-2 rounded-lg bg-red-50">
+              <div class="text-base font-bold text-red-500">5%</div>
+              <div class="text-[10px] text-red-400">待改进</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 质量维度 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">质量维度分析</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="space-y-4">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-fg-primary">完整性</span>
+                <span class="text-sm font-bold text-blue-600">85.6%</span>
+              </div>
+              <div class="cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 85.6%; background: linear-gradient(90deg, #165DFF, #4080FF);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">字段完整性、信息完整度</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-fg-primary">准确性</span>
+                <span class="text-sm font-bold text-green-600">92.3%</span>
+              </div>
+              <div class="cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 92.3%; background: linear-gradient(90deg, #00B42A, #23C343);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">数据准确率、错误率</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-fg-primary">标准化</span>
+                <span class="text-sm font-bold text-purple-600">88.7%</span>
+              </div>
+              <div class="cdb-quality-bar">
+                <div class="cdb-quality-fill" style="width: 88.7%; background: linear-gradient(90deg, #722ED1, #9B61E5);"></div>
+              </div>
+              <p class="text-[11px] text-fg-tertiary mt-1">格式统一、命名规范</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主要问题 -->
+      <div class="lg:col-span-2 cdb-section-card" data-animate="fade-in-up" data-delay="0.4">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">主要问题</h3>
+          <span class="text-xs text-red-500 font-medium">Top 5</span>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-issue-item">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-red-700">缺少法律依据字段</span>
+              <span class="text-xs text-red-500 font-medium">1,256 条</span>
+            </div>
+            <p class="text-xs text-red-600">建议：补充引用法条信息，提升案例可参考性</p>
+          </div>
+          <div class="cdb-issue-item">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-red-700">审判人员信息缺失</span>
+              <span class="text-xs text-red-500 font-medium">892 条</span>
+            </div>
+            <p class="text-xs text-red-600">建议：补充合议庭成员、书记员信息</p>
+          </div>
+          <div class="cdb-issue-item">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-medium text-red-700">涉案金额缺失</span>
+              <span class="text-xs text-red-500 font-medium">567 条</span>
+            </div>
+            <p class="text-xs text-red-600">建议：提取判决书中的金额信息</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 改进建议 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.45">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">改进建议</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-suggestion-item">
+            <p class="text-sm font-medium text-green-700">增强文书解析能力</p>
+            <p class="text-xs text-green-600 mt-1">优化 NLP 模型，提高字段提取准确率</p>
+          </div>
+          <div class="cdb-suggestion-item">
+            <p class="text-sm font-medium text-green-700">建立数据审核机制</p>
+            <p class="text-xs text-green-600 mt-1">引入人工审核流程，确保高质量数据</p>
+          </div>
+          <div class="cdb-suggestion-item">
+            <p class="text-sm font-medium text-green-700">完善数据补全方案</p>
+            <p class="text-xs text-green-600 mt-1">多数据源交叉验证，自动补全缺失字段</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 索引管理面板 -->
+  <div id="cdb-tab-index" class="cdb-tab-panel hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- 索引状态 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.3">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">索引状态</h3>
+          <button onclick="reindexAll()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all">
+            <iconify-icon icon="mdi:refresh"></iconify-icon>
+            <span>重建全部</span>
+          </button>
+        </div>
+        <div class="cdb-section-body">
+          <div class="cdb-index-item">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                <iconify-icon icon="mdi:format-text" class="text-blue-600 text-sm"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-fg-primary">全文索引</div>
+                <div class="text-[10px] text-fg-tertiary">35,000 文档</div>
+              </div>
+            </div>
+            <span class="cdb-index-status bg-green-100 text-green-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+              正常
+            </span>
+          </div>
+          <div class="cdb-index-item">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                <iconify-icon icon="mdi:tag-outline" class="text-purple-600 text-sm"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-fg-primary">案由索引</div>
+                <div class="text-[10px] text-fg-tertiary">35,000 文档</div>
+              </div>
+            </div>
+            <span class="cdb-index-status bg-green-100 text-green-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+              正常
+            </span>
+          </div>
+          <div class="cdb-index-item">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                <iconify-icon icon="mdi:domain" class="text-green-600 text-sm"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-fg-primary">法院索引</div>
+                <div class="text-[10px] text-fg-tertiary">35,000 文档</div>
+              </div>
+            </div>
+            <span class="cdb-index-status bg-green-100 text-green-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+              正常
+            </span>
+          </div>
+          <div class="cdb-index-item">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                <iconify-icon icon="mdi:calendar-outline" class="text-orange-600 text-sm"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-fg-primary">日期索引</div>
+                <div class="text-[10px] text-fg-tertiary">35,000 文档</div>
+              </div>
+            </div>
+            <span class="cdb-index-status bg-green-100 text-green-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+              正常
+            </span>
+          </div>
+          <div class="cdb-index-item">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
+                <iconify-icon icon="mdi:tag-multiple-outline" class="text-pink-600 text-sm"></iconify-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-fg-primary">标签索引</div>
+                <div class="text-[10px] text-fg-tertiary">35,000 文档</div>
+              </div>
+            </div>
+            <span class="cdb-index-status bg-yellow-100 text-yellow-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-yellow-600"></span>
+              同步中
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 去重处理 -->
+      <div class="cdb-section-card" data-animate="fade-in-up" data-delay="0.35">
+        <div class="cdb-section-header">
+          <h3 class="cdb-section-title">去重处理</h3>
+        </div>
+        <div class="cdb-section-body">
+          <div class="p-4 bg-bg rounded-xl mb-4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-fg-primary">相似度阈值</span>
+              <span class="text-sm font-bold text-blue-600" id="cdb-dedupe-threshold-value">85%</span>
+            </div>
+            <input type="range" min="50" max="100" value="85" class="w-full" oninput="document.getElementById('cdb-dedupe-threshold-value').innerText = this.value + '%'"/>
+            <div class="flex justify-between text-[10px] text-fg-tertiary mt-1">
+              <span>50%</span>
+              <span>75%</span>
+              <span>100%</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span class="text-sm text-fg-secondary">预计重复数量</span>
+              <span class="text-sm font-bold text-orange-600">~156 条</span>
+            </div>
+            <button onclick="startDedupe()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+              <iconify-icon icon="mdi:delete-sweep-outline"></iconify-icon>
+              <span>开始去重</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var currentCdbTab = 'overview';
+
+function switchCdbTab(tabName) {
+  currentCdbTab = tabName;
+  var tabBtns = document.querySelectorAll('.cdb-tab-btn');
+  for (var i = 0; i < tabBtns.length; i++) {
+    if (tabBtns[i].getAttribute('data-tab') === tabName) {
+      tabBtns[i].classList.add('active');
+    } else {
+      tabBtns[i].classList.remove('active');
+    }
+  }
+  var panels = document.querySelectorAll('.cdb-tab-panel');
+  for (var j = 0; j < panels.length; j++) {
+    panels[j].classList.add('hidden');
+  }
+  var targetPanel = document.getElementById('cdb-tab-' + tabName);
+  if (targetPanel) {
+    targetPanel.classList.remove('hidden');
+  }
+}
+
+function selectTagType(type) {
+  var items = document.querySelectorAll('#cdb-tab-tags .cdb-tag-item.cursor-pointer');
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.remove('bg-blue-50');
+  }
+  event.currentTarget.classList.add('bg-blue-50');
+  var titles = {
+    cause: '案由标签',
+    procedure: '程序标签',
+    document: '文书标签',
+    custom: '自定义标签'
+  };
+  var titleEl = document.getElementById('cdb-tag-list-title');
+  if (titleEl) {
+    titleEl.innerText = titles[type] || '标签列表';
+  }
+}
+
+function refreshCaseDbStats() {
+  showToast('刷新中...', 'info');
+  setTimeout(function() {
+    showToast('数据已更新', 'success');
+  }, 800);
+}
+
+function handleImportFile(input) {
+  if (input.files && input.files.length > 0) {
+    showToast('已选择文件: ' + input.files[0].name, 'info');
+  }
+}
+
+function startImport() {
+  showToast('开始导入...', 'info');
+  setTimeout(function() {
+    showToast('导入完成：成功 1238 条，失败 12 条', 'success');
+  }, 1500);
+}
+
+function startExport() {
+  showToast('正在生成导出文件...', 'info');
+  setTimeout(function() {
+    showToast('导出完成，文件已准备好下载', 'success');
+  }, 1000);
+}
+
+function startDedupe() {
+  showToast('正在进行去重分析...', 'info');
+  setTimeout(function() {
+    showToast('去重完成：发现 156 条重复数据', 'success');
+  }, 1500);
+}
+
+function reindexAll() {
+  showToast('正在重建索引...', 'info');
+  setTimeout(function() {
+    showToast('索引重建完成', 'success');
+  }, 2000);
+}
+</script>

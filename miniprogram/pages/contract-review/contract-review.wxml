@@ -1,0 +1,111 @@
+<view class="container">
+  <view class="input-section card" wx:if="{{!reviewResult}}">
+    <view class="section-title">合同信息</view>
+    
+    <view class="form-item">
+      <text class="form-label">合同类型</text>
+      <picker 
+        mode="selector" 
+        range="{{contractTypes}}" 
+        bindchange="onContractTypeChange"
+      >
+        <view class="picker-value">
+          {{contractType || '请选择合同类型'}}
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">审查立场</text>
+      <picker 
+        mode="selector" 
+        range="{{stances}}" 
+        bindchange="onStanceChange"
+      >
+        <view class="picker-value">
+          {{stance}}
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">合同内容</text>
+      <textarea 
+        class="contract-textarea"
+        placeholder="请粘贴合同文本，或点击下方按钮上传图片/文件"
+        value="{{contractText}}"
+        bindinput="onTextInput"
+        auto-height
+        maxlength="50000"
+      />
+    </view>
+
+    <view class="upload-buttons">
+      <view class="upload-btn" bindtap="chooseImage">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">拍照/图片</text>
+      </view>
+      <view class="upload-btn" bindtap="chooseFile">
+        <text class="upload-icon">📁</text>
+        <text class="upload-text">上传文件</text>
+      </view>
+    </view>
+
+    <button 
+      class="btn-primary submit-btn" 
+      bindtap="startReview"
+      loading="{{isAnalyzing}}"
+      disabled="{{isAnalyzing}}"
+    >
+      {{isAnalyzing ? '审查中...' : '开始审查'}}
+    </button>
+  </view>
+
+  <view class="result-section" wx:if="{{reviewResult}}">
+    <view class="result-header card">
+      <view class="result-title-row">
+        <text class="result-title">审查结果</text>
+        <view class="score-badge">
+          <text class="score-label">风险评分</text>
+          <text class="score-value">{{reviewResult.risk_score || 0}}</text>
+        </view>
+      </view>
+      <text class="result-subtitle">{{reviewResult.contract_type || contractType}}</text>
+    </view>
+
+    <view class="summary-section card">
+      <text class="section-title">审查摘要</text>
+      <text class="summary-text">{{reviewResult.summary || '已完成合同审查，发现以下风险点。'}}</text>
+    </view>
+
+    <view class="risks-section">
+      <view class="section-header">
+        <text class="section-title">风险点</text>
+        <text class="risk-count">{{reviewResult.risks?.length || 0}} 项</text>
+      </view>
+      
+      <view 
+        class="risk-item card" 
+        wx:for="{{reviewResult.risks}}" 
+        wx:key="index"
+        data-index="{{index}}"
+        bindtap="viewRiskDetail"
+      >
+        <view class="risk-header">
+          <view class="risk-level badge-danger badge" wx:if="{{item.level === 'high'}}">高风险</view>
+          <view class="risk-level badge-warning badge" wx:elif="{{item.level === 'medium'}}">中风险</view>
+          <view class="risk-level badge badge-success" wx:else>低风险</view>
+          <text class="risk-title">{{item.title || item.clause || '风险点'}}</text>
+        </view>
+        <text class="risk-desc line-clamp-2">{{item.description || item.detail}}</text>
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <button class="btn-outline" bindtap="resetReview">重新审查</button>
+      <button class="btn-primary" bindtap="exportReport">导出报告</button>
+    </view>
+  </view>
+</view>

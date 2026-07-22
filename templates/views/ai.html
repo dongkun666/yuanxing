@@ -1,224 +1,463 @@
-﻿<div class="view-content hidden flex-1 flex flex-col overflow-hidden bg-bg" id="view-ai">
-<!-- ====== 新对话 ====== -->
-<div class="flex-1 flex flex-col overflow-hidden" id="aiViewChat">
-<!-- 顶部标题 -->
-<div class="bg-white border-b border-bg-border px-5 py-2.5 flex items-center justify-between flex-none">
-<h2 class="text-sm font-semibold text-fg-primary">新对话</h2>
-<button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="startNewChat()">
-<iconify-icon class="text-xs" icon="mdi:plus"></iconify-icon>
+<div class="view-content hidden flex-1 flex flex-col overflow-hidden bg-bg" id="view-ai">
+<div class="flex-1 flex overflow-hidden">
+  <!-- 侧边栏：历史会话 -->
+  <div class="hidden lg:flex flex-col w-72 border-r border-bg-border bg-white flex-none" data-animate="slide-in-left" data-delay="0.05">
+    <!-- 侧边栏头部 -->
+    <div class="p-4 border-b border-bg-border">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand to-wiki flex items-center justify-center shadow-md shadow-brand/20">
+            <iconify-icon class="text-base text-white" icon="mdi:robot"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-fg-primary">LexPrime AI</h3>
+            <p class="text-[10px] text-fg-tertiary">智能法律助手</p>
+          </div>
+        </div>
+        <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="新建对话" onclick="startNewChat()">
+          <iconify-icon class="text-base" icon="mdi:plus"></iconify-icon>
+        </button>
+      </div>
+      <button class="w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="startNewChat()">
+        <iconify-icon class="text-base" icon="mdi:message-plus-outline"></iconify-icon>
         新建对话
       </button>
-</div>
-<!-- 消息列表 -->
-<div class="flex-1 overflow-y-auto px-6 py-4 space-y-4 max-w-4xl mx-auto w-full" id="aiViewMessages">
-<!-- AI 问候 -->
-<div class="flex gap-3">
-<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
-</div>
-<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-bg-border">
-<p class="text-sm leading-relaxed text-fg-secondary">您好！我是 <span class="font-semibold text-brand">LexPrime AI</span> 助手。我可以帮您生成法律文书、检索类案、分析案情、管理证据等。请问有什么可以帮您的？</p>
-<span class="text-[10px] text-fg-tertiary mt-2 block">刚刚</span>
-</div>
-</div>
-<!-- 用户消息 -->
-<div class="flex gap-3 justify-end">
-<div class="max-w-[70%] bg-brand rounded-xl p-4 shadow-sm">
-<p class="text-sm leading-relaxed text-white">帮我写一份买卖合同纠纷的起诉状</p>
-<span class="text-[10px] text-white/70 mt-2 block text-right">刚刚</span>
-</div>
-<div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:account"></iconify-icon>
-</div>
-</div>
-<!-- AI 回复 -->
-<div class="flex gap-3">
-<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#165DFF] to-[#6C5CE7] flex items-center justify-center text-white flex-shrink-0">
-<iconify-icon class="text-sm" icon="mdi:robot"></iconify-icon>
-</div>
-<div class="max-w-[70%] bg-white rounded-xl p-4 shadow-sm border border-bg-border">
-<p class="text-sm leading-relaxed text-fg-secondary">好的！请先告诉我以下信息：</p>
-<ol class="text-sm leading-relaxed text-fg-secondary mt-2 pl-4 list-decimal space-y-1">
-<li>原告和被告的基本信息</li>
-<li>合同签订时间及主要条款</li>
-<li>违约事实的具体描述</li>
-<li>诉讼请求金额及计算依据</li>
-</ol>
-<span class="text-[10px] text-fg-tertiary mt-2 block">刚刚 · 思考中...</span>
-</div>
-</div>
-</div>
-<!-- 输入区 -->
-<div class="flex-none px-6 pb-4 pt-2 max-w-4xl mx-auto w-full">
-<div class="bg-white rounded-xl border border-bg-border p-3 shadow-sm">
-<textarea id="aiChatInput" class="w-full bg-transparent border-0 outline-none text-sm text-fg-primary placeholder-[#86909C] resize-none focus:ring-0 leading-relaxed" placeholder="输入您的问题，支持多行输入... (Enter 发送, Shift+Enter 换行)" rows="2" onkeydown="handleAIInputKeydown(event)"></textarea>
-<div class="flex items-center justify-between mt-2 pt-2 border-t border-bg-border">
-<div class="flex items-center gap-2">
-<button class="w-7 h-7 rounded-md hover:bg-bg flex items-center justify-center text-fg-tertiary transition-colors" title="上传文件">
-<iconify-icon class="text-sm" icon="mdi:paperclip"></iconify-icon>
-</button>
-<button class="w-7 h-7 rounded-md hover:bg-bg flex items-center justify-center text-fg-tertiary transition-colors" title="语音输入">
-<iconify-icon class="text-sm" icon="mdi:microphone"></iconify-icon>
-</button>
-</div>
-<button id="aiSendBtn" class="w-9 h-9 rounded-lg bg-brand hover:bg-brand-hover text-white flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onclick="sendAIMessage()">
-<iconify-icon id="aiSendIcon" class="text-sm" icon="mdi:send"></iconify-icon>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- ====== 技能（默认隐藏） ====== -->
-<div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewSkills">
-<div class="max-w-5xl mx-auto w-full">
-<h2 class="text-base font-semibold text-fg-primary mb-4">技能库</h2>
-<div class="grid grid-cols-3 gap-4">
-<!-- 技能卡片1 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:book-search-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">类案检索与裁判参考</h4>
-<p class="text-[10px] text-fg-tertiary">多维度检索，输出统计图表</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-<!-- 技能卡片2 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:book-open-page-variant-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">法律研究备忘录</h4>
-<p class="text-[10px] text-fg-tertiary">法条/类案/学术观点检索生成</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-<!-- 技能卡片3 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:currency-cny"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">民间借贷纠纷分析</h4>
-<p class="text-[10px] text-fg-tertiary">借条效力审查、合法利息计算</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-<!-- 技能卡片4 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:scale-balance"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">劳动争议仲裁辅助</h4>
-<p class="text-[10px] text-fg-tertiary">赔偿金计算、仲裁申请书生成</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-<!-- 技能卡片5 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:heart-broken-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">离婚纠纷财产分割</h4>
-<p class="text-[10px] text-fg-tertiary">共同财产梳理、分割方案计算</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-<!-- 技能卡片6 -->
-<div class="bg-white rounded-xl p-4 border border-bg-border hover:border-brand hover:shadow-sm transition-all cursor-default">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 rounded-xl bg-brand-tint3 text-brand flex items-center justify-center text-lg">
-<iconify-icon icon="mdi:file-document-check-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<h4 class="text-sm font-medium text-fg-primary">合同风险审查</h4>
-<p class="text-[10px] text-fg-tertiary">逐条审查、风险等级标注</p>
-</div>
-</div>
-<button class="text-xs text-white bg-brand hover:bg-brand-hover px-3 py-1.5 rounded-lg transition-colors w-full mt-1">运行</button>
-</div>
-</div>
-</div>
-</div>
-<!-- ====== 历史记录（默认隐藏） ====== -->
-<div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewHistory">
-<div class="max-w-3xl mx-auto w-full">
-<div class="flex items-center justify-between mb-4">
-<h2 class="text-base font-semibold text-fg-primary">历史记录</h2>
-</div>
-<div class="relative mb-4">
-<iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
-<input class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-bg-border bg-white text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/20 transition-all" oninput="filterAIHistory(this)" placeholder="搜索历史对话..." type="text"/>
-</div>
-<div class="space-y-1" id="aiHistoryList">
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle cursor-pointer transition-colors border border-transparent hover:border-bg-border" data-title="买卖合同纠纷起诉状起草" onclick="selectAIHistory(this)">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon icon="mdi:file-document-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary truncate">买卖合同纠纷起诉状起草</p>
-<p class="text-[10px] text-fg-tertiary">2026-06-10 14:30</p>
-</div>
-<iconify-icon class="text-fg-disabled text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
-</div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle cursor-pointer transition-colors border border-transparent hover:border-bg-border" data-title="民间借贷利息计算咨询" onclick="selectAIHistory(this)">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon icon="mdi:currency-cny"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary truncate">民间借贷利息计算咨询</p>
-<p class="text-[10px] text-fg-tertiary">2026-06-09 10:15</p>
-</div>
-<iconify-icon class="text-fg-disabled text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
-</div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle cursor-pointer transition-colors border border-transparent hover:border-bg-border" data-title="劳动争议仲裁申请分析" onclick="selectAIHistory(this)">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon icon="mdi:scale-balance"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary truncate">劳动争议仲裁申请分析</p>
-<p class="text-[10px] text-fg-tertiary">2026-06-08 16:00</p>
-</div>
-<iconify-icon class="text-fg-disabled text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
-</div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle cursor-pointer transition-colors border border-transparent hover:border-bg-border" data-title="股权转让合同审查" onclick="selectAIHistory(this)">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon icon="mdi:file-sign"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary truncate">股权转让合同审查</p>
-<p class="text-[10px] text-fg-tertiary">2026-06-07 09:30</p>
-</div>
-<iconify-icon class="text-fg-disabled text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
-</div>
-<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-bg-subtle cursor-pointer transition-colors border border-transparent hover:border-bg-border" data-title="离婚财产分割方案咨询" onclick="selectAIHistory(this)">
-<div class="w-9 h-9 rounded-lg bg-brand-tint3 text-brand flex items-center justify-center flex-shrink-0">
-<iconify-icon icon="mdi:heart-broken-outline"></iconify-icon>
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-medium text-fg-primary truncate">离婚财产分割方案咨询</p>
-<p class="text-[10px] text-fg-tertiary">2026-06-06 11:00</p>
-</div>
-<iconify-icon class="text-fg-disabled text-sm flex-none" icon="mdi:chevron-right"></iconify-icon>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- 会员订阅 -->
+    </div>
+    <!-- 搜索框 -->
+    <div class="px-4 py-3 border-b border-bg-border">
+      <div class="relative">
+        <iconify-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-tertiary text-sm" icon="mdi:magnify"></iconify-icon>
+        <input class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-bg-border bg-bg text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 focus:bg-white transition-all" oninput="filterAIHistory(this)" placeholder="搜索历史对话..." type="text"/>
+      </div>
+    </div>
+    <!-- 历史会话列表 -->
+    <div class="flex-1 overflow-y-auto px-3 py-2">
+      <p class="text-[10px] font-semibold text-fg-tertiary px-2 mb-2 mt-1">今天</p>
+      <div class="space-y-1" id="aiHistoryList">
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm ai-history-item active" data-title="买卖合同纠纷起诉状起草" onclick="selectAIHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-brand" icon="mdi:file-document-outline"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">买卖合同纠纷起诉状起草</p>
+            <p class="text-[10px] text-fg-tertiary">10:30 · 5 条消息</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm ai-history-item" data-title="民间借贷利息计算咨询" onclick="selectAIHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-urgent" icon="mdi:currency-cny"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">民间借贷利息计算咨询</p>
+            <p class="text-[10px] text-fg-tertiary">09:15 · 3 条消息</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+      </div>
+      <p class="text-[10px] font-semibold text-fg-tertiary px-2 mb-2 mt-4">昨天</p>
+      <div class="space-y-1">
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm ai-history-item" data-title="劳动争议仲裁申请分析" onclick="selectAIHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-wiki" icon="mdi:scale-balance"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">劳动争议仲裁申请分析</p>
+            <p class="text-[10px] text-fg-tertiary">16:00 · 8 条消息</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm ai-history-item" data-title="股权转让合同审查" onclick="selectAIHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-success" icon="mdi:file-sign"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">股权转让合同审查</p>
+            <p class="text-[10px] text-fg-tertiary">11:20 · 12 条消息</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+      </div>
+      <p class="text-[10px] font-semibold text-fg-tertiary px-2 mb-2 mt-4">更早</p>
+      <div class="space-y-1">
+        <div class="group flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-bg-subtle cursor-pointer transition-all duration-200 border border-transparent hover:border-bg-border hover:shadow-sm ai-history-item" data-title="离婚财产分割方案咨询" onclick="selectAIHistory(this)">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+            <iconify-icon class="text-xs text-pink-500" icon="mdi:heart-broken-outline"></iconify-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-fg-primary truncate">离婚财产分割方案咨询</p>
+            <p class="text-[10px] text-fg-tertiary">06-06 · 6 条消息</p>
+          </div>
+          <iconify-icon class="text-fg-disabled text-xs flex-none opacity-0 group-hover:opacity-100 transition-opacity" icon="mdi:chevron-right"></iconify-icon>
+        </div>
+      </div>
+    </div>
+    <!-- 侧边栏底部 -->
+    <div class="p-3 border-t border-bg-border">
+      <button class="w-full py-2 text-xs text-fg-secondary hover:text-brand hover:bg-bg-subtle rounded-lg transition-colors flex items-center justify-center gap-1.5" onclick="switchView('ai-doc')">
+        <iconify-icon class="text-sm" icon="mdi:file-document-edit-outline"></iconify-icon>
+        AI 文书生成
+      </button>
+    </div>
+  </div>
 
+  <!-- 主区域：对话 -->
+  <div class="flex-1 flex flex-col overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+    <!-- ====== 对话视图 ====== -->
+    <div class="flex-1 flex flex-col overflow-hidden" id="aiViewChat">
+      <!-- 顶部标题栏 -->
+      <div class="bg-white border-b border-bg-border px-4 py-3 flex items-center justify-between flex-none">
+        <div class="flex items-center gap-3">
+          <button class="lg:hidden w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary" onclick="toggleAISidebar()">
+            <iconify-icon class="text-base" icon="mdi:menu"></iconify-icon>
+          </button>
+          <div>
+            <h2 class="text-sm font-bold text-fg-primary">新对话</h2>
+            <p class="text-[10px] text-fg-tertiary">AI 智能法律助手 · 专业、高效、可靠</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="查看技能" onclick="switchAIView('skills')">
+            <iconify-icon class="text-base" icon="mdi:grid-view-outline"></iconify-icon>
+          </button>
+          <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-colors" title="历史记录" onclick="switchAIView('history')">
+            <iconify-icon class="text-base" icon="mdi:history"></iconify-icon>
+          </button>
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-lg transition-all duration-300 hover:-translate-y-0.5" onclick="startNewChat()">
+            <iconify-icon class="text-xs" icon="mdi:plus"></iconify-icon>
+            新建对话
+          </button>
+        </div>
+      </div>
 
+      <!-- 消息列表 -->
+      <div class="flex-1 overflow-y-auto px-4 py-6 space-y-5 max-w-4xl mx-auto w-full" id="aiViewMessages">
+        <!-- 欢迎空状态 -->
+        <div class="flex flex-col items-center justify-center py-8 text-center" id="aiWelcomeState">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand via-brand to-wiki flex items-center justify-center mb-5 shadow-xl shadow-brand/20">
+            <iconify-icon class="text-4xl text-white" icon="mdi:robot-happy"></iconify-icon>
+          </div>
+          <h2 class="text-xl font-bold text-fg-primary mb-2">下午好，张律师 👋</h2>
+          <p class="text-sm text-fg-secondary mb-6 max-w-md">我是 <span class="font-semibold text-brand">LexPrime AI</span> 法律助手，可以帮您起草文书、检索类案、分析案情、审查合同。请问有什么可以帮您的？</p>
+          
+          <!-- 快捷指令卡片 -->
+          <p class="text-xs font-semibold text-fg-tertiary mb-3 self-start">💡 试试这些快捷问题</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+            <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-brand/30 hover:shadow-lg hover:shadow-brand/10 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAsk('帮我写一份买卖合同纠纷的起诉状')">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <iconify-icon class="text-lg text-brand" icon="mdi:file-document-edit-outline"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0 text-left">
+                  <h4 class="text-sm font-semibold text-fg-primary mb-1">起草起诉状</h4>
+                  <p class="text-[11px] text-fg-tertiary">买卖合同纠纷起诉状模板生成</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-brand transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+              </div>
+            </div>
+            <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAsk('帮我审查这份合同的风险点')">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <iconify-icon class="text-lg text-wiki" icon="mdi:shield-search"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0 text-left">
+                  <h4 class="text-sm font-semibold text-fg-primary mb-1">合同风险审查</h4>
+                  <p class="text-[11px] text-fg-tertiary">逐条扫描风险点并给出建议</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-wiki transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+              </div>
+            </div>
+            <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAsk('帮我检索类似的判例')">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <iconify-icon class="text-lg text-success" icon="mdi:book-search-outline"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0 text-left">
+                  <h4 class="text-sm font-semibold text-fg-primary mb-1">类案检索</h4>
+                  <p class="text-[11px] text-fg-tertiary">查找相似判例和裁判观点</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-success transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+              </div>
+            </div>
+            <div class="group p-4 bg-white rounded-2xl border border-bg-border hover:border-orange-300 hover:shadow-lg hover:shadow-orange-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-1" onclick="quickAsk('帮我整理证据清单')">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-warning-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <iconify-icon class="text-lg text-urgent" icon="mdi:folder-multiple-outline"></iconify-icon>
+                </div>
+                <div class="flex-1 min-w-0 text-left">
+                  <h4 class="text-sm font-semibold text-fg-primary mb-1">证据清单整理</h4>
+                  <p class="text-[11px] text-fg-tertiary">按类型整理证据并标注证明目的</p>
+                </div>
+                <iconify-icon class="text-fg-disabled text-base flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-urgent transition-all translate-x-[-4px] group-hover:translate-x-0" icon="mdi:arrow-right"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 输入区 -->
+      <div class="flex-none px-4 pb-5 pt-2 max-w-4xl mx-auto w-full">
+        <div class="bg-white rounded-2xl border border-bg-border p-3 shadow-sm hover:shadow-md hover:border-brand/30 transition-all duration-300 focus-within:shadow-lg focus-within:shadow-brand/10 focus-within:border-brand/50">
+          <textarea id="aiChatInput" class="w-full bg-transparent border-0 outline-none text-sm text-fg-primary placeholder-[#86909C] resize-none focus:ring-0 leading-relaxed px-1 py-2" placeholder="输入您的法律问题，支持多行输入... (Enter 发送, Shift+Enter 换行)" rows="2" onkeydown="handleAIInputKeydown(event)"></textarea>
+          <div class="flex items-center justify-between mt-2 pt-2 border-t border-bg-border">
+            <div class="flex items-center gap-1">
+              <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="上传文件">
+                <iconify-icon class="text-base" icon="mdi:paperclip"></iconify-icon>
+              </button>
+              <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="语音输入">
+                <iconify-icon class="text-base" icon="mdi:microphone"></iconify-icon>
+              </button>
+              <button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-fg-tertiary hover:text-brand transition-all hover:shadow-sm" title="插入案件材料">
+                <iconify-icon class="text-base" icon="mdi:briefcase-outline"></iconify-icon>
+              </button>
+              <div class="w-px h-5 bg-bg-border mx-1"></div>
+              <span class="text-[10px] text-fg-tertiary">AI 生成内容仅供参考，建议律师审核</span>
+            </div>
+            <button id="aiSendBtn" class="w-10 h-10 rounded-xl bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/30 text-white flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0" onclick="sendAIMessage()">
+              <iconify-icon id="aiSendIcon" class="text-base" icon="mdi:send"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 技能视图 ====== -->
+    <div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewSkills">
+      <div class="max-w-5xl mx-auto w-full">
+        <div class="flex items-center justify-between mb-5" data-animate="fade-in-up" data-delay="0.1">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center shadow-md shadow-wiki/20">
+              <iconify-icon class="text-xl text-white" icon="mdi:sparkles"></iconify-icon>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-fg-primary">AI 技能库</h2>
+              <p class="text-[11px] text-fg-tertiary">专业法律技能，一键运行高效处理</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-brand/30 hover:shadow-xl hover:shadow-brand/10 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="0" data-delay="0.15">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-md shadow-brand/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:book-search-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">类案检索与裁判参考</h4>
+                <p class="text-[10px] text-fg-tertiary">多维度检索，输出统计图表</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">基于海量判例库，智能检索相似案例，提炼裁判规则，生成检索报告。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-tint text-brand font-medium">民商事</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">3 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-brand to-brand-hover hover:shadow-md hover:shadow-brand/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="1" data-delay="0.15">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-wiki flex items-center justify-center shadow-md shadow-wiki/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:book-open-page-variant-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">法律研究备忘录</h4>
+                <p class="text-[10px] text-fg-tertiary">法条/类案/学术观点检索生成</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">针对特定法律问题，全面检索法条、类案、学术观点，生成专业备忘录。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-wiki-tint text-wiki font-medium">研究</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">5 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-500 to-wiki hover:shadow-md hover:shadow-wiki/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-amber-300 hover:shadow-xl hover:shadow-amber-100/50 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="2" data-delay="0.15">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-urgent flex items-center justify-center shadow-md shadow-urgent/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:currency-cny"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">民间借贷纠纷分析</h4>
+                <p class="text-[10px] text-fg-tertiary">借条效力审查、合法利息计算</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">审查借条效力，计算合法利息，分析诉讼风险，给出处理建议。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-urgent-tint text-urgent font-medium">金融</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">2 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-amber-500 to-urgent hover:shadow-md hover:shadow-urgent/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="3" data-delay="0.2">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-md shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:scale-balance"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">劳动争议仲裁辅助</h4>
+                <p class="text-[10px] text-fg-tertiary">赔偿金计算、仲裁申请书生成</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">计算经济补偿、赔偿金、代通知金，自动生成仲裁申请书。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 font-medium">劳动</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">3 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:shadow-md hover:shadow-indigo-500/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-pink-300 hover:shadow-xl hover:shadow-pink-100/50 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="4" data-delay="0.2">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-md shadow-pink-500/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:heart-broken-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">离婚纠纷财产分割</h4>
+                <p class="text-[10px] text-fg-tertiary">共同财产梳理、分割方案计算</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">梳理夫妻共同财产，分析分割原则，提供多种分割方案对比。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-medium">婚姻家庭</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">4 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-pink-500 to-rose-500 hover:shadow-md hover:shadow-pink-500/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+          <div class="group bg-white rounded-2xl p-5 border border-bg-border hover:border-green-300 hover:shadow-xl hover:shadow-green-100/50 transition-all duration-300 cursor-default hover:-translate-y-1" data-animate="scale-in" data-stagger-group="ai-skills" data-stagger-index="5" data-delay="0.2">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-success flex items-center justify-center shadow-md shadow-success/20 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-xl text-white" icon="mdi:file-document-check-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-fg-primary">合同风险审查</h4>
+                <p class="text-[10px] text-fg-tertiary">逐条审查、风险等级标注</p>
+              </div>
+            </div>
+            <p class="text-xs text-fg-secondary mb-3 leading-relaxed">智能审查合同条款，标注风险等级，提供修改建议和法律依据。</p>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-success-tint text-success font-medium">合同</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">5 秒响应</span>
+            </div>
+            <button class="w-full py-2 text-xs font-semibold text-white bg-gradient-to-r from-green-500 to-success hover:shadow-md hover:shadow-success/20 rounded-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+              <iconify-icon class="text-xs" icon="mdi:play"></iconify-icon>
+              立即运行
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 历史记录视图 ====== -->
+    <div class="hidden flex-1 flex flex-col overflow-y-auto p-6" id="aiViewHistory">
+      <div class="max-w-3xl mx-auto w-full">
+        <div class="flex items-center justify-between mb-5" data-animate="fade-in-up" data-delay="0.1">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-brand flex items-center justify-center shadow-md shadow-brand/20">
+              <iconify-icon class="text-xl text-white" icon="mdi:history"></iconify-icon>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-fg-primary">历史对话</h2>
+              <p class="text-[11px] text-fg-tertiary">查看和管理您的历史对话记录</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative mb-5" data-animate="fade-in-up" data-delay="0.15">
+          <iconify-icon class="absolute left-4 top-1/2 -translate-y-1/2 text-fg-tertiary text-base" icon="mdi:magnify"></iconify-icon>
+          <input class="w-full pl-11 pr-4 py-2.5 text-sm rounded-xl border border-bg-border bg-white text-fg-primary placeholder-[#86909C] focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition-all" oninput="filterAIHistory(this)" placeholder="搜索历史对话..." type="text"/>
+        </div>
+        <div class="space-y-2" id="aiHistoryListView">
+          <div class="group bg-white rounded-2xl border border-bg-border p-4 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/10 transition-all duration-300 cursor-pointer hover:-translate-y-0.5" data-animate="fade-in-up" data-delay="0.2" onclick="selectAIHistory(this)" data-title="买卖合同纠纷起诉状起草">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-tint to-brand-tint2 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-brand" icon="mdi:file-document-outline"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary truncate">买卖合同纠纷起诉状起草</h4>
+                  <span class="text-[10px] text-fg-tertiary flex-shrink-0 ml-2">今天 10:30</span>
+                </div>
+                <p class="text-xs text-fg-secondary truncate mb-2">帮我写一份买卖合同纠纷的起诉状，原告是张三...</p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">5 条消息</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-tint text-brand">民商事</span>
+                </div>
+              </div>
+              <iconify-icon class="text-fg-disabled text-lg flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-brand transition-all translate-x-[-4px] group-hover:translate-x-0 mt-1" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group bg-white rounded-2xl border border-bg-border p-4 hover:border-amber-300 hover:shadow-lg hover:shadow-amber-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-0.5" data-animate="fade-in-up" data-delay="0.25" onclick="selectAIHistory(this)" data-title="民间借贷利息计算咨询">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-urgent" icon="mdi:currency-cny"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary truncate">民间借贷利息计算咨询</h4>
+                  <span class="text-[10px] text-fg-tertiary flex-shrink-0 ml-2">今天 09:15</span>
+                </div>
+                <p class="text-xs text-fg-secondary truncate mb-2">借款50万，年利率12%，已经借了8个月，利息怎么算...</p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">3 条消息</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-urgent-tint text-urgent">金融</span>
+                </div>
+              </div>
+              <iconify-icon class="text-fg-disabled text-lg flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-urgent transition-all translate-x-[-4px] group-hover:translate-x-0 mt-1" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group bg-white rounded-2xl border border-bg-border p-4 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-0.5" data-animate="fade-in-up" data-delay="0.3" onclick="selectAIHistory(this)" data-title="劳动争议仲裁申请分析">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-50 to-wiki-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-wiki" icon="mdi:scale-balance"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary truncate">劳动争议仲裁申请分析</h4>
+                  <span class="text-[10px] text-fg-tertiary flex-shrink-0 ml-2">昨天 16:00</span>
+                </div>
+                <p class="text-xs text-fg-secondary truncate mb-2">公司违法解除劳动合同，工作3年，能要多少赔偿...</p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">8 条消息</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-wiki-tint text-wiki">劳动</span>
+                </div>
+              </div>
+              <iconify-icon class="text-fg-disabled text-lg flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-wiki transition-all translate-x-[-4px] group-hover:translate-x-0 mt-1" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+          </div>
+          <div class="group bg-white rounded-2xl border border-bg-border p-4 hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 transition-all duration-300 cursor-pointer hover:-translate-y-0.5" data-animate="fade-in-up" data-delay="0.35" onclick="selectAIHistory(this)" data-title="股权转让合同审查">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-50 to-success-tint flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <iconify-icon class="text-lg text-success" icon="mdi:file-sign"></iconify-icon>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h4 class="text-sm font-semibold text-fg-primary truncate">股权转让合同审查</h4>
+                  <span class="text-[10px] text-fg-tertiary flex-shrink-0 ml-2">昨天 11:20</span>
+                </div>
+                <p class="text-xs text-fg-secondary truncate mb-2">帮我看看这份股权转让协议有什么风险点...</p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-bg text-fg-tertiary">12 条消息</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-success-tint text-success">合同</span>
+                </div>
+              </div>
+              <iconify-icon class="text-fg-disabled text-lg flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:text-success transition-all translate-x-[-4px] group-hover:translate-x-0 mt-1" icon="mdi:chevron-right"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

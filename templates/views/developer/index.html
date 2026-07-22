@@ -1,0 +1,555 @@
+<div class="view-content hidden flex-1 flex flex-col overflow-y-auto p-6 bg-bg" id="view-developer">
+<div class="max-w-7xl mx-auto w-full space-y-5">
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 text-white" data-animate="fade-in-up" data-delay="0">
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-xl font-bold">开发者中心</h1>
+                <p class="text-sm text-white/80 mt-1">开放平台 API · 插件系统 · 构建法律科技应用</p>
+            </div>
+            <button class="px-4 py-2 bg-white text-indigo-600 font-medium rounded-lg hover:bg-white/90 transition-colors text-sm" onclick="openDevRegisterModal()">
+                注册开发者
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4" data-animate="fade-in-up" data-delay="0.1">
+        <div class="bg-white rounded-xl border border-bg-border p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                    <iconify-icon class="text-indigo-600 text-xl" icon="mdi:key-variant"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-xs text-fg-tertiary">API Key</p>
+                    <p class="text-lg font-bold text-fg-primary" id="dev-api-key-count">0</p>
+                </div>
+            </div>
+            <button class="text-xs text-indigo-600 hover:text-indigo-700 font-medium" onclick="switchDevTab('api-keys')">管理 API Key →</button>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <iconify-icon class="text-emerald-600 text-xl" icon="mdi:chart-line"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-xs text-fg-tertiary">本月调用</p>
+                    <p class="text-lg font-bold text-fg-primary" id="dev-monthly-calls">0</p>
+                </div>
+            </div>
+            <button class="text-xs text-emerald-600 hover:text-emerald-700 font-medium" onclick="switchDevTab('usage')">查看统计 →</button>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                    <iconify-icon class="text-amber-600 text-xl" icon="mdi:book-open-page-variant"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-xs text-fg-tertiary">API 文档</p>
+                    <p class="text-lg font-bold text-fg-primary">50+</p>
+                </div>
+            </div>
+            <button class="text-xs text-amber-600 hover:text-amber-700 font-medium" onclick="switchDevTab('docs')">浏览文档 →</button>
+        </div>
+        <div class="bg-white rounded-xl border border-bg-border p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
+                    <iconify-icon class="text-rose-600 text-xl" icon="mdi:puzzle-outline"></iconify-icon>
+                </div>
+                <div>
+                    <p class="text-xs text-fg-tertiary">插件市场</p>
+                    <p class="text-lg font-bold text-fg-primary">12</p>
+                </div>
+            </div>
+            <button class="text-xs text-rose-600 hover:text-rose-700 font-medium" onclick="switchDevTab('plugins')">浏览插件 →</button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-bg-border overflow-hidden" data-animate="fade-in-up" data-delay="0.15">
+        <div class="flex items-center border-b border-bg-border">
+            <button class="dev-tab-btn active px-5 py-3 text-sm font-medium text-brand border-b-2 border-brand" data-tab="overview" onclick="switchDevTab('overview', this)">
+                概览
+            </button>
+            <button class="dev-tab-btn px-5 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent" data-tab="api-keys" onclick="switchDevTab('api-keys', this)">
+                API Key 管理
+            </button>
+            <button class="dev-tab-btn px-5 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent" data-tab="usage" onclick="switchDevTab('usage', this)">
+                调用统计
+            </button>
+            <button class="dev-tab-btn px-5 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent" data-tab="docs" onclick="switchDevTab('docs', this)">
+                API 文档
+            </button>
+            <button class="dev-tab-btn px-5 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent" data-tab="sdk" onclick="switchDevTab('sdk', this)">
+                SDK 下载
+            </button>
+            <button class="dev-tab-btn px-5 py-3 text-sm font-medium text-fg-tertiary hover:text-fg-primary border-b-2 border-transparent" data-tab="examples" onclick="switchDevTab('examples', this)">
+                示例代码
+            </button>
+        </div>
+
+        <div class="p-5">
+            <div class="dev-tab-content" id="dev-tab-overview">
+                <div class="space-y-5">
+                    <div>
+                        <h3 class="text-base font-semibold text-fg-primary mb-3">快速开始</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-bg-subtle rounded-lg p-4">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+                                    <span class="text-sm font-bold text-indigo-600">1</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-1">注册开发者</h4>
+                                <p class="text-xs text-fg-tertiary">创建开发者账号，获取 API 访问权限</p>
+                            </div>
+                            <div class="bg-bg-subtle rounded-lg p-4">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+                                    <span class="text-sm font-bold text-emerald-600">2</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-1">创建 API Key</h4>
+                                <p class="text-xs text-fg-tertiary">在控制台创建 API Key，用于身份认证</p>
+                            </div>
+                            <div class="bg-bg-subtle rounded-lg p-4">
+                                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center mb-3">
+                                    <span class="text-sm font-bold text-amber-600">3</span>
+                                </div>
+                                <h4 class="text-sm font-semibold text-fg-primary mb-1">调用 API</h4>
+                                <p class="text-xs text-fg-tertiary">使用 SDK 或直接调用 REST API 接口</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-semibold text-fg-primary mb-3">API 分类</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="border border-bg-border rounded-lg p-4 hover:border-brand hover:bg-brand-tint3/20 cursor-pointer transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <iconify-icon class="text-blue-600 text-xl" icon="mdi:scale-balance"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-fg-primary">判例检索 API</h4>
+                                        <p class="text-xs text-fg-tertiary">海量裁判文书，支持全文检索和多维度筛选</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border border-bg-border rounded-lg p-4 hover:border-brand hover:bg-brand-tint3/20 cursor-pointer transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                                        <iconify-icon class="text-green-600 text-xl" icon="mdi:gavel"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-fg-primary">合同审查 API</h4>
+                                        <p class="text-xs text-fg-tertiary">AI 驱动的合同风险审查，智能条款分析</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border border-bg-border rounded-lg p-4 hover:border-brand hover:bg-brand-tint3/20 cursor-pointer transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                        <iconify-icon class="text-purple-600 text-xl" icon="mdi:file-document-edit"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-fg-primary">文书生成 API</h4>
+                                        <p class="text-xs text-fg-tertiary">智能法律文书生成，多模板支持</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border border-bg-border rounded-lg p-4 hover:border-brand hover:bg-brand-tint3/20 cursor-pointer transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
+                                        <iconify-icon class="text-rose-600 text-xl" icon="mdi:domain"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-fg-primary">企业查询 API</h4>
+                                        <p class="text-xs text-fg-tertiary">企业工商信息、执行公开状态查询</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-tab-content hidden" id="dev-tab-api-keys">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-fg-primary">API Key 列表</h3>
+                    <button class="px-4 py-2 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors flex items-center gap-1.5" onclick="openCreateApiKeyModal()">
+                        <iconify-icon icon="mdi:plus"></iconify-icon> 创建 API Key
+                    </button>
+                </div>
+                <div class="border border-bg-border rounded-lg overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-bg-subtle/50 border-b border-bg-border">
+                                <th class="text-left py-3 px-4 text-[11px] font-semibold text-fg-secondary">名称</th>
+                                <th class="text-left py-3 px-4 text-[11px] font-semibold text-fg-secondary">Key</th>
+                                <th class="text-left py-3 px-4 text-[11px] font-semibold text-fg-secondary">状态</th>
+                                <th class="text-left py-3 px-4 text-[11px] font-semibold text-fg-secondary">调用次数</th>
+                                <th class="text-left py-3 px-4 text-[11px] font-semibold text-fg-secondary">创建时间</th>
+                                <th class="text-center py-3 px-4 text-[11px] font-semibold text-fg-secondary w-24">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dev-api-keys-tbody">
+                            <tr>
+                                <td colspan="6" class="py-12 text-center text-fg-tertiary text-sm">
+                                    暂无 API Key，点击上方按钮创建
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dev-tab-content hidden" id="dev-tab-usage">
+                <div class="space-y-5">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-bg-subtle rounded-lg p-4">
+                            <p class="text-xs text-fg-tertiary mb-1">今日调用</p>
+                            <p class="text-2xl font-bold text-fg-primary" id="dev-today-calls">0</p>
+                        </div>
+                        <div class="bg-bg-subtle rounded-lg p-4">
+                            <p class="text-xs text-fg-tertiary mb-1">本月调用</p>
+                            <p class="text-2xl font-bold text-fg-primary" id="dev-usage-monthly">0</p>
+                        </div>
+                        <div class="bg-bg-subtle rounded-lg p-4">
+                            <p class="text-xs text-fg-tertiary mb-1">累计调用</p>
+                            <p class="text-2xl font-bold text-fg-primary" id="dev-total-calls">0</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-fg-primary mb-3">近 30 天调用趋势</h4>
+                        <div class="bg-bg-subtle rounded-lg p-4 h-48 flex items-end justify-around">
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 30%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第1天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 45%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第5天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 60%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第10天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 40%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第15天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 70%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第20天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 85%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第25天</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-6 bg-brand rounded-t" style="height: 55%"></div>
+                                <span class="text-[10px] text-fg-tertiary">第30天</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-fg-primary mb-3">API 调用分布</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-fg-secondary w-24">判例检索</span>
+                                <div class="flex-1 bg-bg-subtle rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                                <span class="text-xs text-fg-tertiary w-16 text-right">45%</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-fg-secondary w-24">合同审查</span>
+                                <div class="flex-1 bg-bg-subtle rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                                <span class="text-xs text-fg-tertiary w-16 text-right">30%</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-fg-secondary w-24">文书生成</span>
+                                <div class="flex-1 bg-bg-subtle rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 15%"></div>
+                                </div>
+                                <span class="text-xs text-fg-tertiary w-16 text-right">15%</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-fg-secondary w-24">企业查询</span>
+                                <div class="flex-1 bg-bg-subtle rounded-full h-2">
+                                    <div class="bg-rose-500 h-2 rounded-full" style="width: 10%"></div>
+                                </div>
+                                <span class="text-xs text-fg-tertiary w-16 text-right">10%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-tab-content hidden" id="dev-tab-docs">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold text-fg-primary">API 文档</h3>
+                        <a href="/docs" target="_blank" class="text-xs text-brand hover:text-brand-hover font-medium">
+                            打开完整文档 →
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border border-bg-border rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-fg-primary mb-2">认证方式</h4>
+                            <p class="text-xs text-fg-tertiary mb-3">所有 API 请求需要在请求头中携带 API Key</p>
+                            <div class="bg-bg-subtle rounded p-3 font-mono text-xs text-fg-secondary">
+                                X-API-Key: your_api_key_here
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-fg-primary mb-2">请求频率</h4>
+                            <p class="text-xs text-fg-tertiary mb-2">免费版：60 次/分钟</p>
+                            <p class="text-xs text-fg-tertiary">专业版：1000 次/分钟</p>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-fg-primary mb-2">数据格式</h4>
+                            <p class="text-xs text-fg-tertiary">所有接口返回 JSON 格式数据，UTF-8 编码</p>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-fg-primary mb-2">错误码</h4>
+                            <p class="text-xs text-fg-tertiary">使用标准 HTTP 状态码 + 业务错误码</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-tab-content hidden" id="dev-tab-sdk">
+                <div class="space-y-4">
+                    <h3 class="text-base font-semibold text-fg-primary">SDK 下载</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="border border-bg-border rounded-lg p-5 hover:border-brand transition-colors">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <iconify-icon class="text-blue-600 text-2xl" icon="mdi:language-python"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-fg-primary">Python SDK</h4>
+                                    <p class="text-xs text-fg-tertiary">版本 v1.0.0</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fg-tertiary mb-4">支持 Python 3.8+，完整封装所有 API 接口</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-3 py-2 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                    pip install lexprime
+                                </button>
+                                <button class="px-3 py-2 text-xs text-fg-secondary border border-bg-border hover:border-brand rounded-lg transition-colors">
+                                    文档
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-5 hover:border-brand transition-colors">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
+                                    <iconify-icon class="text-yellow-600 text-2xl" icon="mdi:language-javascript"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-fg-primary">JavaScript SDK</h4>
+                                    <p class="text-xs text-fg-tertiary">版本 v1.0.0</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fg-tertiary mb-4">支持 Node.js 和浏览器，TypeScript 类型定义</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-3 py-2 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                    npm install lexprime
+                                </button>
+                                <button class="px-3 py-2 text-xs text-fg-secondary border border-bg-border hover:border-brand rounded-lg transition-colors">
+                                    文档
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-5 hover:border-brand transition-colors">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <iconify-icon class="text-red-600 text-2xl" icon="mdi:language-java"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-fg-primary">Java SDK</h4>
+                                    <p class="text-xs text-fg-tertiary">版本 v1.0.0</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fg-tertiary mb-4">支持 Java 8+，Spring Boot 集成</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-3 py-2 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                    Maven 引入
+                                </button>
+                                <button class="px-3 py-2 text-xs text-fg-secondary border border-bg-border hover:border-brand rounded-lg transition-colors">
+                                    文档
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg p-5 hover:border-brand transition-colors">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                                    <iconify-icon class="text-cyan-600 text-2xl" icon="mdi:language-go"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-fg-primary">Go SDK</h4>
+                                    <p class="text-xs text-fg-tertiary">版本 v1.0.0</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fg-tertiary mb-4">支持 Go 1.18+，高性能异步调用</p>
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-3 py-2 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors">
+                                    go get
+                                </button>
+                                <button class="px-3 py-2 text-xs text-fg-secondary border border-bg-border hover:border-brand rounded-lg transition-colors">
+                                    文档
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-tab-content hidden" id="dev-tab-examples">
+                <div class="space-y-4">
+                    <h3 class="text-base font-semibold text-fg-primary">示例代码</h3>
+                    <div class="space-y-3">
+                        <div class="border border-bg-border rounded-lg overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-2 bg-bg-subtle border-b border-bg-border">
+                                <span class="text-xs font-medium text-fg-primary">判例检索 - Python</span>
+                                <button class="text-xs text-brand hover:text-brand-hover">复制代码</button>
+                            </div>
+                            <div class="p-4 bg-bg-subtle/30">
+                                <pre class="text-xs text-fg-secondary font-mono whitespace-pre-wrap">import lexprime
+
+client = lexprime.Client(api_key="your_api_key")
+
+results = client.cases.search(
+    query="借款合同纠纷",
+    court="北京市第一中级人民法院",
+    page=1,
+    size=10
+)
+
+for case in results.items:
+    print(case.case_name, case.lex_score)</pre>
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-2 bg-bg-subtle border-b border-bg-border">
+                                <span class="text-xs font-medium text-fg-primary">合同审查 - JavaScript</span>
+                                <button class="text-xs text-brand hover:text-brand-hover">复制代码</button>
+                            </div>
+                            <div class="p-4 bg-bg-subtle/30">
+                                <pre class="text-xs text-fg-secondary font-mono whitespace-pre-wrap">const LexPrime = require('lexprime');
+
+const client = new LexPrime({ apiKey: 'your_api_key' });
+
+async function reviewContract() {
+    const result = await client.contractReview.analyze({
+        contractText: contractContent,
+        contractType: 'loan',
+        riskLevel: 'standard'
+    });
+
+    console.log('风险等级:', result.riskLevel);
+    console.log('风险条款:', result.risks);
+}</pre>
+                            </div>
+                        </div>
+                        <div class="border border-bg-border rounded-lg overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-2 bg-bg-subtle border-b border-bg-border">
+                                <span class="text-xs font-medium text-fg-primary">文书生成 - cURL</span>
+                                <button class="text-xs text-brand hover:text-brand-hover">复制代码</button>
+                            </div>
+                            <div class="p-4 bg-bg-subtle/30">
+                                <pre class="text-xs text-fg-secondary font-mono whitespace-pre-wrap">curl -X POST https://api.lexprime.cn/api/doc-gen/complaint \
+  -H "X-API-Key: your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "case_type": "contract_dispute",
+    "plaintiff": "张三",
+    "defendant": "李四",
+    "claim": "要求被告偿还借款100万元",
+    "facts": "2025年3月被告向原告借款..."
+  }'</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="dev-register-modal">
+    <div class="bg-white rounded-xl w-[480px] max-h-[80vh] overflow-y-auto">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">
+            <h3 class="text-base font-semibold text-fg-primary">注册开发者</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeDevRegisterModal()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">开发者名称</label>
+                <input type="text" id="dev-reg-name" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors" placeholder="请输入开发者或团队名称"/>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">联系邮箱</label>
+                <input type="email" id="dev-reg-email" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors" placeholder="请输入联系邮箱"/>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">开发者类型</label>
+                <select id="dev-reg-type" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors">
+                    <option value="individual">个人开发者</option>
+                    <option value="company">企业开发者</option>
+                    <option value="law_firm">律师事务所</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">使用场景</label>
+                <textarea id="dev-reg-purpose" rows="3" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors resize-none" placeholder="请描述您的使用场景"></textarea>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-bg-border">
+            <button class="px-4 py-2 text-sm text-fg-secondary bg-bg hover:bg-bg-border rounded-lg transition-colors" onclick="closeDevRegisterModal()">取消</button>
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="submitDevRegister()">提交注册</button>
+        </div>
+    </div>
+</div>
+
+<div class="hidden fixed inset-0 bg-black/50 z-[200] flex items-center justify-center" id="create-api-key-modal">
+    <div class="bg-white rounded-xl w-[420px]">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-bg-border">
+            <h3 class="text-base font-semibold text-fg-primary">创建 API Key</h3>
+            <button class="text-fg-tertiary hover:text-fg-primary" onclick="closeCreateApiKeyModal()">
+                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">Key 名称</label>
+                <input type="text" id="new-api-key-name" class="w-full px-3 py-2 text-sm border border-bg-border rounded-lg focus:outline-none focus:border-brand transition-colors" placeholder="请输入 API Key 名称"/>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-fg-secondary block mb-1.5">权限范围</label>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-2 text-xs text-fg-primary cursor-pointer">
+                        <input type="checkbox" checked class="rounded border-bg-border text-brand focus:ring-brand"/>
+                        判例检索
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-fg-primary cursor-pointer">
+                        <input type="checkbox" checked class="rounded border-bg-border text-brand focus:ring-brand"/>
+                        合同审查
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-fg-primary cursor-pointer">
+                        <input type="checkbox" checked class="rounded border-bg-border text-brand focus:ring-brand"/>
+                        文书生成
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-fg-primary cursor-pointer">
+                        <input type="checkbox" checked class="rounded border-bg-border text-brand focus:ring-brand"/>
+                        企业查询
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-bg-border">
+            <button class="px-4 py-2 text-sm text-fg-secondary bg-bg hover:bg-bg-border rounded-lg transition-colors" onclick="closeCreateApiKeyModal()">取消</button>
+            <button class="px-4 py-2 text-sm text-white bg-brand hover:bg-brand-hover rounded-lg transition-colors" onclick="submitCreateApiKey()">创建</button>
+        </div>
+    </div>
+</div>

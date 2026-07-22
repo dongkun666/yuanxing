@@ -10,7 +10,7 @@ from sqlalchemy import (
     ForeignKey, JSON, UniqueConstraint, Index,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, desc
 
 
 class Base(DeclarativeBase):
@@ -46,8 +46,14 @@ class Case(Base):
     lex_tags: Mapped[Optional[List[str]]] = mapped_column(JSON)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
     favorite_count: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
+
+    __table_args__ = (
+        Index("idx_cases_cause_category_year", "cause_category", "year"),
+        Index("idx_cases_region_cause", "region", "cause"),
+        Index("idx_cases_created_desc", desc("created_at")),
+    )
 
 
 # ========== 法规库 ==========
@@ -62,10 +68,10 @@ class Law(Base):
     issuing_organ: Mapped[Optional[str]] = mapped_column(String(256))
     issue_date: Mapped[Optional[date]] = mapped_column(Date)
     effective_date: Mapped[Optional[date]] = mapped_column(Date, index=True)
-    status: Mapped[Optional[str]] = mapped_column(String(32), default="有效")
+    status: Mapped[Optional[str]] = mapped_column(String(32), default="有效", index=True)
     summary: Mapped[Optional[str]] = mapped_column(Text)
     full_text: Mapped[Optional[str]] = mapped_column(Text)
-    level: Mapped[Optional[int]] = mapped_column(SmallInteger, default=1)
+    level: Mapped[Optional[int]] = mapped_column(SmallInteger, default=1, index=True)
     source: Mapped[Optional[str]] = mapped_column(String(32), default="npc_laws")
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     revised_from: Mapped[Optional[str]] = mapped_column(String(64))
@@ -73,8 +79,8 @@ class Law(Base):
     related_laws: Mapped[Optional[List[str]]] = mapped_column(JSON)
     related_cases_count: Mapped[int] = mapped_column(Integer, default=0)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
 
 
 # ========== 企业征信 ==========
@@ -95,12 +101,17 @@ class Company(Base):
     industry: Mapped[Optional[str]] = mapped_column(String(64), index=True)
     region: Mapped[Optional[str]] = mapped_column(String(32), index=True)
     is_zxgk: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
-    is_dishonest: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_dishonest: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     source: Mapped[Optional[str]] = mapped_column(String(32), default="gsxt")
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
+
+    __table_args__ = (
+        Index("idx_companies_region_industry", "region", "industry"),
+        Index("idx_companies_status_region", "business_status", "region"),
+    )
 
 
 # ========== 律师自加判例 ==========
@@ -110,18 +121,18 @@ class LawyerAddedCase(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), index=True)
     firm_id: Mapped[Optional[str]] = mapped_column(String(64), index=True)
-    case_id: Mapped[str] = mapped_column(String(64))
+    case_id: Mapped[str] = mapped_column(String(64), index=True)
     title: Mapped[str] = mapped_column(String(512))
     summary: Mapped[Optional[str]] = mapped_column(Text)
     full_text: Mapped[Optional[str]] = mapped_column(Text)
-    cause: Mapped[Optional[str]] = mapped_column(String(128))
-    cause_category: Mapped[Optional[str]] = mapped_column(String(64))
+    cause: Mapped[Optional[str]] = mapped_column(String(128), index=True)
+    cause_category: Mapped[Optional[str]] = mapped_column(String(64), index=True)
     tags: Mapped[Optional[List[str]]] = mapped_column(JSON)
     notes: Mapped[Optional[str]] = mapped_column(Text)
-    visibility: Mapped[str] = mapped_column(String(16), default="private")
+    visibility: Mapped[str] = mapped_column(String(16), default="private", index=True)
     related_official_case_id: Mapped[Optional[int]] = mapped_column(BigInteger, ForeignKey("cases.id"), index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
 
 
 # ========== 律所 ==========
@@ -130,21 +141,21 @@ class Firm(Base):
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     name: Mapped[str] = mapped_column(String(256), index=True)
-    unified_id: Mapped[Optional[str]] = mapped_column(String(64))
-    license_no: Mapped[Optional[str]] = mapped_column(String(64))
-    region: Mapped[Optional[str]] = mapped_column(String(32))
+    unified_id: Mapped[Optional[str]] = mapped_column(String(64), index=True)
+    license_no: Mapped[Optional[str]] = mapped_column(String(64), unique=True)
+    region: Mapped[Optional[str]] = mapped_column(String(32), index=True)
     address: Mapped[Optional[str]] = mapped_column(String(512))
     contact_phone: Mapped[Optional[str]] = mapped_column(String(32))
     contact_email: Mapped[Optional[str]] = mapped_column(String(128))
     website: Mapped[Optional[str]] = mapped_column(String(256))
     established_date: Mapped[Optional[date]] = mapped_column(Date)
-    firm_size: Mapped[str] = mapped_column(String(16), default="small")
+    firm_size: Mapped[str] = mapped_column(String(16), default="small", index=True)
     subscription_tier: Mapped[str] = mapped_column(String(16), default="trial", index=True)
     subscription_started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     subscription_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     settings: Mapped[Optional[dict]] = mapped_column(JSON, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
 
     lawyers: Mapped[List["Lawyer"]] = relationship(back_populates="firm")
 
@@ -155,20 +166,24 @@ class Lawyer(Base):
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     firm_id: Mapped[Optional[str]] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
-    name: Mapped[str] = mapped_column(String(64))
-    license_no: Mapped[Optional[str]] = mapped_column(String(64), unique=True)
+    name: Mapped[str] = mapped_column(String(64), index=True)
+    license_no: Mapped[Optional[str]] = mapped_column(String(64), unique=True, index=True)
     email: Mapped[str] = mapped_column(String(128), unique=True, index=True)
-    phone: Mapped[Optional[str]] = mapped_column(String(32))
+    phone: Mapped[Optional[str]] = mapped_column(String(32), index=True)
     role: Mapped[str] = mapped_column(String(16), default="lawyer", index=True)
     specialties: Mapped[Optional[List[str]]] = mapped_column(JSON)
     avatar_url: Mapped[Optional[str]] = mapped_column(Text)
     bio: Mapped[Optional[str]] = mapped_column(Text)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     joined_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
 
     firm: Mapped[Optional["Firm"]] = relationship(back_populates="lawyers")
+
+    __table_args__ = (
+        Index("idx_lawyers_firm_active", "firm_id", "is_active"),
+    )
 
 
 # ========== 律所案件分配 ==========
@@ -180,10 +195,13 @@ class FirmCaseAssignment(Base):
     case_id: Mapped[Optional[int]] = mapped_column(BigInteger, index=True)
     case_title: Mapped[str] = mapped_column(String(512))
     lawyer_id: Mapped[str] = mapped_column(String(64), ForeignKey("lawyers.id"), index=True)
-    role: Mapped[str] = mapped_column(String(16), default="lead")
-    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    role: Mapped[str] = mapped_column(String(16), default="lead", index=True)
+    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
-    __table_args__ = (UniqueConstraint("case_id", "lawyer_id", name="uq_case_lawyer"),)
+    __table_args__ = (
+        UniqueConstraint("case_id", "lawyer_id", name="uq_case_lawyer"),
+        Index("idx_fca_firm_lawyer", "firm_id", "lawyer_id"),
+    )
 
 
 # ========== 工时记录 ==========
@@ -193,15 +211,20 @@ class FirmTimeEntry(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     firm_id: Mapped[str] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), ForeignKey("lawyers.id"), index=True)
-    case_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    case_id: Mapped[Optional[int]] = mapped_column(BigInteger, index=True)
     entry_date: Mapped[date] = mapped_column(Date, index=True)
     hours: Mapped[Decimal] = mapped_column(Numeric(5, 2))
     description: Mapped[Optional[str]] = mapped_column(Text)
-    billable: Mapped[bool] = mapped_column(Boolean, default=True)
+    billable: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     rate: Mapped[Optional[Decimal]] = mapped_column(Numeric(8, 2))
     amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(12, 2))
     status: Mapped[str] = mapped_column(String(16), default="draft", index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+    __table_args__ = (
+        Index("idx_fte_firm_date", "firm_id", "entry_date"),
+        Index("idx_fte_lawyer_date", "lawyer_id", "entry_date"),
+    )
 
 
 # ========== 收藏 ==========
@@ -210,10 +233,10 @@ class Favorite(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     lawyer_id: Mapped[str] = mapped_column(String(64), index=True)
-    target_type: Mapped[str] = mapped_column(String(16))
+    target_type: Mapped[str] = mapped_column(String(16), index=True)
     target_id: Mapped[str] = mapped_column(String(64), index=True)
     note: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
     __table_args__ = (UniqueConstraint("lawyer_id", "target_type", "target_id", name="uq_favorite"),)
 
@@ -224,8 +247,8 @@ class CrawlerRun(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     source: Mapped[str] = mapped_column(String(32), index=True)
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    finished_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    finished_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
     status: Mapped[str] = mapped_column(String(16), default="running", index=True)
     items_total: Mapped[int] = mapped_column(Integer, default=0)
     items_inserted: Mapped[int] = mapped_column(Integer, default=0)
@@ -233,3 +256,49 @@ class CrawlerRun(Base):
     items_failed: Mapped[int] = mapped_column(Integer, default=0)
     error_log: Mapped[Optional[str]] = mapped_column(Text)
     config: Mapped[Optional[dict]] = mapped_column(JSON)
+
+    __table_args__ = (
+        Index("idx_crawler_source_status", "source", "status"),
+        Index("idx_crawler_started_status", desc("started_at"), "status"),
+    )
+
+
+# ========== 客户 ==========
+class Client(Base):
+    """客户表 (律所维度的客户主档)
+
+    Fields:
+        id            PK (autoincrement)
+        client_id     客户业务 ID (unique, CL-uuid8)
+        firm_id       律所 ID (FK -> firms.id)
+        name          客户名称 (个人姓名 / 企业名称)
+        client_type   客户类型 (personal 个人 / enterprise 企业)
+        id_number     证件号 (身份证 / 统一社会信用代码)
+        phone         联系电话
+        email         邮箱
+        address       地址
+        grade         客户分级 (A / B / C / D)
+        notes         备注
+        created_at    创建时间
+        updated_at    更新时间
+    """
+    __tablename__ = "clients"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    client_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    firm_id: Mapped[Optional[str]] = mapped_column(String(64), ForeignKey("firms.id"), index=True)
+    name: Mapped[str] = mapped_column(String(256), index=True)
+    client_type: Mapped[str] = mapped_column(String(16), default="personal", index=True)
+    id_number: Mapped[Optional[str]] = mapped_column(String(64), index=True)
+    phone: Mapped[Optional[str]] = mapped_column(String(32), index=True)
+    email: Mapped[Optional[str]] = mapped_column(String(128), index=True)
+    address: Mapped[Optional[str]] = mapped_column(String(512))
+    grade: Mapped[str] = mapped_column(String(8), default="C", index=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), index=True)
+
+    __table_args__ = (
+        Index("idx_clients_firm_type", "firm_id", "client_type"),
+        Index("idx_clients_firm_grade", "firm_id", "grade"),
+    )

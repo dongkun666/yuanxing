@@ -1,0 +1,557 @@
+<!--
+  系统设置页面 (lex-coder · 2026-07-03)
+  数据源: GET/PUT /api/settings (settings_router.py)
+  
+  设置分类:
+  - basic:       基本设置 (网站名称、Logo、描述)
+  - notification: 通知设置 (邮件通知开关、频率)
+  - security:    安全设置 (密码策略、登录尝试次数)
+  - data:        数据设置 (自动清理、备份策略)
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-settings" data-view-source="settings/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  
+  .setting-section {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #E5E6EB;
+    overflow: hidden;
+  }
+  
+  .section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #E5E6EB;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #FAFBFC;
+  }
+  
+  .section-body {
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1F2329;
+    margin-bottom: 6px;
+  }
+  
+  .form-hint {
+    font-size: 11px;
+    color: #8F959E;
+    margin-top: 4px;
+  }
+  
+  .form-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1F2329;
+    background: #FAFBFC;
+    transition: all 150ms;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .form-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1F2329;
+    background: #FAFBFC;
+    resize: vertical;
+    transition: all 150ms;
+  }
+  
+  .form-textarea:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .form-select {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1F2329;
+    background: #FAFBFC;
+    transition: all 150ms;
+  }
+  
+  .form-select:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .checkbox-input {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #E5E6EB;
+    cursor: pointer;
+  }
+  
+  .checkbox-label {
+    font-size: 13px;
+    color: #4E5969;
+  }
+  
+  .switch-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #E5E6EB;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 150ms;
+  }
+  
+  .switch.on {
+    background: #165DFF;
+  }
+  
+  .switch::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 150ms;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .switch.on::after {
+    transform: translateX(20px);
+  }
+  
+  .save-btn {
+    height: 36px;
+    padding: 0 24px;
+    background: #165DFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 150ms;
+  }
+  
+  .save-btn:hover {
+    background: #0D47A1;
+  }
+  
+  .save-btn:disabled {
+    background: #E5E6EB;
+    cursor: not-allowed;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .setting-tab {
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 150ms;
+    color: #4E5969;
+  }
+  
+  .setting-tab:hover {
+    background: rgba(22, 93, 255, 0.06);
+    color: #165DFF;
+  }
+  
+  .setting-tab.active {
+    background: #165DFF;
+    color: white;
+  }
+</style>
+
+<div class="flex flex-col min-h-full bg-bg-subtle">
+
+  <!-- ============ 顶部 header ============ -->
+  <header class="bg-white border-b border-bg-border sticky top-0 z-30 shadow-sm">
+    <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="w-9 h-9 rounded-md text-fg-secondary hover:bg-brand-tint hover:text-brand flex items-center justify-center flex-shrink-0" onclick="switchView('workstation')" title="返回">
+        <iconify-icon icon="mdi:arrow-left" class="text-lg"></iconify-icon>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base md:text-lg font-semibold flex items-center gap-1.5 truncate">
+            <iconify-icon icon="mdi:settings" class="text-brand text-lg md:text-xl"></iconify-icon>
+            <span class="truncate">系统设置</span>
+          </h1>
+        </div>
+        <p class="text-[11px] text-fg-tertiary truncate">管理系统配置和参数</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主体内容 ============ -->
+  <main class="flex-1 px-4 md:px-6 py-5 md:py-6 max-w-4xl mx-auto w-full">
+
+    <!-- ============ 设置分类 Tab ============ -->
+    <div class="bg-white rounded-lg shadow-card border border-bg-border p-2 mb-5 fade-in flex flex-wrap gap-2">
+      <button class="setting-tab active" data-section="basic">
+        <iconify-icon icon="mdi:home" class="text-sm"></iconify-icon>
+        <span>基本设置</span>
+      </button>
+      <button class="setting-tab" data-section="notification">
+        <iconify-icon icon="mdi:bell" class="text-sm"></iconify-icon>
+        <span>通知设置</span>
+      </button>
+      <button class="setting-tab" data-section="security">
+        <iconify-icon icon="mdi:shield" class="text-sm"></iconify-icon>
+        <span>安全设置</span>
+      </button>
+      <button class="setting-tab" data-section="data">
+        <iconify-icon icon="mdi:database" class="text-sm"></iconify-icon>
+        <span>数据设置</span>
+      </button>
+    </div>
+
+    <!-- ============ 基本设置 ============ -->
+    <div id="section-basic" class="setting-section mb-5 fade-in">
+      <div class="section-header">
+        <iconify-icon icon="mdi:home" class="text-brand"></iconify-icon>
+        <h3 class="text-sm font-semibold">基本设置</h3>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">网站名称</label>
+          <input type="text" id="basic-site-name" class="form-input" placeholder="请输入网站名称">
+          <p class="form-hint">显示在页面顶部和浏览器标签页的名称</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">网站描述</label>
+          <textarea id="basic-site-description" class="form-textarea" placeholder="请输入网站描述"></textarea>
+          <p class="form-hint">用于 SEO 和网站介绍</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logo URL</label>
+          <input type="text" id="basic-logo-url" class="form-input" placeholder="请输入 Logo 图片地址">
+          <p class="form-hint">支持 http/https 协议的图片链接</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 通知设置 ============ -->
+    <div id="section-notification" class="setting-section mb-5 fade-in hidden">
+      <div class="section-header">
+        <iconify-icon icon="mdi:bell" class="text-brand"></iconify-icon>
+        <h3 class="text-sm font-semibold">通知设置</h3>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">邮件通知</label>
+          <div class="switch-wrapper">
+            <span class="checkbox-label">启用邮件通知</span>
+            <div class="switch" id="notification-email-enabled" onclick="toggleSwitch(this)"></div>
+          </div>
+          <p class="form-hint">开启后，系统会发送案件状态变更、任务提醒等邮件通知</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">通知频率</label>
+          <select id="notification-frequency" class="form-select">
+            <option value="immediate">即时</option>
+            <option value="daily">每日汇总</option>
+            <option value="weekly">每周汇总</option>
+          </select>
+          <p class="form-hint">选择通知发送的频率</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 安全设置 ============ -->
+    <div id="section-security" class="setting-section mb-5 fade-in hidden">
+      <div class="section-header">
+        <iconify-icon icon="mdi:shield" class="text-brand"></iconify-icon>
+        <h3 class="text-sm font-semibold">安全设置</h3>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">密码最小长度</label>
+          <input type="number" id="security-password-min-length" class="form-input" min="4" max="64" placeholder="8">
+          <p class="form-hint">用户密码的最小字符数</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">要求大写字母</label>
+            <div class="switch-wrapper">
+              <span class="checkbox-label">启用</span>
+              <div class="switch" id="security-password-uppercase" onclick="toggleSwitch(this)"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">要求小写字母</label>
+            <div class="switch-wrapper">
+              <span class="checkbox-label">启用</span>
+              <div class="switch" id="security-password-lowercase" onclick="toggleSwitch(this)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">要求数字</label>
+            <div class="switch-wrapper">
+              <span class="checkbox-label">启用</span>
+              <div class="switch" id="security-password-number" onclick="toggleSwitch(this)"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">要求特殊字符</label>
+            <div class="switch-wrapper">
+              <span class="checkbox-label">启用</span>
+              <div class="switch" id="security-password-special" onclick="toggleSwitch(this)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">最大登录尝试次数</label>
+          <input type="number" id="security-max-login-attempts" class="form-input" min="1" max="20" placeholder="5">
+          <p class="form-hint">超过此次数后账户将被锁定</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">锁定时长 (分钟)</label>
+          <input type="number" id="security-lockout-duration" class="form-input" min="1" max="1440" placeholder="15">
+          <p class="form-hint">账户被锁定后的解锁时间</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 数据设置 ============ -->
+    <div id="section-data" class="setting-section mb-5 fade-in hidden">
+      <div class="section-header">
+        <iconify-icon icon="mdi:database" class="text-brand"></iconify-icon>
+        <h3 class="text-sm font-semibold">数据设置</h3>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">自动清理</label>
+          <div class="switch-wrapper">
+            <span class="checkbox-label">启用自动清理</span>
+            <div class="switch" id="data-auto-cleanup-enabled" onclick="toggleSwitch(this)"></div>
+          </div>
+          <p class="form-hint">定期清理过期数据</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">自动清理保留天数</label>
+          <input type="number" id="data-auto-cleanup-days" class="form-input" min="7" max="365" placeholder="90">
+          <p class="form-hint">自动清理时保留的数据天数</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">自动备份</label>
+          <div class="switch-wrapper">
+            <span class="checkbox-label">启用自动备份</span>
+            <div class="switch" id="data-backup-enabled" onclick="toggleSwitch(this)"></div>
+          </div>
+          <p class="form-hint">定期备份数据库</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">备份频率</label>
+          <select id="data-backup-frequency" class="form-select">
+            <option value="daily">每日</option>
+            <option value="weekly">每周</option>
+            <option value="monthly">每月</option>
+          </select>
+          <p class="form-hint">选择自动备份的频率</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 保存按钮 ============ -->
+    <div class="flex items-center justify-end gap-3 mb-6">
+      <button id="settings-reset-btn" class="h-9 px-4 bg-white border border-bg-border rounded-md text-sm text-fg-secondary hover:border-brand hover:text-brand">
+        重置
+      </button>
+      <button id="settings-save-btn" class="h-9 px-4 bg-brand text-white rounded-md text-sm font-medium hover:bg-brand-dark flex items-center gap-1">
+        <iconify-icon icon="mdi:save" class="text-sm"></iconify-icon>
+        <span>保存设置</span>
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var currentSettings = null;
+
+  function toggleSwitch(el) {
+    el.classList.toggle('on');
+  }
+
+  function getSwitchValue(elId) {
+    return document.getElementById(elId).classList.contains('on');
+  }
+
+  function setSwitchValue(elId, value) {
+    var el = document.getElementById(elId);
+    if (value) {
+      el.classList.add('on');
+    } else {
+      el.classList.remove('on');
+    }
+  }
+
+  async function loadSettings() {
+    try {
+      var resp = await fetch('/api/settings');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      currentSettings = await resp.json();
+      renderSettings(currentSettings);
+    } catch (err) {
+      console.error('[settings] load failed', err);
+    }
+  }
+
+  function renderSettings(settings) {
+    var basic = settings.basic || {};
+    document.getElementById('basic-site-name').value = basic.site_name || '';
+    document.getElementById('basic-site-description').value = basic.site_description || '';
+    document.getElementById('basic-logo-url').value = basic.logo_url || '';
+
+    var notification = settings.notification || {};
+    setSwitchValue('notification-email-enabled', notification.email_notification_enabled || false);
+    document.getElementById('notification-frequency').value = notification.notification_frequency || 'daily';
+
+    var security = settings.security || {};
+    document.getElementById('security-password-min-length').value = security.password_min_length || 8;
+    setSwitchValue('security-password-uppercase', security.password_require_uppercase || false);
+    setSwitchValue('security-password-lowercase', security.password_require_lowercase || false);
+    setSwitchValue('security-password-number', security.password_require_number || false);
+    setSwitchValue('security-password-special', security.password_require_special || false);
+    document.getElementById('security-max-login-attempts').value = security.max_login_attempts || 5;
+    document.getElementById('security-lockout-duration').value = security.lockout_duration_minutes || 15;
+
+    var data = settings.data || {};
+    setSwitchValue('data-auto-cleanup-enabled', data.auto_cleanup_enabled || false);
+    document.getElementById('data-auto-cleanup-days').value = data.auto_cleanup_days || 90;
+    setSwitchValue('data-backup-enabled', data.backup_enabled || false);
+    document.getElementById('data-backup-frequency').value = data.backup_frequency || 'daily';
+  }
+
+  async function saveSettings() {
+    var saveData = {};
+
+    saveData.basic = {
+      site_name: document.getElementById('basic-site-name').value.trim(),
+      site_description: document.getElementById('basic-site-description').value.trim(),
+      logo_url: document.getElementById('basic-logo-url').value.trim(),
+    };
+
+    saveData.notification = {
+      email_notification_enabled: getSwitchValue('notification-email-enabled'),
+      notification_frequency: document.getElementById('notification-frequency').value,
+    };
+
+    saveData.security = {
+      password_min_length: parseInt(document.getElementById('security-password-min-length').value) || 8,
+      password_require_uppercase: getSwitchValue('security-password-uppercase'),
+      password_require_lowercase: getSwitchValue('security-password-lowercase'),
+      password_require_number: getSwitchValue('security-password-number'),
+      password_require_special: getSwitchValue('security-password-special'),
+      max_login_attempts: parseInt(document.getElementById('security-max-login-attempts').value) || 5,
+      lockout_duration_minutes: parseInt(document.getElementById('security-lockout-duration').value) || 15,
+    };
+
+    saveData.data = {
+      auto_cleanup_enabled: getSwitchValue('data-auto-cleanup-enabled'),
+      auto_cleanup_days: parseInt(document.getElementById('data-auto-cleanup-days').value) || 90,
+      backup_enabled: getSwitchValue('data-backup-enabled'),
+      backup_frequency: document.getElementById('data-backup-frequency').value,
+    };
+
+    try {
+      var resp = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saveData)
+      });
+
+      if (!resp.ok) throw new Error('保存失败');
+
+      currentSettings = await resp.json();
+
+      if (typeof Utils !== 'undefined' && Utils.showToast) {
+        Utils.showToast('设置已保存', 'success');
+      } else {
+        alert('设置已保存');
+      }
+    } catch (err) {
+      console.error('[settings] save failed', err);
+      alert('保存失败: ' + err.message);
+    }
+  }
+
+  var tabs = document.querySelectorAll('.setting-tab');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var section = tab.getAttribute('data-section');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelectorAll('.setting-section').forEach(function(s) { s.classList.add('hidden'); });
+      document.getElementById('section-' + section).classList.remove('hidden');
+    });
+  });
+
+  document.getElementById('settings-save-btn').addEventListener('click', saveSettings);
+  document.getElementById('settings-reset-btn').addEventListener('click', loadSettings);
+
+  globalThis.toggleSwitch = toggleSwitch;
+
+  loadSettings();
+})();
+</script>
+</div>

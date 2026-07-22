@@ -1,0 +1,1301 @@
+<!--
+  组织架构管理页面 (lex-coder · 2026-07-03)
+  数据源: GET/POST/PUT/DELETE /api/org/* (org_router.py)
+  
+  功能模块:
+  - 组织架构树
+  - 部门管理
+  - 团队管理
+  - 角色权限
+  - 成员管理
+-->
+<div class="hidden view-content flex-1 flex flex-col overflow-y-auto" id="view-org-admin" data-view-source="org-admin/index.html">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif; }
+  .fade-in { animation: fadeIn 200ms ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  
+  .oa-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  
+  .oa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .oa-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1D2129;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .oa-breadcrumb {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 16px;
+  }
+  
+  .oa-breadcrumb a { color: #165DFF; cursor: pointer; }
+  .oa-breadcrumb span { margin: 0 8px; }
+  
+  .oa-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #E5E6EB;
+    margin-bottom: 20px;
+  }
+  
+  .oa-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #4E5969;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 150ms;
+  }
+  
+  .oa-tab:hover { color: #165DFF; }
+  
+  .oa-tab.active {
+    color: #165DFF;
+    border-bottom-color: #165DFF;
+    font-weight: 500;
+  }
+  
+  .oa-tab-content { display: none; }
+  .oa-tab-content.active { display: block; }
+  
+  .oa-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+  }
+  
+  .oa-side-panel {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 16px;
+    height: fit-content;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  
+  .oa-side-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .oa-side-add-btn {
+    background: none;
+    border: none;
+    color: #165DFF;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  
+  .oa-side-add-btn:hover { background: #E8F3FF; }
+  
+  .oa-tree {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .oa-tree-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 150ms;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #4E5969;
+  }
+  
+  .oa-tree-item:hover { background: #F7F8FA; }
+  
+  .oa-tree-item.active {
+    background: #E8F3FF;
+    color: #165DFF;
+    font-weight: 500;
+  }
+  
+  .oa-tree-arrow {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 150ms;
+    color: #86909C;
+    font-size: 10px;
+  }
+  
+  .oa-tree-arrow.expanded { transform: rotate(90deg); }
+  
+  .oa-tree-icon { font-size: 14px; }
+  
+  .oa-tree-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: #86909C;
+    background: #F2F3F5;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  
+  .oa-tree-item.active .oa-tree-count {
+    background: #165DFF;
+    color: white;
+  }
+  
+  .oa-tree-children {
+    list-style: none;
+    padding-left: 20px;
+    margin: 0;
+    display: none;
+  }
+  
+  .oa-tree-children.show { display: block; }
+  
+  .oa-main-panel {
+    min-width: 0;
+  }
+  
+  .oa-toolbar {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px 8px 0 0;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .oa-search {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  
+  .oa-search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 36px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    transition: all 150ms;
+    box-sizing: border-box;
+  }
+  
+  .oa-search-input:focus {
+    outline: none;
+    border-color: #165DFF;
+    background: white;
+  }
+  
+  .oa-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #86909C;
+    font-size: 16px;
+  }
+  
+  .oa-filter-select {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #E5E6EB;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #FAFBFC;
+    color: #1D2129;
+    min-width: 120px;
+  }
+  
+  .oa-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    transition: all 150ms;
+  }
+  
+  .oa-btn-primary {
+    background: #165DFF;
+    color: white;
+    border-color: #165DFF;
+  }
+  
+  .oa-btn-primary:hover {
+    background: #0E42D2;
+    border-color: #0E42D2;
+  }
+  
+  .oa-btn-default {
+    background: white;
+    color: #4E5969;
+    border-color: #E5E6EB;
+  }
+  
+  .oa-btn-default:hover {
+    border-color: #165DFF;
+    color: #165DFF;
+  }
+  
+  .oa-btn-danger {
+    background: white;
+    color: #F53F3F;
+    border-color: #FFECE8;
+  }
+  
+  .oa-btn-danger:hover {
+    background: #F53F3F;
+    color: white;
+    border-color: #F53F3F;
+  }
+  
+  .oa-table-wrap {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow-x: auto;
+  }
+  
+  .oa-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .oa-table th {
+    background: #FAFBFC;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4E5969;
+    border-bottom: 1px solid #E5E6EB;
+    white-space: nowrap;
+  }
+  
+  .oa-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F2F3F5;
+    font-size: 13px;
+    color: #1D2129;
+    vertical-align: middle;
+  }
+  
+  .oa-table tr:hover { background: #F7F8FA; }
+  .oa-table tr:last-child td { border-bottom: none; }
+  
+  .oa-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .oa-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    flex-shrink: 0;
+  }
+  
+  .oa-avatar.c1 { background: #165DFF; }
+  .oa-avatar.c2 { background: #00B42A; }
+  .oa-avatar.c3 { background: #722ED1; }
+  .oa-avatar.c4 { background: #FF7D00; }
+  .oa-avatar.c5 { background: #F53F3F; }
+  .oa-avatar.c6 { background: #13C2C2; }
+  
+  .oa-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  
+  .oa-user-name {
+    font-size: 13px;
+    color: #1D2129;
+    font-weight: 500;
+  }
+  
+  .oa-user-email {
+    font-size: 12px;
+    color: #86909C;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .oa-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .oa-tag.active { background: #E8FFEA; color: #00B42A; }
+  .oa-tag.inactive { background: #F2F3F5; color: #86909C; }
+  .oa-tag.disabled { background: #FFECE8; color: #F53F3F; }
+  .oa-tag.system { background: #FFF7E8; color: #FF7D00; }
+  .oa-tag.custom { background: #E8F3FF; color: #165DFF; }
+  
+  .oa-role-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #E5E6EB;
+    color: #4E5969;
+    background: white;
+  }
+  
+  .oa-role-tag.owner { background: #FFF1F0; color: #F53F3F; border-color: #FFCCC7; }
+  .oa-role-tag.admin { background: #FFF7E8; color: #FF7D00; border-color: #FFD591; }
+  .oa-role-tag.lawyer { background: #E8F3FF; color: #165DFF; border-color: #91CAFF; }
+  .oa-role-tag.paralegal { background: #E8FFEA; color: #00B42A; border-color: #95DE64; }
+  .oa-role-tag.guest { background: #F2F3F5; color: #86909C; border-color: #E5E6EB; }
+  
+  .oa-action-btn {
+    background: none;
+    border: none;
+    color: #165DFF;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+    margin-right: 12px;
+  }
+  
+  .oa-action-btn:hover { text-decoration: underline; }
+  .oa-action-btn.danger { color: #F53F3F; }
+  
+  .oa-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .oa-page-info { font-size: 13px; color: #86909C; }
+  
+  .oa-page-buttons { display: flex; gap: 4px; }
+  
+  .oa-page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #E5E6EB;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #4E5969;
+    transition: all 150ms;
+  }
+  
+  .oa-page-btn:hover { border-color: #165DFF; color: #165DFF; }
+  .oa-page-btn.active { background: #165DFF; color: white; border-color: #165DFF; }
+  .oa-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  .oa-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .oa-stat-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  
+  .oa-stat-label {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .oa-stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1D2129;
+    font-feature-settings: "tnum";
+  }
+  
+  .oa-role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .oa-role-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 150ms;
+  }
+  
+  .oa-role-card:hover {
+    border-color: #165DFF;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.1);
+  }
+  
+  .oa-role-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .oa-role-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .oa-role-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  
+  .oa-role-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2129;
+  }
+  
+  .oa-role-desc {
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 12px;
+  }
+  
+  .oa-role-users {
+    font-size: 12px;
+    color: #86909C;
+    margin-bottom: 12px;
+  }
+  
+  .oa-role-users strong { color: #1D2129; font-weight: 500; }
+  
+  .oa-role-permissions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  
+  .oa-perm-chip {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: #F2F3F5;
+    color: #4E5969;
+    border-radius: 3px;
+  }
+  
+  .oa-role-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #F2F3F5;
+  }
+  
+  .oa-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .oa-team-card {
+    background: white;
+    border: 1px solid #E5E6EB;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 150ms;
+  }
+  
+  .oa-team-card:hover {
+    border-color: #165DFF;
+    box-shadow: 0 4px 12px rgba(22, 93, 255, 0.1);
+  }
+  
+  .oa-team-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .oa-team-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .oa-team-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 4px;
+  }
+  
+  .oa-team-type {
+    font-size: 12px;
+    color: #86909C;
+  }
+  
+  .oa-team-desc {
+    font-size: 13px;
+    color: #4E5969;
+    margin-bottom: 12px;
+  }
+  
+  .oa-team-members {
+    display: flex;
+    margin-bottom: 12px;
+  }
+  
+  .oa-team-member-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-left: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: white;
+    background: #165DFF;
+  }
+  
+  .oa-team-member-avatar:first-child { margin-left: 0; }
+  .oa-team-member-avatar.more { background: #86909C; }
+  
+  .oa-team-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #F2F3F5;
+  }
+  
+  .oa-team-count {
+    font-size: 12px;
+    color: #86909C;
+  }
+  
+  .oa-team-count strong { color: #1D2129; font-weight: 500; }
+</style>
+
+<div class="oa-container fade-in">
+  <div class="oa-breadcrumb">
+    <a onclick="showView('settings')">设置</a>
+    <span>/</span>
+    <span>组织架构管理</span>
+  </div>
+  
+  <div class="oa-header">
+    <div class="oa-title">
+      <span>🏢</span>
+      <span>组织架构管理</span>
+    </div>
+  </div>
+  
+  <div class="oa-tabs">
+    <div class="oa-tab active" data-tab="members" onclick="oaSwitchTab('members')">成员管理</div>
+    <div class="oa-tab" data-tab="departments" onclick="oaSwitchTab('departments')">部门管理</div>
+    <div class="oa-tab" data-tab="teams" onclick="oaSwitchTab('teams')">团队管理</div>
+    <div class="oa-tab" data-tab="roles" onclick="oaSwitchTab('roles')">角色权限</div>
+  </div>
+  
+  <!-- 成员管理 -->
+  <div class="oa-tab-content active" id="oa-tab-members">
+    <div class="oa-stats-row">
+      <div class="oa-stat-card fade-in">
+        <div class="oa-stat-label"><span>👤</span> 总成员数</div>
+        <div class="oa-stat-value">68</div>
+      </div>
+      <div class="oa-stat-card fade-in">
+        <div class="oa-stat-label"><span>✅</span> 在职成员</div>
+        <div class="oa-stat-value" style="color: #00B42A;">62</div>
+      </div>
+      <div class="oa-stat-card fade-in">
+        <div class="oa-stat-label"><span>🏢</span> 部门数</div>
+        <div class="oa-stat-value" style="color: #165DFF;">8</div>
+      </div>
+      <div class="oa-stat-card fade-in">
+        <div class="oa-stat-label"><span>👥</span> 团队数</div>
+        <div class="oa-stat-value" style="color: #722ED1;">12</div>
+      </div>
+    </div>
+    
+    <div class="oa-layout">
+      <div class="oa-side-panel">
+        <div class="oa-side-title">
+          <span>组织架构</span>
+          <button class="oa-side-add-btn" onclick="oaAddDept()">+ 部门</button>
+        </div>
+        <ul class="oa-tree" id="oaDeptTree">
+          <!-- 动态渲染 -->
+        </ul>
+      </div>
+      
+      <div class="oa-main-panel">
+        <div class="oa-toolbar">
+          <div class="oa-search">
+            <span class="oa-search-icon">🔍</span>
+            <input type="text" class="oa-search-input" placeholder="搜索成员姓名、邮箱..." oninput="oaSearchMembers(this.value)">
+          </div>
+          <select class="oa-filter-select" id="oaRoleFilter" onchange="oaFilterMembers()">
+            <option value="">全部角色</option>
+            <option value="owner">所有者</option>
+            <option value="admin">管理员</option>
+            <option value="lawyer">律师</option>
+            <option value="paralegal">律师助理</option>
+            <option value="guest">访客</option>
+          </select>
+          <select class="oa-filter-select" id="oaStatusFilter" onchange="oaFilterMembers()">
+            <option value="">全部状态</option>
+            <option value="active">在职</option>
+            <option value="inactive">离职</option>
+          </select>
+          <button class="oa-btn oa-btn-default">批量操作</button>
+          <button class="oa-btn oa-btn-primary" onclick="oaInviteMember()">
+            <span>+</span> 邀请成员
+          </button>
+        </div>
+        
+        <div class="oa-table-wrap">
+          <table class="oa-table">
+            <thead>
+              <tr>
+                <th style="width: 32px;"><input type="checkbox"></th>
+                <th>成员</th>
+                <th style="width: 120px;">角色</th>
+                <th style="width: 150px;">部门</th>
+                <th style="width: 120px;">职位</th>
+                <th style="width: 100px;">状态</th>
+                <th style="width: 140px;">最近登录</th>
+                <th style="width: 120px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="oaMemberTableBody">
+              <!-- 动态渲染 -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="oa-pagination">
+          <div class="oa-page-info">共 <span id="oaMemberTotal">68</span> 位成员</div>
+          <div class="oa-page-buttons" id="oaMemberPagination">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 部门管理 -->
+  <div class="oa-tab-content" id="oa-tab-departments">
+    <div class="oa-layout">
+      <div class="oa-side-panel">
+        <div class="oa-side-title">
+          <span>部门树</span>
+          <button class="oa-side-add-btn" onclick="oaAddDept()">+ 新建</button>
+        </div>
+        <ul class="oa-tree" id="oaDeptTree2">
+          <!-- 动态渲染 -->
+        </ul>
+      </div>
+      
+      <div class="oa-main-panel">
+        <div class="oa-toolbar">
+          <div class="oa-search">
+            <span class="oa-search-icon">🔍</span>
+            <input type="text" class="oa-search-input" placeholder="搜索部门..." oninput="oaSearchDepts(this.value)">
+          </div>
+          <button class="oa-btn oa-btn-primary" onclick="oaAddDept()">
+            <span>+</span> 新建部门
+          </button>
+        </div>
+        
+        <div class="oa-table-wrap">
+          <table class="oa-table">
+            <thead>
+              <tr>
+                <th>部门名称</th>
+                <th style="width: 120px;">上级部门</th>
+                <th style="width: 100px;">负责人</th>
+                <th style="width: 100px;">成员数</th>
+                <th style="width: 100px;">状态</th>
+                <th style="width: 160px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="oaDeptTableBody">
+              <!-- 动态渲染 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 团队管理 -->
+  <div class="oa-tab-content" id="oa-tab-teams">
+    <div class="oa-toolbar" style="border-radius: 8px;">
+      <div class="oa-search" style="max-width: 300px;">
+        <span class="oa-search-icon">🔍</span>
+        <input type="text" class="oa-search-input" placeholder="搜索团队..." oninput="oaSearchTeams(this.value)">
+      </div>
+      <select class="oa-filter-select" onchange="oaFilterTeams(this.value)">
+        <option value="">全部类型</option>
+        <option value="project">项目组</option>
+        <option value="practice">业务组</option>
+        <option value="committee">委员会</option>
+      </select>
+      <select class="oa-filter-select" onchange="oaFilterTeamsByStatus(this.value)">
+        <option value="">全部状态</option>
+        <option value="active">活跃</option>
+        <option value="inactive">停用</option>
+      </select>
+      <div style="flex: 1;"></div>
+      <button class="oa-btn oa-btn-primary" onclick="oaAddTeam()">
+        <span>+</span> 创建团队
+      </button>
+    </div>
+    
+    <div class="oa-team-grid" id="oaTeamGrid" style="margin-top: 16px;">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+  
+  <!-- 角色权限 -->
+  <div class="oa-tab-content" id="oa-tab-roles">
+    <div class="oa-toolbar" style="border-radius: 8px;">
+      <div class="oa-search" style="max-width: 300px;">
+        <span class="oa-search-icon">🔍</span>
+        <input type="text" class="oa-search-input" placeholder="搜索角色..." oninput="oaSearchRoles(this.value)">
+      </div>
+      <select class="oa-filter-select" onchange="oaFilterRoles(this.value)">
+        <option value="">全部类型</option>
+        <option value="system">系统角色</option>
+        <option value="custom">自定义角色</option>
+      </select>
+      <div style="flex: 1;"></div>
+      <button class="oa-btn oa-btn-primary" onclick="oaAddRole()">
+        <span>+</span> 新建角色
+      </button>
+    </div>
+    
+    <div class="oa-role-grid" id="oaRoleGrid" style="margin-top: 16px;">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 数据 =====
+var oaDepartments = [
+  { id: 1, dept_id: "dept_root", name: "总经办", parent_id: null, level: 1, member_count: 5, manager: "系统管理员", status: "active", children: [
+    { id: 2, dept_id: "dept_legal", name: "法务部", parent_id: 1, level: 2, member_count: 15, manager: "张律师", status: "active", children: [
+      { id: 3, dept_id: "dept_litigation", name: "诉讼组", parent_id: 2, level: 3, member_count: 8, manager: "李律师", status: "active", children: [] },
+      { id: 4, dept_id: "dept_contract", name: "合同组", parent_id: 2, level: 3, member_count: 7, manager: "王律师", status: "active", children: [] },
+    ]},
+    { id: 5, dept_id: "dept_tech", name: "技术部", parent_id: 1, level: 2, member_count: 25, manager: "技术总监", status: "active", children: [
+      { id: 6, dept_id: "dept_frontend", name: "前端组", parent_id: 5, level: 3, member_count: 10, manager: "前端组长", status: "active", children: [] },
+      { id: 7, dept_id: "dept_backend", name: "后端组", parent_id: 5, level: 3, member_count: 10, manager: "后端组长", status: "active", children: [] },
+      { id: 8, dept_id: "dept_ai", name: "AI 组", parent_id: 5, level: 3, member_count: 5, manager: "AI 组长", status: "active", children: [] },
+    ]},
+    { id: 9, dept_id: "dept_sales", name: "销售部", parent_id: 1, level: 2, member_count: 20, manager: "销售总监", status: "active", children: [] },
+    { id: 10, dept_id: "dept_hr", name: "人力资源部", parent_id: 1, level: 2, member_count: 8, manager: "HR 总监", status: "active", children: [] },
+  ]}
+];
+
+var oaMembers = [
+  { id: 1, name: "系统管理员", email: "admin@example.com", role: "owner", dept_id: 1, dept_name: "总经办", position: "CEO", status: "active", last_login: "2026-07-03 09:00", avatar_color: 1 },
+  { id: 2, name: "张律师", email: "zhang@example.com", role: "admin", dept_id: 2, dept_name: "法务部", position: "法务总监", status: "active", last_login: "2026-07-03 08:30", avatar_color: 2 },
+  { id: 3, name: "李律师", email: "li@example.com", role: "lawyer", dept_id: 3, dept_name: "诉讼组", position: "诉讼组组长", status: "active", last_login: "2026-07-02 17:45", avatar_color: 3 },
+  { id: 4, name: "王律师", email: "wang@example.com", role: "lawyer", dept_id: 4, dept_name: "合同组", position: "合同组组长", status: "active", last_login: "2026-07-03 10:15", avatar_color: 4 },
+  { id: 5, name: "陈助理", email: "chen@example.com", role: "paralegal", dept_id: 3, dept_name: "诉讼组", position: "律师助理", status: "active", last_login: "2026-07-03 09:30", avatar_color: 5 },
+  { id: 6, name: "刘律师", email: "liu@example.com", role: "lawyer", dept_id: 3, dept_name: "诉讼组", position: "律师", status: "active", last_login: "2026-07-03 08:00", avatar_color: 6 },
+  { id: 7, name: "赵律师", email: "zhao@example.com", role: "lawyer", dept_id: 4, dept_name: "合同组", position: "律师", status: "active", last_login: "2026-07-02 16:00", avatar_color: 1 },
+  { id: 8, name: "孙助理", email: "sun@example.com", role: "paralegal", dept_id: 4, dept_name: "合同组", position: "律师助理", status: "active", last_login: "2026-07-03 09:00", avatar_color: 2 },
+  { id: 10, name: "技术总监", email: "tech@example.com", role: "admin", dept_id: 5, dept_name: "技术部", position: "CTO", status: "active", last_login: "2026-07-02 23:00", avatar_color: 3 },
+  { id: 11, name: "周工程师", email: "zhou@example.com", role: "lawyer", dept_id: 8, dept_name: "AI 组", position: "AI 工程师", status: "active", last_login: "2026-07-03 11:00", avatar_color: 4 },
+];
+
+var oaTeams = [
+  { id: 1, name: "诉讼团队", description: "专注于诉讼业务", type: "practice", color: "#1890ff", leader: "李律师", member_count: 8, max_members: 20, status: "active" },
+  { id: 2, name: "合同审查团队", description: "专注于合同审查业务", type: "practice", color: "#52c41a", leader: "王律师", member_count: 7, max_members: 15, status: "active" },
+  { id: 3, name: "AI 研发团队", description: "负责 AI 功能研发", type: "project", color: "#722ed1", leader: "技术总监", member_count: 5, max_members: 10, status: "active" },
+  { id: 4, name: "产品研发团队", description: "负责核心产品研发", type: "project", color: "#fa8c16", leader: "技术总监", member_count: 20, max_members: 30, status: "active" },
+  { id: 5, name: "知识产权组", description: "知识产权专项业务组", type: "practice", color: "#13c2c2", leader: "刘律师", member_count: 4, max_members: 10, status: "active" },
+  { id: 6, name: "合规委员会", description: "公司合规审查委员会", type: "committee", color: "#f5222d", leader: "张律师", member_count: 6, max_members: 12, status: "active" },
+];
+
+var oaRoles = [
+  { id: 1, name: "组织所有者", description: "拥有组织的全部权限", type: "system", color: "#f5222d", icon: "👑", user_count: 1, permissions: ["*"] },
+  { id: 2, name: "管理员", description: "负责组织管理工作", type: "system", color: "#fa8c16", icon: "🛡️", user_count: 3, permissions: ["用户管理", "部门管理", "角色管理", "系统配置"] },
+  { id: 3, name: "律师", description: "法律专业人员", type: "system", color: "#165DFF", icon: "⚖️", user_count: 10, permissions: ["案例查看", "案例搜索", "合同审查", "文档生成", "AI 使用"] },
+  { id: 4, name: "律师助理", description: "协助律师工作", type: "system", color: "#52c41a", icon: "📋", user_count: 5, permissions: ["案例查看", "案例搜索", "文档生成", "AI 使用"] },
+  { id: 5, name: "访客", description: "只读访问权限", type: "system", color: "#86909C", icon: "👁️", user_count: 2, permissions: ["案例查看", "案例搜索"] },
+  { id: 6, name: "实习生", description: "实习生权限", type: "custom", color: "#722ed1", icon: "🎓", user_count: 3, permissions: ["案例搜索", "文档查看", "AI 使用"] },
+];
+
+var oaMemberPage = 1;
+var oaMemberPageSize = 10;
+var oaMemberFilter = { keyword: "", role: "", status: "", dept_id: null };
+
+// ===== 初始化 =====
+function oaInit() {
+  oaRenderDeptTree("oaDeptTree");
+  oaRenderDeptTree("oaDeptTree2");
+  oaRenderMemberTable();
+  oaRenderMemberPagination();
+  oaRenderDeptTable();
+  oaRenderTeamGrid();
+  oaRenderRoleGrid();
+}
+
+// ===== 标签切换 =====
+function oaSwitchTab(tab) {
+  var tabs = document.querySelectorAll(".oa-tab");
+  var contents = document.querySelectorAll(".oa-tab-content");
+  
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove("active");
+  }
+  for (var i = 0; i < contents.length; i++) {
+    contents[i].classList.remove("active");
+  }
+  
+  var activeTab = document.querySelector('.oa-tab[data-tab="' + tab + '"]');
+  var activeContent = document.getElementById("oa-tab-" + tab);
+  if (activeTab) activeTab.classList.add("active");
+  if (activeContent) activeContent.classList.add("active");
+}
+
+// ===== 部门树 =====
+function oaRenderDeptTree(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  
+  function renderDept(dept, level) {
+    var hasChildren = dept.children && dept.children.length > 0;
+    var html = '<li>' +
+      '<div class="oa-tree-item' + (level === 0 ? ' active' : '') + '" onclick="oaSelectDept(' + dept.id + ', this)">' +
+        '<span class="oa-tree-arrow ' + (level < 2 ? 'expanded' : '') + '" onclick="event.stopPropagation(); oaToggleDept(this)">' + (hasChildren ? '▶' : '') + '</span>' +
+        '<span class="oa-tree-icon">🏢</span>' +
+        '<span>' + dept.name + '</span>' +
+        '<span class="oa-tree-count">' + dept.member_count + '</span>' +
+      '</div>';
+    
+    if (hasChildren) {
+      html += '<ul class="oa-tree-children ' + (level < 2 ? 'show' : '') + '">';
+      for (var i = 0; i < dept.children.length; i++) {
+        html += renderDept(dept.children[i], level + 1);
+      }
+      html += '</ul>';
+    }
+    
+    html += '</li>';
+    return html;
+  }
+  
+  var html = "";
+  for (var i = 0; i < oaDepartments.length; i++) {
+    html += renderDept(oaDepartments[i], 0);
+  }
+  
+  container.innerHTML = html;
+}
+
+function oaToggleDept(arrowEl) {
+  arrowEl.classList.toggle("expanded");
+  var next = arrowEl.parentElement.nextElementSibling;
+  if (next && next.classList.contains("oa-tree-children")) {
+    next.classList.toggle("show");
+  }
+}
+
+function oaSelectDept(deptId, el) {
+  var items = document.querySelectorAll("#oaDeptTree .oa-tree-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.remove("active");
+  }
+  el.classList.add("active");
+  
+  oaMemberFilter.dept_id = deptId;
+  oaMemberPage = 1;
+  oaRenderMemberTable();
+  oaRenderMemberPagination();
+}
+
+// ===== 成员表格 =====
+function oaGetFilteredMembers() {
+  return oaMembers.filter(function(m) {
+    if (oaMemberFilter.keyword) {
+      var kw = oaMemberFilter.keyword.toLowerCase();
+      if (m.name.toLowerCase().indexOf(kw) === -1 && m.email.toLowerCase().indexOf(kw) === -1) return false;
+    }
+    if (oaMemberFilter.role && m.role !== oaMemberFilter.role) return false;
+    if (oaMemberFilter.status && m.status !== oaMemberFilter.status) return false;
+    if (oaMemberFilter.dept_id && m.dept_id !== oaMemberFilter.dept_id) {
+      var dept = oaFindDept(oaMemberFilter.dept_id);
+      if (dept) {
+        var childIds = oaGetDeptChildIds(dept);
+        if (childIds.indexOf(m.dept_id) === -1) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function oaFindDept(id, depts) {
+  if (!depts) depts = oaDepartments;
+  for (var i = 0; i < depts.length; i++) {
+    if (depts[i].id === id) return depts[i];
+    if (depts[i].children) {
+      var found = oaFindDept(id, depts[i].children);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function oaGetDeptChildIds(dept) {
+  var ids = [dept.id];
+  if (dept.children) {
+    for (var i = 0; i < dept.children.length; i++) {
+      ids = ids.concat(oaGetDeptChildIds(dept.children[i]));
+    }
+  }
+  return ids;
+}
+
+function oaRenderMemberTable() {
+  var tbody = document.getElementById("oaMemberTableBody");
+  if (!tbody) return;
+  
+  var filtered = oaGetFilteredMembers();
+  var start = (oaMemberPage - 1) * oaMemberPageSize;
+  var pageData = filtered.slice(start, start + oaMemberPageSize);
+  
+  if (pageData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #86909C;">暂无成员</td></tr>';
+    return;
+  }
+  
+  var roleNames = { owner: "所有者", admin: "管理员", lawyer: "律师", paralegal: "律师助理", guest: "访客" };
+  
+  var html = "";
+  for (var i = 0; i < pageData.length; i++) {
+    var m = pageData[i];
+    html += '<tr class="fade-in">' +
+      '<td><input type="checkbox"></td>' +
+      '<td>' +
+        '<div class="oa-user-cell">' +
+          '<div class="oa-avatar c' + m.avatar_color + '">' + m.name.charAt(0) + '</div>' +
+          '<div class="oa-user-info">' +
+            '<span class="oa-user-name">' + m.name + '</span>' +
+            '<span class="oa-user-email">' + m.email + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</td>' +
+      '<td><span class="oa-role-tag ' + m.role + '">' + roleNames[m.role] + '</span></td>' +
+      '<td>' + m.dept_name + '</td>' +
+      '<td>' + m.position + '</td>' +
+      '<td><span class="oa-tag ' + m.status + '">' + (m.status === "active" ? "在职" : "离职") + '</span></td>' +
+      '<td style="color: #86909C;">' + m.last_login + '</td>' +
+      '<td>' +
+        '<button class="oa-action-btn">编辑</button>' +
+        '<button class="oa-action-btn danger">停用</button>' +
+      '</td>' +
+    '</tr>';
+  }
+  
+  tbody.innerHTML = html;
+}
+
+function oaRenderMemberPagination() {
+  var container = document.getElementById("oaMemberPagination");
+  var totalEl = document.getElementById("oaMemberTotal");
+  if (!container) return;
+  
+  var filtered = oaGetFilteredMembers();
+  var total = filtered.length;
+  var totalPages = Math.ceil(total / oaMemberPageSize) || 1;
+  
+  if (totalEl) totalEl.textContent = total;
+  
+  var html = "";
+  html += '<button class="oa-page-btn" onclick="oaGoMemberPage(' + (oaMemberPage - 1) + ')" ' + (oaMemberPage <= 1 ? "disabled" : "") + '>上一页</button>';
+  
+  var start = Math.max(1, oaMemberPage - 2);
+  var end = Math.min(totalPages, oaMemberPage + 2);
+  
+  for (var p = start; p <= end; p++) {
+    html += '<button class="oa-page-btn ' + (p === oaMemberPage ? "active" : "") + '" onclick="oaGoMemberPage(' + p + ')">' + p + '</button>';
+  }
+  
+  html += '<button class="oa-page-btn" onclick="oaGoMemberPage(' + (oaMemberPage + 1) + ')" ' + (oaMemberPage >= totalPages ? "disabled" : "") + '>下一页</button>';
+  
+  container.innerHTML = html;
+}
+
+function oaGoMemberPage(page) {
+  var filtered = oaGetFilteredMembers();
+  var totalPages = Math.ceil(filtered.length / oaMemberPageSize) || 1;
+  if (page < 1 || page > totalPages) return;
+  oaMemberPage = page;
+  oaRenderMemberTable();
+  oaRenderMemberPagination();
+}
+
+function oaSearchMembers(keyword) {
+  oaMemberFilter.keyword = keyword;
+  oaMemberPage = 1;
+  oaRenderMemberTable();
+  oaRenderMemberPagination();
+}
+
+function oaFilterMembers() {
+  oaMemberFilter.role = document.getElementById("oaRoleFilter").value;
+  oaMemberFilter.status = document.getElementById("oaStatusFilter").value;
+  oaMemberPage = 1;
+  oaRenderMemberTable();
+  oaRenderMemberPagination();
+}
+
+function oaInviteMember() {
+  alert("邀请成员 - 框架性实现\n\n可通过邮箱邀请成员加入组织。");
+}
+
+// ===== 部门表格 =====
+function oaRenderDeptTable() {
+  var tbody = document.getElementById("oaDeptTableBody");
+  if (!tbody) return;
+  
+  function flattenDepts(depts, result) {
+    for (var i = 0; i < depts.length; i++) {
+      result.push(depts[i]);
+      if (depts[i].children) {
+        flattenDepts(depts[i].children, result);
+      }
+    }
+    return result;
+  }
+  
+  var allDepts = flattenDepts(oaDepartments, []);
+  
+  var html = "";
+  for (var i = 0; i < allDepts.length; i++) {
+    var d = allDepts[i];
+    var parentName = "—";
+    if (d.parent_id) {
+      var parent = oaFindDept(d.parent_id);
+      if (parent) parentName = parent.name;
+    }
+    
+    var indent = "";
+    for (var j = 1; j < d.level; j++) {
+      indent += "　";
+    }
+    
+    html += '<tr class="fade-in">' +
+      '<td>' + indent + '🏢 ' + d.name + '</td>' +
+      '<td>' + parentName + '</td>' +
+      '<td>' + d.manager + '</td>' +
+      '<td>' + d.member_count + '</td>' +
+      '<td><span class="oa-tag ' + d.status + '">' + (d.status === "active" ? "活跃" : "停用") + '</span></td>' +
+      '<td>' +
+        '<button class="oa-action-btn">编辑</button>' +
+        '<button class="oa-action-btn">成员</button>' +
+        '<button class="oa-action-btn danger">删除</button>' +
+      '</td>' +
+    '</tr>';
+  }
+  
+  tbody.innerHTML = html;
+}
+
+function oaAddDept() {
+  alert("新建部门 - 框架性实现");
+}
+
+function oaSearchDepts(keyword) {
+  // 框架性实现
+}
+
+// ===== 团队 =====
+function oaRenderTeamGrid() {
+  var container = document.getElementById("oaTeamGrid");
+  if (!container) return;
+  
+  var html = "";
+  for (var i = 0; i < oaTeams.length; i++) {
+    var t = oaTeams[i];
+    var typeNames = { project: "项目组", practice: "业务组", committee: "委员会" };
+    var initial = t.name.charAt(0);
+    
+    html += '<div class="oa-team-card fade-in">' +
+      '<div class="oa-team-header">' +
+        '<div class="oa-team-icon" style="background: ' + t.color + ';">' + initial + '</div>' +
+        '<div style="flex: 1;">' +
+          '<div class="oa-team-name">' + t.name + '</div>' +
+          '<div class="oa-team-type">' + typeNames[t.type] + ' · 负责人: ' + t.leader + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="oa-team-desc">' + t.description + '</div>' +
+      '<div class="oa-team-members">' +
+        '<div class="oa-team-member-avatar" style="background: #165DFF;">张</div>' +
+        '<div class="oa-team-member-avatar" style="background: #00B42A;">李</div>' +
+        '<div class="oa-team-member-avatar" style="background: #722ED1;">王</div>' +
+        '<div class="oa-team-member-avatar" style="background: #FF7D00;">刘</div>' +
+        '<div class="oa-team-member-avatar more">+' + (t.member_count - 4) + '</div>' +
+      '</div>' +
+      '<div class="oa-team-footer">' +
+        '<span class="oa-team-count"><strong>' + t.member_count + '</strong>/' + (t.max_members || "∞") + ' 人</span>' +
+        '<span style="display: flex; gap: 8px;">' +
+          '<button class="oa-btn oa-btn-default" style="height: 28px; font-size: 12px; padding: 0 10px;">管理</button>' +
+        '</span>' +
+      '</div>' +
+    '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function oaAddTeam() {
+  alert("创建团队 - 框架性实现");
+}
+
+function oaSearchTeams(keyword) {
+  // 框架性实现
+}
+
+function oaFilterTeams(type) {
+  // 框架性实现
+}
+
+function oaFilterTeamsByStatus(status) {
+  // 框架性实现
+}
+
+// ===== 角色 =====
+function oaRenderRoleGrid() {
+  var container = document.getElementById("oaRoleGrid");
+  if (!container) return;
+  
+  var html = "";
+  for (var i = 0; i < oaRoles.length; i++) {
+    var r = oaRoles[i];
+    
+    var permChips = "";
+    for (var j = 0; j < Math.min(r.permissions.length, 4); j++) {
+      permChips += '<span class="oa-perm-chip">' + r.permissions[j] + '</span>';
+    }
+    if (r.permissions.length > 4) {
+      permChips += '<span class="oa-perm-chip">+' + (r.permissions.length - 4) + '</span>';
+    }
+    
+    html += '<div class="oa-role-card fade-in">' +
+      '<div class="oa-role-card-header">' +
+        '<div class="oa-role-card-title">' +
+          '<div class="oa-role-icon" style="background: ' + r.color + '20;">' + r.icon + '</div>' +
+          '<div>' +
+            '<div class="oa-role-name">' + r.name + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<span class="oa-tag ' + r.type + '">' + (r.type === "system" ? "系统" : "自定义") + '</span>' +
+      '</div>' +
+      '<div class="oa-role-desc">' + r.description + '</div>' +
+      '<div class="oa-role-users">拥有用户: <strong>' + r.user_count + '</strong> 人</div>' +
+      '<div class="oa-role-permissions">' + permChips + '</div>' +
+      '<div class="oa-role-card-footer">' +
+        '<button class="oa-btn oa-btn-default" style="height: 28px; font-size: 12px; padding: 0 10px;">复制</button>' +
+        '<button class="oa-btn oa-btn-primary" style="height: 28px; font-size: 12px; padding: 0 10px;">编辑权限</button>' +
+      '</div>' +
+    '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function oaAddRole() {
+  alert("新建角色 - 框架性实现");
+}
+
+function oaSearchRoles(keyword) {
+  // 框架性实现
+}
+
+function oaFilterRoles(type) {
+  // 框架性实现
+}
+
+oaInit();
+</script>
+</div>

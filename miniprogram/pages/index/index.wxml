@@ -1,0 +1,137 @@
+<view class="container">
+  <view class="header">
+    <view class="header-top">
+      <view class="logo-section">
+        <view class="logo">⚖️</view>
+        <view class="brand">
+          <text class="brand-name">LexPrime</text>
+          <text class="brand-slogan">智能法律助手</text>
+        </view>
+      </view>
+      <view class="user-avatar" bindtap="goToProfile">
+        <block wx:if="{{isLoggedIn && userInfo}}">
+          <image src="{{userInfo.avatarUrl}}" class="avatar-img" mode="aspectFill" />
+        </block>
+        <block wx:else>
+          <view class="avatar-placeholder" bindtap="goToLogin">登录</view>
+        </block>
+      </view>
+    </view>
+    
+    <view class="search-bar">
+      <input 
+        class="search-input" 
+        placeholder="搜索判例、法规、企业..." 
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+      />
+      <view class="search-btn" bindtap="onSearch">搜索</view>
+    </view>
+  </view>
+
+  <view class="quick-actions">
+    <view class="action-grid">
+      <view class="action-item" data-action="case-search" bindtap="onQuickAction">
+        <view class="action-icon icon-blue">📚</view>
+        <text class="action-text">判例检索</text>
+      </view>
+      <view class="action-item" data-action="contract-review" bindtap="onQuickAction">
+        <view class="action-icon icon-green">📋</view>
+        <text class="action-text">合同审查</text>
+      </view>
+      <view class="action-item" data-action="schedule" bindtap="onQuickAction">
+        <view class="action-icon icon-orange">📅</view>
+        <text class="action-text">日程管理</text>
+      </view>
+      <view class="action-item" data-action="ai-chat" bindtap="onQuickAction">
+        <view class="action-icon icon-purple">🤖</view>
+        <text class="action-text">AI 咨询</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-section card">
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-number">{{stats.totalCases}}</text>
+        <text class="stat-label">判例总量</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{stats.todaySchedule}}</text>
+        <text class="stat-label">今日日程</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-number">{{stats.pendingReview}}</text>
+        <text class="stat-label">待审查</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🔥 热门判例</text>
+      <text class="section-more" bindtap="goToCases">查看更多 ›</text>
+    </view>
+    
+    <view class="loading" wx:if="{{loading && hotCases.length === 0}}">
+      <text>加载中...</text>
+    </view>
+    
+    <view class="case-list" wx:else>
+      <view 
+        class="case-item card" 
+        wx:for="{{hotCases}}" 
+        wx:key="id"
+        data-doc-id="{{item.doc_id}}"
+        bindtap="onCaseTap"
+      >
+        <view class="case-header">
+          <text class="case-name">{{item.case_name}}</text>
+          <view class="case-badge badge">{{item.cause_category}}</view>
+        </view>
+        <view class="case-info">
+          <text class="case-court">{{item.court}}</text>
+          <text class="case-date">{{item.judgment_date}}</text>
+        </view>
+        <view class="case-footer">
+          <view class="case-score">
+            <text class="score-label">LexScore</text>
+            <text class="score-value">{{item.lex_score || 0}}</text>
+          </view>
+          <view class="case-stats">
+            <text class="stat">👁 {{item.view_count || 0}}</text>
+            <text class="stat">⭐ {{item.favorite_count || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{isLoggedIn}}">
+    <view class="section-header">
+      <text class="section-title">📅 今日日程</text>
+      <text class="section-more" bindtap="goToSchedule">全部 ›</text>
+    </view>
+    
+    <view class="empty-state" wx:if="{{scheduleList.length === 0}}">
+      <text class="icon">📭</text>
+      <text>今日暂无日程</text>
+    </view>
+    
+    <view class="schedule-list" wx:else>
+      <view class="schedule-item card" wx:for="{{scheduleList}}" wx:key="id">
+        <view class="schedule-time">
+          <text class="time">{{item.time || '全天'}}</text>
+        </view>
+        <view class="schedule-content">
+          <text class="schedule-title">{{item.title}}</text>
+          <text class="schedule-type">{{item.type === 'court' ? '开庭' : item.type === 'meeting' ? '会议' : '其他'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

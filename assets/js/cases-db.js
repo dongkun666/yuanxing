@@ -1,0 +1,1085 @@
+/**
+ * 案例数据库 - 交互模块 (2026-07-03)
+ *
+ * 视图: templates/views/cases-db.html
+ * 功能: 多条件检索 + 排序 + 分页 + 结果计数 + 空态 + loading + 详情
+ *       + 案件状态流转 + 状态变更记录 + 案件时间线
+ * 依赖: showToast (script.js)
+ * 暴露: initCasesDb, searchCases, changeCasesPage, openCaseDetail, changeCasesSort
+ *       changeCaseStatus, getCaseTimeline
+ */
+
+(function () {
+    'use strict';
+
+    var CAUSE_STYLES = {
+        合同纠纷: 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 border border-blue-200/50',
+        侵权责任纠纷: 'bg-gradient-to-r from-red-50 to-red-100 text-red-600 border border-red-200/50',
+        劳动争议: 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-600 border border-amber-200/50',
+        知识产权纠纷: 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-600 border border-purple-200/50'
+    };
+
+    var CASE_STATUSES = {
+        pending: { label: '待处理', color: 'bg-gray-100 text-gray-600' },
+        reviewing: { label: '审查中', color: 'bg-blue-100 text-blue-600' },
+        matching: { label: '匹配中', color: 'bg-purple-100 text-purple-600' },
+        in_progress: { label: '进行中', color: 'bg-green-100 text-green-600' },
+        closed: { label: '结案', color: 'bg-amber-100 text-amber-600' },
+        archived: { label: '归档', color: 'bg-gray-200 text-gray-500' }
+    };
+
+    var STATUS_FLOW = {
+        pending: ['reviewing'],
+        reviewing: ['matching', 'pending'],
+        matching: ['in_progress', 'reviewing'],
+        in_progress: ['closed', 'matching'],
+        closed: ['archived', 'in_progress'],
+        archived: []
+    };
+
+    // ===== Mock 案例数据集 (16 条, 覆盖 4 案由 / 4 级法院 / 4 年份) =====
+    // courtLevel: 1=最高 2=高级 3=中级 4=基层
+    var CASES_DB = [
+        {
+            id: 'cd-001',
+            title: '张三与李四买卖合同纠纷一审民事判决书',
+            court: '北京市朝阳区人民法院',
+            courtLevel: 4,
+            date: '2025-12-15',
+            cause: '合同纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告张三与被告李四买卖合同纠纷一案，本院于2025年10月20日立案后，依法适用普通程序，公开开庭进行了审理。原告张三及其委托诉讼代理人到庭参加诉讼，被告李四经本院合法传唤无正当理由拒不到庭参加诉讼，本院依法缺席审理。本案现已审理终结。'
+        },
+        {
+            id: 'cd-002',
+            title: '王五与某科技公司劳动争议二审民事判决书',
+            court: '北京市第三中级人民法院',
+            courtLevel: 3,
+            date: '2025-11-20',
+            cause: '劳动争议',
+            caseType: '民事二审',
+            summary:
+                '上诉人王五因与被上诉人某科技公司劳动争议一案，不服北京市朝阳区人民法院民事判决，向本院提起上诉。本院于2025年10月8日立案后，依法组成合议庭，开庭进行了审理。上诉人王五及其委托诉讼代理人、被上诉人某科技公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-003',
+            title: '某房地产公司与某建筑公司建设工程施工合同纠纷一审民事判决书',
+            court: '上海市第一中级人民法院',
+            courtLevel: 3,
+            date: '2025-10-08',
+            cause: '合同纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告某房地产公司与被告某建筑公司建设工程施工合同纠纷一案，本院于2025年6月15日立案后，依法适用普通程序，公开开庭进行了审理。原告某房地产公司之委托诉讼代理人、被告某建筑公司之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-004',
+            title: '高空抛物致害责任纠纷一审民事判决书',
+            court: '最高人民法院',
+            courtLevel: 1,
+            date: '2024-09-15',
+            cause: '侵权责任纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告甲与被告某小区全体业主高空抛物致害责任纠纷一案，经公安机关调查难以确定具体侵权人。原告请求可能加害的建筑物使用人给予补偿。本院依法适用普通程序，公开开庭进行了审理。本案现已审理终结。'
+        },
+        {
+            id: 'cd-005',
+            title: '某科技公司侵害发明专利权纠纷二审民事判决书',
+            court: '最高人民法院知识产权法庭',
+            courtLevel: 1,
+            date: '2024-08-22',
+            cause: '知识产权纠纷',
+            caseType: '民事二审',
+            summary:
+                '上诉人某科技公司因与被上诉人某研究院侵害发明专利权纠纷一案，不服北京知识产权法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人某科技公司之委托诉讼代理人、被上诉人某研究院之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-006',
+            title: '某贸易公司与某物流公司运输合同纠纷二审民事判决书',
+            court: '上海市高级人民法院',
+            courtLevel: 2,
+            date: '2026-01-10',
+            cause: '合同纠纷',
+            caseType: '民事二审',
+            summary:
+                '上诉人某贸易公司因与被上诉人某物流公司运输合同纠纷一案，不服上海市第一中级人民法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人某贸易公司之委托诉讼代理人、被上诉人某物流公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-007',
+            title: '赵六与某餐饮公司劳动争议二审民事判决书',
+            court: '北京市高级人民法院',
+            courtLevel: 2,
+            date: '2024-06-18',
+            cause: '劳动争议',
+            caseType: '民事二审',
+            summary:
+                '上诉人赵六因与被上诉人某餐饮公司劳动争议一案，不服北京市第二中级人民法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人赵六及其委托诉讼代理人、被上诉人某餐饮公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-008',
+            title: '钱七与某物业公司违反安全保障义务责任纠纷一审民事判决书',
+            court: '北京市海淀区人民法院',
+            courtLevel: 4,
+            date: '2023-05-30',
+            cause: '侵权责任纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告钱七与被告某物业公司违反安全保障义务责任纠纷一案，本院于2023年3月12日立案后，依法适用简易程序，公开开庭进行了审理。原告钱七、被告某物业公司之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-009',
+            title: '某服装公司与某商贸公司商标权权属纠纷一审民事判决书',
+            court: '上海知识产权法院',
+            courtLevel: 3,
+            date: '2025-03-12',
+            cause: '知识产权纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告某服装公司与被告某商贸公司商标权权属纠纷一案，本院于2025年1月8日立案后，依法适用普通程序，公开开庭进行了审理。原告某服装公司之委托诉讼代理人、被告某商贸公司之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-010',
+            title: '某投资公司与某担保公司借款合同纠纷二审民事判决书',
+            court: '最高人民法院',
+            courtLevel: 1,
+            date: '2023-11-25',
+            cause: '合同纠纷',
+            caseType: '民事二审',
+            summary:
+                '上诉人某投资公司因与被上诉人某担保公司借款合同纠纷一案，不服北京市高级人民法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人某投资公司之委托诉讼代理人、被上诉人某担保公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-011',
+            title: '孙八与某互联网公司竞业限制纠纷一审民事判决书',
+            court: '上海市浦东新区人民法院',
+            courtLevel: 4,
+            date: '2026-02-14',
+            cause: '劳动争议',
+            caseType: '民事一审',
+            summary:
+                '原告孙八与被告某互联网公司竞业限制纠纷一案，本院于2025年12月20日立案后，依法适用简易程序，公开开庭进行了审理。原告孙八、被告某互联网公司之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-012',
+            title: '周九与某保险公司机动车交通事故责任纠纷二审民事判决书',
+            court: '上海市高级人民法院',
+            courtLevel: 2,
+            date: '2025-07-08',
+            cause: '侵权责任纠纷',
+            caseType: '民事二审',
+            summary:
+                '上诉人周九因与被上诉人某保险公司机动车交通事故责任纠纷一案，不服上海市第一中级人民法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人周九及其委托诉讼代理人、被上诉人某保险公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-013',
+            title: '某食品公司与某广告公司著作权权属纠纷二审民事判决书',
+            court: '北京市高级人民法院',
+            courtLevel: 2,
+            date: '2024-04-20',
+            cause: '知识产权纠纷',
+            caseType: '民事二审',
+            summary:
+                '上诉人某食品公司因与被上诉人某广告公司著作权权属纠纷一案，不服北京知识产权法院民事判决，向本院提起上诉。本院依法组成合议庭，开庭进行了审理。上诉人某食品公司之委托诉讼代理人、被上诉人某广告公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-014',
+            title: '吴十与某开发商商品房预售合同纠纷一审民事判决书',
+            court: '北京市第一中级人民法院',
+            courtLevel: 3,
+            date: '2023-08-30',
+            cause: '合同纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告吴十与被告某开发商商品房预售合同纠纷一案，本院于2023年6月10日立案后，依法适用普通程序，公开开庭进行了审理。原告吴十之委托诉讼代理人、被告某开发商之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-015',
+            title: '郑十一与某制造公司工伤保险待遇纠纷再审民事判决书',
+            court: '最高人民法院',
+            courtLevel: 1,
+            date: '2026-03-05',
+            cause: '劳动争议',
+            caseType: '民事再审',
+            summary:
+                '再审申请人郑十一因与被申请人某制造公司工伤保险待遇纠纷一案，不服上海市高级人民法院民事判决，向本院申请再审。本院依法提审后组成合议庭，开庭进行了审理。再审申请人郑十一之委托诉讼代理人、被申请人某制造公司之委托诉讼代理人到庭参加诉讼。本案现已审理终结。'
+        },
+        {
+            id: 'cd-016',
+            title: '王十二与某医院医疗损害责任纠纷一审民事判决书',
+            court: '上海市第二中级人民法院',
+            courtLevel: 3,
+            date: '2025-04-16',
+            cause: '侵权责任纠纷',
+            caseType: '民事一审',
+            summary:
+                '原告王十二与被告某医院医疗损害责任纠纷一案，本院于2025年2月8日立案后，依法适用普通程序，公开开庭进行了审理。原告王十二之委托诉讼代理人、被告某医院之委托诉讼代理人均到庭参加诉讼。本案现已审理终结。'
+        }
+    ];
+
+    // ===== 状态 =====
+    var PAGE_SIZE = 10;
+    var _closeCaseDetail = null;
+    var state = {
+        filtered: [], // 当前筛选结果
+        results: [], // 当前筛选 + 排序结果
+        page: 1,
+        sort: 'relevance', // 'relevance' | 'date' | 'courtLevel'
+        keyword: ''
+    };
+
+    // ===== API 联调状态 =====
+    // _casesData: 当前数据集 (API 成功 → API 数据; 失败 → CASES_DB 兜底)
+    var _casesData = CASES_DB.slice();
+    var _casesApiFailed = false; // 后端不可达标记, 命中后本次会话不再重试, 避免每次搜索卡顿
+
+    // ===== 工具 =====
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+    // 从日期字符串取年份 (YYYY-MM-DD -> YYYY)
+    function yearOf(date) {
+        return String(date || '').slice(0, 4);
+    }
+
+    // 相关度评分: 关键词命中字段加权 (标题最高, 次为案由/案件类型, 摘要/法院最低)
+    function relevanceScore(c, kw) {
+        if (!kw) return 0;
+        var k = kw.toLowerCase();
+        var score = 0;
+        if (String(c.title).toLowerCase().indexOf(k) >= 0) score += 5;
+        if (String(c.cause).toLowerCase().indexOf(k) >= 0) score += 3;
+        if (String(c.caseType).toLowerCase().indexOf(k) >= 0) score += 2;
+        if (String(c.court).toLowerCase().indexOf(k) >= 0) score += 2;
+        if (String(c.summary).toLowerCase().indexOf(k) >= 0) score += 2;
+        return score;
+    }
+
+    // 日期比较: 返回 b.date - a.date 的符号 (降序)
+    function compareDateDesc(a, b) {
+        return b.date < a.date ? -1 : b.date > a.date ? 1 : 0;
+    }
+
+    // ===== 筛选 =====
+    function applyFilters() {
+        var kwInput = $('cases-db-keyword');
+        var causeSel = $('cases-db-cause');
+        var courtSel = $('cases-db-court');
+        var yearSel = $('cases-db-year');
+
+        var kw = (kwInput ? kwInput.value : '').trim();
+        var cause = causeSel ? causeSel.value : '全部案由';
+        var court = courtSel ? courtSel.value : '全部法院';
+        var year = yearSel ? yearSel.value : '全部年份';
+
+        state.keyword = kw;
+
+        var causeActive = cause && cause !== '全部案由';
+        var courtActive = court && court !== '全部法院';
+        var yearActive = year && year !== '全部年份';
+        // 年份选项形如 "2026年", 提取数字
+        var yearNum = yearActive ? year.replace(/[^0-9]/g, '') : '';
+
+        state.filtered = _casesData.filter(function (c) {
+            var matchKw = true;
+            if (kw) {
+                var k = kw.toLowerCase();
+                matchKw =
+                    String(c.title).toLowerCase().indexOf(k) >= 0 ||
+                    String(c.summary).toLowerCase().indexOf(k) >= 0 ||
+                    String(c.cause).toLowerCase().indexOf(k) >= 0 ||
+                    String(c.court).toLowerCase().indexOf(k) >= 0 ||
+                    String(c.caseType).toLowerCase().indexOf(k) >= 0;
+            }
+            var matchCause = !causeActive || c.cause === cause;
+            // 法院用 includes: "最高人民法院" 可命中 "最高人民法院知识产权法庭"
+            var matchCourt = !courtActive || String(c.court).indexOf(court) >= 0;
+            var matchYear = !yearActive || yearOf(c.date) === yearNum;
+            return matchKw && matchCause && matchCourt && matchYear;
+        });
+    }
+
+    // ===== 排序 =====
+    function applySort() {
+        var arr = state.filtered.slice();
+        var kw = state.keyword;
+        if (state.sort === 'relevance') {
+            arr.sort(function (a, b) {
+                var sa = relevanceScore(a, kw),
+                    sb = relevanceScore(b, kw);
+                if (sb !== sa) return sb - sa;
+                // 无关键词或同分时按裁判日期降序兜底
+                return compareDateDesc(a, b);
+            });
+        } else if (state.sort === 'date') {
+            arr.sort(compareDateDesc);
+        } else if (state.sort === 'courtLevel') {
+            arr.sort(function (a, b) {
+                if (a.courtLevel !== b.courtLevel) return a.courtLevel - b.courtLevel;
+                return compareDateDesc(a, b);
+            });
+        }
+        state.results = arr;
+    }
+
+    // ===== 渲染: 结果列表 =====
+    function renderResults() {
+        var list = state.results;
+        var container = $('cases-db-results');
+        var countEl = $('cases-db-result-count');
+        var pager = $('cases-db-pagination');
+
+        if (countEl) {
+            countEl.textContent = '共 ' + list.length.toLocaleString() + ' 条结果';
+        }
+        if (!container) return;
+
+        var totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+        if (state.page > totalPages) state.page = totalPages;
+        if (state.page < 1) state.page = 1;
+
+        var start = (state.page - 1) * PAGE_SIZE;
+        var end = Math.min(start + PAGE_SIZE, list.length);
+        var slice = list.slice(start, end);
+
+        if (slice.length === 0) {
+            if (typeof Utils !== 'undefined' && Utils.renderEmptyState) {
+                container.innerHTML = Utils.renderEmptyState({
+                    type: 'search',
+                    icon: 'mdi:file-search-outline',
+                    title: '未找到匹配的案例',
+                    description: '请调整关键词或筛选条件后重试，或尝试其他搜索词',
+                    actionText: '重置筛选',
+                    actionHandler: resetCasesDb
+                });
+            } else {
+                container.innerHTML =
+                    '<div class="flex flex-col items-center justify-center py-16 px-4">' +
+                    '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center mb-4">' +
+                    '<iconify-icon class="text-4xl text-blue-500/60" icon="mdi:file-search-outline"></iconify-icon>' +
+                    '</div>' +
+                    '<h4 class="text-base font-semibold text-fg-primary mb-1">未找到匹配的案例</h4>' +
+                    '<p class="text-xs text-fg-tertiary mb-4 text-center max-w-xs">请调整关键词或筛选条件后重试，或尝试其他搜索词</p>' +
+                    '<button onclick="resetCasesDb()" class="px-4 py-2 text-xs font-medium rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:shadow-md hover:shadow-blue-500/20 transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-1.5">' +
+                    '<iconify-icon class="text-sm" icon="mdi:refresh"></iconify-icon>' +
+                    '重置筛选' +
+                    '</button>' +
+                    '</div>';
+            }
+        } else {
+            container.innerHTML = slice
+                .map(function (c, idx) {
+                    return renderCaseItem(c, start + idx);
+                })
+                .join('');
+        }
+
+        renderPagination(pager, totalPages);
+
+        if (typeof Animations !== 'undefined' && Animations.initPageAnimations) {
+            Animations.initPageAnimations(container);
+        }
+    }
+
+    function renderCaseItem(c, idx) {
+        var causeBadge = CAUSE_STYLES[c.cause] || 'bg-gray-50 text-gray-600 border border-gray-200/50';
+        var levelIconMap = { 1: 'mdi:crown', 2: 'mdi:shield-star', 3: 'mdi:scale-balance', 4: 'mdi:gavel' };
+        var levelIcon = levelIconMap[c.courtLevel] || 'mdi:gavel';
+        return (
+            '<div class="p-4 md:p-5 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer group" data-animate="fade-in-up" data-stagger-group="cases-list" data-stagger-index="' +
+            idx +
+            '" data-delay="0.05" onclick="openCaseDetail(\'' +
+            c.id +
+            '\')">' +
+            '<div class="flex items-start gap-3 md:gap-4">' +
+            '<div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">' +
+            '<iconify-icon class="text-lg md:text-xl text-blue-500" icon="' +
+            levelIcon +
+            '"></iconify-icon>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-start justify-between gap-3 mb-1.5">' +
+            '<h3 class="text-sm md:text-base font-semibold text-fg-primary group-hover:text-blue-600 transition-colors line-clamp-2">' +
+            escapeHtml(c.title) +
+            '</h3>' +
+            '<span class="text-[10px] font-semibold ' +
+            causeBadge +
+            ' px-2.5 py-1 rounded-full flex-shrink-0 shadow-sm">' +
+            c.cause +
+            '</span>' +
+            '</div>' +
+            '<div class="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs text-fg-tertiary mb-2 flex-wrap">' +
+            '<span class="inline-flex items-center gap-1">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:domain"></iconify-icon>' +
+            escapeHtml(c.court) +
+            '</span>' +
+            '<span class="inline-flex items-center gap-1">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:calendar"></iconify-icon>' +
+            escapeHtml(c.date) +
+            '</span>' +
+            '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-bg-subtle rounded-md font-medium text-fg-secondary">' +
+            '<iconify-icon class="text-[11px]" icon="mdi:tag-outline"></iconify-icon>' +
+            escapeHtml(c.caseType) +
+            '</span>' +
+            '</div>' +
+            '<p class="text-[11px] md:text-xs text-fg-secondary line-clamp-2 leading-relaxed">' +
+            escapeHtml(c.summary) +
+            '</p>' +
+            '</div>' +
+            '<iconify-icon class="text-fg-disabled text-base md:text-lg opacity-0 group-hover:opacity-100 transition-all translate-x-[-4px] group-hover:translate-x-0 flex-shrink-0 mt-1" icon="mdi:chevron-right"></iconify-icon>' +
+            '</div>' +
+            '</div>'
+        );
+    }
+
+    // ===== 渲染: 分页 =====
+    function renderPagination(pager, totalPages) {
+        if (!pager) return;
+        if (totalPages <= 1) {
+            pager.innerHTML =
+                '<span class="text-[10px] text-fg-tertiary">第 ' + state.page + ' / ' + totalPages + ' 页</span>';
+            return;
+        }
+
+        var html = '';
+        html += pageBtn(
+            state.page > 1,
+            '<iconify-icon icon="mdi:chevron-left"></iconify-icon>',
+            state.page - 1,
+            'text-fg-tertiary'
+        );
+
+        buildPageList(state.page, totalPages).forEach(function (p) {
+            if (p === '...') {
+                html += '<span class="text-xs text-fg-tertiary px-2">...</span>';
+            } else {
+                var active = p === state.page;
+                html +=
+                    '<button class="min-w-[32px] h-8 px-2.5 rounded-xl flex items-center justify-center text-xs font-medium ' +
+                    (active
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20'
+                        : 'hover:bg-white text-fg-secondary hover:text-blue-600') +
+                    ' transition-all duration-200" onclick="changeCasesPage(' +
+                    p +
+                    ')">' +
+                    p +
+                    '</button>';
+            }
+        });
+
+        html += pageBtn(
+            state.page < totalPages,
+            '<iconify-icon icon="mdi:chevron-right"></iconify-icon>',
+            state.page + 1,
+            'text-fg-tertiary'
+        );
+
+        pager.innerHTML = html;
+    }
+
+    function pageBtn(enabled, inner, target, cls) {
+        if (!enabled) {
+            return (
+                '<button class="w-8 h-8 rounded-lg flex items-center justify-center text-xs ' +
+                cls +
+                ' opacity-40 cursor-not-allowed">' +
+                inner +
+                '</button>'
+            );
+        }
+        return (
+            '<button class="w-8 h-8 rounded-lg hover:bg-bg-subtle flex items-center justify-center text-xs ' +
+            cls +
+            '" onclick="changeCasesPage(' +
+            target +
+            ')">' +
+            inner +
+            '</button>'
+        );
+    }
+
+    // 生成页码数组, 含 '...' 占位
+    function buildPageList(current, total) {
+        var window = 2;
+        var set = {};
+        var nums = [];
+        function add(n) {
+            if (n < 1 || n > total || set[n]) return;
+            set[n] = true;
+            nums.push(n);
+        }
+        add(1);
+        for (var i = current - window; i <= current + window; i++) add(i);
+        add(total);
+        nums.sort(function (a, b) {
+            return a - b;
+        });
+
+        var result = [];
+        for (var j = 0; j < nums.length; j++) {
+            if (j > 0 && nums[j] - nums[j - 1] > 1) result.push('...');
+            result.push(nums[j]);
+        }
+        return result;
+    }
+
+    // ===== Loading 状态 =====
+    function showLoading() {
+        var container = $('cases-db-results');
+        if (container) {
+            container.innerHTML =
+                '<div class="p-12 text-center">' +
+                '<iconify-icon class="text-3xl text-brand animate-spin inline-block" icon="mdi:loading"></iconify-icon>' +
+                '<p class="text-xs text-fg-tertiary mt-2">正在检索案例...</p>' +
+                '</div>';
+        }
+        var countEl = $('cases-db-result-count');
+        if (countEl) countEl.textContent = '检索中...';
+        var pager = $('cases-db-pagination');
+        if (pager) pager.innerHTML = '';
+    }
+
+    // ===== API 联调 (mock 兜底) =====
+    // 从法院名推导层级: 1=最高 2=高级 3=中级 4=基层
+    function deriveCourtLevel(court) {
+        if (!court) return 4;
+        if (court.indexOf('最高人民法院') >= 0) return 1;
+        if (court.indexOf('高级') >= 0) return 2;
+        if (court.indexOf('中级') >= 0) return 3;
+        return 4;
+    }
+
+    // 将后端 CaseOut 归一化为前端结构 (兼容已归一化对象)
+    function normalizeCase(c) {
+        if (!c) return null;
+        var court = c.court || '';
+        var summary = c.summary || c.parties || c.full_text || c.legal_basis || '';
+        if (summary && summary.length > 240) summary = summary.slice(0, 240) + '…';
+        return {
+            id: c.doc_id || c.id || 'api-' + Math.random().toString(36).slice(2),
+            title: c.case_name || c.title || '',
+            court: court,
+            courtLevel: c.courtLevel || deriveCourtLevel(court),
+            date: c.judgment_date || c.date || '',
+            cause: c.cause || '',
+            caseType: c.cause_category || c.caseType || '民事',
+            summary: summary || '（详情见裁判文书全文）'
+        };
+    }
+
+    // 读取当前筛选条件 (供 API 参数构造与本地过滤)
+    function readFilters() {
+        var kwInput = $('cases-db-keyword');
+        var causeSel = $('cases-db-cause');
+        var courtSel = $('cases-db-court');
+        var yearSel = $('cases-db-year');
+        var kw = (kwInput ? kwInput.value : '').trim();
+        var cause = causeSel ? causeSel.value : '全部案由';
+        var court = courtSel ? courtSel.value : '全部法院';
+        var year = yearSel ? yearSel.value : '全部年份';
+        var causeActive = cause && cause !== '全部案由';
+        var courtActive = court && court !== '全部法院';
+        var yearActive = year && year !== '全部年份';
+        var yearNum = yearActive ? year.replace(/[^0-9]/g, '') : '';
+        return {
+            keyword: kw,
+            cause: causeActive ? cause : null,
+            court: courtActive ? court : null,
+            year: yearNum ? Number(yearNum) : null
+        };
+    }
+
+    // 从 API 加载判例列表 (失败 reject)
+    function loadCasesFromAPI(params) {
+        if (typeof API === 'undefined' || !API.caseLaw || !API.caseLaw.list) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.caseLaw.list(params || { limit: 50 }, { showError: false }).then(function (res) {
+            if (res && res.ok && Array.isArray(res.data)) {
+                var list = res.data.map(normalizeCase).filter(function (x) {
+                    return x;
+                });
+                if (list.length > 0) return list;
+            }
+            throw new Error('API response invalid');
+        });
+    }
+
+    // 调 API 全文搜索 (关键词命中), 失败 reject
+    function searchCasesViaAPI(keyword) {
+        if (typeof API === 'undefined' || !API.search || !API.search.cases) {
+            return Promise.reject(new Error('API unavailable'));
+        }
+        return API.search.cases(keyword, {}, { showError: false }).then(function (res) {
+            var items = null;
+            if (res && res.ok && res.data) {
+                if (Array.isArray(res.data.items)) items = res.data.items;
+                else if (Array.isArray(res.data)) items = res.data;
+            }
+            if (!items || items.length === 0) throw new Error('search empty or invalid');
+            return items.map(normalizeCase).filter(function (x) {
+                return x;
+            });
+        });
+    }
+
+    // 回退到 mock 数据并提示
+    function fallbackToMockCases(reason) {
+        console.warn('[cases-db] API 调用失败, 回退 mock:', reason);
+        _casesApiFailed = true;
+        _casesData = CASES_DB.slice();
+        if (typeof showToast === 'function') showToast('后端不可达, 已切换本地示例数据');
+    }
+
+    // ===== 对外 API =====
+
+    // 检索 (搜索按钮): 优先 API (关键词→全文检索 / 否则→列表筛选), 失败回退 mock
+    function searchCases() {
+        showLoading();
+        if (typeof showToast === 'function') showToast('正在检索案例...');
+
+        var filters = readFilters();
+        state.keyword = filters.keyword;
+
+        function renderLocal() {
+            state.page = 1;
+            applyFilters();
+            applySort();
+            renderResults();
+        }
+
+        // 后端此前已判定不可达 → 直接走 mock
+        if (_casesApiFailed || typeof API === 'undefined' || !API.caseLaw || !API.search) {
+            _casesData = CASES_DB.slice();
+            renderLocal();
+            return;
+        }
+
+        var apiPromise;
+        if (filters.keyword && API.search.cases) {
+            apiPromise = searchCasesViaAPI(filters.keyword);
+        } else {
+            apiPromise = loadCasesFromAPI({
+                cause: filters.cause,
+                year: filters.year,
+                court: filters.court,
+                limit: 50
+            });
+        }
+
+        apiPromise
+            .then(function (list) {
+                _casesData = list;
+                renderLocal();
+            })
+            .catch(function (err) {
+                fallbackToMockCases(err && err.message ? err.message : err);
+                renderLocal();
+            });
+    }
+
+    // 切换排序: 读取排序下拉, 重新排序并回到第 1 页
+    function changeCasesSort() {
+        var sel = $('cases-db-sort');
+        var label = sel ? sel.value : '相关度';
+        var map = { 相关度: 'relevance', 裁判日期: 'date', 法院层级: 'courtLevel' };
+        state.sort = map[label] || 'relevance';
+        state.page = 1;
+        applySort();
+        renderResults();
+    }
+
+    // 翻页
+    function changeCasesPage(page) {
+        if (page < 1) return;
+        state.page = page;
+        renderResults();
+        var container = $('cases-db-results');
+        if (container && container.scrollIntoView) {
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    // 快捷案由搜索
+    function quickSearchCause(cause) {
+        var causeSel = $('cases-db-cause');
+        if (causeSel) {
+            for (var i = 0; i < causeSel.options.length; i++) {
+                if (causeSel.options[i].text.indexOf(cause) >= 0) {
+                    causeSel.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        searchCases();
+    }
+
+    // 重置
+    function resetCasesDb() {
+        var kw = $('cases-db-keyword');
+        if (kw) kw.value = '';
+        var cause = $('cases-db-cause');
+        if (cause) cause.selectedIndex = 0;
+        var court = $('cases-db-court');
+        if (court) court.selectedIndex = 0;
+        var year = $('cases-db-year');
+        if (year) year.selectedIndex = 0;
+        var sort = $('cases-db-sort');
+        if (sort) sort.selectedIndex = 0;
+        state.page = 1;
+        state.sort = 'relevance';
+        state.keyword = '';
+        applyFilters();
+        applySort();
+        renderResults();
+    }
+
+    // 查看案例详情
+    function openCaseDetail(id) {
+        var c = null;
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(id)) {
+                c = _casesData[i];
+                break;
+            }
+        }
+        if (!c) {
+            if (typeof showToast === 'function') showToast('未找到案例 #' + id);
+            return;
+        }
+
+        var levelMap = { 1: '最高人民法院', 2: '高级人民法院', 3: '中级人民法院', 4: '基层人民法院' };
+
+        var content =
+            '<div class="space-y-4">' +
+            '<div class="p-4 bg-bg-subtle rounded-xl">' +
+            '<p class="text-sm font-medium text-fg-primary leading-relaxed">' +
+            escapeHtml(c.title) +
+            '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">审理法院</p>' +
+            '<p class="text-sm text-fg-primary font-medium">' +
+            escapeHtml(c.court) +
+            '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">法院层级</p>' +
+            '<p class="text-sm text-fg-primary">' +
+            levelMap[c.courtLevel] +
+            '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-3 text-sm">' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">裁判日期</p>' +
+            '<p class="text-sm text-fg-primary">' +
+            escapeHtml(c.date) +
+            '</p>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">案件类型</p>' +
+            '<p class="text-sm text-fg-primary">' +
+            escapeHtml(c.caseType) +
+            '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="p-3 bg-white border border-bg-border rounded-lg">' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">案由</p>' +
+            '<span class="text-[10px] bg-brand-tint3 text-brand font-medium px-2 py-0.5 rounded-full">' +
+            escapeHtml(c.cause) +
+            '</span>' +
+            '</div>' +
+            '<div class="p-4 bg-bg-subtle rounded-xl">' +
+            '<p class="text-[11px] text-fg-tertiary mb-2">案件摘要</p>' +
+            '<p class="text-xs text-fg-secondary leading-relaxed whitespace-pre-wrap">' +
+            escapeHtml(c.summary) +
+            '</p>' +
+            '</div>' +
+            '</div>';
+
+        var footer =
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeCaseDetail()">关闭</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="closeCaseDetail()">引用到文书</button>';
+
+        if (_closeCaseDetail) _closeCaseDetail();
+        _closeCaseDetail = Utils.showModal({
+            id: 'case-detail-modal',
+            title: '案例详情',
+            icon: 'mdi:file-search-outline',
+            content: content,
+            footer: footer,
+            size: 'lg'
+        });
+    }
+
+    function closeCaseDetail() {
+        if (_closeCaseDetail) {
+            _closeCaseDetail();
+            _closeCaseDetail = null;
+        }
+    }
+
+    // ===== 案件状态流转 =====
+    function getCaseStatus(caseId) {
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(caseId)) {
+                return _casesData[i].status || 'pending';
+            }
+        }
+        return 'pending';
+    }
+
+    function getCaseTitle(caseId) {
+        for (var i = 0; i < _casesData.length; i++) {
+            if (String(_casesData[i].id) === String(caseId)) {
+                return _casesData[i].title || '未命名案件';
+            }
+        }
+        return '未命名案件';
+    }
+
+    async function changeCaseStatus(caseId, toStatus, reason) {
+        var currentStatus = getCaseStatus(caseId);
+        var allowed = STATUS_FLOW[currentStatus] || [];
+
+        if (allowed.indexOf(toStatus) === -1) {
+            if (typeof showToast === 'function') {
+                showToast('状态流转不允许: ' + CASE_STATUSES[currentStatus].label + ' -> ' + CASE_STATUSES[toStatus].label, 'error');
+            }
+            return false;
+        }
+
+        try {
+            var resp = await fetch('/api/cases/' + caseId + '/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to_status: toStatus,
+                    reason: reason,
+                    actor_name: '系统用户'
+                })
+            });
+
+            if (!resp.ok) {
+                var err = await resp.json();
+                if (typeof showToast === 'function') {
+                    showToast(err.detail || '状态变更失败', 'error');
+                }
+                return false;
+            }
+
+            await resp.json();
+
+            for (var i = 0; i < _casesData.length; i++) {
+                if (String(_casesData[i].id) === String(caseId)) {
+                    _casesData[i].status = toStatus;
+                    break;
+                }
+            }
+
+            if (typeof showToast === 'function') {
+                showToast('案件状态已变更为: ' + CASE_STATUSES[toStatus].label, 'success');
+            }
+
+            return true;
+        } catch (err) {
+            console.error('[cases-db] changeCaseStatus failed', err);
+            if (typeof showToast === 'function') {
+                showToast('状态变更失败: ' + err.message, 'error');
+            }
+            return false;
+        }
+    }
+
+    // ===== 案件时间线 =====
+    async function getCaseTimeline(caseId) {
+        try {
+            var resp = await fetch('/api/cases/' + caseId + '/timeline');
+            if (!resp.ok) {
+                console.warn('[cases-db] getCaseTimeline failed:', resp.status);
+                return [];
+            }
+            var result = await resp.json();
+            return result.timeline || [];
+        } catch (err) {
+            console.error('[cases-db] getCaseTimeline failed', err);
+            return [];
+        }
+    }
+
+    function renderTimeline(timeline) {
+        if (!timeline || timeline.length === 0) {
+            return '<p class="text-xs text-fg-tertiary text-center py-4">暂无时间线记录</p>';
+        }
+
+        var html = '<div class="relative pl-4 border-l-2 border-bg-border space-y-4">';
+        timeline.forEach(function(event) {
+            var icon = event.type === 'status' ? 'mdi:refresh' : 'mdi:note';
+            var colorClass = event.type === 'status' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600';
+            var timeStr = '';
+            try {
+                timeStr = new Date(event.created_at).toLocaleString('zh-CN');
+            } catch (e) {
+                timeStr = event.created_at;
+            }
+
+            html += '<div class="relative">' +
+                '<div class="absolute -left-[25px] w-5 h-5 rounded-full ' + colorClass + ' flex items-center justify-center">' +
+                '<iconify-icon icon="' + icon + '" class="text-xs"></iconify-icon>' +
+                '</div>' +
+                '<div class="bg-white border border-bg-border rounded-lg p-3">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-sm font-medium text-fg-primary">' + escapeHtml(event.title) + '</span>' +
+                '<span class="text-[10px] text-fg-tertiary">' + timeStr + '</span>' +
+                '</div>';
+
+            if (event.description) {
+                html += '<p class="text-xs text-fg-secondary">' + escapeHtml(event.description) + '</p>';
+            }
+
+            if (event.actor_name) {
+                html += '<p class="text-[10px] text-fg-tertiary mt-1">操作人: ' + escapeHtml(event.actor_name) + '</p>';
+            }
+
+            html += '</div></div>';
+        });
+        html += '</div>';
+
+        return html;
+    }
+
+    function openStatusChangeModal(caseId) {
+        var currentStatus = getCaseStatus(caseId);
+        var allowedTransitions = STATUS_FLOW[currentStatus] || [];
+
+        if (allowedTransitions.length === 0) {
+            if (typeof showToast === 'function') {
+                showToast('当前状态不允许变更', 'warning');
+            }
+            return;
+        }
+
+        var selectHtml = '<select id="status-change-select" class="w-full h-9 px-3 bg-bg-subtle border border-bg-border rounded-md text-sm">' +
+            allowedTransitions.map(function(status) {
+                return '<option value="' + status + '">' + CASE_STATUSES[status].label + '</option>';
+            }).join('') +
+            '</select>';
+
+        var content =
+            '<div class="space-y-4">' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">当前状态</p>' +
+            '<span class="inline-block px-2 py-1 text-[11px] font-medium rounded-full ' + CASE_STATUSES[currentStatus].color + '">' +
+            CASE_STATUSES[currentStatus].label +
+            '</span>' +
+            '</div>' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">目标状态</p>' +
+            selectHtml +
+            '</div>' +
+            '<div>' +
+            '<p class="text-[11px] text-fg-tertiary mb-1">变更原因</p>' +
+            '<textarea id="status-change-reason" class="w-full h-24 px-3 py-2 bg-bg-subtle border border-bg-border rounded-md text-sm resize-none" placeholder="请输入变更原因..."></textarea>' +
+            '</div>' +
+            '</div>';
+
+        var footer =
+            '<button class="h-9 px-4 text-xs text-fg-secondary bg-white border border-bg-border rounded-lg hover:bg-bg" onclick="closeStatusChangeModal()">取消</button>' +
+            '<button class="h-9 px-4 text-xs text-white bg-brand hover:bg-brand-hover rounded-lg" onclick="confirmStatusChange(\'' + caseId + '\')">确认变更</button>';
+
+        if (_closeCaseDetail) _closeCaseDetail();
+        _closeCaseDetail = Utils.showModal({
+            id: 'status-change-modal',
+            title: '变更案件状态',
+            icon: 'mdi:refresh',
+            content: content,
+            footer: footer,
+            size: 'md'
+        });
+    }
+
+    function closeStatusChangeModal() {
+        if (_closeCaseDetail) {
+            _closeCaseDetail();
+            _closeCaseDetail = null;
+        }
+    }
+
+    async function confirmStatusChange(caseId) {
+        var select = document.getElementById('status-change-select');
+        var reasonInput = document.getElementById('status-change-reason');
+        var toStatus = select ? select.value : '';
+        var reason = reasonInput ? reasonInput.value.trim() : '';
+
+        var success = await changeCaseStatus(caseId, toStatus, reason);
+        if (success) {
+            closeStatusChangeModal();
+            searchCases();
+        }
+    }
+
+    // 初始化: 重置筛选/排序, 先渲染 mock, 再尝试从 API 加载覆盖 (失败保持 mock)
+    function initCasesDb() {
+        state.page = 1;
+        state.sort = 'relevance';
+        state.keyword = '';
+
+        // 重置输入控件 (避免缓存视图残留上一次的筛选)
+        var kw = $('cases-db-keyword');
+        if (kw) kw.value = '';
+        var cause = $('cases-db-cause');
+        if (cause) cause.selectedIndex = 0;
+        var court = $('cases-db-court');
+        if (court) court.selectedIndex = 0;
+        var year = $('cases-db-year');
+        if (year) year.selectedIndex = 0;
+        var sort = $('cases-db-sort');
+        if (sort) sort.selectedIndex = 0;
+
+        // 先用 mock 渲染 (立即可见)
+        _casesData = CASES_DB.slice();
+        applyFilters();
+        applySort();
+        renderResults();
+
+        // 尝试从 API 加载真实数据覆盖
+        if (!_casesApiFailed && typeof API !== 'undefined' && API.caseLaw && API.caseLaw.list) {
+            showLoading();
+            loadCasesFromAPI({ limit: 50 })
+                .then(function (list) {
+                    _casesData = list;
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                })
+                .catch(function (err) {
+                    console.warn('[cases-db] 初始化 API 加载失败, 使用 mock:', err && err.message ? err.message : err);
+                    _casesApiFailed = true;
+                    // 保持已渲染的 mock 数据
+                    applyFilters();
+                    applySort();
+                    renderResults();
+                });
+        }
+    }
+
+    // ===== 双绑定 =====
+    globalThis.initCasesDb = initCasesDb;
+    globalThis.searchCases = searchCases;
+    globalThis.changeCasesPage = changeCasesPage;
+    globalThis.openCaseDetail = openCaseDetail;
+    globalThis.closeCaseDetail = closeCaseDetail;
+    globalThis.changeCasesSort = changeCasesSort;
+    globalThis.quickSearchCause = quickSearchCause;
+    globalThis.resetCasesDb = resetCasesDb;
+    globalThis.changeCaseStatus = changeCaseStatus;
+    globalThis.getCaseTimeline = getCaseTimeline;
+    globalThis.renderTimeline = renderTimeline;
+    globalThis.openStatusChangeModal = openStatusChangeModal;
+    globalThis.closeStatusChangeModal = closeStatusChangeModal;
+    globalThis.confirmStatusChange = confirmStatusChange;
+})();
